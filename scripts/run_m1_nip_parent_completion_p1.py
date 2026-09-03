@@ -20,6 +20,7 @@ import numpy as np
 from ccad.mscc import minimum_support_contribution_correspondence, source_conditioned_topk_proposal
 from ccad.nip_baselines import IMPLEMENTED_CONTINUOUS_REFERENCES, IMPLEMENTED_NATIVE_LANES, run_continuous_reference, run_native_baseline
 from ccad.nip_synthetic import FAMILIES, observed_kernels
+from ccad.nip_synthetic_v2 import generate_cap_identifiable_observed
 from ccad.nip_synthetic_v3 import generate_endpoint_observed
 
 
@@ -92,7 +93,9 @@ def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict],
             if len(set(seeds.values())) != len(seeds):
                 raise RuntimeError("derived seed streams collided")
             seed_rows.append({"family_id": family, "pair_index": pair, "seeds": seeds})
-            mean = generate_endpoint_observed(family, structural_seed=seeds["structural"], sample_seed=seeds["mean"], n=config["sample_sizes"]["mean"])
+            # The mean stream never constructs or reads an intervention endpoint.
+            # Its frozen odd sample size is therefore valid for every family.
+            mean = generate_cap_identifiable_observed(family, structural_seed=seeds["structural"], sample_seed=seeds["mean"], n=config["sample_sizes"]["mean"])
             discovery = generate_endpoint_observed(family, structural_seed=seeds["structural"], sample_seed=seeds["discovery"], n=config["sample_sizes"]["discovery"])
             fingerprint = hashlib.sha256(discovery.source_contributions.tobytes() + discovery.target_contributions.tobytes()).hexdigest().upper()
             approximate = family in config["approximate_families"]

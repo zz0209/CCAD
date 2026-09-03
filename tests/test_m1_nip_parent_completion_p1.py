@@ -6,6 +6,7 @@ from pathlib import Path
 import unittest
 
 from ccad.nip_baselines import IMPLEMENTED_CONTINUOUS_REFERENCES, IMPLEMENTED_NATIVE_LANES
+from ccad.nip_synthetic_v2 import generate_cap_identifiable_observed
 
 
 ROOT = Path(__file__).parents[1]
@@ -46,6 +47,14 @@ class ParentCompletionP1Tests(unittest.TestCase):
     def test_required_artifact_contract_is_complete(self):
         required = set(self.config["required_artifacts"])
         self.assertTrue({"proposals.jsonl", "predictions.jsonl", "prediction_closure.json", "prelabel_validation.json", "seed_ledger.json"} <= required)
+
+    def test_odd_mean_stream_never_requires_n11_endpoint(self):
+        observed = generate_cap_identifiable_observed(
+            "N11_downstream_cliff", structural_seed=913, sample_seed=1913,
+            n=self.config["sample_sizes"]["mean"],
+        )
+        self.assertEqual(observed.source_mean_contributions.shape, (1, 1))
+        self.assertEqual(observed.target_mean_contributions.shape, (1, 20))
 
 
 if __name__ == "__main__":

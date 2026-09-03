@@ -2110,3 +2110,13 @@ Runner实现已提交并推送，固定HEAD/origin=`a503f7d45d6aef9d219f2692bb3e
 修复后的第一次targeted回归暴露certificate的旧数值缺陷：对线性相关forbidden atoms使用满列QR会把任意QR补空间当作真实禁区，导致10个family的decoy正交性证书假失败。Construction与certificate均改用`1e-12` numerical-rank SVD projector后，targeted24/24、full159/159 PASS；cap-pressure、bounded-search truth、N11 endpoint和v2/v3 compatibility tests均未改变。另将P0 unit test从“运行后仍要求no-existing-run=true”修为只验证不随执行状态改变的contract checks；P0历史artifact未改。
 
 Repair run ID=`M1_NIP_PC2_rankone_decoy_impltest_v1_20260903T180444Z`。源码SHA-256=`907DC5F8D5299D743E8047348E0D1E5DF19C3A6E346894045825128442B0A01C`；rank-one test=`9C9D4824526E9103BC30FC220B82462A3A2735D25AD12FA3DA5E288D7967E97E`；P0 test=`A1A750FD8AB28CD95EFF87DD7BFF2C70710D405FAE509C5951A96342ACDDC345`。这属于labels打开前的synthetic schema/implementation修复；下一步提交固定新code hash后使用新的P1 run ID和fresh seeds重跑，不复用v1 partial state。
+
+### 2026-09-03 14:05 EDT — 启动C028修复后的fresh P1 v2
+
+C028修复已提交并推送，HEAD/origin=`e1c3662dd0beafa5b25669c6641fa27ea2e38e0b`。新run `M1_NIP_PC2_V1_P1_predict_v2_20260903T180532Z`登记为RUNNING；因seed derivation绑定新code snapshot，本次12 pairs均与v1不同，不读取或复用v1 partial artifact。执行信息边界、lane、阈值、预算与runtime protocol均不变，仍须先prediction closure再pre-label validator，labels保持关闭。
+
+### 2026-09-03 14:06 EDT — P1 v2 FAIL；修正mean-only与endpoint generator混用
+
+`M1_NIP_PC2_V1_P1_predict_v2_20260903T180532Z`在`cpu-heavy` lease中于7.47秒fail closed，lease已释放。P1 runner将冻结的mean-only sample size `n=257`传给N11 intervention endpoint generator，而该generator为exact zero-mean perturbation要求偶数n，因此在N11 mean stream抛出`ValueError`。失败仍发生在closure/validator/labels前；v2 run和stderr完整保留。
+
+冻结协议的mean n257与N11 endpoint偶数约束并不冲突：mean stream只应提供source/target mean contributions，不应构造干预endpoint。Runner改用无endpoint的20-atom observed generator生成mean stream；discovery仍用v3 endpoint-aware generator，evaluation/intervention仍完全未读。新增odd-n257 N11 mean compatibility regression。Repair run `M1_NIP_PC2_mean_stream_impltest_v1_20260903T180654Z` targeted17/17、full160/160 PASS；runner SHA-256=`4D0F6A9C3EEBCD895C938C5199BBB6342163BA2AF147523AD046AE8B94F6F528`，test=`E236ECC19C294EB602F54E5F2863435A91BF0FDF0F13AD56C33253DF2EDAE0D1`。下一步提交后以第三个fresh code-hash run重试，仍不复用任何失败run state。
