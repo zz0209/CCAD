@@ -75,6 +75,7 @@ def verify_prediction_run(prediction_dir: Path) -> list[dict]:
 
 def score_prediction_run(prediction_dir: Path, score_dir: Path) -> dict:
     records = verify_prediction_run(prediction_dir)  # Mandatory before truth import.
+    prediction_config = json.loads((prediction_dir / "config.resolved.json").read_text(encoding="utf-8"))
     if score_dir.exists():
         raise FileExistsError(score_dir)
     score_dir.mkdir(parents=False)
@@ -87,7 +88,7 @@ def score_prediction_run(prediction_dir: Path, score_dir: Path) -> dict:
     write_json(score_dir / "inputs.json", {"prediction_run": str(prediction_dir), "prediction_closure_sha256": closure_hash, "prediction_raw_sha256": sha(prediction_dir / "predictions.raw.jsonl")})
     write_json(score_dir / "code_hashes.json", {"git_available": False, "scorer_snapshot": snapshot.relative_to(score_dir).as_posix(), "scorer_sha256": sha(snapshot)})
     started = now()
-    write_json(score_dir / "manifest.json", {"artifact_schema_version": "ccad.score_run.v1", "run_id": score_dir.name, "prediction_run": prediction_dir.name, "prediction_closure_sha256": closure_hash, "information_order": "VERIFY_CLOSURE_THEN_DYNAMIC_TRUTH_IMPORT", "formal_d1_seed_consumed": False, "evidence_level": "I1_two_stage_contract_engineering_only", "started_utc": started})
+    write_json(score_dir / "manifest.json", {"artifact_schema_version": "ccad.score_run.v1", "run_id": score_dir.name, "prediction_run": prediction_dir.name, "prediction_closure_sha256": closure_hash, "information_order": "VERIFY_CLOSURE_THEN_DYNAMIC_TRUTH_IMPORT", "phase": prediction_config["phase"], "formal_d1_seed_consumed": prediction_config["formal_d1_seed_consumed"], "evidence_level": prediction_config["evidence_level"], "started_utc": started})
     write_json(score_dir / "status.json", {"status": "RUNNING", "started_utc": started})
     truth_module = importlib.import_module("ccad.nip_truth")
     by_cap = {}

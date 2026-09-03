@@ -43,6 +43,14 @@ class D1InformationOrderTests(unittest.TestCase):
         self.assertFalse(config["formal_d1_seed_consumed"])
         self.assertFalse(config["truth_opened_in_prediction"])
 
+    def test_formal_d1_grid_matches_frozen_protocol(self):
+        config = json.loads((ROOT / "configs/m1_nip_d1_v2.json").read_text(encoding="utf-8"))
+        self.assertEqual(config["phase"], "D1")
+        self.assertTrue(config["formal_d1_seed_consumed"])
+        self.assertEqual(config["pairs_per_family"], 20)
+        self.assertEqual(config["expected_prediction_rows"], 12 * 20 * 5)
+        self.assertFalse(config["truth_opened_in_prediction"])
+
 
 if __name__ == "__main__":
     unittest.main()

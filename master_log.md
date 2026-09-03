@@ -1806,3 +1806,17 @@ I1结果与v1调试数值一致：cap 4/8/12/16/20的positive exact pairs为1/2/
 用户明确要求将GitHub仓库及“重要更新及时提交”写入`AGENTS.md`。新增第8.1节，将`https://github.com/zz0209/CCAD.git`与`main`登记为规范远程/默认分支，并将`.gitignore`白名单内项目本体的重要、已验证更新之常规`commit`/`push`记为持续授权。重要更新包括实质代码、可执行config/runner/validator/test、已同步master log的实验/失败/修复/gate/裁决，以及经授权更新的理论PDF。
 
 规则要求提交前检查并发改动、白名单、密钥/大文件、测试或validator，禁止`git add -f`绕过忽略；推送后核对本地HEAD与`origin/main`并报告commit hash。持续授权不扩展到release、仓库可见性、远程分支/标签变更、force push、历史改写、被忽略内容、其他远程或付费服务。`runs/`、`data/`、权重、原始统计、其他研究文档和本地环境继续本地保存并以path/hash追溯。该治理更新不改变任何LOCKED协议、实验结果、M1/M2 gate或C1/C2证据。
+
+## 2026-09-03 01:03 EDT — 执行后端恢复；formal D1 validator 资格化
+
+用户报告环境问题可能修复并要求检查后推进一轮。只读`Get-Location`、AGENTS/master log/plan/tracker读取、Python编译与测试均正常，确认此前的Windows sandbox helper故障已解除。新增`configs/m1_nip_d1_v2.json`，严格绑定v2 protocol：D1 namespace、12 families×20 pairs×5 paired caps=1,200 predictions、512 observations、`g_max=4`、7,462 budget、prediction truth closed；配置中的`formal_d1_seed_consumed=true`只表示执行该config会生成正式D1 seeds，本轮尚未运行该config。
+
+新增独立`validate_m1_nip_d1_v2.py`，不导入prediction runner或scorer；重算sealed closure、bound files、code/input snapshots、protocol/config、predictor AST truth隔离、paired grid/seeds、proposal/prediction hashes；score阶段再独立导入truth重算逐row outcomes、cap aggregates与runtime-free词典序。scorer provenance改为从sealed prediction config推导phase、formal-seed flag和evidence level，移除I1硬编码。新增formal-grid测试；py_compile与全套107/107 tests PASS。
+
+首次用新validator检查旧`M1_NIP_I1_score_impltest_v2_20260903T045800Z`时在`score_provenance` fail-closed：该目录由旧scorer生成，虽有formal=false/evidence，但manifest缺显式`phase`。不修改、不删除v2，tracker勘误为有效FAIL；这不影响sealed prediction。已预登记`M1_NIP_I1_score_impltest_v3_20260903T050300Z`为RUNNING，将使用修正后的scorer复用同一sealed I1 prediction并接受持久化validator。formal D1 config仍未执行，D2/real audit关闭。
+
+### 2026-09-03 01:05 EDT — I1 score v3 与持久化 validator PASS
+
+修正后的scorer复用只读sealed I1 prediction，在新目录`M1_NIP_I1_score_impltest_v3_20260903T050300Z`完成评分；独立validator 22/22 PASS，其中prediction 14项、score 8项。验证覆盖60-row paired grid、truth-closed prediction、source/input/config/protocol绑定、逐row proposal/prediction hashes、score phase/formal flag、scorer snapshot、逐row truth重评分、cap aggregate与词典序重算。selected cap仍为20，数值与先前I1一致。validator SHA-256=`9A2AB690DB25F8827DEE39E0CD930C9F00D553F67379425B3874BFB987BF6D33`；formal config=`DCF87704C508A72F9422C00EF83C0DD0DD972AB3E9C704A56E08D9D0B60065A3`；scorer=`7CFF58A55F8F7E70BBEB562C2E211A2BFEE772C7126DA2702AF0F36B690B50E2`；validator source=`42B1858FD68F0E0774EF94E295BF7EF1F132D6C5275820678EF0FB5883EE297D`。
+
+本轮只完成formal D1执行前的资格门，没有运行`configs/m1_nip_d1_v2.json`，所以正式D1 seeds仍未生成；D2与real audit保持关闭。I1只属工程证据，不改变M1/R001–R003 FAIL、R006/M2 BLOCKED，也不支持C1/C2。下一轮可以先登记formal D1 prediction run并生成1,200条truth-blind predictions，必须独立验证sealed closure后才允许登记score run。
