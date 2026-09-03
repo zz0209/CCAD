@@ -1858,3 +1858,27 @@ Heartbeat `ccad`在生成任何D2 seed前，按v2第6节与继承的v1第5/7/8�
 新增`M1_NIP_D2_ORTHOGONAL_ENDPOINT_AUDIT_20260903_015500.md`与C024，保留三案：A（推荐）以prospective v3加入sub-threshold source/target delta、共享cliff endpoint、固定margin与smooth control，并对受影响阶段使用fresh seeds；B删除M1的N11 causal gate、延后到历史F12/真实endpoint，较简单但削弱边界；C只评分registry标签，明确拒绝。v2 D0/D1各自scope内结果不追溯改写，但v2 D2在seed生成前标`BLOCKED`；D2 seeds仍不存在，未打开任何D2 tensor/label/held-out/real audit。
 
 该修复需要改变LOCKED协议，依AGENTS第0/12节暂停并请求用户裁决。推荐A，因为它保留“高贡献一致性不自动推出因果可移植性”的关键 falsifier，同时使结果可由observed endpoint而非标签验证。M1/C1/C2仍未通过，R006/M2继续BLOCKED。
+
+## 2026-09-03 09:20 EDT — 用户裁决授权后采用方案A；登记v3 formal D0
+
+用户指出既然属于implementation矛盾就应修复，并明确授权agent自行裁决。经复核理论PDF的THM-CBSM-009：同hook下pointwise exact contribution equality对任意deterministic downstream map必然exact interchangeable；approximate transfer只在Lipschitz假设下有界。故问题确属v2 N11实例化错误，不是PDF核心定理错误。
+
+三案裁决：采用A，创建prospective v3 observable endpoint；B（删除M1 N11 causal gate）仅保留为v3在D2前失败时的降级备选；C（读取truth registry标签代替endpoint measurement）因循环自证永久拒绝。新增`M1_NIP_PROTOCOL_V3_20260903_091500.md`、`configs/m1_nip_protocol_v3.json`、`src/ccad/nip_synthetic_v3.py`与对应测试。V3 N11冻结exact-balanced zero-mean perturbation，`d_ctr=0.01`、joint feasibility threshold 0.05、threshold margin 0.04；shared base hook为source/target midpoint，固定step readout的normalized boundary margin 0.05、effect RMSE 1.0，smooth linear control RMSE 0.1。endpoint由observed tensors重算，不含truth/outcome label。非N11构造继承v2且不变。
+
+定向py_compile与8/8 v3 tests PASS，覆盖20 seeds endpoint、unique support仍FOUND、exact zero mean、decoy/cap contract、非N11不变、odd-n fail-closed以及protocol hash/phase closure。现于计算前登记唯一run `M1_NIP_D0_v3_formal_v1_20260903T132000Z`为RUNNING：12 families×5 fresh structural pairs、512 observations、20 targets、cap20、`g_max=4`、budget 7,462；N11使用approximate lane，其他阈值继承v2。任务为lightweight CPU，无resource lease。D0只序列化construction/endpoint numeric certificate、shapes、seeds、hash和budget，不打开truth、label、D1/D2或real audit；失败必须原样保留。
+
+### 2026-09-03 09:23 EDT — v3 D0 formal v1 有效 FAIL；生成顺序修复并登记v2
+
+`M1_NIP_D0_v3_formal_v1_20260903T132000Z`在truth-closed construction gate有效FAIL：初版v3先由v2相对旧pointwise-equal N11 span生成orthogonal decoys，随后才把target atom替换为`source+delta`。因此decoys不再对actual v3 forbidden span保持机器精度正交，runner按冻结gate fail-closed。失败run目录、status与traceback原样保留；未打开truth、label、D1/D2或real audit。
+
+修复只改变implementation顺序：N11先在v1 base上构造冻结的zero-mean delta，再相对actual source、perturbed target和hook constants生成同一v2公式的20-atom decoys。协议数值、阈值、endpoint、seed derivation、budget与family均不变。现于重算前登记新run `M1_NIP_D0_v3_formal_v2_20260903T132300Z`为RUNNING；源码hash变化将自然导出fresh code-bound D0 seeds，v1失败不得覆盖。
+
+### 2026-09-03 09:28 EDT — v3 D0 formal v2 PASS；独立完整性审计 WARN 已闭环
+
+修复后的`M1_NIP_D0_v3_formal_v2_20260903T132300Z`正常完成60 records（12 families×5 fresh pairs），独立validator 19/19 PASS。所有240个structural/sample/proposal/solver seeds互异；20-target、6,195 scored supports、decoy residual/orthogonality、cap contract、truth-free imports/outputs、source snapshots、raw hash及status均通过。五个N11 pairs的cliff disagreement与effect RMSE均为1.0，最小normalized boundary margin为`0.04999999999999967`，最大smooth-control RMSE为`0.10000000000000003`；proposal refusal为0。raw SHA-256=`52050F217F0BBF44B821BC404DA1EB3E4E3BDD19BD1748F566DEF880CF00CA63`，summary=`FAC558703A9CB2416B973C86C6F029DF64127303FB4B0BE5C256C137A187C88B`，validation=`8F964BB6BAF920D69AB4FE8497F215CA6872F2AE92E644B845633E215C45D160`。
+
+全项目discover运行112项：111项PASS；唯一collection error仍为历史`test_r006b3a_family_paired_noninferiority.py`导入缺少`mpmath`，与v3代码无关，未跳过或下载依赖伪造全绿。定向v3 8/8 tests PASS。
+
+按`experiment-audit`技能触发fresh same-family read-only reviewer。其总体为provisional `WARN`：A ground-truth provenance、B normalization、D dead-code、E scope与F simulation-only分类均PASS；未发现truth registry替代endpoint、自归一化造高分、phantom result或scope夸大。唯一WARN是审计时tracker/master log仍显示v2 RUNNING；本条与tracker同步已立即闭环，原始WARN不追溯改写。审计同时要求D1/D2额外保存raw delta RMSE、raw cliff margin和source RMS，并在D2对frozen predicted support而非construction atom评分；这些成为D1前置工程项。报告见`EXPERIMENT_AUDIT_M1_NIP_D0_V3_20260903.md/.json`及`.aris/traces/experiment-audit/2026-09-03_m1_nip_d0_v3/`。
+
+保守解释：本轮只证明v3 observable-endpoint synthetic fixture和artifact contract可执行，不是D1/D2 confirmation，不支持M1、C1-NIP、C2-NIP或真实SAE。`M1_NIP_protocol_v3`转为TODO；fresh D1 seeds仍UNGENERATED，D2/real audit关闭。下一轮应先实现N09/N10/N12正交诊断、raw N11 scale字段及predicted-support endpoint API/tests，再制作fresh v3 D1两阶段adapter；不得直接生成D2 seeds。
