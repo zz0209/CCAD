@@ -2086,3 +2086,13 @@ Heartbeat `ccad`按PC2冻结参数完成剩余三条native baseline。`DUSTBIN_S
 Run ID=`M1_NIP_PC2_baseline_api_impltest_v2_20260903T174928Z`。新增registry exact-completeness、Sinkhorn deterministic/convergence/scope、spectral deterministic/factorization和rank-two拒绝测试。第一次命令误用系统Python，collection阶段因缺NumPy而FAIL，未执行测试或生成实验artifact；换用锁定R004解释器后targeted 12/12、全项目154/154与py_compile全部PASS。源码SHA-256：`nip_baselines.py=67980D775D41602147BCE9E84F9F07A7AD436C2E05F2DFA2E52F4FE9FEB42048`，`proposal.py=2AEDDE174DCAED2CC701FCFE3C36015E3AEB311C3A8ED4312FD8262ABA23AD68`；测试SHA-256=`77CDC912A8D82A98F113414463EF41E6AE019BF9647E1105C9DF38A8BC058BEB`。
 
 保守解释：PC2注册的8条native baselines与2条continuous references现都有truth-free实现和conformance coverage，C027实现门通过；这仍不是任何方法在fresh data上的结果。P1 formal seeds、truth、evaluation和intervention仍未生成/未打开，M1 parent保持FAIL、R006保持BLOCKED。下一轮可实现P1 truth-closed one-pair-per-family runner、完整runtime/cost ledger与pre-label closure；只有独立validator通过后才可打开P1 labels。
+
+## 2026-09-03 14:00 EDT — PC2 P1 runner与pre-label validator实现门PASS
+
+Heartbeat `ccad`继续按C026-A实现P1 truth-closed integration surface。新增执行配置`configs/m1_nip_parent_completion_p1_v1.json`：固定12 families×1 fresh structural pair、six distinct streams、9 native lanes+2 continuous references、MSCC相同threshold/gmax/budget、runtime warmup1+measured5和random primary之外32个diagnostic permutations；P1配置明确`formal_seed_manifest_status=UNGENERATED`、`formal_seed_consumed=false`，prediction不读取evaluation/intervention或truth。
+
+新增runner与独立pre-label validator。Runner在生成seed前封存源码和输入，seed严格按`protocol_hash||code_hash||P1||family||pair||stream`派生；分别生成mean/discovery observations，保存132条proposal/prediction、实际candidate cost、五次runtime、random diagnostics cost、seed ledger、环境、状态和atomic closure。Validator先核验closure及workspace/source snapshot hash，再用AST检查truth import与evaluation/intervention seed reads，重派生全部seeds并重跑132条scientific predictions；runtime不要求bitwise相等，但所有ranking/support/status/cost与random diagnostics必须一致。正式P2 seeds不在此流程生成。
+
+实现测试首次用字符串搜索检查禁止的seed读取，validator为表达该检查本身包含相同字符串，造成1/16自指式误报；未运行P1、未生成run artifact。修复为AST `Subscript`数据流检查后targeted16/16、full158/158、py_compile PASS。Run ID=`M1_NIP_PC2_P1_runner_impltest_v1_20260903T180033Z`。配置SHA-256=`A53E56DCD33B91BC85241D10307BF475AB48658550F9CD39EA9E37375F54C1ED`；runner=`3633BB189EAFC6971D94D1C67EE5B198ABBBE637B24A284368975429A502F29B`；validator=`6D4CA96077C6B4148917B1BB183B86FFCF24C45163ED2D04799291EF0C91189C`；test=`F0D5536CFBCBDA3AADC6EB2BF62501046DB35D168888D9364908D3C727D2DFCD`。
+
+该PASS只说明P1执行面可启动；没有方法结果、metric surface或label证据，M1/R006状态不变。下一动作是先提交并固定实现版本，再以唯一run ID执行fresh P1 prediction及pre-label recomputation；任一closure/validator失败都必须保留run且不得打开truth/evaluation/intervention。
