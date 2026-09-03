@@ -1820,3 +1820,15 @@ I1结果与v1调试数值一致：cap 4/8/12/16/20的positive exact pairs为1/2/
 修正后的scorer复用只读sealed I1 prediction，在新目录`M1_NIP_I1_score_impltest_v3_20260903T050300Z`完成评分；独立validator 22/22 PASS，其中prediction 14项、score 8项。验证覆盖60-row paired grid、truth-closed prediction、source/input/config/protocol绑定、逐row proposal/prediction hashes、score phase/formal flag、scorer snapshot、逐row truth重评分、cap aggregate与词典序重算。selected cap仍为20，数值与先前I1一致。validator SHA-256=`9A2AB690DB25F8827DEE39E0CD930C9F00D553F67379425B3874BFB987BF6D33`；formal config=`DCF87704C508A72F9422C00EF83C0DD0DD972AB3E9C704A56E08D9D0B60065A3`；scorer=`7CFF58A55F8F7E70BBEB562C2E211A2BFEE772C7126DA2702AF0F36B690B50E2`；validator source=`42B1858FD68F0E0774EF94E295BF7EF1F132D6C5275820678EF0FB5883EE297D`。
 
 本轮只完成formal D1执行前的资格门，没有运行`configs/m1_nip_d1_v2.json`，所以正式D1 seeds仍未生成；D2与real audit保持关闭。I1只属工程证据，不改变M1/R001–R003 FAIL、R006/M2 BLOCKED，也不支持C1/C2。下一轮可以先登记formal D1 prediction run并生成1,200条truth-blind predictions，必须独立验证sealed closure后才允许登记score run。
+
+## 2026-09-03 01:19 EDT — 启动 formal D1 truth-blind prediction/freeze
+
+Heartbeat `ccad`按新AGENTS顺序恢复状态，确认本地`HEAD`与`origin/main`均为`e59effef4922c0a145cf961af5dca6e165e62383`、工作区无未提交变更、I1 v3 validator 22/22 PASS，且formal config、prediction runner、独立validator与v2 locked protocol一致。运行前登记唯一run `M1_NIP_D1_predict_formal_v1_20260903T051900Z`为RUNNING。
+
+本阶段将首次生成正式D1 seeds：12 families×20 structural seed-pairs，每pair共享structural/sample/proposal/solver四路seed并配对比较caps 4/8/12/16/20，共1,200条predictions；512 observations、20 target atoms、`g_max=4`、7,462 budget。prediction进程禁止truth import，结束时最后原子写sealed closure；本轮只运行独立pre-label validator，不登记或启动formal score。任务为lightweight CPU，不申请resource lease。D2、held-out eval和real audit保持关闭；失败run必须保留且不得进入score。
+
+### 2026-09-03 01:20 EDT — formal D1 prediction closure PASS；标签仍关闭
+
+prediction runner正常退出并最后写入sealed closure。1,200/1,200 rows覆盖12 families×20 pairs×5 paired caps；raw SHA-256=`3CCF6D22D592CB9351CE282826580352D8ABC4BF01E6786AF42466C09F21450D`，closure SHA-256=`0688C54FD9A1AD26ED5C8A32BCFC26ABE57B9EBB279BE25FCA166C84354F0C4B`。独立validator在不导入truth的prediction-only模式下14/14 PASS，重算所有bound file、源码/输入/config/protocol、predictor AST、paired grid/seeds以及1,200个proposal/prediction hashes；pre-label validation SHA-256=`275E415E4DE0AF9199B9E4F3479DFF5E3C5F7001447ABFBD20044D54647B6E17`。
+
+本轮严格停止在pre-label边界：没有创建formal score目录、没有导入D1 truth，也没有生成D2 seeds或打开held-out/real audit。该PASS证明formal D1 predictions可追溯且信息顺序合规，但尚无recovery/selection结果，不支持M1/C1/C2。下一工作单元才可在再次核验closure hash后预登记formal score run；score若失败不得修改prediction目录。
