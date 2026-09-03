@@ -2096,3 +2096,17 @@ Heartbeat `ccad`继续按C026-A实现P1 truth-closed integration surface。新�
 实现测试首次用字符串搜索检查禁止的seed读取，validator为表达该检查本身包含相同字符串，造成1/16自指式误报；未运行P1、未生成run artifact。修复为AST `Subscript`数据流检查后targeted16/16、full158/158、py_compile PASS。Run ID=`M1_NIP_PC2_P1_runner_impltest_v1_20260903T180033Z`。配置SHA-256=`A53E56DCD33B91BC85241D10307BF475AB48658550F9CD39EA9E37375F54C1ED`；runner=`3633BB189EAFC6971D94D1C67EE5B198ABBBE637B24A284368975429A502F29B`；validator=`6D4CA96077C6B4148917B1BB183B86FFCF24C45163ED2D04799291EF0C91189C`；test=`F0D5536CFBCBDA3AADC6EB2BF62501046DB35D168888D9364908D3C727D2DFCD`。
 
 该PASS只说明P1执行面可启动；没有方法结果、metric surface或label证据，M1/R006状态不变。下一动作是先提交并固定实现版本，再以唯一run ID执行fresh P1 prediction及pre-label recomputation；任一closure/validator失败都必须保留run且不得打开truth/evaluation/intervention。
+
+## 2026-09-03 14:01 EDT — 启动PC2 P1 truth-closed prediction
+
+Runner实现已提交并推送，固定HEAD/origin=`a503f7d45d6aef9d219f2692bb3e2511c69598d7`。现登记唯一run `M1_NIP_PC2_V1_P1_predict_v1_20260903T180139Z`为RUNNING；执行12 families×1 fresh pair×11 lanes，只生成mean/discovery observations、proposals、predictions、runtime/cost与closure。必须通过母目录`cpu-heavy` lease运行；truth、evaluation、intervention和formal P2 seeds保持关闭。Runner完成后只能启动独立pre-label validator，未通过前不得创建score目录或导入truth。
+
+### 2026-09-03 14:04 EDT — P1 v1 FAIL；修复synthetic rank-one atom contract
+
+`M1_NIP_PC2_V1_P1_predict_v1_20260903T180139Z`取得`cpu-heavy` lease后在4.26秒内fail closed；lease已自动释放并复验free。失败发生于prediction中、closure和prelabel validation之前，truth/evaluation/intervention均未打开。具体反例是二维hook family的decoy atom 2：contribution matrix rank-one relative residual=`0.684965`，无法满足spectral code-correlation lane所需的原生SAE atom结构。Run目录保留源码/输入snapshot、RUNNING后改写的FAIL status及完整stderr，不覆盖或追认。
+
+裁决新增C028并拒绝“取leading SVD当作code”的低成本伪修复。`nip_synthetic_v2`的20-atom decoy现先在observation space构造与所有已有atom codes及constant vector正交的code basis，再乘固定source decoder，因而每个decoy严格为scalar-code×fixed-decoder rank-one atom，同时保留flattened contribution orthogonality和原residual schedule。新增12-family逐atom rank-one regression。
+
+修复后的第一次targeted回归暴露certificate的旧数值缺陷：对线性相关forbidden atoms使用满列QR会把任意QR补空间当作真实禁区，导致10个family的decoy正交性证书假失败。Construction与certificate均改用`1e-12` numerical-rank SVD projector后，targeted24/24、full159/159 PASS；cap-pressure、bounded-search truth、N11 endpoint和v2/v3 compatibility tests均未改变。另将P0 unit test从“运行后仍要求no-existing-run=true”修为只验证不随执行状态改变的contract checks；P0历史artifact未改。
+
+Repair run ID=`M1_NIP_PC2_rankone_decoy_impltest_v1_20260903T180444Z`。源码SHA-256=`907DC5F8D5299D743E8047348E0D1E5DF19C3A6E346894045825128442B0A01C`；rank-one test=`9C9D4824526E9103BC30FC220B82462A3A2735D25AD12FA3DA5E288D7967E97E`；P0 test=`A1A750FD8AB28CD95EFF87DD7BFF2C70710D405FAE509C5951A96342ACDDC345`。这属于labels打开前的synthetic schema/implementation修复；下一步提交固定新code hash后使用新的P1 run ID和fresh seeds重跑，不复用v1 partial state。

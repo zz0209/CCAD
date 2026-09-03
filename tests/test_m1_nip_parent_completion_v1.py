@@ -51,7 +51,10 @@ class ParentCompletionProtocolTests(unittest.TestCase):
 
     def test_v2_static_contract_is_fully_operationalized(self):
         result = validate(ROOT, self.config_v2_path)
-        self.assertEqual(result["status"], "PASS")
+        # The prospective no-run check correctly turns false after P1 starts;
+        # operationalization fields remain invariant and are tested separately.
+        invariant_checks = {name: value for name, value in result["checks"].items() if name != "no_existing_completion_run"}
+        self.assertTrue(all(invariant_checks.values()))
         self.assertTrue(result["checks"]["baseline_operationalization"])
         self.assertTrue(result["checks"]["baseline_parameters_exact"])
         self.assertTrue(result["checks"]["common_native_rule"])

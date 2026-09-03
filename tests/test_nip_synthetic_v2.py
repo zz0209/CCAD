@@ -11,6 +11,16 @@ from ccad.nip_truth import nip_truth
 
 
 class NIPSyntheticV2ProbeTests(unittest.TestCase):
+    def test_every_generated_atom_is_a_native_rank_one_contribution(self):
+        for family in FAMILIES:
+            observed = generate_cap_identifiable_observed(family, structural_seed=913, sample_seed=1913, n=512)
+            for atom in observed.target_contributions.transpose(1, 0, 2):
+                singular = np.linalg.svd(atom, compute_uv=False)
+                tail_sq = float(singular[1:] @ singular[1:]) if singular.size > 1 else 0.0
+                total_sq = float(singular @ singular)
+                residual = np.sqrt(tail_sq / total_sq) if total_sq > 0.0 else 0.0
+                self.assertLessEqual(residual, 1e-12, msg=family)
+
     def _result(self, family: str, cap: int, structural_seed: int = 1101, sample_seed: int = 2202):
         observed = generate_cap_identifiable_observed(family, structural_seed=structural_seed, sample_seed=sample_seed)
         k_ss, k_st, k_tt = observed_kernels(observed)

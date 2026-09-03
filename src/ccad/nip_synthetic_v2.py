@@ -50,24 +50,37 @@ _CONSTRUCTION_REQUIRED_IDS = {
 
 def _orthogonal_decoy_basis(instance: NIPObservedInstance, count: int, seed: int) -> np.ndarray:
     n, _, hook_dim = instance.target_contributions.shape
-    dimension = n * hook_dim
-    forbidden = [
-        atom.reshape(-1)
-        for atom in np.concatenate((instance.source_contributions, instance.target_contributions), axis=1).transpose(1, 0, 2)
-    ]
-    for hook_index in range(hook_dim):
-        constant = np.zeros((n, hook_dim), dtype=np.float64)
-        constant[:, hook_index] = 1.0
-        forbidden.append(constant.reshape(-1))
-    forbidden_matrix = np.stack(forbidden, axis=1)
-    q_forbidden, _ = np.linalg.qr(forbidden_matrix, mode="reduced")
+    all_atoms = np.concatenate((instance.source_contributions, instance.target_contributions), axis=1)
+    codes = []
+    source_direction = None
+    for atom_id, atom in enumerate(all_atoms.transpose(1, 0, 2)):
+        u, singular, vh = np.linalg.svd(atom, full_matrices=False)
+        total_sq = float(singular @ singular)
+        tail_sq = float(singular[1:] @ singular[1:]) if singular.size > 1 else 0.0
+        residual = np.sqrt(tail_sq / total_sq) if total_sq > 0.0 else 0.0
+        if residual > 1e-12:
+            raise RuntimeError(f"base atom {atom_id} is not a native rank-one contribution")
+        codes.append(u[:, 0] * singular[0] if singular.size else np.zeros(n))
+        if atom_id == instance.source_atom_id:
+            source_direction = vh[0]
+    if source_direction is None or np.linalg.norm(source_direction) == 0.0:
+        raise RuntimeError("source atom has no decoder direction")
+    source_direction = source_direction / np.linalg.norm(source_direction)
+    # A code vector orthogonal to every existing atom code gives a flattened
+    # rank-one contribution orthogonal to every existing contribution,
+    # regardless of decoder direction.  Orthogonality to the constant vector
+    # also gives zero sample mean in every hook coordinate.
+    forbidden_matrix = np.stack([*codes, np.ones(n, dtype=np.float64)], axis=1)
+    u_forbidden, singular_forbidden, _ = np.linalg.svd(forbidden_matrix, full_matrices=False)
+    forbidden_rank = 0 if not singular_forbidden.size or singular_forbidden[0] == 0.0 else int(np.sum(singular_forbidden > 1e-12 * singular_forbidden[0]))
+    q_forbidden = u_forbidden[:, :forbidden_rank]
     rng = np.random.default_rng(seed)
-    candidates = rng.standard_normal((dimension, count))
+    candidates = rng.standard_normal((n, count))
     candidates -= q_forbidden @ (q_forbidden.T @ candidates)
-    basis, triangular = np.linalg.qr(candidates, mode="reduced")
-    if basis.shape[1] != count or np.min(np.abs(np.diag(triangular))) < 1e-10:
+    code_basis, triangular = np.linalg.qr(candidates, mode="reduced")
+    if code_basis.shape[1] != count or np.min(np.abs(np.diag(triangular))) < 1e-10:
         raise RuntimeError("insufficient orthogonal complement for decoy construction")
-    return basis
+    return np.stack([(code_basis[:, column, None] * source_direction[None, :]).reshape(-1) for column in range(count)], axis=1)
 
 
 def _base_singleton_residuals(instance: NIPObservedInstance) -> np.ndarray:
@@ -135,7 +148,10 @@ def construction_certificate(instance: NIPObservedInstance) -> dict[str, object]
         constant = np.zeros((n, hook_dim), dtype=np.float64)
         constant[:, hook_index] = 1.0
         forbidden.append(constant.reshape(-1))
-    q_forbidden, _ = np.linalg.qr(np.stack(forbidden, axis=1), mode="reduced")
+    forbidden_matrix = np.stack(forbidden, axis=1)
+    u_forbidden, singular_forbidden, _ = np.linalg.svd(forbidden_matrix, full_matrices=False)
+    forbidden_rank = 0 if not singular_forbidden.size or singular_forbidden[0] == 0.0 else int(np.sum(singular_forbidden > 1e-12 * singular_forbidden[0]))
+    q_forbidden = u_forbidden[:, :forbidden_rank]
     residual_vectors = decoys - (decoys @ q_forbidden) @ q_forbidden.T
     source_energy = float(source @ source)
     residual_energies = np.sum(residual_vectors * residual_vectors, axis=1) / source_energy
