@@ -50,6 +50,23 @@ class NIPMetricSurfaceTests(unittest.TestCase):
         self.assertAlmostEqual(metric["psc_value"], 2.0 / 3.0, places=10)
         self.assertEqual(len(metric["psc_principal_angles_radians"]), 1)
 
+    def test_n06_group_surface_separates_sum_metrics_from_atom_direction_psc(self):
+        observed = generate_endpoint_observed(
+            "N06_exact_dense_orthogonal_rotation", structural_seed=123,
+            sample_seed=456, n=512,
+        )
+        metric = native_support_metric_surface(
+            observed.source_contributions, observed.target_contributions,
+            observed.source_mean_contributions, observed.target_mean_contributions,
+            observed.document_ids, source_atom_id=None, source_atom_ids=(0, 1),
+            target_ids=(0, 1), epsilon=1e-12,
+        )
+        self.assertAlmostEqual(metric["d_ctr"], 0.0)
+        self.assertAlmostEqual(metric["bcc_value"], 1.0)
+        self.assertEqual(metric["psc_rank_source"], 2)
+        self.assertEqual(metric["psc_rank_target"], 2)
+        self.assertAlmostEqual(metric["psc_value"], 1.0)
+
     def test_algorithm_fields_are_explicitly_not_applicable_until_scoring(self):
         metric = self.surface("N05_bloated_decoy", (0, 1))
         for key in ("proposal_recall", "conditional_solver_correctness", "solver_gap", "coverage"):

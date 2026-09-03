@@ -67,7 +67,8 @@ def native_support_metric_surface(
     target_mean_contributions: np.ndarray,
     document_ids: np.ndarray,
     *,
-    source_atom_id: int,
+    source_atom_id: int | None,
+    source_atom_ids: tuple[int, ...] | None = None,
     target_ids: tuple[int, ...],
     epsilon: float,
     algorithm_diagnostics: dict | None = None,
@@ -83,12 +84,15 @@ def native_support_metric_surface(
         raise ValueError("contributions must be paired observation x atom x hook tensors")
     if source_all.shape[0] != documents.size or not ids or tuple(sorted(set(ids))) != ids:
         raise ValueError("documents must align and target_ids must be nonempty, sorted, and unique")
-    if not 0 <= source_atom_id < source_all.shape[1] or ids[-1] >= target_all.shape[1] or epsilon <= 0.0:
+    source_ids = (source_atom_id,) if source_atom_ids is None and source_atom_id is not None else tuple(int(value) for value in source_atom_ids or ())
+    if not source_ids or tuple(sorted(set(source_ids))) != source_ids:
+        raise ValueError("exactly one valid source atom or a sorted source group is required")
+    if source_ids[0] < 0 or source_ids[-1] >= source_all.shape[1] or ids[-1] >= target_all.shape[1] or epsilon <= 0.0:
         raise ValueError("atom IDs and epsilon are invalid")
     if source_means.shape != (source_all.shape[2], source_all.shape[1]) or target_means.shape != (target_all.shape[2], target_all.shape[1]):
         raise ValueError("mean contribution shapes do not match hook and atom dimensions")
 
-    source = source_all[:, source_atom_id, :]
+    source = np.sum(source_all[:, np.asarray(source_ids), :], axis=1)
     selected = target_all[:, np.asarray(ids), :]
     target = np.sum(selected, axis=1)
     source_energy = float(np.mean(np.sum(source * source, axis=1)))
@@ -100,7 +104,7 @@ def native_support_metric_surface(
     bcc_value = None if bcc_denominator <= 1e-15 else 2.0 * cross_inner / bcc_denominator
     bcc_residual = None if bcc_denominator <= 1e-15 else centered_numerator / bcc_denominator
 
-    source_mean = source_means[:, source_atom_id]
+    source_mean = np.sum(source_means[:, np.asarray(source_ids)], axis=1)
     target_mean = np.sum(target_means[:, np.asarray(ids)], axis=1)
     mean_delta = source_mean - target_mean
     mean_numerator = float(mean_delta @ mean_delta)
@@ -114,7 +118,7 @@ def native_support_metric_surface(
     document_energy = np.asarray([np.sum(token_energy[documents == doc]) for doc in unique_documents], dtype=np.float64)
 
     psc = _psc(
-        _direction_matrix(source_all[:, [source_atom_id], :]),
+        _direction_matrix(source_all[:, np.asarray(source_ids), :]),
         _direction_matrix(target_all[:, np.asarray(ids), :]),
     )
     not_applicable = {"status": "NOT_APPLICABLE_PRELABEL", "value": None}

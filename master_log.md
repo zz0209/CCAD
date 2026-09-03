@@ -2163,6 +2163,22 @@ Heartbeat `ccad`实现`score_m1_nip_parent_completion_p1.py`和独立`validate_m
 
 新增逐点group-sum regression；首次测试因新test漏`import numpy`而NameError，未运行实验，补import后full164/164 PASS。Repair run=`M1_NIP_PC2_n06_fullblock_impltest_v1_20260903T182408Z`。哈希：generator=`52FC48AF30410ABDDD9EBE2DED6B896122AAE36E6BD38ABDB42BD328921E03BF`，scorer=`5D45D465CED13974991C8107C90A0547D46B2B7A99E04879874AB0E57E110EEA`，validator=`0BD0991FA76F8B3E79264BAA8466915170CB41B2169DCEF719B17B25C41B469B`，test=`9B5DB0254444ADED62EC9A779705F474B0B939255FAE2A5AD27AFEB7C05B1F19`。因generator和code hash改变，必须提交后从prediction开始使用fresh P1 run；v4 prediction与score v1均保持immutable。
 
+## 2026-09-03 15:28 EDT — 启动C029后的fresh P1 prediction v5
+
+状态恢复确认HEAD/origin=`8e86b45305f51998dcfb168433f0c1445fb7fdbd`、工作树clean，`cpu-heavy`、`disk-e-io`和GPU均free。登记`M1_NIP_PC2_V1_P1_predict_v5_20260903T192854Z`为RUNNING；新code snapshot将派生fresh P1 seeds，不读取v4 prediction或score v1。Prediction仍严格truth/evaluation/intervention closed，完成后只运行pre-label validator。
+
+### 2026-09-03 15:30 EDT — fresh P1 v5 prediction/prelabel PASS；启动score v2
+
+Prediction v5在受管`cpu-heavy` lease内封存132 rows，独立prelabel validator另持lease重算17/17 PASS；两次lease均释放。Closure SHA-256=`CAB5929D43B9AAD4C3FEED90783C6286C7DE5C140B60462606D2E2B0F4A3D5ED`，prelabel validation=`6243650D25ACF48D97E0CACDD306F29B37094A73A1FC3045388A5DEACB52A0EE`，truth/evaluation/intervention仍未在prediction进程打开。现登记`M1_NIP_PC2_V1_P1_score_v2_20260903T193006Z`为RUNNING；score必须验证上述hash后才打开P1 labels，并由强化后的validator检查N06数值门。
+
+### 2026-09-03 15:31 EDT — P1 score v2 FAIL；修复group PSC度量对象
+
+Score v2 scorer正常写出132 rows，但强化validator 7/8，`mandatory_controls_present=false`，因此整体FAIL。C029已经使N06 group contribution逐点相等，实测`d_ctr=0,BCC=1`；剩余`PSC=.6667,ranks=1/2`来自metric adapter把两个source atoms先求和成一个伪atom，再对该aggregate matrix只提取leading singular direction。Score raw SHA-256=`3B94C0435586973D44C907C24C829AAF34CD8A1D23DE58A31404E0BB3BFC79E3`，validation=`71D71FBB56D771D06748C83EAA1796AF64AFD2DC0D9EC377F90213CB4CCBC8A6`；artifact与labels保留，不追认。
+
+新增C030并修复metric adapter：可选`source_atom_ids`显式声明source group；贡献和mean仍按组求和计算`d_ctr/BCC/d_mu`，PSC则从每个组成atom的decoder direction构造span。原`source_atom_id`单query调用保持不变。N06 scorer直接传`source_atom_ids=(0,1)`；新增regression同时要求`d_ctr=0,BCC=1,PSC=1,ranks=2/2`。Implementation run=`M1_NIP_PC2_group_psc_impltest_v1_20260903T193153Z`，targeted11/11、full165/165 PASS。哈希：adapter=`B03BD28EBAD47C34C9485C4E2BBA9A3D9BF7232E2BF2E076E17D3D98028E8BE7`，scorer=`33F6683C2E621FC0102F32079AA5D6B941A20EB6D366C9226FB0E89DD2CD56C3`，test=`0D561B89CD8928349430E507767E7038BC1DE1C46B6758B2AC57B3E0E25850C6`。
+
+Prediction v5不包含metric adapter/scorer且support已封存，其closure仍有效；修复只影响post-closure measurement。因此提交后可对同一v5 prediction用新的score suffix重算，无需重新生成prediction，也不得改v5 artifact。
+
 ### 2026-09-03 14:21 EDT — 登记P1 post-closure score；等待共享CPU资源
 
 Scorer/validator已提交并推送，HEAD/origin=`78ebb6febdc410829b8dbe37bca110eb91b272e3`。登记`M1_NIP_PC2_V1_P1_score_v1_20260903T182134Z`为RUNNING，输入固定为prediction v4及其closure/prelabel hashes。资源盘点显示另一项目正持`cpu-heavy`与`disk-e-io`执行behavior fidelity；本run不绕过lease、不争抢硬件，将由资源管理器排队，取得`cpu-heavy`后再顺序执行score和raw validator。
