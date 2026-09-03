@@ -1846,3 +1846,15 @@ score进程正常完成且未修改prediction closure；独立validator对formal
 冻结词典序选择cap20。cap 4/8/12/16/20的positive exact pair counts为20/40/80/120/140；cap8和12各有20个false-unique，cap4/16/20为0；所有caps的false-native-positive和budget refusal均为0。cap20在7个positive families的140/140 pairs上恢复精确minimum support set/cardinality/multiplicity，在5个native-absent families的100 pairs上0 false native positive，且false-unique/refusal为0。
 
 保守解释：这是D1 labeled synthetic development证据，证明v2构造内的minimum-support/ambiguity/absence-lane行为并选出cap20；它不是fresh D2 confirmation、真实SAE、held-out contribution或causal证据，不能支持C1/C2。由于N05预写第一充分cap20，该选择主要验证压力构造与solver，不是可外推的真实超参学习。D2 seeds仍未生成；下一轮必须先产生独立selection-freeze/D2 config，绑定selected cap、D1 closure/score/validator、source/config/environment hashes并通过静态审计，之后才可原子生成fresh D2 seeds。M1/R001–R003与R006/M2状态暂不改变。
+
+## 2026-09-03 01:55 EDT — pre-D2 orthogonal-endpoint audit 阻断 v2 D2
+
+Heartbeat `ccad`在生成任何D2 seed前，按v2第6节与继承的v1第5/7/8节审计N09–N12正交属性是否可由当前artifact独立测量。结论：当前prediction/score仅验证identification；N09 cancellation可由组内能量比测量，N10 evidence可由document ESS测量，N12 mean mismatch已有`d_mu`，但N11 causal属性存在不可绕过的逻辑矛盾。
+
+当前`generate_nip_observed`对N11令target atom逐点等于source atom。对相同base hook `h`与确定性downstream map `F`，`Y_A(x)=Y_B(x)`逐点必然推出`F(h-Y_A)=F(h-Y_B)`逐点，因此任何真实intervention gap都为0；这与truth registry写定的`FOUND + CAUSAL_FAIL`不可能同时由现有observable construction成立。直接读取registry标签评分会成为循环自证，违反D2 hard gate与claim纪律。
+
+用20个独立构造seed直接复算N11 source/target首atom的最大逐点差，20/20均为0，全局最大值精确为`0.0`，确认矛盾来自实际生成器而非仅源码解读。
+
+新增`M1_NIP_D2_ORTHOGONAL_ENDPOINT_AUDIT_20260903_015500.md`与C024，保留三案：A（推荐）以prospective v3加入sub-threshold source/target delta、共享cliff endpoint、固定margin与smooth control，并对受影响阶段使用fresh seeds；B删除M1的N11 causal gate、延后到历史F12/真实endpoint，较简单但削弱边界；C只评分registry标签，明确拒绝。v2 D0/D1各自scope内结果不追溯改写，但v2 D2在seed生成前标`BLOCKED`；D2 seeds仍不存在，未打开任何D2 tensor/label/held-out/real audit。
+
+该修复需要改变LOCKED协议，依AGENTS第0/12节暂停并请求用户裁决。推荐A，因为它保留“高贡献一致性不自动推出因果可移植性”的关键 falsifier，同时使结果可由observed endpoint而非标签验证。M1/C1/C2仍未通过，R006/M2继续BLOCKED。
