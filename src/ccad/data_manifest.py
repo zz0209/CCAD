@@ -35,6 +35,19 @@ def document_split(
     return "validation" if bucket < validation_basis_points else "train"
 
 
+def paired_document_split(dataset_commit: str, document_id: str, *, salt: str) -> str:
+    """Assign an immutable document-level 10/40/20/30 paired-data split."""
+    key = f"{salt}\0{dataset_commit}\0{document_id}".encode("utf-8")
+    bucket = int.from_bytes(hashlib.sha256(key).digest()[:8], "big") % 10_000
+    if bucket < 1_000:
+        return "mean"
+    if bucket < 5_000:
+        return "discovery"
+    if bucket < 7_000:
+        return "calibration"
+    return "audit"
+
+
 def fineweb_document_record(
     row: Mapping[str, object],
     *,

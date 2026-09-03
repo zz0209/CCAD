@@ -8,6 +8,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from ccad.data_manifest import (  # noqa: E402
     document_split,
     fineweb_document_record,
+    paired_document_split,
     validate_document_records,
 )
 
@@ -34,6 +35,12 @@ class DataManifestTests(unittest.TestCase):
             for i in range(100)
         }
         self.assertEqual(assignments, {"train", "validation"})
+
+    def test_paired_split_is_document_stable_and_has_locked_four_way_support(self) -> None:
+        first = paired_document_split("commit-a", "doc-1", salt="r008")
+        self.assertEqual(first, paired_document_split("commit-a", "doc-1", salt="r008"))
+        labels = {paired_document_split("commit-a", f"doc-{index}", salt="r008") for index in range(1000)}
+        self.assertEqual(labels, {"mean", "discovery", "calibration", "audit"})
 
     def test_record_excludes_text_but_binds_its_hash(self) -> None:
         record = fineweb_document_record(

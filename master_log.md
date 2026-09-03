@@ -2308,3 +2308,17 @@ Seeds3/4/5的FVE为`.9688278/.9688691/.9688140`，CE recovered为`.9082209/.9121
 首次五种子aggregation `R007_k128_five_seed_quality_gate_v1_20260903T224000Z`因共享validator只接受R006字段`decision`、未接受R007字段`primary_config_decision`而在输出result前FAIL；失败目录与`status.json/CORRECTION.md`保留。该错误未读取结果做选择，也未改变训练、checkpoint、阈值或任何seed。单行schema兼容修复后，新suffix `R007_k128_five_seed_quality_gate_v2_20260903T224500Z`为81/81 PASS，result SHA-256=`E096C72230FFB86721200E43A99F06A493534B3ED138F5ED90BD75E036B30A92`。五seed FVE range=`7.264e-5`、CE range=`.0055363`、alive range=0，均远低于前瞻上限`.03/.05/.05`。
 
 裁决：R007 PASS，已达到M3最低五个same-config seed的训练与质量要求；不追加第六seed来美化稳定性。下一主线是R008：只为这五个冻结checkpoint构建document-hash 10/40/20/30 paired activation/code资产，保持audit关闭，然后进入R009–R011 discovery/calibration冻结。此处仍不构成C1-NIP/C2-NIP结果。
+
+## 2026-09-03 20:18 EDT — R008 paired corpus and five-seed sparse-code assets PASS
+
+用户要求继续沿主线推进，并提醒遵守更新后的GitHub条件。本工作单元因此在R008形成完整M3里程碑前没有为中间实现或失败单独提交。首先新增document-level `paired_document_split`，用固定FineWeb commit与salt将文档不可变地分为10% mean、40% discovery、20% calibration、30% audit；新增单测后全套172/172 PASS。
+
+R008a v1在任何网络读取前因锁定Python缺`pyarrow`而FAIL，且暴露失败路径未写`environment.json`；失败run保留。复用历史R006记录的`pyarrow==25.0.1`，安装到独立`D:\CCAD_Storage\environments\r008_data_overlay`。V2仍在数据读取前因未加入既有requests/transformers overlay而FAIL，同时artifact validator指出code aggregate算法不一致；失败run继续保留。V3只修复两个依赖路径和项目既有aggregate算法，所有dataset commit、shard/row-group salt、split salt、token数量和最低文档数均与v1/v2相同。
+
+`R008a_paired_corpus_v3_20260903T234000Z`在`disk-e-io` lease下14/14与artifact contract PASS。固定五个row group共读取41,527,004 bytes、采样4,998文档，最终使用569文档。Mean/discovery/calibration/audit分别为56/237/98/178文档与32,768/131,072/65,536/98,304 tokens，总计327,680 tokens；四split文档集合互斥，并与R006 SAE train/validation corpus按document ID和text SHA-256双重零重叠。Audit只被token化封存，没有用于选择、阈值或结果查看。
+
+随后在其他项目释放GPU后，通过外层`gpu-0`、内层`disk-d-io`两个共享lease运行`R008b_paired_codes_v1_20260904T000500Z`。每个batch只做一次Pythia layer-5底模forward，再由五个冻结SAE同步编码；总计640 base forwards、327,680 tokens、51.40秒、6,375 tok/s，peak allocated VRAM 895,002,624 bytes。D盘资产`D:\CCAD_Storage\paired_assets\R008b_paired_codes_v1_20260904T000500Z`共1,305,495,855 bytes，包含四split×五seed的float32 top acts、uint16 indices及五份float32 decoder；selected/nonzero L0在全部split均为128。生成检查8/8、artifact contract PASS。
+
+独立validator在单独`disk-d-io` lease中复算全部约1.3GB文件hash和尺寸，并遍历全部indices/acts/decoders检查范围与有限性，11/11 PASS；validation SHA-256=`1EB2DA0E7E02EED9CB822947A90D1EB1BA94228F5E617D88C4561F848168DA8A`，bulk asset manifest SHA-256=`35A873FB9821369E45E589432A7BC94B361908C5E8E5F6C167846D4E0B0374A5`。所有lease已释放。
+
+裁决：R008 PASS，M3所需的五个受控seed与split/hash完整paired assets均已完成。该里程碑只建立真实SAE数据面，不产生C1/C2结论。下一步直接进入R009–R011：用mean split估计中心化常数，只在discovery/calibration上构造source-only census、实现公平atom/group baselines与MSCC候选冻结；R012/R013之前禁止读取audit codes进行任何度量或选择。
