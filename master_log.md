@@ -1894,3 +1894,19 @@ Heartbeat `ccad`按AGENTS顺序恢复状态，确认HEAD与origin/main均为`bd2
 全项目discover共117项：116项PASS，唯一collection error仍是历史R006测试缺少`mpmath`，与本轮变更无关，未跳过或安装依赖伪造全绿。源码SHA-256：diagnostics=`17C0BF7F74D2D83B5B067B347E0E239E0376B951A6D710F1B740307A7B82F1FF`，更新后N11 generator=`38B1FBB62248E6FF29EB2B88EF82B4BDE23E5127ECE79219F0200CEF3E8A0F24`，diagnostic config=`2987076AA9C922B7BE20DE62AB8848AD428E08AABCFD79186BBA9A92CEFB59D0`。
 
 保守解释：这是C024的API/测试级工程证据，不是formal D1/D2结果；C024保持SCREENING，M1/C1/C2不变。下一轮应建立v3 D1 truth-blind predictor adapter与信息顺序测试，把fresh namespace、N11 approximate threshold和raw endpoint contract绑定；在prediction closure独立验证前不得打开labels。
+
+## 2026-09-03 09:47 EDT — v3 D1 truth-blind adapter资格化；登记I1 prediction
+
+Heartbeat `ccad`继续C024。新增`configs/m1_nip_i1_v3.json`、`configs/m1_nip_d1_v3.json`、`scripts/run_m1_nip_d1_predict_v3.py`、独立pre-label validator及信息顺序测试。Predictor只导入MSCC与observed generators，不导入`nip_truth`或orthogonal outcome scorer；同时绑定v3 protocol与diagnostic config hashes。N11与N07明确走approximate 0.05 lane；I1和formal D1分别使用phase namespace且前者不消费formal seed。Output保留proposal/prediction hash、paired caps与atomic closure，不序列化endpoint outcome或truth。
+
+Py-compile与17/17定向tests PASS，覆盖config hashes、60/1200 row grids、I1/D1 namespace、N11 approximate lane和validator pre-label性质。现于执行前登记唯一run `M1_NIP_I1_predict_v3_impltest_v1_20260903T134700Z`为RUNNING：12 families×1 structural pair×5 paired caps=60 rows，512 observations，20 target atoms，`g_max=4`、budget 7,462。任务为lightweight CPU，无lease。该run仅验证prediction closure，不生成formal D1/D2 seeds，不打开labels、orthogonal outcomes、held-out或real audit。
+
+### 2026-09-03 09:49 EDT — v3 I1 prediction closure 与pre-label validator PASS
+
+I1 predictor正常完成并最后原子写入closure。60 rows完整覆盖12 families×1 pair×5 paired caps；truth_opened=false，runtime不参与selection。raw SHA-256=`E2A51F98A5BCDEAB3C6380FC45DBC7D9F2BFD54429BCCD3A48365D6CBDA7145A`，closure=`D67E5B0EBEC0342D5279D54922962767BE56CB24A98E8212DF7741DF10AF9D22`。
+
+独立pre-label validator 19/19 PASS：重算closure bound files、code aggregate、source/input snapshots、protocol/diagnostic config binding、60-row paired grid、48个独立structural/sample/proposal/solver seeds、proposal/prediction hashes；AST确认predictor无truth或orthogonal outcome import；cap20的N11 frozen prediction包含target atom0且`d_ctr=0.01`。validation SHA-256=`580E5E9775FE81DE1F3EC0D60D9631F5D8047D017C1A7C56CA2024A2345B1070`。
+
+保守解释：这只是I1 truth-blind prediction与closure工程证据，不是labeled D1、orthogonal attribute结果、D2、M1或C1/C2。formal v3 D1 seeds仍UNGENERATED，labels与real audit关闭。下一轮必须实现并tamper-test v3 score adapter：先验证closure，再动态导入truth；orthogonal metrics必须从seeds重建observed tensors并对frozen predicted support计算。只有I1 score及独立rescore validator通过后才可登记formal D1 prediction。
+
+提交前全项目discover共121项：120项PASS；唯一collection error仍为历史R006测试导入缺少`mpmath`，与v3 D1 adapter无关，未跳过或安装依赖伪造全绿。
