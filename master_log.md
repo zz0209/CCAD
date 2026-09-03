@@ -2000,3 +2000,17 @@ Heartbeat `ccad`恢复状态后注意到formal D1同类计算实际耗时91分�
 Fresh D2 prediction完整覆盖12 families×20 pairs×cap20，共240 rows。Raw SHA-256=`46DCA5946A5826D9021FB6DB495043D1588F93D2900495D4229BC776BF16A490`，closure=`C52116174A648986FB5FF337F628DBF88DC129A109E4C5AB6AE82D625401A67A`。独立pre-label validator新增selection-freeze binding后21/21 PASS；validation=`D75CD6EA74CF73E6BED0DF173AEBDB3E634E2525CE006C92525409270361C03F`。`truth_opened=false`，score目录尚不存在，held-out/real audit仍关闭。
 
 保守解释：这只是fresh D2 truth-blind prediction及closure证据，尚不能称D2 confirmation PASS，也不支持M1/C1/C2。下一轮只可在再次复核closure后登记独立formal D2 score；score失败不得修改prediction artifact。
+
+## 2026-09-03 12:25 EDT — 启动formal D2 post-closure score
+
+Heartbeat `ccad`重新读取D2 resolved config、closure、status和21/21 pre-label validation，确认closure SHA-256仍为`C52116174A648986FB5FF337F628DBF88DC129A109E4C5AB6AE82D625401A67A`、selection freeze绑定存在，且HEAD与origin/main均为`0e5bfc9cc2b562d6713cde3bea567313aba1c6a7`。只有完成上述检查后才登记唯一run `M1_NIP_D2_score_v3_formal_v1_20260903T162500Z`为RUNNING。
+
+Scorer使用selection freeze中预绑定的源码版本，必须先完整核验closure再动态打开D2 truth，并写独立score目录；独立validator随后逐row重建observable tensors和identification/orthogonal results。本run不修改任何D2 prediction、threshold或support，held-out和real audit保持关闭。
+
+### 2026-09-03 12:26 EDT — fresh formal D2 score PASS；v3协议级合成门完成
+
+D2 scorer与独立validator正常完成。Validator 10/10 PASS，对fresh 240 rows逐行重算identification、orthogonal attributes、aggregate及selected-cap contract。Score raw SHA-256=`52BC6DA5288DA5F92EACF3E527B634A55B752B30A515A3E886857D63B433A472`，validation=`7CBD889CF9EE07DAD83D627BCD594AB98B01496D99E50C278810B953C681EF0E`，输入closure仍为`C52116174A648986FB5FF337F628DBF88DC129A109E4C5AB6AE82D625401A67A`。
+
+Fresh D2结果复现D1门：7个positive families共140/140 pairs精确恢复minimum native support/multiplicity；5个negative families共100 pairs零false native positive；false unique与budget refusal均为0。N09–N12各20 pairs全部命中预冻结属性：N09 cancellation ratio 136.10–412.43；N10 active documents恒2且document ESS最大1.99998；N11 cliff RMSE恒1.0、smooth最大0.1、minimum normalized margin约0.05；N12 `d_mu≈1`。
+
+据此`M1_NIP_protocol_v3`本身由TODO转PASS：D0、D1、fresh D2及信息顺序/正交属性门均完成。保守边界不变：这些仍是synthetic fixture confirmation，不是real SAE或C1/C2证据；历史R001–R003 parent FAIL不得自动改写，R006/M2仍BLOCKED。下一轮应做独立parent aggregation/integrity audit，明确v3是否充分替代旧corrective gate及哪些历史缺口仍需补，审计前不恢复M1或启动真实主线。
