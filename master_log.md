@@ -1942,3 +1942,15 @@ v1 scorer正常写出60行，identification aggregation仍选cap20；独立valid
 字段回归3/3 PASS后，v2 scorer在同一immutable prediction closure上完成；独立validator 10/10 PASS，逐行重算60条identification与orthogonal outputs、cap aggregates和selection。selected cap为20；该cap的N09在冻结predicted support `(0,1)`上测得cancellation ratio `273.8224`并判`OBSERVATIONALLY_UNSAFE`，N10为2个active documents、document ESS `1.9446`并判`INSUFFICIENT_EVIDENCE`，N11在support `(0,)`上测得cliff RMSE `1.0`、smooth RMSE `0.1`、normalized margin约`0.05`并判`CAUSAL_FAIL`，N12在pre-mean candidate `(0,)`上测得`d_mu≈1.0`并判`MEAN_MISMATCH`。score raw SHA-256=`736CDF3472E376AFB9817096D8E5B192F24327DDDBC7598BE9F9B62D843B427E`；validation=`43DA8A352143A3DCFBB7E1E5931094498B4556F6E192660F11C2BE3782BA9C88`。
 
 全项目unittest discover 128/128 PASS。C024由SCREENING转ADMIT，含义仅为observable-endpoint组件获准进入fresh formal D1，不代表M1、C1或C2成立。Formal v3 D1/D2 seeds仍未生成，held-out与real audit仍关闭；下一轮须先把formal D1 config/source hashes与当前合格scorer/validator绑定并登记truth-blind prediction，仍应先封存再评分。
+
+## 2026-09-03 10:19 EDT — 启动formal v3 D1 truth-blind prediction
+
+Heartbeat `ccad`重新核验I1 score v2 status、immutable prediction closure及10/10独立validator，确认HEAD与origin/main均为`7946741bba5369d16d2ace17ce74f1e2d319d6a3`且工作区起始干净。Formal config继续绑定v3 protocol与冻结diagnostic config，12 families×20 fresh structural pairs×5 paired caps，共1,200 rows；N11使用approximate lane，所有rows在mean/truth前保存content-addressed centered-only candidate。
+
+现于执行前登记唯一run `M1_NIP_D1_predict_v3_formal_v1_20260903T141900Z`为RUNNING。这是首次消费formal v3 D1 seed namespace；prediction进程禁止truth import，只允许最后原子封存closure并运行独立pre-label validator。Formal score、D2 seeds、held-out及real audit仍关闭；若失败不得打开labels。
+
+### 2026-09-03 11:49 EDT — formal v3 D1 prediction closure PASS
+
+Truth-blind predictor在lightweight CPU上用时约91.1分钟完成1,200/1,200 rows；长耗时来自每个paired cap额外冻结centered-only candidate的组合枚举，不涉及GPU或共享重型资源。进程最后原子封存closure；raw SHA-256=`6BF333525EB2482C465575A255FF0C931C31FFB9D3D192107EB1E42923417879`，closure=`26D18520F05A1476C3ACF11377BB5E27D039A4072753A93A7C723D13756A4D5F`。
+
+独立pre-label validator 20/20 PASS，覆盖bound files/source/input/config/protocol/diagnostic绑定、12×20×5 paired grid与seed、proposal/prediction hashes、逐row centered candidate重生及N11 approximate observable contract；validation SHA-256=`F26C4B135DA9C2FD126B55766BF33B58D723082BADA533D8F82DA4594FA02EC6`。`truth_opened=false`，formal score目录不存在，D2 seeds、held-out和real audit均未打开。该PASS仅证明formal D1 prediction及信息顺序合规，尚无label/attribute结论；下一工作单元可先复核closure后登记formal v3 score。
