@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import inspect
+import json
+from pathlib import Path
 import unittest
 
 import numpy as np
@@ -8,6 +10,7 @@ import numpy as np
 from ccad.nip_baselines import (
     IMPLEMENTED_CONTINUOUS_REFERENCES,
     IMPLEMENTED_NATIVE_LANES,
+    infer_rank_one_codes,
     run_continuous_reference,
     run_native_baseline,
 )
@@ -84,21 +87,34 @@ class NIPBaselineTests(unittest.TestCase):
         self.assertLess(nonnegative.discovery_residual_sq, 1e-8)
         self.assertTrue(nonnegative.converged)
 
-    def test_unimplemented_frozen_lanes_fail_loudly(self):
-        missing_native = {
-            "DUSTBIN_SINKHORN", "OT_MASS_NATIVE_SUPPORT", "SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT"
-        }
-        self.assertTrue(missing_native.isdisjoint(IMPLEMENTED_NATIVE_LANES))
-        observed = self.observed("N01_structured_split")
-        with self.assertRaises(NotImplementedError):
-            run_native_baseline(
-                "DUSTBIN_SINKHORN", observed.source_contributions[:, 0, :], observed.target_contributions,
-                observed.source_mean_contributions[:, 0], observed.target_mean_contributions,
-                g_max=4, tau_ctr=1e-10, tau_mu=1e-10, epsilon=1e-12,
-                tie_tolerance=1e-12, solver_seed=77,
-            )
-        self.assertEqual(len(IMPLEMENTED_NATIVE_LANES), 5)
-        self.assertEqual(len(IMPLEMENTED_CONTINUOUS_REFERENCES), 2)
+    def test_frozen_registry_is_fully_implemented(self):
+        config = json.loads((Path(__file__).parents[1] / "configs" / "m1_nip_parent_completion_v2.json").read_text(encoding="utf-8"))
+        self.assertEqual(IMPLEMENTED_NATIVE_LANES, set(config["registered_native_lanes"]) - {"MSCC"})
+        self.assertEqual(IMPLEMENTED_CONTINUOUS_REFERENCES, set(config["registered_non_native_references"]))
+
+    def test_sinkhorn_lanes_are_deterministic_and_report_single_query_scope(self):
+        for lane in ("DUSTBIN_SINKHORN", "OT_MASS_NATIVE_SUPPORT"):
+            first = self.run_lane(lane, "N11_downstream_cliff", tau=0.05)
+            second = self.run_lane(lane, "N11_downstream_cliff", tau=0.05)
+            self.assertEqual(first, second)
+            self.assertEqual(first.diagnostics["scope"], "DEGENERATE_SINGLE_QUERY")
+            self.assertTrue(first.diagnostics["converged"])
+            self.assertLessEqual(first.evaluated_support_count, 4)
+
+    def test_spectral_lane_is_truth_free_deterministic_and_factorized(self):
+        first = self.run_lane("SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT", "N01_structured_split")
+        second = self.run_lane("SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT", "N01_structured_split")
+        self.assertEqual(first, second)
+        self.assertIn(first.identification, {"FOUND", "UNRESOLVED"})
+        self.assertIn("cluster_count", first.diagnostics)
+        self.assertLessEqual(max(first.diagnostics["target_factorization_residuals"]), 1e-12)
+
+    def test_rank_one_code_inference_fails_closed_on_rank_two_process(self):
+        contributions = np.zeros((4, 1, 2), dtype=np.float64)
+        contributions[:2, 0, 0] = 1.0
+        contributions[2:, 0, 1] = 1.0
+        with self.assertRaisesRegex(ValueError, "not rank one"):
+            infer_rank_one_codes(contributions)
 
 
 if __name__ == "__main__":

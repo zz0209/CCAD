@@ -2076,3 +2076,13 @@ Heartbeat `ccad`按PC2 v2实现`src/ccad/nip_baselines.py`的第一批truth-free
 测试过程保留三个实现级发现：首次test helper误覆盖`unittest.TestCase.run`而在collection时TypeError，改名后修复；原测试假设OMP应恢复N01，但冻结的unit-L2 selection会使`0.4x/0.6x`两列完全tie，实现正确按协议`SELECTION_TIE/BUDGET_REFUSAL`；未用index破tie或修改规则追求好结果，而是把该负结果写入测试，另加无tie二维planted case验证OMP可恢复；同时修复了`g_max`可合法大于tiny atom count却被API误拒的边界bug。
 
 终态targeted 9/9，full 151/151 PASS。源码SHA-256=`9EA6A52344AB1611942A41751A1BFBAABDF84F8CCD54714F188742404D990576`，test SHA-256=`20234D4E77B154141E4CB1F1D854BCCCB2B0CE6F00D49E9D109A4BBFCDE36E06`。`DUSTBIN_SINKHORN`、`OT_MASS_NATIVE_SUPPORT`和`SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT`仍显式`NotImplementedError`，测试要求其fail loudly；因此该run仅在tranche-1范围PASS，P1仍不得启动，formal seeds/truth/evaluation/intervention未生成/未打开。下一轮实现和验证剩3条native lanes，然后再做全registry completeness gate。R006继续BLOCKED。
+
+## 2026-09-03 13:49 EDT — baseline registry implementation完成；C027实现门PASS
+
+Heartbeat `ccad`按PC2冻结参数完成剩余三条native baseline。`DUSTBIN_SINKHORN`使用clipped singleton discovery cost、一个source/target dustbin、uniform augmented marginals和balanced log-domain updates；`OT_MASS_NATIVE_SUPPORT`使用同一truth-free cost与`rho=1.0, epsilon=0.05`的unbalanced log-Sinkhorn。两者都只按outgoing target mass排序，再用共同的unweighted prefix与`d_ctr/d_mu`规则判定；单source限制明确记录为`DEGENERATE_SINGLE_QUERY`，不包装成多query OT证据。两类solver若1000步内不满足冻结容差会`BUDGET_REFUSAL/SINKHORN_DID_NOT_CONVERGE`，不静默使用未收敛结果。
+
+`SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT`只从每个observed atom contribution matrix的rank-one SVD恢复code；若relative residual超过`1e-12`则fail closed。随后按joint absolute code correlation、0.2阈值、unnormalized Laplacian、2–8最大eigengap与10次deterministic k-means生成mixed cluster，只从最佳contribution singleton所在mixed cluster按`d_ctr`排序并截到4。检查时发现公共`li15_spectral_proposal`虽文档/协议要求absolute correlation，实际graph仍使用signed correlation；本轮同步改为absolute，属于冻结规范的implementation repair，不改变协议。
+
+Run ID=`M1_NIP_PC2_baseline_api_impltest_v2_20260903T174928Z`。新增registry exact-completeness、Sinkhorn deterministic/convergence/scope、spectral deterministic/factorization和rank-two拒绝测试。第一次命令误用系统Python，collection阶段因缺NumPy而FAIL，未执行测试或生成实验artifact；换用锁定R004解释器后targeted 12/12、全项目154/154与py_compile全部PASS。源码SHA-256：`nip_baselines.py=67980D775D41602147BCE9E84F9F07A7AD436C2E05F2DFA2E52F4FE9FEB42048`，`proposal.py=2AEDDE174DCAED2CC701FCFE3C36015E3AEB311C3A8ED4312FD8262ABA23AD68`；测试SHA-256=`77CDC912A8D82A98F113414463EF41E6AE019BF9647E1105C9DF38A8BC058BEB`。
+
+保守解释：PC2注册的8条native baselines与2条continuous references现都有truth-free实现和conformance coverage，C027实现门通过；这仍不是任何方法在fresh data上的结果。P1 formal seeds、truth、evaluation和intervention仍未生成/未打开，M1 parent保持FAIL、R006保持BLOCKED。下一轮可实现P1 truth-closed one-pair-per-family runner、完整runtime/cost ledger与pre-label closure；只有独立validator通过后才可打开P1 labels。

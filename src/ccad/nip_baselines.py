@@ -11,12 +11,17 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ccad.proposal import li15_spectral_proposal
+
 
 IMPLEMENTED_NATIVE_LANES = {
     "CONTRIBUTION_NEAREST_ATOM",
     "PW_MCC_HUNGARIAN",
     "GREEDY_DECODER_COSINE",
+    "DUSTBIN_SINKHORN",
     "BINARY_FORWARD_OMP",
+    "OT_MASS_NATIVE_SUPPORT",
+    "SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT",
     "RANDOM_MATCHED_GROUP",
 }
 IMPLEMENTED_CONTINUOUS_REFERENCES = {
@@ -120,6 +125,91 @@ def infer_decoder_directions(contributions: np.ndarray) -> np.ndarray:
     return directions
 
 
+def infer_rank_one_codes(contributions: np.ndarray, *, relative_tolerance: float = 1e-12) -> tuple[np.ndarray, tuple[float, ...]]:
+    """Factor per-atom contribution matrices into codes, failing closed on rank > 1."""
+    values = np.asarray(contributions, dtype=np.float64)
+    if values.ndim != 3 or relative_tolerance < 0.0:
+        raise ValueError("contributions must be observation x atom x hook and tolerance nonnegative")
+    codes = np.zeros((values.shape[0], values.shape[1]), dtype=np.float64)
+    residuals: list[float] = []
+    for atom in range(values.shape[1]):
+        u, singular, _ = np.linalg.svd(values[:, atom, :], full_matrices=False)
+        total_sq = float(singular @ singular)
+        tail_sq = float(singular[1:] @ singular[1:]) if singular.size > 1 else 0.0
+        residual = np.sqrt(tail_sq / total_sq) if total_sq > 0.0 else 0.0
+        if residual > relative_tolerance:
+            raise ValueError(f"atom {atom} contribution process is not rank one: relative residual {residual:.6g}")
+        if singular.size:
+            codes[:, atom] = u[:, 0] * singular[0]
+        residuals.append(float(residual))
+    return codes, tuple(residuals)
+
+
+def _logsumexp(values: np.ndarray, *, axis: int) -> np.ndarray:
+    maximum = np.max(values, axis=axis, keepdims=True)
+    finite = np.isfinite(maximum)
+    shifted = np.where(finite, values - maximum, -np.inf)
+    result = np.log(np.sum(np.exp(shifted), axis=axis, keepdims=True)) + maximum
+    return np.squeeze(result, axis=axis)
+
+
+def _balanced_log_sinkhorn(cost: np.ndarray, a: np.ndarray, b: np.ndarray, *, regularization: float, tolerance: float, max_iterations: int) -> tuple[np.ndarray, int, bool, float]:
+    if regularization <= 0.0 or tolerance <= 0.0 or max_iterations < 1:
+        raise ValueError("invalid Sinkhorn numerical parameters")
+    matrix = np.asarray(cost, dtype=np.float64)
+    left = np.asarray(a, dtype=np.float64)
+    right = np.asarray(b, dtype=np.float64)
+    if matrix.shape != (left.size, right.size) or np.any(left <= 0.0) or np.any(right <= 0.0):
+        raise ValueError("Sinkhorn cost and positive marginals are incompatible")
+    if not np.isclose(np.sum(left), np.sum(right), atol=tolerance, rtol=0.0):
+        raise ValueError("balanced Sinkhorn marginals must have equal mass")
+    log_kernel = -matrix / regularization
+    log_u = np.zeros(left.size, dtype=np.float64)
+    log_v = np.zeros(right.size, dtype=np.float64)
+    log_a = np.log(left)
+    log_b = np.log(right)
+    converged = False
+    marginal_error = np.inf
+    for iteration in range(1, max_iterations + 1):
+        log_u = log_a - _logsumexp(log_kernel + log_v[None, :], axis=1)
+        log_v = log_b - _logsumexp(log_kernel + log_u[:, None], axis=0)
+        plan = np.exp(log_u[:, None] + log_kernel + log_v[None, :])
+        marginal_error = max(float(np.max(np.abs(np.sum(plan, axis=1) - left))), float(np.max(np.abs(np.sum(plan, axis=0) - right))))
+        if marginal_error <= tolerance:
+            converged = True
+            break
+    return plan, iteration, converged, marginal_error
+
+
+def _unbalanced_log_sinkhorn(cost: np.ndarray, a: np.ndarray, b: np.ndarray, *, regularization: float, marginal_relaxation: float, tolerance: float, max_iterations: int) -> tuple[np.ndarray, int, bool, float]:
+    if regularization <= 0.0 or marginal_relaxation <= 0.0 or tolerance <= 0.0 or max_iterations < 1:
+        raise ValueError("invalid unbalanced Sinkhorn numerical parameters")
+    matrix = np.asarray(cost, dtype=np.float64)
+    left = np.asarray(a, dtype=np.float64)
+    right = np.asarray(b, dtype=np.float64)
+    if matrix.shape != (left.size, right.size) or np.any(left <= 0.0) or np.any(right <= 0.0):
+        raise ValueError("unbalanced Sinkhorn cost and positive marginals are incompatible")
+    power = marginal_relaxation / (marginal_relaxation + regularization)
+    log_kernel = -matrix / regularization
+    log_u = np.zeros(left.size, dtype=np.float64)
+    log_v = np.zeros(right.size, dtype=np.float64)
+    log_a = np.log(left)
+    log_b = np.log(right)
+    converged = False
+    scaling_change = np.inf
+    for iteration in range(1, max_iterations + 1):
+        previous_u = log_u.copy()
+        previous_v = log_v.copy()
+        log_u = power * (log_a - _logsumexp(log_kernel + log_v[None, :], axis=1))
+        log_v = power * (log_b - _logsumexp(log_kernel + log_u[:, None], axis=0))
+        scaling_change = max(float(np.max(np.abs(log_u - previous_u))), float(np.max(np.abs(log_v - previous_v))))
+        if scaling_change <= tolerance:
+            converged = True
+            break
+    plan = np.exp(log_u[:, None] + log_kernel + log_v[None, :])
+    return plan, iteration, converged, scaling_change
+
+
 def run_native_baseline(
     lane: str,
     source: np.ndarray,
@@ -196,6 +286,64 @@ def run_native_baseline(
             if d_ctr <= tau_ctr and d_mu <= tau_mu:
                 return NativeBaselineResult(lane, "OK", "FOUND", "UNIQUE", (support,), tuple(selected), tuple(ranking_scores), len(selected), None, {"continuous_coefficients": tuple(float(value) for value in coefficients), "coefficients_used_for_native_endpoint": False})
         return NativeBaselineResult(lane, "OK", "UNRESOLVED", None, (), tuple(selected), tuple(ranking_scores), len(selected), "NO_ACCEPTED_PREFIX", {"continuous_coefficients": tuple(float(value) for value in coefficients), "coefficients_used_for_native_endpoint": False})
+
+    if lane in {"DUSTBIN_SINKHORN", "OT_MASS_NATIVE_SUPPORT"}:
+        costs = np.clip(singleton_d_ctr(y, x_atoms, epsilon=epsilon), 0.0, 1.0)
+        if lane == "DUSTBIN_SINKHORN":
+            augmented = np.full((2, atom_count + 1), tau_ctr, dtype=np.float64)
+            augmented[0, :atom_count] = costs
+            augmented[1, atom_count] = 0.0
+            plan, iterations, converged, error = _balanced_log_sinkhorn(
+                augmented, np.full(2, 0.5), np.full(atom_count + 1, 1.0 / (atom_count + 1)),
+                regularization=0.05, tolerance=1e-9, max_iterations=1000,
+            )
+            masses = plan[0, :atom_count]
+            diagnostic_name = "marginal_error"
+        else:
+            plan, iterations, converged, error = _unbalanced_log_sinkhorn(
+                costs[None, :], np.ones(1), np.full(atom_count, 1.0 / atom_count),
+                regularization=0.05, marginal_relaxation=1.0, tolerance=1e-9, max_iterations=1000,
+            )
+            masses = plan[0]
+            diagnostic_name = "scaling_change"
+        order = tuple(sorted(range(atom_count), key=lambda atom: (-masses[atom], atom)))
+        scores = tuple(float(masses[atom]) for atom in order)
+        diagnostics = {
+            "scope": "DEGENERATE_SINGLE_QUERY",
+            "solver": "BALANCED_LOG_SINKHORN" if lane == "DUSTBIN_SINKHORN" else "UNBALANCED_LOG_SINKHORN",
+            "iterations": iterations,
+            "converged": converged,
+            diagnostic_name: error,
+            "transport_mass": float(np.sum(plan)),
+        }
+        if not converged:
+            return NativeBaselineResult(lane, "BUDGET_REFUSAL", "UNRESOLVED", None, (), order, scores, 0, "SINKHORN_DID_NOT_CONVERGE", diagnostics)
+        return _result_from_ranking(lane, order, scores, y, x_atoms, mu_s, mu_t, g_max=g_max, tau_ctr=tau_ctr, tau_mu=tau_mu, epsilon=epsilon, tie_tolerance=tie_tolerance, refuse_membership_ties=True, diagnostics=diagnostics)
+
+    if lane == "SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT":
+        source_codes, source_residuals = infer_rank_one_codes(y[:, None, :], relative_tolerance=1e-12)
+        target_codes, target_residuals = infer_rank_one_codes(x_atoms, relative_tolerance=1e-12)
+        spectral = li15_spectral_proposal(
+            source_codes, target_codes, correlation_threshold=0.2, max_clusters=8,
+            kmeans_seed=solver_seed, max_neighborhood_atoms=atom_count + 1,
+        )
+        residuals = singleton_d_ctr(y, x_atoms, epsilon=epsilon)
+        best = min(range(atom_count), key=lambda atom: (residuals[atom], atom))
+        neighborhood = next((item for item in spectral.proposal.neighborhoods if item.anchor_left == 0 and item.anchor_right == best), None)
+        diagnostics = {
+            "cluster_count": spectral.cluster_count,
+            "eigenvalues": spectral.eigenvalues,
+            "mixed_cluster_count": spectral.mixed_cluster_count,
+            "best_contribution_singleton": best,
+            "source_factorization_residuals": source_residuals,
+            "target_factorization_residuals": target_residuals,
+        }
+        if neighborhood is None or neighborhood.status != "OK" or not neighborhood.right_ids:
+            reason = "NO_MIXED_CLUSTER" if neighborhood is None else neighborhood.refusal_reason or "NO_MIXED_CLUSTER"
+            return NativeBaselineResult(lane, "BUDGET_REFUSAL" if neighborhood is not None and neighborhood.status != "OK" else "OK", "UNRESOLVED", None, (), (), (), 0, reason, diagnostics)
+        order = tuple(sorted(neighborhood.right_ids, key=lambda atom: (residuals[atom], atom)))
+        scores = tuple(float(residuals[atom]) for atom in order)
+        return _result_from_ranking(lane, order, scores, y, x_atoms, mu_s, mu_t, g_max=min(g_max, 4), tau_ctr=tau_ctr, tau_mu=tau_mu, epsilon=epsilon, tie_tolerance=tie_tolerance, refuse_membership_ties=True, diagnostics=diagnostics)
 
     rng = np.random.default_rng(solver_seed)
     order = tuple(int(value) for value in rng.permutation(atom_count))

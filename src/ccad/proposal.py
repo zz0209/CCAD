@@ -137,7 +137,7 @@ def li15_spectral_proposal(
     if not 0.0 <= correlation_threshold < 1.0:
         raise ValueError("correlation_threshold must be in [0, 1)")
     combined = np.concatenate([left, right], axis=1)
-    correlation = _correlation_matrix(combined)
+    correlation = np.abs(_correlation_matrix(combined))
     adjacency = np.where(correlation > correlation_threshold, correlation, 0.0)
     np.fill_diagonal(adjacency, 0.0)
     laplacian = np.diag(np.sum(adjacency, axis=1)) - adjacency
