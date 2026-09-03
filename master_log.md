@@ -1924,3 +1924,21 @@ Heartbeat `ccad`在实现post-closure scorer前发现：I1 v1虽正确封存了i
 新predictor正常完成60 rows并最后原子封存closure；raw SHA-256=`662A8DC729AF31AB1C3BDBA6AED3347D48C94E2A45108722B47374D8C2E56F72`，closure绑定的code snapshot=`7D63C092196E882F60BB605D087FAD3C64BAFC25D098646E026B790E56A6E949`。独立pre-label validator 20/20 PASS，新增门逐row由seed重建observed tensors并精确重生centered-only candidate；validation SHA-256=`0AB4ED24C16FC26AA9FFBC77C44E3FF5EEB350129DFCFC2B9BE197B19C30B368`。truth_opened=false，formal D1/D2 seed未生成。
 
 使用项目R004环境运行全量unittest discover，125/125 PASS；这次环境包含历史R006测试所需依赖，因此没有collection error。保守解释：本轮只修复并验证closure-first输入契约，不是D1标签结果或C1/C2证据。下一轮应实现独立v3 scorer与rescore validator，先验closure/tamper、再动态导入truth，并从observed tensors对冻结support计算N09–N12属性。
+
+## 2026-09-03 10:07 EDT — 登记v3 I1 post-closure scorer
+
+Heartbeat `ccad`在已封存I1 v2 prediction上实现`score_m1_nip_d1_v3.py`及独立`validate_m1_nip_d1_score_v3.py`。Scorer在创建score目录及动态导入truth前完整核验closure、bound files、源码/input snapshots、protocol/diagnostic绑定、proposal/prediction/candidate hashes；tamper测试确认失败时truth import未发生且score目录不存在。之后仅对N09–N11使用冻结的唯一predicted support，对N12使用pre-mean centered-only candidate，从structural/sample seeds重建observed tensors并计算cancellation、document evidence、mean与shared-hook endpoint raw metrics。Identification score与orthogonal属性保持分栏。
+
+独立validator没有导入scorer，逐row重建observed tensors、重新计算identification与orthogonal结果、cap aggregation和selection，并单独检查selected-cap N09–N12属性套件。py_compile与2/2 scorer information-order tests PASS。现于打开I1 labels前登记唯一run `M1_NIP_I1_score_v3_impltest_v1_20260903T140700Z`为RUNNING；输入仅为immutable `M1_NIP_I1_predict_v3_impltest_v2_20260903T135700Z` closure。Formal D1/D2 seeds、held-out与real audit仍关闭。
+
+### 2026-09-03 10:11 EDT — I1 score v1 有效FAIL；字段名修复并登记v2
+
+v1 scorer正常写出60行，identification aggregation仍选cap20；独立validator的selected-cap attribute suite失败。检查raw numeric artifact发现N09、N10、N12均正确测得，但N11 endpoint明明保存`cliff_effect_rmse=1.0`、`smooth_effect_rmse=0.1`与margin约0.05，分类器却读取不存在的`effect_rmse`并输出`CAUSAL_PASS`。这是明确的字段名implementation bug，不是理论或阈值失败。v1 run与validator traceback原样保留并标FAIL。
+
+修复scorer和独立validator只把读取键改为已冻结API字段`cliff_effect_rmse`，不更改数值、threshold、prediction closure或protocol；新增targeted regression直接要求N11 observable endpoint分类为`CAUSAL_FAIL`。现登记新run `M1_NIP_I1_score_v3_impltest_v2_20260903T141100Z`为RUNNING，失败仍须保留。
+
+### 2026-09-03 10:13 EDT — I1 score v2 PASS；C024获准进入formal D1
+
+字段回归3/3 PASS后，v2 scorer在同一immutable prediction closure上完成；独立validator 10/10 PASS，逐行重算60条identification与orthogonal outputs、cap aggregates和selection。selected cap为20；该cap的N09在冻结predicted support `(0,1)`上测得cancellation ratio `273.8224`并判`OBSERVATIONALLY_UNSAFE`，N10为2个active documents、document ESS `1.9446`并判`INSUFFICIENT_EVIDENCE`，N11在support `(0,)`上测得cliff RMSE `1.0`、smooth RMSE `0.1`、normalized margin约`0.05`并判`CAUSAL_FAIL`，N12在pre-mean candidate `(0,)`上测得`d_mu≈1.0`并判`MEAN_MISMATCH`。score raw SHA-256=`736CDF3472E376AFB9817096D8E5B192F24327DDDBC7598BE9F9B62D843B427E`；validation=`43DA8A352143A3DCFBB7E1E5931094498B4556F6E192660F11C2BE3782BA9C88`。
+
+全项目unittest discover 128/128 PASS。C024由SCREENING转ADMIT，含义仅为observable-endpoint组件获准进入fresh formal D1，不代表M1、C1或C2成立。Formal v3 D1/D2 seeds仍未生成，held-out与real audit仍关闭；下一轮须先把formal D1 config/source hashes与当前合格scorer/validator绑定并登记truth-blind prediction，仍应先封存再评分。
