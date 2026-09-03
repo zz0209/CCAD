@@ -2038,3 +2038,13 @@ Fresh same-family reviewer已完成A–H审计；overall verdict=`FAIL`，artifa
 新增5-atom regression：当source仅可由5个`0.2x` target atoms之和表示时，`complete_universe=True,g_max=4`必须fail closed；同一对象在bounded mode/gmax4返回`UNRESOLVED`，在true complete mode/gmax5返回`FOUND`且minimum support size=5。目标测试23/23 PASS；全项目unittest 130/130 PASS，使用`D:\CCAD_Storage\environments\r004\Scripts\python.exe`。首次用系统Python调用因缺`numpy`产生3个import error，属错环境调用，已保留在本条而不误记为科学失败。
 
 该PASS仅关闭C025的核心API实现缺陷；由于旧D2 labels已打开，修复后的端到端artifact/provenance确认必须使用fresh suffix/seeds。C026与R006状态不变，M1 parent仍FAIL/BLOCKED。
+
+## 2026-09-03 13:07 EDT — C026选择补齐路线；parent-completion P0 v3 PASS
+
+Heartbeat `ccad`按experimental-design流程对parent audit缺口做了前瞻性设计。裁决不选“退役旧义务并改写parent gate”的低成本路线，而选择C026-A补齐路线：保留继承的fair baselines、OMP simplicity、raw BCC/PSC/energy/rank/leverage/proposal/solver/coverage surface、N06/N08 controls和独立mean/discovery/evaluation/intervention streams。设计把family作为block，structural seed pair作为独立重复单位，同pair不同method作paired repeated measures；token只是technical measurement，不计伪重复。
+
+新冻结`M1_NIP_PARENT_COMPLETION_PROTOCOL_V1_20260903_130500.md`及machine config `configs/m1_nip_parent_completion_v1.json`。Protocol SHA-256=`0D9B5E8F6F1EC9A6BE8BEF820D019541FEB0833A00AF16CEA4664428F5268B74`，config SHA-256=`CCE798DA4D1025F70569E9376BF2C4F165E4C6AC688B1D91E9332A4F6743C2D5`。正式设计固定12 families×20 fresh pairs，6条互异seed streams，9个native lanes及2个continuous references；`g_max=4`、20 atoms、7,462 budget与既有threshold不改。Formal seeds仍`UNGENERATED`，truth/real audit关闭。
+
+P0静态validator首次调用v1数值16/16，但只生成`validation.json`，违反项目artifact contract，故保留为FAIL。修复validator使其同时产生resolved config、environment、code/input hashes、status、stdout/stderr与manifest后，v2数值与artifact通过，但run ID时标被预分配到晚于实际finish，作为recordkeeping FAIL保留，不追认。
+
+终态`M1_NIP_PC1_V1_P0_static_v3_20260903T170630Z` 16/16 PASS；独立PowerShell重算manifest全部匹配，validation SHA-256=`E01F6AEE4C30F2C9AF79AC93AE072C7065516DB6FF1A388263423532789DE03B`，manifest SHA-256=`90D4BF70531C147AFD66F78B3015B1403C5B4B170B48B9A758BF1B09C5314087`。全项目unittest 133/133 PASS。该P0只授权下一轮实现P1 truth-closed one-pair-per-family metric/baseline smoke；不生成formal seeds，不改变M1 parent FAIL或R006 BLOCKED。
