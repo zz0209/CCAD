@@ -1980,3 +1980,23 @@ Heartbeat `ccad`创建`configs/m1_nip_d2_selection_freeze_v3.json`与`configs/m1
 静态审计10/10 PASS。D2 config SHA-256=`4CF9B8746360CE75821A8C7C278D789758DA18A7061FE81EA2405D9919751FB8`，selection freeze=`388692CC223A9C1BF5EBF2A3B9202BDEB38755EEDE10AF74C49CA2EC59742916`，validation=`F9AE273084ADC4759520FBB2ABAF4F745CABA518BBCC3CEF82B507AD75A59BAC`。全项目unittest discover 129/129 PASS。
 
 审计时确认不存在任何`M1_NIP_D2_predict_v3_formal_*`目录，故D2 seeds仍严格UNGENERATED，labels/held-out/real audit关闭。该PASS只授权下一轮使用已绑定配置登记fresh D2 truth-blind prediction；它不是D2结果，也不改变M1/C1/C2。鉴于selected-cap-only D2仅240 rows，预计计算量显著低于D1五cap 1,200 rows，但仍应在run中记录实测耗时。
+
+## 2026-09-03 12:17 EDT — D2生成前修正资源声明并重审
+
+Heartbeat `ccad`恢复状态后注意到formal D1同类计算实际耗时91分钟，因此即使D2只有其约五分之一，仍应按AGENTS视为CPU-heavy，而非原config中的`lightweight_cpu_no_lease`。在任何D2 seed生成前，将D2 config的纯运行资源字段改为`cpu-heavy_lease_required`；selection、threshold、namespace、row grid和科学协议均未改变。原freeze audit v1在其旧config scope内保留PASS，但不用于启动新计算。
+
+现登记`M1_NIP_D2_freeze_v3_audit_v2_20260903T161700Z`为RUNNING，使用同一静态validator重审修改后的config。只有v2审计PASS后才允许通过母目录resource manager的`cpu-heavy` lease运行D2 prediction；不申请当前被其他项目占用但本任务不需要的disk-e lease。
+
+### 2026-09-03 12:19 EDT — 修正后freeze audit PASS；启动formal D2 prediction
+
+修正资源声明后的静态审计再次10/10 PASS；新D2 config SHA-256=`28018643DF95C79D370D25E8A2F994DD32EF85F1E0D1F03A26137CE6F8E1E800`，selection freeze仍为`388692CC223A9C1BF5EBF2A3B9202BDEB38755EEDE10AF74C49CA2EC59742916`。审计仍确认D2 seeds尚未生成。
+
+现登记唯一run `M1_NIP_D2_predict_v3_formal_v1_20260903T161900Z`为RUNNING，并首次生成fresh D2 seeds：12 families×20 pairs×selected cap20=240 rows。执行必须持母目录`cpu-heavy` lease并自动heartbeat/release；prediction保持truth closed，完成后只运行独立pre-label validator。Formal D2 score、held-out和real audit继续关闭。
+
+### 2026-09-03 12:16 EDT — formal D2 prediction closure PASS；标签仍关闭
+
+第一次在sandbox内调用资源管理器因其母目录lease文件无写权限而`PermissionError`，发生在lease获取和run目录创建之前；随后按既有授权提升权限重试。资源管理器成功获取`cpu-heavy` lease，prediction耗时22.3秒完成并自动释放；独立validator另持同类lease约9.0秒重生全部240 rows后释放。最终资源状态确认`cpu-heavy`为free；未触碰其他项目遗留的expired disk-e lease。
+
+Fresh D2 prediction完整覆盖12 families×20 pairs×cap20，共240 rows。Raw SHA-256=`46DCA5946A5826D9021FB6DB495043D1588F93D2900495D4229BC776BF16A490`，closure=`C52116174A648986FB5FF337F628DBF88DC129A109E4C5AB6AE82D625401A67A`。独立pre-label validator新增selection-freeze binding后21/21 PASS；validation=`D75CD6EA74CF73E6BED0DF173AEBDB3E634E2525CE006C92525409270361C03F`。`truth_opened=false`，score目录尚不存在，held-out/real audit仍关闭。
+
+保守解释：这只是fresh D2 truth-blind prediction及closure证据，尚不能称D2 confirmation PASS，也不支持M1/C1/C2。下一轮只可在再次复核closure后登记独立formal D2 score；score失败不得修改prediction artifact。

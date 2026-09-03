@@ -28,6 +28,6 @@
   "approximate_tau_mu": 0.05,
   "boundary_tie_tolerance": 1e-12,
   "candidate_budget": 7462,
-  "resource": "lightweight_cpu_no_lease",
+  "resource": "cpu-heavy_lease_required",
   "evidence_level": "D2_v3_fresh_synthetic_confirmation"
 }
