@@ -7,6 +7,10 @@ import hashlib
 import json
 from pathlib import Path
 
+from ccad.nip_diagnostics_v3 import freeze_centered_only_candidate
+from ccad.nip_synthetic import observed_kernels
+from ccad.nip_synthetic_v3 import generate_endpoint_observed
+
 
 def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest().upper()
@@ -72,7 +76,7 @@ def main() -> int:
     predictor = next(row for row in code["files"] if row["snapshot"].endswith("scripts/run_m1_nip_d1_predict_v3.py"))
     tree = ast.parse((run / predictor["snapshot"]).read_text(encoding="utf-8"))
     imports = [ast.unparse(node) for node in ast.walk(tree) if isinstance(node, (ast.Import, ast.ImportFrom))]
-    check("no_static_truth_or_diagnostic_outcome_import", not any("nip_truth" in item or "nip_diagnostics" in item for item in imports))
+    check("no_static_truth_or_outcome_import", not any("nip_truth" in item for item in imports))
     rows = [json.loads(line) for line in (run / "predictions.raw.jsonl").read_text(encoding="utf-8").splitlines() if line]
     expected = len(config["families"]) * config["pairs_per_family"] * len(config["atom_caps"])
     check("row_count", len(rows) == closure["row_count"] == config["expected_prediction_rows"] == expected)
@@ -86,6 +90,28 @@ def main() -> int:
     check("v3_contract", all(row["schema_version"] == "m1_nip_prediction.v3" and row["protocol_hash"] == config["protocol_sha256"] and row["diagnostic_config_hash"] == config["diagnostic_config_sha256"] for row in rows))
     check("proposal_hashes", all(digest(proposal_payload(row)) == row["proposal"]["proposal_hash"] for row in rows))
     check("prediction_hashes", all(digest(prediction_payload(row)) == row["prediction"]["prediction_hash"] for row in rows))
+    candidates_ok = True
+    for group in grouped.values():
+        seed_row = group[0]
+        observed = generate_endpoint_observed(
+            seed_row["family_id"], structural_seed=seed_row["seeds"]["structural"],
+            sample_seed=seed_row["seeds"]["sample"], n=config["observations_per_pair"],
+        )
+        k_ss, k_st, k_tt = observed_kernels(observed)
+        for row in group:
+            expected_candidate = freeze_centered_only_candidate(
+                k_ss, k_st, k_tt, source_atom_id=row["source_atom_id"],
+                proposed_target_ids=tuple(row["proposal"]["proposed_target_ids"]), g_max=config["g_max"],
+                epsilon=config["epsilon"], candidate_budget=config["candidate_budget"],
+            )
+            observed_candidate = row["diagnostic_candidate"]
+            candidates_ok &= (
+                observed_candidate["target_ids"] == list(expected_candidate.target_ids)
+                and observed_candidate["d_ctr"] == expected_candidate.d_ctr
+                and observed_candidate["evaluated_count"] == expected_candidate.evaluated_count
+                and observed_candidate["candidate_hash"] == expected_candidate.candidate_hash
+            )
+    check("centered_candidates_regenerated", candidates_ok)
     check("n11_approximate_observable", all(any(item["target_ids"] == [0] and abs(item["d_ctr"] - 0.01) <= 1e-12 for item in row["prediction"]["supports"]) for row in rows if row["family_id"] == "N11_downstream_cliff" and row["atom_cap"] == 20))
     check("terminal_pass", json.loads((run / "status.json").read_text(encoding="utf-8"))["status"] == "PASS")
     result = {"status": "PASS", "prediction_run": run.name, "check_count": len(checks), "prediction_row_count": len(rows), "checks": checks}

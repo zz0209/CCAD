@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 
 from ccad.mscc import freeze_mscc_prediction, minimum_support_contribution_correspondence, source_conditioned_topk_proposal
+from ccad.nip_diagnostics_v3 import freeze_centered_only_candidate
 from ccad.nip_synthetic import FAMILIES, observed_kernels
 from ccad.nip_synthetic_v3 import generate_endpoint_observed
 
@@ -26,6 +27,7 @@ SOURCES = (
     "src/ccad/nip_synthetic.py",
     "src/ccad/nip_synthetic_v2.py",
     "src/ccad/nip_synthetic_v3.py",
+    "src/ccad/nip_diagnostics_v3.py",
     "scripts/run_m1_nip_d1_predict_v3.py",
 )
 
@@ -147,6 +149,11 @@ def main() -> int:
                     result, protocol_hash=config["protocol_sha256"], proposal_hash=proposal.proposal_hash,
                     discovery_fingerprint=fingerprint, source_atom_id=0,
                 )
+                centered_only = freeze_centered_only_candidate(
+                    k_ss, k_st, k_tt, source_atom_id=0,
+                    proposed_target_ids=proposal.proposed_target_ids, g_max=config["g_max"],
+                    epsilon=config["epsilon"], candidate_budget=config["candidate_budget"],
+                )
                 records.append({
                     "schema_version": "m1_nip_prediction.v3", "run_id": run_dir.name,
                     "family_id": family, "pair_index": pair, "atom_cap": cap, "seeds": seeds,
@@ -165,6 +172,7 @@ def main() -> int:
                         "refusal_reason": proposal.refusal_reason,
                         "proposal_hash": proposal.proposal_hash,
                     },
+                    "diagnostic_candidate": asdict(centered_only),
                     "prediction": {
                         "search_status": result.status, "identification": result.identification,
                         "multiplicity": result.multiplicity, "minimum_support_size": result.minimum_support_size,

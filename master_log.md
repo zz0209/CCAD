@@ -1910,3 +1910,17 @@ I1 predictor正常完成并最后原子写入closure。60 rows完整覆盖12 fam
 保守解释：这只是I1 truth-blind prediction与closure工程证据，不是labeled D1、orthogonal attribute结果、D2、M1或C1/C2。formal v3 D1 seeds仍UNGENERATED，labels与real audit关闭。下一轮必须实现并tamper-test v3 score adapter：先验证closure，再动态导入truth；orthogonal metrics必须从seeds重建observed tensors并对frozen predicted support计算。只有I1 score及独立rescore validator通过后才可登记formal D1 prediction。
 
 提交前全项目discover共121项：120项PASS；唯一collection error仍为历史R006测试导入缺少`mpmath`，与v3 D1 adapter无关，未跳过或安装依赖伪造全绿。
+
+## 2026-09-03 09:57 EDT — 修复I1 closure的N12诊断候选缺口并登记v2
+
+Heartbeat `ccad`在实现post-closure scorer前发现：I1 v1虽正确封存了identification prediction，但N12的真实identification应为native-absent，因而没有可供mean-mismatch审计的FOUND support。若在score阶段看到mean或truth后再选support，会违反已冻结的“mean check前固定diagnostic candidate”信息顺序。故不改写v1 artifact，也不把该缺口解释成理论失败；v1在其prediction-closure scope内仍为PASS，但不足以作为完整orthogonal scorer输入。
+
+修复在truth-blind predictor中加入通用centered-only候选冻结：只用discovery centered kernels，在同一`g_max=4`与7,462预算内枚举候选，按`(d_ctr, support size, lexicographic IDs)`确定性选择，并写入candidate content hash。独立pre-label validator从sealed row seeds重建observed tensors并逐row重算该候选；它仍禁止truth import，也不计算mean mismatch或causal outcome。定向10/10 unittest PASS；系统Python的pytest入口不存在且其环境缺numpy，随后按项目既有R004环境与`PYTHONPATH=src`完成有效测试，前两次均未生成artifact。
+
+现于计算前登记唯一run `M1_NIP_I1_predict_v3_impltest_v2_20260903T135700Z`为RUNNING。它使用I1 namespace、12 families×1 pair×5 caps，只验证修复后的sealed prediction contract；formal D1/D2 seeds、labels、held-out与real audit继续关闭。失败run必须保留。
+
+### 2026-09-03 09:59 EDT — 修复后的I1 prediction closure PASS
+
+新predictor正常完成60 rows并最后原子封存closure；raw SHA-256=`662A8DC729AF31AB1C3BDBA6AED3347D48C94E2A45108722B47374D8C2E56F72`，closure绑定的code snapshot=`7D63C092196E882F60BB605D087FAD3C64BAFC25D098646E026B790E56A6E949`。独立pre-label validator 20/20 PASS，新增门逐row由seed重建observed tensors并精确重生centered-only candidate；validation SHA-256=`0AB4ED24C16FC26AA9FFBC77C44E3FF5EEB350129DFCFC2B9BE197B19C30B368`。truth_opened=false，formal D1/D2 seed未生成。
+
+使用项目R004环境运行全量unittest discover，125/125 PASS；这次环境包含历史R006测试所需依赖，因此没有collection error。保守解释：本轮只修复并验证closure-first输入契约，不是D1标签结果或C1/C2证据。下一轮应实现独立v3 scorer与rescore validator，先验closure/tamper、再动态导入truth，并从observed tensors对冻结support计算N09–N12属性。

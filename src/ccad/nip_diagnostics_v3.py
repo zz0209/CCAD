@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import combinations
+from math import comb
 
 import numpy as np
 
@@ -22,9 +24,77 @@ class NIPOrthogonalDiagnostics:
     endpoint: dict[str, float] | None
 
 
+@dataclass(frozen=True)
+class CenteredOnlyCandidate:
+    target_ids: tuple[int, ...]
+    d_ctr: float
+    evaluated_count: int
+    candidate_hash: str
+
+
 def _kish(weights: np.ndarray) -> float:
     denominator = float(np.sum(weights * weights))
     return 0.0 if denominator == 0.0 else float(np.sum(weights) ** 2 / denominator)
+
+
+def freeze_centered_only_candidate(
+    k_source_source: np.ndarray,
+    k_source_target: np.ndarray,
+    k_target_target: np.ndarray,
+    *,
+    source_atom_id: int,
+    proposed_target_ids: tuple[int, ...],
+    g_max: int,
+    epsilon: float,
+    candidate_budget: int,
+) -> CenteredOnlyCandidate:
+    """Freeze the best contribution-only candidate before any mean/truth check."""
+    import hashlib
+    import json
+
+    k_ss = np.asarray(k_source_source, dtype=np.float64)
+    k_st = np.asarray(k_source_target, dtype=np.float64)
+    k_tt = np.asarray(k_target_target, dtype=np.float64)
+    ids = tuple(int(value) for value in proposed_target_ids)
+    if tuple(sorted(set(ids))) != ids or not ids:
+        raise ValueError("proposed_target_ids must be nonempty, sorted, and unique")
+    if g_max < 1 or epsilon <= 0.0 or candidate_budget < 1:
+        raise ValueError("g_max, epsilon, and candidate_budget must be positive")
+    source_count, target_count = k_st.shape
+    if k_ss.shape != (source_count, source_count) or k_tt.shape != (target_count, target_count):
+        raise ValueError("kernel shapes are inconsistent")
+    if not 0 <= source_atom_id < source_count or ids[0] < 0 or ids[-1] >= target_count:
+        raise ValueError("source or target id is outside the kernel universe")
+    planned = sum(comb(len(ids), size) for size in range(1, min(g_max, len(ids)) + 1))
+    if planned > candidate_budget:
+        raise ValueError("centered-only candidate family exceeds budget")
+    source_energy = float(k_ss[source_atom_id, source_atom_id])
+    scored: list[tuple[float, int, tuple[int, ...]]] = []
+    for size in range(1, min(g_max, len(ids)) + 1):
+        for support in combinations(ids, size):
+            selected = np.asarray(support, dtype=int)
+            target_energy = float(np.sum(k_tt[np.ix_(selected, selected)]))
+            cross = float(np.sum(k_st[source_atom_id, selected]))
+            numerator = source_energy + target_energy - 2.0 * cross
+            scale = max(1.0, abs(source_energy), abs(target_energy), 2.0 * abs(cross))
+            if numerator < -1e-10 * scale:
+                raise ValueError("kernels imply a materially negative centered residual")
+            scored.append((max(0.0, numerator) / (source_energy + epsilon), size, support))
+    d_ctr, _, target_ids = min(scored, key=lambda row: (row[0], row[1], row[2]))
+    payload = {
+        "schema_version": "centered_only_candidate.v1",
+        "source_atom_id": source_atom_id,
+        "proposed_target_ids": ids,
+        "g_max": g_max,
+        "candidate_budget": candidate_budget,
+        "target_ids": target_ids,
+        "d_ctr": d_ctr,
+        "evaluated_count": planned,
+    }
+    candidate_hash = hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest().upper()
+    return CenteredOnlyCandidate(target_ids, d_ctr, planned, candidate_hash)
 
 
 def evaluate_orthogonal_diagnostics(

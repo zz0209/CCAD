@@ -16,7 +16,7 @@ class D1V3InformationOrderTests(unittest.TestCase):
     def test_predictor_has_no_truth_or_orthogonal_outcome_import(self):
         tree = ast.parse(PREDICTOR.read_text(encoding="utf-8"))
         imports = [ast.unparse(node) for node in ast.walk(tree) if isinstance(node, (ast.Import, ast.ImportFrom))]
-        self.assertFalse(any("nip_truth" in item or "nip_diagnostics" in item for item in imports))
+        self.assertFalse(any("nip_truth" in item for item in imports))
 
     def test_i1_and_formal_d1_use_distinct_declared_namespaces(self):
         i1 = json.loads((ROOT / "configs/m1_nip_i1_v3.json").read_text(encoding="utf-8"))

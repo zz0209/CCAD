@@ -5,8 +5,9 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from ccad.nip_diagnostics_v3 import evaluate_orthogonal_diagnostics
+from ccad.nip_diagnostics_v3 import evaluate_orthogonal_diagnostics, freeze_centered_only_candidate
 from ccad.nip_synthetic_v3 import generate_endpoint_observed
+from ccad.nip_synthetic import observed_kernels
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -73,6 +74,18 @@ class NIPOrthogonalDiagnosticsV3Tests(unittest.TestCase):
         for invalid in ((), (1, 0), (0, 0), (20,)):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 evaluate_orthogonal_diagnostics(observed, invalid)
+
+    def test_n12_centered_candidate_is_frozen_before_mean_check(self):
+        observed = generate_endpoint_observed("N12_mean_mismatch", structural_seed=9, sample_seed=10)
+        k_ss, k_st, k_tt = observed_kernels(observed)
+        candidate = freeze_centered_only_candidate(
+            k_ss, k_st, k_tt, source_atom_id=0, proposed_target_ids=tuple(range(20)),
+            g_max=4, epsilon=1e-12, candidate_budget=7462,
+        )
+        self.assertEqual(candidate.target_ids, (0,))
+        self.assertAlmostEqual(candidate.d_ctr, 0.0, places=12)
+        self.assertEqual(candidate.evaluated_count, 6195)
+        self.assertEqual(len(candidate.candidate_hash), 64)
 
 
 if __name__ == "__main__":
