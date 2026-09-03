@@ -2130,3 +2130,17 @@ Mean-stream修复已提交并推送，HEAD/origin=`cdf7c03157133ff74e8dab2a5f6f6
 `M1_NIP_PC2_V1_P1_predict_v3_20260903T180728Z`在`cpu-heavy` lease中8.28秒完成132条prediction并原子封存，closure SHA-256=`0264B65C08CF513E8F9C645A483222F32B764A4FADBA58142C36D6A3B68832C6`。独立validator随后另持lease重跑，17项中16项PASS：scientific predictions、six-stream seeds、random diagnostic cost、runtime count、closure/source/input hashes、AST信息边界和formal-seed closure均通过；唯一失败为`proposal_recomputation`。
 
 诊断确认值本身没有差异：JSONL反序列化的ranking/scores为list，而内存重算结果的同值字段为tuple；validator对prediction先做了JSON canonicalization，对proposal却直接用Python容器类型比较。因此整个P1 v3仍按gate记FAIL，validation SHA-256=`FC793A6B3699CAAE1C7FD5A5E9CA555A685869C94B4DA5EE7271EC6D53BDF751`，不得追认或打开labels。修复只将proposal两侧先转canonical JSON再比较，不改任何科学值。Repair run `M1_NIP_PC2_p1_validator_impltest_v2_20260903T180903Z` full160/160 PASS；validator SHA-256=`76BDC5116E2FA239F6AB12024BB4E5898C08EFB0482BAE8DA84E615E839BBBFA`。因validator属于code snapshot，仍须提交后fresh seeds重跑v4。
+
+### 2026-09-03 14:09 EDT — 启动fresh P1 v4
+
+Validator修复已提交并推送，HEAD/origin=`d03dde7e4e54d4b5826f4948502aa6cef835775e`。登记`M1_NIP_PC2_V1_P1_predict_v4_20260903T180938Z`为RUNNING；再次由新code snapshot派生fresh P1 seeds，协议与information boundary不变。
+
+### 2026-09-03 14:10 EDT — PC2 P1 prediction与pre-label gate PASS
+
+`M1_NIP_PC2_V1_P1_predict_v4_20260903T180938Z`在独占`cpu-heavy` lease中正常封存132条rows；独立validator随后重新获取同类lease并从sealed source/config/code hash重派生seeds、重生observations、重跑全部11 lanes，17/17 checks PASS。两次lease均自动释放，`cpu-heavy`现为free；未占用另一项目正在使用的`disk-d-io`。
+
+关键artifact：closure SHA-256=`03DD31527DD67E79A6894713728037818974974D41282AD496C81B3F96E10A75`，prelabel validation=`EE5CB95CC48C8EBBE12E224C3FF8E167585C03536AA109B3A79C51D6D6DE4E0A`，predictions=`9BCF2473FA09BF3B66F3105BA0A09AB387836471911CAC4C0949D5F9E2AF7EFC`，proposals=`6AD1DD82DBD9FC92DC350E73D5D15339C0DBE2B564B94BB32942D0BEB9E45EE6`，seed ledger=`1227AAD56C865B43D0C4A33046A41D3E3A20D886A625EE588DA0717D8E193810`。`truth_opened=false`，formal P2 seed未生成，evaluation/intervention seed仅封存未读取。
+
+Truth-free输出分布仅作执行诊断：MSCC为7 FOUND/5 UNRESOLVED；contribution-nearest、PW-MCC、dustbin、OT-mass、spectral和OMP各1 FOUND/11 UNRESOLVED；greedy cosine和random primary均12 UNRESOLVED。Continuous references无native identification。由于尚未打开truth/evaluation/intervention，这些计数不能解释为accuracy、baseline优劣或C1/C2证据。
+
+P1 prediction subgate现PASS，只授权下一轮实现post-closure scorer：必须先重验closure/prelabel PASS，再动态打开P1 truth及独立evaluation/intervention streams，生成完整metric surface与N06/N08/N11 controls；在score和独立validator通过前，M1 parent仍FAIL、R006仍BLOCKED，P2 formal不得启动。
