@@ -27,8 +27,10 @@ from ccad.nip_synthetic_v3 import generate_endpoint_observed
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = (
+    "src/ccad/__init__.py", "src/ccad/metrics.py", "src/ccad/synthetic.py",
     "src/ccad/mscc.py", "src/ccad/nip_baselines.py", "src/ccad/nip_synthetic.py",
     "src/ccad/nip_synthetic_v2.py", "src/ccad/nip_synthetic_v3.py",
+    "src/ccad/proposal.py",
     "scripts/run_m1_nip_parent_completion_p1.py",
     "scripts/validate_m1_nip_parent_completion_p1.py",
 )
@@ -91,7 +93,7 @@ def _timed(call, semantic=lambda value: value) -> tuple[object, list[float], int
 def _fairness(config: dict, source_hash: str, target_hash: str, *, full_comparisons: int,
               proposed_count: int, supports: list[tuple[int, ...]], evaluated: int,
               runtime: list[float], peak: int, terminal_reason: str | None) -> dict:
-    raw_atoms = [atom for support in supports for atom in support]
+    normalized_supports = [tuple(support) for support in supports]
     return {
         "source_query_manifest_hash": source_hash,
         "target_universe_hash": target_hash,
@@ -99,8 +101,8 @@ def _fairness(config: dict, source_hash: str, target_hash: str, *, full_comparis
         "candidate_budget": config["candidate_budget"],
         "full_dictionary_comparisons": full_comparisons,
         "proposed_atom_count": proposed_count,
-        "raw_support_count": len(raw_atoms),
-        "deduplicated_support_count": len(set(raw_atoms)),
+        "raw_support_count": len(normalized_supports),
+        "deduplicated_support_count": len(set(normalized_supports)),
         "evaluated_candidate_count": evaluated,
         "runtime_seconds_descriptive_only": runtime,
         "peak_memory_bytes": peak,
@@ -288,7 +290,8 @@ def main() -> int:
         except (OSError, subprocess.CalledProcessError):
             git_head = None
         write_json(run_dir / "resolved_config.json", config)
-        write_json(run_dir / "environment.json", {"python": sys.version, "executable": sys.executable, "numpy": np.__version__, "platform": platform.platform(), "device": "cpu", "git_head_at_run": git_head})
+        git_status = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True, capture_output=True).stdout.splitlines() if git_head else None
+        write_json(run_dir / "environment.json", {"python": sys.version, "executable": sys.executable, "numpy": np.__version__, "platform": platform.platform(), "device": "cpu", "git_head_at_run": git_head, "git_status_porcelain": git_status})
         write_json(run_dir / "code_hashes.json", {"aggregate_sha256": code_hash, "files": sources})
         write_json(run_dir / "input_hashes.json", {"files": inputs})
         started = now()

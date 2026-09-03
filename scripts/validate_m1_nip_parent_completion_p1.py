@@ -114,6 +114,8 @@ def validate(run_dir: Path) -> dict:
         and len(row["fairness"]["runtime_seconds_descriptive_only"]) == 5
         and isinstance(row["fairness"]["peak_memory_bytes"], int)
         and row["fairness"]["peak_memory_bytes"] >= 0
+        and row["fairness"]["raw_support_count"] == len(row["prediction"].get("supports", []))
+        and row["fairness"]["deduplicated_support_count"] == len({json.dumps(value, sort_keys=True) for value in row["prediction"].get("supports", [])})
         for row in observed_predictions
     )
     checks["formal_seed_state"] = config["formal_seed_manifest_status"] == "UNGENERATED" and not config["formal_seed_consumed"] and closure["formal_seed_consumed"] == expected_formal

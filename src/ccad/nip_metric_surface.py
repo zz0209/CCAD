@@ -121,7 +121,11 @@ def native_support_metric_surface(
         _direction_matrix(source_all[:, np.asarray(source_ids), :]),
         _direction_matrix(target_all[:, np.asarray(ids), :]),
     )
-    not_applicable = {"status": "NOT_APPLICABLE_PRELABEL", "value": None}
+    not_applicable = {
+        "status": "NOT_APPLICABLE_PRELABEL",
+        "reason": "ALGORITHM_DIAGNOSTIC_REQUIRES_FROZEN_POST_DISCOVERY_OUTPUT",
+        "value": None,
+    }
     surface = {
         "schema_version": "metric_surface.v2-nip",
         "centered_residual_numerator": centered_numerator,

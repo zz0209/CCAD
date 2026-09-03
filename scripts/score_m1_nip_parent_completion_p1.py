@@ -22,10 +22,12 @@ from ccad.nip_synthetic_v3 import evaluate_shared_hook_endpoint, generate_endpoi
 
 ROOT = Path(__file__).resolve().parents[1]
 SCORE_SOURCES = (
+    "src/ccad/__init__.py", "src/ccad/metrics.py", "src/ccad/synthetic.py",
     "scripts/score_m1_nip_parent_completion_p1.py",
     "scripts/validate_m1_nip_parent_completion_p1_score.py",
     "src/ccad/nip_truth.py", "src/ccad/nip_metric_surface.py",
-    "src/ccad/nip_synthetic_v2.py", "src/ccad/nip_synthetic_v3.py",
+    "src/ccad/nip_synthetic.py", "src/ccad/nip_synthetic_v2.py", "src/ccad/nip_synthetic_v3.py",
+    "configs/m1_nip_parent_completion_v2.json",
 )
 
 
@@ -80,6 +82,29 @@ def _supports(row: dict) -> list[tuple[int, ...]]:
     return [tuple(item) for item in raw]
 
 
+def _algorithm_diagnostics(row: dict, proposal_recall: bool | None, exact: bool) -> dict:
+    supports = _supports(row)
+    shared = {
+        "multiplicity": {"status": "MEASURED", "value": row["prediction"].get("multiplicity")},
+        "tie_set": {"status": "MEASURED", "value": [list(value) for value in supports]},
+        "proposal_recall": {"status": "MEASURED", "value": proposal_recall},
+        "conditional_solver_correctness": {"status": "MEASURED", "value": exact if proposal_recall else None},
+        "end_to_end_recovery": {"status": "MEASURED", "value": exact},
+        "coverage": {"status": "MEASURED", "value": 1.0},
+        "terminal_reason": {"status": "MEASURED", "value": row["prediction"].get("terminal_reason") or row["prediction"].get("unresolved_reason")},
+        "solver_gap": {"status": "NOT_APPLICABLE", "reason": "EXACT_ENUMERATION_HAS_NO_RELAXATION_GAP", "value": None},
+        "proposal_stability": {"status": "NOT_MEASURED", "reason": "NO_PRESPECIFIED_DISCOVERY_RESAMPLE_IN_FORMAL_PROTOCOL", "value": None},
+    }
+    if row["lane"] == "MSCC" and row["prediction"].get("best_candidate") and row["prediction"].get("nearest_competitor"):
+        best = row["prediction"]["best_candidate"]
+        competitor = row["prediction"]["nearest_competitor"]
+        score = lambda item: max(item["d_ctr"], item["d_mu"])
+        shared["nearest_competitor_margin"] = {"status": "MEASURED", "definition": "max_d_ctr_d_mu_gap", "value": score(competitor) - score(best)}
+    else:
+        shared["nearest_competitor_margin"] = {"status": "NOT_APPLICABLE", "reason": "LANE_DOES_NOT_EMIT_COMPARABLE_MSCC_CANDIDATES", "value": None}
+    return shared
+
+
 def score_rows(prediction_dir: Path, config: dict, truth_module) -> list[dict]:
     predictions = _read_jsonl(prediction_dir / "predictions.jsonl")
     proposals = {(row["family_id"], row["pair_index"], row["lane"]): row for row in _read_jsonl(prediction_dir / "proposals.jsonl")}
@@ -107,15 +132,7 @@ def score_rows(prediction_dir: Path, config: dict, truth_module) -> list[dict]:
         if row["kind"] == "NATIVE" and support_list:
             surfaces = []
             for support in support_list:
-                diagnostics = {
-                    "multiplicity": {"status": "MEASURED", "value": row["prediction"].get("multiplicity")},
-                    "tie_set": {"status": "MEASURED", "value": [list(value) for value in support_list]},
-                    "proposal_recall": {"status": "MEASURED", "value": proposal_recall},
-                    "conditional_solver_correctness": {"status": "MEASURED", "value": exact if proposal_recall else None},
-                    "end_to_end_recovery": {"status": "MEASURED", "value": exact},
-                    "coverage": {"status": "MEASURED", "value": 1.0},
-                    "terminal_reason": {"status": "MEASURED", "value": row["prediction"].get("terminal_reason") or row["prediction"].get("unresolved_reason")},
-                }
+                diagnostics = _algorithm_diagnostics(row, proposal_recall, exact)
                 surfaces.append(native_support_metric_surface(
                     evaluation.source_contributions, evaluation.target_contributions,
                     mean.source_mean_contributions, mean.target_mean_contributions,
@@ -201,7 +218,8 @@ def main() -> int:
             "raw_sha256": sha(raw),
         }
         write_json(score_dir / "summary.json", summary)
-        write_json(score_dir / "environment.json", {"python": sys.version, "numpy": np.__version__, "platform": platform.platform(), "device": "cpu", "git_head_at_score": git_head})
+        git_status = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True, capture_output=True).stdout.splitlines() if git_head else None
+        write_json(score_dir / "environment.json", {"python": sys.version, "numpy": np.__version__, "platform": platform.platform(), "device": "cpu", "git_head_at_score": git_head, "git_status_porcelain": git_status})
         scorer = next(item for item in sources if item["path"] == "scripts/score_m1_nip_parent_completion_p1.py")
         validator = next(item for item in sources if item["path"] == "scripts/validate_m1_nip_parent_completion_p1_score.py")
         write_json(score_dir / "manifest.json", {

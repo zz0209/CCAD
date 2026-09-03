@@ -17,6 +17,7 @@ class ParentCompletionP1Tests(unittest.TestCase):
         self.config = json.loads((ROOT / "configs/m1_nip_parent_completion_p1_v1.json").read_text(encoding="utf-8"))
         self.p2 = json.loads((ROOT / "configs/m1_nip_parent_completion_p2_v1.json").read_text(encoding="utf-8"))
         self.p2_v2 = json.loads((ROOT / "configs/m1_nip_parent_completion_p2_v2.json").read_text(encoding="utf-8"))
+        self.p2_v3 = json.loads((ROOT / "configs/m1_nip_parent_completion_p2_v3.json").read_text(encoding="utf-8"))
 
     def test_p1_is_fresh_smoke_and_formal_seeds_remain_ungenerated(self):
         self.assertEqual(self.config["phase"], "P1")
@@ -87,6 +88,23 @@ class ParentCompletionP1Tests(unittest.TestCase):
         for key in set(self.p2) - allowed:
             self.assertEqual(self.p2[key], self.p2_v2[key], key)
         self.assertNotEqual(self.p2["fresh_namespace"], self.p2_v2["fresh_namespace"])
+
+    def test_p3_minimal_suffix_changes_only_execution_identity(self):
+        allowed = {"schema_version", "fresh_namespace"}
+        self.assertEqual(set(self.p2_v2), set(self.p2_v3))
+        for key in set(self.p2_v2) - allowed:
+            self.assertEqual(self.p2_v2[key], self.p2_v3[key], key)
+        self.assertNotEqual(self.p2_v2["fresh_namespace"], self.p2_v3["fresh_namespace"])
+
+    def test_fairness_counts_support_objects_not_atoms(self):
+        import run_m1_nip_parent_completion_p1 as runner
+        ledger = runner._fairness(
+            self.p2_v3, "source", "target", full_comparisons=20,
+            proposed_count=4, supports=[(0, 1), (2, 3)], evaluated=7,
+            runtime=[0.1] * 5, peak=123, terminal_reason=None,
+        )
+        self.assertEqual(ledger["raw_support_count"], 2)
+        self.assertEqual(ledger["deduplicated_support_count"], 2)
 
 
 if __name__ == "__main__":

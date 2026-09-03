@@ -72,6 +72,7 @@ class NIPMetricSurfaceTests(unittest.TestCase):
         for key in ("proposal_recall", "conditional_solver_correctness", "solver_gap", "coverage"):
             self.assertEqual(metric[key]["status"], "NOT_APPLICABLE_PRELABEL")
             self.assertIsNone(metric[key]["value"])
+            self.assertTrue(metric[key]["reason"])
 
     def test_surface_covers_every_frozen_mandatory_field(self):
         config = json.loads((Path(__file__).resolve().parents[1] / "configs/m1_nip_parent_completion_v1.json").read_text(encoding="utf-8"))

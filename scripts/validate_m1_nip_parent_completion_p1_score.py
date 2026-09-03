@@ -109,7 +109,7 @@ def validate(prediction_dir: Path, score_dir: Path) -> dict:
             and sha(score_dir / manifest["validator_snapshot"]) == manifest["validator_sha256"]
             and sha(score_dir / "resolved_config.json") == manifest["resolved_config_sha256"]
             and sha(score_dir / "input_hashes.json") == manifest["input_hashes_sha256"]
-            and all(sha(prediction_dir / name) == value for name, value in input_hashes["files"].items() if "/" not in name)
+            and all(sha((ROOT / name) if name == config["parent_config_path"] else (prediction_dir / name)) == value for name, value in input_hashes["files"].items())
             and all(sha(score_dir / "resolved_config.json") == sha(prediction_dir / "resolved_config.json") for _ in [0])
         )
     checks["score_hash_and_status"] = status["status"] == "PASS" and summary["status"] == "PASS" and summary["raw_sha256"] == sha(score_dir / "scores.jsonl")
@@ -196,6 +196,15 @@ def validate(prediction_dir: Path, score_dir: Path) -> dict:
         summary["native_positive_exact"] == {lane: sum(row["positive_exact"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]}
         and summary["native_false_positive"] == {lane: sum(row["false_native_positive"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]}
         and summary["native_false_unique"] == {lane: sum(row["false_unique"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]}
+    )
+    checks["typed_algorithm_diagnostics"] = all(
+        all(
+            isinstance(surface[field], dict)
+            and surface[field].get("status") in {"MEASURED", "NOT_APPLICABLE", "NOT_MEASURED"}
+            and (surface[field].get("status") == "MEASURED" or bool(surface[field].get("reason")))
+            for field in ("nearest_competitor_margin", "solver_gap", "proposal_stability")
+        )
+        for row in rows for surface in row["metric_surfaces"]
     )
     result = {"schema_version": "pc2.score_validation.v3", "prediction_run": prediction_dir.name, "score_run": score_dir.name, "checks": checks, "check_count": len(checks), "passed_count": sum(checks.values()), "status": "PASS" if all(checks.values()) else "FAIL", "family_aggregation": _family_aggregation(rows, config["native_lanes"], config["pairs_per_family"])}
     return result
