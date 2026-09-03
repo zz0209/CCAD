@@ -70,9 +70,13 @@ def validate(run_dir: Path) -> dict:
     checks["no_truth_import"] = "ccad.nip_truth" not in imported
     checks["evaluation_intervention_unused"] = not _forbidden_seed_reads(tree)
     checks["config_and_parent_binding"] = sha(ROOT / config["parent_config_path"]) == config["parent_config_sha256"] and sha(ROOT / config["protocol_path"]) == config["protocol_sha256"]
-    checks["grid_contract"] = tuple(config["families"]) == FAMILIES and config["pairs_per_family"] == 1 and config["expected_prediction_rows"] == 132
+    phase = config["phase"]
+    pair_count = 12 * config["pairs_per_family"]
+    expected_rows = pair_count * (len(config["native_lanes"]) + len(config["continuous_references"]))
+    expected_formal = phase == "P2"
+    checks["grid_contract"] = phase in {"P1", "P2"} and tuple(config["families"]) == FAMILIES and config["pairs_per_family"] == (1 if phase == "P1" else 20) and config["expected_prediction_rows"] == expected_rows
     checks["seed_ledger_complete_distinct"] = (
-        len(seed_ledger["rows"]) == 12 and not seed_ledger["formal_seed_consumed"]
+        seed_ledger["phase"] == phase and len(seed_ledger["rows"]) == pair_count and seed_ledger["formal_seed_consumed"] == expected_formal
         and all(set(item["seeds"]) == set(config["required_seed_streams"]) and len(set(item["seeds"].values())) == 6 for item in seed_ledger["rows"])
     )
 
@@ -85,7 +89,7 @@ def validate(run_dir: Path) -> dict:
     lane_counts = {}
     for row in observed_predictions:
         lane_counts[row["lane"]] = lane_counts.get(row["lane"], 0) + 1
-    checks["lane_grid_complete"] = len(observed_predictions) == 132 and set(lane_counts) == set(config["native_lanes"]) | set(config["continuous_references"]) and all(count == 12 for count in lane_counts.values())
+    checks["lane_grid_complete"] = len(observed_predictions) == expected_rows and set(lane_counts) == set(config["native_lanes"]) | set(config["continuous_references"]) and all(count == pair_count for count in lane_counts.values())
     checks["native_outputs_unweighted"] = all(
         row["kind"] != "NATIVE" or row["lane"] == "MSCC"
         or all(list(support) == sorted(set(support)) for support in row["prediction"]["supports"])
@@ -97,9 +101,9 @@ def validate(run_dir: Path) -> dict:
         for row in observed_predictions
     )
     checks["runtime_protocol_complete"] = all(len(row["cost"]["runtime_seconds"]) == 5 and row["cost"]["median_runtime_seconds"] >= 0.0 for row in observed_predictions)
-    checks["formal_seeds_untouched"] = config["formal_seed_manifest_status"] == "UNGENERATED" and not config["formal_seed_consumed"] and not closure["formal_seed_consumed"]
+    checks["formal_seed_state"] = config["formal_seed_manifest_status"] == "UNGENERATED" and not config["formal_seed_consumed"] and closure["formal_seed_consumed"] == expected_formal
     result = {
-        "schema_version": "pc2.p1.prelabel_validation.v1",
+        "schema_version": f"pc2.{phase.lower()}.prelabel_validation.v1",
         "run_id": run_dir.name,
         "checks": checks,
         "check_count": len(checks),

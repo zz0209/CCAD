@@ -15,6 +15,7 @@ ROOT = Path(__file__).parents[1]
 class ParentCompletionP1Tests(unittest.TestCase):
     def setUp(self):
         self.config = json.loads((ROOT / "configs/m1_nip_parent_completion_p1_v1.json").read_text(encoding="utf-8"))
+        self.p2 = json.loads((ROOT / "configs/m1_nip_parent_completion_p2_v1.json").read_text(encoding="utf-8"))
 
     def test_p1_is_fresh_smoke_and_formal_seeds_remain_ungenerated(self):
         self.assertEqual(self.config["phase"], "P1")
@@ -55,6 +56,29 @@ class ParentCompletionP1Tests(unittest.TestCase):
         )
         self.assertEqual(observed.source_mean_contributions.shape, (1, 1))
         self.assertEqual(observed.target_mean_contributions.shape, (1, 20))
+
+    def test_p2_is_formal_fresh_and_scientifically_frozen_to_p1(self):
+        self.assertEqual(self.p2["phase"], "P2")
+        self.assertEqual(self.p2["pairs_per_family"], 20)
+        self.assertEqual(self.p2["expected_prediction_rows"], 12 * 20 * 11)
+        self.assertEqual(self.p2["formal_seed_manifest_status"], "UNGENERATED")
+        self.assertFalse(self.p2["formal_seed_consumed"])
+        self.assertTrue(self.p2["consume_formal_seeds_on_execution"])
+        for key in (
+            "families", "sample_sizes", "required_seed_streams", "g_max", "target_atom_count",
+            "candidate_budget", "epsilon", "exact_tau_ctr", "exact_tau_mu",
+            "approximate_tau_ctr", "approximate_tau_mu", "approximate_families",
+            "tie_tolerance", "native_lanes", "continuous_references", "runtime_protocol",
+            "random_diagnostic_replicates",
+        ):
+            self.assertEqual(self.p2[key], self.config[key], key)
+        self.assertEqual(len(self.p2["p1_gate_bindings"]), 3)
+
+    def test_phase_namespaces_produce_disjoint_seeds(self):
+        import run_m1_nip_parent_completion_p1 as runner
+        p1 = runner.seed_for("protocol", "code", "P1", "N01_structured_split", 0, "structural")
+        p2 = runner.seed_for("protocol", "code", "P2", "N01_structured_split", 0, "structural")
+        self.assertNotEqual(p1, p2)
 
 
 if __name__ == "__main__":

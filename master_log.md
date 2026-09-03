@@ -2194,3 +2194,15 @@ Artifact hashes：scores=`23D88CCA1B9657E06A006CC96CFB47134F5E23B3BD29BC5FA80417
 ### 2026-09-03 14:21 EDT — 登记P1 post-closure score；等待共享CPU资源
 
 Scorer/validator已提交并推送，HEAD/origin=`78ebb6febdc410829b8dbe37bca110eb91b272e3`。登记`M1_NIP_PC2_V1_P1_score_v1_20260903T182134Z`为RUNNING，输入固定为prediction v4及其closure/prelabel hashes。资源盘点显示另一项目正持`cpu-heavy`与`disk-e-io`执行behavior fidelity；本run不绕过lease、不争抢硬件，将由资源管理器排队，取得`cpu-heavy`后再顺序执行score和raw validator。
+
+### 2026-09-03 15:44 EDT — Formal P2执行面静态门PASS；不提前打开labels
+
+Heartbeat `ccad`在P1完整门通过后执行C031裁决。没有把此前implementation缺陷当作理论问题绕开：rank-two decoy、mean/endpoint generator混用、N06伪full-block及group PSC聚合错误均已由C028–C030分别修复，失败run保持immutable。当前选择不是继续调P1或直接冒险启动formal P2，而是先把已修复路径参数化为可审计P2 contract；这能以很小工程成本换取fresh-seed、信息边界和复现实验的可信度。
+
+新增`configs/m1_nip_parent_completion_p2_v1.json`：固定12 families×20 independent pairs×11 lanes=`2640` prediction rows，沿用P1全部科学参数，显式声明执行时消耗formal seeds，并绑定P1 prediction closure `CAB5929D…`、prelabel validation `6243650D…`、score validation `C22FE320…`。Runner现在将phase纳入seed derivation，P1/P2 namespace数值隔离；P2启动前逐hash验证三份P1 gate，且要求score validation完整PASS。Prediction closure与seed ledger按phase记录`formal_seed_consumed`，但truth/evaluation/intervention仍不得在prediction进程读取。
+
+独立prelabel validator已从固定132行泛化为由config计算pair/lane grid，并核验P2的240条six-stream ledger、2640条prediction、逐lane 240条、phase/formal状态及完全重算。Post-closure score validator同样改为config驱动row count，并独立复核positive exact、false positive和false unique汇总，避免只信scorer summary。没有修改family、lane、阈值、`g_max=4`、预算7,462、样本量、runtime 1+5、random32或simplicity rule。
+
+实现run=`M1_NIP_PC2_P2_runner_impltest_v1_20260903T194443Z`。第一次用系统Python调用pytest因该环境未安装pytest，在测试收集前退出且未产生artifact；随后使用既有R004环境与显式`PYTHONPATH`完成targeted 7/7、full 167/167 unittest PASS，四个脚本py_compile PASS。哈希：P2 config=`44EA2215D06EF530A754110EED528028BF23404704678B753344A6014AEBA494`，runner=`A1BEFECE191BE30BCDFDE494D201558FC39B55D39DA56EEB778FF28FCC316E45`，prelabel validator=`82A74ECC7F19FB1C32A923ACFACBC09EBB6B5D649AA8EEE6615C515517D89433`，scorer=`FF326DE664B2555567121F9D8F73CCFE1F866914D0315418FF06A5693988DDE7`，score validator=`AC63FF02C736B9C662A252727ADE7D095BFDBA4554DF3B43052512BC6B37EDD0`，test=`9BDE338B2CF7F0B3CB5C372DC11B4F0201A7CB306ECC79D3346C1FF14D43D311`。
+
+本轮没有创建P2 run目录、没有生成或消耗formal seeds、没有打开P2 labels，也没有恢复M1/R006。下一动作是在提交固定代码后，通过资源管理器申请`cpu-heavy` lease，启动唯一P2 truth-closed prediction run；只有2640-row closure和独立prelabel validator全部PASS后，才能另起post-closure score run。

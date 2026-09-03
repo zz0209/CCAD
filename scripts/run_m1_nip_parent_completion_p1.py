@@ -50,8 +50,8 @@ def now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def seed_for(protocol_hash: str, code_hash: str, family: str, pair: int, stream: str) -> int:
-    value = "||".join((protocol_hash, code_hash, "P1", family, str(pair), stream)).encode()
+def seed_for(protocol_hash: str, code_hash: str, phase: str, family: str, pair: int, stream: str) -> int:
+    value = "||".join((protocol_hash, code_hash, phase, family, str(pair), stream)).encode()
     return int.from_bytes(hashlib.sha256(value).digest()[:8], "big")
 
 
@@ -89,7 +89,7 @@ def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict],
     seed_rows: list[dict] = []
     for family in FAMILIES:
         for pair in range(config["pairs_per_family"]):
-            seeds = {stream: seed_for(config["protocol_sha256"], code_hash, family, pair, stream) for stream in config["required_seed_streams"]}
+            seeds = {stream: seed_for(config["protocol_sha256"], code_hash, config["phase"], family, pair, stream) for stream in config["required_seed_streams"]}
             if len(set(seeds.values())) != len(seeds):
                 raise RuntimeError("derived seed streams collided")
             seed_rows.append({"family_id": family, "pair_index": pair, "seeds": seeds})
@@ -214,16 +214,28 @@ def main() -> int:
     config = json.loads(config_path.read_text(encoding="utf-8"))
     parent_path = ROOT / config["parent_config_path"]
     protocol_path = ROOT / config["protocol_path"]
-    if not config["execution_enabled"] or config["phase"] != "P1" or config["formal_seed_consumed"]:
-        raise ValueError("P1 execution contract is closed")
+    phase = config["phase"]
+    if not config["execution_enabled"] or phase not in {"P1", "P2"} or config["formal_seed_consumed"]:
+        raise ValueError("prediction execution contract is closed")
     if any(config[key] for key in ("truth_opened_in_prediction", "evaluation_opened_in_prediction", "intervention_opened_in_prediction", "real_sae_audit_opened")):
         raise ValueError("prediction information boundary is open")
-    if tuple(config["families"]) != FAMILIES or config["pairs_per_family"] != 1:
-        raise ValueError("P1 smoke grid drift")
+    expected_pairs = 1 if phase == "P1" else 20
+    if tuple(config["families"]) != FAMILIES or config["pairs_per_family"] != expected_pairs:
+        raise ValueError(f"{phase} grid drift")
     if sha(parent_path) != config["parent_config_sha256"] or sha(protocol_path) != config["protocol_sha256"]:
         raise ValueError("parent config or protocol hash drift")
     if set(config["native_lanes"]) != IMPLEMENTED_NATIVE_LANES | {"MSCC"} or set(config["continuous_references"]) != IMPLEMENTED_CONTINUOUS_REFERENCES:
         raise ValueError("implemented lane registry drift")
+    if phase == "P2":
+        if not config.get("consume_formal_seeds_on_execution"):
+            raise ValueError("P2 must consume a fresh formal seed namespace")
+        for binding in config["p1_gate_bindings"]:
+            artifact = ROOT / binding["path"]
+            if not artifact.is_file() or sha(artifact) != binding["sha256"]:
+                raise ValueError(f"P1 gate binding failed: {binding['path']}")
+        gate = json.loads((ROOT / config["p1_gate_bindings"][-1]["path"]).read_text(encoding="utf-8"))
+        if gate.get("status") != "PASS" or gate.get("passed_count") != gate.get("check_count"):
+            raise ValueError("P1 score gate is not a complete PASS")
 
     run_dir.mkdir(parents=True)
     try:
@@ -243,14 +255,15 @@ def main() -> int:
         proposals, predictions, seeds = build_records(config, code_hash)
         if len(predictions) != config["expected_prediction_rows"] or len(proposals) != len(predictions):
             raise RuntimeError("prediction grid is incomplete")
-        write_json(run_dir / "seed_ledger.json", {"schema_version": "pc2.p1.seed_ledger.v1", "phase": "P1", "formal_seed_consumed": False, "rows": seeds})
+        formal_seed_consumed = phase == "P2"
+        write_json(run_dir / "seed_ledger.json", {"schema_version": f"pc2.{phase.lower()}.seed_ledger.v1", "phase": phase, "formal_seed_consumed": formal_seed_consumed, "rows": seeds})
         (run_dir / "proposals.jsonl").write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in proposals), encoding="utf-8")
         (run_dir / "predictions.jsonl").write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in predictions), encoding="utf-8")
-        (run_dir / "stdout.log").write_text(f"sealed {len(predictions)} truth-closed P1 prediction rows\n", encoding="utf-8")
+        (run_dir / "stdout.log").write_text(f"sealed {len(predictions)} truth-closed {phase} prediction rows\n", encoding="utf-8")
         (run_dir / "stderr.log").write_text("", encoding="utf-8")
         write_json(run_dir / "status.json", {"status": "PASS", "started_utc": started, "ended_utc": now(), "truth_opened": False})
         bound = [name for name in config["required_artifacts"] if name not in {"prediction_closure.json", "prelabel_validation.json"}]
-        closure = {"schema_version": "pc2.p1.prediction_closure.v1", "state": "SEALED", "run_id": run_dir.name, "row_count": len(predictions), "code_snapshot_hash": code_hash, "protocol_sha256": config["protocol_sha256"], "truth_opened": False, "formal_seed_consumed": False, "files": {name: sha(run_dir / name) for name in bound}}
+        closure = {"schema_version": f"pc2.{phase.lower()}.prediction_closure.v1", "state": "SEALED", "run_id": run_dir.name, "row_count": len(predictions), "code_snapshot_hash": code_hash, "protocol_sha256": config["protocol_sha256"], "truth_opened": False, "formal_seed_consumed": formal_seed_consumed, "files": {name: sha(run_dir / name) for name in bound}}
         temporary = run_dir / "prediction_closure.json.tmp"
         write_json(temporary, closure)
         os.replace(temporary, run_dir / "prediction_closure.json")

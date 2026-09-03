@@ -43,7 +43,8 @@ def validate(prediction_dir: Path, score_dir: Path) -> dict:
     rows = [json.loads(line) for line in (score_dir / "scores.jsonl").read_text(encoding="utf-8").splitlines() if line]
     predictions = {(row["family_id"], row["pair_index"], row["lane"]): row for row in [json.loads(line) for line in (prediction_dir / "predictions.jsonl").read_text(encoding="utf-8").splitlines() if line]}
     seeds = {(row["family_id"], row["pair_index"]): row["seeds"] for row in json.loads((prediction_dir / "seed_ledger.json").read_text(encoding="utf-8"))["rows"]}
-    checks["row_grid"] = len(rows) == len(predictions) == 132 and len({(row["family_id"], row["pair_index"], row["lane"]) for row in rows}) == 132
+    expected_rows = config["expected_prediction_rows"]
+    checks["row_grid"] = len(rows) == len(predictions) == expected_rows and len({(row["family_id"], row["pair_index"], row["lane"]) for row in rows}) == expected_rows
     truth_module = importlib.import_module("ccad.nip_truth")
     raw_ok = True
     truth_ok = True
@@ -94,6 +95,11 @@ def validate(prediction_dir: Path, score_dir: Path) -> dict:
     checks["truth_classification_recomputed"] = bool(truth_ok)
     checks["continuous_evaluation_recomputed"] = bool(continuous_ok)
     checks["mandatory_controls_present"] = bool(controls_ok) and sum(row["continuous_evaluation"] is not None for row in rows if row["family_id"] == "N08_continuous_only_representation") == 2
+    checks["summary_aggregates"] = (
+        summary["native_positive_exact"] == {lane: sum(row["positive_exact"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]}
+        and summary["native_false_positive"] == {lane: sum(row["false_native_positive"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]}
+        and summary["native_false_unique"] == {lane: sum(row["false_unique"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]}
+    )
     result = {"schema_version": "pc2.p1.score_validation.v1", "prediction_run": prediction_dir.name, "score_run": score_dir.name, "checks": checks, "check_count": len(checks), "passed_count": sum(checks.values()), "status": "PASS" if all(checks.values()) else "FAIL"}
     return result
 

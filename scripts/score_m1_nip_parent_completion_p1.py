@@ -170,6 +170,7 @@ def main() -> int:
             "truth_imported_after_closure_verification": True,
             "native_positive_exact": {lane: sum(row["positive_exact"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]},
             "native_false_positive": {lane: sum(row["false_native_positive"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]},
+            "native_false_unique": {lane: sum(row["false_unique"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]},
             "raw_sha256": sha(raw),
         }
         write_json(score_dir / "summary.json", summary)
