@@ -124,9 +124,11 @@ def score_rows(prediction_dir: Path, config: dict, truth_module) -> list[dict]:
 
         full_block_control = None
         if family == "N06_exact_dense_orthogonal_rotation" and lane == "MSCC":
+            grouped_source = np.sum(evaluation.source_contributions[:, (0, 1), :], axis=1)[:, None, :]
+            grouped_source_mean = np.sum(mean.source_mean_contributions[:, (0, 1)], axis=1)[:, None]
             full_block_control = native_support_metric_surface(
-                evaluation.source_contributions, evaluation.target_contributions,
-                mean.source_mean_contributions, mean.target_mean_contributions,
+                grouped_source, evaluation.target_contributions,
+                grouped_source_mean, mean.target_mean_contributions,
                 evaluation.document_ids, source_atom_id=0, target_ids=(0, 1), epsilon=config["epsilon"],
             )
         scored.append({

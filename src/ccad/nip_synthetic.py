@@ -61,7 +61,10 @@ def generate_nip_observed(family_id: str, *, structural_seed: int, sample_seed: 
         x2 = rng.standard_normal((n, 2))
         angle = structural_rng.uniform(0.55, 1.0) if family_id.startswith("N06") else structural_rng.uniform(0.28, 0.38)
         q = np.asarray([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
-        source = _stack(x2[:, [0]] * np.asarray([1.0, 0.0]))
+        source = _stack(
+            x2[:, [0]] * np.asarray([1.0, 0.0]),
+            x2[:, [1]] * np.asarray([0.0, 1.0]),
+        )
         coords = x2 @ q
         target = _stack(*(coords[:, [j]] * q[:, j] for j in range(2)))
     elif family_id == "N08_continuous_only_representation":

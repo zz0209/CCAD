@@ -2154,3 +2154,15 @@ Heartbeat `ccad`实现`score_m1_nip_parent_completion_p1.py`和独立`validate_m
 独立validator不调用scorer函数：重新生成mean/evaluation tensors，逐support从原始数组重算`d_ctr/d_mu` numerator/denominator，重算continuous residual与truth classification，并检查132-row grid、mandatory字段、N06/N08/N11 controls、score/source/closure/prelabel hash。Implementation run `M1_NIP_PC2_P1_score_impltest_v1_20260903T181950Z` targeted10/10、full163/163、py_compile PASS。Scorer SHA-256=`0C226EDAA99DDCBE10F52ACAFD88841BAB9AE4B0645E1932B86887508ED0EEB0`；validator=`885468DBE61C6433D2BB9F5B683D5C1D06D3D4089591E83CA970A202233D259B`；test=`0F0750D1DAD9D9400E0614B8BC9716939A7211675338F172B4E134E0BC9738E3`。
 
 该PASS仅授权固定代码后对已封存v4执行post-closure P1 score；尚未打开labels或产生metric结果，M1/R006状态不变。若score/validator失败，必须保留独立score run，不能回写prediction或调阈值。
+
+### 2026-09-03 14:24 EDT — P1 score v1研究门FAIL；N06 full-block fixture修复
+
+`M1_NIP_PC2_V1_P1_score_v1_20260903T182134Z`等待另一项目释放`cpu-heavy`后由资源管理器执行，score正常写出132 rows，raw-identity validator 8/8 PASS；所有lease已释放。执行正确不等于研究门通过：N06固定full-block control实测`d_ctr=1.05557`、`BCC=0.65454`、`PSC=0.66667`、source/target ranks=`1/2`，违反协议要求的full-block positive control。因此本run整体记FAIL，不能因validator只检查control存在而追认。Score raw SHA-256=`6AB8392A7909D3DFB007B64B3DBDE069F9B675FB54905142DBD6A0624EA3400E`，summary=`F1EF53F4AFE5C71A33FC76A0429D8ADB0A9ECEB2D8C3AAF7F195B758F7584A26`，validation=`8FD2FAD7D1A7B40E6F344C03261689B8DAEC96D6C123F657481470813D7DEB87`。
+
+根因是N06/N07旧generator只生成source atom0=`x_1 e_1`，而两个target rotated atoms之和为完整`x_1 e_1+x_2 e_2`；truth却标记full group portable。新增C029：source端改为两个原生orthogonal atoms`x_1 e_1`与`x_2 e_2`，target端仍是同一2D rotation；atom0 query、target universe、threshold和native absence truth不变，而source(0,1)与target(0,1)现在逐点相等。Scorer full-block control先聚合两个source atoms；validator从只检查存在强化为必须`d_ctr=0,BCC=1,PSC=1,ranks=2/2`。
+
+新增逐点group-sum regression；首次测试因新test漏`import numpy`而NameError，未运行实验，补import后full164/164 PASS。Repair run=`M1_NIP_PC2_n06_fullblock_impltest_v1_20260903T182408Z`。哈希：generator=`52FC48AF30410ABDDD9EBE2DED6B896122AAE36E6BD38ABDB42BD328921E03BF`，scorer=`5D45D465CED13974991C8107C90A0547D46B2B7A99E04879874AB0E57E110EEA`，validator=`0BD0991FA76F8B3E79264BAA8466915170CB41B2169DCEF719B17B25C41B469B`，test=`9B5DB0254444ADED62EC9A779705F474B0B939255FAE2A5AD27AFEB7C05B1F19`。因generator和code hash改变，必须提交后从prediction开始使用fresh P1 run；v4 prediction与score v1均保持immutable。
+
+### 2026-09-03 14:21 EDT — 登记P1 post-closure score；等待共享CPU资源
+
+Scorer/validator已提交并推送，HEAD/origin=`78ebb6febdc410829b8dbe37bca110eb91b272e3`。登记`M1_NIP_PC2_V1_P1_score_v1_20260903T182134Z`为RUNNING，输入固定为prediction v4及其closure/prelabel hashes。资源盘点显示另一项目正持`cpu-heavy`与`disk-e-io`执行behavior fidelity；本run不绕过lease、不争抢硬件，将由资源管理器排队，取得`cpu-heavy`后再顺序执行score和raw validator。

@@ -83,7 +83,11 @@ def validate(prediction_dir: Path, score_dir: Path) -> dict:
             numerator = float(np.sum((source - target) ** 2))
             continuous_ok &= close(metric["residual_numerator"], numerator)
         if key[0] == "N06_exact_dense_orthogonal_rotation" and key[2] == "MSCC":
-            controls_ok &= row["n06_full_block_control"] is not None
+            control = row["n06_full_block_control"] or {}
+            controls_ok &= close(control.get("d_ctr", float("inf")), 0.0)
+            controls_ok &= close(control.get("bcc_value", -float("inf")), 1.0)
+            controls_ok &= close(control.get("psc_value", -float("inf")), 1.0)
+            controls_ok &= control.get("psc_rank_source") == 2 and control.get("psc_rank_target") == 2
         if key[0] == "N11_downstream_cliff" and supports:
             controls_ok &= row["intervention_evaluation"] is not None
     checks["raw_native_identities"] = bool(raw_ok)

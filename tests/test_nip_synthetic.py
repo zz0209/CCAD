@@ -4,6 +4,8 @@ import ast
 import inspect
 import unittest
 
+import numpy as np
+
 import ccad.nip_synthetic as observed_module
 from ccad.mscc import minimum_support_contribution_correspondence
 from ccad.nip_synthetic import FAMILIES, assert_observed_schema_truth_free, generate_nip_observed, observed_kernels
@@ -11,6 +13,16 @@ from ccad.nip_truth import nip_truth
 
 
 class NIPSyntheticRegistryTests(unittest.TestCase):
+    def test_n06_full_rotation_block_is_exactly_portable(self):
+        observed = generate_nip_observed(
+            "N06_exact_dense_orthogonal_rotation", structural_seed=913,
+            sample_seed=1913, n=512,
+        )
+        source = np.sum(observed.source_contributions[:, (0, 1), :], axis=1)
+        target = np.sum(observed.target_contributions[:, (0, 1), :], axis=1)
+        self.assertEqual(observed.source_contributions.shape[1], 2)
+        self.assertTrue(np.allclose(source, target, atol=1e-12, rtol=1e-12))
+
     def test_registry_has_exactly_the_twelve_frozen_families(self):
         self.assertEqual(len(FAMILIES), 12)
         self.assertEqual(len(set(FAMILIES)), 12)
