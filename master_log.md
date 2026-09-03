@@ -2179,6 +2179,18 @@ Score v2 scorer正常写出132 rows，但强化validator 7/8，`mandatory_contro
 
 Prediction v5不包含metric adapter/scorer且support已封存，其closure仍有效；修复只影响post-closure measurement。因此提交后可对同一v5 prediction用新的score suffix重算，无需重新生成prediction，也不得改v5 artifact。
 
+### 2026-09-03 15:33 EDT — 启动group-aware P1 score v3
+
+C030修复已提交并推送，HEAD/origin=`d7cfa4d5ca8eae5269537e14c39aedb43291fdf0`。登记`M1_NIP_PC2_V1_P1_score_v3_20260903T193310Z`为RUNNING，输入仍为sealed prediction v5（closure `CAB5929D…`）；只重算post-closure metrics和control，不重新选择任何support。
+
+### 2026-09-03 15:34 EDT — PC2 P1完整score门PASS；允许进入P2实现
+
+Score v3与强化validator均正常完成，8/8 checks PASS；`cpu-heavy` lease释放并复验所有资源free。MSCC在7个positive families上7/7 exact minimum-support/multiplicity，5个negative families零false native positive；其余native baselines均零false positive，但OMP、contribution singleton、PW-MCC、dustbin、OT-mass和spectral各仅1/7 exact，greedy/random为0/7。因此预写simplicity rule不触发：OMP没有匹配MSCC correctness，无需比较cost/runtime即可拒绝promotion。
+
+Mandatory controls全部通过：N06 full block `d_ctr=0,BCC=1,PSC=1,ranks=2/2`，projector distance约`7.34e-32`；N08 signed与nonnegative continuous held-out normalized residual均为0且converged；N09 cancellation ratio=`211.73`；N10 active documents=2、document ESS=`1.76`；N11 held-out `d_ctr≈0.01`，独立intervention cliff RMSE=1、smooth RMSE=0.1、normalized margin=0.05。上述仍是单pair/family synthetic smoke，不是formal统计或真实SAE证据。
+
+Artifact hashes：scores=`23D88CCA1B9657E06A006CC96CFB47134F5E23B3BD29BC5FA804179750AE3982`，summary=`754D4F37E75BCDBAC66AC1AC73D897CC2CB74DFE283B17D9360EFA39DDF9F3B0`，validation=`C22FE3200D890CC6EE3E6A0FE0A22E3BAAA31A2EAB22C1AF73B80D9CE2431B47`，manifest=`B0CD214B6EE70AEFA0958C21FEA01FAF6266617C320AEA1B3367D8D1235595DB`。P1 prediction v5与score v3现共同PASS，formal P2 seeds仍UNGENERATED；只授权下一轮实现并静态审计20 pairs/family的P2 config/runner，不恢复M1 parent或R006。
+
 ### 2026-09-03 14:21 EDT — 登记P1 post-closure score；等待共享CPU资源
 
 Scorer/validator已提交并推送，HEAD/origin=`78ebb6febdc410829b8dbe37bca110eb91b272e3`。登记`M1_NIP_PC2_V1_P1_score_v1_20260903T182134Z`为RUNNING，输入固定为prediction v4及其closure/prelabel hashes。资源盘点显示另一项目正持`cpu-heavy`与`disk-e-io`执行behavior fidelity；本run不绕过lease、不争抢硬件，将由资源管理器排队，取得`cpu-heavy`后再顺序执行score和raw validator。
