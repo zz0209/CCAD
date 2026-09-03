@@ -1954,3 +1954,17 @@ Heartbeat `ccad`重新核验I1 score v2 status、immutable prediction closure及
 Truth-blind predictor在lightweight CPU上用时约91.1分钟完成1,200/1,200 rows；长耗时来自每个paired cap额外冻结centered-only candidate的组合枚举，不涉及GPU或共享重型资源。进程最后原子封存closure；raw SHA-256=`6BF333525EB2482C465575A255FF0C931C31FFB9D3D192107EB1E42923417879`，closure=`26D18520F05A1476C3ACF11377BB5E27D039A4072753A93A7C723D13756A4D5F`。
 
 独立pre-label validator 20/20 PASS，覆盖bound files/source/input/config/protocol/diagnostic绑定、12×20×5 paired grid与seed、proposal/prediction hashes、逐row centered candidate重生及N11 approximate observable contract；validation SHA-256=`F26C4B135DA9C2FD126B55766BF33B58D723082BADA533D8F82DA4594FA02EC6`。`truth_opened=false`，formal score目录不存在，D2 seeds、held-out和real audit均未打开。该PASS仅证明formal D1 prediction及信息顺序合规，尚无label/attribute结论；下一工作单元可先复核closure后登记formal v3 score。
+
+## 2026-09-03 11:58 EDT — 启动formal v3 D1 post-closure score
+
+Heartbeat `ccad`重新读取formal prediction的resolved config、closure、status及20/20 pre-label validation，并复核closure SHA-256仍为`26D18520F05A1476C3ACF11377BB5E27D039A4072753A93A7C723D13756A4D5F`、HEAD与origin/main均为`0a3d1b187208668abe070056ed70ffcc11030291`。只有完成这些检查后才登记唯一run `M1_NIP_D1_score_v3_formal_v1_20260903T155800Z`为RUNNING。
+
+Scorer必须再次在创建score目录和动态导入truth前核验closure及所有绑定，并写独立目录；随后独立validator逐row重建observable tensors与全部identification/attribute输出。该run只打开formal D1 labeled synthetic development，不生成D2 seed，也不打开held-out或real audit；失败不允许修改prediction artifact。
+
+### 2026-09-03 11:59 EDT — formal v3 D1 score PASS；cap20 selected
+
+Formal scorer与独立validator均正常完成。Validator 10/10 PASS，对1,200条rows逐行重算identification与orthogonal measurements、cap aggregation和词典序selection；score raw SHA-256=`C2D9C6C24EEF5BA3F84AF92B8500759320F6B2E17AA0BD91A4C8D5AA847BEF60`，validation=`55A32690694521D87FBE2748D0E0241417701927645804EAB6114C8FF23C3ACA`，输入closure仍为`26D18520F05A1476C3ACF11377BB5E27D039A4072753A93A7C723D13756A4D5F`。
+
+冻结词典序选择cap20：7个positive families的140/140 pairs精确恢复minimum support set/cardinality/multiplicity；5个negative families共100 pairs无false native positive；false unique与budget refusal均为0。Selected-cap orthogonal suite也全部20/20符合预冻结属性：N09 cancellation ratio范围114.95–332.68并判unsafe；N10 active documents恒2且document ESS最大1.99981并判insufficient；N11 cliff RMSE恒1.0、smooth最大0.1、minimum normalized margin约0.05并判causal fail；N12 `d_mu≈1`并判mean mismatch。
+
+保守解释：这是formal D1 labeled synthetic development，支持在v3构造内冻结cap20与属性测量，但不是fresh D2 confirmation、真实SAE、held-out contribution或C1/C2证据。`M1_NIP_protocol_v3`仍TODO；D2 seeds仍未生成。下一轮必须先产生selection-freeze manifest与D2 config，绑定D1 prediction/score/validators、selected cap、protocol/diagnostic/scorer hashes，并经静态审计后才可原子生成fresh D2 seeds。
