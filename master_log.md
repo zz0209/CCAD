@@ -2068,3 +2068,11 @@ Heartbeat `ccad`继续用experimental-design规范修复P0的baseline操作化�
 Static validator由17个门扩展到21个，新检查baseline必需字段、关键数值、common native rule、runtime protocol和4个来源registry。第一次PC2 P0调用数值21/21，但run ID预分配时标晚于实际finish，作为recordkeeping FAIL保留，不追认。终态`M1_NIP_PC2_V1_P0_static_v2_20260903T172830Z` 21/21 PASS，manifest独立重算PASS，validation SHA-256=`84CA503D59526E37CEAA3E03B756AF12F3AA519CD7EE9965DFC3DC1F8A3BC3F6`，manifest SHA-256=`56D11344CDF370941BEAA8AAB18FCD88F20270808608F77C8059590741348F22`；全项目142/142 tests PASS。
 
 C027由READY-FOR-SCREEN转ADMIT，只表示该contract获准进入P1 implementation，不表示baseline有效或M1过门。下一轮先实现统一baseline API与deterministic conformance tests，在源码/输入hash封存前仍不生成P1 seeds。R006继续BLOCKED。
+
+## 2026-09-03 13:40 EDT — baseline API tranche 1 PASS；P1继续关闭
+
+Heartbeat `ccad`按PC2 v2实现`src/ccad/nip_baselines.py`的第一批truth-free API：`CONTRIBUTION_NEAREST_ATOM`、单source范围`PW_MCC_HUNGARIAN`、`GREEDY_DECODER_COSINE`、`BINARY_FORWARD_OMP`、`RANDOM_MATCHED_GROUP`，以及 signed least-squares与deterministic projected-gradient NNLS references。Native API只接收source/target discovery contributions、独立mean contribution、固定阈值/预算/种子；不存在truth、label、evaluation、intervention或planted-support参数。OMP和continuous fit的系数均不进入native endpoint，native output只用unweighted support重算。
+
+测试过程保留三个实现级发现：首次test helper误覆盖`unittest.TestCase.run`而在collection时TypeError，改名后修复；原测试假设OMP应恢复N01，但冻结的unit-L2 selection会使`0.4x/0.6x`两列完全tie，实现正确按协议`SELECTION_TIE/BUDGET_REFUSAL`；未用index破tie或修改规则追求好结果，而是把该负结果写入测试，另加无tie二维planted case验证OMP可恢复；同时修复了`g_max`可合法大于tiny atom count却被API误拒的边界bug。
+
+终态targeted 9/9，full 151/151 PASS。源码SHA-256=`9EA6A52344AB1611942A41751A1BFBAABDF84F8CCD54714F188742404D990576`，test SHA-256=`20234D4E77B154141E4CB1F1D854BCCCB2B0CE6F00D49E9D109A4BBFCDE36E06`。`DUSTBIN_SINKHORN`、`OT_MASS_NATIVE_SUPPORT`和`SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT`仍显式`NotImplementedError`，测试要求其fail loudly；因此该run仅在tranche-1范围PASS，P1仍不得启动，formal seeds/truth/evaluation/intervention未生成/未打开。下一轮实现和验证剩3条native lanes，然后再做全registry completeness gate。R006继续BLOCKED。
