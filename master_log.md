@@ -1832,3 +1832,17 @@ Heartbeat `ccad`按新AGENTS顺序恢复状态，确认本地`HEAD`与`origin/ma
 prediction runner正常退出并最后写入sealed closure。1,200/1,200 rows覆盖12 families×20 pairs×5 paired caps；raw SHA-256=`3CCF6D22D592CB9351CE282826580352D8ABC4BF01E6786AF42466C09F21450D`，closure SHA-256=`0688C54FD9A1AD26ED5C8A32BCFC26ABE57B9EBB279BE25FCA166C84354F0C4B`。独立validator在不导入truth的prediction-only模式下14/14 PASS，重算所有bound file、源码/输入/config/protocol、predictor AST、paired grid/seeds以及1,200个proposal/prediction hashes；pre-label validation SHA-256=`275E415E4DE0AF9199B9E4F3479DFF5E3C5F7001447ABFBD20044D54647B6E17`。
 
 本轮严格停止在pre-label边界：没有创建formal score目录、没有导入D1 truth，也没有生成D2 seeds或打开held-out/real audit。该PASS证明formal D1 predictions可追溯且信息顺序合规，但尚无recovery/selection结果，不支持M1/C1/C2。下一工作单元才可在再次核验closure hash后预登记formal score run；score若失败不得修改prediction目录。
+
+## 2026-09-03 01:38 EDT — 启动 formal D1 post-closure score
+
+Heartbeat `ccad`重新读取AGENTS、最新master log、M1-NIP plan/tracker以及formal prediction的resolved config、status、summary与pre-label validation。复算closure仍为`0688C54FD9A1AD26ED5C8A32BCFC26ABE57B9EBB279BE25FCA166C84354F0C4B`，pre-label validator仍为14/14 PASS，`truth_opened=false`；本地HEAD与origin/main均为`d6b891cc192b7f530501942eaf2081663088e4e9`。
+
+只有完成上述核验后，才预登记唯一run `M1_NIP_D1_score_formal_v1_20260903T053800Z`为RUNNING。score进程读取sealed formal prediction但写入独立目录，先内置重复closure核验、后动态导入D1 truth；随后由持久化独立validator重新验证prediction并逐row重评分/重算selection。任务为lightweight CPU，无resource lease。D2 seeds、held-out eval与real audit保持关闭；任何失败均停止D2。
+
+### 2026-09-03 01:39 EDT — formal D1 score PASS；cap20 selected
+
+score进程正常完成且未修改prediction closure；独立validator对formal prediction 14项与score 8项共22/22 PASS，覆盖1,200条prediction/score绑定、逐row truth重评分、cap aggregate和词典序selection重算。score raw SHA-256=`4DE3EAFFEEB59152C7060B531D54665FBC41131E6E33E3C52FBC0A80B65A3D41`，summary=`30C61F9AF64C78035F497CFE4E6D04D945DA4CB2B83770CB85C34326774C12EB`，independent validation=`CF84FA68BE5900A6258A0DFEDDAB4F2C5E98C355AA19F095B3C0DD59FD54073E`，输入closure复核仍为`0688C54FD9A1AD26ED5C8A32BCFC26ABE57B9EBB279BE25FCA166C84354F0C4B`。
+
+冻结词典序选择cap20。cap 4/8/12/16/20的positive exact pair counts为20/40/80/120/140；cap8和12各有20个false-unique，cap4/16/20为0；所有caps的false-native-positive和budget refusal均为0。cap20在7个positive families的140/140 pairs上恢复精确minimum support set/cardinality/multiplicity，在5个native-absent families的100 pairs上0 false native positive，且false-unique/refusal为0。
+
+保守解释：这是D1 labeled synthetic development证据，证明v2构造内的minimum-support/ambiguity/absence-lane行为并选出cap20；它不是fresh D2 confirmation、真实SAE、held-out contribution或causal证据，不能支持C1/C2。由于N05预写第一充分cap20，该选择主要验证压力构造与solver，不是可外推的真实超参学习。D2 seeds仍未生成；下一轮必须先产生独立selection-freeze/D2 config，绑定selected cap、D1 closure/score/validator、source/config/environment hashes并通过静态审计，之后才可原子生成fresh D2 seeds。M1/R001–R003与R006/M2状态暂不改变。
