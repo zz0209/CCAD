@@ -2284,3 +2284,9 @@ Committed the minimal closure repair at `b7688d8`, then executed `M1_NIP_PC2_V3_
 Fresh same-family GPT-5.6-Sol ultra final audit `M1_NIP_PC2_P3_FINAL_AUDIT_V3_20260903.{md,json}` returned overall PASS. Direct audit found 0/2,640 fairness support-count mismatches, 0/2,660 missing typed diagnostic reasons, 160/160 reproducible MSCC competitor margins, 1,440 unique fresh seeds with zero v2 overlap, clean Git state, and zero code/input binding mismatches. A/B/D/E/F/G/H PASS；C只有审计时tracker尚未登记的行政性WARN，按AGENTS §5.1不阻塞。Trace=`.aris/traces/experiment-audit/2026-09-03_run03/reviewer_final.md`.
 
 Gate裁决：prospective M1-NIP synthetic parent现在PASS，R006从BLOCKED恢复为TODO；历史R001–R003、corrective和早期PC2 failures保持不变。此结论只授权M2真实SAE配置/质量工作，不构成real-SAE C1-NIP或C2-NIP证据。Synthetic线到此停止，不再追加family、selector或重跑。
+
+## 2026-09-03 18:05 EDT — R006 resumed; prospective k128 two-seed quality gate frozen
+
+R006恢复后没有重开失败的automatic selector。基于既有、audit未开的seed-0 calibration，k128是唯一同时落入冻结FVE与CE-recovered margin的候选，因此选择“保留sparse probe为诊断、以明示工程取舍执行可逆两-seed门”。这不是全局最优k主张；seeds1/2任一失败即停止，不能删seed、调阈值或向k256扩展。
+
+新增`configs/r006c_k128_seed{1,2}_v1.json`和前瞻gate `configs/r006c_k128_two_seed_gate_v1.json`。两seed固定Pythia-160M commit、layer5 resid-post、sparsify commit、width3072、k128、同一131,072-token document order与32,768-token validation。运行前阈值：FVE≥.93、CE recovered≥.85、actual L0=128、alive≥.95、最小nonzero firing≥16、decoder norm error≤5e-6；两seedFVE range≤.03、CE range≤.05、alive range≤.05；吞吐≥10k tok/s、peak allocated VRAM≤2GiB，并要求全部input/checkpoint/hook/logit checks。c_dec只报告，不作为单一selector。`run_r006b_topk_capacity.py`仅补真实Git HEAD/cleanliness记录；full171/171与py_compile PASS。GPU-0资源管理器free，nvidia-smi基线1006/16303MiB，locked runtime ledger仍READY。

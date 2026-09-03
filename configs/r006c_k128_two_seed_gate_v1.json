@@ -1,0 +1,21 @@
+{
+  "schema_version": "r006c.two_seed_quality_gate.v1",
+  "decision": "diagnostic_sparse_probe_retained_engineering_choice_k128",
+  "decision_rationale": "k128 was the only frozen calibration candidate within both FVE and CE-recovered margins; this is a reversible two-seed gate, not a global optimum claim",
+  "seed_run_configs": ["configs/r006c_k128_seed1_v1.json", "configs/r006c_k128_seed2_v1.json"],
+  "minimum_fve": 0.93,
+  "minimum_ce_recovered": 0.85,
+  "required_actual_l0": 128,
+  "minimum_alive_fraction": 0.95,
+  "minimum_nonzero_firing_count": 16,
+  "maximum_decoder_norm_error": 0.000005,
+  "maximum_pair_fve_range": 0.03,
+  "maximum_pair_ce_recovered_range": 0.05,
+  "maximum_pair_alive_fraction_range": 0.05,
+  "minimum_train_tokens_per_second": 10000,
+  "maximum_peak_allocated_vram_bytes": 2147483648,
+  "required_checks": ["train_token_hash", "validation_token_hash", "global_step_exact", "one_base_forward_per_train_step", "loss_trace_complete", "safe_checkpoint_present", "exact_checkpoint_present", "hook_oracle_exact", "capture_logits_exact", "ce_denominator_positive", "metrics_finite", "selected_l0_exact"],
+  "c_dec_role": "report_only_not_selection_scalar",
+  "failure_rule": "any per-seed or pair gate failure stops R006; do not delete or rerun the seed",
+  "claim_limit": "pre-audit SAE quality/configuration evidence only; not C1-NIP or C2-NIP"
+}

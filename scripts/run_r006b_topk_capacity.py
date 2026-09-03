@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 import platform
+import subprocess
 import sys
 import time
 import traceback
@@ -222,6 +223,11 @@ def main() -> int:
         if path.is_file() and path.name != "pytorch_model.bin":
             inputs.append(file_entry(path, f"Hugging Face {cfg['model_id']}@{cfg['model_revision']}", cfg["model_license"], "model_or_tokenizer"))
     write_json(run_dir / "inputs.json", {"inputs": inputs})
+    try:
+        git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+        git_status = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True, capture_output=True).stdout.splitlines()
+    except (OSError, subprocess.CalledProcessError):
+        git_head, git_status = None, None
     write_json(run_dir / "manifest.json", {
         "schema_version": cfg["schema_version"], "run_id": cfg["run_id"], "run_parent": cfg["run_parent"],
         "purpose": cfg["purpose"], "milestone": cfg["milestone"], "evidence_level": cfg["evidence_level"],
@@ -232,7 +238,7 @@ def main() -> int:
         "seeds": {"init": cfg["init_seeds"], "data_order": cfg["data_order_seed"]},
         "resource_lease": "gpu-0 via SAE Lab resource_manager.run", "resource_lease_reason": "Pythia-160M training and intervention evaluation",
         "model_id": cfg["model_id"], "model_revision": cfg["model_revision"], "tokenizer_revision": cfg["tokenizer_revision"],
-        "git_status": "project directory is not a Git repository; exact code/input hashes recorded",
+        "git_head_at_run": git_head, "git_status_porcelain": git_status,
     })
     write_json(run_dir / "status.json", {"status": "RUNNING", "updated_utc": started.isoformat()})
     record = None
