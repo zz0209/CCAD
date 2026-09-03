@@ -10,6 +10,7 @@ from scripts.validate_m1_nip_parent_completion_v1 import (
     EXPECTED_NATIVE_LANES,
     EXPECTED_REFERENCES,
     EXPECTED_STREAMS,
+    validate,
 )
 
 
@@ -41,6 +42,11 @@ class ParentCompletionProtocolTests(unittest.TestCase):
         self.assertTrue(self.config["prelabel_validation_must_pass_before_truth_import"])
         self.assertTrue(self.config["complete_universe_requires_gmax_cover_target_count"])
         self.assertEqual(self.config["scalable_negative_identification"], "UNRESOLVED")
+
+    def test_static_validator_rejects_unfrozen_baseline_parameters(self):
+        result = validate(ROOT, ROOT / "configs/m1_nip_parent_completion_v1.json")
+        self.assertFalse(result["checks"]["baseline_operationalization"])
+        self.assertEqual(result["status"], "FAIL")
 
 
 if __name__ == "__main__":

@@ -2048,3 +2048,13 @@ Heartbeat `ccad`按experimental-design流程对parent audit缺口做了前瞻性
 P0静态validator首次调用v1数值16/16，但只生成`validation.json`，违反项目artifact contract，故保留为FAIL。修复validator使其同时产生resolved config、environment、code/input hashes、status、stdout/stderr与manifest后，v2数值与artifact通过，但run ID时标被预分配到晚于实际finish，作为recordkeeping FAIL保留，不追认。
 
 终态`M1_NIP_PC1_V1_P0_static_v3_20260903T170630Z` 16/16 PASS；独立PowerShell重算manifest全部匹配，validation SHA-256=`E01F6AEE4C30F2C9AF79AC93AE072C7065516DB6FF1A388263423532789DE03B`，manifest SHA-256=`90D4BF70531C147AFD66F78B3015B1403C5B4B170B48B9A758BF1B09C5314087`。全项目unittest 133/133 PASS。该P0只授权下一轮实现P1 truth-closed one-pair-per-family metric/baseline smoke；不生成formal seeds，不改变M1 parent FAIL或R006 BLOCKED。
+
+## 2026-09-03 13:17 EDT — raw metric adapter PASS；P0因baseline操作化不完整勘误为FAIL
+
+Heartbeat `ccad`在启动P1前实现`src/ccad/nip_metric_surface.py`。Adapter只接收observed tensors与已冻结support，不接收truth、label、family rule、proposal或selection；持久化centered/mean residual的raw numerator/denominator、BCC raw components、synthetic atom-direction PSC/ranks/angles、mean vectors、effective rank/condition、cancellation/leverage、occupancy与document ESS。只能在post-closure scoring中得到的proposal recall/solver/end-to-end/coverage字段显式记为`NOT_APPLICABLE_PRELABEL`，不伪造数值。
+
+Metric adapter定向测试覆盖N01 raw identity、N06 PSC rank boundary、N09 cancellation、N10 document evidence、N12 centered/mean separation与冻结schema全字段；22/22 targeted PASS。在static validator新增第17个`baseline_operationalization`检查后，最新全项目141/141 tests PASS，且测试确认当前v1 config必须被该检查判FAIL。这是implementation-only证据，未运行P1也未打开任何新seed/label/evaluation。
+
+随后对baseline API做实现前审计，发现P0 v3的16个检查只验证了9个native lane和2个continuous reference的名称存在，却没有冻结dustbin Sinkhorn的cost/entropy/dustbin/convergence/support extraction、OT-mass threshold、OMP coefficient/stopping/native conversion、spectral graph/rank、random matching replicates及continuous solver参数。因此直接编码会引入未登记的researcher degrees of freedom。P0 v3已勘误为FAIL，P1保持未启动，formal seeds仍`UNGENERATED`。
+
+本轮在2026-09-03检索并记录了Scikit-learn OMP官方规范（fixed cardinality与residual tolerance是不同regime）、Cao et al. 2026 SAE semantic OT、Cohen-Indelman & Indelman 2024 dustbin partial matching，以及Gerasimov et al. 2026 cross-seed stable subspace路线；来源与设计影响详见`M1_NIP_BASELINE_PARAMETER_AUDIT_20260903_131700.md`。新登记C027；下一轮必须先以前瞻性suffix冻结参数并扩展P0 validator，然后才能运行P1。M1/R006仍FAIL/BLOCKED，无需用户即时裁决。

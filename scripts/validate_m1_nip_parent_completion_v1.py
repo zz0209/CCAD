@@ -33,6 +33,17 @@ EXPECTED_CONTROLS = {
     "N08_NONNEGATIVE_CONTINUOUS_REFERENCE", "N11_INDEPENDENT_INTERVENTION_STREAM",
     "N11_SMOOTH_CONTROL",
 }
+REQUIRED_BASELINE_PARAMETER_FIELDS = {
+    "PW_MCC_HUNGARIAN": {"similarity", "assignment", "tie_rule", "refusal_rule"},
+    "GREEDY_DECODER_COSINE": {"similarity", "support_cap", "tie_rule", "stopping_rule"},
+    "DUSTBIN_SINKHORN": {"cost", "entropy_regularization", "dustbin_cost", "marginals", "tolerance", "max_iterations", "support_extraction"},
+    "BINARY_FORWARD_OMP": {"column_normalization", "coefficient_domain", "support_cap", "stopping_rule", "tie_rule", "native_support_conversion"},
+    "OT_MASS_NATIVE_SUPPORT": {"transport_representation", "solver", "regularization", "mass_threshold", "tie_rule", "native_support_conversion"},
+    "SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT": {"affinity", "graph_rule", "cluster_rule", "rank_rule", "support_extraction"},
+    "RANDOM_MATCHED_GROUP": {"matched_object", "replicates", "seed_stream", "support_cap"},
+    "SIGNED_CONTINUOUS_REGRESSION": {"solver", "fit_intercept", "centering", "tolerance", "regularization"},
+    "NONNEGATIVE_CONTINUOUS_REGRESSION": {"solver", "fit_intercept", "centering", "tolerance", "regularization"},
+}
 
 
 def sha256(path: Path) -> str:
@@ -57,6 +68,11 @@ def validate(root: Path, config_path: Path) -> dict:
         "fixed_search_contract": config["g_max"] == 4 and config["target_atom_count"] == 20 and config["atom_cap"] == 20 and config["candidate_budget_per_query_per_native_lane"] == 7462,
         "all_native_lanes": set(config["registered_native_lanes"]) == EXPECTED_NATIVE_LANES,
         "all_non_native_references": set(config["registered_non_native_references"]) == EXPECTED_REFERENCES,
+        "baseline_operationalization": all(
+            name in config.get("baseline_parameters", {})
+            and fields <= set(config["baseline_parameters"][name])
+            for name, fields in REQUIRED_BASELINE_PARAMETER_FIELDS.items()
+        ),
         "raw_metric_surface": config["metric_surface_schema"] == "metric_surface.v2-nip" and CRITICAL_METRICS <= set(config["mandatory_metric_fields"]),
         "family_controls": set(config["mandatory_family_controls"]) == EXPECTED_CONTROLS,
         "prelabel_gate": config["prelabel_validation_must_pass_before_truth_import"] and "prelabel_validation.json" in config["prelabel_required_artifacts"],
