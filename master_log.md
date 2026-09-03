@@ -1800,3 +1800,9 @@ score v1数值路径退出0：按cap的positive exact pairs为1/2/4/6/7，false-
 I1结果与v1调试数值一致：cap 4/8/12/16/20的positive exact pairs为1/2/4/6/7；所有cap的false-native-positive与budget refusal为0；cap8/12各1个false-unique，cap4/16/20为0；按冻结次序选择cap20。prediction closure先通过全量验证，之后才动态导入truth，且runtime不参与选择。
 
 保守解释：I1只证明两阶段信息隔离、cap压力和artifact contract端到端可执行；它不是formal D1、M1、C1/C2或真实SAE证据。尤其cap20由预写N05 rank band推动，只能视为synthetic stress gate，不能外推成真实SAE matcher的cap选择。formal D1/D2 seeds仍UNGENERATED，real audit关闭，R006/M2仍BLOCKED。下一轮应先形成formal D1 execution config与持久化独立prediction/score validators，静态复核20 pairs/family与seed namespace，再登记formal prediction run；不可直接复用I1 scorer结果。
+
+## 2026-09-03 01:03 EDT — GitHub规范远程与及时提交治理规则
+
+用户明确要求将GitHub仓库及“重要更新及时提交”写入`AGENTS.md`。新增第8.1节，将`https://github.com/zz0209/CCAD.git`与`main`登记为规范远程/默认分支，并将`.gitignore`白名单内项目本体的重要、已验证更新之常规`commit`/`push`记为持续授权。重要更新包括实质代码、可执行config/runner/validator/test、已同步master log的实验/失败/修复/gate/裁决，以及经授权更新的理论PDF。
+
+规则要求提交前检查并发改动、白名单、密钥/大文件、测试或validator，禁止`git add -f`绕过忽略；推送后核对本地HEAD与`origin/main`并报告commit hash。持续授权不扩展到release、仓库可见性、远程分支/标签变更、force push、历史改写、被忽略内容、其他远程或付费服务。`runs/`、`data/`、权重、原始统计、其他研究文档和本地环境继续本地保存并以path/hash追溯。该治理更新不改变任何LOCKED协议、实验结果、M1/M2 gate或C1/C2证据。
