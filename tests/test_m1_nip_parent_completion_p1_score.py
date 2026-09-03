@@ -32,6 +32,7 @@ class ParentCompletionP1ScoreTests(unittest.TestCase):
         text = (ROOT / "scripts/validate_m1_nip_parent_completion_p1_score.py").read_text(encoding="utf-8")
         self.assertIn('checks["raw_native_identities"]', text)
         self.assertIn('checks["continuous_evaluation_recomputed"]', text)
+        self.assertIn('expected_n08_controls = 2 * config["pairs_per_family"]', text)
 
 
 if __name__ == "__main__":

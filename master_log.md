@@ -2206,3 +2206,25 @@ Heartbeat `ccad`在P1完整门通过后执行C031裁决。没有把此前impleme
 实现run=`M1_NIP_PC2_P2_runner_impltest_v1_20260903T194443Z`。第一次用系统Python调用pytest因该环境未安装pytest，在测试收集前退出且未产生artifact；随后使用既有R004环境与显式`PYTHONPATH`完成targeted 7/7、full 167/167 unittest PASS，四个脚本py_compile PASS。哈希：P2 config=`44EA2215D06EF530A754110EED528028BF23404704678B753344A6014AEBA494`，runner=`A1BEFECE191BE30BCDFDE494D201558FC39B55D39DA56EEB778FF28FCC316E45`，prelabel validator=`82A74ECC7F19FB1C32A923ACFACBC09EBB6B5D649AA8EEE6615C515517D89433`，scorer=`FF326DE664B2555567121F9D8F73CCFE1F866914D0315418FF06A5693988DDE7`，score validator=`AC63FF02C736B9C662A252727ADE7D095BFDBA4554DF3B43052512BC6B37EDD0`，test=`9BDE338B2CF7F0B3CB5C372DC11B4F0201A7CB306ECC79D3346C1FF14D43D311`。
 
 本轮没有创建P2 run目录、没有生成或消耗formal seeds、没有打开P2 labels，也没有恢复M1/R006。下一动作是在提交固定代码后，通过资源管理器申请`cpu-heavy` lease，启动唯一P2 truth-closed prediction run；只有2640-row closure和独立prelabel validator全部PASS后，才能另起post-closure score run。
+
+### 2026-09-03 15:50 EDT — 启动formal P2 truth-closed prediction
+
+用户要求在不牺牲严谨性的前提下避免过度工程化并实质推进。状态恢复确认P2执行contract已在HEAD/origin=`99cc92544c6a51c8acb30f2e169390c537390f43`冻结、工作树无tracked并发修改、P1三项gate binding仍存在且资源管理器四类资源均free。现登记唯一run `M1_NIP_PC2_V1_P2_predict_v1_20260903T195052Z`为RUNNING，并直接执行12 families×20 fresh pairs×11 lanes的formal truth-closed prediction。
+
+本run只申请`cpu-heavy` lease；正式seed由phase-bound P2 namespace首次生成。Runner完成后在同一冻结代码上另行取得lease执行独立prelabel full recomputation。若两者全部PASS，本工作轮直接进入post-closure score，不再增加新的工程准备门；若失败则保留run并只修复被证实的缺陷。Truth、evaluation与intervention在prediction/prelabel阶段保持关闭。
+
+### 2026-09-03 15:57 EDT — P2 prediction/prelabel PASS；直接启动formal score
+
+Formal prediction在受管`cpu-heavy` lease内完成2640/2640 rows并原子封存；独立prelabel validator随后另持lease，从run-local snapshots、resolved config、240-pair six-stream ledger和code aggregate重跑全grid，17/17 checks PASS。两次lease均已释放。Closure SHA-256=`54331A1A957C7790D892D1866472119B639968355D6FC24C353A17C05FE2A3E9`，prelabel validation=`6381CCA3EF6A6A576F74AD99C05F9EE2BC7E95593F89F9C44F4299C87A54EC6C`。
+
+按用户要求不再增加工程准备轮，现登记`M1_NIP_PC2_V1_P2_score_v1_20260903T195746Z`为RUNNING。Scorer只能读取冻结support，并在验证上述closure/prelabel hashes后打开formal truth、evaluation和N11 intervention streams；完成后立即运行独立raw-identity validator并判定预写all-pair gates。
+
+### 2026-09-03 16:02 EDT — Formal P2结果PASS；保留validator v1 FAIL并最小修复
+
+P2 scorer完成2640 rows。MSCC在7个positive families×20 pairs上140/140 exact minimum-support/multiplicity，5个negative families×20 pairs上0/100 false native positive，全240 pairs 0 false unique、0 budget refusal；140/140 positive proposal recall。OMP、contribution singleton、PW-MCC、dustbin、OT-mass与spectral各20/140 exact，且全部只解决singleton N11；greedy 0/140，random 2/140并有1次false unique。MSCC相对最强deterministic challenger提高85.7 percentage points、exact count为7×。OMP correctness远未匹配，因此冻结simplicity rule不触发；MSCC median evaluated supports=6,195、mean runtime=0.0635 s，效率代价明确保留。
+
+首次独立validator输出`validation.json`为8/9 FAIL。其余raw identities、truth classification、continuous residual、2640 grid、hash bindings及summary aggregates均PASS；唯一失败是validator仍把N08 continuous controls硬编码为P1的2条，而P2正确数量为2 lanes×20 pairs=40。这是验证器泛化缺陷，不是科学结果失败。失败artifact SHA-256=`65877A2F39721208C9BC3559FB9AD711D169B5EC6361ECE75E4D186027809E01`保留不覆盖。最小修复为`expected_n08_controls = 2 * pairs_per_family`，不改prediction、support、score、threshold、metric或任何label-dependent方法。Targeted3/3、full167/167和py_compile PASS；同一frozen score的新`validation_v2.json` 9/9 PASS，SHA-256=`83E399E559EB0D350D748820DC8443C00B86D79A434152829AB1EE0AA4069287`。
+
+Mandatory controls逐pair通过：N06 20/20 full block `d_ctr=0,BCC=1,PSC=1,ranks2/2`；N08两continuous lanes共40/40 normalized residual 0；N09 cancellation ratio 116.88–438.85；N10 document ESS 1.33–2.00；N11 20/20 cliff RMSE 1而smooth RMSE 0.1。Raw scores hash=`18DBFC268668B7281C14B6D94E7C4D1D8B006EEA5EBB10DF5151A2F0BED0782B`，summary=`14D443A2D216F4FBB266302BB59BDFCC2B7DEB87E0809E8E1989357382ABBC45`，manifest=`88FD4BA38A422564647BC3A2DA4AB5075B41BF3667BD51ADAF24EA56F282E975`。详见本地结果评审`M1_NIP_PC2_P2_RESULT_REVIEW_20260903_160200.md`。
+
+保守裁决：P2 formal synthetic gate PASS，形成可信的“many-atom native support recovery + selective refusal + falsifier-aware boundaries”故事空间，但不把它写成真实SAE C1/C2。下一步仅执行锁定的P3 parent aggregation与fresh A–H audit；不再增加合成family或调方法。P3通过后立即解除M1对R006的阻塞，转向受控真实SAE推进。

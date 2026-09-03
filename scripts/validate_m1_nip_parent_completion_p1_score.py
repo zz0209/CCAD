@@ -94,7 +94,8 @@ def validate(prediction_dir: Path, score_dir: Path) -> dict:
     checks["raw_native_identities"] = bool(raw_ok)
     checks["truth_classification_recomputed"] = bool(truth_ok)
     checks["continuous_evaluation_recomputed"] = bool(continuous_ok)
-    checks["mandatory_controls_present"] = bool(controls_ok) and sum(row["continuous_evaluation"] is not None for row in rows if row["family_id"] == "N08_continuous_only_representation") == 2
+    expected_n08_controls = 2 * config["pairs_per_family"]
+    checks["mandatory_controls_present"] = bool(controls_ok) and sum(row["continuous_evaluation"] is not None for row in rows if row["family_id"] == "N08_continuous_only_representation") == expected_n08_controls
     checks["summary_aggregates"] = (
         summary["native_positive_exact"] == {lane: sum(row["positive_exact"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]}
         and summary["native_false_positive"] == {lane: sum(row["false_native_positive"] for row in rows if row["lane"] == lane) for lane in config["native_lanes"]}
