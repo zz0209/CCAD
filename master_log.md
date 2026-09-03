@@ -2228,3 +2228,13 @@ P2 scorer完成2640 rows。MSCC在7个positive families×20 pairs上140/140 exac
 Mandatory controls逐pair通过：N06 20/20 full block `d_ctr=0,BCC=1,PSC=1,ranks2/2`；N08两continuous lanes共40/40 normalized residual 0；N09 cancellation ratio 116.88–438.85；N10 document ESS 1.33–2.00；N11 20/20 cliff RMSE 1而smooth RMSE 0.1。Raw scores hash=`18DBFC268668B7281C14B6D94E7C4D1D8B006EEA5EBB10DF5151A2F0BED0782B`，summary=`14D443A2D216F4FBB266302BB59BDFCC2B7DEB87E0809E8E1989357382ABBC45`，manifest=`88FD4BA38A422564647BC3A2DA4AB5075B41BF3667BD51ADAF24EA56F282E975`。详见本地结果评审`M1_NIP_PC2_P2_RESULT_REVIEW_20260903_160200.md`。
 
 保守裁决：P2 formal synthetic gate PASS，形成可信的“many-atom native support recovery + selective refusal + falsifier-aware boundaries”故事空间，但不把它写成真实SAE C1/C2。下一步仅执行锁定的P3 parent aggregation与fresh A–H audit；不再增加合成family或调方法。P3通过后立即解除M1对R006的阻塞，转向受控真实SAE推进。
+
+### 2026-09-03 16:19 EDT — Fresh P3 audit FAIL；数值结论保留，选择单次contract remediation
+
+复用此前指出v3 parent缺口的独立same-family reviewer，对PC2 P2执行fresh A–H audit；reviewer另启numeric-integrity子审查并只读复算当前artifacts。最终标记`reviewer_independence=same-family`、`acceptance_status=provisional`、`evaluation_type=simulation_only / labeled synthetic formal confirmation`。P3 verdict=`FAIL`，prospective M1-NIP parent保持HOLD，R006继续BLOCKED；历史R001–R003/corrective FAIL不变。
+
+重要区分：科学数值通过了独立攻击性复核。Reviewer穷举全部240 structural pairs的size≤4 supports，复现truth；复算全部1,440 P2 seeds且全局唯一、P1/P2零重叠；直接解析复现MSCC 140/140、0/100、零false unique/refusal及全部baseline counts；独立重生mean/evaluation tensors，复算283个realized native surfaces在`1e-10`内零mismatch，最大代数误差`7.29e-16`；N06–N11范围全部复现。因此没有证据表明理论蓝本、MSCC数值实现、truth ordering或headline comparison错误。
+
+P3失败集中于locked contract：现有9/9 score validator只独立核验centered/mean identities和continuous numerator，未充分核验BCC/PSC/rank/cancellation/ESS、N08 normalized residual、N09–N11数值或从truth重算false unique；prelabel validator是deterministic full replay但复用runner函数。支持MSCC rows已有immutable nearest competitor却在surface写prelabel N/A；solver gap/proposal stability可保持N/A，但缺明确reason。Per-lane fairness ledger缺source-query/target-universe hash与proposed/raw/deduplicated counts，peak memory均null。Score bundle未完整绑定truth/generators/metric adapter/parent config/validator、resolved config和Git state。P3还缺equal-family paired clustered summary。这些不推翻结果，但使“complete/independent”措辞过强并阻止formal acceptance。
+
+裁决C032：拒绝凭数值正确直接越过P3，也拒绝重做理论、加family或调method。只启动一个fresh suffix：保持12 families、11 lanes、20 pairs、全部threshold/budget/gmax/runtime与MSCC不变，补齐reasoned diagnostics、fairness metadata、score provenance、substantive validator checks和family-clustered aggregation；使用fresh formal seeds短CPU重跑一次，再做P3。预估是一个实现轮加约6–8分钟运行，不消耗GPU。若仍出现科学性失败则接受，不继续synthetic tuning。完整review见本地`M1_NIP_PC2_P3_FRESH_AUDIT_20260903_161900.md`。
