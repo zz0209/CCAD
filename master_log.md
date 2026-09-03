@@ -1882,3 +1882,15 @@ Heartbeat `ccad`在生成任何D2 seed前，按v2第6节与继承的v1第5/7/8�
 按`experiment-audit`技能触发fresh same-family read-only reviewer。其总体为provisional `WARN`：A ground-truth provenance、B normalization、D dead-code、E scope与F simulation-only分类均PASS；未发现truth registry替代endpoint、自归一化造高分、phantom result或scope夸大。唯一WARN是审计时tracker/master log仍显示v2 RUNNING；本条与tracker同步已立即闭环，原始WARN不追溯改写。审计同时要求D1/D2额外保存raw delta RMSE、raw cliff margin和source RMS，并在D2对frozen predicted support而非construction atom评分；这些成为D1前置工程项。报告见`EXPERIMENT_AUDIT_M1_NIP_D0_V3_20260903.md/.json`及`.aris/traces/experiment-audit/2026-09-03_m1_nip_d0_v3/`。
 
 保守解释：本轮只证明v3 observable-endpoint synthetic fixture和artifact contract可执行，不是D1/D2 confirmation，不支持M1、C1-NIP、C2-NIP或真实SAE。`M1_NIP_protocol_v3`转为TODO；fresh D1 seeds仍UNGENERATED，D2/real audit关闭。下一轮应先实现N09/N10/N12正交诊断、raw N11 scale字段及predicted-support endpoint API/tests，再制作fresh v3 D1两阶段adapter；不得直接生成D2 seeds。
+
+## 2026-09-03 09:37 EDT — C024 truth-free orthogonal diagnostics 实现门 PASS
+
+Heartbeat `ccad`按AGENTS顺序恢复状态，确认HEAD与origin/main均为`bd2bda0d356e5d6fac2b2060f9dc42fae7d5b8aa`、工作区起始干净、v3 D0 v2仍19/19 PASS，且fresh D1/D2 seeds与real audit均未打开。按上一轮审计action items，实现`src/ccad/nip_diagnostics_v3.py`及冻结配置`configs/m1_nip_orthogonal_diagnostics_v3.json`。
+
+公共diagnostic API只接收observed instance和调用方提供的nonempty sorted target support；不选择support、不读取family truth或outcome label。它统一重算：target constituent/aggregate energy与cancellation ratio；source token/document activity和Kish ESS；独立mean arrays上的`d_mu`；若存在endpoint，则对调用方提供的support做shared-hook cliff与smooth evaluation。N11 endpoint新增raw `source_rms`、`raw_delta_rmse`和`minimum_raw_cliff_margin`，避免只保存由构造固定的normalized values。D2 contract明确要求support来自content-addressed frozen prediction；N12 identification absent时仅允许使用在mean check前冻结的best-centered diagnostic candidate。
+
+在任何v3 D1/D2 seed生成前冻结synthetic attribute阈值：N09 unsafe cancellation ratio至少50；N10 sufficient evidence至少4 active documents，insufficient fixture的document-energy Kish ESS至多2.1；N12 mean mismatch threshold 0.05；N11 cliff/smooth/margin继承v3。20-pair-per-family定向测试验证N09最小ratio超过门、N10始终2 active documents且ESS不超过2.1、N11正确support与错误support产生不同endpoint且raw scales存在、N12 `d_mu≈1`并能对修复mean变为0、非法support fail-closed。定向13/13 PASS。一次非证据性的100-seed implementation probe观察N09 ratio范围86.53–433.09、N10 active docs恒2且document ESS 1.25–2.00、N12 `d_mu≈1`；该probe未预登记，不作为D1/D2或claim证据，仅用于确认冻结门远离数值边界。
+
+全项目discover共117项：116项PASS，唯一collection error仍是历史R006测试缺少`mpmath`，与本轮变更无关，未跳过或安装依赖伪造全绿。源码SHA-256：diagnostics=`17C0BF7F74D2D83B5B067B347E0E239E0376B951A6D710F1B740307A7B82F1FF`，更新后N11 generator=`38B1FBB62248E6FF29EB2B88EF82B4BDE23E5127ECE79219F0200CEF3E8A0F24`，diagnostic config=`2987076AA9C922B7BE20DE62AB8848AD428E08AABCFD79186BBA9A92CEFB59D0`。
+
+保守解释：这是C024的API/测试级工程证据，不是formal D1/D2结果；C024保持SCREENING，M1/C1/C2不变。下一轮应建立v3 D1 truth-blind predictor adapter与信息顺序测试，把fresh namespace、N11 approximate threshold和raw endpoint contract绑定；在prediction closure独立验证前不得打开labels。

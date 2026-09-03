@@ -1,0 +1,24 @@
+{
+  "schema_version": "m1_nip_orthogonal_diagnostics.v3",
+  "protocol_path": "M1_NIP_PROTOCOL_V3_20260903_091500.md",
+  "protocol_sha256": "E1453C1720E34B52C3805ECB95E217FEEB0666E11AB98E3D32EE39A069D527BB",
+  "status": "FROZEN_BEFORE_V3_D1_AND_D2",
+  "truth_registry_is_measurement": false,
+  "support_source_d2": "CONTENT_ADDRESSED_FROZEN_PREDICTION",
+  "n09_minimum_unsafe_cancellation_energy_ratio": 50.0,
+  "n10_minimum_active_documents_for_sufficient_evidence": 4,
+  "n10_maximum_insufficient_document_energy_kish_ess": 2.1,
+  "n12_mean_mismatch_tau": 0.05,
+  "n11_minimum_cliff_effect_rmse": 1.0,
+  "n11_maximum_smooth_effect_rmse": 0.11,
+  "n11_minimum_normalized_cliff_margin": 0.05,
+  "required_n11_raw_fields": [
+    "source_rms",
+    "raw_delta_rmse",
+    "minimum_raw_cliff_margin"
+  ],
+  "diagnostic_candidate_when_identification_absent": {
+    "N12_mean_mismatch": "BEST_CENTERED_ONLY_CANDIDATE_FROZEN_BEFORE_MEAN_CHECK"
+  },
+  "evidence_scope": "synthetic_fixture_attribute_validation_only"
+}

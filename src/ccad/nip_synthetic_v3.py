@@ -144,7 +144,14 @@ def evaluate_shared_hook_endpoint(instance: NIPV3ObservedInstance, target_ids: t
     cliff_difference = source_cliff - target_cliff
     smooth_difference = endpoint.smooth_scale * (source_projection - target_projection)
     source_rms = float(np.sqrt(np.mean(source * source)))
+    raw_delta = source - target
     return {
+        "target_support_size": float(len(target_ids)),
+        "source_rms": source_rms,
+        "raw_delta_rmse": float(np.sqrt(np.mean(raw_delta * raw_delta))),
+        "minimum_raw_cliff_margin": float(
+            min(np.min(np.abs(source_projection)), np.min(np.abs(target_projection)))
+        ),
         "cliff_disagreement_rate": float(np.mean(source_cliff != target_cliff)),
         "cliff_effect_rmse": float(np.sqrt(np.mean(cliff_difference * cliff_difference))),
         "minimum_normalized_cliff_margin": float(

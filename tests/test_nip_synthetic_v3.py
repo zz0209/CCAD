@@ -54,6 +54,14 @@ class NIPSyntheticV3Tests(unittest.TestCase):
                     metrics["minimum_normalized_cliff_margin"], N11_CLIFF_NORMALIZED_MARGIN - 1e-12
                 )
                 self.assertLessEqual(metrics["smooth_effect_rmse"], N11_MAXIMUM_SMOOTH_RMSE)
+                self.assertGreater(metrics["source_rms"], 0.0)
+                self.assertGreater(metrics["raw_delta_rmse"], 0.0)
+                self.assertGreater(metrics["minimum_raw_cliff_margin"], 0.0)
+                self.assertAlmostEqual(
+                    metrics["minimum_raw_cliff_margin"] / metrics["source_rms"],
+                    metrics["minimum_normalized_cliff_margin"],
+                    places=12,
+                )
 
     def test_n11_certificate_has_non_circular_numeric_endpoint(self):
         instance = generate_endpoint_observed("N11_downstream_cliff", structural_seed=303, sample_seed=404)
