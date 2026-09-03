@@ -2322,3 +2322,37 @@ R008a v1在任何网络读取前因锁定Python缺`pyarrow`而FAIL，且暴露�
 独立validator在单独`disk-d-io` lease中复算全部约1.3GB文件hash和尺寸，并遍历全部indices/acts/decoders检查范围与有限性，11/11 PASS；validation SHA-256=`1EB2DA0E7E02EED9CB822947A90D1EB1BA94228F5E617D88C4561F848168DA8A`，bulk asset manifest SHA-256=`35A873FB9821369E45E589432A7BC94B361908C5E8E5F6C167846D4E0B0374A5`。所有lease已释放。
 
 裁决：R008 PASS，M3所需的五个受控seed与split/hash完整paired assets均已完成。该里程碑只建立真实SAE数据面，不产生C1/C2结论。下一步直接进入R009–R011：用mean split估计中心化常数，只在discovery/calibration上构造source-only census、实现公平atom/group baselines与MSCC候选冻结；R012/R013之前禁止读取audit codes进行任何度量或选择。
+
+## 2026-09-03 18:59 EDT — R009 source census、query freeze 与 atom discovery baselines PASS；正式进入真实主线故事
+
+**触发与计划裁决。** 用户要求在复核相关材料后正式进入主线、且本轮形成较多实质推进。重新阅读了AGENTS、最新账本、B2/B3计划、R009–R013 tracker、C009/C020/C022以及理论PDF中动态贡献、有限候选族、causal interchangeability、主表与否证条件。由此冻结本阶段承重故事：C1是预冻结query panel上的选择性native portability与拒答账本；C2是MSCC group相对calibration-selected best functional single的held-out因果优势。BCC与centered raw swap residual代数等价，不重复算作两项证据；R011候选/阈值与R013 endpoint冻结前继续禁止读取audit。
+
+**R009a source-only census。** `R009a_source_census_v1_20260904T004000Z`完成数值后因NumPy boolean无法JSON序列化而在finalization FAIL，失败run和correction保留。仅做builtin-bool转换的`R009a_source_census_v2_20260904T005000Z`为7/7与artifact contract PASS。它只读取mean/discovery，生成五seed×3,072 atoms=`15,360`行完整抽样框，SHA-256=`B1C13EE2DC83C0DF51C505934D88B2174E147EFC453E427CFC029B7DE7F30894`；所有atoms alive，各seed最低active documents为115/89/41/125/114，最低document-energy ESS为12.08/6.27/11.54/10.90/14.88。未做query选择、target lookup或阈值。
+
+**R009b target-blind query freeze。** 计划采用每seed按source discovery code energy秩分8个等大层（384 atoms/层），固定salt SHA-256顺序每层取16，得到128 queries/seed、合计640。所有15,360 atoms保留为sampling frame，不按低频或结果删query；occupancy只作属性。`R009b_query_panel_v1_20260904T012500Z`科学检查9/9但manifest漏`resource_lease_reason`，artifact contract FAIL，已改status并保留。只补该字段的v2为9/9与contract PASS，panel SHA-256=`EFBA3B06EC13F43E17AA6FF30786D1E908D63AE638FF4282B33FC8D2542AE447`，与v1选择逐字节相同；panel最低firing=338、active documents=122、document ESS=27.43。没有读取target、calibration或audit。
+
+**R009c atom discovery。** 为正式矩形Hungarian安装了本地隔离依赖`.runtime/r009`（SciPy 1.16.1、NumPy 2.5.2；目录被gitignore）。第一次受限网络安装失败后，经授权下载安装成功。`R009c_atom_discovery_v1_20260904T014000Z`在任何pair结果前因SciPy不能就地排序只读memmap而FAIL；复制为可写CSR缓冲后v2通过。V2同时暴露source-normalized residual最近邻会系统性选择低能量近零target：大多数pair的128 queries只落到1–5个target atoms，median best BCC约零。该输出保留为direct-native-residual负诊断，不能冒充强best-single。
+
+在未打开calibration/audit的前提下，v3按理论预定BCC补入`BALANCED_CONTRIBUTION_BCC_NEAREST`，保留direct residual、decoder cosine与frozen-panel-to-full-dictionary rectangular Hungarian，并增加same-seed contribution identity见证。`R009c_atom_discovery_v3_20260904T020000Z`在嵌套`cpu-heavy`+`disk-d-io` leases下完成全部20个有序seed pairs×128 queries=`2,560`行，每种ranking固定top32；10/10检查和artifact contract PASS，候选SHA-256=`C111C4F2D2A5D616A6C5D22570B2C782C7BCEAA22792FD95D8969FAC6166DD7F`，所有leases释放。矩形Hungarian平均绝对decoder cosine=`.15982`；balanced best-single BCC中位数=`.01940`，90/95/99分位=`.07328/.09514/.13800`，最大`.21643`，只有103/2,560 rows达到`.1`、3 rows达到`.2`。balanced target top1在pair内覆盖87.5%–97.7%的queries，说明未发生direct-residual式塌缩。按source-energy层，median best BCC从最低层`.0082`升到最高层`.0805`，后续统计必须保留该层级而不能只报总体平均。
+
+**保守解释与下一步。** 这是真实same-config SAE上的第一组主线张力：atom correspondence整体很弱，尤其低能量层；它既不证明理论错误，也不证明MSCC/group会成功。R009仍为RUNNING，因为calibration-selected functional best single与阈值尚未冻结；R010/R011下一步应在同一640-query panel和统一candidate/search budget上直接运行group baselines与MSCC，检验小型native supports能否明显超过上述atom ceiling。Audit保持封存。全套172/172 tests在正确`PYTHONPATH=src;scripts`环境PASS；一次遗漏PYTHONPATH的164-test调用产生5个import collection errors，没有执行项目逻辑或生成run artifact。按更新后的GitHub条件，本轮尚未形成R009完整阶段性结论，因此保留本地，不单独commit/push。
+
+## 2026-09-03 19:06 EDT — R011a全量真实group discovery surface PASS，但简单unweighted native groups给出负信号
+
+自动化继续执行C033中预定且有明确科学消费者的Option C，没有新增外围runner层。`R011a_group_discovery_surface_v1_20260903T231500Z`绑定R009b query panel、R009a mean/source statistics与R008b asset manifest；对全部20 ordered seed pairs×128 queries=`2,560`行，使用固定20-atom proposal（positive contribution correlation 8、balanced BCC 8、absolute decoder cosine 4，按固定顺序去重回填）、`g_max=4`，逐query精确评分全部6,195个非空supports，低于统一7,462 evaluation budget。只读取mean/discovery，不使用calibration/audit，不设置阈值或`FOUND`状态。
+
+Run在嵌套`cpu-heavy`与`disk-d-io` leases下约两分钟完成，10/10 checks与artifact contract PASS；输出SHA-256=`EA1E3B8CCC58DC30976E1FC48657511388E7BAB1DDC6E6F0CDD186D8F0ADC80D`，所有leases已释放。Across all query-pairs，median best BCC按support size 1/2/3/4仅为`.01940/.02259/.02350/.02369`；median best source-normalized residual则为`1.4457/2.0589/2.7722/3.5899`。20个seed-pair方向一致：加入更多无权native atoms只带来极小balanced-BCC增量，同时因target contribution energy累积而显著恶化direct interchange residual。
+
+保守裁决：这是主线的实质负结果，不是工程失败，也尚不是C1/C2否证。它否定的是当前“20-atom contribution/cosine union + unweighted binary support求和”能直接恢复source atom的希望；可能原因仍分为proposal miss、binary native representability failure、或本配置根本缺乏局部portable unit。Audit继续封存，R011记RUNNING而非FAIL。下一步限制为一次承重separator：在相同query/candidate budget上计算signed continuous、nonnegative continuous与OMP/greedy上界，并检查其相对binary surface的差距。若continuous也接近零，停止调proposal并优先审计paired identity/配置边界；若continuous显著更好而binary失败，则收窄native-support claim。按Git同步规则，这一发现与即将进行的separator一起形成阶段性裁决后再提交。
+
+## 2026-09-03 19:40 EDT — R011b完整representability separator PASS；排除局部系数约束并停止proposal微调
+
+**触发与动作。** 用户要求把5分钟automation prompt替换为给定的精简治理文本，并再推进一轮、取得更多实质进展。Automation `ccad` 已保持`ACTIVE`与`FREQ=MINUTELY;INTERVAL=5`，prompt逐字替换为用户给定版本。按AGENTS恢复状态后，没有新增文献或下载，因此`REFERENCE_REGISTRY.md`无需变更。C034预先登记一次完整separator：固定R011a的query、20-atom proposal、discovery split和2,560行，不在结果后追加proposal变体；连续拟合仅作non-native reference，永不输出`FOUND`。
+
+新增`configs/r011b_representability_separator_v1.json`与`scripts/run_r011b_representability_separator.py`。正式run `R011b_representability_separator_v1_20260903T233000Z`通过母目录资源管理器依次取得`disk-d-io`与`cpu-heavy`租约，完成全部20 ordered seed pairs×128 queries。每行比较：R011a native unweighted size-4、最优signed scaled-single、逐步重拟合的signed OMP 1–4、20-atom nonnegative quadratic fit、20-atom signed pseudoinverse fit；均使用独立mean split常数与discovery covariance。Run 12/12 checks、artifact contract PASS，nonnegative solver 0 failures，输出SHA-256=`D54E9D0EDFEC14DB4DC1B390FA610222A3CDFDC7128A3A71479C906367DDCC96`；两项lease均已释放，audit/calibration未读。
+
+**结果。** Across 2,560 rows，median `d_ctr`依次为native size-4 `3.58991`、scaled-single `.999557`、signed OMP-4 `.998893`、nonnegative full-20 `.997735`、signed full-20 `.997735`。所有continuous methods的`d_ctr<.25`和`<.50`比例均为0；signed full-20的q10/median/q90为`.97833/.99773/.99938`，全局最优也只有`.84739`。其effective rank median为20，负系数比例median为0；所以不是等权限制、非负锥或4-sparse搜索造成的主要失败。source-energy最高层的signed full-20 median `.95916`，低于最低层`.99940`，显示能量梯度但没有出现足以支撑selective portability的局部族。
+
+**保守解释与阶段裁决。** R007五seed FVE约`.9688`、CE recovered约`.907–.912`、alive=1；R008对五seed使用同一640次base forward并通过全部文件hash/shape检查；R009c same-seed contribution identity亦通过。结合这些既有证据，目前没有资产错位、token错配或单seed质量失败的迹象。R011b因此是科学负结果：当前局部proposal几乎不张成source atom contribution，而不是implementation crash；但它仍不能证明完整target dictionary中不存在大支持表示，也没有打开audit，故不否定C1/C2全局版本。
+
+按C034停止规则，关闭局部proposal/系数变体，不追加小pilot。R011保持`RUNNING`，下一项承重实验转向R010 aggregate reconstruction identity与stable-subspace/group baseline：若整体/子空间跨seed稳定而atom/native-small-support失败，主故事成为“高重构质量掩盖非规范atom分解，并以选择性refusal量化边界”；若整体也不稳定，则回到训练配置/充分性边界。全项目`unittest discover`本轮执行169项，其中168项PASS；唯一collection error来自既有T021模拟测试缺少可选依赖`mpmath`，并非本轮代码失败。R011b真实run自身与artifact contract均PASS。
