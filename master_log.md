@@ -2290,3 +2290,11 @@ Gate裁决：prospective M1-NIP synthetic parent现在PASS，R006从BLOCKED恢�
 R006恢复后没有重开失败的automatic selector。基于既有、audit未开的seed-0 calibration，k128是唯一同时落入冻结FVE与CE-recovered margin的候选，因此选择“保留sparse probe为诊断、以明示工程取舍执行可逆两-seed门”。这不是全局最优k主张；seeds1/2任一失败即停止，不能删seed、调阈值或向k256扩展。
 
 新增`configs/r006c_k128_seed{1,2}_v1.json`和前瞻gate `configs/r006c_k128_two_seed_gate_v1.json`。两seed固定Pythia-160M commit、layer5 resid-post、sparsify commit、width3072、k128、同一131,072-token document order与32,768-token validation。运行前阈值：FVE≥.93、CE recovered≥.85、actual L0=128、alive≥.95、最小nonzero firing≥16、decoder norm error≤5e-6；两seedFVE range≤.03、CE range≤.05、alive range≤.05；吞吐≥10k tok/s、peak allocated VRAM≤2GiB，并要求全部input/checkpoint/hook/logit checks。c_dec只报告，不作为单一selector。`run_r006b_topk_capacity.py`仅补真实Git HEAD/cleanliness记录；full171/171与py_compile PASS。GPU-0资源管理器free，nvidia-smi基线1006/16303MiB，locked runtime ledger仍READY。
+
+## 2026-09-03 18:24 EDT — R006 two-seed quality gate PASS; freeze k128 and enter R007
+
+在提交`e71c0f7`的冻结配置与干净工作树上，经母目录资源管理器依次取得并释放GPU-0 lease，完成`R006c_k128_seed1_v1_20260903T220000Z`与`R006c_k128_seed2_v1_20260903T220000Z`。两个run均为12/12内部检查与artifact contract PASS，保存safe及exact checkpoint；实际只改变初始化seed，模型、hook、训练/验证token及顺序、架构、优化器与预算一致。
+
+冻结阈值的机械汇总`R006c_k128_two_seed_gate_v1_20260903T222000Z`为36/36 PASS。Seed1/2的FVE分别`.9688258/.9687965`，CE recovered `.9120052/.9091944`，actual L0均128，alive fraction均1.0，最小非零firing为54/35，decoder norm最大误差均`1.67e-6`；吞吐14.36k/25.54k tok/s，peak allocated VRAM均1,419,920,384 bytes。两seed FVE range=`2.93e-5`、CE range=`.0028109`、alive range=0，且SAE state hash不同。此前真实模型R005d v2的13/13精确中断续训轨迹复现仅作为framework-level支撑，不参与本次配置选择，也未新增训练支线。
+
+裁决：R006 PASS，正式冻结Pythia-160M commit `582159…`、layer5 resid-post、sparsify `42c0645…`、width3072、TopK k128与131,072-token训练预算为R007 primary配置。这是可解释的工程选择而非全局最优k主张；R006不再扩k、selector或probe。R007登记为RUNNING：保留seeds1/2并直接训练seeds3–5达到最低五种子套件，沿用相同质量阈值，不因不利结果删除seed或事后调整门槛。该进展仍是M2/M3 SAE质量证据，不是C1-NIP或C2-NIP结果。
