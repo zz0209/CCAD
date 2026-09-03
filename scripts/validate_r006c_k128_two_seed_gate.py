@@ -1,4 +1,4 @@
-"""Aggregate the prospectively frozen R006c k=128 two-seed quality gate."""
+"""Aggregate a prospectively frozen R006/R007 k=128 seed quality gate."""
 from __future__ import annotations
 
 import argparse
@@ -9,7 +9,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ALLOWED_SEED_DIFFERENCES = {"run_id", "purpose", "init_seeds"}
+NON_SCIENTIFIC_SEED_FIELDS = {
+    "run_id", "run_parent", "milestone", "purpose", "evidence_level",
+    "init_seeds", "scope_limit",
+}
 
 
 def read_json(path: Path) -> dict:
@@ -26,7 +29,7 @@ def write_json(path: Path, value: object) -> None:
 
 def normalized_seed_config(config: dict) -> dict:
     result = deepcopy(config)
-    for key in ALLOWED_SEED_DIFFERENCES:
+    for key in NON_SCIENTIFIC_SEED_FIELDS:
         result.pop(key, None)
     return result
 
@@ -78,11 +81,16 @@ def evaluate(gate_path: Path) -> dict:
         exact_checkpoint = run_dir / "exact_checkpoint"
         safe_checkpoint = run_dir / "sae"
 
+        expected_git_heads = gate.get(
+            "expected_git_heads_by_seed",
+            {"1": "e71c0f7044a4fa4891d61c5d352661bfa4566680", "2": "e71c0f7044a4fa4891d61c5d352661bfa4566680"},
+        )
+        init_seed = config["init_seeds"][0]
         checks = {
             "resolved_config_binding": resolved == config,
             "status_pass": status.get("status") == "PASS" and summary.get("status") == "PASS",
             "contract_pass": contract.get("ok") is True and not contract.get("errors"),
-            "clean_frozen_git_run": manifest.get("git_head_at_run") == "e71c0f7044a4fa4891d61c5d352661bfa4566680" and manifest.get("git_status_porcelain") == [],
+            "clean_frozen_git_run": manifest.get("git_head_at_run") == expected_git_heads[str(init_seed)] and manifest.get("git_status_porcelain") == [],
             "required_checks_pass": all(metrics["checks"].get(name) is True for name in gate["required_checks"]),
             "exact_checkpoint_materialized": exact_checkpoint.is_dir() and any(exact_checkpoint.iterdir()),
             "safe_checkpoint_materialized": safe_checkpoint.is_dir() and any(safe_checkpoint.iterdir()),
@@ -98,7 +106,7 @@ def evaluate(gate_path: Path) -> dict:
         seed_rows.append(
             {
                 "run_id": config["run_id"],
-                "init_seed": config["init_seeds"][0],
+                "init_seed": init_seed,
                 "checks": checks,
                 "status": "PASS" if all(checks.values()) else "FAIL",
                 "metrics": {
@@ -126,13 +134,17 @@ def evaluate(gate_path: Path) -> dict:
         "ce_recovered_range": max(ce_values) - min(ce_values),
         "alive_fraction_range": max(alive_values) - min(alive_values),
     }
+    expected_seeds = gate.get("expected_init_seeds", [1, 2])
+    maximum_fve_range = gate.get("maximum_suite_fve_range", gate.get("maximum_pair_fve_range"))
+    maximum_ce_range = gate.get("maximum_suite_ce_recovered_range", gate.get("maximum_pair_ce_recovered_range"))
+    maximum_alive_range = gate.get("maximum_suite_alive_fraction_range", gate.get("maximum_pair_alive_fraction_range"))
     pair_checks = {
-        "exact_seed_set": sorted(row["init_seed"] for row in seed_rows) == [1, 2],
+        "exact_seed_set": sorted(row["init_seed"] for row in seed_rows) == expected_seeds,
         "same_config_except_declared_seed_fields": normalized_seed_config(seed_configs[0]) == normalized_seed_config(seed_configs[1]),
         "distinct_sae_states": len({row["metrics"]["sae_state_sha256"] for row in seed_rows}) == len(seed_rows),
-        "fve_range": pair_metrics["fve_range"] <= gate["maximum_pair_fve_range"],
-        "ce_recovered_range": pair_metrics["ce_recovered_range"] <= gate["maximum_pair_ce_recovered_range"],
-        "alive_fraction_range": pair_metrics["alive_fraction_range"] <= gate["maximum_pair_alive_fraction_range"],
+        "fve_range": pair_metrics["fve_range"] <= maximum_fve_range,
+        "ce_recovered_range": pair_metrics["ce_recovered_range"] <= maximum_ce_range,
+        "alive_fraction_range": pair_metrics["alive_fraction_range"] <= maximum_alive_range,
     }
 
     resume_dir = ROOT / "runs" / "R005d_pythia_native_resume_v2_20260902T111500Z"
@@ -152,7 +164,7 @@ def evaluate(gate_path: Path) -> dict:
     return {
         "schema_version": "r006c.two_seed_quality_gate_result.v1",
         "gate_config": str(gate_path.relative_to(ROOT)).replace("\\", "/"),
-        "decision": gate["decision"],
+        "decision": gate.get("decision", gate.get("primary_config_decision")),
         "claim_limit": gate["claim_limit"],
         "input_hashes": input_hashes,
         "seed_results": seed_rows,

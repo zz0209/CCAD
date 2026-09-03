@@ -9,6 +9,13 @@
     "configs/r007_k128_seed5_v1.json"
   ],
   "expected_init_seeds": [1, 2, 3, 4, 5],
+  "expected_git_heads_by_seed": {
+    "1": "e71c0f7044a4fa4891d61c5d352661bfa4566680",
+    "2": "e71c0f7044a4fa4891d61c5d352661bfa4566680",
+    "3": "4fd27711a114e7804047c8e3a663168e9d939523",
+    "4": "4fd27711a114e7804047c8e3a663168e9d939523",
+    "5": "4fd27711a114e7804047c8e3a663168e9d939523"
+  },
   "minimum_fve": 0.93,
   "minimum_ce_recovered": 0.85,
   "required_actual_l0": 128,

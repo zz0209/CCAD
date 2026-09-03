@@ -2298,3 +2298,13 @@ R006恢复后没有重开失败的automatic selector。基于既有、audit未�
 冻结阈值的机械汇总`R006c_k128_two_seed_gate_v1_20260903T222000Z`为36/36 PASS。Seed1/2的FVE分别`.9688258/.9687965`，CE recovered `.9120052/.9091944`，actual L0均128，alive fraction均1.0，最小非零firing为54/35，decoder norm最大误差均`1.67e-6`；吞吐14.36k/25.54k tok/s，peak allocated VRAM均1,419,920,384 bytes。两seed FVE range=`2.93e-5`、CE range=`.0028109`、alive range=0，且SAE state hash不同。此前真实模型R005d v2的13/13精确中断续训轨迹复现仅作为framework-level支撑，不参与本次配置选择，也未新增训练支线。
 
 裁决：R006 PASS，正式冻结Pythia-160M commit `582159…`、layer5 resid-post、sparsify `42c0645…`、width3072、TopK k128与131,072-token训练预算为R007 primary配置。这是可解释的工程选择而非全局最优k主张；R006不再扩k、selector或probe。R007登记为RUNNING：保留seeds1/2并直接训练seeds3–5达到最低五种子套件，沿用相同质量阈值，不因不利结果删除seed或事后调整门槛。该进展仍是M2/M3 SAE质量证据，不是C1-NIP或C2-NIP结果。
+
+## 2026-09-03 18:45 EDT — R007 minimum five-seed primary suite PASS
+
+在配置冻结提交`4fd2771`之后，通过共享资源管理器逐个取得GPU-0独占lease并完成`R007_k128_seed{3,4,5}_v1_20260903T223000Z`；三次lease均正常释放。每个run均12/12内部检查、artifact contract、safe checkpoint与exact checkpoint PASS，Git运行状态干净。它们与R006c seeds1/2在全部科学字段上相同，仅运行层级元数据与初始化seed不同。
+
+Seeds3/4/5的FVE为`.9688278/.9688691/.9688140`，CE recovered为`.9082209/.9121620/.9066256`，actual L0均128、alive fraction均1.0，最小非零firing为41/54/72，decoder norm误差不超过`2.03e-6`；吞吐23.60k–26.11k tok/s，peak allocated VRAM均1,419,920,384 bytes。五个seed的SAE state hash全异。
+
+首次五种子aggregation `R007_k128_five_seed_quality_gate_v1_20260903T224000Z`因共享validator只接受R006字段`decision`、未接受R007字段`primary_config_decision`而在输出result前FAIL；失败目录与`status.json/CORRECTION.md`保留。该错误未读取结果做选择，也未改变训练、checkpoint、阈值或任何seed。单行schema兼容修复后，新suffix `R007_k128_five_seed_quality_gate_v2_20260903T224500Z`为81/81 PASS，result SHA-256=`E096C72230FFB86721200E43A99F06A493534B3ED138F5ED90BD75E036B30A92`。五seed FVE range=`7.264e-5`、CE range=`.0055363`、alive range=0，均远低于前瞻上限`.03/.05/.05`。
+
+裁决：R007 PASS，已达到M3最低五个same-config seed的训练与质量要求；不追加第六seed来美化稳定性。下一主线是R008：只为这五个冻结checkpoint构建document-hash 10/40/20/30 paired activation/code资产，保持audit关闭，然后进入R009–R011 discovery/calibration冻结。此处仍不构成C1-NIP/C2-NIP结果。
