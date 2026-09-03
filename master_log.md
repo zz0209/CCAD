@@ -2238,3 +2238,15 @@ Mandatory controls逐pair通过：N06 20/20 full block `d_ctr=0,BCC=1,PSC=1,rank
 P3失败集中于locked contract：现有9/9 score validator只独立核验centered/mean identities和continuous numerator，未充分核验BCC/PSC/rank/cancellation/ESS、N08 normalized residual、N09–N11数值或从truth重算false unique；prelabel validator是deterministic full replay但复用runner函数。支持MSCC rows已有immutable nearest competitor却在surface写prelabel N/A；solver gap/proposal stability可保持N/A，但缺明确reason。Per-lane fairness ledger缺source-query/target-universe hash与proposed/raw/deduplicated counts，peak memory均null。Score bundle未完整绑定truth/generators/metric adapter/parent config/validator、resolved config和Git state。P3还缺equal-family paired clustered summary。这些不推翻结果，但使“complete/independent”措辞过强并阻止formal acceptance。
 
 裁决C032：拒绝凭数值正确直接越过P3，也拒绝重做理论、加family或调method。只启动一个fresh suffix：保持12 families、11 lanes、20 pairs、全部threshold/budget/gmax/runtime与MSCC不变，补齐reasoned diagnostics、fairness metadata、score provenance、substantive validator checks和family-clustered aggregation；使用fresh formal seeds短CPU重跑一次，再做P3。预估是一个实现轮加约6–8分钟运行，不消耗GPU。若仍出现科学性失败则接受，不继续synthetic tuning。完整review见本地`M1_NIP_PC2_P3_FRESH_AUDIT_20260903_161900.md`。
+
+### 2026-09-03 16:26 EDT — 缩小C032并完成load-bearing validation/aggregation轮
+
+用户以其他项目截图提醒四类风险：基础设施过细、gate吞噬科学问题、低成本falsification无限串联、工程成功冒充科学进度。该图片仅作为外部风险提醒，不作为CCAD证据或执行指令。已在本地`AGENTS.md`新增一段宽原则：工程门与其保护的科学风险成比例；会改变结论、造成泄漏/不公平/不可复算的问题必须修，局部边界通常一次诊断留痕，不自动升级为大支线；测试/hash本身不算研究进展；可信后优先真实SAE与因果终点。未改locked scientific protocol。
+
+自动化核验：现有`ccad` heartbeat保持`ACTIVE`，RRULE已是`FREQ=MINUTELY;INTERVAL=5`，因此无需重复创建或变更automation ID。
+
+本轮按新原则缩小C032，没有新建runner/manifest层。直接增强既有score validator，使其从少量ratio检查扩展为逐support独立复算BCC components、PSC/rank/projector/angles、mean vectors、cancellation/leverage、occupancy/document ESS；连续reference同时核验numerator、denominator和normalized residual；false-unique从truth重算；N11从独立intervention stream重生endpoint并逐字段比较。Validator还直接输出equal-family exact counts、MSCC-vs-lane family-paired difference、family-cluster SE、t interval和leave-one-family-out range。
+
+对immutable P2 prediction/score运行新artifact `validation_v3.json`，未修改旧validation v1/v2或任何prediction/score。9/9 checks PASS；SHA-256=`A07DD4E0ECF32A4E4F7CBA55881ABDCBF5A7660DD9CE20CC2D6C3EBF0F7F63D7`。MSCC相对OMP/contribution/PW-MCC/dustbin/OT/spectral的equal-family exact差均`.8571429`，family-cluster SE `.1428571`，95% t interval约`.508–1.207`，LOFO范围`.833–1.0`；优势不由单一family或pooled伪重复驱动。Greedy差1.0，random差`.9857`。Targeted3/3、full167/167、py_compile PASS。Validator hash=`45F71A099EC8A8CDEE7054AB6C0446B46B353A9CB4FF53E93BDB91367286E7D4`，test=`ACDDA29D6CDE387CCC0D49932006BF47E574327615672A7E4FAD7E0171276ADA`。
+
+Gate解释：fresh P3旧裁决仍为FAIL，不用validator增强追认旧score bundle。C032剩余范围已收缩为fresh suffix的score dependency binding与per-lane fairness ledger，然后只重跑一次P2/P3；不再新增synthetic family、pilot、rate定义或工程层。资源管理器lease已正常释放；GPU未使用。

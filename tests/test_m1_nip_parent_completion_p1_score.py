@@ -33,6 +33,9 @@ class ParentCompletionP1ScoreTests(unittest.TestCase):
         self.assertIn('checks["raw_native_identities"]', text)
         self.assertIn('checks["continuous_evaluation_recomputed"]', text)
         self.assertIn('expected_n08_controls = 2 * config["pairs_per_family"]', text)
+        self.assertIn('row["false_unique"] ==', text)
+        self.assertIn('family_cluster_standard_error', text)
+        self.assertIn('evaluate_shared_hook_endpoint', text)
 
 
 if __name__ == "__main__":
