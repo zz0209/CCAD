@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.1.0",
+  "scope": "R005-A core-module tiny-tensor overlays only; not complete framework CLI/data/model environment",
+  "shared_runtime": {
+    "python_executable": "D:\\CCAD_Storage\\environments\\r004\\Scripts\\python.exe",
+    "python_version": "3.13.7",
+    "torch": "2.8.0+cu128",
+    "safetensors": "0.8.0",
+    "base_lock_path": "configs/r004_environment_lock_candidate_v1.json",
+    "base_lock_sha256": "92a420b54871fae1f1d6325812bb939197e90bbf42b776a04952a63dc9d35bd6"
+  },
+  "dictionary_learning": {
+    "source_commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+    "overlay_path": "D:\\CCAD_Storage\\environments\\r005a_dictionary_overlay",
+    "packages": {
+      "einops": "0.8.2"
+    },
+    "file_count": 59,
+    "bytes": 531133,
+    "aggregate_sha256": "f62a649020b37ce0479339f768899236d51cb88a9dd2786b796d70358ea228fb"
+  },
+  "sparsify": {
+    "source_commit": "42c064525b1cdd2b97f4a4807e247e89025d552c",
+    "overlay_path": "D:\\CCAD_Storage\\environments\\r005a_sparsify_overlay",
+    "packages": {
+      "accelerate": "1.14.0",
+      "docstring-parser": "0.18.0",
+      "einops": "0.8.2",
+      "natsort": "8.4.0",
+      "psutil": "7.2.2",
+      "simple-parsing": "0.1.9",
+      "typing-extensions": "4.16.0"
+    },
+    "file_count": 403,
+    "bytes": 6201262,
+    "aggregate_sha256": "2e4b96cf16f1028c9eb2e37ad79f933d36aa1aaa9fb6efb37a38e5cf52491907"
+  }
+}

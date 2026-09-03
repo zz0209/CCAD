@@ -1,0 +1,33 @@
+{
+  "schema_version": "0.1.1",
+  "run_id": "R005c_native_state_audit_v2_20260902T101704Z",
+  "run_parent": "R005",
+  "milestone": "M2",
+  "evidence_level": "upstream_native_checkpoint_state_audit",
+  "purpose": "Verify native checkpoint completeness for dictionary_learning final save and sparsify multi-seed resume state",
+  "dictionary_learning": {
+    "commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+    "source_dir": "D:\\CCAD_Storage\\references\\source\\dictionary_learning_60ec6bf",
+    "overlay_dir": "D:\\CCAD_Storage\\environments\\r005a_dictionary_overlay"
+  },
+  "sparsify": {
+    "commit": "42c064525b1cdd2b97f4a4807e247e89025d552c",
+    "source_dir": "D:\\CCAD_Storage\\references\\source\\sparsify_42c0645",
+    "overlay_dir": "D:\\CCAD_Storage\\environments\\r005a_sparsify_overlay"
+  },
+  "environment_lock": "configs/r005a_environment_lock_v2.json",
+  "activation_dim": 4,
+  "dictionary_size": 8,
+  "k": 2,
+  "learning_rate": 0.001,
+  "init_seeds": [0, 1],
+  "device": "cpu",
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "mean_constants_source_split": "not_applicable_checkpoint_audit",
+  "threshold_source_split": "exact_state_key_and_tensor_comparison",
+  "statistics_unit": "framework_checkpoint_implementation",
+  "repair_from": "R005c_native_state_audit_v1_20260902T101407Z",
+  "repair_note": "Enable upstream activation normalization so dictionary backup_steps defines norm_factor; retains v1 crash as a separate native limitation.",
+  "scope_limit": "checkpoint control audit only; PASS means limitations were reproducibly detected, not that native resume is adequate"
+}

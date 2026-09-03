@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "run_parent": "R001",
+  "evidence_level": "synthetic_smoke",
+  "dtype": "float64",
+  "q_values": [2, 4, 8],
+  "n_mean": 257,
+  "n_eval": 1024,
+  "base_seed": 20260902,
+  "absolute_tolerance": 1e-10,
+  "relative_tolerance": 1e-10,
+  "families": [
+    "F01_hadamard_gauge",
+    "F10_same_span_different_computation",
+    "F11_same_sum_bloated_span"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "mean_constants_source_split": "synthetic_mean",
+  "threshold_source_split": "not_applicable_conformance",
+  "statistics_unit": "configuration",
+  "resource_lease": null,
+  "resource_lease_reason": "short single-process CPU smoke test"
+}

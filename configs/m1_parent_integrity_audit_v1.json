@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "run_family": "M1_parent_integrity_audit",
+  "formal_runs": {
+    "R001": [
+      "runs/R001_candidate_v1_20260902T024247Z",
+      "runs/R001_complements_v1_20260902T030045Z"
+    ],
+    "R002": [
+      "runs/R002_f02_formal_v1_20260902T043603Z",
+      "runs/R002_f03_formal_v2_20260902T033826Z",
+      "runs/R002_f04_formal_v1_20260902T035744Z",
+      "runs/R002_f06_formal_v1_20260902T041703Z"
+    ],
+    "R003": [
+      "runs/R003_f05_formal_v1_20260902T051636Z",
+      "runs/R003_f07_formal_v1_20260902T053744Z",
+      "runs/R003_f08_f09_formal_v1_20260902T045635Z",
+      "runs/R003_f10_f11_formal_v1_20260902T055911Z",
+      "runs/R003_f12_formal_v1_20260902T062322Z"
+    ]
+  },
+  "expected_families": {
+    "R001": ["F01_hadamard_gauge", "F02_local_block_rotations", "F10_same_span_different_computation", "F11_same_sum_bloated_span"],
+    "R002": ["F02_local_block_rotations", "F03_unequal_split_merge", "F04_partial_overlap", "F06_cooccurrence_confounding"],
+    "R003": ["F05_cancellation", "F07_rare_occupancy", "F08_competing_covers", "F09_whole_dictionary_only", "F10_same_span_different_computation", "F11_same_sum_bloated_span", "F12_non_lipschitz_downstream_cliff"]
+  },
+  "required_run_files": ["code_hashes.json", "config.resolved.json", "contract.validation.json", "environment.json", "inputs.json", "manifest.json", "metrics.raw.jsonl", "metrics.summary.json", "status.json", "stderr.log", "stdout.log"],
+  "audit_opened": false,
+  "claim_scope": "synthetic M1 only"
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.2.0",
+  "scope": "R005-A public-package/offline/tiny-resume overlays; still not a Pythia or corpus environment",
+  "captured_at_utc": "2026-09-02T09:02:00Z",
+  "shared_runtime": {
+    "python_executable": "D:\\CCAD_Storage\\environments\\r004\\Scripts\\python.exe",
+    "python_version": "3.13.7",
+    "torch": "2.8.0+cu128",
+    "safetensors": "0.8.0",
+    "base_lock_path": "configs/r004_environment_lock_candidate_v1.json",
+    "base_lock_sha256": "92a420b54871fae1f1d6325812bb939197e90bbf42b776a04952a63dc9d35bd6"
+  },
+  "dictionary_learning": {
+    "source_commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+    "overlay_path": "D:\\CCAD_Storage\\environments\\r005a_dictionary_overlay",
+    "packages": {
+      "accelerate": "1.14.0", "diffusers": "0.40.0", "einops": "0.8.2",
+      "nnsight": "0.3.7", "numpy": "2.5.2", "protobuf": "7.36.1",
+      "psutil": "7.2.2", "pydantic": "2.13.5", "sentencepiece": "0.2.2",
+      "torchvision": "0.23.0", "wandb": "0.29.0", "xxhash": "4.0.1"
+    },
+    "file_count": 7994,
+    "bytes": 284633507,
+    "aggregate_sha256": "7c9465ca2f7ea2852621a756f6d2a2e65c3a2c7b9926e23c918d7d6b7bb7e2a5"
+  },
+  "sparsify": {
+    "source_commit": "42c064525b1cdd2b97f4a4807e247e89025d552c",
+    "overlay_path": "D:\\CCAD_Storage\\environments\\r005a_sparsify_overlay",
+    "packages": {
+      "accelerate": "1.14.0", "datasets": "5.0.1", "docstring-parser": "0.18.0",
+      "einops": "0.8.2", "natsort": "8.4.0", "numpy": "2.5.2",
+      "pandas": "3.0.5", "pyarrow": "25.0.1", "psutil": "7.2.2",
+      "schedulefree": "1.4.1", "simple-parsing": "0.1.9", "xxhash": "4.0.1"
+    },
+    "file_count": 7683,
+    "bytes": 251335332,
+    "aggregate_sha256": "988988061b3bb77c8c27354d29c6d29ee6ccd5649c21434a9ac3aeda47686933"
+  },
+  "installation_note": "Two bulk pip --target commands reported success but remained alive and were interrupted; missing metadata/packages were repaired by explicit package installs. Aggregate hashes above capture the post-repair state."
+}

@@ -1,0 +1,32 @@
+{
+  "purpose": "Pythia-70M real single-batch hook, token, manual-SAE round-trip, and intervention contract",
+  "model_id": "EleutherAI/pythia-70m-deduped",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_license": "Apache-2.0",
+  "attn_implementation": "eager",
+  "cublas_workspace_config": ":4096:8",
+  "hidden_size": 512,
+  "num_hidden_layers": 6,
+  "layer_index": 2,
+  "hook_module_path": "gpt_neox.layers.2",
+  "fixture_width": 16,
+  "dataset_id": "ccad-r004-public-text-fixture-v1",
+  "document_ids": ["r004-doc-0001", "r004-doc-0002"],
+  "prompts": [
+    "The quick brown fox jumps over the lazy dog.",
+    "Sparse autoencoders can reveal distributed features."
+  ],
+  "seed": 20260902,
+  "fixture_seed": 20260903,
+  "absolute_tolerance": 1e-6,
+  "relative_tolerance": 1e-6,
+  "minimum_intervention_logit_delta": 1e-8,
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "mean_constants_source_split": "not_applicable_M0_manual_fixture",
+  "threshold_source_split": "preflight_frozen_analytic_and_float32_tolerance",
+  "statistics_unit": "deterministic_two-document_fixture",
+  "protocol_deviations": [],
+  "scope_warning": "M0 real-model debug fixture only; no trained SAE, C1, or C2 claim."
+}

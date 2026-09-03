@@ -1,0 +1,25 @@
+{
+  "absolute_tolerance": 1e-10,
+  "audit_opened": false,
+  "base_seed": 20264000,
+  "block_count": 4,
+  "candidate_family_frozen": true,
+  "evidence_level": "synthetic_candidate_matrix",
+  "families": [
+    "F03_unequal_split_merge"
+  ],
+  "max_group_size": 2,
+  "mean_constants_source_split": "synthetic_mean",
+  "n_eval": 2048,
+  "n_mean": 257,
+  "purpose": "R002 F03 unequal split/merge candidate matrix",
+  "relative_tolerance": 1e-10,
+  "residual_tolerance": 1e-10,
+  "resource_lease": null,
+  "resource_lease_reason": "bounded CPU-only deterministic synthetic run",
+  "run_parent": "R002",
+  "scope_warning": "R002 candidate evidence for F03 only; F04/F06 and the M1 gate remain incomplete.",
+  "seed_pair_count": 20,
+  "statistics_unit": "synthetic_seed_pair",
+  "threshold_source_split": "predeclared_config"
+}

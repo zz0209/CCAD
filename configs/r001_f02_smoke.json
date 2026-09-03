@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.1.0",
+  "run_parent": "R001",
+  "evidence_level": "synthetic_smoke",
+  "dtype": "float64",
+  "q_values": [],
+  "block_ranks": [2, 2, 2],
+  "n_mean": 257,
+  "n_eval": 2048,
+  "base_seed": 20260920,
+  "seed_pair_count": 5,
+  "max_group_size": 4,
+  "residual_tolerance": 1e-10,
+  "absolute_tolerance": 1e-10,
+  "relative_tolerance": 1e-10,
+  "families": [
+    "F02_local_block_rotations"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "mean_constants_source_split": "synthetic_mean",
+  "threshold_source_split": "predeclared_smoke_config",
+  "statistics_unit": "generator_seed_pair",
+  "resource_lease": null,
+  "resource_lease_reason": "short single-process CPU exhaustive-neighborhood smoke test"
+}

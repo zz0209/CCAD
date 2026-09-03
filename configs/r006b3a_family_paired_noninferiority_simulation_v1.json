@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "run_family": "R006b3a_family_paired_noninferiority_simulation",
+  "simulation_seed": 60064,
+  "n_simulations": 5000,
+  "family_counts": [6, 8, 10, 12, 16, 20, 24, 32, 48, 64],
+  "tasks_per_family": [4, 8, 12],
+  "icc_values": [0.25, 0.5, 0.75],
+  "total_task_sd": 0.04,
+  "cross_configuration_correlation": 0.5,
+  "configuration_labels": ["k8", "k16", "k32", "k64", "k128"],
+  "reference_configuration": "k128",
+  "primary_sesoi_auc": 0.01,
+  "sensitivity_sesoi_auc": [0.005, 0.02],
+  "loss_profiles_as_sesoi_multiples": {
+    "early_plateau": [3.0, 2.0, 0.5, 0.1, 0.0],
+    "late_gain": [3.0, 2.0, 1.5, 0.5, 0.0],
+    "weak_plateau": [1.5, 0.8, 0.4, 0.1, 0.0]
+  },
+  "familywise_alpha": 0.05,
+  "multiplicity_method": "bonferroni_four_one_sided_family_paired_t_bounds",
+  "lofo_required_fraction": 0.8,
+  "gate_thresholds": {
+    "false_noninferiority_upper_mc_bound": 0.07,
+    "boundary_false_noninferiority_upper_mc_bound": 0.025,
+    "correct_smallest_safe_lower_mc_bound": 0.8,
+    "lofo_stability_lower_mc_bound": 0.8,
+    "maximum_mc_half_width": 0.015
+  },
+  "audit_opened": false,
+  "sae_scores_loaded": false,
+  "probe_activations_computed": false,
+  "notes": [
+    "The .01 AUC primary SESOI is a prospective active-feature-budget decision threshold, not a universal literature constant.",
+    "The .005 and .02 margins are mandatory sensitivity analyses and cannot be hidden.",
+    "Loss profiles are prospective SESOI-relative scenarios and are not fitted to CCAD SAE results.",
+    "Qualification at .01 does not qualify the evaluator or open B3-B."
+  ]
+}

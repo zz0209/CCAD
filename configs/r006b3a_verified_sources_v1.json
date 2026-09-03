@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "purpose": "Source-license evidence known before any R006-B3-A probe activation is computed.",
+  "verified_tasks": {
+    "36_sciq_tf": {
+      "upstream": "allenai/sciq",
+      "license": "CC-BY-NC-3.0",
+      "use_class": "research-only-noncommercial",
+      "evidence_url": "https://huggingface.co/datasets/allenai/sciq"
+    },
+    "41_truthqa_tf": {
+      "upstream": "sylinrl/TruthfulQA",
+      "license": "Apache-2.0",
+      "use_class": "permissive-with-notice",
+      "evidence_url": "https://github.com/sylinrl/TruthfulQA"
+    },
+    "44_phys_tf": {
+      "upstream": "ybisk/PIQA",
+      "license": "AFL-3.0",
+      "use_class": "permissive-with-notice",
+      "evidence_url": "https://github.com/ybisk/ybisk.github.io/blob/master/piqa/README.md"
+    },
+    "48_cm_correct": {
+      "upstream": "hendrycks/ethics",
+      "license": "MIT",
+      "use_class": "permissive-with-notice",
+      "evidence_url": "https://github.com/hendrycks/ethics/blob/master/LICENSE"
+    },
+    "49_cm_isshort": {
+      "upstream": "hendrycks/ethics",
+      "license": "MIT",
+      "use_class": "permissive-with-notice",
+      "evidence_url": "https://github.com/hendrycks/ethics/blob/master/LICENSE"
+    },
+    "50_deon_isvalid": {
+      "upstream": "hendrycks/ethics",
+      "license": "MIT",
+      "use_class": "permissive-with-notice",
+      "evidence_url": "https://github.com/hendrycks/ethics/blob/master/LICENSE"
+    },
+    "51_just_is": {
+      "upstream": "hendrycks/ethics",
+      "license": "MIT",
+      "use_class": "permissive-with-notice",
+      "evidence_url": "https://github.com/hendrycks/ethics/blob/master/LICENSE"
+    },
+    "52_virtue_is": {
+      "upstream": "hendrycks/ethics",
+      "license": "MIT",
+      "use_class": "permissive-with-notice",
+      "evidence_url": "https://github.com/hendrycks/ethics/blob/master/LICENSE"
+    },
+    "54_cs_tf": {
+      "upstream": "tasksource/commonsense_qa_2.0",
+      "license": "CC-BY-4.0",
+      "use_class": "permissive-with-attribution",
+      "evidence_url": "https://huggingface.co/datasets/tasksource/commonsense_qa_2.0/tree/main"
+    },
+    "95_toxic_is": {
+      "upstream": "lmsys/toxic-chat",
+      "license": "CC-BY-NC-4.0",
+      "use_class": "research-only-noncommercial-sensitive",
+      "evidence_url": "https://huggingface.co/datasets/lmsys/toxic-chat"
+    }
+  }
+}

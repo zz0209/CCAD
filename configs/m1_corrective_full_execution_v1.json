@@ -1,0 +1,45 @@
+{
+  "schema_version": "m1_corrective_full_execution.v1",
+  "parent_protocol": "configs/m1_corrective_full_v1.json",
+  "synthetic_eval_opened_at_start": false,
+  "real_sae_audit_opened": false,
+  "evidence_level": "synthetic_formal_corrective",
+  "seed_pair_count": 20,
+  "base_seed": 30300000,
+  "families": [
+    "F01_hadamard_gauge",
+    "F02_local_block_rotations",
+    "F03_unequal_split_merge",
+    "F04_partial_overlap",
+    "F05_cancellation",
+    "F06_cooccurrence_confounding",
+    "F07_rare_occupancy",
+    "F08_competing_covers",
+    "F09_whole_dictionary_only",
+    "F10_same_span_different_computation",
+    "F11_same_sum_bloated_span",
+    "F12_non_lipschitz_downstream_cliff"
+  ],
+  "diagnostic_config_sources": {
+    "F01_hadamard_gauge": "configs/r001_candidate_v1.json",
+    "F02_local_block_rotations": "configs/r002_f02_formal_v1.json",
+    "F03_unequal_split_merge": "configs/r002_f03_formal_v2.json",
+    "F04_partial_overlap": "configs/r002_f04_formal_v1.json",
+    "F05_cancellation": "configs/r003_f05_formal_v1.json",
+    "F06_cooccurrence_confounding": "configs/r002_f06_formal_v1.json",
+    "F07_rare_occupancy": "configs/r003_f07_formal_v1.json",
+    "F08_competing_covers": "configs/r003_f08_f09_formal_v1.json",
+    "F09_whole_dictionary_only": "configs/r003_f08_f09_formal_v1.json",
+    "F10_same_span_different_computation": "configs/r003_f10_f11_formal_v1.json",
+    "F11_same_sum_bloated_span": "configs/r003_f10_f11_formal_v1.json",
+    "F12_non_lipschitz_downstream_cliff": "configs/r003_f12_formal_v1.json"
+  },
+  "unknown_support_families": [
+    "F02_local_block_rotations",
+    "F03_unequal_split_merge",
+    "F04_partial_overlap",
+    "F06_cooccurrence_confounding"
+  ],
+  "resource": "cpu-heavy",
+  "scope_warning": "Formal 12-family corrective synthetic evidence only. PASS permits a fresh semantic audit; it is not real-SAE C1/C2 evidence and does not itself restore M1."
+}

@@ -1,0 +1,24 @@
+{
+  "protocol_version": "m1_unknown_support_feasibility.v1",
+  "evidence_level": "synthetic_discovery_only_feasibility",
+  "audit_opened": false,
+  "held_out_eval_loaded": false,
+  "planted_labels_loaded": false,
+  "families": {
+    "F02_local_block_rotations": {"block_ranks": [2, 2, 2]},
+    "F03_unequal_split_merge": {"block_count": 4},
+    "F04_partial_overlap": {},
+    "F06_cooccurrence_confounding": {}
+  },
+  "seed_pair_count": 5,
+  "base_seed": 9100,
+  "n_mean": 257,
+  "n_discovery": 1024,
+  "top_k_grid": [1, 2, 4],
+  "max_group_size_grid": [1, 2, 3, 4],
+  "max_neighborhood_atoms": 12,
+  "random_swap_attempt_multiplier": 20,
+  "lanes": ["CONTRIB-KNN", "DECODER-KNN", "CODE-KNN", "RANDOM-MATCHED"],
+  "budget_rule": "maximum observed deduplicated candidate-family size across the frozen discovery-only grid",
+  "notes": "No planted hyperedge, held-out eval array, eval metric, or recovery score may be loaded by this feasibility run. LI15 spectral remains unimplemented and blocks formal freeze."
+}

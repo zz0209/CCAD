@@ -1,0 +1,86 @@
+{
+  "schema_version": "m1_nip_protocol.v1",
+  "protocol_status": "LOCKED_FOR_IMPLEMENTATION",
+  "protocol_frozen_utc": "2026-09-03T02:43:00Z",
+  "execution_enabled": false,
+  "synthetic_evaluation_opened": false,
+  "real_sae_audit_opened": false,
+  "evidence_level": "prospective_synthetic_protocol",
+  "method": "MSCC",
+  "query_unit": "source_atom",
+  "target_object": "unweighted_binary_native_atom_support",
+  "dtype": "float64",
+  "epsilon": 1e-12,
+  "g_max": 4,
+  "primary_score_budget_per_query_per_lane": 7462,
+  "proposal_atom_cap_grid_d1": [4, 8, 12, 16, 20],
+  "maximum_support_count_at_atom_cap_20": 6195,
+  "proposal_tie_rule": "BUDGET_REFUSAL_IF_TIE_EXPANSION_EXCEEDS_CAP",
+  "exact_thresholds": {
+    "tau_ctr": 1e-10,
+    "tau_mu": 1e-10,
+    "tie_tolerance": 1e-12
+  },
+  "approximate_thresholds": {
+    "tau_ctr": 0.05,
+    "tau_mu": 0.05,
+    "minimum_population_margin": 0.02,
+    "retain_all_rejected_draws": true
+  },
+  "phases": {
+    "D0": {"pairs_per_family": 5, "truth_open": false, "purpose": "engineering_only"},
+    "D1": {"pairs_per_family": 20, "truth_open_after_prediction_freeze": true, "purpose": "lexicographic_variant_selection"},
+    "D2": {"pairs_per_family": 20, "seed_manifest_status": "UNGENERATED", "purpose": "fresh_all_pair_confirmation"}
+  },
+  "seed_derivation": "uint64(SHA256(protocol_hash||code_hash||phase||family||pair_index||stream)[:8])",
+  "families": [
+    "N01_structured_split",
+    "N02_structured_merge_refactorization",
+    "N03_tied_native_supports",
+    "N04_absent_target",
+    "N05_bloated_decoy",
+    "N06_exact_dense_orthogonal_rotation",
+    "N07_margin_separated_approximate_rotation",
+    "N08_continuous_only_representation",
+    "N09_cancellation",
+    "N10_rare_occupancy",
+    "N11_downstream_cliff",
+    "N12_mean_mismatch"
+  ],
+  "scalable_lanes": [
+    "MSCC",
+    "PW_MCC_HUNGARIAN",
+    "CONTRIBUTION_NEAREST_ATOM",
+    "GREEDY_DECODER_COSINE",
+    "DUSTBIN_SINKHORN",
+    "BINARY_FORWARD_OMP",
+    "OT_MASS_SUPPORT",
+    "SPECTRAL_LOCAL_SVD_SUPPORT",
+    "RANDOM_MATCHED_GROUP"
+  ],
+  "non_native_reference": "SIGNED_AND_NONNEGATIVE_CONTINUOUS_REGRESSION",
+  "tiny_oracle": "FULL_EXHAUSTIVE",
+  "real_identification_states": ["FOUND", "UNRESOLVED"],
+  "synthetic_complete_universe_extra_state": "CERTIFIED_ABSENT",
+  "unresolved_reasons": [
+    "NO_ACCEPTED_IN_FROZEN_FAMILY",
+    "PROPOSAL_LIMITED",
+    "BUDGET_REFUSAL",
+    "INSUFFICIENT_EVIDENCE"
+  ],
+  "hard_gate": {
+    "all_primary_pairs_must_pass": true,
+    "maximum_false_unique_count": 0,
+    "maximum_false_native_positive_count": 0,
+    "maximum_primary_budget_refusal_count": 0,
+    "artifact_and_information_order_fraction": 1.0,
+    "averaging_over_failures_allowed": false
+  },
+  "simplicity_rule": "DELETE_COMBINATORIAL_MSCC_IF_BINARY_FORWARD_OMP_MATCHES_PRIMARY_GATES_AND_COST",
+  "protocol_document": "M1_NIP_PROTOCOL_V1_20260902_224300.md",
+  "theory_boundary_document": "THEORY_NIP_ATOM_GROUP_BOUNDARY_20260902_224300.md",
+  "theory_pdf_sha256": "4AC04A9D2B65AA14F5A3E8B8DBC1A2B30374A20846A88D11B516362D4F410B80",
+  "final_proposal_sha256": "C6BD71A7F4964FB7E4B157C2E367C820A81E5B2B111B9F8B8F3A4B4AD6BBB65D",
+  "decision_sha256": "1748562BBCD9D0BFC050D5A78FBB8C4FBB80A1447425B58D663F85EDA7A97C0C",
+  "scope_warning": "This config is non-executable until implementation, source hashes, environment and selected phase are resolved. It does not restore M1 or open real audit."
+}

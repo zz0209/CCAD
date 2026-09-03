@@ -1,0 +1,30 @@
+{
+  "absolute_tolerance": 1e-10,
+  "audit_opened": false,
+  "base_seed": 20269000,
+  "block_ranks": [
+    2,
+    2,
+    2
+  ],
+  "candidate_family_frozen": true,
+  "evidence_level": "synthetic_formal_matrix",
+  "families": [
+    "F02_local_block_rotations"
+  ],
+  "max_group_size": 4,
+  "mean_constants_source_split": "synthetic_mean",
+  "n_eval": 2048,
+  "n_mean": 257,
+  "purpose": "R002 F02 formal local block-rotation recovery matrix",
+  "relative_tolerance": 1e-10,
+  "residual_tolerance": 1e-10,
+  "resource_lease": null,
+  "resource_lease_reason": "bounded CPU-only exhaustive synthetic run over small fixed neighborhoods",
+  "run_parent": "R002",
+  "scope_warning": "Formal F02 evidence; parent R002 requires aggregation with F03/F04/F06 and does not pass M1 without R003.",
+  "seed_pair_count": 20,
+  "statistics_unit": "synthetic_structural_seed_pair",
+  "threshold_source_split": "predeclared_config",
+  "tie_tolerance": 1e-12
+}

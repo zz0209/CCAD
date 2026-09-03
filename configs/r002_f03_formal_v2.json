@@ -1,0 +1,26 @@
+{
+  "absolute_tolerance": 1e-10,
+  "audit_opened": false,
+  "base_seed": 20266000,
+  "block_count": 4,
+  "candidate_family_frozen": true,
+  "evidence_level": "synthetic_formal_matrix",
+  "families": [
+    "F03_unequal_split_merge"
+  ],
+  "max_group_size": 2,
+  "mean_constants_source_split": "synthetic_mean",
+  "n_eval": 2048,
+  "n_mean": 257,
+  "purpose": "R002 F03 formal unequal split/merge matrix with complete oracle diagnostics",
+  "relative_tolerance": 1e-10,
+  "residual_tolerance": 1e-10,
+  "resource_lease": null,
+  "resource_lease_reason": "bounded CPU-only exhaustive synthetic run",
+  "run_parent": "R002",
+  "scope_warning": "Formal F03 evidence only; parent R002 still requires F02/F04/F06 aggregation.",
+  "seed_pair_count": 20,
+  "statistics_unit": "synthetic_structural_seed_pair",
+  "threshold_source_split": "predeclared_config",
+  "tie_tolerance": 1e-12
+}

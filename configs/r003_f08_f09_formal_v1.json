@@ -1,0 +1,28 @@
+{
+  "absolute_tolerance": 1e-10,
+  "audit_opened": false,
+  "base_seed": 20270000,
+  "candidate_family_frozen": true,
+  "evidence_level": "synthetic_formal_matrix",
+  "f08_max_group_size": 1,
+  "f09_max_group_size": 3,
+  "families": [
+    "F08_competing_covers",
+    "F09_whole_dictionary_only"
+  ],
+  "max_group_size": 3,
+  "mean_constants_source_split": "synthetic_mean",
+  "n_eval": 2048,
+  "n_mean": 257,
+  "purpose": "R003 F08 ambiguity and F09 global-only refusal formal matrix",
+  "relative_tolerance": 1e-10,
+  "residual_tolerance": 1e-10,
+  "resource_lease": null,
+  "resource_lease_reason": "bounded CPU-only exhaustive synthetic ambiguity/refusal run",
+  "run_parent": "R003",
+  "scope_warning": "Formal F08/F09 evidence only; R003 and M1 still require F05/F07/F10/F11/F12 diagnostics.",
+  "seed_pair_count": 20,
+  "statistics_unit": "synthetic_structural_seed_pair",
+  "threshold_source_split": "predeclared_config",
+  "tie_tolerance": 1e-12
+}

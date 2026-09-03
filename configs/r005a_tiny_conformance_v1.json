@@ -1,0 +1,43 @@
+{
+  "schema_version": "0.1.0",
+  "run_id": "R005a_tiny_conformance_v1_20260902T081643Z",
+  "run_parent": "R005",
+  "milestone": "M2",
+  "evidence_level": "framework_core_tiny_tensor_conformance",
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "device": "cpu",
+  "dtype": "float32",
+  "activation_dim": 4,
+  "dictionary_size": 8,
+  "k": 2,
+  "batch_size": 8,
+  "init_seeds": [0, 1],
+  "replay_seed": 0,
+  "learning_rate": 0.001,
+  "steps": 1,
+  "dictionary_learning": {
+    "commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+    "source_dir": "D:\\CCAD_Storage\\references\\source\\dictionary_learning_60ec6bf",
+    "overlay_dir": "D:\\CCAD_Storage\\environments\\r005a_dictionary_overlay"
+  },
+  "sparsify": {
+    "commit": "42c064525b1cdd2b97f4a4807e247e89025d552c",
+    "source_dir": "D:\\CCAD_Storage\\references\\source\\sparsify_42c0645",
+    "overlay_dir": "D:\\CCAD_Storage\\environments\\r005a_sparsify_overlay"
+  },
+  "shared_runtime": "D:\\CCAD_Storage\\environments\\r004\\Scripts\\python.exe",
+  "external_logging": false,
+  "network_during_run": false,
+  "hard_checks": [
+    "same_seed_initial_hash_equal",
+    "same_seed_post_step_hash_equal",
+    "different_seed_initial_hash_different",
+    "selected_k_exact",
+    "actual_l0_bounded_by_k",
+    "decode_formula_matches",
+    "decoder_norm_unit",
+    "safe_export_roundtrip_exact"
+  ],
+  "scope_limit": "core modules only; not full CLI/install, activation buffer, model hook, resume, SAE quality, M2 gate, C1, or C2"
+}

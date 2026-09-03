@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.1.1",
+  "run_id": "R005a_package_resume_v2_20260902T090317Z",
+  "run_parent": "R005",
+  "milestone": "M2",
+  "evidence_level": "framework_package_offline_and_tiny_resume_conformance",
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "device": "cpu",
+  "dtype": "float32",
+  "activation_dim": 4,
+  "dictionary_size": 8,
+  "k": 2,
+  "batch_size": 1,
+  "training_batches": 2,
+  "interrupt_after_batches": 1,
+  "init_seed": 0,
+  "model_seed": 1234,
+  "learning_rate": 0.001,
+  "dictionary_learning": {
+    "commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+    "source_dir": "D:\\CCAD_Storage\\references\\source\\dictionary_learning_60ec6bf",
+    "overlay_dir": "D:\\CCAD_Storage\\environments\\r005a_dictionary_overlay"
+  },
+  "sparsify": {
+    "commit": "42c064525b1cdd2b97f4a4807e247e89025d552c",
+    "source_dir": "D:\\CCAD_Storage\\references\\source\\sparsify_42c0645",
+    "overlay_dir": "D:\\CCAD_Storage\\environments\\r005a_sparsify_overlay"
+  },
+  "shared_runtime": "D:\\CCAD_Storage\\environments\\r004\\Scripts\\python.exe",
+  "environment_lock": "configs/r005a_environment_lock_v2.json",
+  "offline_environment": {
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "WANDB_MODE": "offline",
+    "WANDB_DISABLED": "true",
+    "SPARSIFY_DISABLE_TRITON": "1"
+  },
+  "hard_checks": [
+    "public_package_import",
+    "documented_training_or_trainer_path_executes",
+    "external_logging_disabled",
+    "no_socket_connect_attempt",
+    "checkpoint_artifact_complete",
+    "uninterrupted_vs_resumed_final_hash_equal",
+    "uninterrupted_vs_resumed_step_equal"
+  ],
+  "repair_from": "R005a_package_resume_v1_20260902T085540Z",
+  "repair_note": "Use a minimal sized/selectable torch Dataset fixture because HF Dataset.from_dict fails in the shared Python 3.13 runtime through a PyArrow/dill MonthDayNano pickling incompatibility before Trainer execution.",
+  "scope_limit": "tiny local CPU model/tensors only; no Pythia, HF dataset pipeline, corpus, SAE quality, full M2, C1, or C2"
+}

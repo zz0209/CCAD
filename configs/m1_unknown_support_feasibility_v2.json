@@ -1,0 +1,31 @@
+{
+  "protocol_version": "m1_unknown_support_feasibility.v2",
+  "evidence_level": "synthetic_discovery_only_feasibility",
+  "audit_opened": false,
+  "held_out_eval_loaded": false,
+  "planted_labels_loaded": false,
+  "families": {
+    "F02_local_block_rotations": {"block_ranks": [2, 2, 2]},
+    "F03_unequal_split_merge": {"block_count": 4},
+    "F04_partial_overlap": {},
+    "F06_cooccurrence_confounding": {}
+  },
+  "seed_pair_count": 5,
+  "base_seed": 9100,
+  "n_mean": 257,
+  "n_discovery": 1024,
+  "top_k_grid": [1, 2, 4],
+  "max_group_size_grid": [1, 2, 3, 4],
+  "max_neighborhood_atoms": 12,
+  "random_swap_attempt_multiplier": 20,
+  "li15_spectral": {
+    "correlation_threshold": 0.2,
+    "max_clusters": 8,
+    "kmeans_seed_offset": 90,
+    "cluster_count_rule": "largest unnormalized-Laplacian eigengap over k=2..min(max_clusters,V-1)",
+    "source": "Li et al., PMLR 44 / ICLR 2016 supplement S.3; tau=0.2 reported for conv2 example"
+  },
+  "lanes": ["CONTRIB-KNN", "DECODER-KNN", "CODE-KNN", "RANDOM-MATCHED", "LI15-SPECTRAL"],
+  "budget_rule": "maximum observed deduplicated candidate-family size across the frozen discovery-only grid and all lanes",
+  "notes": "No planted hyperedge, held-out eval array, eval metric, or recovery score may be loaded. Li15 is an independent clean-room implementation of the published combined-correlation/unnormalized-Laplacian/eigengap/k-means description; no GPL source was copied."
+}

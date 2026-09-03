@@ -1,0 +1,31 @@
+{
+  "run_parent": "R003",
+  "purpose": "Formal F10 function-mismatch and F11 span-bloat refusal matrix",
+  "evidence_level": "synthetic_formal",
+  "families": [
+    "F10_same_span_different_computation",
+    "F11_same_sum_bloated_span"
+  ],
+  "formal_f10_f11": true,
+  "base_seed": 20260902,
+  "seed_pair_count": 20,
+  "n_mean": 257,
+  "n_eval": 2048,
+  "max_group_size": 2,
+  "residual_tolerance": 0.1,
+  "tie_tolerance": 1e-12,
+  "absolute_tolerance": 1e-10,
+  "relative_tolerance": 1e-10,
+  "maximum_abs_f10_bcc": 1e-10,
+  "minimum_f10_residual": 0.99,
+  "minimum_f10_contribution_rmse": 1.0,
+  "maximum_f11_psc": 0.6666666667666666,
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "mean_constants_source_split": "independent synthetic mean split",
+  "threshold_source_split": "construction-derived pre-run protocol",
+  "statistics_unit": "structural seed pair",
+  "resource_lease": "not_required",
+  "resource_lease_reason": "bounded single-process CPU synthetic matrix",
+  "scope_warning": "Synthetic formal falsifier evidence only; thresholds do not transfer to real SAE data."
+}

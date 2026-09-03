@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.1.0",
+  "run_parent": "R001",
+  "evidence_level": "synthetic_candidate_matrix",
+  "dtype": "float64",
+  "q_values": [],
+  "n_mean": 257,
+  "n_eval": 2048,
+  "base_seed": 20263000,
+  "seed_pair_count": 20,
+  "absolute_tolerance": 1e-10,
+  "relative_tolerance": 1e-10,
+  "families": [
+    "F10_same_span_different_computation",
+    "F11_same_sum_bloated_span"
+  ],
+  "scope_warning": "R001 complement matrix only; M1 and the remaining falsifier suite are not complete.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "mean_constants_source_split": "synthetic_mean",
+  "threshold_source_split": "predeclared_r001_complement_config",
+  "statistics_unit": "synthetic_replicate_seed",
+  "resource_lease": null,
+  "resource_lease_reason": "bounded single-process CPU complement matrix"
+}

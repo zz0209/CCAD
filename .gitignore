@@ -1,0 +1,37 @@
+# CCAD uses an explicit upload allowlist. Everything is private/local by default.
+*
+
+# Repository policy
+!.gitignore
+
+# Project implementation
+!src/
+!src/**
+!scripts/
+!scripts/**
+!tests/
+!tests/**
+!configs/
+!configs/**
+
+# Explicitly authorized research records
+!master_log.md
+!goal_aligned_subspace_consistency_complete_proofs.pdf
+
+# Generated Python artifacts inside allowlisted trees
+**/__pycache__/
+*.py[cod]
+*.pyo
+
+# Local environments, credentials, and editor state (defense in depth)
+.env
+.env.*
+*.pem
+*.key
+.venv/
+venv/
+.idea/
+.vscode/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
