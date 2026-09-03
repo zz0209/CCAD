@@ -2356,3 +2356,21 @@ Run在嵌套`cpu-heavy`与`disk-d-io` leases下约两分钟完成，10/10 checks
 **保守解释与阶段裁决。** R007五seed FVE约`.9688`、CE recovered约`.907–.912`、alive=1；R008对五seed使用同一640次base forward并通过全部文件hash/shape检查；R009c same-seed contribution identity亦通过。结合这些既有证据，目前没有资产错位、token错配或单seed质量失败的迹象。R011b因此是科学负结果：当前局部proposal几乎不张成source atom contribution，而不是implementation crash；但它仍不能证明完整target dictionary中不存在大支持表示，也没有打开audit，故不否定C1/C2全局版本。
 
 按C034停止规则，关闭局部proposal/系数变体，不追加小pilot。R011保持`RUNNING`，下一项承重实验转向R010 aggregate reconstruction identity与stable-subspace/group baseline：若整体/子空间跨seed稳定而atom/native-small-support失败，主故事成为“高重构质量掩盖非规范atom分解，并以选择性refusal量化边界”；若整体也不稳定，则回到训练配置/充分性边界。全项目`unittest discover`本轮执行169项，其中168项PASS；唯一collection error来自既有T021模拟测试缺少可选依赖`mpmath`，并非本轮代码失败。R011b真实run自身与artifact contract均PASS。
+
+## 2026-09-03 19:55 EDT — R010a aggregate identity PASS；发现whole-SAE稳定与atom/local-support失配的强尺度分离
+
+5分钟automation按状态恢复顺序进入R010，没有重复调R011局部proposal。新增C035、`configs/r010a_aggregate_reconstruction_identity_v1.json`与`scripts/run_r010a_aggregate_reconstruction_identity.py`。正式run `R010a_aggregate_reconstruction_identity_v1_20260903T235000Z`绑定R008b asset manifest和R009a独立mean constants，在共享`disk-d-io`+`cpu-heavy` leases下流式重建五个冻结SAE对全部131,072个discovery tokens的whole-dictionary hook output；不读取calibration/audit、不选择query、不设置阈值或`FOUND`，也不做token-level inference。Run 9/9 checks与artifact contract PASS，输出SHA-256=`BB912E98008DCE77E348244BB0CC3B0036E43EF29508A7F7EF312E55564CD3C8`，资源均正常释放。
+
+20个ordered seed pairs的whole-SAE centered BCC min/median/max为`.984484/.984521/.984554`；source-normalized residual min/median/max为`.030890/.030960/.031038`。这与同一资产上R009c balanced best atom BCC median `.01940`、R011a native size-4 BCC median `.02369`以及R011b signed full-20 residual median `.99773`形成明确尺度分离：五个seed整体重建几乎一致，但单atom及当前local native support几乎不可互换。
+
+保守解释：该结果实质排除了gross token/pairing错位和“不同seed整体表示完全不一致”，使当前主线故事获得可信空间；它说明非规范性发生在分解尺度，而不是底模hook整体，但不能据此断言具体机制是rotation、不能推出任意atom有大support表示，也不是C1/C2或因果证据。R010由TODO转RUNNING。下一工作单元只允许一个dynamic stable-subspace baseline来量化共享低维结构；完成后应进入calibration/refusal冻结，不再回到local proposal变体。本轮未采用新文献，`REFERENCE_REGISTRY.md`无需修改；该单次automation不单独触发Git提交。
+
+## 2026-09-03 20:08 EDT — R010b动态稳定子空间PASS；均值位移复核后尺度分离仍成立
+
+Automation按上轮停止规则只执行一个dynamic stable-subspace baseline。`R010b_dynamic_stable_subspace_v1_20260904T001000Z`在全131,072 discovery tokens上累积五个whole-SAE reconstruction covariance，计算rank 16/32/64/128/256/512共享hook子空间PSC；10/10与artifact contract PASS。但其effective rank median仅`1.8856`，可能由独立mean split与discovery empirical mean的固定偏移主导。虽然不是程序失败，直接采用v1会使稳定子空间故事存在可避免的混杂。
+
+因此保留v1并执行唯一纠正suffix `R010b_dynamic_stable_subspace_v2_20260904T002000Z`：不改tokens、seeds、ranks或数据，只利用R009a已保存的discovery code means把covariance精确分解为independent-mean与within-discovery empirical-mean两种centering，并报告mean-shift能量。V2在嵌套`disk-d-io`+`cpu-heavy` leases下11/11与contract PASS，输出SHA-256=`73413743F7E8DA97790A1A0F57DD0DD4298977DC04E0CC8E3123AFD3A4768A7A`，所有lease释放。Mean shift只占independent-centered trace的min/median/max `.011553%/.012064%/.012737%`；effective rank两种centering均约`1.88`，故低effective rank不是mean-split伪影。
+
+Within-discovery centering下，rank16/32/64的pairwise PSC median为`.98899/.97511/.95609`，variance coverage median为`.95764/.96447/.97232`；isotropic random expectations仅`.02083/.04167/.08333`。Rank128 PSC仍`.90631`且覆盖`.98080`。与R010a aggregate BCC `.98452`、R009 atom BCC `.01940`和R011 local native BCC `.02369`合并，当前受控真实SAE证据支持一个清楚但保守的尺度分离：跨seed整体输出和领先动态子空间高度复现，原生atom及小型local support却不复现。
+
+该结果不能识别rotation，effective rank也不等于monosemanticity，更没有给C1/C2、`FOUND`或causal portability提供独立证明。R010保持RUNNING，因为stitching/Li15与calibration公平冻结尚未完成。Discovery方法优化到此停止；下一工作单元进入calibration，冻结best-single、group baselines、MSCC refusal/ambiguity与共同预算，之后才能决定是否打开audit。本轮未新增文献，registry无需更新；R010a/R010b组成一个阶段性主线里程碑，允许合并Git同步。
