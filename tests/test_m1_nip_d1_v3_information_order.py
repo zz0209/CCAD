@@ -29,12 +29,21 @@ class D1V3InformationOrderTests(unittest.TestCase):
         self.assertEqual(d1["expected_prediction_rows"], 1200)
 
     def test_configs_bind_protocol_diagnostics_and_n11_approximate_lane(self):
-        for name in ("m1_nip_i1_v3.json", "m1_nip_d1_v3.json"):
+        for name in ("m1_nip_i1_v3.json", "m1_nip_d1_v3.json", "m1_nip_d2_v3.json"):
             config = json.loads((ROOT / "configs" / name).read_text(encoding="utf-8"))
             self.assertEqual(hashlib.sha256((ROOT / config["protocol_path"]).read_bytes()).hexdigest().upper(), config["protocol_sha256"])
             self.assertEqual(hashlib.sha256((ROOT / config["diagnostic_config_path"]).read_bytes()).hexdigest().upper(), config["diagnostic_config_sha256"])
             self.assertIn("N11_downstream_cliff", config["approximate_families"])
             self.assertFalse(config["truth_opened_in_prediction"])
+
+    def test_d2_is_fresh_selected_cap_only(self):
+        config = json.loads((ROOT / "configs/m1_nip_d2_v3.json").read_text(encoding="utf-8"))
+        self.assertEqual(config["phase"], "D2")
+        self.assertTrue(config["formal_d2_seed_consumed"])
+        self.assertEqual(config["atom_caps"], [20])
+        self.assertEqual(config["pairs_per_family"], 20)
+        self.assertEqual(config["expected_prediction_rows"], 240)
+        self.assertFalse(config["truth_opened_in_prediction"])
 
     def test_validator_is_prelabel_only(self):
         tree = ast.parse(VALIDATOR.read_text(encoding="utf-8"))

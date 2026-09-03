@@ -1968,3 +1968,15 @@ Formal scorer与独立validator均正常完成。Validator 10/10 PASS，对1,200
 冻结词典序选择cap20：7个positive families的140/140 pairs精确恢复minimum support set/cardinality/multiplicity；5个negative families共100 pairs无false native positive；false unique与budget refusal均为0。Selected-cap orthogonal suite也全部20/20符合预冻结属性：N09 cancellation ratio范围114.95–332.68并判unsafe；N10 active documents恒2且document ESS最大1.99981并判insufficient；N11 cliff RMSE恒1.0、smooth最大0.1、minimum normalized margin约0.05并判causal fail；N12 `d_mu≈1`并判mean mismatch。
 
 保守解释：这是formal D1 labeled synthetic development，支持在v3构造内冻结cap20与属性测量，但不是fresh D2 confirmation、真实SAE、held-out contribution或C1/C2证据。`M1_NIP_protocol_v3`仍TODO；D2 seeds仍未生成。下一轮必须先产生selection-freeze manifest与D2 config，绑定D1 prediction/score/validators、selected cap、protocol/diagnostic/scorer hashes，并经静态审计后才可原子生成fresh D2 seeds。
+
+## 2026-09-03 12:09 EDT — 登记pre-D2 selection/config freeze audit
+
+Heartbeat `ccad`创建`configs/m1_nip_d2_selection_freeze_v3.json`与`configs/m1_nip_d2_v3.json`。Freeze manifest内容寻址绑定formal D1 prediction closure/prelabel validator、score raw/summary/independent validator、selected cap20、v3 protocol/diagnostics及D2 predictor/scorer/validators源码；D2 config固定fresh `D2` namespace、20 pairs/family、selected cap `[20]`、240 rows和既有7,462 budget。Runner仅做必要泛化以接受D2 selected-cap-only grid，并把freeze manifest作为run-local input snapshot；I1/D1五cap语义不变。
+
+新增独立静态审计器，检查完整hash chain、D1 validators PASS、cap20 selection重放、D2 source绑定、fresh namespace、信息边界及不存在已有D2 prediction目录。py_compile与8/8定向tests PASS。现登记`M1_NIP_D2_freeze_v3_audit_v1_20260903T160900Z`为RUNNING；审计只产配置artifact，不生成D2 seed或打开label/held-out/real audit。
+
+### 2026-09-03 12:10 EDT — pre-D2 freeze audit PASS；D2 generation尚未启动
+
+静态审计10/10 PASS。D2 config SHA-256=`4CF9B8746360CE75821A8C7C278D789758DA18A7061FE81EA2405D9919751FB8`，selection freeze=`388692CC223A9C1BF5EBF2A3B9202BDEB38755EEDE10AF74C49CA2EC59742916`，validation=`F9AE273084ADC4759520FBB2ABAF4F745CABA518BBCC3CEF82B507AD75A59BAC`。全项目unittest discover 129/129 PASS。
+
+审计时确认不存在任何`M1_NIP_D2_predict_v3_formal_*`目录，故D2 seeds仍严格UNGENERATED，labels/held-out/real audit关闭。该PASS只授权下一轮使用已绑定配置登记fresh D2 truth-blind prediction；它不是D2结果，也不改变M1/C1/C2。鉴于selected-cap-only D2仅240 rows，预计计算量显著低于D1五cap 1,200 rows，但仍应在run中记录实测耗时。

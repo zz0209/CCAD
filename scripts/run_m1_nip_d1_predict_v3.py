@@ -79,18 +79,22 @@ def main() -> int:
     if run_dir.exists():
         raise FileExistsError(run_dir)
     config = json.loads(config_path.read_text(encoding="utf-8"))
-    if not config["execution_enabled"] or config["phase"] not in {"I1", "D1"}:
+    if not config["execution_enabled"] or config["phase"] not in {"I1", "D1", "D2"}:
         raise ValueError("v3 prediction phase is not enabled")
     if config["truth_opened_in_prediction"] or config["held_out_eval_opened"] or config["real_sae_audit_opened"]:
         raise ValueError("prediction information boundary is open")
-    if tuple(config["families"]) != FAMILIES or config["atom_caps"] != [4, 8, 12, 16, 20]:
+    expected_caps = [20] if config["phase"] == "D2" else [4, 8, 12, 16, 20]
+    if tuple(config["families"]) != FAMILIES or config["atom_caps"] != expected_caps:
         raise ValueError("grid differs from v3 protocol")
-    if config["target_atom_count"] != 20 or config["expected_prediction_rows"] != 12 * config["pairs_per_family"] * 5:
+    if config["target_atom_count"] != 20 or config["expected_prediction_rows"] != 12 * config["pairs_per_family"] * len(expected_caps):
         raise ValueError("v3 prediction dimensions are inconsistent")
     protocol = ROOT / config["protocol_path"]
     diagnostics = ROOT / config["diagnostic_config_path"]
     if sha(protocol) != config["protocol_sha256"] or sha(diagnostics) != config["diagnostic_config_sha256"]:
         raise ValueError("protocol or diagnostic contract hash drift")
+    selection_freeze = ROOT / config["selection_freeze_path"] if config["phase"] == "D2" else None
+    if selection_freeze is not None and sha(selection_freeze) != config["selection_freeze_sha256"]:
+        raise ValueError("D2 selection freeze hash drift")
 
     run_dir.mkdir(parents=True)
     source_rows = [snapshot(ROOT / item, run_dir, "source_snapshot", item) for item in SOURCES]
@@ -100,6 +104,8 @@ def main() -> int:
         "diagnostic_config": snapshot(diagnostics, run_dir, "input_snapshot", config["diagnostic_config_path"]),
         "execution_config": snapshot(config_path, run_dir, "input_snapshot", "execution_config.json"),
     }
+    if selection_freeze is not None:
+        input_rows["selection_freeze"] = snapshot(selection_freeze, run_dir, "input_snapshot", config["selection_freeze_path"])
     write_json(run_dir / "config.resolved.json", config)
     write_json(run_dir / "code_hashes.json", {"git_available": False, "aggregate_sha256": code_hash, "files": source_rows})
     write_json(run_dir / "inputs.json", input_rows)
@@ -109,8 +115,10 @@ def main() -> int:
         "artifact_schema_version": "ccad.prediction_run.v1", "run_id": run_dir.name,
         "phase": config["phase"], "evidence_level": config["evidence_level"], "started_utc": started,
         "protocol_sha256": config["protocol_sha256"], "diagnostic_config_sha256": config["diagnostic_config_sha256"],
+        "selection_freeze_sha256": config.get("selection_freeze_sha256"),
         "code_snapshot_hash": code_hash, "truth_opened": False,
         "formal_d1_seed_consumed": config["formal_d1_seed_consumed"],
+        "formal_d2_seed_consumed": config.get("formal_d2_seed_consumed", False),
         "statistical_unit": "seed_pair", "caps_paired_within_seed_pair": True,
     })
     write_json(run_dir / "status.json", {"status": "RUNNING", "started_utc": started})
@@ -204,6 +212,7 @@ def main() -> int:
         "schema_version": "ccad.prediction_closure.v1", "state": "SEALED", "run_id": run_dir.name,
         "row_count": len(records), "protocol_sha256": config["protocol_sha256"],
         "diagnostic_config_sha256": config["diagnostic_config_sha256"], "code_snapshot_hash": code_hash,
+        "selection_freeze_sha256": config.get("selection_freeze_sha256"),
         "files": {name: sha(run_dir / name) for name in bound},
     }
     temporary = run_dir / "prediction_closure.json.tmp"
