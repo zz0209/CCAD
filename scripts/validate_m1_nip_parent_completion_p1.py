@@ -27,6 +27,9 @@ def _scientific_prediction(row: dict) -> dict:
     value = json.loads(json.dumps(row, sort_keys=True))
     value["cost"].pop("runtime_seconds", None)
     value["cost"].pop("median_runtime_seconds", None)
+    value["cost"].pop("peak_memory_bytes", None)
+    value["fairness"].pop("runtime_seconds_descriptive_only", None)
+    value["fairness"].pop("peak_memory_bytes", None)
     return value
 
 
@@ -101,6 +104,18 @@ def validate(run_dir: Path) -> dict:
         for row in observed_predictions
     )
     checks["runtime_protocol_complete"] = all(len(row["cost"]["runtime_seconds"]) == 5 and row["cost"]["median_runtime_seconds"] >= 0.0 for row in observed_predictions)
+    fairness_fields = set(json.loads((ROOT / config["parent_config_path"]).read_text(encoding="utf-8"))["fairness_fields"])
+    checks["fairness_ledger_complete"] = all(
+        set(row.get("fairness", {})) == fairness_fields
+        and row["fairness"]["source_query_manifest_hash"]
+        and row["fairness"]["target_universe_hash"]
+        and row["fairness"]["g_max"] == config["g_max"]
+        and row["fairness"]["candidate_budget"] == config["candidate_budget"]
+        and len(row["fairness"]["runtime_seconds_descriptive_only"]) == 5
+        and isinstance(row["fairness"]["peak_memory_bytes"], int)
+        and row["fairness"]["peak_memory_bytes"] >= 0
+        for row in observed_predictions
+    )
     checks["formal_seed_state"] = config["formal_seed_manifest_status"] == "UNGENERATED" and not config["formal_seed_consumed"] and closure["formal_seed_consumed"] == expected_formal
     result = {
         "schema_version": f"pc2.{phase.lower()}.prelabel_validation.v1",

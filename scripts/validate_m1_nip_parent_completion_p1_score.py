@@ -100,6 +100,18 @@ def validate(prediction_dir: Path, score_dir: Path) -> dict:
     status = json.loads((score_dir / "status.json").read_text(encoding="utf-8"))
     checks["prediction_and_prelabel_binding"] = closure["state"] == "SEALED" and prelabel["status"] == "PASS" and manifest["prediction_closure_sha256"] == sha(prediction_dir / "prediction_closure.json") and manifest["prelabel_validation_sha256"] == sha(prediction_dir / "prelabel_validation.json")
     checks["scorer_snapshot_binding"] = sha(score_dir / manifest["scorer_snapshot"]) == manifest["scorer_sha256"] and manifest["truth_open_order"] == "AFTER_CLOSURE_AND_PRELABEL_PASS"
+    if manifest.get("schema_version") == "pc2.score_manifest.v2":
+        code_hashes = json.loads((score_dir / "code_hashes.json").read_text(encoding="utf-8"))
+        input_hashes = json.loads((score_dir / "input_hashes.json").read_text(encoding="utf-8"))
+        checks["score_dependency_binding"] = (
+            all((score_dir / item["snapshot"]).is_file() and sha(score_dir / item["snapshot"]) == item["sha256"] for item in code_hashes["files"])
+            and hashlib.sha256(json.dumps(code_hashes["files"], sort_keys=True, separators=(",", ":")).encode()).hexdigest().upper() == code_hashes["aggregate_sha256"] == manifest["code_aggregate_sha256"]
+            and sha(score_dir / manifest["validator_snapshot"]) == manifest["validator_sha256"]
+            and sha(score_dir / "resolved_config.json") == manifest["resolved_config_sha256"]
+            and sha(score_dir / "input_hashes.json") == manifest["input_hashes_sha256"]
+            and all(sha(prediction_dir / name) == value for name, value in input_hashes["files"].items() if "/" not in name)
+            and all(sha(score_dir / "resolved_config.json") == sha(prediction_dir / "resolved_config.json") for _ in [0])
+        )
     checks["score_hash_and_status"] = status["status"] == "PASS" and summary["status"] == "PASS" and summary["raw_sha256"] == sha(score_dir / "scores.jsonl")
     rows = [json.loads(line) for line in (score_dir / "scores.jsonl").read_text(encoding="utf-8").splitlines() if line]
     predictions = {(row["family_id"], row["pair_index"], row["lane"]): row for row in [json.loads(line) for line in (prediction_dir / "predictions.jsonl").read_text(encoding="utf-8").splitlines() if line]}

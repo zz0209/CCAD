@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import platform
 import shutil
+import subprocess
 import sys
 import traceback
 
@@ -20,10 +21,27 @@ from ccad.nip_synthetic_v3 import evaluate_shared_hook_endpoint, generate_endpoi
 
 
 ROOT = Path(__file__).resolve().parents[1]
+SCORE_SOURCES = (
+    "scripts/score_m1_nip_parent_completion_p1.py",
+    "scripts/validate_m1_nip_parent_completion_p1_score.py",
+    "src/ccad/nip_truth.py", "src/ccad/nip_metric_surface.py",
+    "src/ccad/nip_synthetic_v2.py", "src/ccad/nip_synthetic_v3.py",
+)
 
 
 def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest().upper()
+
+
+def digest(value: object) -> str:
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest().upper()
+
+
+def snapshot(source: Path, score_dir: Path, relative: str) -> dict:
+    target = score_dir / "source_snapshot" / relative
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, target)
+    return {"path": relative, "snapshot": target.relative_to(score_dir).as_posix(), "sha256": sha(target), "bytes": target.stat().st_size}
 
 
 def write_json(path: Path, value: object) -> None:
@@ -155,9 +173,18 @@ def main() -> int:
     started = now()
     write_json(score_dir / "status.json", {"status": "RUNNING", "started_utc": started})
     try:
-        scorer_snapshot = score_dir / "source_snapshot" / "scripts" / Path(__file__).name
-        scorer_snapshot.parent.mkdir(parents=True)
-        shutil.copy2(Path(__file__), scorer_snapshot)
+        sources = [snapshot(ROOT / relative, score_dir, relative) for relative in SCORE_SOURCES]
+        code_hash = digest(sources)
+        write_json(score_dir / "code_hashes.json", {"aggregate_sha256": code_hash, "files": sources})
+        write_json(score_dir / "resolved_config.json", config)
+        input_names = ("prediction_closure.json", "prelabel_validation.json", "predictions.jsonl", "proposals.jsonl", "seed_ledger.json", "resolved_config.json")
+        inputs = {name: sha(prediction_dir / name) for name in input_names}
+        inputs[config["parent_config_path"]] = sha(ROOT / config["parent_config_path"])
+        write_json(score_dir / "input_hashes.json", {"prediction_run": prediction_dir.name, "files": inputs})
+        try:
+            git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+        except (OSError, subprocess.CalledProcessError):
+            git_head = None
         # Truth is imported only after closure and validation verification above.
         truth_module = importlib.import_module("ccad.nip_truth")
         rows = score_rows(prediction_dir, config, truth_module)
@@ -174,8 +201,20 @@ def main() -> int:
             "raw_sha256": sha(raw),
         }
         write_json(score_dir / "summary.json", summary)
-        write_json(score_dir / "environment.json", {"python": sys.version, "numpy": np.__version__, "platform": platform.platform(), "device": "cpu"})
-        write_json(score_dir / "manifest.json", {"prediction_closure_sha256": summary["prediction_closure_sha256"], "prelabel_validation_sha256": summary["prelabel_validation_sha256"], "scorer_snapshot": scorer_snapshot.relative_to(score_dir).as_posix(), "scorer_sha256": sha(scorer_snapshot), "truth_open_order": "AFTER_CLOSURE_AND_PRELABEL_PASS"})
+        write_json(score_dir / "environment.json", {"python": sys.version, "numpy": np.__version__, "platform": platform.platform(), "device": "cpu", "git_head_at_score": git_head})
+        scorer = next(item for item in sources if item["path"] == "scripts/score_m1_nip_parent_completion_p1.py")
+        validator = next(item for item in sources if item["path"] == "scripts/validate_m1_nip_parent_completion_p1_score.py")
+        write_json(score_dir / "manifest.json", {
+            "schema_version": "pc2.score_manifest.v2",
+            "prediction_closure_sha256": summary["prediction_closure_sha256"],
+            "prelabel_validation_sha256": summary["prelabel_validation_sha256"],
+            "scorer_snapshot": scorer["snapshot"], "scorer_sha256": scorer["sha256"],
+            "validator_snapshot": validator["snapshot"], "validator_sha256": validator["sha256"],
+            "code_aggregate_sha256": code_hash,
+            "resolved_config_sha256": sha(score_dir / "resolved_config.json"),
+            "input_hashes_sha256": sha(score_dir / "input_hashes.json"),
+            "truth_open_order": "AFTER_CLOSURE_AND_PRELABEL_PASS",
+        })
         (score_dir / "stdout.log").write_text(f"scored {len(rows)} post-closure rows\n", encoding="utf-8")
         (score_dir / "stderr.log").write_text("", encoding="utf-8")
         write_json(score_dir / "status.json", {"status": "PASS", "started_utc": started, "ended_utc": now()})

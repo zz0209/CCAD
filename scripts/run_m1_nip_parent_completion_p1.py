@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 from time import perf_counter
+import tracemalloc
 import traceback
 
 import numpy as np
@@ -50,8 +51,8 @@ def now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def seed_for(protocol_hash: str, code_hash: str, phase: str, family: str, pair: int, stream: str) -> int:
-    value = "||".join((protocol_hash, code_hash, phase, family, str(pair), stream)).encode()
+def seed_for(protocol_hash: str, code_hash: str, namespace: str, phase: str, family: str, pair: int, stream: str) -> int:
+    value = "||".join((protocol_hash, code_hash, namespace, phase, family, str(pair), stream)).encode()
     return int.from_bytes(hashlib.sha256(value).digest()[:8], "big")
 
 
@@ -68,19 +69,43 @@ def _semantic_mscc(result) -> dict:
     return payload
 
 
-def _timed(call, semantic=lambda value: value) -> tuple[object, list[float]]:
+def _timed(call, semantic=lambda value: value) -> tuple[object, list[float], int]:
     warm = call()
     reference = semantic(warm)
     times = []
     chosen = None
+    tracemalloc.start()
     for _ in range(5):
         started = perf_counter()
         result = call()
         times.append(perf_counter() - started)
         if semantic(result) != reference:
+            tracemalloc.stop()
             raise RuntimeError("measured repeat changed the scientific output")
         chosen = result
-    return chosen, times
+    _, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    return chosen, times, int(peak)
+
+
+def _fairness(config: dict, source_hash: str, target_hash: str, *, full_comparisons: int,
+              proposed_count: int, supports: list[tuple[int, ...]], evaluated: int,
+              runtime: list[float], peak: int, terminal_reason: str | None) -> dict:
+    raw_atoms = [atom for support in supports for atom in support]
+    return {
+        "source_query_manifest_hash": source_hash,
+        "target_universe_hash": target_hash,
+        "g_max": config["g_max"],
+        "candidate_budget": config["candidate_budget"],
+        "full_dictionary_comparisons": full_comparisons,
+        "proposed_atom_count": proposed_count,
+        "raw_support_count": len(raw_atoms),
+        "deduplicated_support_count": len(set(raw_atoms)),
+        "evaluated_candidate_count": evaluated,
+        "runtime_seconds_descriptive_only": runtime,
+        "peak_memory_bytes": peak,
+        "terminal_reason": terminal_reason,
+    }
 
 
 def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict], list[dict]]:
@@ -89,7 +114,7 @@ def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict],
     seed_rows: list[dict] = []
     for family in FAMILIES:
         for pair in range(config["pairs_per_family"]):
-            seeds = {stream: seed_for(config["protocol_sha256"], code_hash, config["phase"], family, pair, stream) for stream in config["required_seed_streams"]}
+            seeds = {stream: seed_for(config["protocol_sha256"], code_hash, config["fresh_namespace"], config["phase"], family, pair, stream) for stream in config["required_seed_streams"]}
             if len(set(seeds.values())) != len(seeds):
                 raise RuntimeError("derived seed streams collided")
             seed_rows.append({"family_id": family, "pair_index": pair, "seeds": seeds})
@@ -103,6 +128,8 @@ def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict],
             tau_mu = config["approximate_tau_mu"] if approximate else config["exact_tau_mu"]
             y = discovery.source_contributions[:, 0, :]
             targets = discovery.target_contributions
+            source_hash = hashlib.sha256(y.tobytes()).hexdigest().upper()
+            target_hash = hashlib.sha256(targets.tobytes()).hexdigest().upper()
             source_mean = mean.source_mean_contributions[:, 0]
             target_means = mean.target_mean_contributions
             k_ss, k_st, k_tt = observed_kernels(discovery)
@@ -118,7 +145,7 @@ def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict],
                 g_max=config["g_max"], tau_ctr=tau_ctr, tau_mu=tau_mu, epsilon=config["epsilon"],
                 candidate_budget=config["candidate_budget"], complete_universe=False,
             )
-            mscc, runtime = _timed(mscc_call, _semantic_mscc)
+            mscc, runtime, peak = _timed(mscc_call, _semantic_mscc)
             proposal_row = {
                 "family_id": family, "pair_index": pair, "lane": "MSCC",
                 "discovery_fingerprint": fingerprint, "status": proposal.status,
@@ -130,11 +157,17 @@ def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict],
             }
             proposals.append(proposal_row)
             prediction = _semantic_mscc(mscc)
+            mscc_supports = [tuple(item["target_ids"]) for item in prediction["supports"]]
             predictions.append({
                 "family_id": family, "pair_index": pair, "lane": "MSCC", "kind": "NATIVE",
                 "discovery_fingerprint": fingerprint, "prediction": prediction,
                 "cost": {"evaluated_candidate_count": mscc.evaluated_count, "runtime_seconds": runtime,
-                         "median_runtime_seconds": float(np.median(runtime)), "peak_memory_bytes": None},
+                         "median_runtime_seconds": float(np.median(runtime)), "peak_memory_bytes": peak},
+                "fairness": _fairness(config, source_hash, target_hash,
+                    full_comparisons=proposal.full_dictionary_comparisons,
+                    proposed_count=len(proposal.proposed_target_ids), supports=mscc_supports,
+                    evaluated=mscc.evaluated_count, runtime=runtime, peak=peak,
+                    terminal_reason=prediction.get("terminal_reason") or prediction.get("unresolved_reason")),
                 "truth_opened": False,
             })
 
@@ -146,7 +179,7 @@ def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict],
                     tau_ctr=tau_ctr, tau_mu=tau_mu, epsilon=config["epsilon"],
                     tie_tolerance=config["tie_tolerance"], solver_seed=seeds["solver"],
                 )
-                result, runtime = _timed(lane_call)
+                result, runtime, peak = _timed(lane_call)
                 diagnostics = []
                 diagnostic_cost = 0
                 if lane == "RANDOM_MATCHED_GROUP":
@@ -176,13 +209,18 @@ def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict],
                              "primary_evaluated_candidate_count": result.evaluated_support_count,
                              "diagnostic_evaluated_candidate_count": diagnostic_cost,
                              "runtime_seconds": runtime, "median_runtime_seconds": float(np.median(runtime)),
-                             "peak_memory_bytes": None},
+                             "peak_memory_bytes": peak},
+                    "fairness": _fairness(config, source_hash, target_hash,
+                        full_comparisons=20, proposed_count=len(set(result.ranking[:config["g_max"]])),
+                        supports=[tuple(value) for value in result.supports],
+                        evaluated=result.evaluated_support_count + diagnostic_cost,
+                        runtime=runtime, peak=peak, terminal_reason=result.terminal_reason),
                     "truth_opened": False,
                 })
 
             for lane in config["continuous_references"]:
                 call = lambda lane=lane: run_continuous_reference(lane, y, targets)
-                result, runtime = _timed(call)
+                result, runtime, peak = _timed(call)
                 proposals.append({
                     "family_id": family, "pair_index": pair, "lane": lane,
                     "discovery_fingerprint": fingerprint, "status": "CONTINUOUS_REFERENCE",
@@ -196,7 +234,10 @@ def build_records(config: dict, code_hash: str) -> tuple[list[dict], list[dict],
                     "family_id": family, "pair_index": pair, "lane": lane, "kind": "CONTINUOUS_REFERENCE",
                     "discovery_fingerprint": fingerprint, "prediction": asdict(result),
                     "cost": {"evaluated_candidate_count": 0, "runtime_seconds": runtime,
-                             "median_runtime_seconds": float(np.median(runtime)), "peak_memory_bytes": None},
+                             "median_runtime_seconds": float(np.median(runtime)), "peak_memory_bytes": peak},
+                    "fairness": _fairness(config, source_hash, target_hash,
+                        full_comparisons=20, proposed_count=0, supports=[], evaluated=0,
+                        runtime=runtime, peak=peak, terminal_reason="CONTINUOUS_REFERENCE"),
                     "truth_opened": False,
                 })
     return proposals, predictions, seed_rows

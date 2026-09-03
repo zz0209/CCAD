@@ -16,6 +16,7 @@ class ParentCompletionP1Tests(unittest.TestCase):
     def setUp(self):
         self.config = json.loads((ROOT / "configs/m1_nip_parent_completion_p1_v1.json").read_text(encoding="utf-8"))
         self.p2 = json.loads((ROOT / "configs/m1_nip_parent_completion_p2_v1.json").read_text(encoding="utf-8"))
+        self.p2_v2 = json.loads((ROOT / "configs/m1_nip_parent_completion_p2_v2.json").read_text(encoding="utf-8"))
 
     def test_p1_is_fresh_smoke_and_formal_seeds_remain_ungenerated(self):
         self.assertEqual(self.config["phase"], "P1")
@@ -76,9 +77,16 @@ class ParentCompletionP1Tests(unittest.TestCase):
 
     def test_phase_namespaces_produce_disjoint_seeds(self):
         import run_m1_nip_parent_completion_p1 as runner
-        p1 = runner.seed_for("protocol", "code", "P1", "N01_structured_split", 0, "structural")
-        p2 = runner.seed_for("protocol", "code", "P2", "N01_structured_split", 0, "structural")
+        p1 = runner.seed_for("protocol", "code", "P1_NAMESPACE", "P1", "N01_structured_split", 0, "structural")
+        p2 = runner.seed_for("protocol", "code", "P2_NAMESPACE", "P2", "N01_structured_split", 0, "structural")
         self.assertNotEqual(p1, p2)
+
+    def test_c032_suffix_changes_only_execution_identity(self):
+        allowed = {"schema_version", "fresh_namespace"}
+        self.assertEqual(set(self.p2), set(self.p2_v2))
+        for key in set(self.p2) - allowed:
+            self.assertEqual(self.p2[key], self.p2_v2[key], key)
+        self.assertNotEqual(self.p2["fresh_namespace"], self.p2_v2["fresh_namespace"])
 
 
 if __name__ == "__main__":
