@@ -151,7 +151,7 @@ def main() -> int:
                     tau_ctr=config["approximate_tau_ctr"] if approximate else config["exact_tau_ctr"],
                     tau_mu=config["approximate_tau_mu"] if approximate else config["exact_tau_mu"],
                     epsilon=config["epsilon"], candidate_budget=config["candidate_budget"],
-                    complete_universe=cap == 20,
+                    complete_universe=cap == 20 and config["g_max"] >= k_st.shape[1],
                 )
                 frozen = freeze_mscc_prediction(
                     result, protocol_hash=config["protocol_sha256"], proposal_hash=proposal.proposal_hash,

@@ -244,7 +244,10 @@ def minimum_support_contribution_correspondence(
 
     Kernels and means must come from splits permitted by the caller's frozen
     protocol.  ``complete_universe`` is checked mechanically and controls
-    whether an empty feasible set may be called ``CERTIFIED_ABSENT``.
+    whether an empty feasible set may be called ``CERTIFIED_ABSENT``. That
+    certificate is global only when ``g_max`` covers the entire target atom
+    universe; enumerating every atom but only bounded-size supports is not a
+    complete support-universe search.
     """
     started = perf_counter()
     k_ss = np.asarray(k_source_source, dtype=np.float64)
@@ -277,6 +280,8 @@ def minimum_support_contribution_correspondence(
     is_complete = target_ids == tuple(range(target_count))
     if complete_universe and not is_complete:
         raise ValueError("complete_universe requires every target atom exactly once")
+    if complete_universe and g_max < target_count:
+        raise ValueError("complete_universe requires g_max to cover the target atom universe")
 
     planned = _support_count(len(target_ids), g_max)
     if planned > candidate_budget:

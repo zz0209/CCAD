@@ -35,7 +35,7 @@ class NIPSyntheticV3Tests(unittest.TestCase):
             k_ss, k_st, k_tt, instance.source_mean_contributions, instance.target_mean_contributions,
             source_atom_id=0, proposed_target_ids=proposal.proposed_target_ids, g_max=4,
             tau_ctr=N11_FEASIBILITY_THRESHOLD, tau_mu=N11_FEASIBILITY_THRESHOLD,
-            epsilon=1e-12, candidate_budget=7462, complete_universe=True,
+            epsilon=1e-12, candidate_budget=7462, complete_universe=False,
         )
         self.assertEqual(result.identification, "FOUND")
         self.assertEqual(tuple(item.target_ids for item in result.supports), ((0,),))

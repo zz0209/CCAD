@@ -90,7 +90,7 @@ def main() -> int:
                 proposal = source_conditioned_topk_proposal(k_ss, k_st, k_tt, source_atom_id=0, atom_cap=cap, g_max=config["g_max"], epsilon=config["epsilon"], candidate_budget=config["candidate_budget"], boundary_tie_tolerance=config["boundary_tie_tolerance"])
                 tau_ctr = config["approximate_tau_ctr"] if family.startswith("N07") else config["exact_tau_ctr"]
                 tau_mu = config["approximate_tau_mu"] if family.startswith("N07") else config["exact_tau_mu"]
-                result = minimum_support_contribution_correspondence(k_ss, k_st, k_tt, observed.source_mean_contributions, observed.target_mean_contributions, source_atom_id=0, proposed_target_ids=proposal.proposed_target_ids, g_max=config["g_max"], tau_ctr=tau_ctr, tau_mu=tau_mu, epsilon=config["epsilon"], candidate_budget=config["candidate_budget"], complete_universe=cap == 20)
+                result = minimum_support_contribution_correspondence(k_ss, k_st, k_tt, observed.source_mean_contributions, observed.target_mean_contributions, source_atom_id=0, proposed_target_ids=proposal.proposed_target_ids, g_max=config["g_max"], tau_ctr=tau_ctr, tau_mu=tau_mu, epsilon=config["epsilon"], candidate_budget=config["candidate_budget"], complete_universe=cap == 20 and config["g_max"] >= k_st.shape[1])
                 frozen = freeze_mscc_prediction(result, protocol_hash=config["protocol_sha256"], proposal_hash=proposal.proposal_hash, discovery_fingerprint=fingerprint, source_atom_id=0)
                 records.append({
                     "schema_version": "m1_nip_prediction.v2", "run_id": run_dir.name, "family_id": family, "pair_index": pair, "atom_cap": cap, "seeds": seeds,

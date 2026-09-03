@@ -23,7 +23,7 @@ class NIPSyntheticV2ProbeTests(unittest.TestCase):
             k_ss, k_st, k_tt, observed.source_mean_contributions, observed.target_mean_contributions,
             source_atom_id=0, proposed_target_ids=proposal.proposed_target_ids, g_max=4,
             tau_ctr=tau, tau_mu=tau, epsilon=1e-12, candidate_budget=7462,
-            complete_universe=cap == TARGET_ATOM_COUNT,
+            complete_universe=False,
         )
         return observed, proposal, result
 
@@ -35,14 +35,18 @@ class NIPSyntheticV2ProbeTests(unittest.TestCase):
                 self.assertEqual(proposal.status, "OK")
                 self.assertEqual(proposal.planned_support_count, 6195)
 
-    def test_complete_oracle_preserves_v1_truth(self):
+    def test_bounded_search_preserves_positive_truth_and_refuses_global_negative_claims(self):
         for family in FAMILIES:
             with self.subTest(family=family):
                 _, _, result = self._result(family, 20)
                 truth = nip_truth(family)
-                self.assertEqual(result.identification, truth.identification)
-                self.assertEqual(result.multiplicity, truth.multiplicity)
-                self.assertEqual(tuple(item.target_ids for item in result.supports), truth.minimum_supports)
+                if truth.identification == "FOUND":
+                    self.assertEqual(result.identification, truth.identification)
+                    self.assertEqual(result.multiplicity, truth.multiplicity)
+                    self.assertEqual(tuple(item.target_ids for item in result.supports), truth.minimum_supports)
+                else:
+                    self.assertEqual(result.identification, "UNRESOLVED")
+                    self.assertEqual(result.unresolved_reason, "NO_ACCEPTED_IN_FROZEN_FAMILY")
 
     def test_registered_cap_pressure_is_identifiable_on_positive_families(self):
         for family, expected_cap in CAP_PRESSURE.items():

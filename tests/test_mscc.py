@@ -76,11 +76,23 @@ class MSCCTests(unittest.TestCase):
         rng = np.random.default_rng(4)
         source = rng.standard_normal((32, 1))
         targets = rng.standard_normal((32, 21, 1))
-        result = run_mscc(source, targets, complete=True, budget=7462)
+        result = run_mscc(source, targets, complete=False, budget=7462)
         self.assertEqual(result.status, "BUDGET_REFUSAL")
         self.assertEqual(result.identification, "UNRESOLVED")
         self.assertEqual(result.evaluated_count, 0)
         self.assertEqual(result.planned_candidate_count, 7546)
+
+    def test_global_absence_certificate_requires_complete_support_universe(self):
+        rng = np.random.default_rng(40)
+        x = rng.standard_normal((256, 1))
+        targets = np.stack([0.2 * x] * 5, axis=1)
+        with self.assertRaisesRegex(ValueError, "g_max to cover"):
+            run_mscc(x, targets, complete=True, g_max=4)
+        bounded = run_mscc(x, targets, complete=False, g_max=4)
+        complete = run_mscc(x, targets, complete=True, g_max=5)
+        self.assertEqual(bounded.identification, "UNRESOLVED")
+        self.assertEqual(complete.identification, "FOUND")
+        self.assertEqual(complete.minimum_support_size, 5)
 
     def test_dense_rotation_atom_absent_but_full_block_equal(self):
         rng = np.random.default_rng(5)

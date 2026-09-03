@@ -2014,3 +2014,27 @@ D2 scorer与独立validator正常完成。Validator 10/10 PASS，对fresh 240 ro
 Fresh D2结果复现D1门：7个positive families共140/140 pairs精确恢复minimum native support/multiplicity；5个negative families共100 pairs零false native positive；false unique与budget refusal均为0。N09–N12各20 pairs全部命中预冻结属性：N09 cancellation ratio 136.10–412.43；N10 active documents恒2且document ESS最大1.99998；N11 cliff RMSE恒1.0、smooth最大0.1、minimum normalized margin约0.05；N12 `d_mu≈1`。
 
 据此`M1_NIP_protocol_v3`本身由TODO转PASS：D0、D1、fresh D2及信息顺序/正交属性门均完成。保守边界不变：这些仍是synthetic fixture confirmation，不是real SAE或C1/C2证据；历史R001–R003 parent FAIL不得自动改写，R006/M2仍BLOCKED。下一轮应做独立parent aggregation/integrity audit，明确v3是否充分替代旧corrective gate及哪些历史缺口仍需补，审计前不恢复M1或启动真实主线。
+
+## 2026-09-03 12:32 EDT — 启动M1-NIP v3 parent aggregation/integrity audit
+
+Heartbeat `ccad`按`experiment-audit`技能启动fresh GPT-5.6-Sol ultra只读reviewer，输入仅为v3 evaluation/code、configs/protocol、formal D0/D1/D2 artifacts以及历史parent audit/corrective evidence的文件路径和A–H审计清单。审计目标不是重复数值计算，而是独立判断ground-truth provenance、normalization、artifact existence、dead code、scope、information order，以及v3能否作为prospective replacement关闭历史M1 parent blocker。
+
+该审计明确标记`review_independence=same-family`、`acceptance_status=provisional`。现登记`M1_NIP_v3_parent_integrity_audit_20260903T163200Z`为RUNNING；reviewer结论收口前不改变历史R001–R003 FAIL、不恢复M1 parent，也不解除R006 BLOCKED。报告与完整trace必须持久化，若发现tracker陈旧/重复行则以追加勘误和最小同步修复处理，不改写实验artifact。
+
+### 2026-09-03 12:43 EDT — parent audit收口FAIL；区分数值通过、实现缺陷与范围不足
+
+Fresh same-family reviewer已完成A–H审计；overall verdict=`FAIL`，artifact integrity=`WARN`，parent gate=`FAIL`，acceptance仍为`provisional`。Reviewer独立重生60条D0、1,200条D1 prediction与240条D2 prediction，零mismatch；D0最大浮点差`4.44e-16`，并对D2每例的6,195个`|J|≤4`允许support做独立穷举，未发现truth/prediction错配；三阶段seed集互斥。因此保留的正面结论仅是：v3窄范围synthetic MSCC identification + N09–N12 fixture subgate的数值与信息顺序可复核。
+
+审计同时确认一个真实implementation defect：`complete_universe`只确保所有atom ID被proposal，搜索却只枚举到`g_max`；当`g_max=4`时，一个需5 atoms的有效support反例会被输出`CERTIFIED_ABSENT`，将`g_max`改为5即`FOUND`。这不改变现有v3 fixtures的数值结果，但使全局absence语义不成立。已登记C025；修复须将machine-readable certificate限定为`|J|≤g_max`的bounded absence，或真正枚举complete support universe，并加5-atom regression。
+
+范围层面，v3未实施继承的fair baselines/OMP simplicity、BCC/PSC及raw energy/rank/leverage/solver/proposal/coverage surface、N06/N08 controls和独立mean/discovery/evaluation streams；部分validator只重分类已序列化prediction，并非implementation-independent重跑整个identification path。因此v3不是历史R001–R003/corrective parent的replacement，R006继续`BLOCKED`；已登记C026作为前瞻性补齐支线。
+
+记录勘误：`EXPERIMENT_TRACKER.md`中同一D2 score run同时存在PASS与stale RUNNING行；已删除陈旧重复行，实验artifact未改动。审计报告保存为`EXPERIMENT_AUDIT_M1_NIP_V3_PARENT_20260903.md/json`；历史FAIL原样保留。下一步不是启动M2，而是先完成C025的语义/API修复和provenance强化，再以fresh suffix对C026做审计前freeze；不得在已打开的D2 labels上调参。
+
+### 2026-09-03 12:45 EDT — C025 bounded-absence implementation repair PASS
+
+不等待下一个实验周期，本轮直接修复审计发现的absence certificate越界。裁决为保守的fail-closed方案：`complete_universe=True`不再只检查是否proposal了全部target atom，还强制`g_max >= target_count`；否则API拒绝发出全局`CERTIFIED_ABSENT`。所有v1/v2/v3 runner调用点同步改为只在真正complete support universe时设置该标志；20 atoms、`g_max=4`的未命中结果今后只能是`UNRESOLVED`。这没有改动阈值、support search或现有封存artifact。
+
+新增5-atom regression：当source仅可由5个`0.2x` target atoms之和表示时，`complete_universe=True,g_max=4`必须fail closed；同一对象在bounded mode/gmax4返回`UNRESOLVED`，在true complete mode/gmax5返回`FOUND`且minimum support size=5。目标测试23/23 PASS；全项目unittest 130/130 PASS，使用`D:\CCAD_Storage\environments\r004\Scripts\python.exe`。首次用系统Python调用因缺`numpy`产生3个import error，属错环境调用，已保留在本条而不误记为科学失败。
+
+该PASS仅关闭C025的核心API实现缺陷；由于旧D2 labels已打开，修复后的端到端artifact/provenance确认必须使用fresh suffix/seeds。C026与R006状态不变，M1 parent仍FAIL/BLOCKED。

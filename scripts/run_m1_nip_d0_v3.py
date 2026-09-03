@@ -188,7 +188,7 @@ def main() -> int:
                 tau_ctr=config["approximate_tau_ctr"] if approximate else config["exact_tau_ctr"],
                 tau_mu=config["approximate_tau_mu"] if approximate else config["exact_tau_mu"],
                 epsilon=config["epsilon"], candidate_budget=config["candidate_budget"],
-                complete_universe=True,
+                complete_universe=config["g_max"] >= k_st.shape[1],
             )
             fingerprint = hashlib.sha256(
                 observed.source_contributions.tobytes() + observed.target_contributions.tobytes()

@@ -117,7 +117,7 @@ def main() -> int:
                 raise RuntimeError(f"proposal contract failed for {family} pair {pair_index}")
             tau_ctr = config["approximate_tau_ctr"] if family.startswith("N07") else config["exact_tau_ctr"]
             tau_mu = config["approximate_tau_mu"] if family.startswith("N07") else config["exact_tau_mu"]
-            result = minimum_support_contribution_correspondence(k_ss, k_st, k_tt, observed.source_mean_contributions, observed.target_mean_contributions, source_atom_id=0, proposed_target_ids=proposal.proposed_target_ids, g_max=config["g_max"], tau_ctr=tau_ctr, tau_mu=tau_mu, epsilon=config["epsilon"], candidate_budget=config["candidate_budget"], complete_universe=True)
+            result = minimum_support_contribution_correspondence(k_ss, k_st, k_tt, observed.source_mean_contributions, observed.target_mean_contributions, source_atom_id=0, proposed_target_ids=proposal.proposed_target_ids, g_max=config["g_max"], tau_ctr=tau_ctr, tau_mu=tau_mu, epsilon=config["epsilon"], candidate_budget=config["candidate_budget"], complete_universe=config["g_max"] >= k_st.shape[1])
             fingerprint = hashlib.sha256(observed.source_contributions.tobytes() + observed.target_contributions.tobytes()).hexdigest().upper()
             frozen = freeze_mscc_prediction(result, protocol_hash=config["protocol_sha256"], proposal_hash=proposal.proposal_hash, discovery_fingerprint=fingerprint, source_atom_id=0)
             certificate_hash = hashlib.sha256(json.dumps(certificate, sort_keys=True, separators=(",", ":")).encode()).hexdigest().upper()
