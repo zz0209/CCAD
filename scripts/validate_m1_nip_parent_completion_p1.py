@@ -30,6 +30,10 @@ def _scientific_prediction(row: dict) -> dict:
     return value
 
 
+def _json_canonical(value: object) -> object:
+    return json.loads(json.dumps(value, sort_keys=True))
+
+
 def _forbidden_seed_reads(tree: ast.AST) -> set[str]:
     found = set()
     for node in ast.walk(tree):
@@ -75,7 +79,7 @@ def validate(run_dir: Path) -> dict:
     observed_proposals = read_jsonl(run_dir / "proposals.jsonl")
     observed_predictions = read_jsonl(run_dir / "predictions.jsonl")
     recomputed_proposals, recomputed_predictions, recomputed_seeds = runner.build_records(config, code_hashes["aggregate_sha256"])
-    checks["proposal_recomputation"] = observed_proposals == recomputed_proposals
+    checks["proposal_recomputation"] = _json_canonical(observed_proposals) == _json_canonical(recomputed_proposals)
     checks["prediction_recomputation"] = [ _scientific_prediction(row) for row in observed_predictions ] == [ _scientific_prediction(row) for row in recomputed_predictions ]
     checks["seed_recomputation"] = seed_ledger["rows"] == recomputed_seeds
     lane_counts = {}

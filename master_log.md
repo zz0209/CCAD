@@ -2120,3 +2120,13 @@ C028修复已提交并推送，HEAD/origin=`e1c3662dd0beafa5b25669c6641fa27ea2e3
 `M1_NIP_PC2_V1_P1_predict_v2_20260903T180532Z`在`cpu-heavy` lease中于7.47秒fail closed，lease已释放。P1 runner将冻结的mean-only sample size `n=257`传给N11 intervention endpoint generator，而该generator为exact zero-mean perturbation要求偶数n，因此在N11 mean stream抛出`ValueError`。失败仍发生在closure/validator/labels前；v2 run和stderr完整保留。
 
 冻结协议的mean n257与N11 endpoint偶数约束并不冲突：mean stream只应提供source/target mean contributions，不应构造干预endpoint。Runner改用无endpoint的20-atom observed generator生成mean stream；discovery仍用v3 endpoint-aware generator，evaluation/intervention仍完全未读。新增odd-n257 N11 mean compatibility regression。Repair run `M1_NIP_PC2_mean_stream_impltest_v1_20260903T180654Z` targeted17/17、full160/160 PASS；runner SHA-256=`4D0F6A9C3EEBCD895C938C5199BBB6342163BA2AF147523AD046AE8B94F6F528`，test=`E236ECC19C294EB602F54E5F2863435A91BF0FDF0F13AD56C33253DF2EDAE0D1`。下一步提交后以第三个fresh code-hash run重试，仍不复用任何失败run state。
+
+### 2026-09-03 14:07 EDT — 启动fresh P1 v3
+
+Mean-stream修复已提交并推送，HEAD/origin=`cdf7c03157133ff74e8dab2a5f6f6b7e7ab08824`。登记`M1_NIP_PC2_V1_P1_predict_v3_20260903T180728Z`为RUNNING；新code snapshot派生全新P1 seeds，v1/v2失败run只作证据不作输入。协议和信息边界不变。
+
+### 2026-09-03 14:09 EDT — P1 v3 prediction sealed但pre-label gate FAIL
+
+`M1_NIP_PC2_V1_P1_predict_v3_20260903T180728Z`在`cpu-heavy` lease中8.28秒完成132条prediction并原子封存，closure SHA-256=`0264B65C08CF513E8F9C645A483222F32B764A4FADBA58142C36D6A3B68832C6`。独立validator随后另持lease重跑，17项中16项PASS：scientific predictions、six-stream seeds、random diagnostic cost、runtime count、closure/source/input hashes、AST信息边界和formal-seed closure均通过；唯一失败为`proposal_recomputation`。
+
+诊断确认值本身没有差异：JSONL反序列化的ranking/scores为list，而内存重算结果的同值字段为tuple；validator对prediction先做了JSON canonicalization，对proposal却直接用Python容器类型比较。因此整个P1 v3仍按gate记FAIL，validation SHA-256=`FC793A6B3699CAAE1C7FD5A5E9CA555A685869C94B4DA5EE7271EC6D53BDF751`，不得追认或打开labels。修复只将proposal两侧先转canonical JSON再比较，不改任何科学值。Repair run `M1_NIP_PC2_p1_validator_impltest_v2_20260903T180903Z` full160/160 PASS；validator SHA-256=`76BDC5116E2FA239F6AB12024BB4E5898C08EFB0482BAE8DA84E615E839BBBFA`。因validator属于code snapshot，仍须提交后fresh seeds重跑v4。
