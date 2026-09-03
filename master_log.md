@@ -2144,3 +2144,13 @@ Validator修复已提交并推送，HEAD/origin=`d03dde7e4e54d4b5826f4948502aa6c
 Truth-free输出分布仅作执行诊断：MSCC为7 FOUND/5 UNRESOLVED；contribution-nearest、PW-MCC、dustbin、OT-mass、spectral和OMP各1 FOUND/11 UNRESOLVED；greedy cosine和random primary均12 UNRESOLVED。Continuous references无native identification。由于尚未打开truth/evaluation/intervention，这些计数不能解释为accuracy、baseline优劣或C1/C2证据。
 
 P1 prediction subgate现PASS，只授权下一轮实现post-closure scorer：必须先重验closure/prelabel PASS，再动态打开P1 truth及独立evaluation/intervention streams，生成完整metric surface与N06/N08/N11 controls；在score和独立validator通过前，M1 parent仍FAIL、R006仍BLOCKED，P2 formal不得启动。
+
+## 2026-09-03 14:19 EDT — P1 post-closure scorer与raw validator实现门PASS
+
+Heartbeat `ccad`实现`score_m1_nip_parent_completion_p1.py`和独立`validate_m1_nip_parent_completion_p1_score.py`。Scorer入口先逐文件重算v4 closure hash并要求prelabel 17/17 closed PASS，随后才动态导入`ccad.nip_truth`；它不调用任何matcher或proposal API，只读取冻结support。Evaluation使用独立2048-sample stream，N11 intervention另用独立2048-sample stream，mean继续读取冻结的257-sample mean-only stream。
+
+每条native输出保存完整`metric_surface.v2-nip`：有support时计算raw centered/mean numerators与denominators、BCC、PSC、rank/condition、cancellation/leverage、occupancy/document ESS及post-label algorithm fields；无support时为所有mandatory fields写typed `NOT_APPLICABLE/NO_FROZEN_NATIVE_SUPPORT`，不伪造零值。Continuous lanes保存held-out weighted residual；N06固定(0,1) full-block control、N08两类continuous reference和N11冻结support的cliff/smooth endpoint均单独持久化。
+
+独立validator不调用scorer函数：重新生成mean/evaluation tensors，逐support从原始数组重算`d_ctr/d_mu` numerator/denominator，重算continuous residual与truth classification，并检查132-row grid、mandatory字段、N06/N08/N11 controls、score/source/closure/prelabel hash。Implementation run `M1_NIP_PC2_P1_score_impltest_v1_20260903T181950Z` targeted10/10、full163/163、py_compile PASS。Scorer SHA-256=`0C226EDAA99DDCBE10F52ACAFD88841BAB9AE4B0645E1932B86887508ED0EEB0`；validator=`885468DBE61C6433D2BB9F5B683D5C1D06D3D4089591E83CA970A202233D259B`；test=`0F0750D1DAD9D9400E0614B8BC9716939A7211675338F172B4E134E0BC9738E3`。
+
+该PASS仅授权固定代码后对已封存v4执行post-closure P1 score；尚未打开labels或产生metric结果，M1/R006状态不变。若score/validator失败，必须保留独立score run，不能回写prediction或调阈值。
