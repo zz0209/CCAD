@@ -1,0 +1,190 @@
+{
+  "schema_version": "m1_nip_parent_completion.v2",
+  "protocol_status": "LOCKED_FOR_IMPLEMENTATION",
+  "protocol_frozen_utc": "2026-09-03T17:27:00Z",
+  "execution_enabled": false,
+  "formal_seed_manifest_status": "UNGENERATED",
+  "synthetic_labels_opened": false,
+  "real_sae_audit_opened": false,
+  "supersedes_config": "configs/m1_nip_parent_completion_v1.json",
+  "protocol_document": "M1_NIP_PARENT_COMPLETION_PROTOCOL_V2_20260903_132700.md",
+  "protocol_sha256": "7877D0C014DD701F5B6BC2986C1543B1FB638DC6B0AF8B26D582C8807327805C",
+  "fresh_namespace": "M1_NIP_PC2_V1",
+  "forbidden_reuse_namespaces": ["D0", "D1", "D2", "I1", "M1_NIP_PC1_V1"],
+  "evidence_level": "prospective_synthetic_parent_completion",
+  "method": "MSCC_POST_C025",
+  "repeat_unit": "structural_seed_pair",
+  "block": "family",
+  "comparison_structure": "paired_methods_within_structural_pair",
+  "family_count": 12,
+  "formal_pairs_per_family": 20,
+  "dtype": "float64",
+  "epsilon": 1e-12,
+  "g_max": 4,
+  "target_atom_count": 20,
+  "atom_cap": 20,
+  "candidate_budget_per_query_per_native_lane": 7462,
+  "exact_tau_ctr": 1e-10,
+  "exact_tau_mu": 1e-10,
+  "approximate_tau_ctr": 0.05,
+  "approximate_tau_mu": 0.05,
+  "tie_tolerance": 1e-12,
+  "seed_derivation": "uint64(SHA256(protocol_hash||code_hash||phase||family||pair_index||stream)[:8])",
+  "required_seed_streams": ["structural", "mean", "discovery", "evaluation", "intervention", "solver"],
+  "require_pairwise_distinct_seed_streams": true,
+  "sample_sizes": {"mean": 257, "discovery": 1024, "evaluation": 2048, "intervention": 2048},
+  "registered_native_lanes": [
+    "MSCC", "CONTRIBUTION_NEAREST_ATOM", "PW_MCC_HUNGARIAN",
+    "GREEDY_DECODER_COSINE", "DUSTBIN_SINKHORN", "BINARY_FORWARD_OMP",
+    "OT_MASS_NATIVE_SUPPORT", "SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT", "RANDOM_MATCHED_GROUP"
+  ],
+  "registered_non_native_references": ["SIGNED_CONTINUOUS_REGRESSION", "NONNEGATIVE_CONTINUOUS_REGRESSION"],
+  "common_native_support_rule": {
+    "candidate_form": "UNWEIGHTED_TARGET_ATOM_PREFIX",
+    "prefix_sizes": [1, 2, 3, 4],
+    "selection_split": "discovery",
+    "feasibility_splits": ["mean", "discovery"],
+    "no_feasible_output": "UNRESOLVED",
+    "boundary_tie_output": "BUDGET_REFUSAL",
+    "continuous_coefficients_for_ranking_only": true
+  },
+  "baseline_parameters": {
+    "CONTRIBUTION_NEAREST_ATOM": {
+      "similarity": "NEGATIVE_DISCOVERY_D_CTR",
+      "support_cap": 1,
+      "tie_rule": "RETAIN_AMBIGUOUS_WITHIN_1E-12",
+      "refusal_rule": "UNRESOLVED_IF_NO_FEASIBLE_SINGLETON"
+    },
+    "PW_MCC_HUNGARIAN": {
+      "similarity": "ABSOLUTE_DECODER_COSINE",
+      "assignment": "MAX_WEIGHT_RECTANGULAR_HUNGARIAN",
+      "tie_rule": "RETAIN_AMBIGUOUS_WITHIN_1E-12",
+      "refusal_rule": "ZERO_NORM_INELIGIBLE_OTHERWISE_UNRESOLVED",
+      "single_source_scope": "DEGENERATE_SINGLETON_BASELINE"
+    },
+    "GREEDY_DECODER_COSINE": {
+      "similarity": "ABSOLUTE_DECODER_COSINE",
+      "support_cap": 4,
+      "tie_rule": "BUDGET_REFUSAL_IF_MEMBERSHIP_CHANGES_WITHIN_1E-12",
+      "stopping_rule": "FIRST_FEASIBLE_UNWEIGHTED_PREFIX"
+    },
+    "DUSTBIN_SINKHORN": {
+      "cost": "CLIPPED_DISCOVERY_SINGLETON_D_CTR",
+      "entropy_regularization": 0.05,
+      "dustbin_cost": "LANE_TAU_CTR",
+      "marginals": "UNIFORM_AUGMENTED_WITH_ONE_DUSTBIN_EACH_SIDE",
+      "tolerance": 1e-9,
+      "max_iterations": 1000,
+      "support_extraction": "DESCENDING_NON_DUSTBIN_MASS_THEN_COMMON_PREFIX_RULE",
+      "numerics": "LOG_DOMAIN",
+      "single_source_scope": "DEGENERATE_SINGLE_QUERY"
+    },
+    "BINARY_FORWARD_OMP": {
+      "column_normalization": "UNIT_L2_FOR_SELECTION_ONLY",
+      "coefficient_domain": "SIGNED",
+      "support_cap": 4,
+      "stopping_rule": "REFIT_EACH_STEP_AND_TEST_FIRST_FEASIBLE_UNWEIGHTED_PREFIX",
+      "tie_rule": "BUDGET_REFUSAL_IF_SELECTION_TIE_WITHIN_1E-12",
+      "native_support_conversion": "COEFFICIENTS_RANK_ONLY_UNWEIGHTED_PREFIX",
+      "least_squares_rcond": 1e-12
+    },
+    "OT_MASS_NATIVE_SUPPORT": {
+      "transport_representation": "FULL_SOURCE_QUERY_BY_TARGET_DISCOVERY_D_CTR_COST",
+      "solver": "UNBALANCED_LOG_SINKHORN",
+      "regularization": 0.05,
+      "marginal_relaxation": 1.0,
+      "marginals": "UNIFORM_BASE",
+      "tolerance": 1e-9,
+      "max_iterations": 1000,
+      "mass_threshold": "NOT_USED_RANK_ALL_MASS",
+      "tie_rule": "BUDGET_REFUSAL_IF_PREFIX_MEMBERSHIP_TIE_WITHIN_1E-12",
+      "native_support_conversion": "DESCENDING_OUTGOING_TARGET_MASS_THEN_COMMON_PREFIX_RULE",
+      "single_source_scope": "DEGENERATE_SINGLE_QUERY"
+    },
+    "SPECTRAL_LOCAL_SVD_NATIVE_SUPPORT": {
+      "affinity": "JOINT_ABSOLUTE_CODE_CORRELATION",
+      "graph_rule": "THRESHOLD_0.2_UNNORMALIZED_LAPLACIAN",
+      "cluster_rule": "LARGEST_EIGENGAP_2_TO_8_WITH_10_DETERMINISTIC_KMEANS_RESTARTS",
+      "rank_rule": "LOCAL_SVD_RELATIVE_TOLERANCE_1E-12",
+      "support_extraction": "MIXED_CLUSTER_OF_BEST_CONTRIBUTION_SINGLETON_ORDERED_BY_D_CTR_CAP4",
+      "no_mixed_cluster_output": "UNRESOLVED"
+    },
+    "RANDOM_MATCHED_GROUP": {
+      "matched_object": "MSCC_PROPOSAL_SUPPORT_CAP_AND_EVALUATED_PREFIX_COUNT",
+      "replicates": 32,
+      "primary_replicate_index": 0,
+      "seed_stream": "solver",
+      "support_cap": 4,
+      "diagnostic_replicates_charged_to_cost": true
+    },
+    "SIGNED_CONTINUOUS_REGRESSION": {
+      "solver": "NUMPY_LSTSQ",
+      "fit_intercept": false,
+      "centering": "INDEPENDENT_MEAN_STREAM",
+      "tolerance": 1e-12,
+      "regularization": "NONE",
+      "rcond": 1e-12
+    },
+    "NONNEGATIVE_CONTINUOUS_REGRESSION": {
+      "solver": "DETERMINISTIC_PROJECTED_GRADIENT_NNLS",
+      "fit_intercept": false,
+      "centering": "INDEPENDENT_MEAN_STREAM",
+      "tolerance": 1e-10,
+      "objective_tolerance": 1e-12,
+      "regularization": "NONE",
+      "initialization": "ZERO",
+      "step_size": "ONE_OVER_SPECTRAL_NORM_SQUARED",
+      "max_iterations": 10000
+    }
+  },
+  "runtime_protocol": {"warmup_runs": 1, "measured_repeats": 5, "primary_summary": "MEDIAN_WALL_SECONDS", "retain_all_values": true},
+  "fairness_fields": [
+    "source_query_manifest_hash", "target_universe_hash", "g_max", "candidate_budget",
+    "full_dictionary_comparisons", "proposed_atom_count", "raw_support_count",
+    "deduplicated_support_count", "evaluated_candidate_count",
+    "runtime_seconds_descriptive_only", "peak_memory_bytes", "terminal_reason"
+  ],
+  "metric_surface_schema": "metric_surface.v2-nip",
+  "mandatory_metric_fields": [
+    "centered_residual_numerator", "centered_source_energy_denominator", "d_ctr",
+    "mean_residual_numerator", "mean_source_energy_denominator", "d_mu",
+    "bcc_value", "bcc_cross_inner", "bcc_source_energy", "bcc_target_energy",
+    "bcc_normalized_residual", "psc_value", "psc_rank_source", "psc_rank_target",
+    "psc_projector_distance_sq", "psc_principal_angles_radians",
+    "source_mean_contribution", "target_mean_contribution", "mean_difference_norm",
+    "support_size", "effective_rank", "condition_number", "unmatched_energy",
+    "cancellation_ratio", "leave_one_out_leverage", "occupancy", "active_document_count",
+    "document_ess", "multiplicity", "tie_set", "nearest_competitor_margin", "solver_gap",
+    "proposal_stability", "proposal_recall", "conditional_solver_correctness",
+    "end_to_end_recovery", "coverage", "terminal_reason"
+  ],
+  "mandatory_family_controls": [
+    "N06_FULL_BLOCK_BCC_PSC", "N08_SIGNED_CONTINUOUS_REFERENCE",
+    "N08_NONNEGATIVE_CONTINUOUS_REFERENCE", "N11_INDEPENDENT_INTERVENTION_STREAM",
+    "N11_SMOOTH_CONTROL"
+  ],
+  "prelabel_required_artifacts": [
+    "resolved_config.json", "environment.json", "seed_ledger.json", "code_hashes.json",
+    "input_hashes.json", "proposals.jsonl", "predictions.jsonl", "prediction_closure.json",
+    "prelabel_validation.json", "status.json", "stdout.log", "stderr.log"
+  ],
+  "prelabel_validation_must_pass_before_truth_import": true,
+  "complete_universe_requires_gmax_cover_target_count": true,
+  "scalable_negative_identification": "UNRESOLVED",
+  "simplicity_rule": {
+    "challenger": "BINARY_FORWARD_OMP",
+    "fires_only_if_all_mscc_primary_correctness_gates_match": true,
+    "requires_no_worse_paired_evaluated_support_count": true,
+    "requires_no_worse_paired_runtime": true,
+    "action": "REMOVE_MSCC_FROM_HEADLINE_KEEP_AS_ABLATION"
+  },
+  "source_registry": [
+    {"name": "scikit-learn orthogonal_mp", "url": "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.orthogonal_mp.html", "consulted": "2026-09-03"},
+    {"name": "Semantic Optimal Transport for Sparse Autoencoder Feature Matching and Circuit Compression", "url": "https://arxiv.org/abs/2605.28567", "consulted": "2026-09-03"},
+    {"name": "Learning Latent Partial Matchings with Gumbel-IPF Networks", "url": "https://proceedings.mlr.press/v238/cohen-indelman24a.html", "consulted": "2026-09-03"},
+    {"name": "Unstable Features, Reproducible Subspaces", "url": "https://arxiv.org/abs/2606.12138", "consulted": "2026-09-03"}
+  ],
+  "execution_stages": ["P0_STATIC_CONTRACT", "P1_TRUTH_CLOSED_SMOKE", "P2_FORMAL", "P3_PARENT_AUDIT"],
+  "next_allowed_stage": "P0_STATIC_CONTRACT",
+  "resource": "lightweight_static_validation_only"
+}

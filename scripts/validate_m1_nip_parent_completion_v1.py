@@ -34,6 +34,7 @@ EXPECTED_CONTROLS = {
     "N11_SMOOTH_CONTROL",
 }
 REQUIRED_BASELINE_PARAMETER_FIELDS = {
+    "CONTRIBUTION_NEAREST_ATOM": {"similarity", "support_cap", "tie_rule", "refusal_rule"},
     "PW_MCC_HUNGARIAN": {"similarity", "assignment", "tie_rule", "refusal_rule"},
     "GREEDY_DECODER_COSINE": {"similarity", "support_cap", "tie_rule", "stopping_rule"},
     "DUSTBIN_SINKHORN": {"cost", "entropy_regularization", "dustbin_cost", "marginals", "tolerance", "max_iterations", "support_extraction"},
@@ -54,12 +55,25 @@ def validate(root: Path, config_path: Path) -> dict:
     config = json.loads(config_path.read_text(encoding="utf-8"))
     protocol = root / config["protocol_document"]
     mscc_source = (root / "src/ccad/mscc.py").read_text(encoding="utf-8")
+    prefix = config["fresh_namespace"]
     existing = sorted(
         path.name for stage in ("P1", "P2", "P3")
-        for path in (root / "runs").glob(f"M1_NIP_PC1_V1_{stage}*") if path.is_dir()
+        for path in (root / "runs").glob(f"{prefix}_{stage}*") if path.is_dir()
+    )
+    parameters = config.get("baseline_parameters", {})
+    exact_parameters = (
+        parameters.get("DUSTBIN_SINKHORN", {}).get("entropy_regularization") == 0.05
+        and parameters.get("DUSTBIN_SINKHORN", {}).get("tolerance") == 1e-9
+        and parameters.get("DUSTBIN_SINKHORN", {}).get("max_iterations") == 1000
+        and parameters.get("BINARY_FORWARD_OMP", {}).get("least_squares_rcond") == 1e-12
+        and parameters.get("OT_MASS_NATIVE_SUPPORT", {}).get("regularization") == 0.05
+        and parameters.get("OT_MASS_NATIVE_SUPPORT", {}).get("marginal_relaxation") == 1.0
+        and parameters.get("RANDOM_MATCHED_GROUP", {}).get("replicates") == 32
+        and parameters.get("SIGNED_CONTINUOUS_REGRESSION", {}).get("rcond") == 1e-12
+        and parameters.get("NONNEGATIVE_CONTINUOUS_REGRESSION", {}).get("max_iterations") == 10000
     )
     checks = {
-        "schema_and_locked_status": config["schema_version"] == "m1_nip_parent_completion.v1" and config["protocol_status"] == "LOCKED_FOR_IMPLEMENTATION",
+        "schema_and_locked_status": config["schema_version"] in {"m1_nip_parent_completion.v1", "m1_nip_parent_completion.v2"} and config["protocol_status"] == "LOCKED_FOR_IMPLEMENTATION",
         "execution_and_labels_closed": not config["execution_enabled"] and config["formal_seed_manifest_status"] == "UNGENERATED" and not config["synthetic_labels_opened"] and not config["real_sae_audit_opened"],
         "protocol_hash": protocol.is_file() and sha256(protocol) == config["protocol_sha256"],
         "fresh_namespace": config["fresh_namespace"] not in set(config["forbidden_reuse_namespaces"]),
@@ -73,6 +87,10 @@ def validate(root: Path, config_path: Path) -> dict:
             and fields <= set(config["baseline_parameters"][name])
             for name, fields in REQUIRED_BASELINE_PARAMETER_FIELDS.items()
         ),
+        "baseline_parameters_exact": exact_parameters,
+        "common_native_rule": config.get("common_native_support_rule", {}).get("continuous_coefficients_for_ranking_only") is True and config.get("common_native_support_rule", {}).get("prefix_sizes") == [1, 2, 3, 4],
+        "runtime_protocol": config.get("runtime_protocol") == {"warmup_runs": 1, "measured_repeats": 5, "primary_summary": "MEDIAN_WALL_SECONDS", "retain_all_values": True},
+        "source_registry": len(config.get("source_registry", [])) == 4 and all(item.get("url", "").startswith("https://") and item.get("consulted") == "2026-09-03" for item in config.get("source_registry", [])),
         "raw_metric_surface": config["metric_surface_schema"] == "metric_surface.v2-nip" and CRITICAL_METRICS <= set(config["mandatory_metric_fields"]),
         "family_controls": set(config["mandatory_family_controls"]) == EXPECTED_CONTROLS,
         "prelabel_gate": config["prelabel_validation_must_pass_before_truth_import"] and "prelabel_validation.json" in config["prelabel_required_artifacts"],

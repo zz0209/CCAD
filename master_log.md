@@ -2058,3 +2058,13 @@ Metric adapter定向测试覆盖N01 raw identity、N06 PSC rank boundary、N09 c
 随后对baseline API做实现前审计，发现P0 v3的16个检查只验证了9个native lane和2个continuous reference的名称存在，却没有冻结dustbin Sinkhorn的cost/entropy/dustbin/convergence/support extraction、OT-mass threshold、OMP coefficient/stopping/native conversion、spectral graph/rank、random matching replicates及continuous solver参数。因此直接编码会引入未登记的researcher degrees of freedom。P0 v3已勘误为FAIL，P1保持未启动，formal seeds仍`UNGENERATED`。
 
 本轮在2026-09-03检索并记录了Scikit-learn OMP官方规范（fixed cardinality与residual tolerance是不同regime）、Cao et al. 2026 SAE semantic OT、Cohen-Indelman & Indelman 2024 dustbin partial matching，以及Gerasimov et al. 2026 cross-seed stable subspace路线；来源与设计影响详见`M1_NIP_BASELINE_PARAMETER_AUDIT_20260903_131700.md`。新登记C027；下一轮必须先以前瞻性suffix冻结参数并扩展P0 validator，然后才能运行P1。M1/R006仍FAIL/BLOCKED，无需用户即时裁决。
+
+## 2026-09-03 13:29 EDT — C027 executable-baseline suffix冻结；PC2 P0 v2 PASS
+
+Heartbeat `ccad`继续用experimental-design规范修复P0的baseline操作化缺口。新冻结`M1_NIP_PARENT_COMPLETION_PROTOCOL_V2_20260903_132700.md`与`configs/m1_nip_parent_completion_v2.json`，新namespace为`M1_NIP_PC2_V1`；不复用v3/PC1数据，P1/P2 seeds仍`UNGENERATED`，truth/evaluation/intervention全部关闭。Protocol SHA-256=`7877D0C014DD701F5B6BC2986C1543B1FB638DC6B0AF8B26D582C8807327805C`，config SHA-256=`FEED1B084102F86156F448B845A4F55EA7559DD166AFFC62CA5D12B648AC5B12`。
+
+核心裁决是：所有native baselines只用discovery信息产生ranking/proposal，然后统一以unweighted target-atom prefixes 1–4和MSCC相同`d_ctr/d_mu`阈值检验；OMP/OT的continuous coefficients只能rank，不得进入native endpoint。冻结了contribution singleton、PW-MCC/Hungarian、decoder-cosine greedy、dustbin log-Sinkhorn、signed forward OMP、unbalanced OT-mass、Li15-style spectral/local-SVD、degree/budget-matched random，以及signed/nonnegative continuous references的cost、regularization、stopping、ties、support conversion和runtime protocol。单source synthetic下PW-MCC/OT的degeneracy必须显式报告，不包装成global assignment证据。
+
+Static validator由17个门扩展到21个，新检查baseline必需字段、关键数值、common native rule、runtime protocol和4个来源registry。第一次PC2 P0调用数值21/21，但run ID预分配时标晚于实际finish，作为recordkeeping FAIL保留，不追认。终态`M1_NIP_PC2_V1_P0_static_v2_20260903T172830Z` 21/21 PASS，manifest独立重算PASS，validation SHA-256=`84CA503D59526E37CEAA3E03B756AF12F3AA519CD7EE9965DFC3DC1F8A3BC3F6`，manifest SHA-256=`56D11344CDF370941BEAA8AAB18FCD88F20270808608F77C8059590741348F22`；全项目142/142 tests PASS。
+
+C027由READY-FOR-SCREEN转ADMIT，只表示该contract获准进入P1 implementation，不表示baseline有效或M1过门。下一轮先实现统一baseline API与deterministic conformance tests，在源码/输入hash封存前仍不生成P1 seeds。R006继续BLOCKED。

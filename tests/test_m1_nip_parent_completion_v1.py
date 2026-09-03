@@ -21,6 +21,7 @@ class ParentCompletionProtocolTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.config = json.loads((ROOT / "configs/m1_nip_parent_completion_v1.json").read_text(encoding="utf-8"))
+        cls.config_v2_path = ROOT / "configs/m1_nip_parent_completion_v2.json"
 
     def test_fresh_closed_namespace_and_independent_units(self):
         self.assertFalse(self.config["execution_enabled"])
@@ -47,6 +48,14 @@ class ParentCompletionProtocolTests(unittest.TestCase):
         result = validate(ROOT, ROOT / "configs/m1_nip_parent_completion_v1.json")
         self.assertFalse(result["checks"]["baseline_operationalization"])
         self.assertEqual(result["status"], "FAIL")
+
+    def test_v2_static_contract_is_fully_operationalized(self):
+        result = validate(ROOT, self.config_v2_path)
+        self.assertEqual(result["status"], "PASS")
+        self.assertTrue(result["checks"]["baseline_operationalization"])
+        self.assertTrue(result["checks"]["baseline_parameters_exact"])
+        self.assertTrue(result["checks"]["common_native_rule"])
+        self.assertTrue(result["checks"]["source_registry"])
 
 
 if __name__ == "__main__":
