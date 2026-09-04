@@ -35,6 +35,21 @@ def write_json(path: Path, value: object) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def load_config(path: Path) -> tuple[dict, Path | None]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    inherited = raw.get("inherits_config")
+    if inherited is None:
+        return raw, None
+    if set(raw) != {"inherits_config", "overrides"}:
+        raise ValueError("suffix config may contain only inherits_config and overrides")
+    base_path = ROOT / inherited
+    base = json.loads(base_path.read_text(encoding="utf-8"))
+    merged = {**base, **raw["overrides"]}
+    merged["inherited_config_path"] = inherited
+    merged["inherited_config_sha256"] = sha256(base_path)
+    return merged, base_path
+
+
 def aggregate(rows: list[dict]) -> str:
     payload = "".join(f"{row['path']}:{row['sha256']}\n" for row in sorted(rows, key=lambda row: row["path"]))
     return hashlib.sha256(payload.encode()).hexdigest()
@@ -57,7 +72,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
     args = parser.parse_args()
-    cfg = json.loads(args.config.read_text(encoding="utf-8"))
+    cfg, inherited_config_path = load_config(args.config)
     run_dir = ROOT / "runs" / cfg["run_id"]
     if run_dir.exists():
         raise FileExistsError(run_dir)
@@ -71,7 +86,11 @@ def main() -> int:
         "protocol": ROOT / cfg["protocol_document"], "reference_surface": ROOT / cfg["reference_surface_path"],
         "source_census": ROOT / cfg["source_census_path"], "asset_manifest": Path(cfg["bulk_asset_dir"]) / "asset_manifest.json",
     }
-    write_json(run_dir / "inputs.json", {"inputs": [file_entry(args.config.resolve(), "run_protocol")] + [file_entry(path, role) for role, path in paths.items()]})
+    inputs = [file_entry(args.config.resolve(), "run_protocol")]
+    if inherited_config_path is not None:
+        inputs.append(file_entry(inherited_config_path, "inherited_protocol"))
+    inputs.extend(file_entry(path, role) for role, path in paths.items())
+    write_json(run_dir / "inputs.json", {"inputs": inputs})
     write_json(run_dir / "manifest.json", {
         "schema_version": cfg["schema_version"], "run_id": cfg["run_id"], "run_parent": cfg["run_parent"],
         "purpose": cfg["purpose"], "milestone": cfg["milestone"], "evidence_level": cfg["evidence_level"],
@@ -146,7 +165,7 @@ def main() -> int:
                         "rank_boundary_relative_gap": relation.rank_boundary_relative_gap,
                         "source_membership": relation.source_membership.tolist(), "target_membership": relation.target_membership.tolist(),
                         "source_effective_support": relation.source_effective_support, "target_effective_support": relation.target_effective_support,
-                        "global_collision_mean": reference_map[(source_seed, atom, target_seed, rank)]["global_collision_mean"],
+                        "global_collision_mean": reference_map[(source_seed, atom, target_seed, rank)].get("global_collision_mean"),
                         "loading_index": loading_index,
                     })
 

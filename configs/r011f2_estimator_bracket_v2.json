@@ -1,0 +1,8 @@
+{
+  "inherits_config": "configs/r011f2_estimator_bracket_v1.json",
+  "overrides": {
+    "schema_version": "r011.f2.estimator_bracket.v2",
+    "run_id": "R011_F2_estimator_bracket_v2_20260904T184000Z",
+    "scope_limit": "Engineering suffix only: collision-neighbor rows may omit anchor-only global collision summaries; all estimators, gates, data and audit boundaries unchanged"
+  }
+}

@@ -11,6 +11,7 @@ class R011F2EstimatorBracketProtocolTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.cfg = json.loads((ROOT / "configs/r011f2_estimator_bracket_v1.json").read_text(encoding="utf-8"))
+        cls.v2 = json.loads((ROOT / "configs/r011f2_estimator_bracket_v2.json").read_text(encoding="utf-8"))
 
     def test_only_two_alternatives_and_no_audit(self) -> None:
         self.assertEqual(self.cfg["estimators"], ["ENERGY_BALANCED_PLS", "DIAGONAL_WHITENED_CORRELATION"])
@@ -22,6 +23,10 @@ class R011F2EstimatorBracketProtocolTests(unittest.TestCase):
         self.assertEqual(self.cfg["maximum_calibration_normalized_residual"], 0.2)
         self.assertEqual(self.cfg["minimum_progression_coverage"], 0.10)
         self.assertTrue(self.cfg["require_all_represented_ordered_directions"])
+
+    def test_v2_is_engineering_only_suffix(self) -> None:
+        self.assertEqual(self.v2["inherits_config"], "configs/r011f2_estimator_bracket_v1.json")
+        self.assertEqual(set(self.v2["overrides"]), {"schema_version", "run_id", "scope_limit"})
 
 
 if __name__ == "__main__":
