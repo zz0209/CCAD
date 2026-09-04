@@ -111,6 +111,7 @@ def main() -> int:
     write_json(run_dir / "status.json", {"status": "RUNNING", "updated_utc": started})
     record, error, status = None, None, "FAIL"
     try:
+        started_compute = time.perf_counter()
         bound = {
             "synthetic_status": sha256(paths["synthetic_status"]).lower() == cfg["synthetic_gate_status_sha256"], "synthetic_metrics": sha256(paths["synthetic_metrics"]).lower() == cfg["synthetic_gate_metrics_sha256"],
             "reference": sha256(paths["reference"]).lower() == cfg["reference_surface_sha256"], "census": sha256(paths["census"]).lower() == cfg["source_census_sha256"], "sequences": sha256(paths["sequences"]).lower() == cfg["sequence_records_sha256"],
@@ -146,7 +147,7 @@ def main() -> int:
             unresidualized = {(int(row["source_seed"]), int(row["source_atom"]), int(row["target_seed"]), int(row["rank"])): row for row in unresidualized_rows if row.get("query_role") == "anchor" and row.get("evaluable")}
         global_states = select_document_balanced_states(sequence_payload, split="discovery", count=cfg["global_control_tokens"], token_positions=tuple(cfg["global_control_state_positions"]), salt=cfg["global_control_state_salt"])
         global_rows = np.asarray([int(row["sequence_index"]) * cfg["context_length"] + int(row["token_position"]) for row in global_states], dtype=np.int64); global_weights = np.full(len(global_rows), 1 / len(global_rows))
-        query_cache = {}; raw_cache = {}; factor_map = {}; anchor_payload = []; output_rows = []; started_compute = time.perf_counter()
+        query_cache = {}; raw_cache = {}; factor_map = {}; anchor_payload = []; output_rows = []
 
         for base in base_rows:
             source_seed, target_seed, atom = int(base["source_seed"]), int(base["target_seed"]), int(base["source_atom"])
