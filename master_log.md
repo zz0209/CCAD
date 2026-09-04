@@ -2454,3 +2454,7 @@ Primary MSCC calibration结果为0/2,560 `FOUND`；report-only `.10`和`.20`敏�
 **因果结果与保守裁决。** 预写规则冻结`next_state`为primary endpoint；no-op最大误差0且primary effect floor为8/8。SAE conditional、global SAE、raw-hook和relaxed stitching均8/8过门，median normalized effect error分别`.04737/.000129/0/.04462`，median effect BCC分别`.97631/.99994/1/.97759`；best native single与matched random均0/8，error约`1.648/1.997`。SAE median off-target fraction=`.96984`，raw=`.96553`，global=`.99945`；primary相对global coverage优势为0，最小specificity优势为`-.00431`。按预写规则输出`STOP_SAE_SPECIFIC_SCT_NOT_IDENTIFIED`。这不是C1/C2-SCT成功：它只保留atom/native失败与低秩整体动态稳定的measurement结果，R011-S1在audit前`CUT`，R012/R013不启动。
 
 **Gate、资源与下一步。** 所有GPU/CPU/disk leases已释放，audit未打开，未新增文献。R011-NR1与R011-S1两条首轮救援均已形成边界清楚的负结论。C040因Euclidean SCT失配而满足技术触发，但会改变主度量且可能与endpoint循环；启动C040、改用稳定化训练机制/独立设置，或收窄/拆分论文均属用户保留的重大裁决。Automation应暂停而不删除，等待用户决定，不用新pilot掩盖阻塞。
+
+## 2026-09-04 03:14 EDT — 双轨首轮收口后automation已暂停
+
+按上一条重大裁决边界，`ccad` heartbeat保留原prompt与15分钟RRULE但状态由`ACTIVE`改为`PAUSED`，未删除。暂停期间不启动C040、训练机制/设置扩展或audit；待用户选择论文/方法方向后再恢复并同步相应prompt与阶段门。
