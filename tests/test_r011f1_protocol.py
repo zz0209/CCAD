@@ -64,6 +64,22 @@ class R011F1ProtocolTests(unittest.TestCase):
         self.assertEqual(suffix["inherits_config"], "configs/r011f1_c040_probe_metric_v1.json")
         self.assertEqual(suffix["overrides"]["correction_from"], "R011_F1_C040_probe_metric_v2_20260904T160500Z")
 
+    def test_c040_stability_diagnostic_is_bounded_and_non_authorizing(self) -> None:
+        cfg = json.loads((ROOT / "configs/r011f1_c040_probe_stability_v1.json").read_text(encoding="utf-8"))
+        self.assertEqual(cfg["split"], "discovery")
+        self.assertFalse(cfg["audit_opened"])
+        self.assertEqual(cfg["state_indices"], [108, 124, 169, 185])
+        self.assertEqual(cfg["relative_amplitudes"], [0.003, 0.01, 0.03])
+        self.assertIn("cannot select formal states", cfg["scope_limit"])
+        source = ROOT / "runs" / cfg["source_run"]
+        for name, expected in (
+            ("probe_states.jsonl", cfg["source_state_ledger_sha256"]),
+            ("probe_observations.npz", cfg["source_probe_observations_sha256"]),
+            ("output_sketch.json", cfg["source_output_sketch_sha256"]),
+            ("metrics.raw.jsonl", cfg["source_metrics_raw_sha256"]),
+        ):
+            self.assertEqual(hashlib.sha256((source / name).read_bytes()).hexdigest(), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
