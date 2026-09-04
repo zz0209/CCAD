@@ -56,6 +56,15 @@ class TransportGate:
     best_control_specificity: float | None
 
 
+@dataclass(frozen=True)
+class NuisanceProjector:
+    basis: np.ndarray
+    eigenvalues: np.ndarray
+    rank: int
+    explained_variance_fraction: float
+    status: str
+
+
 def fit_hook_space_transport(
     target_process: np.ndarray,
     source_process: np.ndarray,
@@ -192,6 +201,50 @@ def transport_prefix(transport: HookTransport, rank: int) -> HookTransport:
         ridge=transport.ridge,
         status="OK" if keep == rank else "RANK_DEFICIENT",
     )
+
+
+def fit_nuisance_projector(
+    process: np.ndarray,
+    weights: np.ndarray,
+    *,
+    explained_variance_threshold: float = 0.9,
+    maximum_rank: int = 64,
+) -> NuisanceProjector:
+    """Freeze the unique smallest global hook subspace reaching a variance target."""
+
+    values = _matrix(process, "process")
+    if not 0 < explained_variance_threshold < 1:
+        raise ValueError("explained variance threshold must lie strictly between zero and one")
+    if maximum_rank <= 0 or maximum_rank > min(values.shape):
+        raise ValueError("maximum rank exceeds available process dimensions")
+    sample_weights = _weights(weights, values.shape[0])
+    weighted = np.sqrt(sample_weights)[:, None] * values
+    _, singular, right_t = np.linalg.svd(weighted, full_matrices=False)
+    eigenvalues = singular * singular
+    total = float(np.sum(eigenvalues))
+    if total <= np.finfo(np.float64).eps:
+        return NuisanceProjector(np.empty((values.shape[1], 0)), eigenvalues, 0, 0.0, "INACTIVE")
+    cumulative = np.cumsum(eigenvalues) / total
+    candidates = np.flatnonzero(cumulative[:maximum_rank] >= explained_variance_threshold)
+    if candidates.size == 0:
+        rank = maximum_rank; status = "THRESHOLD_NOT_REACHED"
+    else:
+        rank = int(candidates[0]) + 1; status = "OK"
+    return NuisanceProjector(right_t[:rank].T, eigenvalues, rank, float(cumulative[rank - 1]), status)
+
+
+def residualize_hook_process(process: np.ndarray, nuisance: NuisanceProjector | np.ndarray) -> np.ndarray:
+    """Remove the frozen shared nuisance subspace from a hook process."""
+
+    values = _matrix(process, "process")
+    basis = nuisance.basis if isinstance(nuisance, NuisanceProjector) else _matrix(nuisance, "nuisance_basis")
+    if basis.shape[0] != values.shape[1]:
+        raise ValueError("nuisance basis and hook dimensions differ")
+    if basis.shape[1] == 0:
+        return values.copy()
+    if not np.allclose(basis.T @ basis, np.eye(basis.shape[1]), atol=1e-8, rtol=1e-8):
+        raise ValueError("nuisance basis must have orthonormal columns")
+    return values - (values @ basis) @ basis.T
 
 
 def transport_metrics(

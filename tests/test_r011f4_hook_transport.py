@@ -10,6 +10,8 @@ from ccad.hook_transport import (
     decide_transport_gate,
     fit_basis_constrained_transport,
     fit_hook_space_transport,
+    fit_nuisance_projector,
+    residualize_hook_process,
     transport_prefix,
     transport_metrics,
 )
@@ -83,6 +85,23 @@ class HookTransportTests(unittest.TestCase):
         np.testing.assert_allclose(rank_one.source_factors, rank_two.source_factors[:, :1])
         metric = transport_metrics(coordinates[:, :2] @ basis[:, :2].T, rank_two.predict(target), np.ones(300))
         self.assertGreater(metric.bcc, .999)
+
+    def test_nuisance_rank_is_smallest_variance_prefix(self) -> None:
+        rng = np.random.default_rng(53)
+        process = rng.normal(size=(4000, 3)) * np.sqrt([8.0, 2.0, .2])
+        nuisance = fit_nuisance_projector(process, np.ones(len(process)), explained_variance_threshold=.9, maximum_rank=3)
+        self.assertEqual(nuisance.status, "OK")
+        self.assertEqual(nuisance.rank, 2)
+        self.assertGreaterEqual(nuisance.explained_variance_fraction, .9)
+
+    def test_residualization_preserves_orthogonal_query_signal(self) -> None:
+        rng = np.random.default_rng(54)
+        signal = rng.normal(size=(300, 1))
+        process = np.column_stack([rng.normal(size=300), signal[:, 0], np.zeros(300)])
+        nuisance_basis = np.array([[1.0], [0.0], [0.0]])
+        residual = residualize_hook_process(process, nuisance_basis)
+        np.testing.assert_allclose(residual[:, 1], signal[:, 0])
+        np.testing.assert_allclose(residual[:, 0], 0.0)
 
 
 class HookTransportProtocolTests(unittest.TestCase):
