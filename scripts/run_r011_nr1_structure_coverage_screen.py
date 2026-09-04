@@ -74,6 +74,8 @@ def calibration_metrics(
     source_variance = max(0.0, source_second - source_mean * source_mean)
     source_norm_sq = float(d_source @ d_source)
     source_energy = source_variance * source_norm_sq
+    source_firing_count = int(z_source.nnz)
+    calibration_evaluable = source_energy > source_energy_epsilon and source_firing_count > 0
     target_cov = (zt.T @ zt).toarray().astype(np.float64) / tokens - np.outer(target_means[ids], target_means[ids])
     target_energy = float(np.sum(target_cov * (dt @ dt.T)))
     raw_cross = (z_source.T @ zt).toarray().reshape(-1).astype(np.float64) / tokens
@@ -96,6 +98,8 @@ def calibration_metrics(
         "mean_pass_default": bool(mean_pass),
         "bcc": finite_or_none(2.0 * contribution_cross / (source_energy + target_energy)) if source_energy + target_energy > 0 else None,
         "source_energy": source_energy,
+        "source_firing_count": source_firing_count,
+        "calibration_evaluable": bool(calibration_evaluable),
     }
 
 
@@ -264,10 +268,11 @@ def config_screen(cfg: dict, item: dict, combos: dict[int, np.ndarray]) -> tuple
                     cfg["source_energy_epsilon"],
                     cfg["zero_mean_absolute_tolerance"],
                 )
-                ctr_pass = cal["d_ctr"] is not None and cal["d_ctr"] <= cfg["primary_tau_ctr"]
+                ctr_pass = cal["calibration_evaluable"] and cal["d_ctr"] is not None and cal["d_ctr"] <= cfg["primary_tau_ctr"]
                 mean_pass = (cal["d_mu"] <= cfg["primary_tau_mu"]) if cal["mean_gate_applicable"] and cal["d_mu"] is not None else cal["mean_residual_absolute"] <= cfg["zero_mean_absolute_tolerance"]
                 calibration_by_size.append({"size": size, "support": support, **cal, "passes_primary": bool(ctr_pass and mean_pass)})
-            accepted = next((row for row in calibration_by_size if row["passes_primary"]), None)
+            calibration_evaluable = calibration_by_size[0]["calibration_evaluable"]
+            accepted = next((row for row in calibration_by_size if row["passes_primary"]), None) if calibration_evaluable else None
             result_rows.append({
                 **base,
                 "best_single_bcc": finite_or_none(np.max(bcc[qi])),
@@ -277,7 +282,7 @@ def config_screen(cfg: dict, item: dict, combos: dict[int, np.ndarray]) -> tuple
                 "identification": "FOUND" if accepted else "UNRESOLVED",
                 "support": accepted["support"] if accepted else [],
                 "support_size": accepted["size"] if accepted else None,
-                "reason": None if accepted else "NO_DISCOVERY_FROZEN_SUPPORT_PASSES_CALIBRATION_GATES",
+                "reason": None if accepted else ("CALIBRATION_SOURCE_DYNAMIC_ENERGY_BELOW_EPSILON" if not calibration_evaluable else "NO_DISCOVERY_FROZEN_SUPPORT_PASSES_CALIBRATION_GATES"),
             })
 
     eligible = [row for row in result_rows if row["dynamic_eligible"]]
@@ -293,13 +298,15 @@ def config_screen(cfg: dict, item: dict, combos: dict[int, np.ndarray]) -> tuple
             "queries": len(rows),
             "eligible_queries": len(eligible_rows),
             "found": len(found_rows),
+            "found_fraction_all_queries": len(found_rows) / len(rows) if rows else 0.0,
             "eligible_found_fraction": len(found_rows) / len(eligible_rows) if eligible_rows else 0.0,
             "median_best_single_bcc": float(np.median([row["best_single_bcc"] for row in eligible_rows])) if eligible_rows else None,
         })
     rule = cfg["meaningful_coverage_rule"]
     eligible_found_fraction = len(found) / len(eligible) if eligible else 0.0
-    meaningful = eligible_found_fraction >= rule["minimum_overall_eligible_found_fraction"] and all(
-        row["eligible_found_fraction"] >= rule["minimum_each_direction_eligible_found_fraction"] for row in direction_summaries
+    all_found_fraction = len(found) / len(result_rows) if result_rows else 0.0
+    meaningful = all_found_fraction >= rule["minimum_overall_found_fraction"] and all(
+        row["found_fraction_all_queries"] >= rule["minimum_each_direction_found_fraction"] for row in direction_summaries
     )
     summary = {
         "configuration": name,
@@ -307,8 +314,9 @@ def config_screen(cfg: dict, item: dict, combos: dict[int, np.ndarray]) -> tuple
         "query_rows": len(result_rows),
         "eligible_queries": len(eligible),
         "zero_dynamic_energy_refusals": len(result_rows) - len(eligible),
+        "calibration_unevaluable_refusals": sum(row["reason"] == "CALIBRATION_SOURCE_DYNAMIC_ENERGY_BELOW_EPSILON" for row in result_rows),
         "found": len(found),
-        "found_fraction_all_queries": len(found) / len(result_rows),
+        "found_fraction_all_queries": all_found_fraction,
         "found_fraction_eligible_queries": eligible_found_fraction,
         "meaningful_native_coverage": bool(meaningful),
         "median_best_single_bcc": float(np.median([row["best_single_bcc"] for row in eligible])) if eligible else None,
@@ -386,6 +394,7 @@ def main() -> int:
             "complete_ordered_pair_results": len(screen_rows) == expected_results,
             "unique_results": len({(row["configuration"], row["source_seed"], row["source_atom"], row["target_seed"]) for row in screen_rows}) == len(screen_rows),
             "zero_energy_refused": all(row["dynamic_eligible"] or (row["identification"] == "UNRESOLVED" and row["reason"] == "SOURCE_DYNAMIC_ENERGY_BELOW_EPSILON") for row in screen_rows),
+            "calibration_unevaluable_refused": all(row["identification"] == "UNRESOLVED" and row["reason"] == "CALIBRATION_SOURCE_DYNAMIC_ENERGY_BELOW_EPSILON" for row in screen_rows if row["dynamic_eligible"] and row["calibration_by_size"] and not row["calibration_by_size"][0]["calibration_evaluable"]),
             "fixed_candidate_budget": all(not row["dynamic_eligible"] or len(row["proposal_target_ids"]) == cfg["proposal_atom_cap"] for row in screen_rows),
             "all_support_sizes_scored": all(not row["dynamic_eligible"] or [entry["size"] for entry in row["calibration_by_size"]] == list(range(1, cfg["g_max"] + 1)) for row in screen_rows),
             "audit_not_opened": not cfg["audit_opened"] and set(cfg["forbidden_splits"]) == {"audit"},

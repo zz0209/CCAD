@@ -1,0 +1,67 @@
+{
+  "schema_version": "0.1.0",
+  "run_id": "R011_NR1_structure_coverage_screen_v2_20260904T061839Z",
+  "run_parent": "R011-NR1",
+  "milestone": "M4",
+  "purpose": "Joint pre-audit mechanism screen for the frozen 4.19M-token TopK k32 and k128 seed pairs",
+  "evidence_level": "real_sae_pre_audit_configuration_mechanism_screen",
+  "supersedes": "R011_NR1_structure_coverage_screen_v1_20260904T061224Z",
+  "repair_note": "Fail closed when a discovery query has no measurable source dynamic energy on calibration; compute advancement coverage over the complete frozen query universe",
+  "configurations": [
+    {
+      "name": "k32_long4m",
+      "k": 32,
+      "paired_codes_run": "R011_NR1_k32_paired_codes_v1_20260904T060000Z",
+      "bulk_asset_dir": "D:\\CCAD_Storage\\paired_assets\\R011_NR1_k32_paired_codes_v1_20260904T060000Z",
+      "asset_manifest_sha256": "43e036939f257e7bcfd6557adc344fde88b20e532368214c9cee96f3460af066"
+    },
+    {
+      "name": "k128_long4m",
+      "k": 128,
+      "paired_codes_run": "R011_NR1_k128_paired_codes_v1_20260904T060000Z",
+      "bulk_asset_dir": "D:\\CCAD_Storage\\paired_assets\\R011_NR1_k128_paired_codes_v1_20260904T060000Z",
+      "asset_manifest_sha256": "15a7a8531adcbde994673725fab6fcb1fee60cb4125c02b8db9b8b3e1b9a479c"
+    }
+  ],
+  "source_seeds": [1, 2],
+  "num_latents": 3072,
+  "hook_hidden_size": 768,
+  "mean_split": "mean",
+  "discovery_split": "discovery",
+  "calibration_split": "calibration",
+  "forbidden_splits": ["audit"],
+  "mean_tokens": 32768,
+  "discovery_tokens": 131072,
+  "calibration_tokens": 65536,
+  "strata_per_seed": 8,
+  "atoms_per_stratum": 384,
+  "queries_per_stratum": 16,
+  "queries_per_seed": 128,
+  "selection_salt": "ccad-r011-nr1-source-energy-panel-v1",
+  "eligibility_rule": "all_source_atoms_sampled; zero discovery or calibration dynamic energy is an explicit refusal",
+  "source_energy_epsilon": 1e-12,
+  "proposal_atom_cap": 20,
+  "proposal_union_rule": {
+    "positive_contribution_correlation": 8,
+    "balanced_bcc": 8,
+    "absolute_decoder_cosine": 4
+  },
+  "g_max": 4,
+  "support_family_count": 6195,
+  "candidate_evaluation_budget": 7462,
+  "primary_tau_ctr": 0.05,
+  "primary_tau_mu": 0.05,
+  "zero_mean_absolute_tolerance": 1e-12,
+  "meaningful_coverage_rule": {
+    "denominator": "complete_frozen_query_universe",
+    "minimum_overall_found_fraction": 0.10,
+    "minimum_each_direction_found_fraction": 0.05
+  },
+  "winner_rule": "advance_only_if_exactly_one_configuration_passes_meaningful_coverage; otherwise no_winner",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "mean_constants_source_split": "mean",
+  "threshold_source_split": "fixed_before_calibration_read",
+  "statistics_unit": "source_query_seed_direction_and_configuration",
+  "scope_limit": "R011-NR1 two-seed pre-audit mechanism screen only; no held-out audit, causal endpoint, C1/C2 result, or certified absence"
+}
