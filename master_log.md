@@ -2681,3 +2681,29 @@ v3 query中位数的中位数：正条件centered-logit误差target=.013959、ra
 **工程范围。** runner只增加target数量、旧文档排除、实际分母、源码逐字节快照与mean-only方法，并剥离无用旧gate元数据。清理时v3 config漏了audit_opened而manifest=false，初次contract失败/exit1均保留；将原config/manifest备份为*.before_metadata_correction.json，补缺失false并更新manifest config hash，未动任何数值/selection/source_snapshot。run内METADATA_CORRECTION.md及contract_validation.after_metadata_correction.json完整记录；原config hash74e547e400a66c19099f44253ab2973faf7f62557f4ec07215b12a33e182f1ca，修正后0404fe739538dcae83810356b37f26d9459fff6ff84aa1c89b35ca7b9db15d4f。v3最终和v4初次契约均通过；不是OS读取取证或独立科学审查。新增participation代数fixture、三脚本py_compile和diff --check通过，无全套重跑。v4只输出完整表，不画遗漏mean基线的图。
 
 本单元1728 forwards/225.706秒；重启以来3008 forwards/418.655秒。无运行进程，lease全部free，automation保持5分钟ACTIVE，未改长期prompt。忽略文件留本地：tracker SHA256=06d90577bb112463e795eb0205bcd986d2e793903f7084ff7e323a176af6555e；plan=9a9569f29c70f93b9d71b09bc43a37049dc5b286955d59d312fb67a9968da671；v3 atom_participation.summary.json=dfc2ab9a0c595b1840df039b45098fac53c6d52ad378da68f2e6674b65e5bcfb。代码/配置/日志同单元白名单同步，不上传原始数据或扩大白名单。
+
+## 2026-09-04 21:13 UTC — 差分消费者准备与共享资源排队（无新科学结果）
+
+实现source-only跨文档donor差分：原query及recipient文档不变，从该query相反source条件的文档中按source rank1差分能量选donor，相同位置配对供全部方法使用。独立mean代数抵消，source_mean_only差分为0；保留空pair和共享donor依赖。`tests/test_source_reference_difference.py`核对mean抵消、线性map交换、注入符号、未选位置不变、空支持与非零source的零基线误差=1。短测试及py_compile/diff检查通过，未产生新的真实效应数据。
+
+母目录references两个索引未检出相关DAS条目后，复读官方PMLR论文 https://proceedings.mlr.press/v236/geiger24a/geiger24a.pdf 的方法3.1–3.5（印刷163–167页），核对donor/base交换、分布式投影和高层interchange训练目标。实际只借鉴反事实操作，不复制代码，不声称SAE局部贡献交换等同完整DAS/IIA；消费者和差异已写REFERENCE_REGISTRY。该文件本次SHA256=e5b6cd23456d27eb8f07de4a92cfc4a0db39ea7c608f004d2ef2d2de65ddf669，plan=cb8f5dc0a8847e6a7c5a3d3fa5aa684f8721749b7ab244176ddab436ca17f6fe。
+
+disk-d-io/cpu-heavy由EndoSAE_EndoFM活跃提取任务占用，未争抢；gpu空闲不构成跳过共享锁顺序的理由。已用原resource_manager提交有界等待，实际句柄和启动状态只留tracker；等待时不额外训练/扫描数据。差分预算最多512 forwards/预计1–2分钟，保持原ACTIVE/5分钟heartbeat。代码/配置/日志待同一单元真实反馈后成组同步，当前不是科学PASS或失败。
+
+## 2026-09-04 21:20 UTC — 均值消去后的动态作用范围与剂量边界
+
+共享资源释放后，`F4_source_reference_causal_dev_v5_difference_20260904`实际于21:12:04 UTC启动并完成512 forwards/144.149秒，含本次较慢的模型加载；前条“21:13准备/尚无新结果”时间标签与刷新有延迟，以manifest/status为准，未额外创建第二个队列。session39636退出0、自己的三项lease释放；随后共享disk/cpu再次由EndoSAE_EndoFM占用，本单元未再排队。
+
+操作为δ_s=[Y_s(recipient)−Y_s(donor)]BBᵀ，δ_t=[Y_t(recipient)−Y_t(donor)]WBᵀ，在相同recipient hook减去相应δ。mean逐侧严格抵消；source_mean_only差分恒0。沿用8个source-only query、原开发recipient与内容mask、首个循环target、rank1；donor仅从相反source条件的文档中按source投影差分能量最大选择，位置按已选位置升序配对。62个有效pair的donor/recipient文档交集均0；2个无支持pair保留为零干预，320原始行含10空mask行、30个缺失endpoint。s5:710正条件有效2项，其余query-condition为4项；共享donor、文档和seed有依赖，只作描述汇总。每个非零source的zero对照误差精确为1，未将缺失计成功。
+
+**真实效应。** 跨8query中位数的中位数，正条件centered-logit误差target=.794332、raw=1.468759、wrong-matched=1.472645、zero=1；target 7/8优于raw、5/8优于wrong-matched与zero。负条件为1.035610/4.350217/1.519944/1，target仅4/8优于zero。next-state正条件=.837416/1.082199/1.248673/1，负条件=1.338876/4.307904/1.284171/1。均值去除后全panel误差明显增大，但有源范围保留了可发展的动态信号，不能以全panel均值宣称普适对应。
+
+按本轮source hook差分能量（不是target误差）排序最强三query：s2:2176 source能量27327，centered-logit target/raw/wrong-matched=.014421/.123205/.556623；s3:1230能量20.616，为.089956/.034035/1.982888；s4:693能量4.394，为.208791/.336183/.630496。其余query更弱时target误差可超过zero；全部8个结果保留于query_summary.csv/json，不隐去失败。source能量排序与有效范围是本轮开发发现，尚未独立确认，也不是SAE相对raw一致优势。
+
+**剂量核查。** 用保存raw-hook资产在recipient同一内容mask位置的范数作分母，三强query的source扰动范数比中位数为4.86828/.129759/.061966。最大source差分例是大剂量，不能直接列为温和干预成功；另两例说明约13%和6%相对剂量仍有动态作用保持。下一步是同一source决定的公共剂量敏感性，再扩大有效范围；不独立重缩各方法或删除自然幅度结果。完整8query剂量数值/定义留run内source_dose_diagnostic.json（SHA256 999927feed3f7144f33d566e898f0e13476c614dd7a5f7c6f10ead2e88c5c209）。
+
+**产物与检查。** 原始metrics SHA256=72bb3ab378d5f549616f2d3839f2c94bc089a4882ca6d260170956c40c42b9cc；query_summary.json=cd5373c6cab0282273dc255f957161b389f1534ab0d5b398c437d78e678da000。`scripts/plot_f4_difference_energy.py`生成正负两panel、全部48个query-method点、zero=1、无CI/平滑的log-log开发图，包含大剂量警告；SVG SHA256=202e390fe3b6fb028f3e80aa03330bb7c5d378b60e2a15ca857bc77b16db1ee0，CSV及provenance同目录。源数据/零值分母和两无支持pair显式保留，SVG结构解析通过，未声称完成像素预览或期刊合规。
+
+运行no-op0、replay相对误差1.72954e-5、5项自检和artifact契约通过，完整source snapshot保留；allocated VRAM841,839,104 bytes。增加的短代数测试核对mean抵消/linear map/交换符号/未选位置/空支持/zero误差=1，py_compile和diff --check通过；无全套重跑。audit未开，无新训练/下载；重启累计3520 forwards/562.804秒，不含资源排队。研究图按scientific-visualization的全分母、共同log尺度和颜色/形状双编码原则生成；DAS原文方法的范围准确为印刷163–167页，前registry页码范围少写末页不影响所借鉴定义。
+
+本地忽略文件SHA256：tracker=1ae679a6cfd0dfefa7995b8617bf40c2788ddb19d7a0f5067d7a041301966915；plan=b2da606245958900dd5d059731bcc3af4d7b2fbe48828001cc0a528d558e6d1d；registry=e5b6cd23456d27eb8f07de4a92cfc4a0db39ea7c608f004d2ef2d2de65ddf669。下一步与资源状态只看tracker；automation仍ACTIVE/5分钟，未将支线写入长期prompt。白名单代码、测试、配置和本日志同单元同步。

@@ -1,0 +1,16 @@
+{
+  "run_id": "F4_source_reference_causal_dev_v5_difference_20260904",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "ranks": [1], "documents_per_condition": 4, "targets_per_query": 1,
+  "local_content_positions": 4, "centered_logit_endpoint": true, "include_source_mean_only": true,
+  "donor_difference": true,
+  "selection": "Same v3 source queries/recipient sequences. Donor among the opposite source condition in the same query, with disjoint document IDs and enough content positions; maximize source rank1 projected difference energy, then lowest donor sequence index. Align ascending selected content positions. No target/endpoint selection.",
+  "intervention": "Recipient minus donor decoded process, projected/transported by saved signed factors. Subtract this difference at recipient hook: h minus source-process-at-recipient plus source-process-at-donor. All means cancel; mean-only difference is identically zero. Not native deletion or complete DAS abstraction.",
+  "budget": "512 forwards, estimated1-2min; source-only differential intervention pilot on previously exposed calibration development."
+}

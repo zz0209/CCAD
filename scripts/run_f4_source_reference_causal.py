@@ -54,6 +54,15 @@ def content_mask(tokens, values, maximum_positions=4):
     return mask
 
 
+def aligned_difference(recipient, donor, positions, donor_positions):
+    """Swap contribution coordinates at source-selected aligned positions."""
+    if len(positions)!=len(donor_positions):
+        raise ValueError('Recipient and donor position counts must match')
+    result=np.zeros_like(recipient)
+    result[positions]=recipient[positions]-donor[donor_positions]
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(); parser.add_argument("--config", type=Path, required=True); args = parser.parse_args()
     task = json.loads(args.config.read_text(encoding="utf-8"))
@@ -146,6 +155,28 @@ def main():
                     seq=entry["sequence"];sl=slice(seq*length,(seq+1)*length)
                     values=positive[sl] if entry["condition"]=="positive" else negative[sl]
                     entry["intervention_positions"]=np.flatnonzero(content_mask(tokens[seq],values,cfg["local_content_positions"])).tolist()
+        if cfg.get('donor_difference'):
+            for unit in selections:
+                s,a=unit['source_seed'],unit['source_atom'];t0=unit['targets'][0]
+                ids=surface[s,a,t0]['source_candidate_ids']
+                b=factors['source_basis'][findex[s,a,t0],:,:min(cfg['ranks'])].astype(np.float64)
+                coordinates={e['sequence']:dense_seq(s,e['sequence'])[:,ids]@dec[s][ids]@b for e in unit['sequences']}
+                for entry in unit['sequences']:
+                    positions=entry['intervention_positions'];n=len(positions)
+                    candidates=[]
+                    for donor in unit['sequences']:
+                        if donor['condition']==entry['condition'] or len(donor['intervention_positions'])<n or not n:
+                            continue
+                        dp=donor['intervention_positions'][:n]
+                        energy=float(np.sum((coordinates[entry['sequence']][positions]-coordinates[donor['sequence']][dp])**2))
+                        candidates.append((energy,-donor['sequence'],dp,donor))
+                    if candidates:
+                        energy,_,dp,donor=max(candidates,key=lambda x:x[:2])
+                        if set(entry['document_ids']) & set(donor['document_ids']):
+                            raise ValueError('Donor and recipient documents must be disjoint')
+                        entry.update(donor_sequence=donor['sequence'],donor_positions=dp,donor_document_ids=donor['document_ids'],donor_source_difference_energy=energy,donor_status='SELECTED_SOURCE_ONLY')
+                    else:
+                        entry.update(donor_sequence=entry['sequence'],donor_positions=positions,donor_document_ids=entry['document_ids'],donor_source_difference_energy=0.0,donor_status='NO_ELIGIBLE_PAIR')
         write(run/"selection.json",{"rule":"source-only hashes and activation energies; no F4 FOUND filtering","queries":selections,'excluded_document_count':len(excluded),'requested_sequences_per_condition':cfg['documents_per_condition'],'actual_sequences_per_query':[{"query":[x['source_seed'],x['source_atom']],"positive":sum(e['condition']=='positive' for e in x['sequences']),"negative":sum(e['condition']=='negative' for e in x['sequences'])} for x in selections]})
         os.environ.update(HF_HUB_OFFLINE="1",TRANSFORMERS_OFFLINE="1",CUBLAS_WORKSPACE_CONFIG=cfg["cublas_workspace_config"])
         import torch
@@ -175,12 +206,18 @@ def main():
                 ids=surface[s,a,t0]["source_candidate_ids"]
                 for entry in unit["sequences"]:
                     seq=entry["sequence"]; z={v:dense_seq(v,seq) for v in [s]+unit["targets"]}
-                    local=(z[s][:,ids]-means[s][ids])@dec[s][ids]
+                    if cfg.get('donor_difference'):
+                        z={v:aligned_difference(z[v],dense_seq(v,entry['donor_sequence']),entry['intervention_positions'],entry['donor_positions']) for v in z}
+                    local=(z[s][:,ids] if cfg.get('donor_difference') else z[s][:,ids]-means[s][ids])@dec[s][ids]
                     batch=torch.from_numpy(np.asarray(tokens[seq:seq+1],dtype=np.int64)).to(cfg["device"])
                     baseline=forward(batch); zero=forward(batch,torch.zeros_like(baseline["hook"]))
                     noop.append(max(float((baseline[e]-zero[e]).abs().max()) for e in ("next_state","next_logits")))
                     rawseq=np.asarray(raw["calibration"][seq*length:(seq+1)*length],dtype=np.float64)
                     live=baseline["hook"][0].cpu().numpy(); replay.append(float(np.linalg.norm(rawseq-live)/max(np.linalg.norm(live),1e-12)))
+                    rawinput=rawseq-rawmean
+                    if cfg.get('donor_difference'):
+                        donor_start=entry['donor_sequence']*length
+                        rawinput=aligned_difference(rawseq,np.asarray(raw['calibration'][donor_start:donor_start+length],dtype=np.float64),entry['intervention_positions'],entry['donor_positions'])
                     for rank in cfg["ranks"]:
                         b=np.asarray(factors["source_basis"][findex[s,a,t0],:,:rank],dtype=np.float64)
                         mask=np.zeros(length) if cfg.get("local_content_positions") else np.ones(length)
@@ -192,15 +229,15 @@ def main():
                             effects["centered_logits"]=effects["next_logits"]-effects["next_logits"].mean(axis=-1,keepdims=True)
                         for t in unit["targets"]:
                             ix=findex[s,a,t]; bt=np.asarray(factors["source_basis"][ix,:,:rank],dtype=np.float64)
-                            target=(z[t]-means[t])@dec[t]
+                            target=(z[t] if cfg.get('donor_difference') else z[t]-means[t])@dec[t]
                             widx=findex[s,unit["wrong_atom"],t]; wb=np.asarray(factors["source_basis"][widx,:,:rank],dtype=np.float64)
                             wrong=(target@np.asarray(factors["query_target"][widx,:,:rank],dtype=np.float64)@wb.T)*mask[:,None]
                             wrongscale=float(np.linalg.norm(source)/max(np.linalg.norm(wrong),1e-12))
                             variants={"target":(target@np.asarray(factors["query_target"][ix,:,:rank],dtype=np.float64)@bt.T)*mask[:,None],
-                                      "raw":((rawseq-rawmean)@np.asarray(factors["raw_target"][ix,:,:rank],dtype=np.float64)@bt.T)*mask[:,None],
+                                      "raw":(rawinput@np.asarray(factors["raw_target"][ix,:,:rank],dtype=np.float64)@bt.T)*mask[:,None],
                                       "wrong_query":wrong,"wrong_query_matched_energy":wrong*wrongscale}
                             if cfg.get('include_source_mean_only'):
-                                variants['source_mean_only']=np.broadcast_to(-means[s][ids]@dec[s][ids]@b@b.T,source.shape)*mask[:,None]
+                                variants['source_mean_only']=np.zeros_like(source) if cfg.get('donor_difference') else np.broadcast_to(-means[s][ids]@dec[s][ids]@b@b.T,source.shape)*mask[:,None]
                             for method,delta in variants.items():
                                 out=forward(batch,torch.tensor(delta[None],dtype=torch.float32,device=cfg["device"]))
                                 candidate_effects={e:(baseline[e]-out[e]).cpu().numpy() for e in ("next_state","next_logits")}
@@ -208,6 +245,7 @@ def main():
                                     candidate_effects["centered_logits"]=candidate_effects["next_logits"]-candidate_effects["next_logits"].mean(axis=-1,keepdims=True)
                                 endpoints={e:compare(effects[e],candidate_effects[e]) for e in effects}
                                 row={"source_seed":s,"source_atom":a,"target_seed":t,"stratum":unit["stratum"],"rank":rank,"method":method,**entry,"wrong_atom":unit["wrong_atom"],"wrong_norm_scale":wrongscale,"hook":compare(source,delta),"source_mean_projected_norm":float(np.linalg.norm(means[s][ids]@dec[s][ids]@b@b.T)),"target_mean_mapped_norm":float(np.linalg.norm(means[t]@dec[t]@np.asarray(factors["query_target"][ix,:,:rank],dtype=np.float64)@bt.T)),"endpoints":endpoints}
+                                row['mean_terms_cancelled_in_intervention']=bool(cfg.get('donor_difference'))
                                 rows.append(row);sink.write(json.dumps(row,sort_keys=True)+"\n");sink.flush()
                     print(json.dumps({"query":[s,a],"sequence":seq,"rows":len(rows),"forwards":forwards}),flush=True)
         method_names=['target','raw','wrong_query','wrong_query_matched_energy']+(['source_mean_only'] if cfg.get('include_source_mean_only') else [])
