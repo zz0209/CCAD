@@ -2665,3 +2665,19 @@ AGENTS只管长期工作方式，EXPERIMENT_PLAN只管正结果路径，EXPERIME
 **工程与接续。** 无全套重复测试；局部mask/compare短检查和py_compile通过。首次启动在创建run前因未使用scipy import失败，删除无用依赖后复用锁定环境；没有伪报该失败为科学结果。继承asset config含未消费的旧gate字段，manifest和本记录给出实际作用；下次扩展时清理继承字段，不重写旧run。runner v2代码身份由code_hashes与本单元提交留账；v1运行时旧代码只有hash、未另存源码快照，不能声称已保留逐字节历史源码，最终runner仍支持v1配置复跑。tracker已从RUNNING改为真实checkpoint，下一笔预算是全部4target与更多未选开发文档、rank1优先；详细工作卡只留tracker。
 
 本地忽略文件身份：`EXPERIMENT_TRACKER.md`=b844efd00be3efbf2e1346ba55d5dc47913f714c5cb25cc4ef4e228d1d457dfb，`EXPERIMENT_PLAN.md`=cabeef37c9925f80a73e9726b566165c36d10ed49a4c5f7e89e958a9a85a846a。不扩大Git白名单、不改旧负结果；automation实读仍ACTIVE/5分钟，无当前支线写入长期prompt。
+
+## 2026-09-04 20:58 UTC — 扩展真实效应，并以mean-only干预限定动态解释
+
+沿同工作卡完成 `F4_source_reference_causal_dev_v3_expand_20260904`：8个原source-only query、全部4target、rank1、正负各4sequence，排除v2所有25个document IDs，选入43个IDs且交集0，仍为calibration开发。1216 forwards/172.187秒，1024原始行；v2-s5:a710在新正条件的2个sequence无内容位置激活，0干预如实保留，32行/96endpoint无可归一化误差，不算成功；该query正条件有效8项，其余16项。无target筛选、无新训练/下载/audit，锁定环境spec hash8348de46不变，资源依disk-d-io→cpu-heavy→gpu-0申请并释放。峰值allocated VRAM 841,839,104 bytes，no-op0，replay相对误差1.72954e-5。
+
+v3 query中位数的中位数：正条件centered-logit误差target=.013959、raw=.008898、wrong-matched=.652780，target仅4/8优于raw；负条件=.025059/.056124/.582816，7/8优于raw重现。next-state正条件=.011004/.012726/.484472，负条件=.029421/.079724/.462817。旧whole-sequence及v2不变。v3原始SHA256=64c3d1c82f9b334871889bf67758f303c0a2c5a35aa3313e82b81d73394ab7a7。
+
+**关键解释检查。** 新的短分析脚本 `scripts/inspect_f4_atom_participation.py` 只物化所选内容位置的calibration codes，用保存basis/map展开每atom的centered coordinate贡献，报告能量有效数、最大份额、mean/dynamic/aggregate能量；不做模型前向、拟合或必要性推断。source正/负条件effective-energy atoms约8.38/26.49，target约139.51/147.95，均为描述性代数参与。负条件source的mean-energy/centered aggregate约1，dynamic仅.000342；正条件分别.776/.01425。分散的常量项不能当成有用的动态many-to-many结构。重新读F4真实runner weighted_pca(56–61行)及hook_transport的basis-constrained ridge源码：它对全局mean中心化过程算加权二阶矩，没有再减条件mean，首轴可能承载条件常量；这是代码和本次分解支持的解释，未新做外部文献查新。
+
+**决定性真实对照。** 随即运行 `F4_source_reference_causal_dev_v4_mean_control_20260904`，相同source query/文档/mask、首个循环target，增加source_mean_only=−独立mean的source局部投影；512 forwards/53.519秒、320行，其中10空mask行/30缺失endpoint保留。256个既有方法行的全部endpoint与v3逐字段精确相同，额外64行为mean-only对照。正条件centered-logit误差target=.013621/raw=.008898/mean-only=.017035，target在6/8 query优于mean-only；负条件=.027199/.056124/**.000148814**，target仅2/8优于mean-only。负条件next-state mean-only=.000362146而target=.03017445。原始SHA256=fe84163243368cac557f5f8dbebb522219a7e21c5c279cbf6b3e416a83d351d8，v4 query_summary.json=3c1b36a9f287fe8330809c1f65ab958c4a364d285561c938e1da42aadba7ad36。
+
+因此限定20:40条目的解释：局部映射保留下游作用的数值现象真实，但此前负条件相对raw的优势主要是常量作用，尚不能作为动态FCC有用性的证据。正条件仍有小幅超过mean-only的范围，优先用source-only跨文档差分使独立mean严格抵消，直接检验动态作用；若需改善basis，在discovery上分离条件mean与协方差，不机械否定FCC母问题，也不把普通差分/RRR称为首创。具体下一工作/预算只留tracker。
+
+**工程范围。** runner只增加target数量、旧文档排除、实际分母、源码逐字节快照与mean-only方法，并剥离无用旧gate元数据。清理时v3 config漏了audit_opened而manifest=false，初次contract失败/exit1均保留；将原config/manifest备份为*.before_metadata_correction.json，补缺失false并更新manifest config hash，未动任何数值/selection/source_snapshot。run内METADATA_CORRECTION.md及contract_validation.after_metadata_correction.json完整记录；原config hash74e547e400a66c19099f44253ab2973faf7f62557f4ec07215b12a33e182f1ca，修正后0404fe739538dcae83810356b37f26d9459fff6ff84aa1c89b35ca7b9db15d4f。v3最终和v4初次契约均通过；不是OS读取取证或独立科学审查。新增participation代数fixture、三脚本py_compile和diff --check通过，无全套重跑。v4只输出完整表，不画遗漏mean基线的图。
+
+本单元1728 forwards/225.706秒；重启以来3008 forwards/418.655秒。无运行进程，lease全部free，automation保持5分钟ACTIVE，未改长期prompt。忽略文件留本地：tracker SHA256=06d90577bb112463e795eb0205bcd986d2e793903f7084ff7e323a176af6555e；plan=9a9569f29c70f93b9d71b09bc43a37049dc5b286955d59d312fb67a9968da671；v3 atom_participation.summary.json=dfc2ab9a0c595b1840df039b45098fac53c6d52ad378da68f2e6674b65e5bcfb。代码/配置/日志同单元白名单同步，不上传原始数据或扩大白名单。

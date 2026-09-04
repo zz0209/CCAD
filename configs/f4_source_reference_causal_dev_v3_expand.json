@@ -1,0 +1,15 @@
+{
+  "run_id": "F4_source_reference_causal_dev_v3_expand_20260904",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "ranks": [1], "documents_per_condition": 4, "targets_per_query": 4,
+  "local_content_positions": 4, "centered_logit_endpoint": true,
+  "selection": "Same eight source-only queries; all four targets; exclude union of all previously selected document IDs before source-energy selection; retain support shortfalls explicitly.",
+  "intervention": "Source-only top4 content mask shared by all methods. Natural amplitude target/raw/wrong-query and additional wrong-query energy match. Same source reference and centered-logit endpoint as v2.",
+  "budget": "At most1216 forwards; estimated3-4min from observed throughput, allocated VRAM below1GiB. Calibration development expansion, not held-out confirmation."
+}
