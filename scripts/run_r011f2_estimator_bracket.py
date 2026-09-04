@@ -132,6 +132,16 @@ def main() -> int:
         started_compute = time.perf_counter()
         for base in base_rows:
             source_seed, target_seed, atom = int(base["source_seed"]), int(base["target_seed"]), int(base["source_atom"])
+            if not base.get("evaluable", False):
+                for estimator in cfg["estimators"]:
+                    for rank in cfg["candidate_ranks"]:
+                        output_rows.append({
+                            "estimator": estimator, "source_seed": source_seed, "target_seed": target_seed,
+                            "source_atom": atom, "energy_stratum": int(base["energy_stratum"]),
+                            "query_role": base["query_role"], "rank": rank, "evaluable": False,
+                            "reason": base.get("reason", "REFERENCE_CONDITION_UNEVALUABLE"),
+                        })
+                continue
             source_ids = [int(value) for value in base["source_candidate_ids"]]
             target_ids = [int(value) for value in base["target_candidate_ids"]]
             negative_atoms = [int(value) for value in base["negative_source_atoms"]]
@@ -157,7 +167,8 @@ def main() -> int:
                     output_rows.append({
                         "estimator": estimator, "source_seed": source_seed, "target_seed": target_seed,
                         "source_atom": atom, "energy_stratum": int(base["energy_stratum"]), "query_role": base["query_role"],
-                        "rank": rank, "source_candidate_ids": source_ids, "target_candidate_ids": target_ids,
+                        "rank": rank, "evaluable": True, "reason": None,
+                        "source_candidate_ids": source_ids, "target_candidate_ids": target_ids,
                         "negative_source_atoms": negative_atoms, "calibration_positive_bcc": positive.bcc,
                         "calibration_positive_residual": positive.normalized_residual,
                         "calibration_negative_bcc": negative.bcc,
@@ -176,8 +187,12 @@ def main() -> int:
             anchor = embedded_membership(row["target_candidate_ids"], np.asarray(row["target_membership"]), cfg["num_latents"])
             for neighbor in row["negative_source_atoms"]:
                 other = row_map[(row["estimator"], row["source_seed"], neighbor, row["target_seed"], row["rank"])]
+                if not other["evaluable"]:
+                    continue
                 embedded = embedded_membership(other["target_candidate_ids"], np.asarray(other["target_membership"]), cfg["num_latents"])
                 overlaps.append(soft_membership_overlap(anchor, embedded))
+            if not overlaps:
+                raise ValueError("anchor has no evaluable collision-neighbor query")
             row["query_collision_mean"] = float(np.mean(overlaps))
             row["collision_improvement_over_global"] = row["global_collision_mean"] - row["query_collision_mean"]
 
@@ -192,7 +207,7 @@ def main() -> int:
             found = []
             for key, rows in sorted(groups.items()):
                 ordered = sorted(rows, key=lambda row: cfg["candidate_ranks"].index(row["rank"]))
-                passing = [row for row in ordered if row["calibration_positive_bcc"] >= cfg["minimum_calibration_bcc"] and row["calibration_positive_residual"] <= cfg["maximum_calibration_normalized_residual"] and row["calibration_bcc_contrast"] > cfg["minimum_calibration_contrast"] and row["collision_improvement_over_global"] >= cfg["minimum_collision_improvement_over_global"] and row["rank_boundary_relative_gap"] is not None and row["rank_boundary_relative_gap"] >= cfg["minimum_rank_boundary_relative_gap"]]
+                passing = [row for row in ordered if row["evaluable"] and row["calibration_positive_bcc"] >= cfg["minimum_calibration_bcc"] and row["calibration_positive_residual"] <= cfg["maximum_calibration_normalized_residual"] and row["calibration_bcc_contrast"] > cfg["minimum_calibration_contrast"] and row["collision_improvement_over_global"] >= cfg["minimum_collision_improvement_over_global"] and row["rank_boundary_relative_gap"] is not None and row["rank_boundary_relative_gap"] >= cfg["minimum_rank_boundary_relative_gap"]]
                 selected = passing[0] if passing else None
                 decision = {"estimator": estimator, "source_seed": key[0], "source_atom": key[1], "target_seed": key[2], "energy_stratum": key[3], "decision": "FOUND_RELATION" if selected else "UNRESOLVED_RELATION", "reason": None if selected else "NO_RANK_PASSED_MEANINGFUL_TRANSFER_GATE", "selected_rank": selected["rank"] if selected else None, "loading_index": selected["loading_index"] if selected else None}
                 decisions.append(decision)
@@ -226,8 +241,8 @@ def main() -> int:
             "complete_surface_grid": len(output_rows) == len(cfg["estimators"]) * cfg["all_condition_queries"] * cfg["ordered_target_seeds_per_query"] * len(cfg["candidate_ranks"]),
             "complete_anchor_decisions": len(decisions) == len(cfg["estimators"]) * cfg["anchor_units"],
             "all_collisions_computed": all(np.isfinite(row["collision_improvement_over_global"]) for row in anchor_rows),
-            "candidate_budgets_unchanged": all(len(row["source_candidate_ids"]) == 32 and len(row["target_candidate_ids"]) <= 128 for row in output_rows),
-            "finite_metrics": all(np.isfinite([row["calibration_positive_bcc"], row["calibration_positive_residual"], row["calibration_negative_bcc"], row["calibration_bcc_contrast"]]).all() for row in output_rows),
+            "candidate_budgets_unchanged": all((not row["evaluable"]) or (len(row["source_candidate_ids"]) == 32 and len(row["target_candidate_ids"]) <= 128) for row in output_rows),
+            "finite_metrics": all((not row["evaluable"]) or np.isfinite([row["calibration_positive_bcc"], row["calibration_positive_residual"], row["calibration_negative_bcc"], row["calibration_bcc_contrast"]]).all() for row in output_rows),
             "no_causal_forward": True,
             "audit_not_opened": not cfg["audit_opened"] and cfg["forbidden_splits"] == ["audit"],
         }
