@@ -1,0 +1,13 @@
+{
+  "run_id": "F4_source_reference_causal_dev_v2_local_20260904",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "ranks": [1, 4], "documents_per_condition": 2,
+  "local_content_positions": 4, "centered_logit_endpoint": true,
+  "selection": "Same source-only eight-query/two-target/positive-negative document selection as v1; top four source-condition activations at least16 positions after start/EOT. Empty support explicitly gives zero intervention, never counted as success.",
+  "intervention": "Same signed aggregate maps; source-only position mask shared by all methods; natural amplitude and wrong-query norm match. Also compare vocabulary-centered logits.",
+  "budget": "640 forwards; development localization follow-up to whole-sequence v1, not independent confirmation."
+}

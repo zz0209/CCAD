@@ -1,0 +1,13 @@
+{
+  "run_id": "F4_source_reference_causal_dev_v1_20260904",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "ranks": [1, 4],
+  "documents_per_condition": 2,
+  "selection": "Lowest source panel hash per stratum across existing 40 F4 source queries; no target outcome selection. Two cyclic target seeds. Positive source energy and source-negative energy select disjoint-document sequences within each query.",
+  "intervention": "Subtract signed aggregate source-local projection or predicted transport at natural amplitude. Wrong-query also norm matched. All compared against same source intervention.",
+  "budget": "Eight source queries, two target seeds, up to four sequences, two ranks, four controls: at most 640 forwards, local GPU, no training or new download."
+}

@@ -2644,3 +2644,24 @@ AGENTS只管长期工作方式，EXPERIMENT_PLAN只管正结果路径，EXPERIME
 现行长期prompt迁至 `configs/CCAD_AUTOMATION_PROMPT.md`（文件SHA256 f7f68c1d90ee9802e39b0f802820773f550ff9d8e81cbe1cfbdfadbb54e5f728），不含支线/run/日期/参数/当前状态，只读活的tracker与plan。原dated prompt成为迁移指针。已通过app工具更新ccad并核对正文（仅归一化Windows换行）；PAUSED、5分钟、原target task保留，未恢复。初次直接字符串比对只因CRLF/LF差异失败，正文一致，未增加修复分支。
 
 整理核对见 `archive/research_workflow_20260904/consolidation_check.json`：快照身份、11个关键路径、prompt内容与调度状态均符合预期；未新增validator或运行科学测试。本轮是用户要求的整理交付，不是科学PASS。重启后的研究机会与自由调整空间已写入tracker；积极寻找正结果，但尚未执行新的真实因果实验。
+
+
+## 2026-09-04 20:25 UTC — 用户授权重启CCAD研究loop
+
+按用户要求完成一次启动核对：AGENTS/plan/tracker一致，原执行任务idle，共享资源lease free；锁定runtime关键imports成功，F4参考surface/census/sequence/paired和raw manifest及saved factors的hash匹配，因子形状160×768×8，模型config与safetensors存在。未重跑全套测试、未加载audit、未启动第二个竞争实验。
+
+已将现有ccad heartbeat由PAUSED恢复ACTIVE，保留5分钟、原target task和不含当前支线的长期prompt。初始化工作交给原执行任务接续当前tracker中的直接因果工作卡，使用用户要求的GPT-6模型；协调任务不并行修改实验实现。实际运行/结果继续由执行任务维护tracker与plan。本条为普通恢复记录，随下一科学工作单元成组提交，不为恢复调度单独提交。
+
+## 2026-09-04 20:40 UTC — source-reference局部真实作用的首个开发阳性checkpoint
+
+复用F4 saved signed factors、独立mean和共享hook intervention，新runner `scripts/run_f4_source_reference_causal.py` 把所有候选下游效应对同一个source局部投影效应比较。source为32-feature local centered contribution的rank1/4投影；target/raw用各自保存map；wrong-query使用不同source query自己的basis，另有hook总能量匹配版本。source basis跨target逐元素一致。8个query按8档source energy strata内最小source selection hash选择，未按旧FOUND或target效果筛选；涉及4个source seed，每个2个循环target，正负各2个document sequence，每query内文档不重叠，跨query共享文档/seed不视为独立重复。
+
+真实运行：`runs/F4_source_reference_causal_dev_v1_20260904` 全sequence自然幅度，640 forwards/95.27秒；该版source-logit效应尺度过大，随后保留同一query/sequence做 `runs/F4_source_reference_causal_dev_v2_local_20260904`，只在source条件top4内容位置干预，避开起点/EOT后前16位，另计算词表中心化logits。v2为640 forwards/97.68秒，两次累计1280 forwards/192.95秒；峰值allocated VRAM均841,839,104 bytes，无新下载/训练/依赖安装，按disk-d-io→cpu-heavy→gpu-0申请，结束自动释放。v2的512行无空mask或缺失归一化endpoint；每query-method-endpoint-condition有4项。no-op最大差0，raw hook replay相对误差1.533e-5，5项运行自检及artifact契约通过；这不是独立科学复核。
+
+**效应。** 先对每query的2target×2sequence取中位数，再跨8query取中位数。rank1正条件centered-logit source-normalized平方误差target=.012781、raw=.017009、wrong-matched=.661386；next-state为.013097/.016075/.496846。两endpoint均8/8 query优于wrong-matched；相对raw仅5/8与4/8。负条件rank1 centered-logit为.018736/.118156/.665838，target在7/8 query优于raw；next-state为.018986/.079602/.477532。rank4正条件centered-logit .028852/.032530/.663198；负条件.142661/.194219/.650821。负条件source RMS .053277与正条件.054436相近，不能把这些结果升级成语义特异性。真正机会是局部signed transport在跨条件下保留source作用，raw竞争力及有效范围继续研究；不是target native删除或已确认人类概念。
+
+**证据与范围。** calibration继续标记DEVELOPMENT，audit未打开，v2是看到v1后做的开发局部化而非独立复现。原始hash：v1 `metrics.raw.jsonl`=5881e755de3d4cdc4ce293e2616b092101aaf082d67b70a80cbe5fc1e88c1edb；v2=c9853564d07abca3cb918fc88a7b984bc54a8b83db6aafdd00a160df44bbaf78。`scripts/summarize_f4_causal_feedback.py`生成完整正负condition query表/JSON与正条件SVG开发图（SHA256 08ed18a1efcb037c7941bb630b58fc5b996e699427c5ba0f84b336249fe80441）；JSON=afd88125c35fc0edad74ee34bf4e90c5df4004d478d054b11b93d717cd315e34。图保留log10共同尺度、归一化定义、颜色/形状双编码及CSV替代，无CI或期刊合规声明；XML/48数据标记/3图例标记核对通过，浏览器file URL被安全策略拒绝，未完成实际像素预览，未绕过。
+
+**工程与接续。** 无全套重复测试；局部mask/compare短检查和py_compile通过。首次启动在创建run前因未使用scipy import失败，删除无用依赖后复用锁定环境；没有伪报该失败为科学结果。继承asset config含未消费的旧gate字段，manifest和本记录给出实际作用；下次扩展时清理继承字段，不重写旧run。runner v2代码身份由code_hashes与本单元提交留账；v1运行时旧代码只有hash、未另存源码快照，不能声称已保留逐字节历史源码，最终runner仍支持v1配置复跑。tracker已从RUNNING改为真实checkpoint，下一笔预算是全部4target与更多未选开发文档、rank1优先；详细工作卡只留tracker。
+
+本地忽略文件身份：`EXPERIMENT_TRACKER.md`=b844efd00be3efbf2e1346ba55d5dc47913f714c5cb25cc4ef4e228d1d457dfb，`EXPERIMENT_PLAN.md`=cabeef37c9925f80a73e9726b566165c36d10ed49a4c5f7e89e958a9a85a846a。不扩大Git白名单、不改旧负结果；automation实读仍ACTIVE/5分钟，无当前支线写入长期prompt。
