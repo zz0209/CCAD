@@ -10,6 +10,8 @@
   "ranks": [1], "documents_per_condition": 4, "targets_per_query": 4,
   "local_content_positions": 4, "centered_logit_endpoint": true, "include_source_mean_only": true,
   "donor_difference": true, "maximum_source_hook_fraction": 0.1,
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "resource_lease_reason": "User clarified that ongoing D: downloads must not monopolize unrelated compute. This run reads existing assets and performs CPU/GPU inference; no bulk download, extraction or migration.",
   "selection": "Same source-only query, recipient and donor rule as v6; expand only target count from one to all four other seeds.",
   "intervention": "Same source-defined common dose as v6; independent means cancel. Source cap is not an independent cap on candidate magnitude.",
   "budget": "1472 forwards, expected3-5min and allocatedVRAM<1GiB. Cross-target development expansion on unchanged recipient/donor documents, not independent confirmation."

@@ -101,6 +101,9 @@ def main():
     write(run / "manifest.json", {"schema_version":"fcc.causal.development.v1", "run_id":cfg["run_id"], "run_parent":"R011-F4", "purpose":"Signed source-reference causal feedback", "milestone":"M4", "evidence_level":"real_sae_development", "started_utc":now, "project_root":str(ROOT), "config_hash":sha256(run / "config.resolved.json"), "code_snapshot_hash":code_hash, "audit_opened":False, "candidate_family_frozen":True, "mean_constants_source_split":"mean", "threshold_source_split":"development_no_selection_threshold", "statistics_unit":"query/seed/document; directions sharing seeds dependent", "device":cfg["device"], "seeds":cfg["source_seeds"], "resource_lease":"disk-d-io -> cpu-heavy -> gpu-0 resource_manager.run", "resource_lease_reason":"paired assets and bounded causal forward feedback", "git_head_at_run":subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip(), "git_status_porcelain":subprocess.check_output(["git","status","--porcelain"],cwd=ROOT,text=True).splitlines()})
     write(run / "status.json", {"status":"RUNNING", "updated_utc":now})
     manifest=json.loads((run/'manifest.json').read_text());manifest['source_snapshot_required']=True
+    if cfg.get('resource_lease'):
+        manifest['resource_lease']=cfg['resource_lease']
+        manifest['resource_lease_reason']=cfg.get('resource_lease_reason','Compute leases matched to the actual workload')
     write(run/'manifest.json',manifest)
     (run / "stderr.log").write_text("",encoding="utf-8")
     rows=[]; error=None; status="FAIL"; summary={}

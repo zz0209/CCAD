@@ -2731,3 +2731,15 @@ session10381退出0，21:34核对四项共享lease均free，无待执行队列�
 v6新增atom_participation.summary.json SHA256=0268a840ba7fb88ce1aa34bf2b26c420aaed625c017b51da98279cc317021e99，raw.jsonl=4e3895f5a2993979e915c08a04ead8415e2263d7989fa14f0d59f58ff46a6e7a，summary内记原始v6 metrics和分析脚本hash。短fixture验证零mean、dynamic=1以及共同dose下参与比值不变。汇总器新增target_summary.csv以保留逐target异质性；其160条单target汇总在内存中与v6旧query_summary逐项精确一致，没有重写旧汇总。py_compile/diff检查通过，无全套测试；只属实现与描述检查。
 
 tracker本地SHA256=000fc9b7d90f7a1f66eb3988dba099f7f6817eb99ba678bd1538ea4cd6ac28f6；plan未改变，audit封存，重启模型前向累计仍4032/672.919秒。automation仍ACTIVE/5分钟。分析代码、四target配置与日志白名单成组同步，资源等待跨heartbeat续接；本条不是四target实验完成或新因果阳性声明。
+
+## 2026-09-04 21:59 UTC — 共享磁盘等待到期，无新实验
+
+回收上一轮唯一等待session70527输出，退出1，原因为disk-d-io持续busy达到600秒等待上限；最后owner快照heartbeat 21:52:53。本轮实查同一EndoSAE_EndoFM acquisition租约heartbeat更新到21:58:33、PID61420仍存活，其余资源free。v7 run目录未创建，未启动模型、没有部分科学结果或新的实验FAIL。自己的等待/进程/lease均已结束，不重排长队、不抢占；后续资源释放再接续同一配置，位置见tracker。累计前向和科学结论不变；本次仅资源状态勘误，保留5分钟heartbeat，普通无变化检查不发结果通知。日志与下一实质工作单元成组同步。
+
+## 2026-09-04 22:14 UTC — 用户澄清资源范围，四target扩展实际启动
+
+用户明确资源协调应按实际CPU/GPU等负载处理，不因单纯D盘下载占据整盘独占而阻塞其他项目，也不要求中断下载；其他项目已释放该锁。本轮实查cpu/gpu/disk均free，GPU可用显存14210MiB。按该澄清，读取既有资产的本次推理只申请cpu-heavy→gpu-0，未停止对方进程、删除租约或修改共享管理器。AGENTS增加持久澄清：路径在D盘本身不构成附加整盘锁理由，大规模解压/迁移或实测饱和另协调。资源澄清文件本地SHA256=c2f6967971df4f4afacdbb0c98d4fff24639e7cf47315972bbd97d6b85a4126e。
+
+v7于22:09:47 UTC创建run并真实启动，run manifest覆盖为实际cpu-heavy→gpu-0及原因；原有科学参数未变。修改runner仅3行可选资源元数据，配置只增2项resource字段，不改数值路径。锁定环境spec canonical SHA256仍为8348de46ad5dd5c721867641e59a9d9d53e1f083622db98af51089e2bf2c9d43，按run-experiment环境契约warm reuse，无依赖变动。source_snapshot保留本次运行源码；selection去掉新增target列表后与v6完全相同。
+
+到22:13 UTC已持续记录约600/1472 forwards，仍RUNNING、CPU/GPU租约正常续租；不是实验完成或新效应结论。先前600秒资源超时队列已关闭，本轮仅一个模型进程，定位见tracker，不应重复启动。加载比此前慢，仍沿用有界1472-forward规模；完成后核对首target重放、全target异质性与真实分母。tracker本地SHA256=105994d1623ec1d627b5893687843b084f5a9029669862cbb17d3d12a9c61201。此次用户请求已实现实际推进；同单元同步资源元数据、配置与事实日志（包含此前待同步的资源超时条目），数值分析待run完成。automation保持ACTIVE/5分钟。
