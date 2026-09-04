@@ -25,6 +25,8 @@ from ccad.causal_metric_probe import select_document_balanced_states  # noqa: E4
 from ccad.hook_transport import (  # noqa: E402
     decide_transport_gate,
     fit_basis_constrained_transport,
+    fit_nuisance_projector,
+    residualize_hook_process,
     transport_metrics,
     transport_prefix,
     transport_subspace_overlap,
@@ -90,11 +92,14 @@ def main() -> int:
     code_paths = [Path(__file__).resolve(), ROOT / "src/ccad/hook_transport.py", ROOT / "scripts/run_r009c_atom_discovery.py", ROOT / "scripts/run_r011f1_euclidean_surface.py"]
     code_rows = [{"path": path.relative_to(ROOT).as_posix(), "sha256": sha256(path), "bytes": path.stat().st_size} for path in code_paths]
     write_json(run_dir / "code_hashes.json", {"files": code_rows, "aggregate_sha256": aggregate(code_rows)})
+    residual_mode = "nuisance_state_count" in cfg
     paths = {
         "protocol": ROOT / cfg["protocol_document"], "synthetic_status": ROOT / cfg["synthetic_gate_status_path"], "synthetic_metrics": ROOT / cfg["synthetic_gate_metrics_path"],
         "reference": ROOT / cfg["reference_surface_path"], "census": ROOT / cfg["source_census_path"], "sequences": ROOT / cfg["sequence_records_path"],
         "asset_manifest": Path(cfg["bulk_asset_dir"]) / "asset_manifest.json", "raw_manifest": Path(cfg["raw_hook_asset_dir"]) / "raw_hook_manifest.json",
     }
+    if residual_mode:
+        paths["unresidualized_surface"] = ROOT / cfg["unresidualized_transport_surface_path"]
     write_json(run_dir / "inputs.json", {"inputs": [file_entry(args.config.resolve(), "run_protocol")] + [file_entry(path, role) for role, path in paths.items()]})
     write_json(run_dir / "manifest.json", {
         "schema_version": cfg["schema_version"], "run_id": cfg["run_id"], "run_parent": cfg["run_parent"], "purpose": cfg["purpose"], "milestone": cfg["milestone"], "evidence_level": cfg["evidence_level"],
@@ -111,6 +116,8 @@ def main() -> int:
             "reference": sha256(paths["reference"]).lower() == cfg["reference_surface_sha256"], "census": sha256(paths["census"]).lower() == cfg["source_census_sha256"], "sequences": sha256(paths["sequences"]).lower() == cfg["sequence_records_sha256"],
             "asset_manifest": sha256(paths["asset_manifest"]).lower() == cfg["asset_manifest_sha256"], "raw_manifest": sha256(paths["raw_manifest"]).lower() == cfg["raw_hook_manifest_sha256"],
         }
+        if residual_mode:
+            bound["unresidualized_surface"] = sha256(paths["unresidualized_surface"]).lower() == cfg["unresidualized_transport_surface_sha256"]
         synthetic_status = json.loads(paths["synthetic_status"].read_text(encoding="utf-8"))["status"]
         if not all(bound.values()) or synthetic_status != "PASS" or not cfg["execution_enabled"] or cfg["audit_opened"] or cfg["forbidden_splits"] != ["audit"]:
             raise ValueError(f"frozen input, synthetic, execution, or audit boundary mismatch: {bound}")
@@ -126,6 +133,17 @@ def main() -> int:
         raw = {split: np.memmap(raw_meta[split]["path"], dtype="<f4", mode="r").reshape(raw_meta[split]["shape"]) for split in ("mean", "discovery", "calibration")}
         raw_mean = np.mean(raw["mean"], axis=0, dtype=np.float64)
         sequence_payload = json.loads(paths["sequences"].read_text(encoding="utf-8"))["sequences"]
+        nuisance = None
+        unresidualized = {}
+        if residual_mode:
+            nuisance_states = select_document_balanced_states(sequence_payload, split="discovery", count=cfg["nuisance_state_count"], token_positions=tuple(cfg["nuisance_state_positions"]), salt=cfg["nuisance_state_salt"])
+            nuisance_rows = np.asarray([int(row["sequence_index"]) * cfg["context_length"] + int(row["token_position"]) for row in nuisance_states], dtype=np.int64)
+            nuisance_process = np.asarray(raw["discovery"][nuisance_rows], dtype=np.float64) - raw_mean[None, :]
+            nuisance = fit_nuisance_projector(nuisance_process, np.full(len(nuisance_rows), 1 / len(nuisance_rows)), explained_variance_threshold=cfg["nuisance_explained_variance_threshold"], maximum_rank=cfg["nuisance_maximum_rank"])
+            if nuisance.status != "OK":
+                raise ValueError(f"frozen nuisance variance threshold not reached: rank={nuisance.rank}, fraction={nuisance.explained_variance_fraction}")
+            unresidualized_rows = [json.loads(line) for line in paths["unresidualized_surface"].read_text(encoding="utf-8").splitlines() if line]
+            unresidualized = {(int(row["source_seed"]), int(row["source_atom"]), int(row["target_seed"]), int(row["rank"])): row for row in unresidualized_rows if row.get("query_role") == "anchor" and row.get("evaluable")}
         global_states = select_document_balanced_states(sequence_payload, split="discovery", count=cfg["global_control_tokens"], token_positions=tuple(cfg["global_control_state_positions"]), salt=cfg["global_control_state_salt"])
         global_rows = np.asarray([int(row["sequence_index"]) * cfg["context_length"] + int(row["token_position"]) for row in global_states], dtype=np.int64); global_weights = np.full(len(global_rows), 1 / len(global_rows))
         query_cache = {}; raw_cache = {}; factor_map = {}; anchor_payload = []; output_rows = []; started_compute = time.perf_counter()
@@ -144,18 +162,25 @@ def main() -> int:
                 crows, cweights = condition_weights(matrices["calibration"][source_seed], [atom], cfg["condition_weight_power"], cfg["max_condition_tokens_per_split"])
                 cnrows, cnweights = condition_weights(matrices["calibration"][source_seed], negative_atoms, cfg["condition_weight_power"], cfg["max_condition_tokens_per_split"])
                 source_dec = decoders[source_seed][source_ids]; source_mean = means[source_seed][source_ids]
-                source_disc = centered_reconstruct(matrices["discovery"][source_seed][:, source_ids], drows, source_dec, source_mean)
+                source_disc_unresidualized = centered_reconstruct(matrices["discovery"][source_seed][:, source_ids], drows, source_dec, source_mean)
+                source_disc = residualize_hook_process(source_disc_unresidualized, nuisance) if residual_mode else source_disc_unresidualized
+                retained_energy = float(np.sum(dweights[:, None] * source_disc * source_disc) / max(np.sum(dweights[:, None] * source_disc_unresidualized * source_disc_unresidualized), np.finfo(np.float64).eps))
                 basis, singular = weighted_pca(source_disc, dweights, max(cfg["candidate_ranks"]))
                 query_cache[query_key] = {"source_ids": source_ids, "negative_atoms": negative_atoms, "drows": drows, "dweights": dweights, "dnrows": dnrows, "dnweights": dnweights, "crows": crows, "cweights": cweights, "cnrows": cnrows, "cnweights": cnweights, "basis": basis, "singular": singular,
-                    "source_disc_coord": source_disc @ basis, "source_cal_pos_coord": centered_reconstruct(matrices["calibration"][source_seed][:, source_ids], crows, source_dec, source_mean) @ basis,
-                    "source_cal_neg_coord": centered_reconstruct(matrices["calibration"][source_seed][:, source_ids], cnrows, source_dec, source_mean) @ basis,
-                    "source_global_coord": centered_reconstruct(matrices["discovery"][source_seed][:, source_ids], global_rows, source_dec, source_mean) @ basis}
+                    "source_disc_coord": source_disc @ basis,
+                    "source_cal_pos_coord": (residualize_hook_process(centered_reconstruct(matrices["calibration"][source_seed][:, source_ids], crows, source_dec, source_mean), nuisance) if residual_mode else centered_reconstruct(matrices["calibration"][source_seed][:, source_ids], crows, source_dec, source_mean)) @ basis,
+                    "source_cal_neg_coord": (residualize_hook_process(centered_reconstruct(matrices["calibration"][source_seed][:, source_ids], cnrows, source_dec, source_mean), nuisance) if residual_mode else centered_reconstruct(matrices["calibration"][source_seed][:, source_ids], cnrows, source_dec, source_mean)) @ basis,
+                    "source_global_coord": (residualize_hook_process(centered_reconstruct(matrices["discovery"][source_seed][:, source_ids], global_rows, source_dec, source_mean), nuisance) if residual_mode else centered_reconstruct(matrices["discovery"][source_seed][:, source_ids], global_rows, source_dec, source_mean)) @ basis,
+                    "residual_energy_fraction": retained_energy}
             q = query_cache[query_key]; basis = q["basis"]
             if query_key not in raw_cache:
                 raw_disc = np.asarray(raw["discovery"][q["drows"]], dtype=np.float64) - raw_mean[None, :]
+                if residual_mode: raw_disc = residualize_hook_process(raw_disc, nuisance)
                 fitted_raw = fit_basis_constrained_transport(raw_disc, q["source_disc_coord"], basis, q["dweights"], ridge_fraction=cfg["ridge_fraction"])
                 raw_pos_input = np.asarray(raw["calibration"][q["crows"]], dtype=np.float64) - raw_mean[None, :]
                 raw_neg_input = np.asarray(raw["calibration"][q["cnrows"]], dtype=np.float64) - raw_mean[None, :]
+                if residual_mode:
+                    raw_pos_input = residualize_hook_process(raw_pos_input, nuisance); raw_neg_input = residualize_hook_process(raw_neg_input, nuisance)
                 raw_cache[query_key] = {}
                 for rank in cfg["candidate_ranks"]:
                     fit_r = transport_prefix(fitted_raw, rank); source_pos = q["source_cal_pos_coord"][:, :rank] @ basis[:, :rank].T; source_neg = q["source_cal_neg_coord"][:, :rank] @ basis[:, :rank].T
@@ -166,6 +191,8 @@ def main() -> int:
             target_cal_pos = centered_reconstruct(matrices["calibration"][target_seed], q["crows"], target_dec, target_mean)
             target_cal_neg = centered_reconstruct(matrices["calibration"][target_seed], q["cnrows"], target_dec, target_mean)
             target_global = centered_reconstruct(matrices["discovery"][target_seed], global_rows, target_dec, target_mean)
+            if residual_mode:
+                target_disc = residualize_hook_process(target_disc, nuisance); target_cal_pos = residualize_hook_process(target_cal_pos, nuisance); target_cal_neg = residualize_hook_process(target_cal_neg, nuisance); target_global = residualize_hook_process(target_global, nuisance)
             fitted_query = fit_basis_constrained_transport(target_disc, q["source_disc_coord"], basis, q["dweights"], ridge_fraction=cfg["ridge_fraction"])
             fitted_global = fit_basis_constrained_transport(target_global, q["source_global_coord"], basis, global_weights, ridge_fraction=cfg["ridge_fraction"])
             for rank in cfg["candidate_ranks"]:
@@ -174,7 +201,8 @@ def main() -> int:
                 query_pos = transport_metrics(source_pos, query_fit.predict(target_cal_pos), q["cweights"]); query_neg = transport_metrics(source_neg, query_fit.predict(target_cal_neg), q["cnweights"])
                 global_pos = transport_metrics(source_pos, global_fit.predict(target_cal_pos), q["cweights"]); global_neg = transport_metrics(source_neg, global_fit.predict(target_cal_neg), q["cnweights"])
                 factor_map[(source_seed, atom, target_seed, rank)] = (query_fit, global_fit)
-                output_rows.append({**common, "rank": rank, "evaluable": True, "source_candidate_ids": q["source_ids"].tolist(), "negative_source_atoms": q["negative_atoms"], "query_status": query_fit.status, "raw_status": raw_result["transport"].status, "global_status": global_fit.status,
+                unresidualized_specificity = unresidualized.get((source_seed, atom, target_seed, rank), {}).get("query_specificity") if residual_mode else None
+                output_rows.append({**common, "rank": rank, "evaluable": True, "source_candidate_ids": q["source_ids"].tolist(), "negative_source_atoms": q["negative_atoms"], "query_status": query_fit.status, "raw_status": raw_result["transport"].status, "global_status": global_fit.status, "source_residual_energy_fraction": q["residual_energy_fraction"], "unresidualized_query_specificity": unresidualized_specificity,
                     "source_rank_boundary_relative_gap": rank_gap(q["singular"], rank), "query_positive": serial_metrics(query_pos), "query_negative": serial_metrics(query_neg), "query_specificity": specificity(query_pos, query_neg),
                     "raw_positive": serial_metrics(raw_result["positive"]), "raw_negative": serial_metrics(raw_result["negative"]), "raw_specificity": raw_result["specificity"],
                     "global_positive": serial_metrics(global_pos), "global_negative": serial_metrics(global_neg), "global_specificity": specificity(global_pos, global_neg)})
@@ -201,7 +229,10 @@ def main() -> int:
             for row in sorted(values, key=lambda value: cfg["candidate_ranks"].index(value["rank"])):
                 if row["query_status"] != "OK" or row["raw_status"] != "OK" or row["global_status"] != "OK": last_reason = "RANK_DEFICIENT"; continue
                 qpos = type("Metrics", (), row["query_positive"])(); qneg = type("Metrics", (), row["query_negative"])()
-                gate = decide_transport_gate(qpos, qneg, rank_boundary_relative_gap=row["source_rank_boundary_relative_gap"], collision_improvement_over_global=row["collision_improvement_over_global"], raw_control_specificity=row["raw_specificity"], global_control_specificity=row["global_specificity"], minimum_bcc=cfg["minimum_calibration_bcc"], maximum_normalized_residual=cfg["maximum_calibration_normalized_residual"], minimum_specificity=cfg["minimum_calibration_specificity"], minimum_control_advantage=cfg["minimum_control_specificity_advantage"], minimum_collision_improvement=cfg["minimum_collision_improvement_over_global"], minimum_rank_gap=cfg["minimum_rank_boundary_relative_gap"])
+                if residual_mode and row["source_residual_energy_fraction"] < cfg["minimum_source_residual_energy_fraction"]:
+                    last_reason = "SOURCE_RESIDUAL_ENERGY_BELOW_FLOOR"; continue
+                raw_control = max(row["raw_specificity"], row["unresidualized_query_specificity"]) if residual_mode else row["raw_specificity"]
+                gate = decide_transport_gate(qpos, qneg, rank_boundary_relative_gap=row["source_rank_boundary_relative_gap"], collision_improvement_over_global=row["collision_improvement_over_global"], raw_control_specificity=raw_control, global_control_specificity=row["global_specificity"], minimum_bcc=cfg["minimum_calibration_bcc"], maximum_normalized_residual=cfg["maximum_calibration_normalized_residual"], minimum_specificity=cfg["minimum_calibration_specificity"], minimum_control_advantage=cfg["minimum_control_specificity_advantage"], minimum_collision_improvement=cfg["minimum_collision_improvement_over_global"], minimum_rank_gap=cfg["minimum_rank_boundary_relative_gap"])
                 last_reason = gate.reason
                 if gate.decision == "FOUND_RELATION": selected = row; break
             decisions.append({"source_seed": key[0], "source_atom": key[1], "target_seed": key[2], "energy_stratum": key[3], "decision": "FOUND_RELATION" if selected else "UNRESOLVED_RELATION", "reason": None if selected else last_reason, "selected_rank": selected["rank"] if selected else None})
@@ -211,13 +242,13 @@ def main() -> int:
         surface_path = run_dir / "hook_transport_surface.jsonl"; surface_path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in output_rows), encoding="utf-8")
         decision_path = run_dir / "hook_transport_decisions.jsonl"; decision_path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in decisions), encoding="utf-8")
         loading_path = run_dir / "anchor_maxrank_hook_factors.npz"; maximum_rank = max(cfg["candidate_ranks"]); np.savez_compressed(loading_path, source_seed=np.asarray([x[0] for x in anchor_payload]), source_atom=np.asarray([x[1] for x in anchor_payload]), target_seed=np.asarray([x[2] for x in anchor_payload]), source_basis=np.stack([x[3] for x in anchor_payload]).astype(np.float32), query_target=np.stack([pad_columns(x[4], maximum_rank) for x in anchor_payload]), raw_target=np.stack([pad_columns(x[5], maximum_rank) for x in anchor_payload]), global_target=np.stack([pad_columns(x[6], maximum_rank) for x in anchor_payload]), query_effective_rank=np.asarray([x[7] for x in anchor_payload]), raw_effective_rank=np.asarray([x[8] for x in anchor_payload]), global_effective_rank=np.asarray([x[9] for x in anchor_payload]))
-        decision = "PROCEED_HOOK_TRANSPORT_TO_MATCHED_CAUSAL_GATE" if progression else "STOP_HOOK_TRANSPORT_REPRESENTATION"
+        decision = ("PROCEED_RESIDUAL_TRANSPORT_TO_MATCHED_CAUSAL_GATE" if progression else "STOP_RESIDUAL_FCC_REPRESENTATION") if residual_mode else ("PROCEED_HOOK_TRANSPORT_TO_MATCHED_CAUSAL_GATE" if progression else "STOP_HOOK_TRANSPORT_REPRESENTATION")
         rank_summaries = {}
         for rank in cfg["candidate_ranks"]:
             values = [row for row in anchors if row["rank"] == rank]
-            rank_summaries[str(rank)] = {"units": len(values), "median_query_bcc": float(np.median([row["query_positive"]["bcc"] for row in values])), "minimum_query_residual": float(np.min([row["query_positive"]["normalized_residual"] for row in values])), "median_query_specificity": float(np.median([row["query_specificity"] for row in values])), "median_raw_specificity": float(np.median([row["raw_specificity"] for row in values])), "median_global_specificity": float(np.median([row["global_specificity"] for row in values])), "median_control_advantage": float(np.median([row["query_specificity"] - max(row["raw_specificity"], row["global_specificity"]) for row in values]))}
+            rank_summaries[str(rank)] = {"units": len(values), "median_query_bcc": float(np.median([row["query_positive"]["bcc"] for row in values])), "minimum_query_residual": float(np.min([row["query_positive"]["normalized_residual"] for row in values])), "median_query_specificity": float(np.median([row["query_specificity"] for row in values])), "median_raw_specificity": float(np.median([row["raw_specificity"] for row in values])), "median_global_specificity": float(np.median([row["global_specificity"] for row in values])), "median_control_advantage": float(np.median([row["query_specificity"] - max(row["raw_specificity"], row["global_specificity"], row.get("unresidualized_query_specificity") if row.get("unresidualized_query_specificity") is not None else -np.inf) for row in values]))}
         checks = {"frozen_inputs_bound": all(bound.values()), "synthetic_pass": synthetic_status == "PASS", "complete_surface_grid": len(output_rows) == cfg["all_condition_queries"] * cfg["ordered_target_seeds_per_query"] * len(cfg["candidate_ranks"]), "complete_anchor_decisions": len(decisions) == cfg["anchor_units"], "strong_controls_present": all(all(key in row for key in ("query_positive", "raw_positive", "global_positive")) for row in output_rows if row["evaluable"]), "all_anchor_collisions": all(np.isfinite(row["collision_improvement_over_global"]) for row in anchors), "finite_anchor_metrics": all(np.isfinite([row["query_positive"]["bcc"], row["query_positive"]["normalized_residual"], row["query_specificity"], row["raw_specificity"], row["global_specificity"]]).all() for row in anchors), "no_causal_forward": True, "audit_not_opened": not cfg["audit_opened"] and cfg["forbidden_splits"] == ["audit"]}
-        record = {"checks": {key: bool(value) for key, value in checks.items()}, "screen_decision": decision, "found": len(found), "coverage": coverage, "rank_counts": dict(Counter(row["rank"] for row in found)), "covered_strata": sorted(strata), "covered_directions": len(directions), "progression_pass": bool(progression), "surface_rows": len(output_rows), "decision_rows": len(decisions), "rank_summaries": rank_summaries, "surface_sha256": sha256(surface_path), "decisions_sha256": sha256(decision_path), "loadings_sha256": sha256(loading_path), "wall_seconds": time.perf_counter() - started_compute, "scope_limit": cfg["scope_limit"]}
+        record = {"checks": {key: bool(value) for key, value in checks.items()}, "screen_decision": decision, "residual_mode": residual_mode, "nuisance_rank": nuisance.rank if nuisance is not None else None, "nuisance_explained_variance_fraction": nuisance.explained_variance_fraction if nuisance is not None else None, "found": len(found), "coverage": coverage, "rank_counts": dict(Counter(row["rank"] for row in found)), "covered_strata": sorted(strata), "covered_directions": len(directions), "progression_pass": bool(progression), "surface_rows": len(output_rows), "decision_rows": len(decisions), "rank_summaries": rank_summaries, "surface_sha256": sha256(surface_path), "decisions_sha256": sha256(decision_path), "loadings_sha256": sha256(loading_path), "wall_seconds": time.perf_counter() - started_compute, "scope_limit": cfg["scope_limit"]}
         status = "PASS" if all(checks.values()) else "FAIL"; write_json(run_dir / "environment.json", {"python": platform.python_version(), "numpy": np.__version__, "scipy": scipy_version, "platform": platform.platform()})
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"; (run_dir / "stderr.log").write_text(traceback.format_exc(), encoding="utf-8"); write_json(run_dir / "environment.json", {"python": platform.python_version(), "error": error})
