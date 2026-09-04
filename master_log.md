@@ -2410,3 +2410,15 @@ Primary MSCC calibration结果为0/2,560 `FOUND`；report-only `.10`和`.20`敏�
 **其他解决方案与顺序。** C041–C043及计划14.7–14.8已登记：(1)先完成现有4.19M k32/k128×seeds1/2；(2)若出现质量合格的优胜配置，只沿同配置/同seed/同数据流继续到累计16.78M和67.11M tokens，形成nested learning curve并按SESOI早停，不立即支付500M；(3)若预算曲线饱和而仍显著落后公共width65536/k32锚点，再允许一次width机制实验；(4)训练架构reserve按直接稳定性证据和搜索风险排序为parameter-free aligned training、论文指定单点L2 regularization、BatchTopK、最后才是splitting/absorption触发的Matryoshka。JumpReLU暂不优先，因为其主要证据是reconstruction而非cross-seed native portability。每次最多晋级一种，不做架构网格。
 
 `AGENTS.md`新增公开checkpoint分级与禁止混写规则，计划、tracker、components和`REFERENCE_REGISTRY.md`同步更新。Automation `ccad`仍保留原5分钟配置和双轨prompt，但已按用户要求设为`PAUSED`，没有删除。下一次恢复后，优先执行当前R011-NR1两配置两seed screen；公共checkpoint的paired-code/贡献分析只有在其跨配置消费者冻结后才启动，audit继续关闭。
+
+## 2026-09-04 01:49 EDT — R011-NR1四个4.19M-token训练PASS；loop恢复并完成临时间隔回退
+
+**触发与治理。** 用户要求继续验证和实验、重启automation，并允许长process期间临时拉长loop间隔但结束后必须恢复；重大决策或故障可暂停。已在`AGENTS.md` §12写入常态5分钟、长process有界放宽、结束/失败/终止后同轮恢复与留痕，以及重大决策/故障可暂停但不删除的规则。Automation `ccad`由PAUSED恢复为ACTIVE；四次顺序训练期间临时设为20分钟以避免重入，最后一个process退出后立即恢复5分钟，automation未删除。prompt同步为MSCC/SCT双轨、audit继续关闭。
+
+**冻结与验证。** 新增并在训练前提交四份配置：`r011_nr1_k{32,128}_seed{1,2}_v1.json`。四者共同固定Pythia-160M-deduped commit、layer5 resid-post、sparsify commit、width3072、Adam/lr/warmup、4,194,304-token训练资产及顺序、32,768-token validation；只改变预注册的`k`与初始化seed。配置冻结提交=`412ebc3`并在运行前推送。首次全测试命令遗漏`PYTHONPATH=src;scripts`，出现5个import collection errors且没有运行/实验artifact；按既有环境调用修正后172/172 PASS。首次资源管理器启动在取得lease前被沙箱拒绝写母目录，没有创建run或占用GPU；以同一命令取得授权后正常执行，不构成科学失败或配置变化。
+
+**实际运行。** 共享GPU-0在启动前空闲；通过母目录resource manager顺序取得/释放lease，完成`R011_NR1_k32_seed1_v1_20260904T054000Z`、`...k32_seed2...`、`...k128_seed1...`、`...k128_seed2...`。四者均训练8,192 steps/4,194,304 tokens，12/12内部检查与artifact contract PASS，hook oracle/capture logits exact，actual L0分别严格为32或128；所有state hash与safetensors hash互异。k32 seed1/2 safetensors SHA-256分别=`2A0AA163950B82F4B819D9E18B47C44434788C93D7D8C8B4AD45AFA57FE69EDF`、`D8693834E54D2C735A479C6B5B22012729E0FAAEC2B8C784B5B9A3878EB2684B`；k128分别=`818AA8BAC0AA47AA2BA487DF0366AA1049A7A2A65487CBC6F0A4E333AA5938B6`、`5C22EFE536E50A843CA526E54B0DE413170944451255348E0B331E73CC967D1F`。
+
+**质量结果。** 在两配置共享的新validation上，k128 seed1/2的FVE=`.98508274/.98503121`、CE recovered=`.97471081/.97496368`、alive fraction=`.9967448/.9977214`；k32为FVE=`.97577765/.97585806`、CE recovered=`.93798225/.93758814`、alive=`.7347006/.7539063`。四者decoder norm error≤`2.39e-7`、peak allocated VRAM约1.42GB、吞吐21.08k–23.77k tok/s。k32的低alive fraction是真实机制信号，但不能在看到结构结果前用它自动淘汰k32；同样，k128更高重构不能替代cross-seed atom/native coverage。旧131k suite与本轮使用不同validation，当前数字不作无配对的训练预算效应估计。
+
+**保守解释与gate。** R011-NR1继续RUNNING而非PASS：四个训练资产已完成，证明4.19M预算下两种稀疏度都能产生数值稳定且重构良好的SAE，但尚未回答PW-MCC、frequency-stratified atom stability、source-query BCC或native calibration coverage。当前没有选择赢家，没有打开audit，也没有追加k/width/hook。下一工作单元是以同一冻结paired corpus分别构建k32与k128两seed sparse-code资产，在mean/discovery/calibration完成预注册结构与coverage screen；只有该结果才能决定最多一个配置是否进入16.78M nested budget或五seed扩展。SCT支线保持并行授权。
