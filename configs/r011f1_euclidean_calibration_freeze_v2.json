@@ -1,0 +1,23 @@
+{
+  "schema_version": "r011.f1.euclidean_calibration_freeze.v2",
+  "run_id": "R011_F1_euclidean_calibration_freeze_v2_20260904T163000Z",
+  "run_parent": "R011-F1",
+  "surface_run": "R011_F1_euclidean_surface_v1_20260904T164500Z",
+  "surface_path": "runs/R011_F1_euclidean_surface_v1_20260904T164500Z/euclidean_fcc_surface.jsonl",
+  "surface_sha256": "45def786ed2341010fd2f5953e1abbe900443ece9d3df169d23442cb203beed3",
+  "loadings_path": "runs/R011_F1_euclidean_surface_v1_20260904T164500Z/anchor_loadings.npz",
+  "loadings_sha256": "224b5a1a20c606c42fafc4ae4b3e4bb1aa8ab1a88a36e8aac4fb36707b86a2e8",
+  "candidate_ranks": [1, 2, 4, 8],
+  "rank_rule": "minimum_rank_passing_all_calibration_rules",
+  "minimum_calibration_bcc": 0.0,
+  "minimum_calibration_contrast": 0.0,
+  "minimum_collision_improvement_over_global": 0.05,
+  "minimum_rank_boundary_relative_gap": 0.001,
+  "minimum_screen_coverage": 0.10,
+  "minimum_covered_strata": 4,
+  "require_all_ordered_seed_directions": true,
+  "minimum_positive_contrast_fraction": 0.75,
+  "audit_opened": false,
+  "forbidden_splits": ["audit"],
+  "scope_limit": "Calibration-only rank/refusal freeze; no causal or audit result and no C1/C2-FCC claim"
+}

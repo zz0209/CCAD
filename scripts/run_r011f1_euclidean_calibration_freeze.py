@@ -58,6 +58,7 @@ def main() -> int:
         "audit_opened": False, "candidate_family_frozen": True, "mean_constants_source_split": "mean",
         "threshold_source_split": "calibration", "statistics_unit": "source_query_and_ordered_seed_pair",
         "device": "cpu", "seeds": [1, 2, 3, 4, 5], "resource_lease": "not_required_lightweight",
+        "resource_lease_reason": "small calibration table reduction without heavy CPU or disk use",
         "git_head_at_run": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "git_status_porcelain": subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True, capture_output=True).stdout.splitlines(),
     })
