@@ -248,6 +248,36 @@ def transfer_metrics(
     )
 
 
+def direct_process_transfer_metrics(
+    source_process: np.ndarray,
+    target_process: np.ndarray,
+    weights: np.ndarray,
+    *,
+    source_total_energy: float | None = None,
+    target_total_energy: float | None = None,
+    energy_epsilon: float = 1e-12,
+) -> TransferMetrics:
+    """Compare already-constructed hook-space processes such as native atoms."""
+
+    source, w = _samples_and_weights(source_process, weights)
+    target, wt = _samples_and_weights(target_process, weights)
+    if source.shape != target.shape or not np.array_equal(w, wt):
+        raise ValueError("source/target processes must be aligned")
+    source_energy = float(np.sum(w[:, None] * source * source))
+    target_energy = float(np.sum(w[:, None] * target * target))
+    cross = float(np.sum(w[:, None] * source * target))
+    residual = max(0.0, source_energy + target_energy - 2.0 * cross)
+    denominator = source_energy + target_energy
+    return TransferMetrics(
+        source_energy=source_energy, target_energy=target_energy, cross_energy=cross,
+        residual_energy=residual,
+        normalized_residual=residual / max(source_energy, energy_epsilon) if source_energy > energy_epsilon else None,
+        bcc=2.0 * cross / denominator if denominator > energy_epsilon else None,
+        source_effect_fraction=(source_energy / source_total_energy) if source_total_energy is not None and source_total_energy > energy_epsilon else None,
+        target_effect_fraction=(target_energy / target_total_energy) if target_total_energy is not None and target_total_energy > energy_epsilon else None,
+    )
+
+
 def mean_transfer_metrics(source_mean: np.ndarray, target_mean: np.ndarray, energy_epsilon: float = 1e-12) -> dict[str, float | None]:
     left = np.asarray(source_mean, dtype=np.float64).reshape(-1)
     right = np.asarray(target_mean, dtype=np.float64).reshape(-1)

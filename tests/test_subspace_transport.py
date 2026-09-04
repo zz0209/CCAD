@@ -5,6 +5,7 @@ import unittest
 import numpy as np
 
 from ccad.subspace_transport import (
+    direct_process_transfer_metrics,
     fit_weighted_pca,
     fit_weighted_stitching,
     mean_transfer_metrics,
@@ -64,6 +65,13 @@ class SubspaceTransportTests(unittest.TestCase):
         result = mean_transfer_metrics(np.asarray([2.0, 0.0]), np.asarray([1.0, 0.0]))
         self.assertAlmostEqual(result["normalized_mean_residual"], 0.25)
         self.assertAlmostEqual(result["mean_bcc"], 0.8)
+
+    def test_direct_native_process_uses_process_not_projection(self) -> None:
+        source = np.asarray([[1.0, 0.0], [2.0, 0.0]])
+        target = source.copy()
+        result = direct_process_transfer_metrics(source, target, np.asarray([0.25, 0.75]))
+        self.assertAlmostEqual(result.normalized_residual, 0.0)
+        self.assertAlmostEqual(result.bcc, 1.0)
 
     def test_random_basis_is_reproducible_and_ablation_uses_shared_hook_units(self) -> None:
         basis_a = random_orthonormal_basis(5, 2, stable_seed("q", 1))
