@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import unittest
+import json
+from pathlib import Path
 
 import numpy as np
 
@@ -65,6 +67,30 @@ class HookTransportTests(unittest.TestCase):
         fitted = fit_hook_space_transport(target, source, np.ones(len(latent)), rank=2)
         self.assertEqual(fitted.status, "RANK_DEFICIENT")
         self.assertEqual(fitted.effective_rank, 1)
+
+
+class HookTransportProtocolTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        root = Path(__file__).resolve().parents[1]
+        cls.cfg = json.loads((root / "configs/r011f4_hook_transport_real_v1.json").read_text(encoding="utf-8"))
+
+    def test_audit_and_execution_boundary(self) -> None:
+        self.assertTrue(self.cfg["execution_enabled"])
+        self.assertFalse(self.cfg["audit_opened"])
+        self.assertEqual(self.cfg["forbidden_splits"], ["audit"])
+        self.assertEqual(self.cfg["splits"], ["discovery", "calibration"])
+
+    def test_replication_and_controls_are_frozen(self) -> None:
+        self.assertEqual(self.cfg["anchor_units"], 160)
+        self.assertEqual(self.cfg["candidate_ranks"], [1, 2, 4, 8])
+        self.assertEqual(self.cfg["ridge_fraction"], .001)
+        self.assertEqual(set(self.cfg["controls"]), {"query_conditioned_raw_hook_transport", "query_agnostic_whole_sae_global_transport"})
+
+    def test_meaningful_transfer_gate_is_not_weakened(self) -> None:
+        self.assertEqual(self.cfg["minimum_calibration_bcc"], .8)
+        self.assertEqual(self.cfg["maximum_calibration_normalized_residual"], .2)
+        self.assertEqual(self.cfg["minimum_control_specificity_advantage"], .05)
 
 
 if __name__ == "__main__":

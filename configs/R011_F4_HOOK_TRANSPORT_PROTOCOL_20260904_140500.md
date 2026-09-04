@@ -4,9 +4,12 @@ Status: **LOCKED BEFORE REAL CALIBRATION READ; AUDIT CLOSED**
 
 This is a fresh FCC representation setting, not another native-coordinate
 estimator or candidate-cap sweep.  The source query remains target-blind and
-source-only.  Its 32-feature source family defines the centered source dynamic
-contribution process.  The target input is the complete centered reconstruction
-from the target SAE in the same 768-dimensional hook space.  A ridge
+source-only.  For each candidate rank, weighted PCA on the discovery-positive
+sum of its 32-feature centered source contribution family freezes a source
+query projector; the source dynamic process is that local reconstruction
+projected into this source-only subspace.  The target input is the complete
+centered reconstruction from the target SAE in the same 768-dimensional hook
+space.  A ridge
 reduced-rank-regression map is fit on discovery query-positive observations and
 then frozen.  Candidate ranks are exactly `{1,2,4,8}` and the ridge is fixed at
 `1e-3` times the mean nonzero target-process energy; calibration may select only
@@ -25,7 +28,8 @@ improvement over the matched global transport at least `.05`, and rank-boundary
 gap at least `.001`.  In addition, query specificity must exceed the better of
 two matched controls by at least `.05`: (1) query-conditioned raw-hook transport
 and (2) query-agnostic whole-SAE/global transport.  Controls use the same rank,
-ridge rule, observation budget, energy matching, and calibration evaluation.
+ridge rule, source projector, observation budget, energy matching, and
+calibration evaluation.
 This makes raw/global collapse a refusal, not a success.
 
 Progression requires at least 10% of all 160 anchor ordered units, at least four
