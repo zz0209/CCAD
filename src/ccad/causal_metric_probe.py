@@ -101,3 +101,103 @@ def rademacher_direction(hidden_size: int, state_key: str, direction_index: int,
     values = rng.integers(0, 2, size=hidden_size, dtype=np.int8).astype(np.float64)
     values = (2.0 * values - 1.0) / np.sqrt(hidden_size)
     return values
+
+
+def orthonormal_probe_directions(hidden_size: int, salt: str) -> np.ndarray:
+    """Return a deterministic complete orthonormal row basis.
+
+    A complete shared basis is required by the crossed C040 design so that
+    state-specific Jacobians are measured in the same hook coordinates rather
+    than confounding state identity with independently sampled directions.
+    """
+
+    if hidden_size <= 0:
+        raise ValueError("hidden_size must be positive")
+    rng = np.random.default_rng(stable_seed(salt, "orthonormal-basis", hidden_size))
+    matrix = rng.standard_normal((hidden_size, hidden_size))
+    q, r = np.linalg.qr(matrix)
+    signs = np.where(np.diag(r) < 0, -1.0, 1.0)
+    q = q * signs[None, :]
+    return q.T
+
+
+def select_boundary_safe_document_balanced_states(
+    sequence_records: list[dict],
+    tokens: np.ndarray,
+    *,
+    split: str,
+    count: int,
+    token_positions: tuple[int, ...],
+    salt: str,
+    eot_token_id: int,
+    minimum_tokens_after_boundary: int,
+) -> list[dict]:
+    """Select document-balanced states using an input-only causal boundary rule.
+
+    A state is eligible only after the requested number of visible tokens since
+    either sequence start or the most recent EOT. Future EOTs are irrelevant to
+    a causal transformer state and are deliberately not inspected.
+    """
+
+    token_array = np.asarray(tokens)
+    if token_array.ndim != 2:
+        raise ValueError("tokens must be a [sequence, position] matrix")
+    if count <= 0 or not token_positions or minimum_tokens_after_boundary < 0:
+        raise ValueError("invalid state-selection parameters")
+    records = [record for record in sequence_records if record.get("split") == split]
+    if not records:
+        raise ValueError(f"no sequence records for split {split!r}")
+    by_document: dict[str, list[dict]] = {}
+    for record in records:
+        sequence_index = int(record["sequence_index"])
+        if sequence_index < 0 or sequence_index >= token_array.shape[0]:
+            raise ValueError("sequence index exceeds token matrix")
+        token_hash = str(record["token_sha256"])
+        documents = tuple(sorted(str(value) for value in record["document_ids"]))
+        if not documents:
+            raise ValueError("sequence record has no document IDs")
+        sequence = token_array[sequence_index]
+        for position in token_positions:
+            if position < 0 or position >= sequence.shape[0]:
+                raise ValueError("probe token position exceeds sequence length")
+            visible_eot = np.flatnonzero(sequence[:position] == eot_token_id)
+            distance = position + 1 if visible_eot.size == 0 else position - int(visible_eot[-1])
+            if distance < minimum_tokens_after_boundary:
+                continue
+            state_key = f"{split}:{sequence_index}:{position}:{token_hash}"
+            state_hash = hashlib.sha256(f"{salt}|{state_key}".encode()).hexdigest()
+            state = {
+                "split": split,
+                "sequence_index": sequence_index,
+                "token_position": int(position),
+                "token_sha256": token_hash,
+                "document_ids": list(documents),
+                "tokens_since_causal_boundary": int(distance),
+                "state_key": state_key,
+                "selection_hash": state_hash,
+            }
+            for document in documents:
+                by_document.setdefault(document, []).append(state)
+    for candidates in by_document.values():
+        candidates.sort(key=lambda row: (row["selection_hash"], row["sequence_index"], row["token_position"]))
+    documents = sorted(by_document, key=lambda value: hashlib.sha256(f"{salt}|doc|{value}".encode()).hexdigest())
+    selected: list[dict] = []
+    used: set[str] = set()
+    depth = 0
+    while len(selected) < count:
+        added = 0
+        for document in documents:
+            available = next((row for row in by_document[document] if row["state_key"] not in used), None)
+            if available is not None:
+                row = dict(available)
+                row["blocking_document_id"] = document
+                row["document_round"] = depth
+                selected.append(row)
+                used.add(row["state_key"])
+                added += 1
+                if len(selected) == count:
+                    break
+        if added == 0:
+            raise ValueError("insufficient boundary-safe states for requested balanced sample")
+        depth += 1
+    return selected

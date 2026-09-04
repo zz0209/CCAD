@@ -106,6 +106,61 @@ def fit_probe_metric(
     )
 
 
+def fit_crossed_probe_metric(
+    shared_probe_directions: np.ndarray,
+    state_output_effects: np.ndarray,
+    *,
+    state_weights: np.ndarray | None = None,
+    ridge_fraction: float = 1e-6,
+    relative_tolerance: float = 1e-8,
+) -> ProbeMetric:
+    """Estimate ``E_x[J_x.T J_x]`` from a crossed shared-direction design.
+
+    ``state_output_effects[x, j]`` is the output derivative at state ``x``
+    along shared hook direction ``j``. Concatenating equally weighted state
+    outputs turns the regression target into a stacked Jacobian, so its
+    pullback Gram is the average squared downstream sensitivity rather than
+    the Gram of an average Jacobian.
+    """
+
+    directions = _matrix(shared_probe_directions, "shared_probe_directions")
+    effects = np.asarray(state_output_effects, dtype=np.float64)
+    if effects.ndim != 3:
+        raise ValueError("state_output_effects must be [state, direction, output]")
+    if effects.shape[1] != directions.shape[0]:
+        raise ValueError("every state must use the same complete direction rows")
+    if ridge_fraction < 0 or relative_tolerance <= 0:
+        raise ValueError("ridge_fraction must be nonnegative and tolerance positive")
+    weights = _weights(state_weights, effects.shape[0])
+    weights = weights / np.sum(weights)
+    stacked = np.concatenate(
+        [np.sqrt(weights[index]) * effects[index] for index in range(effects.shape[0])],
+        axis=1,
+    )
+    gram = directions.T @ directions
+    scale = float(np.trace(gram)) / directions.shape[1]
+    ridge = ridge_fraction * max(scale, np.finfo(np.float64).eps)
+    stacked_jacobian = np.linalg.solve(
+        gram + ridge * np.eye(gram.shape[0]), directions.T @ stacked,
+    )
+    metric = stacked_jacobian @ stacked_jacobian.T
+    metric = 0.5 * (metric + metric.T)
+    trace = float(np.trace(metric))
+    if trace <= np.finfo(np.float64).eps:
+        return ProbeMetric(
+            matrix=np.zeros_like(metric), factor=np.empty((metric.shape[0], 0)),
+            rank=0, explained_trace_fraction=0.0,
+        )
+    metric *= metric.shape[0] / trace
+    factor, retained = metric_factor(metric, relative_tolerance=relative_tolerance)
+    return ProbeMetric(
+        matrix=metric,
+        factor=factor,
+        rank=factor.shape[1],
+        explained_trace_fraction=retained,
+    )
+
+
 def metric_factor(
     metric: np.ndarray,
     *,

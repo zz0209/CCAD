@@ -80,6 +80,19 @@ class R011F1ProtocolTests(unittest.TestCase):
         ):
             self.assertEqual(hashlib.sha256((source / name).read_bytes()).hexdigest(), expected)
 
+    def test_c040_v2_crosses_a_complete_basis_and_keeps_audit_closed(self) -> None:
+        cfg = json.loads((ROOT / "configs/r011_f1_preaudit_protocol_v2.json").read_text(encoding="utf-8"))
+        self.assertTrue(cfg["execution_enabled"])
+        self.assertFalse(cfg["audit_opened"])
+        self.assertEqual(cfg["metric_estimand"], "document_balanced_mean_state_jacobian_gram")
+        self.assertEqual(cfg["probe_states"], 32)
+        self.assertEqual(cfg["shared_probe_directions"], 768)
+        self.assertEqual(cfg["minimum_tokens_after_causal_boundary"], 16)
+        self.assertEqual(cfg["state_weighting"], "equal")
+        self.assertEqual(cfg["primary_independent_causal_endpoint"], "next_state_residual")
+        self.assertEqual(cfg["candidate_ranks"], [1, 2, 4, 8])
+        self.assertTrue((ROOT / cfg["protocol_document"]).is_file())
+
 
 if __name__ == "__main__":
     unittest.main()
