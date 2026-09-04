@@ -89,6 +89,37 @@ def membership_weighted_contribution(
     return (centered * weights[None, :]) @ decoder
 
 
+def loading_component_contributions(
+    codes,
+    decoders: np.ndarray,
+    mean_codes: np.ndarray,
+    loadings: np.ndarray,
+) -> np.ndarray:
+    """Return signed FCC component processes as ``[rank, token, hook]``.
+
+    Causal quadratic summaries must aggregate all paired components inside the
+    independent query-pair unit.  They must not sum the factor coordinates into
+    one arbitrary vector.  A shared signed permutation of the paired columns
+    therefore leaves the aggregate energies and cross-energy unchanged.
+    """
+
+    decoder = _matrix(decoders, "decoders")
+    shape = _code_shape(codes, "codes")
+    if shape[1] != decoder.shape[0]:
+        raise ValueError("code and decoder feature dimensions differ")
+    mean = _vector(mean_codes, "mean_codes", shape[1])
+    factors = _matrix(loadings, "loadings")
+    if factors.shape[0] != shape[1] or factors.shape[1] == 0:
+        raise ValueError("loadings must have feature rows and positive rank")
+    centered = (
+        codes.toarray().astype(np.float64)
+        if hasattr(codes, "toarray")
+        else np.asarray(codes, dtype=np.float64).copy()
+    )
+    centered -= mean[None, :]
+    return np.einsum("tf,fr,fd->rtd", centered, factors, decoder, optimize=True)
+
+
 def fit_probe_metric(
     probe_directions: np.ndarray,
     output_effects: np.ndarray,

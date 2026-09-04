@@ -27,6 +27,7 @@ from ccad.artifacts import sha256, validate_run_directory  # noqa: E402
 from ccad.causal_metric_probe import select_document_balanced_states  # noqa: E402
 from ccad.fuzzy_correspondence import (  # noqa: E402
     fit_fuzzy_correspondence_from_kernels,
+    loading_component_contributions,
     membership_weighted_contribution,
 )
 from ccad.subspace_transport import (  # noqa: E402
@@ -41,6 +42,21 @@ from run_r011f1_euclidean_surface import condition_weights, local_kernels  # noq
 
 def write_json(path: Path, value: object) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def load_config(path: Path) -> tuple[dict, Path | None]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    inherited = raw.get("inherits_config")
+    if inherited is None:
+        return raw, None
+    if set(raw) != {"inherits_config", "overrides"}:
+        raise ValueError("suffix config may contain only inherits_config and overrides")
+    base_path = ROOT / inherited
+    base = json.loads(base_path.read_text(encoding="utf-8"))
+    merged = {**base, **raw["overrides"]}
+    merged["inherited_config_path"] = inherited
+    merged["inherited_config_sha256"] = sha256(base_path)
+    return merged, base_path
 
 
 def aggregate(rows: list[dict]) -> str:
@@ -84,6 +100,19 @@ def random_memberships(source_count: int, target_count: int, rank: int, *parts: 
     return np.sum(coupling, axis=1), np.sum(coupling, axis=0)
 
 
+def random_loadings(source_count: int, target_count: int, rank: int, *parts: object) -> tuple[np.ndarray, np.ndarray]:
+    rng = np.random.default_rng(stable_seed(*parts))
+    left, _ = np.linalg.qr(rng.normal(size=(source_count, rank)))
+    right, _ = np.linalg.qr(rng.normal(size=(target_count, rank)))
+    return left[:, :rank], right[:, :rank]
+
+
+def projector_components(samples: np.ndarray, mean: np.ndarray, basis: np.ndarray) -> np.ndarray:
+    centered = np.asarray(samples, dtype=np.float64) - np.asarray(mean, dtype=np.float64)
+    scores = centered @ basis
+    return np.einsum("tr,dr->rtd", scores, basis, optimize=True)
+
+
 def endpoint_metrics(accum: dict, key: str) -> dict:
     source = accum[f"{key}_source_energy"]
     target = accum[f"{key}_target_energy"]
@@ -116,7 +145,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
     args = parser.parse_args()
-    cfg = json.loads(args.config.read_text(encoding="utf-8"))
+    cfg, inherited_config_path = load_config(args.config)
     run_dir = ROOT / "runs" / cfg["run_id"]
     if run_dir.exists():
         raise FileExistsError(run_dir)
@@ -141,7 +170,13 @@ def main() -> int:
         "token_manifest": ROOT / cfg["token_manifest_path"],
         "sequence_records": ROOT / cfg["sequence_records_path"],
     }
+    if "loadings_path" in cfg:
+        paths["loadings"] = ROOT / cfg["loadings_path"]
+    if "frozen_selection_path" in cfg:
+        paths["frozen_selection"] = ROOT / cfg["frozen_selection_path"]
     inputs = [file_entry(args.config.resolve(), "CCAD frozen config", "run_protocol")]
+    if inherited_config_path is not None:
+        inputs.append(file_entry(inherited_config_path, "CCAD inherited frozen config", "inherited_protocol"))
     inputs.extend(file_entry(path, "CCAD frozen upstream artifact", role) for role, path in paths.items())
     model_config = Path(cfg["model_local_dir"]) / "config.json"
     inputs.append(file_entry(model_config, cfg["model_id"], "model_config", cfg["model_license"]))
@@ -167,6 +202,10 @@ def main() -> int:
             "asset_manifest": cfg["asset_manifest_sha256"], "raw_hook_manifest": cfg["raw_hook_manifest_sha256"],
             "token_manifest": cfg["token_manifest_sha256"], "sequence_records": cfg["sequence_records_sha256"],
         }
+        if "loadings" in paths:
+            expected["loadings"] = cfg["loadings_sha256"]
+        if "frozen_selection" in paths:
+            expected["frozen_selection"] = cfg["frozen_selection_sha256"]
         bound = {name: sha256(paths[name]).lower() == value.lower() for name, value in expected.items()}
         if not all(bound.values()):
             raise ValueError(f"frozen input mismatch: {bound}")
@@ -186,6 +225,12 @@ def main() -> int:
             selected.append(min(eligible, key=lambda row: (query_lookup[(row["source_seed"], row["source_atom"])]["selection_hash"], row["target_seed"])))
         if len(selected) != cfg["selected_units"]:
             raise ValueError("bounded unit count drift")
+        if "frozen_selection" in paths:
+            frozen_units = json.loads(paths["frozen_selection"].read_text(encoding="utf-8"))["units"]
+            selected_keys = [(row["source_seed"], row["target_seed"], row["source_atom"], row["energy_stratum"], row["selected_rank"]) for row in selected]
+            frozen_keys = [(row["source_seed"], row["target_seed"], row["source_atom"], row["energy_stratum"], row["rank"]) for row in frozen_units]
+            if selected_keys != frozen_keys:
+                raise ValueError("fresh causal suffix changed the endpoint-blind unit selection")
 
         census = [json.loads(line) for line in paths["source_census"].read_text(encoding="utf-8").splitlines() if line]
         stats = {(int(row["seed"]), int(row["atom"])): row for row in census}
@@ -199,6 +244,7 @@ def main() -> int:
         raw_manifest = json.loads(paths["raw_hook_manifest"].read_text(encoding="utf-8"))
         raw_meta = {row["split"]: row for row in raw_manifest["splits"]}
         raw = {split: np.memmap(raw_meta[split]["path"], dtype="<f4", mode="r").reshape(raw_meta[split]["shape"]) for split in ("mean", "discovery", "calibration")}
+        loading_data = np.load(paths["loadings"], allow_pickle=False) if "loadings" in paths else None
         sequences = json.loads(paths["sequence_records"].read_text(encoding="utf-8"))["sequences"]
         global_states = select_document_balanced_states(
             sequences, split="discovery", count=cfg["global_control_tokens"],
@@ -234,6 +280,14 @@ def main() -> int:
             )
             global_relation = fit_fuzzy_correspondence_from_kernels(global_kernel, rank=rank, contrast_strength=0.0, ridge_fraction=1e-6)
             random_source_membership, random_target_membership = random_memberships(len(source_ids), len(target_ids), rank, cfg["random_relation_salt"], source_seed, atom, target_seed, rank)
+            random_source_loadings, random_target_loadings = random_loadings(len(source_ids), len(target_ids), rank, cfg["random_relation_salt"], source_seed, atom, target_seed, rank, "loadings")
+            if loading_data is not None:
+                loading_index = int(row["loading_index"])
+                primary_source_loadings = np.asarray(loading_data["source_loadings"][loading_index, :len(source_ids), :rank], dtype=np.float64)
+                primary_target_loadings = np.asarray(loading_data["target_loadings"][loading_index, :len(target_ids), :rank], dtype=np.float64)
+            else:
+                primary_source_loadings = None
+                primary_target_loadings = None
 
             calibration_code = np.asarray(matrices["calibration"][source_seed][:, atom].toarray(), dtype=np.float64).reshape(-1)
             sequence_energy = np.sum(calibration_code.reshape(-1, cfg["context_length"]) ** 2, axis=1)
@@ -246,6 +300,9 @@ def main() -> int:
                 "primary_source_membership": primary_source_membership, "primary_target_membership": primary_target_membership,
                 "global_source_membership": global_relation.source_membership, "global_target_membership": global_relation.target_membership,
                 "random_source_membership": random_source_membership, "random_target_membership": random_target_membership,
+                "primary_source_loadings": primary_source_loadings, "primary_target_loadings": primary_target_loadings,
+                "global_source_loadings": global_relation.source_loadings, "global_target_loadings": global_relation.target_loadings,
+                "random_source_loadings": random_source_loadings, "random_target_loadings": random_target_loadings,
                 "source_mean": source_mean, "target_mean": target_mean, "source_basis": source_basis[:, :rank], "target_basis": target_basis[:, :rank],
                 "stitch_source": stitch_source[:, :rank], "stitch_target": stitch_target[:, :rank], "raw_mean": raw_mean, "raw_basis": raw_basis[:, :rank],
                 "sequence_ids": sequence_ids, "sequence_energy": [float(sequence_energy[value]) for value in sequence_ids],
@@ -295,6 +352,7 @@ def main() -> int:
         pair_accum = {(item["decision"]["source_seed"], item["decision"]["source_atom"], item["decision"]["target_seed"], method): defaultdict(float) for item in payload for method in cfg["evaluated_methods"]}
         unit_rows, noop_errors, replay_abs, replay_relative = [], [], [], []
         total_forwards = 0
+        expected_forwards = 0
         compute_started = time.perf_counter()
         for item in payload:
             decision = item["decision"]
@@ -325,45 +383,80 @@ def main() -> int:
                 source_query_code = np.asarray(matrices["calibration"][source_seed][begin:stop, atom].toarray(), dtype=np.float64).reshape(-1)
                 target_single_atom = int(item["target_ids"][0])
                 target_single_code = np.asarray(matrices["calibration"][target_seed][begin:stop, target_single_atom].toarray(), dtype=np.float64).reshape(-1)
-                methods = {
-                    "EUCLIDEAN_FCC_RELATION": (primary_source, primary_target),
-                    "GLOBAL_FCC_RELATION": (global_source, global_target),
-                    "RAW_HOOK_QUERY_PCA": (projected(replay, item["raw_mean"], item["raw_basis"]), projected(replay, item["raw_mean"], item["raw_basis"])),
-                    "SAE_QUERY_MARGINAL_PCA": (projected(source_reconstruction, item["source_mean"], item["source_basis"]), projected(target_reconstruction, item["target_mean"], item["target_basis"])),
-                    "RELAXED_PAIRED_STITCHING": (projected(source_reconstruction, item["source_mean"], item["stitch_source"]), projected(target_reconstruction, item["target_mean"], item["stitch_target"])),
-                    "BEST_FUNCTIONAL_SINGLE_NATIVE": ((source_query_code - means[source_seed][atom])[:, None] * decoders[source_seed][atom][None, :], (target_single_code - means[target_seed][target_single_atom])[:, None] * decoders[target_seed][target_single_atom][None, :]),
-                    "MATCHED_RANDOM_RELATION": (random_source, random_target),
-                }
-                reference_norm = float(np.linalg.norm(primary_source))
+                if cfg["relation_intervention"] == "signed_paired_loading_components_with_quadratic_unit_aggregation":
+                    source_rank_ids = np.argsort(-item["primary_source_membership"])[:rank]
+                    target_rank_ids = np.argsort(-item["primary_target_membership"])[:rank]
+                    native_source_components = np.stack([
+                        (np.asarray(source_codes[:, int(index)].toarray(), dtype=np.float64).reshape(-1) - means[source_seed][item["source_ids"][int(index)]])[:, None] * decoders[source_seed][item["source_ids"][int(index)]][None, :]
+                        for index in source_rank_ids
+                    ])
+                    native_target_components = np.stack([
+                        (np.asarray(target_codes[:, int(index)].toarray(), dtype=np.float64).reshape(-1) - means[target_seed][item["target_ids"][int(index)]])[:, None] * decoders[target_seed][item["target_ids"][int(index)]][None, :]
+                        for index in target_rank_ids
+                    ])
+                    methods = {
+                        "EUCLIDEAN_FCC_RELATION": (
+                            loading_component_contributions(source_codes, decoders[source_seed][item["source_ids"]], means[source_seed][item["source_ids"]], item["primary_source_loadings"]),
+                            loading_component_contributions(target_codes, decoders[target_seed][item["target_ids"]], means[target_seed][item["target_ids"]], item["primary_target_loadings"]),
+                        ),
+                        "GLOBAL_FCC_RELATION": (
+                            loading_component_contributions(source_codes, decoders[source_seed][item["source_ids"]], means[source_seed][item["source_ids"]], item["global_source_loadings"]),
+                            loading_component_contributions(target_codes, decoders[target_seed][item["target_ids"]], means[target_seed][item["target_ids"]], item["global_target_loadings"]),
+                        ),
+                        "RAW_HOOK_QUERY_PCA": (projector_components(replay, item["raw_mean"], item["raw_basis"]), projector_components(replay, item["raw_mean"], item["raw_basis"])),
+                        "SAE_QUERY_MARGINAL_PCA": (projector_components(source_reconstruction, item["source_mean"], item["source_basis"]), projector_components(target_reconstruction, item["target_mean"], item["target_basis"])),
+                        "RELAXED_PAIRED_STITCHING": (projector_components(source_reconstruction, item["source_mean"], item["stitch_source"]), projector_components(target_reconstruction, item["target_mean"], item["stitch_target"])),
+                        "BEST_FUNCTIONAL_SINGLE_NATIVE": (native_source_components, native_target_components),
+                        "MATCHED_RANDOM_RELATION": (
+                            loading_component_contributions(source_codes, decoders[source_seed][item["source_ids"]], means[source_seed][item["source_ids"]], item["random_source_loadings"]),
+                            loading_component_contributions(target_codes, decoders[target_seed][item["target_ids"]], means[target_seed][item["target_ids"]], item["random_target_loadings"]),
+                        ),
+                    }
+                else:
+                    methods = {
+                        "EUCLIDEAN_FCC_RELATION": (primary_source[None], primary_target[None]),
+                        "GLOBAL_FCC_RELATION": (global_source[None], global_target[None]),
+                        "RAW_HOOK_QUERY_PCA": (projected(replay, item["raw_mean"], item["raw_basis"])[None], projected(replay, item["raw_mean"], item["raw_basis"])[None]),
+                        "SAE_QUERY_MARGINAL_PCA": (projected(source_reconstruction, item["source_mean"], item["source_basis"])[None], projected(target_reconstruction, item["target_mean"], item["target_basis"])[None]),
+                        "RELAXED_PAIRED_STITCHING": (projected(source_reconstruction, item["source_mean"], item["stitch_source"])[None], projected(target_reconstruction, item["target_mean"], item["stitch_target"])[None]),
+                        "BEST_FUNCTIONAL_SINGLE_NATIVE": (((source_query_code - means[source_seed][atom])[:, None] * decoders[source_seed][atom][None, :])[None], ((target_single_code - means[target_seed][target_single_atom])[:, None] * decoders[target_seed][target_single_atom][None, :])[None]),
+                        "MATCHED_RANDOM_RELATION": (random_source[None], random_target[None]),
+                    }
+                reference_norm = float(np.linalg.norm(methods["EUCLIDEAN_FCC_RELATION"][0]))
                 active_mask = torch.from_numpy(source_query_code != 0).to(device)
                 off_mask = ~active_mask
-                for method, (source_value, target_value) in methods.items():
-                    source_matched, source_scale = rescale_to_norm(source_value, reference_norm)
-                    target_matched, target_scale = rescale_to_norm(target_value, reference_norm)
-                    source_tensor = torch.from_numpy(source_matched.astype(np.float32))[None].to(device)
-                    target_tensor = torch.from_numpy(target_matched.astype(np.float32))[None].to(device)
-                    _, source_next, source_logits = forward(batch, contribution=source_tensor)
-                    _, target_next, target_logits = forward(batch, contribution=target_tensor)
-                    total_forwards += 2
+                expected_forwards += 2 + 2 * sum(values[0].shape[0] for values in methods.values())
+                for method, (source_block, target_block) in methods.items():
+                    source_scale = reference_norm / max(float(np.linalg.norm(source_block)), 1e-12)
+                    target_scale = reference_norm / max(float(np.linalg.norm(target_block)), 1e-12)
+                    source_matched_block = source_block * source_scale
+                    target_matched_block = target_block * target_scale
                     key = (source_seed, atom, target_seed, method)
                     acc = pair_accum[key]
-                    for endpoint, base, source_output, target_output in (("next_state", baseline_next, source_next, target_next), ("next_logits", baseline_logits, source_logits, target_logits)):
-                        source_effect = base - source_output
-                        target_effect = base - target_output
-                        acc[f"{endpoint}_source_energy"] += float(torch.sum(source_effect * source_effect).item())
-                        acc[f"{endpoint}_target_energy"] += float(torch.sum(target_effect * target_effect).item())
-                        acc[f"{endpoint}_cross_energy"] += float(torch.sum(source_effect * target_effect).item())
-                        acc[f"{endpoint}_elements"] += source_effect.numel()
-                        acc[f"{endpoint}_source_off_energy"] += float(torch.sum(source_effect[0, off_mask] ** 2).item())
-                        acc[f"{endpoint}_target_off_energy"] += float(torch.sum(target_effect[0, off_mask] ** 2).item())
-                    acc["hook_source_energy"] += float(np.sum(source_matched * source_matched))
-                    acc["hook_target_energy"] += float(np.sum(target_matched * target_matched))
-                    unit_rows.append({
-                        "source_seed": source_seed, "target_seed": target_seed, "source_atom": atom, "energy_stratum": decision["energy_stratum"],
-                        "sequence_id": sequence_id, "method": method, "rank": rank, "active_query_tokens": int(np.sum(source_query_code != 0)),
-                        "reference_hook_norm": reference_norm, "source_unscaled_hook_norm": float(np.linalg.norm(source_value)),
-                        "target_unscaled_hook_norm": float(np.linalg.norm(target_value)), "source_energy_scale": source_scale, "target_energy_scale": target_scale,
-                    })
+                    for component_index, (source_matched, target_matched) in enumerate(zip(source_matched_block, target_matched_block)):
+                        source_tensor = torch.from_numpy(source_matched.astype(np.float32))[None].to(device)
+                        target_tensor = torch.from_numpy(target_matched.astype(np.float32))[None].to(device)
+                        _, source_next, source_logits = forward(batch, contribution=source_tensor)
+                        _, target_next, target_logits = forward(batch, contribution=target_tensor)
+                        total_forwards += 2
+                        for endpoint, base, source_output, target_output in (("next_state", baseline_next, source_next, target_next), ("next_logits", baseline_logits, source_logits, target_logits)):
+                            source_effect = base - source_output
+                            target_effect = base - target_output
+                            acc[f"{endpoint}_source_energy"] += float(torch.sum(source_effect * source_effect).item())
+                            acc[f"{endpoint}_target_energy"] += float(torch.sum(target_effect * target_effect).item())
+                            acc[f"{endpoint}_cross_energy"] += float(torch.sum(source_effect * target_effect).item())
+                            acc[f"{endpoint}_elements"] += source_effect.numel()
+                            acc[f"{endpoint}_source_off_energy"] += float(torch.sum(source_effect[0, off_mask] ** 2).item())
+                            acc[f"{endpoint}_target_off_energy"] += float(torch.sum(target_effect[0, off_mask] ** 2).item())
+                        acc["hook_source_energy"] += float(np.sum(source_matched * source_matched))
+                        acc["hook_target_energy"] += float(np.sum(target_matched * target_matched))
+                        unit_rows.append({
+                            "source_seed": source_seed, "target_seed": target_seed, "source_atom": atom, "energy_stratum": decision["energy_stratum"],
+                            "sequence_id": sequence_id, "method": method, "rank": rank, "component_index": component_index,
+                            "active_query_tokens": int(np.sum(source_query_code != 0)), "reference_hook_norm": reference_norm,
+                            "source_unscaled_block_norm": float(np.linalg.norm(source_block)), "target_unscaled_block_norm": float(np.linalg.norm(target_block)),
+                            "source_energy_scale": source_scale, "target_energy_scale": target_scale,
+                        })
 
         pair_rows = []
         for item in payload:
@@ -444,7 +537,7 @@ def main() -> int:
             "raw_hook_replay_conformance": conformance["raw_replay_absolute"] and conformance["raw_replay_relative"],
             "primary_endpoint_frozen": cfg["primary_endpoint"] == "next_state",
             "audit_not_opened": not cfg["audit_opened"] and cfg["forbidden_splits"] == ["audit"],
-            "model_forward_count_exact": total_forwards == cfg["selected_units"] * cfg["sequences_per_unit"] * (2 + 2 * len(cfg["evaluated_methods"])),
+            "model_forward_count_exact": total_forwards == expected_forwards,
         }
         record = {
             "checks": {name: bool(value) for name, value in checks.items()}, "screen_decision": screen_decision,

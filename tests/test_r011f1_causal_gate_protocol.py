@@ -12,6 +12,7 @@ class R011F1CausalGateProtocolTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.cfg = json.loads((ROOT / "configs/r011f1_euclidean_causal_gate_v1.json").read_text(encoding="utf-8"))
+        cls.v2 = json.loads((ROOT / "configs/r011f1_euclidean_causal_gate_v2.json").read_text(encoding="utf-8"))
 
     def test_gate_is_bounded_endpoint_blind_and_audit_closed(self) -> None:
         self.assertEqual(self.cfg["selected_units"], 8)
@@ -32,6 +33,13 @@ class R011F1CausalGateProtocolTests(unittest.TestCase):
     def test_mscc_refusal_is_not_scored_as_zero_intervention(self) -> None:
         self.assertIn("MSCC_REFUSAL", self.cfg["methods"])
         self.assertNotIn("MSCC_REFUSAL", self.cfg["evaluated_methods"])
+
+    def test_v2_changes_only_causalization_and_binds_v1_selection(self) -> None:
+        self.assertEqual(self.v2["inherits_config"], "configs/r011f1_euclidean_causal_gate_v1.json")
+        overrides = self.v2["overrides"]
+        self.assertEqual(overrides["relation_intervention"], "signed_paired_loading_components_with_quadratic_unit_aggregation")
+        self.assertIn("causal_gate_v1", overrides["frozen_selection_path"])
+        self.assertEqual(len(overrides["frozen_selection_sha256"]), 64)
 
 
 if __name__ == "__main__":

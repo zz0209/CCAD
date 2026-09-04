@@ -10,6 +10,7 @@ from ccad.fuzzy_correspondence import (
     fit_fuzzy_correspondence,
     fit_fuzzy_correspondence_from_kernels,
     fit_probe_metric,
+    loading_component_contributions,
     membership_weighted_contribution,
     metric_factor,
     sparse_contribution_kernels,
@@ -32,6 +33,23 @@ class FuzzyCorrespondenceTests(unittest.TestCase):
             membership_weighted_contribution(
                 np.ones((2, 2)), np.eye(2), np.zeros(2), np.zeros(2),
             )
+
+    def test_loading_components_preserve_signed_pair_quadratics(self) -> None:
+        rng = np.random.default_rng(81)
+        codes_s = rng.normal(size=(11, 4))
+        codes_t = rng.normal(size=(11, 5))
+        decoder_s = rng.normal(size=(4, 3))
+        decoder_t = rng.normal(size=(5, 3))
+        left = rng.normal(size=(4, 2))
+        right = rng.normal(size=(5, 2))
+        source = loading_component_contributions(codes_s, decoder_s, np.zeros(4), left)
+        target = loading_component_contributions(codes_t, decoder_t, np.zeros(5), right)
+        transform = np.asarray([[0.0, -1.0], [1.0, 0.0]])
+        rotated_source = loading_component_contributions(codes_s, decoder_s, np.zeros(4), left @ transform)
+        rotated_target = loading_component_contributions(codes_t, decoder_t, np.zeros(5), right @ transform)
+        before = (np.sum(source * source), np.sum(target * target), np.sum(source * target))
+        after = (np.sum(rotated_source * rotated_source), np.sum(rotated_target * rotated_target), np.sum(rotated_source * rotated_target))
+        np.testing.assert_allclose(after, before, atol=1e-10)
 
     def test_probe_metric_recovers_output_sensitive_subspace(self) -> None:
         rng = np.random.default_rng(3)

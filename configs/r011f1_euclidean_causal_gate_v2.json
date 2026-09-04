@@ -1,0 +1,16 @@
+{
+  "inherits_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "overrides": {
+    "schema_version": "r011.f1.euclidean_causal_gate.v2",
+    "run_id": "R011_F1_euclidean_causal_gate_v2_20260904T180500Z",
+    "purpose": "Bounded endpoint-blind matched causal specificity gate for frozen signed Euclidean FCC components",
+    "protocol_document": "configs/R011_F1_CAUSAL_GATE_PROTOCOL_V2_20260904_130000.md",
+    "loadings_path": "runs/R011_F1_euclidean_surface_v1_20260904T164500Z/anchor_loadings.npz",
+    "loadings_sha256": "224b5a1a20c606c42fafc4ae4b3e4bb1aa8ab1a88a36e8aac4fb36707b86a2e8",
+    "frozen_selection_path": "runs/R011_F1_euclidean_causal_gate_v1_20260904T174500Z/selected_units_and_sequences.json",
+    "frozen_selection_sha256": "b92878214d4f67503a7f5dbd3303046e25475f8a34fb16f6dca482578a62bf0e",
+    "relation_intervention": "signed_paired_loading_components_with_quadratic_unit_aggregation",
+    "energy_matching": "single_block_scale_per_method_side_sequence_to_source_FCC_component_block_Frobenius_norm",
+    "scope_limit": "Fresh signed-component pre-audit causal gate on v1-frozen units and sequences only; no full-640 expansion, audit, C1-FCC or C2-FCC claim"
+  }
+}
