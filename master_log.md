@@ -2374,3 +2374,23 @@ Automation按上轮停止规则只执行一个dynamic stable-subspace baseline�
 Within-discovery centering下，rank16/32/64的pairwise PSC median为`.98899/.97511/.95609`，variance coverage median为`.95764/.96447/.97232`；isotropic random expectations仅`.02083/.04167/.08333`。Rank128 PSC仍`.90631`且覆盖`.98080`。与R010a aggregate BCC `.98452`、R009 atom BCC `.01940`和R011 local native BCC `.02369`合并，当前受控真实SAE证据支持一个清楚但保守的尺度分离：跨seed整体输出和领先动态子空间高度复现，原生atom及小型local support却不复现。
 
 该结果不能识别rotation，effective rank也不等于monosemanticity，更没有给C1/C2、`FOUND`或causal portability提供独立证明。R010保持RUNNING，因为stitching/Li15与calibration公平冻结尚未完成。Discovery方法优化到此停止；下一工作单元进入calibration，冻结best-single、group baselines、MSCC refusal/ambiguity与共同预算，之后才能决定是否打开audit。本轮未新增文献，registry无需更新；R010a/R010b组成一个阶段性主线里程碑，允许合并Git同步。
+
+## 2026-09-03 20:20 EDT — R011c calibration为0 coverage；audit继续关闭并触发用户保留裁决
+
+Automation进入calibration前新增C037并预先固定：R009b的640-query panel、R011a candidate/support、R011b OMP membership均不可重选；`g_max=4`、primary `tau_ctr=tau_mu=.05`、tie band `.005`在读取calibration前写入config，`.10/.20`只报告敏感性且不能改变primary。新增`configs/r011c_frozen_support_calibration_v1.json`与`scripts/run_r011c_frozen_support_calibration.py`。`R011c_frozen_support_calibration_v1_20260904T003000Z`通过共享`disk-d-io`+`cpu-heavy` leases完整评分20 ordered seed pairs×128 queries；只读取mean/discovery-frozen identities与calibration codes，不触及audit。Run 10/10 checks、artifact contract PASS，输出SHA-256=`80B049173CBF8A3B077F924D8FC083B9D323DD7E6FC63F3ACC9F39A830BD65EC`，所有lease已释放。
+
+Primary MSCC calibration结果为0/2,560 `FOUND`；report-only `.10`和`.20`敏感性仍均为0。Discovery-minimum-residual native support的calibration median `d_ctr`按size1/2/3/4为`1.4444/2.0699/2.8051/3.6200`，median `d_mu`为`1.1215/1.4160/1.8395/2.4405`。Balanced-BCC supports的median BCC仅从size1 `.01871`到size4 `.02247`，对应`d_ctr`从`2.3434`恶化至`5.1624`；decoder-cosine prefixes和signed-OMP membership同样无可用native transfer。
+
+保守裁决：这只证明当前冻结的20-atom local candidate family在本配置上100% `UNRESOLVED`，不能写成target native support不存在。但它使当前C1没有非零可审计coverage，C2也没有可进入held-out causal比较的MSCC support；打开audit只会消耗封存数据而不能回答主张。按C037停止规则，不再新增local family、不扩大support、不打开audit。R011转为`BLOCKED`。下一步涉及改变claim对象到subspace-level causal transport、改变primary SAE config，或终止/拆分native-local C1/C2，均属于AGENTS明确保留给用户的重大裁决；automation在用户决定前不得用新实验掩盖该阻塞。未新增文献，registry不变；该单轮结果先本地留痕，不单独Git推送。
+
+## 2026-09-03 20:56 EDT — 双轨统一为causal granularity frontier；R011-NR1长预算语料PASS
+
+**触发与理论裁决。** 用户明确要求同时保留subspace-level causal transport与native MSCC配置救援，不接受因当前0 coverage停止主线。重新按顺序阅读AGENTS、最新账本、计划/追踪器、理论蓝本和相关本地论文。理论PDF的THM-CBSM-009针对任意共享hook中的向量贡献过程给出同hook干预转移界，并不要求输出必须是target native atom subset；THM-CBSM-004/005同时允许基底不唯一。因而当前native-local MSCC是理论的严格工程实例，不是唯一合法应用。统一论文问题冻结为causal granularity frontier：跨seed因果可移植性最小在atom、native support还是query-conditioned dynamic subspace层面出现，以及训练充分性/稀疏度能否把该前沿推回atom层。当前0 coverage永久保留为短预算、稠密k128配置的有效负结果，不改公式掩盖。
+
+**文献学习与边界。** 本地原文和官方线上来源交叉确认：Song et al. ACL 2026的Pythia-160M一致性实验约用500M tokens、width16384、TopK k20，而当前suite仅131,072 tokens、width3072、k128；训练量相差约3,800倍且激活更稠密。因此当前高FVE/CE只能证明重构质量，不能证明atom分解已训练充分。P04、SASA、Model Alignment Search、DAS及最新causal audit共同支持把非规范基底、子空间对齐与held-out causal intervention分开评估；它们不直接证明CCAD的SCT或MSCC主张。新增来源和消费者已登记到`REFERENCE_REGISTRY.md`。
+
+**计划与组件。** `AGENTS.md`、`EXPERIMENT_PLAN.md`、`EXPERIMENT_TRACKER.md`和`COMPONENT_CANDIDATES.md`已登记统一双轨：R011-S1/C038用source-only query条件化的rank 1/2/4/8/16子空间，比较raw-hook PCA、global SAE subspace、random projector、single/native与stitching/MAS controls；R011-NR1/C039固定Pythia-160M layer5、sparsify、width3072、FineWeb revision/order，只比较4,194,304-token下k128与k32、各seeds1/2，最多晋级一个配置，不在结果后追加k/hook/width。C040下游敏感度seminorm只作延后备选，防止endpoint circularity。Audit继续封存。
+
+**实际运行与失败保留。** 为R011-NR1在`run_r006a_capacity_manifest.py`增加document ID与text SHA-256双重排除，绑定旧SAE训练与R008 paired文档账本，防止训练/mean/discovery/calibration/audit重叠。`R011_NR1_long_budget_corpus_v1_20260904T010000Z`使用5个固定shard，因排除后仅有2,708,569 train tokens而未达到4,194,304，按预期FAIL；其run、日志与metrics SHA-256 `4880AA7587A9F518544A823E491477091F578AEE4252C8450DD534A45EF949D5`保留。唯一有界修复v2只把固定shard数从5增至10，未改变数据revision、token预算、split、排除项或训练设计。
+
+`R011_NR1_long_budget_corpus_v2_20260904T012000Z`在`disk-e-io` lease下16/16 checks与artifact contract PASS，lease正常释放。它从10,000个唯一FineWeb文档中使用7,124个，生成精确32,768×128=`4,194,304` train tokens及256×128=`32,768` validation tokens；train/validation SHA-256分别为`5BCD46159DAA59DE70CF8C05F76502C6D5CB719E95DDD41CF055B3082F60BBA8`与`B6EC15F1F640E691718D9446E97B94A2653F0EF2D9FED0C817D68A6C9D65CC0A`，所有source-row/document/text hash唯一性和838条排除记录均通过。全项目172/172 tests PASS。R011-NR1转`RUNNING`；GPU当前被相邻项目合法占用，因此本轮没有争抢或启动训练。该资产不是C1/C2证据，下一步是在lease可用时执行冻结的四次训练，同时并行推进R011-S1的calibration-feasibility协议与单元测试。

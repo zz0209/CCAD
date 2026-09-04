@@ -204,11 +204,38 @@ def main() -> int:
                 })
                 total_range_requests += reader.range_requests
                 total_range_bytes += reader.bytes_received
+        excluded_ids: set[str] = set()
+        excluded_text_hashes: set[str] = set()
+        excluded_paths = [Path(str(value)) for value in cfg.get("excluded_document_paths", [])]
+        for excluded_path in excluded_paths:
+            resolved_excluded = excluded_path if excluded_path.is_absolute() else ROOT / excluded_path
+            input_entries.append(local_entry(
+                resolved_excluded,
+                "CCAD frozen document exclusion ledger",
+                "internal artifact",
+                "prevent SAE-training overlap with prior training and paired corpora",
+            ))
+            for line in resolved_excluded.read_text(encoding="utf-8").splitlines():
+                if not line:
+                    continue
+                row = json.loads(line)
+                if row.get("document_id") is not None:
+                    excluded_ids.add(str(row["document_id"]))
+                if row.get("text_sha256") is not None:
+                    excluded_text_hashes.add(str(row["text_sha256"]))
+        pre_exclusion_count = len(sampled_rows)
+        sampled_rows = [
+            row for row in sampled_rows
+            if str(row["document_id"]) not in excluded_ids
+            and str(row["text_sha256"]) not in excluded_text_hashes
+        ]
         report = validate_document_records(sampled_rows)
         checks["sample_document_ids_unique"] = bool(report["unique_document_ids"])
         checks["sample_source_rows_unique"] = bool(report["unique_source_rows"])
         checks["sample_text_hashes_unique"] = bool(report["unique_text_hashes"])
         checks["sample_has_both_splits"] = report["train_documents"] > 0 and report["validation_documents"] > 0
+        checks["excluded_document_ids_absent"] = not any(str(row["document_id"]) in excluded_ids for row in sampled_rows)
+        checks["excluded_text_hashes_absent"] = not any(str(row["text_sha256"]) in excluded_text_hashes for row in sampled_rows)
         tokenizer_dir = Path(str(cfg["tokenizer_local_dir"]))
         tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir, local_files_only=True)
         tokenizer_files = [path for path in tokenizer_dir.iterdir() if path.is_file() and "tokenizer" in path.name or path.name == "special_tokens_map.json"]
@@ -254,7 +281,10 @@ def main() -> int:
             "selected_sources": source_records,
         })
         details = {
-            "catalog_shards": len(files), "selected_shards": len(selected), "sampled_documents": len(sampled_rows),
+            "catalog_shards": len(files), "selected_shards": len(selected),
+            "sampled_documents_before_exclusion": pre_exclusion_count,
+            "sampled_documents": len(sampled_rows), "excluded_document_ids": len(excluded_ids),
+            "excluded_text_hashes": len(excluded_text_hashes),
             "sample_report": report, "used_documents": len(all_used_documents),
             "range_requests": total_range_requests, "range_bytes_received": total_range_bytes,
             "token_outputs": token_outputs,
