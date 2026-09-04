@@ -6,9 +6,11 @@ import numpy as np
 from scipy.sparse import csr_matrix
 
 from ccad.fuzzy_correspondence import (
+    ContributionKernels,
     evaluate_fixed_correspondence,
     fit_fuzzy_correspondence,
     fit_fuzzy_correspondence_from_kernels,
+    fit_cross_covariance_relation_from_kernels,
     fit_probe_metric,
     loading_component_contributions,
     membership_weighted_contribution,
@@ -50,6 +52,19 @@ class FuzzyCorrespondenceTests(unittest.TestCase):
         before = (np.sum(source * source), np.sum(target * target), np.sum(source * target))
         after = (np.sum(rotated_source * rotated_source), np.sum(rotated_target * rotated_target), np.sum(rotated_source * rotated_target))
         np.testing.assert_allclose(after, before, atol=1e-10)
+
+    def test_cross_covariance_estimators_recover_energy_balanced_split(self) -> None:
+        source = np.diag([4.0, 1.0])
+        target = np.diag([1.0, 1.0, 1.0])
+        cross = np.asarray([[1.2, 1.6, 0.0], [0.0, 0.0, 1.0]])
+        kernels = ContributionKernels(source, target, cross, np.zeros_like(source), np.zeros_like(target), np.zeros_like(cross))
+        for estimator in ("ENERGY_BALANCED_PLS", "DIAGONAL_WHITENED_CORRELATION"):
+            relation = fit_cross_covariance_relation_from_kernels(kernels, rank=2, estimator=estimator)
+            self.assertEqual(relation.source_loadings.shape, (2, 2))
+            self.assertEqual(relation.target_loadings.shape, (3, 2))
+            np.testing.assert_allclose(np.diag(relation.source_loadings.T @ source @ relation.source_loadings), 1.0, atol=1e-10)
+            np.testing.assert_allclose(np.diag(relation.target_loadings.T @ target @ relation.target_loadings), 1.0, atol=1e-10)
+            self.assertAlmostEqual(float(np.sum(relation.coupling)), 1.0)
 
     def test_probe_metric_recovers_output_sensitive_subspace(self) -> None:
         rng = np.random.default_rng(3)

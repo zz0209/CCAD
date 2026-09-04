@@ -434,6 +434,97 @@ def fit_fuzzy_correspondence_from_kernels(
     )
 
 
+def fit_cross_covariance_relation_from_kernels(
+    kernels: ContributionKernels,
+    *,
+    rank: int,
+    estimator: str,
+    contrast_strength: float = 1.0,
+    ridge_fraction: float = 1e-6,
+    energy_epsilon: float = 1e-12,
+) -> FuzzyCorrespondence:
+    """Fit an energy-balanced PLS or diagonal-whitened FCC relation.
+
+    Both alternatives preserve the frozen feature universes and contrastive
+    cross-covariance.  Unlike fully whitened CCA, they do not rotate through a
+    dense inverse square root of the within-side feature Gram.  Loading columns
+    are normalized to unit positive discovery contribution energy before the
+    relation operator and its soft marginals are formed.
+    """
+
+    source = _square(kernels.source_gram, "source_gram")
+    target = _square(kernels.target_gram, "target_gram")
+    cross = _matrix(kernels.cross_gram, "cross_gram")
+    if cross.shape != (source.shape[0], target.shape[0]):
+        raise ValueError("cross kernel dimensions differ from marginal kernels")
+    if rank <= 0 or rank > min(cross.shape):
+        raise ValueError("rank exceeds the available feature dimensions")
+    if estimator not in {"ENERGY_BALANCED_PLS", "DIAGONAL_WHITENED_CORRELATION"}:
+        raise ValueError("unknown cross-covariance estimator")
+    if contrast_strength < 0 or ridge_fraction <= 0:
+        raise ValueError("contrast strength and ridge must be valid")
+    if contrast_strength > 0:
+        if kernels.negative_cross_gram is None:
+            raise ValueError("contrastive estimator requires negative kernels")
+        negative_cross = _matrix(kernels.negative_cross_gram, "negative_cross_gram")
+        if negative_cross.shape != cross.shape:
+            raise ValueError("negative cross kernel dimensions differ")
+        objective_cross = cross - contrast_strength * negative_cross
+    else:
+        objective_cross = cross
+
+    if estimator == "ENERGY_BALANCED_PLS":
+        left_scale = np.ones(source.shape[0])
+        right_scale = np.ones(target.shape[0])
+    else:
+        left_diag = np.maximum(np.diag(source), 0.0)
+        right_diag = np.maximum(np.diag(target), 0.0)
+        left_ridge = ridge_fraction * max(float(np.mean(left_diag)), np.finfo(np.float64).eps)
+        right_ridge = ridge_fraction * max(float(np.mean(right_diag)), np.finfo(np.float64).eps)
+        left_scale = 1.0 / np.sqrt(left_diag + left_ridge)
+        right_scale = 1.0 / np.sqrt(right_diag + right_ridge)
+    normalized_cross = left_scale[:, None] * objective_cross * right_scale[None, :]
+    left, singular, right_t = np.linalg.svd(normalized_cross, full_matrices=False)
+    keep = min(rank, singular.size)
+    source_loadings = left_scale[:, None] * left[:, :keep]
+    target_loadings = right_scale[:, None] * right_t.T[:, :keep]
+    canonical = np.empty(keep, dtype=np.float64)
+    for component in range(keep):
+        source_energy = float(source_loadings[:, component] @ source @ source_loadings[:, component])
+        target_energy = float(target_loadings[:, component] @ target @ target_loadings[:, component])
+        if source_energy <= energy_epsilon or target_energy <= energy_epsilon:
+            raise ValueError("selected component has negligible positive contribution energy")
+        source_loadings[:, component] /= np.sqrt(source_energy)
+        target_loadings[:, component] /= np.sqrt(target_energy)
+        value = float(source_loadings[:, component] @ cross @ target_loadings[:, component])
+        if value < 0:
+            target_loadings[:, component] *= -1.0
+            value = -value
+        canonical[component] = value
+    cross_operator = source_loadings @ np.diag(canonical) @ target_loadings.T
+    magnitude = np.abs(cross_operator)
+    total = float(np.sum(magnitude))
+    coupling = magnitude / total if total > 0 else np.zeros_like(magnitude)
+    source_membership = np.sum(coupling, axis=1)
+    target_membership = np.sum(coupling, axis=0)
+    return FuzzyCorrespondence(
+        source_loadings=source_loadings,
+        target_loadings=target_loadings,
+        canonical_values=canonical,
+        full_canonical_values=singular,
+        rank_boundary_relative_gap=(
+            float((singular[keep - 1] - singular[keep]) / max(singular[0], np.finfo(np.float64).eps))
+            if keep < singular.size else None
+        ),
+        cross_operator=cross_operator,
+        coupling=coupling,
+        source_membership=source_membership,
+        target_membership=target_membership,
+        source_effective_support=_effective_support(source_membership),
+        target_effective_support=_effective_support(target_membership),
+    )
+
+
 def soft_membership_overlap(left: np.ndarray, right: np.ndarray) -> float:
     """Bhattacharyya overlap for auditing cross-query correspondence collision."""
 
