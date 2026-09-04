@@ -63,6 +63,16 @@ def aligned_difference(recipient, donor, positions, donor_positions):
     return result
 
 
+def source_dose_scale(source, masked_hook, maximum_fraction=None):
+    """One source-defined scale, applied unchanged to every candidate."""
+    if maximum_fraction is None:
+        return 1.0
+    if maximum_fraction<=0:
+        raise ValueError('Source dose fraction must be positive')
+    norm=float(np.linalg.norm(source))
+    return min(1.0,maximum_fraction*float(np.linalg.norm(masked_hook))/norm) if norm else 1.0
+
+
 def main():
     parser = argparse.ArgumentParser(); parser.add_argument("--config", type=Path, required=True); args = parser.parse_args()
     task = json.loads(args.config.read_text(encoding="utf-8"))
@@ -222,7 +232,10 @@ def main():
                         b=np.asarray(factors["source_basis"][findex[s,a,t0],:,:rank],dtype=np.float64)
                         mask=np.zeros(length) if cfg.get("local_content_positions") else np.ones(length)
                         if cfg.get("local_content_positions"): mask[entry["intervention_positions"]]=1
-                        source=(local@b@b.T)*mask[:,None]
+                        source_natural=(local@b@b.T)*mask[:,None]
+                        masked_hook_norm=float(np.linalg.norm(rawseq*mask[:,None]))
+                        dose_scale=source_dose_scale(source_natural,rawseq*mask[:,None],cfg.get('maximum_source_hook_fraction'))
+                        source=source_natural*dose_scale
                         ref=forward(batch,torch.tensor(source[None],dtype=torch.float32,device=cfg["device"]))
                         effects={e:(baseline[e]-ref[e]).cpu().numpy() for e in ("next_state","next_logits")}
                         if cfg.get("centered_logit_endpoint"):
@@ -232,13 +245,14 @@ def main():
                             target=(z[t] if cfg.get('donor_difference') else z[t]-means[t])@dec[t]
                             widx=findex[s,unit["wrong_atom"],t]; wb=np.asarray(factors["source_basis"][widx,:,:rank],dtype=np.float64)
                             wrong=(target@np.asarray(factors["query_target"][widx,:,:rank],dtype=np.float64)@wb.T)*mask[:,None]
-                            wrongscale=float(np.linalg.norm(source)/max(np.linalg.norm(wrong),1e-12))
+                            wrongscale=float(np.linalg.norm(source_natural)/max(np.linalg.norm(wrong),1e-12))
                             variants={"target":(target@np.asarray(factors["query_target"][ix,:,:rank],dtype=np.float64)@bt.T)*mask[:,None],
                                       "raw":(rawinput@np.asarray(factors["raw_target"][ix,:,:rank],dtype=np.float64)@bt.T)*mask[:,None],
                                       "wrong_query":wrong,"wrong_query_matched_energy":wrong*wrongscale}
                             if cfg.get('include_source_mean_only'):
                                 variants['source_mean_only']=np.zeros_like(source) if cfg.get('donor_difference') else np.broadcast_to(-means[s][ids]@dec[s][ids]@b@b.T,source.shape)*mask[:,None]
                             for method,delta in variants.items():
+                                delta=delta*dose_scale
                                 out=forward(batch,torch.tensor(delta[None],dtype=torch.float32,device=cfg["device"]))
                                 candidate_effects={e:(baseline[e]-out[e]).cpu().numpy() for e in ("next_state","next_logits")}
                                 if cfg.get("centered_logit_endpoint"):
@@ -246,10 +260,13 @@ def main():
                                 endpoints={e:compare(effects[e],candidate_effects[e]) for e in effects}
                                 row={"source_seed":s,"source_atom":a,"target_seed":t,"stratum":unit["stratum"],"rank":rank,"method":method,**entry,"wrong_atom":unit["wrong_atom"],"wrong_norm_scale":wrongscale,"hook":compare(source,delta),"source_mean_projected_norm":float(np.linalg.norm(means[s][ids]@dec[s][ids]@b@b.T)),"target_mean_mapped_norm":float(np.linalg.norm(means[t]@dec[t]@np.asarray(factors["query_target"][ix,:,:rank],dtype=np.float64)@bt.T)),"endpoints":endpoints}
                                 row['mean_terms_cancelled_in_intervention']=bool(cfg.get('donor_difference'))
+                                row.update(common_source_dose_scale=dose_scale,source_natural_hook_energy=float(np.sum(source_natural**2)),recipient_masked_hook_norm=masked_hook_norm,source_hook_fraction=float(np.linalg.norm(source)/masked_hook_norm) if masked_hook_norm else None,candidate_hook_fraction=float(np.linalg.norm(delta)/masked_hook_norm) if masked_hook_norm else None)
                                 rows.append(row);sink.write(json.dumps(row,sort_keys=True)+"\n");sink.flush()
                     print(json.dumps({"query":[s,a],"sequence":seq,"rows":len(rows),"forwards":forwards}),flush=True)
         method_names=['target','raw','wrong_query','wrong_query_matched_energy']+(['source_mean_only'] if cfg.get('include_source_mean_only') else [])
         checks={"noop":max(noop)<=1e-6,"raw_replay_relative":max(replay)<=1e-4,"eight_source_queries":len(selections)==8,"rows":len(rows)==sum(len(x["sequences"])*len(x["targets"])*len(cfg["ranks"])*len(method_names) for x in selections),"audit_closed":True}
+        if cfg.get('maximum_source_hook_fraction'):
+            checks['source_dose_bound']=all(r['source_hook_fraction'] is None or r['source_hook_fraction']<=cfg['maximum_source_hook_fraction']+1e-12 for r in rows)
         summary={"checks":checks,"model_forwards":forwards,"rows":len(rows),"wall_seconds":time.perf_counter()-start,"peak_allocated_vram_bytes":torch.cuda.max_memory_allocated(),"max_noop":max(noop),"max_replay_relative":max(replay),"by_method":{}}
         for condition in ("positive","negative"):
             for rank in cfg["ranks"]:

@@ -2707,3 +2707,15 @@ disk-d-io/cpu-heavy由EndoSAE_EndoFM活跃提取任务占用，未争抢；gpu�
 运行no-op0、replay相对误差1.72954e-5、5项自检和artifact契约通过，完整source snapshot保留；allocated VRAM841,839,104 bytes。增加的短代数测试核对mean抵消/linear map/交换符号/未选位置/空支持/zero误差=1，py_compile和diff --check通过；无全套重跑。audit未开，无新训练/下载；重启累计3520 forwards/562.804秒，不含资源排队。研究图按scientific-visualization的全分母、共同log尺度和颜色/形状双编码原则生成；DAS原文方法的范围准确为印刷163–167页，前registry页码范围少写末页不影响所借鉴定义。
 
 本地忽略文件SHA256：tracker=1ae679a6cfd0dfefa7995b8617bf40c2788ddb19d7a0f5067d7a041301966915；plan=b2da606245958900dd5d059731bcc3af4d7b2fbe48828001cc0a528d558e6d1d；registry=e5b6cd23456d27eb8f07de4a92cfc4a0db39ea7c608f004d2ef2d2de65ddf669。下一步与资源状态只看tracker；automation仍ACTIVE/5分钟，未将支线写入长期prompt。白名单代码、测试、配置和本日志同单元同步。
+
+## 2026-09-04 21:35 UTC — 动态对应在source限量干预下保留
+
+`F4_source_reference_causal_dev_v6_dose_20260904`完成512 forwards/110.114732秒，allocated VRAM841,839,104 bytes。与v5完全相同的8query、recipient/donor、rank1、首循环target；selection逐字节SHA256同为09bcfecd87c6daef8c09751989cdb6aa94a81933c558409835fb22c75983b902。仅新增scale=min(1,0.1*||recipient masked hook||/||natural source delta||)，source与所有候选共同乘该scale，wrong的相对能量匹配先按自然source完成，避免double scaling。只有source被限量，未按候选独立缩放误差。
+
+**本次正checkpoint。** 正条件source最强三query的centered-logit target归一化平方误差，s2:2176从自然幅度.014421变为.013679，raw=.098526、wrong-matched=.929380、zero=1；source剂量中位数从4.86828倍hook降至.1倍、公共scale中位数.020542，source效应RMS从3.19035降至.032714。s3:1230的target=.092746、raw=.034232、wrong=1.996504，source剂量=.1；s4:693无需缩小、剂量=.061966，target/raw/wrong=.208791/.336183/.630496。最大的开发阳性并不只存在于超大source扰动；另一query仍raw更好，不能宣称一致SAE优势或普适FCC。三query是先前按source能量定位的开发范围，本轮是同pair剂量敏感性，不是独立确认。
+
+完整8query正条件target/raw/wrong的中位数仍为.794332/1.468759/1.472645（target 7/8优于raw、5/8优于zero/wrong）；负条件为1.035610/4.350217/1.494307。聚合中位数未变源于弱query不缩小，不能单用这一事实证明稳健性。320行中60行缩小剂量，其余260行endpoint逐字段精确重放v5；全部source剂量满足上限。62有效pair、2空pair/10空mask行/30缺失endpoint保留，s5:710正条件2有效观察而非4。每个非零source的zero误差=1。保留共享document/donor/seed依赖，无CI，不作native必要性/人类语义主张。
+
+**实现与记录。** 新增source_dose_scale与公共剂量字段及上限自检；两项短代数测试/py_compile通过，no-op0、replay1.72953987e-5、6项运行自检与artifact契约PASS。检查是实现/记录范围，不称独立科学验证。完整source snapshot保留，原始metrics SHA256=f756e7867596096f30f6a95f54a7d0fbe96d3d7a6efe98cee0d290ab58e793e7，query_summary.json=7757a3678d1162330aa5c379c6de9511429b8fd3204466c198af361fa2aa1a44。未复用带v5大剂量警告的图，以当前完整CSV/JSON和tracker比较表报告。
+
+session10381退出0，21:34核对四项共享lease均free，无待执行队列。重启累计4032 forwards/672.919秒，不含资源等待；audit封存，automation保持ACTIVE/5分钟，未修改长期prompt。下一笔实际扩展/预算仅留tracker。plan科学路径无需变化；本地忽略文件tracker SHA256=55e850cef6a6598e1fc5010edf7f34e27127575481028c7d247abb64198cb154，plan=b2da606245958900dd5d059731bcc3af4d7b2fbe48828001cc0a528d558e6d1d。白名单runner、测试、配置与本日志成组同步，无数据/大文件上传。
