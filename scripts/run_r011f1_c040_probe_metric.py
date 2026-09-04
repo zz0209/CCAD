@@ -28,6 +28,21 @@ def write_json(path: Path, value: object) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def load_config(path: Path) -> tuple[dict, Path | None]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    inherited = raw.get("inherits_config")
+    if inherited is None:
+        return raw, None
+    if set(raw) != {"inherits_config", "overrides"}:
+        raise ValueError("suffix config may contain only inherits_config and overrides")
+    base_path = ROOT / inherited
+    base = json.loads(base_path.read_text(encoding="utf-8"))
+    merged = {**base, **raw["overrides"]}
+    merged["inherited_config_path"] = inherited
+    merged["inherited_config_sha256"] = sha256(base_path)
+    return merged, base_path
+
+
 def aggregate(rows: list[dict]) -> str:
     payload = "".join(f"{row['path']}:{row['sha256']}\n" for row in sorted(rows, key=lambda row: row["path"]))
     return hashlib.sha256(payload.encode()).hexdigest()
@@ -42,7 +57,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
     args = parser.parse_args()
-    cfg = json.loads(args.config.read_text(encoding="utf-8"))
+    cfg, inherited_config_path = load_config(args.config)
     run_dir = ROOT / "runs" / cfg["run_id"]
     if run_dir.exists():
         raise FileExistsError(run_dir)
@@ -63,14 +78,19 @@ def main() -> int:
         "raw_hook_manifest": Path(cfg["raw_hook_manifest_path"]),
         "model_config": Path(cfg["model_local_dir"]) / "config.json",
     }
-    write_json(run_dir / "inputs.json", {"inputs": [
+    input_rows = [
         file_entry(args.config.resolve(), "CCAD frozen config", "protocol"),
+    ]
+    if inherited_config_path is not None:
+        input_rows.append(file_entry(inherited_config_path, "CCAD frozen inherited config", "inherited_protocol"))
+    input_rows.extend([
         file_entry(paths["protocol"], "R011-F1 pre-audit protocol", "parent_protocol"),
         file_entry(paths["token_manifest"], "R008a paired corpus", "token_manifest"),
         file_entry(paths["sequence_records"], "R008a paired corpus", "sequence_records"),
         file_entry(paths["raw_hook_manifest"], "R011-S1 shared hook asset", "raw_hook_manifest"),
         file_entry(paths["model_config"], cfg["model_id"], "model_config", cfg["model_license"]),
-    ]})
+    ])
+    write_json(run_dir / "inputs.json", {"inputs": input_rows})
     git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     git_status = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True, capture_output=True).stdout.splitlines()
     write_json(run_dir / "manifest.json", {

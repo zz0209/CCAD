@@ -49,6 +49,14 @@ class R011F1ProtocolTests(unittest.TestCase):
         ):
             self.assertEqual(cfg[field], parent[field])
 
+    def test_c040_v2_changes_only_execution_identity(self) -> None:
+        base = json.loads((ROOT / "configs/r011f1_c040_probe_metric_v1.json").read_text(encoding="utf-8"))
+        suffix = json.loads((ROOT / "configs/r011f1_c040_probe_metric_v2.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(suffix), {"inherits_config", "overrides"})
+        self.assertEqual(set(suffix["overrides"]), {"run_id", "correction_from", "correction_reason"})
+        self.assertEqual(suffix["inherits_config"], "configs/r011f1_c040_probe_metric_v1.json")
+        self.assertEqual(base["run_id"], suffix["overrides"]["correction_from"])
+
 
 if __name__ == "__main__":
     unittest.main()

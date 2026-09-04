@@ -1,0 +1,8 @@
+{
+  "inherits_config": "configs/r011f1_c040_probe_metric_v1.json",
+  "overrides": {
+    "run_id": "R011_F1_C040_probe_metric_v2_20260904T160500Z",
+    "correction_from": "R011_F1_C040_probe_metric_v1_20260904T154500Z",
+    "correction_reason": "Invoke the already frozen run with the existing R004 CUDA/Transformers environment; no state, direction, amplitude, sketch, metric, split, or gate changes"
+  }
+}
