@@ -2743,3 +2743,17 @@ tracker本地SHA256=000fc9b7d90f7a1f66eb3988dba099f7f6817eb99ba678bd1538ea4cd6ac
 v7于22:09:47 UTC创建run并真实启动，run manifest覆盖为实际cpu-heavy→gpu-0及原因；原有科学参数未变。修改runner仅3行可选资源元数据，配置只增2项resource字段，不改数值路径。锁定环境spec canonical SHA256仍为8348de46ad5dd5c721867641e59a9d9d53e1f083622db98af51089e2bf2c9d43，按run-experiment环境契约warm reuse，无依赖变动。source_snapshot保留本次运行源码；selection去掉新增target列表后与v6完全相同。
 
 到22:13 UTC已持续记录约600/1472 forwards，仍RUNNING、CPU/GPU租约正常续租；不是实验完成或新效应结论。先前600秒资源超时队列已关闭，本轮仅一个模型进程，定位见tracker，不应重复启动。加载比此前慢，仍沿用有界1472-forward规模；完成后核对首target重放、全target异质性与真实分母。tracker本地SHA256=105994d1623ec1d627b5893687843b084f5a9029669862cbb17d3d12a9c61201。此次用户请求已实现实际推进；同单元同步资源元数据、配置与事实日志（包含此前待同步的资源超时条目），数值分析待run完成。automation保持ACTIVE/5分钟。
+
+## 2026-09-04 22:25 UTC — mean-free限量动态作用跨全部target保留
+
+`F4_source_reference_causal_dev_v7_alltargets_20260904`于22:15:51 UTC完成，1472 forwards/363.884807秒、1280行，allocated VRAM841,839,104 bytes。约6分钟超过原3–5分钟估算，包含较慢模型加载；后续同规模预算据此调整，未虚构吞吐。session20101退出0，CPU/GPU租约释放，无整盘独占。22:21检查计算资源已转交EndoSAE_EndoFM自己的训练任务，没有重复启动/抢占。6项自检、no-op0、replay1.72954e-5、artifact契约PASS；这些检查不称独立科学审查。
+
+**正checkpoint。** 既有source有源三query在全部4个target上的正条件、两个endpoint均优于zero与wrong-matched。centered-logit每个target内的pair中位数范围：s2:2176 target=.010716–.017342，raw=.098526，wrong=.928935–.929953；s3:1230 target=.056548–.102096，raw=.034232，wrong=1.640603–2.029113；s4:693 target=.089218–.208791，raw=.336183，wrong=.507526–.630496。next-state target范围分别.009636–.015476、.087931–.119551、.107007–.179961；对应raw=.088661/.056051/.313446。s2和s4在所有target/两个endpoint都比raw更好，s3全部target仍是raw更好。支持一个可发展的跨seed动态作用范围，不支持普适SAE优势、人类概念唯一性或native必要性。
+
+**完整分母。** 全8query正条件centered-logit的target/raw/wrong-matched跨query中位数=.736222/1.468759/1.644564，target 6/8优于raw、5/8优于wrong、4/8优于zero；next-state=.913946/1.082199/1.678106。负条件centered-logit=1.287397/4.350217/1.312191，target仅3/8优于zero。2个空pair按4target×5方法展开为40空mask行/120缺失endpoint，s5:710正条件8有效观察、其余16，缺失不计成功。三强例是3query×4target的依赖方向，不是12个独立seed重复；原recipient/donor文档未变，因此本轮不是新数据确认。与v6共享的320行hook和全部endpoint逐字段精确相同，新增960行来自其余target。
+
+原始metrics SHA256=17c6f0db14ac293c11e930bf30174e8e2f74b790888bb32164e962ce5547f1c8；query_summary.json=aaa02abecc405b73d4074b98742745d483527c19220ee801c8f1286304c22d42；target_summary.csv=2cbc00b0088e23b876366e7b14d3bfe3a6e3ecd46210894cf1e8268780d1fa59。未新训练/拟合、audit保持封存。重启累计5504 forwards/1036.803807秒，不含排队。
+
+**图与下一笔投入。** 复用stdlib SVG脚本，按scientific-visualization的全分母、共同log尺度、色/形双编码原则，修正target数量和实际dose脚注，加入逐target pair中位数min–max须线（不是CI）。图含正负两panel、全部48query-method点/48须线，x为实际限量source hook能量，zero=1、缺失pair和依赖均说明；无平滑。`difference_energy.svg` SHA256=7490b436bb615c3b44891e9ee67b15b4accb321fc53bb6f0658222d7ac5b3d35，CSV/provenance同目录。XML/范围数量检查通过，未声称像素预览或出版合规；Codex文件预览已排入当前任务。先前自然幅度图不覆盖。
+
+下一步优先在未选开发文档复制既有有源范围，排除全部已用IDs，规则与预算只维护tracker，不再添加一列无关门。tracker本地SHA256=1fc44eca44ca5d8ff2bcae3a48f7bd92864cd79d3289febd4338c827eb09d6aa；plan路径无需改变。automation仍ACTIVE/5分钟。本轮图脚本与日志成组白名单同步，全部原始结果留本地。
