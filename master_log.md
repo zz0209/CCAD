@@ -2480,3 +2480,22 @@ Primary MSCC calibration结果为0/2,560 `FOUND`；report-only `.10`和`.20`敏�
 **协议冻结。** 新增`configs/R011_F1_PREAUDIT_PROTOCOL_20260904_112000.md`与`configs/r011_f1_preaudit_protocol_v1.json`。独立单位固定为query×ordered seed pair；40-query feasibility由R009b每seed×energy stratum最低selection hash产生；positive/hard-negative只由source codes定义；source/target local universes为32×至多128、每relation 4,096 feature-pair预算；rank固定1/2/4/8。C040固定为256个discovery hook states×4 Rademacher directions、±0.01 hook-RMS central perturbation、256维next-logit sketch、ridge fraction `1e-4`与eigen tolerance `1e-6`，并以未用于metric拟合的next-state residual作为primary causal screen。Calibration只可选rank/阈值/refusal；audit禁止读取。40-query screen若失败即结束v1，不追加candidate/threshold变体；若通过只授权同规则扩到完整640 panel。配置保持`execution_enabled=false`，直到C040 probe artifact实现与静态验证完成。
 
 **验证与边界。** 稀疏kernel对显式dense centered fit，以及带C040 metric和hard-negative contrast的fit均在`1e-10`内一致；targeted 13/13、py_compile与`git diff --check` PASS。全发现运行中其余196项PASS，唯一collection error是既有R006 family-paired test依赖当前系统Python未安装的`mpmath`，未进入测试主体且与本轮代码无关；不把该命令写成full-suite PASS。Audit未打开、没有真实calibration结果、没有新文献或GPU运行。下一步只实现/静态审计C040 query-agnostic probe artifact，然后把protocol的`execution_enabled`改为true并执行唯一40-query pre-audit screen；不能越过该门直接读calibration。
+
+## 2026-09-04 11:40 EDT — C040工程artifact PASS但科学metric HOLD；冻结协议变更需用户裁决
+
+**执行与失败保留。** 按R011-F1冻结协议实现discovery-only、query-agnostic C040 probes。V1使用系统Python，因缺`transformers`在模型计算前FAIL，artifact contract仍PASS；V2在正确CUDA环境完成probe/model计算，但finalizer无法JSON序列化NumPy boolean，原`status.json`停在stale `RUNNING`。资源管理器确认无process/lease存活；已追加`CORRECTION.md`将其明确为incomplete FAIL而不改写原失败状态。只修`bool(value)` finalizer的V3 `R011_F1_C040_probe_metric_v3_20260904T163500Z`为11/11与contract PASS，metric SHA-256=`2EE85D0B39E36E1F7FC186356155C4C45F3C32CC61E5A784A9ABE569E34C5266`，raw metrics SHA-256=`13985E6F47F4241528D45378648867E7D849D4A79F0D4FD748BFD8BE074A4632`。所有leases均释放。
+
+**Raw table与异常归因。** V3用256个discovery states×4独立方向=1,024 probes、2,048 central variants。Effect norm min/median/max=`.8093/2.3780/21,355.024`；trace-normalized metric rank=2、effective rank=`1.000091`、top eigenvalue=`767.9957/768`。唯一极端state 108位于sequence569、position31，前一token为EOT，四方向norm约`2,523/12,905/13,494/21,355`。只读全ledger诊断如下：
+
+| 输入分组 | states | state-max median | q90 | max |
+|---|---:|---:|---:|---:|
+| 前一token为EOT | 2 | 10,710.60 | 19,226.14 | 21,355.02 |
+| 距前一EOT≤8 token | 9 | 39.93 | 4,343.01 | 21,355.02 |
+| 距前一EOT>8 token | 247 | 3.62 | 10.99 | 131.20 |
+| multi-document sequence | 121 | 3.86 | 19.92 | 21,355.02 |
+
+另一个immediate-post-EOT state的max仅`66.17`，所以边界与极端值相关但不充分；不得把“删除EOT附近state”当作已证实修复。为区分batch replay/有限差分伪影，预写并提交bounded diagnostic `389067a`，随后在GPU-0 lease下运行`R011_F1_C040_probe_stability_v1_20260904T170000Z`。四个固定诊断states×4方向×relative amplitude `.003/.01/.03`共96 variants，5/5与contract PASS；`.01`复放相对v3最大RMS误差=`3.22e-8`，极端state相对三controls的min-to-max separation=`12.998×`，但跨幅度maximum ratio=`1.479`超过预写`1.25`，输出`FINITE_DIFFERENCE_OR_STATE_LOCALITY_NOT_CONFIRMED`。Raw SHA-256=`70C036B949DB2E24083DDA0B237F0D82DE81F59A087B88F0E3BF30DC130CC440`；rows=`A614BFDA83FD43FB998BFA317E2E75C87B3028DBD6B3DBF2060183B5FE641376`。该diagnostic明确禁止用于正式state/阈值选择。
+
+**设计审计与gate影响。** 现v1让每个state使用不同随机方向，再对全部`(d,J_xd)`拟合单一ridge map。在线性各向同性近似下，它得到平均Jacobian `E[J_x]`并形成`E[J_x]^T E[J_x]`，不是FCC需要的平均平方敏感度`E[J_x^T J_x]`；state-dependent Jacobian时会产生cancellation与state-direction混杂。V3近rank-1和单state极端主导把这个风险实化，因此V3虽工程PASS但不能作为科学metric，不能据此开启FCC calibration。
+
+R011-F1转`BLOCKED`，但母对象FCC不变；`execution_enabled=false`，calibration/audit从未读取。推荐fresh协议改为crossed shared directions：同一方向跨document-balanced、输入侧固定boundary-margin states复用，拼接/等权聚合各state output effects后拟合stacked Jacobian，并先过state-varying Jacobian synthetic recovery、state-duplication invariance与boundary-rule测试。只删异常点或直接沿用v3均不接受。由于这会修改已标`FROZEN FOR IMPLEMENTATION`的§5 probe contract，按AGENTS必须请求用户批准，不能由automation静默替换。Targeted protocol6/6、artifact/activation10/10、py_compile和diff check PASS；一次额外collection命令因环境缺SciPy/误写不存在的test module而未进入对应测试，不计项目失败。阶段性代码提交`389067a`已推送且当时HEAD=`origin/main`。
