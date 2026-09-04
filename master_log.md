@@ -2458,3 +2458,15 @@ Primary MSCC calibration结果为0/2,560 `FOUND`；report-only `.10`和`.20`敏�
 ## 2026-09-04 03:14 EDT — 双轨首轮收口后automation已暂停
 
 按上一条重大裁决边界，`ccad` heartbeat保留原prompt与15分钟RRULE但状态由`ACTIVE`改为`PAUSED`，未删除。暂停期间不启动C040、训练机制/设置扩展或audit；待用户选择论文/方法方向后再恢复并同步相应prompt与阶段门。
+
+## 2026-09-04 11:00 EDT — 母对象回正为模糊多对多concept correspondence；C040/R011-F1启动
+
+**触发与纠错。** 用户明确指出上一轮把R011-NR1/R011-S1的退化对象负结果错误提升为方向阻塞，并重申论文最高概念不得改变：必须保持为基于线性代数表示的模糊many-to-many concept matching，理论蓝本只允许必要微调。该裁决覆盖上一条“等待用户选择C040/训练/收窄”的暂停边界。今后MSCC仅是binary native-support端点，SCT仅是丢弃两侧对应关系后的marginal-subspace端点；两者失败不能终止、改名或降级母问题。
+
+**学习与方法裁决。** 重新阅读理论PDF中动态贡献对象、THM-CBSM-004/005/009、exact circuit与因果转移边界，并核对DAS/MAS、Li15、Semantic OT和sparsity-controlled many-to-many OT。Generic many-to-many或soft coupling本身已明显拥挤，故新的承重对象必须保留CCAD特有的paired dynamic contribution、source-only query、gauge-aware relation、refusal和held-out causal validation。冻结母对象为Fuzzy Contribution Correspondence：对两侧独立mean-centered native contribution banks学习paired low-rank loadings与cross operator `K=A Sigma B^T`，以`|K|/||K||_1`给出允许split/merge、重叠与非整数effective support的软耦合。因子坐标不作concept本体，relation/operator才是比较对象。
+
+**C040与非平凡性控制。** C040正式触发：用discovery-only、query-agnostic hook probes与宽output sketch估计PSD downstream-sensitivity pullback metric；Euclidean FCC保留为必报基线。为避免R011-S1被raw/global PCA平凡解释，R011-F1同时要求同energy hard-negative contrast与cross-query collision控制。Metric学习endpoint不得成为唯一验证endpoint；calibration只选rank/阈值/refusal，audit继续封存。强对照预定为native/MSCC、SCT、raw/global relation、Li15、sparsity-controlled/semantic OT、stitching/MAS/DAS-style alignment与matched random，全部匹配rank、energy、coverage、candidate count和selection budget。
+
+**实现与验证。** 新增`src/ccad/fuzzy_correspondence.py`：实现ridge probe pullback metric、PSD数值因子、query-contrastive regularized paired CCA relation、soft coupling/marginals/effective support、rank-boundary gap与cross-query Bhattacharyya collision。新增7个单测覆盖output-sensitive subspace、split/merge、任意旋转下的aggregate relation、downstream-null差异、hard-negative nuisance抑制、soft overlap与equal competing rank-one ambiguity。第一次回归中“旋转应给两个逐feature canonical values=1”失败；复核表明一般旋转不保持逐feature contribution-process span，只有group aggregate process由THM-CBSM-004保证不变。保留这一数学边界并把测试修正为rank-1 aggregate relation，而非放宽数值阈值。最终targeted 7/7、全项目194/194、py_compile与`git diff --check` PASS。
+
+**治理、引用与下一步。** `AGENTS.md`、计划、tracker、components和registry已登记C1/C2-FCC、C040/C044与R011-F1；新增sparsity-controlled OT prior-art警告。Automation `ccad`已由PAUSED恢复ACTIVE，常态间隔恢复为5分钟，prompt改为持续推进FCC且不得再因退化端点失败请求方向裁决。Audit未打开，本轮没有真实SAE/FCC结果。下一工作单元是把dense合成内核改为稀疏contribution-kernel实现，完成overlap/competing-relation refusal artifact，并在读取calibration前冻结R011-F1真实discovery协议。
