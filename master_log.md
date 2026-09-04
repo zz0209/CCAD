@@ -2595,3 +2595,9 @@ Fresh `r011f4_hook_transport_real_v2`仅修artifact serialization：factor矩阵
 **失败保留与fresh suffix。** V1真实执行得到rank64 explained variance `.8873410940`，命中预写停止，但runner将该科学分支作为异常收口，contract仍PASS；旧run保留。V2只增加stop artifact分支并从commit `a945b00`执行，但该分支早于`started_compute`初始化，触发`UnboundLocalError`，状态停在stale RUNNING；资源管理器确认process和leases均已释放，并以`CORRECTION.md`标为工程FAIL。Fresh v3只把计时器初始化前移，从clean commit `a06d236`运行；state、rank、阈值、representation、control和数据均未改变。
 
 **正式裁决。** `R011_F5_residual_transport_real_v3_20260904T192000Z`为6/6 checks与artifact contract PASS，metrics SHA-256=`98D6516431C9F860C7DC0BC5D2221E99F6A8941F66B36E87711350A960A4CCB7`；独立validator 7/7复核rank cap、`.887341<.90`、无surface/decision/progression与audit关闭。输出`STOP_NUISANCE_VARIANCE_THRESHOLD_NOT_REACHED`。由于停止发生在calibration载入前，本轮没有transport screen、causal forward、full-640或audit读取。R011-F5转`CUT`；不放宽`.90`、不扩大cap、不做nuisance-rank sweep。下一承重单元按预写规则转SAE训练/configuration证据；FCC母对象不变。本轮无新增文献，registry不变；所有CPU/disk/GPU resources为free。
+
+## 2026-09-04 15:25 EDT — C049单因素width机制screen预冻结
+
+按`experimental-design`先固定单位、block、对照与停止门。C049只把R011-NR1 k32的dictionary width从3,072改为16,384；底模/revision、layer5 resid-post、sparsify、k32、4,194,304-token corpus/order、optimizer、batch、validation和初始化seeds1/2全部保持一致。独立单位是SAE seed，按seed与旧width3072配对；tokens/sequences只作重复测量。Width16,384是与直接相关文献对齐的唯一处理水平，不做width sweep；公开width65,536单seed checkpoint仍只作外部质量锚点。
+
+预写resource gate先执行seed1 256-step smoke：peak allocated VRAM≤6GiB、外推≤50分钟/seed、checkpoint≤1GiB/seed、exact L0与hook/CE pipeline必须通过。两正式seed各需FVE≥.97、CE recovered≥.93、alive≥.50、L0=32、decoder norm error≤1e-5。结构晋级需full-dictionary PW-MCC较`.48940`提高≥`.05`，且source-evaluable native FOUND coverage≥10%、双向各≥5%；best-single BCC不能替代coverage。协议`configs/R011_W1_WIDTH_MECHANISM_PROTOCOL_20260904_152500.md`、manifest与static validator完成，9/9 PASS，py_compile/diff check PASS。当前`execution_enabled=false`，尚未申请GPU或读取audit；下一步只实现capacity smoke配置/runner并再静态复核。本轮未新增文献。

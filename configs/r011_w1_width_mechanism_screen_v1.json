@@ -1,0 +1,16 @@
+{
+  "schema_version": "r011.w1.width_mechanism.screen.v1",
+  "run_parent": "R011-W1",
+  "purpose": "Pre-training freeze and resource gate for one width-only cross-seed mechanism screen",
+  "protocol_document": "configs/R011_W1_WIDTH_MECHANISM_PROTOCOL_20260904_152500.md",
+  "matched_baseline_configs": {
+    "seed1": {"path": "configs/r011_nr1_k32_seed1_v1.json", "sha256": "99ca8d7c147a0e37948b5a9454898725f6bb2ce5314e27d970374dc204545578"},
+    "seed2": {"path": "configs/r011_nr1_k32_seed2_v1.json", "sha256": "87ede8bafe5112b93f2c8306ad34f4605c828ae83025a4ce3d1af50f4c7860bc"}
+  },
+  "treatment_factor": "num_latents", "baseline_num_latents": 3072, "treatment_num_latents": 16384, "fixed_k": 32, "formal_seeds": [1, 2], "formal_train_tokens_per_seed": 4194304,
+  "capacity_smoke_seed": 1, "capacity_smoke_steps": 256, "maximum_peak_allocated_vram_bytes": 6442450944, "maximum_projected_seconds_per_seed": 3000, "maximum_projected_checkpoint_bytes_per_seed": 1073741824,
+  "minimum_fve": 0.97, "minimum_ce_recovered": 0.93, "minimum_alive_fraction": 0.5, "required_l0": 32, "maximum_decoder_norm_error": 0.00001,
+  "baseline_pw_mcc": 0.4894, "minimum_pw_mcc_gain": 0.05, "minimum_native_found_coverage": 0.1, "minimum_native_found_coverage_per_direction": 0.05,
+  "statistics_unit": "independent_sae_initialization_seed_with_tokens_and_sequences_as_repeated_measurements", "forbidden_splits": ["audit"], "audit_opened": false, "execution_enabled": false,
+  "scope_limit": "One width16384 versus width3072 TopK-k32 mechanism screen; no width/k/hook/budget/optimizer sweep, audit, causal claim, five-seed promotion or longer-budget continuation"
+}
