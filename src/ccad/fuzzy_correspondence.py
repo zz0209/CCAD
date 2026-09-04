@@ -429,6 +429,40 @@ def evaluate_fixed_correspondence(
     )
 
 
+def evaluate_fixed_correspondence_from_kernels(
+    source_gram: np.ndarray,
+    target_gram: np.ndarray,
+    cross_gram: np.ndarray,
+    source_loadings: np.ndarray,
+    target_loadings: np.ndarray,
+    *,
+    energy_epsilon: float = 1e-12,
+) -> FixedRelationMetrics:
+    """Evaluate discovery-frozen FCC loadings using held-out kernels."""
+
+    source = _square(source_gram, "source_gram")
+    target = _square(target_gram, "target_gram")
+    cross = _matrix(cross_gram, "cross_gram")
+    left = _matrix(source_loadings, "source_loadings")
+    right = _matrix(target_loadings, "target_loadings")
+    if cross.shape != (source.shape[0], target.shape[0]):
+        raise ValueError("cross kernel dimensions differ from marginal kernels")
+    if left.shape[0] != source.shape[0] or right.shape[0] != target.shape[0] or left.shape[1] != right.shape[1]:
+        raise ValueError("loading and kernel dimensions differ")
+    source_energy = float(np.trace(left.T @ source @ left))
+    target_energy = float(np.trace(right.T @ target @ right))
+    cross_energy = float(np.trace(left.T @ cross @ right))
+    denominator = source_energy + target_energy
+    residual = max(0.0, denominator - 2.0 * cross_energy)
+    return FixedRelationMetrics(
+        source_energy=source_energy,
+        target_energy=target_energy,
+        cross_energy=cross_energy,
+        normalized_residual=(residual / source_energy if source_energy > energy_epsilon else None),
+        bcc=(2.0 * cross_energy / denominator if denominator > energy_epsilon else None),
+    )
+
+
 def _weighted_feature_matrix(bank: np.ndarray, weights: np.ndarray) -> np.ndarray:
     weighted = bank * np.sqrt(weights)[:, None, None]
     return weighted.transpose(0, 2, 1).reshape(-1, bank.shape[1])

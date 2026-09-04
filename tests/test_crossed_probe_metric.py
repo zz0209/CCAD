@@ -4,7 +4,11 @@ import unittest
 
 import numpy as np
 
-from ccad.fuzzy_correspondence import fit_crossed_probe_metric
+from ccad.fuzzy_correspondence import (
+    evaluate_fixed_correspondence,
+    evaluate_fixed_correspondence_from_kernels,
+    fit_crossed_probe_metric,
+)
 
 
 class CrossedProbeMetricTests(unittest.TestCase):
@@ -31,6 +35,30 @@ class CrossedProbeMetricTests(unittest.TestCase):
             directions, np.repeat(effects, 2, axis=0), ridge_fraction=0.0,
         )
         np.testing.assert_allclose(original.matrix, duplicated.matrix, atol=1e-10)
+
+    def test_kernel_fixed_evaluation_matches_dense_bank(self) -> None:
+        rng = np.random.default_rng(73)
+        source = rng.normal(size=(40, 3, 5))
+        target = rng.normal(size=(40, 4, 5))
+        weights = rng.random(40)
+        weights /= weights.sum()
+        left = rng.normal(size=(3, 2))
+        right = rng.normal(size=(4, 2))
+        dense = evaluate_fixed_correspondence(source, target, weights, left, right)
+        source_matrix = (source * np.sqrt(weights)[:, None, None]).transpose(0, 2, 1).reshape(-1, 3)
+        target_matrix = (target * np.sqrt(weights)[:, None, None]).transpose(0, 2, 1).reshape(-1, 4)
+        kernel = evaluate_fixed_correspondence_from_kernels(
+            source_matrix.T @ source_matrix,
+            target_matrix.T @ target_matrix,
+            source_matrix.T @ target_matrix,
+            left,
+            right,
+        )
+        self.assertAlmostEqual(dense.source_energy, kernel.source_energy)
+        self.assertAlmostEqual(dense.target_energy, kernel.target_energy)
+        self.assertAlmostEqual(dense.cross_energy, kernel.cross_energy)
+        self.assertAlmostEqual(dense.normalized_residual, kernel.normalized_residual)
+        self.assertAlmostEqual(dense.bcc, kernel.bcc)
 
 
 if __name__ == "__main__":
