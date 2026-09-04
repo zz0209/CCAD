@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 from scipy import __version__ as scipy_version  # noqa: E402
 from ccad.artifacts import sha256, validate_run_directory  # noqa: E402
+from ccad.split_access import SplitAccess  # noqa: E402
 from ccad.causal_metric_probe import select_document_balanced_states  # noqa: E402
 from ccad.hook_transport import (  # noqa: E402
     decide_transport_gate,
@@ -89,7 +90,7 @@ def main() -> int:
     cfg = json.loads(args.config.read_text(encoding="utf-8")); run_dir = ROOT / "runs" / cfg["run_id"]
     if run_dir.exists(): raise FileExistsError(run_dir)
     run_dir.mkdir(parents=True); started = datetime.now(timezone.utc).isoformat(); write_json(run_dir / "config.resolved.json", cfg)
-    code_paths = [Path(__file__).resolve(), ROOT / "src/ccad/hook_transport.py", ROOT / "scripts/run_r009c_atom_discovery.py", ROOT / "scripts/run_r011f1_euclidean_surface.py"]
+    code_paths = [Path(__file__).resolve(), ROOT / "src/ccad/hook_transport.py", ROOT / "src/ccad/split_access.py", ROOT / "scripts/run_r009c_atom_discovery.py", ROOT / "scripts/run_r011f1_euclidean_surface.py"]
     code_rows = [{"path": path.relative_to(ROOT).as_posix(), "sha256": sha256(path), "bytes": path.stat().st_size} for path in code_paths]
     write_json(run_dir / "code_hashes.json", {"files": code_rows, "aggregate_sha256": aggregate(code_rows)})
     residual_mode = "nuisance_state_count" in cfg
@@ -110,8 +111,10 @@ def main() -> int:
     })
     write_json(run_dir / "status.json", {"status": "RUNNING", "updated_utc": started})
     record, error, status = None, None, "FAIL"
+    nuisance = None
+    matrices = raw = None
+    started_compute = time.perf_counter()
     try:
-        started_compute = time.perf_counter()
         bound = {
             "synthetic_status": sha256(paths["synthetic_status"]).lower() == cfg["synthetic_gate_status_sha256"], "synthetic_metrics": sha256(paths["synthetic_metrics"]).lower() == cfg["synthetic_gate_metrics_sha256"],
             "reference": sha256(paths["reference"]).lower() == cfg["reference_surface_sha256"], "census": sha256(paths["census"]).lower() == cfg["source_census_sha256"], "sequences": sha256(paths["sequences"]).lower() == cfg["sequence_records_sha256"],
@@ -128,13 +131,14 @@ def main() -> int:
         stats = {(int(row["seed"]), int(row["atom"])): row for row in census}
         means = {seed: np.asarray([stats[(seed, atom)]["mean_code"] for atom in range(cfg["num_latents"])], dtype=np.float64) for seed in cfg["source_seeds"]}
         asset_dir = Path(cfg["bulk_asset_dir"]); asset_manifest = json.loads(paths["asset_manifest"].read_text(encoding="utf-8")); split_tokens = {row["split"]: int(row["tokens"]) for row in asset_manifest["splits"]}
-        matrices = {split: {seed: sparse_codes(asset_dir, split, seed, split_tokens[split], cfg["k"], cfg["num_latents"]) for seed in cfg["source_seeds"]} for split in cfg["splits"]}
+        if set(cfg["splits"]) - {"discovery", "calibration"}:
+            raise ValueError("this development runner permits discovery/calibration codes only")
+        matrices = SplitAccess(cfg["splits"], lambda split: {seed: sparse_codes(asset_dir, split, seed, split_tokens[split], cfg["k"], cfg["num_latents"]) for seed in cfg["source_seeds"]})
         decoders = {seed: decoder(asset_dir, seed, cfg["num_latents"], cfg["hook_hidden_size"]).astype(np.float64, copy=False) for seed in cfg["source_seeds"]}
         raw_manifest = json.loads(paths["raw_manifest"].read_text(encoding="utf-8")); raw_meta = {row["split"]: row for row in raw_manifest["splits"]}
-        raw = {split: np.memmap(raw_meta[split]["path"], dtype="<f4", mode="r").reshape(raw_meta[split]["shape"]) for split in ("mean", "discovery", "calibration")}
+        raw = SplitAccess(("mean", "discovery", "calibration"), lambda split: np.memmap(raw_meta[split]["path"], dtype="<f4", mode="r").reshape(raw_meta[split]["shape"]))
         raw_mean = np.mean(raw["mean"], axis=0, dtype=np.float64)
         sequence_payload = json.loads(paths["sequences"].read_text(encoding="utf-8"))["sequences"]
-        nuisance = None
         unresidualized = {}
         if residual_mode:
             nuisance_states = select_document_balanced_states(sequence_payload, split="discovery", count=cfg["nuisance_state_count"], token_positions=tuple(cfg["nuisance_state_positions"]), salt=cfg["nuisance_state_salt"])
@@ -253,12 +257,14 @@ def main() -> int:
         status = "PASS" if all(checks.values()) else "FAIL"; write_json(run_dir / "environment.json", {"python": platform.python_version(), "numpy": np.__version__, "scipy": scipy_version, "platform": platform.platform()})
     except Exception as exc:
         if residual_mode and nuisance is not None and nuisance.status == "THRESHOLD_NOT_REACHED":
-            record = {"checks": {"frozen_inputs_bound": bool(all(bound.values())), "synthetic_pass": synthetic_status == "PASS", "nuisance_threshold_evaluated": True, "no_calibration_read": True, "no_causal_forward": True, "audit_not_opened": not cfg["audit_opened"] and cfg["forbidden_splits"] == ["audit"]}, "screen_decision": "STOP_NUISANCE_VARIANCE_THRESHOLD_NOT_REACHED", "residual_mode": True, "nuisance_rank": nuisance.rank, "nuisance_explained_variance_fraction": nuisance.explained_variance_fraction, "found": 0, "coverage": 0.0, "progression_pass": False, "surface_rows": 0, "decision_rows": 0, "wall_seconds": time.perf_counter() - started_compute, "scope_limit": cfg["scope_limit"]}
+            no_calibration_request = not matrices.requested("calibration") and not raw.requested("calibration")
+            record = {"checks": {"frozen_inputs_bound": bool(all(bound.values())), "synthetic_pass": synthetic_status == "PASS", "nuisance_threshold_evaluated": True, "no_calibration_read": no_calibration_request, "no_causal_forward": True, "audit_not_opened": not cfg["audit_opened"] and cfg["forbidden_splits"] == ["audit"]}, "screen_decision": "STOP_NUISANCE_VARIANCE_THRESHOLD_NOT_REACHED", "residual_mode": True, "nuisance_rank": nuisance.rank, "nuisance_explained_variance_fraction": nuisance.explained_variance_fraction, "found": 0, "coverage": 0.0, "progression_pass": False, "surface_rows": 0, "decision_rows": 0, "wall_seconds": time.perf_counter() - started_compute, "scope_limit": cfg["scope_limit"], "calibration_transport_evaluated": False}
             status = "PASS" if all(record["checks"].values()) else "FAIL"
             error = None
             write_json(run_dir / "environment.json", {"python": platform.python_version(), "numpy": np.__version__, "scipy": scipy_version, "platform": platform.platform()})
         else:
             error = f"{type(exc).__name__}: {exc}"; (run_dir / "stderr.log").write_text(traceback.format_exc(), encoding="utf-8"); write_json(run_dir / "environment.json", {"python": platform.python_version(), "error": error})
+    write_json(run_dir / "split_access.json", {"scope": "instrumented code-loader calls and raw memmap opens; not OS-level read tracing", "codes": matrices.events if matrices is not None else [], "raw_hook": raw.events if raw is not None else []})
     raw_path = run_dir / "metrics.raw.jsonl"; raw_path.write_text((json.dumps(record, sort_keys=True) + "\n") if record else "", encoding="utf-8")
     write_json(run_dir / "metrics.summary.json", {"status": status, "error": error, "checks_passed": sum(record["checks"].values()) if record else 0, "checks_total": len(record["checks"]) if record else 0, "metrics_raw_sha256": sha256(raw_path), "generator_script_path": "scripts/run_r011f4_hook_transport_real.py", "generator_script_sha256": sha256(Path(__file__).resolve()), "scope_limit": cfg["scope_limit"]})
     write_json(run_dir / "status.json", {"status": status, "updated_utc": datetime.now(timezone.utc).isoformat(), "error": error}); (run_dir / "stdout.log").write_text(json.dumps({"run_id": cfg["run_id"], "status": status, "screen_decision": record.get("screen_decision") if record else None}) + "\n", encoding="utf-8")

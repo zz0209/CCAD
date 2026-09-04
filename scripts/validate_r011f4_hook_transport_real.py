@@ -1,4 +1,4 @@
-"""Independent artifact and decision validation for the C047 real screen."""
+"""Artifact/decision consistency checks; not independent scientific replication."""
 from __future__ import annotations
 
 import argparse
@@ -30,7 +30,11 @@ def main() -> int:
             "no_screen_or_progression": record.get("surface_rows") == 0 and record.get("decision_rows") == 0 and record.get("progression_pass") is False,
             "audit_closed": cfg["audit_opened"] is False and cfg["forbidden_splits"] == ["audit"],
         }
-        print(json.dumps({"run_id": run_dir.name, "checks": checks, "checks_passed": sum(checks.values()), "checks_total": len(checks), "screen_decision": record["screen_decision"], "nuisance_rank": record["nuisance_rank"], "nuisance_explained_variance_fraction": record["nuisance_explained_variance_fraction"]}, indent=2, sort_keys=True))
+        access_path = run_dir / "split_access.json"
+        access = json.loads(access_path.read_text(encoding="utf-8")) if access_path.exists() else None
+        if access is not None:
+            checks["no_calibration_loader_request"] = not any(e["split"] == "calibration" for name in ("codes", "raw_hook") for e in access[name])
+        print(json.dumps({"run_id": run_dir.name, "checks": checks, "checks_passed": sum(checks.values()), "checks_total": len(checks), "screen_decision": record["screen_decision"], "nuisance_rank": record["nuisance_rank"], "nuisance_explained_variance_fraction": record["nuisance_explained_variance_fraction"], "verification_scope": {"variance_independently_recomputed": False, "split_access": "instrumented loader ledger only" if access is not None else "UNVERIFIED_LEGACY_RECORD", "audit_os_reads_verified": False}}, indent=2, sort_keys=True))
         return 0 if all(checks.values()) else 1
     rows = [json.loads(line) for line in (run_dir / "hook_transport_surface.jsonl").read_text(encoding="utf-8").splitlines() if line]
     decisions = [json.loads(line) for line in (run_dir / "hook_transport_decisions.jsonl").read_text(encoding="utf-8").splitlines() if line]

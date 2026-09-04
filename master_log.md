@@ -2601,3 +2601,31 @@ Fresh `r011f4_hook_transport_real_v2`仅修artifact serialization：factor矩阵
 按`experimental-design`先固定单位、block、对照与停止门。C049只把R011-NR1 k32的dictionary width从3,072改为16,384；底模/revision、layer5 resid-post、sparsify、k32、4,194,304-token corpus/order、optimizer、batch、validation和初始化seeds1/2全部保持一致。独立单位是SAE seed，按seed与旧width3072配对；tokens/sequences只作重复测量。Width16,384是与直接相关文献对齐的唯一处理水平，不做width sweep；公开width65,536单seed checkpoint仍只作外部质量锚点。
 
 预写resource gate先执行seed1 256-step smoke：peak allocated VRAM≤6GiB、外推≤50分钟/seed、checkpoint≤1GiB/seed、exact L0与hook/CE pipeline必须通过。两正式seed各需FVE≥.97、CE recovered≥.93、alive≥.50、L0=32、decoder norm error≤1e-5。结构晋级需full-dictionary PW-MCC较`.48940`提高≥`.05`，且source-evaluable native FOUND coverage≥10%、双向各≥5%；best-single BCC不能替代coverage。协议`configs/R011_W1_WIDTH_MECHANISM_PROTOCOL_20260904_152500.md`、manifest与static validator完成，9/9 PASS，py_compile/diff check PASS。当前`execution_enabled=false`，尚未申请GPU或读取audit；下一步只实现capacity smoke配置/runner并再静态复核。本轮未新增文献。
+
+## 2026-09-04 15:33 EDT — 用户请求的项目与母目录系统阅读
+
+**触发与范围。** 用户要求学习CCAD当前目录及母目录相关内容。本轮按治理顺序恢复状态，阅读当前研究对象、关键计划/追踪/日志、理论PDF完整证明部分与修订边界、核心贡献/MSCC/FCC/transport实现及相关测试；对母目录文献目录、既有90-PDF提取索引、六个应用项目和SAE Philosophy作分层梳理。没有打开封存audit、运行模型、改变协议/阶段门或操作任何automation。
+
+**产物与实际深度。** 新增本地 `RESEARCH_ORIENTATION_20260904.md`（SHA256 `2d0a594b6e7919880cdb91d0bb3a946f2649b8ef8d0e4310942e9bdda6bb0c7b`）和 `READING_INVENTORY_20260904.json`（SHA256 `d89b1c66d363a6515521c21d2b3572de9c4c4f4fe52d27b6bc6e076f18c21a86`），生成脚本 `tmp/build_orientation_inventory.py`。357个项目文本文件完成结构索引，含58 Markdown、142 JSON、157 Python；86个参考条目目录含82个paper.pdf与48个code目录；既有90条PDF路径均存在。167个run目录仅清点，关键已完成run的汇总被选择性读取。报告明确区分精读、片段阅读、既有摘录与机器索引，不声称完成所有论文/第三方代码的逐行审计或独立证明复核。索引是本条追加之前的快照，故其中master_log hash对应追加前版本。
+
+**核验与理解。** 索引时Python AST/JSON解析无失败，追加本条前357个文件hash复核无漂移；R011-F4决策文件重计160条、6条FOUND，符合日志。核对R011c/F4/F5原始汇总与C049 execution-disabled配置。报告强调FCC母对象、MSCC/SCT端点分离，旧BCC与source-normalized residual不能混用，F5只在nuisance选择门停止而没有产生residual transport结果。发现计划首页/理论稿/母目录wiki中的历史状态不可替代最新治理与记录；没有回写历史文档。
+
+**结果边界与下一步。** 本工作单元是研究阅读与接续地图，不是新科学run、全库citation audit或全球查新；无新文献采用/排除决定，REFERENCE_REGISTRY不变。当前科学接续仍为已冻结C049 capacity smoke。按第8.1节，本地阅读笔记与常规日志追加不单独触发commit/push；Git基线为2026782，保留全部既有状态。
+
+## 2026-09-04 16:05 EDT — 用户要求的研究流程重整、F5保证勘误与直接因果主线
+
+**触发与裁决。** 用户指出严苛代理门、过度工程化、重复开发panel和错误独立验证保证，要求科学实践方案、长期automation prompt与AGENTS修改。本工作单元已完成这些交付；没有启动新模型实验或宣布FCC阳性。新版AGENTS把可信度硬门、科学证据、预算门分开；atom/native、rank gap、collision、覆盖/全方向不再串联拥有FCC否决权。当前主线改为复用F4 signed relation的source-referenced直接因果开发判别，随后由其证据选择一次机制修正，再冻结独立确认；C049为候选而非唯一路线，旧配置execution-disabled保持。
+
+**实际科学核查。** 从F4 v2原surface（SHA256 334F4D8523035571B6EA636F0D621A4CA13382EDB37D6873A3F9884F7EE5C04F）重计：rank1/2/4/8各160个evaluable units均达到旧BCC>=.8、source-normalized residual<=.2；154/157/156/157个未过旧control advantage>=.05。rank8有56个effective-rank不足，不能把其结果称rank8成功。加入精确反例：正负条件都完美预测时BCC差=0，但线性endpoint正/负效应能量比可为10000。它证伪“该差一般等价因果特异性”，不证明真实F4因果有效。旧6/160 FOUND/CUT原样保留。
+
+**F5勘误与代码修复。** 撤回15:20、15:33条目及orientation中的“calibration未读”：历史runner在nuisance门前物化calibration codes并打开raw memmap；未计算calibration transport指标。未发现这些值参与nuisance选择或audit数组被加载，但不是OS级取证。旧7/7只支持保存字段一致性，未独立重算方差或读取边界。新增 `F5_READ_BOUNDARY_CORRECTION_20260904.md` 和run-local CORRECTION，原metrics/status不改。F4/F5 runner改用 `ccad.split_access.SplitAccess` lazy加载，记录loader成功/失败尝试与raw打开；初始化早停状态。Validator对旧run输出UNVERIFIED_LEGACY_RECORD及独立方差/OS读取未验证，7/7不再隐含更强保证。
+
+**验证。** 使用锁定 `D:/CCAD_Storage/environments/r004/Scripts/python.exe` 与已有r009 overlay，split-access 2项、specificity反例1项、hook-transport既有11项、真实runner早停入口stub1项共15项PASS。入口stub使用不存在的calibration文件和禁止code loader，确证停止能正常收口且无calibration loader调用；它不是实际nuisance方差复算或OS取证。py_compile和git diff --check PASS。旧F5 validator重新执行仍7/7，但明确打印验证范围；未重跑F5科学实验，无GPU/CPU-heavy/disk lease启动，无audit读取。
+
+**文档与引用。** `SCIENTIFIC_PRACTICE_PLAN_20260904.md`包括数学对象/干预、三工作包、统计独立性、直接因果预算、论文主图和分支选择；计划/tracker入口与orientation增加现行范围说明。REFERENCE_REGISTRY记录MAS v7、DAS/CLeaR2024、SeedStability v1一手页面复核与新消费者，不声称全球查新。旧AGENTS备份 `tmp/research_reset_20260904/AGENTS.before.md`（SHA256 af90709ddeb617dda25dd4c39280b41727c4ff88f6976ec198fa49c6cb3518f6），automation备份同目录automation.before.toml。
+
+产物SHA256：AGENTS=`7dcd44436f36df5a7d930f9bbf262957ab2349aa8612a9c094bef9d0117dc835`；科学方案=`a43d1e48fb04f4580b44981605a3ca98f4a3480cca1fbd8281745e0d674c5b82`；F5勘误=`830a4b5dc9530e1a8f25967a8157445f8d34cad77375384414db31119fc8501f`；长期prompt=`1e3e96507a41d40719ca7a5db6a5327532d989f2113801865253f75e898a758f`。本地被忽略研究文件不扩大Git白名单。
+
+**Automation与下一步。** 已通过app工具更新现有ccad的长期prompt，并逐字核对 `configs/CCAD_AUTOMATION_PROMPT_20260904.md`。保持PAUSED、5分钟与原target task不变，未恢复/删除。恢复后的第一个科学消费者是工作包A：8个source-only anchors、各4个target、rank1/4、正负文档与7种移除、两个剂量，初批上限4096单sequence-forward等价；先补实际ID/hash和实测资源预算，不再为内部选择请求批准。新结果仍须独立确认，正面论文目标保持但不保证预设方法成功。
+
+上条标题16:05为录入时间误差，实际初次写入为16:03 EDT。最终审阅补充了source projector在一般GL换基下的定义与hard-negative背景能量匹配范围；科学方案最终SHA256=`d9a9c5f0735ac85580baa07400f5112b6e567f6b8880cd8d464b454b6e40b13f`，取代上条方案hash。其余artifact身份不变。
