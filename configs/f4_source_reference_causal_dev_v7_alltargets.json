@@ -1,0 +1,16 @@
+{
+  "run_id": "F4_source_reference_causal_dev_v7_alltargets_20260904",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "ranks": [1], "documents_per_condition": 4, "targets_per_query": 4,
+  "local_content_positions": 4, "centered_logit_endpoint": true, "include_source_mean_only": true,
+  "donor_difference": true, "maximum_source_hook_fraction": 0.1,
+  "selection": "Same source-only query, recipient and donor rule as v6; expand only target count from one to all four other seeds.",
+  "intervention": "Same source-defined common dose as v6; independent means cancel. Source cap is not an independent cap on candidate magnitude.",
+  "budget": "1472 forwards, expected3-5min and allocatedVRAM<1GiB. Cross-target development expansion on unchanged recipient/donor documents, not independent confirmation."
+}

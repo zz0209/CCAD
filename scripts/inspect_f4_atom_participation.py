@@ -50,18 +50,23 @@ def main():
         s,a=q['source_seed'],q['source_atom'];t0=q['targets'][0];ids=surface[s,a,t0]['source_candidate_ids']
         for e in q['sequences']:
             pos=np.asarray(e['intervention_positions'],dtype=int)+e['sequence']*cfg['context_length']
+            donor_pos=np.asarray(e.get('donor_positions',[]),dtype=int)+e.get('donor_sequence',e['sequence'])*cfg['context_length']
             z={}
             for seed in [s]+q['targets']:
                 z[seed]=np.zeros((len(pos),cfg['num_latents']))
                 np.add.at(z[seed],(np.arange(len(pos))[:,None],indices[seed][pos]),acts[seed][pos])
+                if cfg.get('donor_difference'):
+                    assert len(pos)==len(donor_pos)
+                    np.add.at(z[seed],(np.arange(len(pos))[:,None],indices[seed][donor_pos]),-acts[seed][donor_pos])
+            active_means={seed:np.zeros_like(means[seed]) if cfg.get('donor_difference') else means[seed] for seed in z}
             for rank in cfg['ranks']:
                 b=f['source_basis'][lookup[s,a,t0],:,:rank].astype(np.float64)
                 common={'source_seed':s,'source_atom':a,'rank':rank,'condition':e['condition'],'sequence':e['sequence']}
-                source=participation(z[s][:,ids],means[s][ids],dec[s][ids].astype(np.float64)@b)
+                source=participation(z[s][:,ids],active_means[s][ids],dec[s][ids].astype(np.float64)@b)
                 out.append(dict(common,side='source',target_seed=None,**source))
                 for t in q['targets']:
                     w=f['query_target'][lookup[s,a,t],:,:rank].astype(np.float64)
-                    out.append(dict(common,side='target',target_seed=t,**participation(z[t],means[t],dec[t].astype(np.float64)@w)))
+                    out.append(dict(common,side='target',target_seed=t,**participation(z[t],active_means[t],dec[t].astype(np.float64)@w)))
     groups={}
     for r in out:groups.setdefault((r['condition'],r['side'],r['rank'],r['source_seed'],r['source_atom']),[]).append(r)
     summaries={}
@@ -72,6 +77,8 @@ def main():
         selected=[g for key,g in groups.items() if key[:3]==(condition,side,rank)]
         summaries[label]={field:statistics.median(statistics.median(r[field] for r in g if r[field] is not None) for g in selected) for field in fields}
     report={'metrics_raw_sha256':hashlib.sha256(raw.read_bytes()).hexdigest(),'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'definition':'e_j=sum_position,rank(((z_j-mean_j)*decoder_j@factor)^2); effective=(sum e)^2/sum(e^2). Means from independent mean split.','aggregation':'Median within query/condition/side/rank then across queries. Source counted once per sequence, not per target.','scope':'Descriptive coordinate-energy participation and mean/dynamic decomposition, not necessity or semantic evidence.','summary':summaries}
+    if cfg.get('donor_difference'):
+        report['definition']='e_j=sum_position,rank(((z_recipient,j-z_donor,j)*decoder_j@factor)^2); effective=(sum e)^2/sum(e^2). Mean cancels exactly. Participation and cancellation ratios are invariant to the shared nonzero dose; aggregate_energy is natural unscaled energy.'
     (run/'atom_participation.raw.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in out))
     (run/'atom_participation.summary.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))

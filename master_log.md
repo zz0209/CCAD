@@ -2719,3 +2719,15 @@ disk-d-io/cpu-heavy由EndoSAE_EndoFM活跃提取任务占用，未争抢；gpu�
 **实现与记录。** 新增source_dose_scale与公共剂量字段及上限自检；两项短代数测试/py_compile通过，no-op0、replay1.72953987e-5、6项运行自检与artifact契约PASS。检查是实现/记录范围，不称独立科学验证。完整source snapshot保留，原始metrics SHA256=f756e7867596096f30f6a95f54a7d0fbe96d3d7a6efe98cee0d290ab58e793e7，query_summary.json=7757a3678d1162330aa5c379c6de9511429b8fd3204466c198af361fa2aa1a44。未复用带v5大剂量警告的图，以当前完整CSV/JSON和tracker比较表报告。
 
 session10381退出0，21:34核对四项共享lease均free，无待执行队列。重启累计4032 forwards/672.919秒，不含资源等待；audit封存，automation保持ACTIVE/5分钟，未修改长期prompt。下一笔实际扩展/预算仅留tracker。plan科学路径无需变化；本地忽略文件tracker SHA256=55e850cef6a6598e1fc5010edf7f34e27127575481028c7d247abb64198cb154，plan=b2da606245958900dd5d059731bcc3af4d7b2fbe48828001cc0a528d558e6d1d。白名单runner、测试、配置与本日志成组同步，无数据/大文件上传。
+
+## 2026-09-04 21:48 UTC — 动态atom参与分解与四target扩展排队
+
+按当前工作卡准备四target扩展配置，source query、recipient/donor、rank1、公共剂量均保持v6，仅targets_per_query从1变4，预算1472 forwards/3–5分钟/<1GiB allocated VRAM。锁定环境spec canonical SHA256仍为8348de46ad5dd5c721867641e59a9d9d53e1f083622db98af51089e2bf2c9d43，按run-experiment环境契约warm reuse，不安装/重验环境。GPU实查空闲显存14304MiB，disk-d-io由EndoSAE_EndoFM活跃acquisition持有，使用共享管理器有界等待；未占用CPU/GPU、未抢占磁盘。到本条记录时新run目录尚未创建、没有新增模型前向；唯一等待句柄/当前操作只留tracker，后续需先核对该队列，不重复启动。
+
+等待期间，对已完成v6作真实差分的atom参与分析。`inspect_f4_atom_participation.py`现在识别donor_difference，逐side用z_recipient−z_donor而不是单recipient减固定mean；mean项严格为0。e_j=sum_position,rank(((z_recipient,j−z_donor,j)*decoder_j@factor)^2)，effective=(sum e)^2/sum e²；比值对公共非零dose不变，aggregate_energy报告自然未缩放能量。脚本物化所选少量位置，运行3.84秒，无新模型前向/拟合、未全量扫描codes，原v6结果不改写。
+
+全8query正条件source/target effective-energy atoms的query中位数分别1.321/106.520；不能把target分散当成功解释。先前source有源三例s2:2176为24.896/54.204，最大单atom份额.08116/.04209；s3:1230为5.043/9.781、最大份额.26427/.25140；s4:693为2.060/22.747、最大份额.59595/.15074。其余source effective约1–1.44，而失败target也可以超过100。动态最强source确实能量分散，但这只是代数参与证据；没有证明原生atom必要性、唯一概念或many-to-many优于单atom方法。均值消去的分解与旧v3固定mean分解属于不同操作，旧产物保留不覆盖。
+
+v6新增atom_participation.summary.json SHA256=0268a840ba7fb88ce1aa34bf2b26c420aaed625c017b51da98279cc317021e99，raw.jsonl=4e3895f5a2993979e915c08a04ead8415e2263d7989fa14f0d59f58ff46a6e7a，summary内记原始v6 metrics和分析脚本hash。短fixture验证零mean、dynamic=1以及共同dose下参与比值不变。汇总器新增target_summary.csv以保留逐target异质性；其160条单target汇总在内存中与v6旧query_summary逐项精确一致，没有重写旧汇总。py_compile/diff检查通过，无全套测试；只属实现与描述检查。
+
+tracker本地SHA256=000fc9b7d90f7a1f66eb3988dba099f7f6817eb99ba678bd1538ea4cd6ac28f6；plan未改变，audit封存，重启模型前向累计仍4032/672.919秒。automation仍ACTIVE/5分钟。分析代码、四target配置与日志白名单成组同步，资源等待跨heartbeat续接；本条不是四target实验完成或新因果阳性声明。

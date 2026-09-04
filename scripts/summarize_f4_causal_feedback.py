@@ -7,6 +7,18 @@ import math
 import statistics
 from pathlib import Path
 
+def target_table(rows):
+    """Keep target-seed heterogeneity visible; no pooled independence claim."""
+    fields=['condition','source_seed','source_atom','target_seed','rank','endpoint','method']
+    groups={}
+    for row in rows:
+        for endpoint in ('next_state','centered_logits'):
+            value=row['endpoints'].get(endpoint)
+            if value is None or value['normalized_error'] is None:continue
+            key=tuple(row[k] if k!='endpoint' else endpoint for k in fields)
+            groups.setdefault(key,[]).append(value)
+    return [dict(zip(fields,key),median_error=statistics.median(v['normalized_error'] for v in values),median_source_rms=statistics.median(v['source_rms'] for v in values),observations=len(values)) for key,values in sorted(groups.items())]
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--run-dir',type=Path,required=True);p.add_argument('--no-plot',action='store_true');args=p.parse_args()
     run=args.run_dir;raw=run/'metrics.raw.jsonl'
@@ -22,6 +34,9 @@ def main():
     table=[dict(zip(['condition','source_seed','source_atom','rank','endpoint','method'],key),median_error=statistics.median(x['normalized_error'] for x in values),median_source_rms=statistics.median(x['source_rms'] for x in values),observations=len(values)) for key,values in sorted(groups.items())]
     with (run/'query_summary.csv').open('w',newline='',encoding='utf-8') as f:
         writer=csv.DictWriter(f,fieldnames=list(table[0]));writer.writeheader();writer.writerows(table)
+    per_target=target_table(rows)
+    with (run/'target_summary.csv').open('w',newline='',encoding='utf-8') as f:
+        writer=csv.DictWriter(f,fieldnames=list(per_target[0]));writer.writeheader();writer.writerows(per_target)
     summaries={}
     available_methods=sorted({r['method'] for r in rows})
     for condition in ('positive','negative'):
