@@ -1,4 +1,4 @@
-"""Encode one shared-hook pass into five frozen SAE sparse-code assets."""
+"""Encode one shared-hook pass into a frozen same-configuration SAE set."""
 from __future__ import annotations
 
 import argparse
@@ -69,7 +69,7 @@ def main() -> int:
         "candidate_family_frozen": False, "mean_constants_source_split": cfg["mean_constants_source_split"],
         "threshold_source_split": cfg["threshold_source_split"], "statistics_unit": cfg["statistics_unit"], "device": cfg["device"],
         "seeds": [item["seed"] for item in cfg["saes"]], "resource_lease": "gpu-0 + disk-d-io via nested SAE Lab resource_manager.run",
-        "resource_lease_reason": "shared-hook inference and 1.3GB paired sparse-code writes", "git_head_at_run": git_head, "git_status_porcelain": git_status,
+        "resource_lease_reason": "shared-hook inference and paired sparse-code writes", "git_head_at_run": git_head, "git_status_porcelain": git_status,
         "bulk_output_dir": str(bulk_dir),
     })
     write_json(run_dir / "status.json", {"status": "RUNNING", "updated_utc": started})
@@ -160,8 +160,10 @@ def main() -> int:
             sae.W_dec.detach().float().cpu().numpy().astype("<f4", copy=False).tofile(path)
             decoder_files.append({"seed": seed, "path": str(path), "sha256": sha256(path), "bytes": path.stat().st_size, "dtype": "float32", "shape": [cfg["num_latents"], cfg["hook_hidden_size"]]})
         elapsed = time.perf_counter() - start_time
+        expected_seed_ids = cfg.get("expected_seed_ids", [1, 2, 3, 4, 5])
+        expected_sae_count = cfg.get("expected_sae_count", 5)
         checks = {
-            "five_frozen_saes": len(saes) == 5 and sorted(saes) == [1, 2, 3, 4, 5],
+            "frozen_sae_set": len(saes) == expected_sae_count and sorted(saes) == expected_seed_ids,
             "four_splits_complete": len(output_rows) == 4,
             "shared_forward_count": total_forwards == sum((info["sequences"] + cfg["batch_size_sequences"] - 1) // cfg["batch_size_sequences"] for info in token_manifest["outputs"].values()),
             "all_rows_encoded": all(row["observed_rows"] == row["tokens"] for row in output_rows),
