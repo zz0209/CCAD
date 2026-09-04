@@ -2629,3 +2629,18 @@ Fresh `r011f4_hook_transport_real_v2`仅修artifact serialization：factor矩阵
 **Automation与下一步。** 已通过app工具更新现有ccad的长期prompt，并逐字核对 `configs/CCAD_AUTOMATION_PROMPT_20260904.md`。保持PAUSED、5分钟与原target task不变，未恢复/删除。恢复后的第一个科学消费者是工作包A：8个source-only anchors、各4个target、rank1/4、正负文档与7种移除、两个剂量，初批上限4096单sequence-forward等价；先补实际ID/hash和实测资源预算，不再为内部选择请求批准。新结果仍须独立确认，正面论文目标保持但不保证预设方法成功。
 
 上条标题16:05为录入时间误差，实际初次写入为16:03 EDT。最终审阅补充了source projector在一般GL换基下的定义与hard-negative背景能量匹配范围；科学方案最终SHA256=`d9a9c5f0735ac85580baa07400f5112b6e567f6b8880cd8d464b454b6e40b13f`，取代上条方案hash。其余artifact身份不变。
+
+
+## 2026-09-04 20:16 UTC — 日常研究入口合并与长期prompt去时效化
+
+用户要求在重启前进一步解决skills无条件依赖、自审过度、重复文档与过期prompt，同时保留积极查新/文献代码组装、硬件与资源策略。上一版只是追加纠错，仍让历史计划充当日常上下文且prompt含F4/C049，本轮改为实际合并信息归属。
+
+AGENTS只管长期工作方式，EXPERIMENT_PLAN只管正结果路径，EXPERIMENT_TRACKER只管当前进度/下一步。三个日常入口由192,376 bytes缩为20,579 bytes（89.3%减少）。COMPONENT_CANDIDATES改成现成积木目录；旧详细实践方案改为指向统一入口。六份原文逐字节归档到 `archive/research_workflow_20260904/`，snapshot_manifest.json记录原hash；已核对全部6份一致。旧run、配置、理论PDF、reference registry与master_log历史未迁移或删除。
+
+规则明确：skills按需取用，不能把评分/轮数/模板变成项目硬门；默认一次聚焦自审，具体缺陷才追加。路径按“可重复信号→关系价值→系统方法→独立确认成文”的正checkpoint发展，允许依据开发结果调整表示/query/rank/正则/训练，不把起步样本量或支线次数锁成必要条件。主动阅读最邻近原文与代码、维护novelty差异、优先最小组装和复用写回长期规则。
+
+硬件/环境保持集中在 `.aris/compute/local.md` 与原spec，本轮补充nvidia-smi实测RTX5070Ti/16,303MiB/driver610.88及CPU字段/20逻辑处理器；RAM和磁盘余量查询受限未建立，未据此扩展排查或编造值。资源lease类型、固定多资源顺序、run自动续租释放、GPU忙时的主线轻任务、bulk storage与锁定解释器策略保留。没有启动实验、安装环境或申请重资源。
+
+现行长期prompt迁至 `configs/CCAD_AUTOMATION_PROMPT.md`（文件SHA256 f7f68c1d90ee9802e39b0f802820773f550ff9d8e81cbe1cfbdfadbb54e5f728），不含支线/run/日期/参数/当前状态，只读活的tracker与plan。原dated prompt成为迁移指针。已通过app工具更新ccad并核对正文（仅归一化Windows换行）；PAUSED、5分钟、原target task保留，未恢复。初次直接字符串比对只因CRLF/LF差异失败，正文一致，未增加修复分支。
+
+整理核对见 `archive/research_workflow_20260904/consolidation_check.json`：快照身份、11个关键路径、prompt内容与调度状态均符合预期；未新增validator或运行科学测试。本轮是用户要求的整理交付，不是科学PASS。重启后的研究机会与自由调整空间已写入tracker；积极寻找正结果，但尚未执行新的真实因果实验。
