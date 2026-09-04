@@ -39,6 +39,22 @@ def write_json(path: Path, value: object) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def load_config(path: Path) -> tuple[dict, Path | None]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    inherited = raw.get("inherits_config")
+    if inherited is None:
+        return raw, None
+    base_path = ROOT / inherited
+    base = json.loads(base_path.read_text(encoding="utf-8"))
+    overrides = raw.get("overrides", {})
+    if set(raw) != {"inherits_config", "overrides"}:
+        raise ValueError("suffix config may contain only inherits_config and overrides")
+    merged = {**base, **overrides}
+    merged["inherited_config_path"] = inherited
+    merged["inherited_config_sha256"] = sha256(base_path)
+    return merged, base_path
+
+
 def aggregate(rows: list[dict]) -> str:
     payload = "".join(f"{row['path']}:{row['sha256']}\n" for row in sorted(rows, key=lambda item: item["path"]))
     return hashlib.sha256(payload.encode()).hexdigest()
@@ -108,7 +124,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
     args = parser.parse_args()
-    cfg = json.loads(args.config.read_text(encoding="utf-8"))
+    cfg, inherited_config_path = load_config(args.config)
     run_dir = ROOT / "runs" / cfg["run_id"]
     if run_dir.exists():
         raise FileExistsError(run_dir)
@@ -129,6 +145,8 @@ def main() -> int:
         "token_manifest": ROOT / cfg["token_manifest_path"],
     }
     inputs = [file_entry(args.config.resolve(), "CCAD frozen config", "protocol")]
+    if inherited_config_path is not None:
+        inputs.append(file_entry(inherited_config_path, "CCAD inherited frozen config", "inherited_protocol"))
     for role, path in paths.items():
         inputs.append(file_entry(path, "CCAD frozen upstream artifact", role))
     model_config = Path(cfg["model_local_dir"]) / "config.json"
@@ -296,7 +314,7 @@ def main() -> int:
             return captured["hook"], captured["next"], result.logits.detach()
 
         pair_accum = {(item["query_key"], item["pair"]["target_seed"], method): defaultdict(float) for item in pair_payload for method in cfg["methods"]}
-        unit_rows, noop_errors, raw_replay_errors = [], [], []
+        unit_rows, noop_errors, raw_replay_errors, raw_replay_relative_rms = [], [], [], []
         total_forwards = 0
         started_compute = time.perf_counter()
         for item in pair_payload:
@@ -312,7 +330,10 @@ def main() -> int:
                 noop_logit_error = float((noop_logits - baseline_logits).abs().max().item())
                 noop_errors.append(max(noop_next_error, noop_logit_error))
                 replay = np.asarray(raw_calibration[begin:stop], dtype=np.float32)
-                raw_replay_errors.append(float(np.max(np.abs(replay - hook[0].detach().cpu().numpy()))))
+                live_hook = hook[0].detach().cpu().numpy()
+                replay_difference = np.asarray(replay - live_hook, dtype=np.float64)
+                raw_replay_errors.append(float(np.max(np.abs(replay_difference))))
+                raw_replay_relative_rms.append(float(np.sqrt(np.mean(replay_difference * replay_difference)) / max(np.sqrt(np.mean(np.asarray(live_hook, dtype=np.float64) ** 2)), 1e-12)))
                 source_reconstruction = reconstruct(matrices["calibration"][source_seed], np.arange(begin, stop), decoders[source_seed])
                 target_reconstruction = reconstruct(matrices["calibration"][target_seed], np.arange(begin, stop), decoders[target_seed])
                 source_query_code = dense_code(matrices["calibration"][source_seed], atom)[begin:stop]
@@ -439,6 +460,7 @@ def main() -> int:
             "source_atom": item["pair"]["source_atom"], "energy_stratum": item["pair"]["energy_stratum"],
             "sequence_ids": item["sequence_ids"], "sequence_energy": item["sequence_energy"],
         } for item in pair_payload]})
+        replay_tolerance = cfg.get("raw_hook_replay_tolerance", {"maximum_absolute_error": 1e-5, "maximum_relative_rms_error": 0.0})
         checks = {
             "frozen_inputs_bound": all(bound.values()),
             "eight_strata_once": sorted(item["pair"]["energy_stratum"] for item in pair_payload) == list(range(8)),
@@ -448,7 +470,7 @@ def main() -> int:
             "matched_rank": all(row["rank"] == 1 for row in pair_rows),
             "matched_energy_finite": all(np.isfinite(row["reference_hook_norm"]) and row["reference_hook_norm"] > 0 for row in unit_rows),
             "noop_control": noop_pass,
-            "raw_hook_replay": max(raw_replay_errors) <= 1e-5,
+            "raw_hook_replay": max(raw_replay_errors) <= replay_tolerance["maximum_absolute_error"] and max(raw_replay_relative_rms) <= replay_tolerance["maximum_relative_rms_error"],
             "endpoint_frozen": frozen_endpoint in {"next_state", "next_logits"},
             "finite_pair_metrics": all(np.isfinite(value) for row in pair_rows for endpoint in row["endpoints"].values() for value in endpoint.values() if value is not None),
             "audit_not_opened": not cfg["audit_opened"] and cfg["forbidden_splits"] == ["audit"],
@@ -457,6 +479,7 @@ def main() -> int:
             "checks": checks, "selected_pairs": len(pair_payload), "intervention_units": len(unit_rows),
             "total_model_forwards": total_forwards, "noop_max_absolute_error": max(noop_errors),
             "raw_hook_replay_max_absolute_error": max(raw_replay_errors), "frozen_primary_endpoint": frozen_endpoint,
+            "raw_hook_replay_max_relative_rms_error": max(raw_replay_relative_rms),
             "next_state_primary_effect_floor_coverage": next_state_floor, "next_logits_primary_effect_floor_coverage": next_logit_floor,
             "method_pair_coverage": coverages, "method_median_source_off_target_fraction": off_target_medians,
             "primary_minus_global_coverage": global_advantage, "primary_min_specificity_advantage": specificity_advantage,

@@ -30,6 +30,13 @@ class R011S1CausalProtocolTests(unittest.TestCase):
         self.assertTrue({"RAW_HOOK_QUERY_CONDITIONAL_PCA", "GLOBAL_SAE_PCA", "RELAXED_PAIRED_STITCHING", "MATCHED_RANK_RANDOM", "BEST_FUNCTIONAL_SINGLE_NATIVE"}.issubset(methods))
         self.assertIn("off_target", json.dumps(self.config["sae_specific_progression"]))
 
+    def test_v2_changes_only_execution_identity_and_raw_replay_conformance(self) -> None:
+        suffix = json.loads((ROOT / "configs/r011s1_causal_calibration_screen_v2.json").read_text(encoding="utf-8"))
+        self.assertEqual(suffix["inherits_config"], "configs/r011s1_causal_calibration_screen_v1.json")
+        self.assertEqual(set(suffix["overrides"]), {"run_id", "correction_from", "correction_reason", "raw_hook_replay_tolerance"})
+        tolerance = suffix["overrides"]["raw_hook_replay_tolerance"]
+        self.assertEqual(tolerance, {"maximum_absolute_error": 0.001, "maximum_relative_rms_error": 0.0001})
+
 
 if __name__ == "__main__":
     unittest.main()

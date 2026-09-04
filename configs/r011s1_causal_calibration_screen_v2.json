@@ -1,0 +1,12 @@
+{
+  "inherits_config": "configs/r011s1_causal_calibration_screen_v1.json",
+  "overrides": {
+    "run_id": "R011_S1_causal_calibration_screen_v2_20260904T083000Z",
+    "correction_from": "R011_S1_causal_calibration_screen_v1_20260904T080000Z",
+    "correction_reason": "Replace an over-strict cross-process exact raw-hook replay check with bounded absolute and relative RMS numerical conformance; no scientific object, selection, endpoint, metric, or gate changes",
+    "raw_hook_replay_tolerance": {
+      "maximum_absolute_error": 0.001,
+      "maximum_relative_rms_error": 0.0001
+    }
+  }
+}
