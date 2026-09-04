@@ -35,6 +35,20 @@ class R011F1ProtocolTests(unittest.TestCase):
         ])
         self.assertFalse(cfg["audit_opened"])
 
+    def test_c040_probe_asset_is_discovery_only_and_protocol_bound(self) -> None:
+        cfg = json.loads((ROOT / "configs/r011f1_c040_probe_metric_v1.json").read_text(encoding="utf-8"))
+        parent_path = ROOT / cfg["protocol_config_path"]
+        parent = json.loads(parent_path.read_text(encoding="utf-8"))
+        self.assertEqual(hashlib.sha256(parent_path.read_bytes()).hexdigest(), cfg["protocol_config_sha256"])
+        self.assertFalse(parent["execution_enabled"])
+        self.assertEqual(cfg["split"], "discovery")
+        self.assertEqual(cfg["forbidden_splits"], ["mean", "calibration", "audit"])
+        for field in (
+            "probe_states", "probe_directions_per_state", "probe_relative_amplitude",
+            "output_logit_sketch_dim", "probe_ridge_fraction", "metric_eigenvalue_relative_tolerance",
+        ):
+            self.assertEqual(cfg[field], parent[field])
+
 
 if __name__ == "__main__":
     unittest.main()
