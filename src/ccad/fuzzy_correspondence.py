@@ -37,6 +37,27 @@ class FuzzyCorrespondence:
     target_effective_support: float
 
 
+@dataclass(frozen=True)
+class FixedRelationMetrics:
+    source_energy: float
+    target_energy: float
+    cross_energy: float
+    normalized_residual: float | None
+    bcc: float | None
+
+
+@dataclass(frozen=True)
+class ContributionKernels:
+    """Feature-space kernels without materializing token-feature-hook tensors."""
+
+    source_gram: np.ndarray
+    target_gram: np.ndarray
+    cross_gram: np.ndarray
+    negative_source_gram: np.ndarray | None = None
+    negative_target_gram: np.ndarray | None = None
+    negative_cross_gram: np.ndarray | None = None
+
+
 def fit_probe_metric(
     probe_directions: np.ndarray,
     output_effects: np.ndarray,
@@ -163,6 +184,107 @@ def fit_fuzzy_correspondence(
         target_gram += contrast_strength * (target_neg.T @ target_neg)
         cross -= contrast_strength * (source_neg.T @ target_neg)
 
+    return fit_fuzzy_correspondence_from_kernels(
+        ContributionKernels(source_gram, target_gram, cross),
+        rank=rank,
+        ridge_fraction=ridge_fraction,
+    )
+
+
+def sparse_contribution_kernels(
+    source_codes,
+    target_codes,
+    source_decoders: np.ndarray,
+    target_decoders: np.ndarray,
+    positive_weights: np.ndarray,
+    *,
+    source_mean_codes: np.ndarray,
+    target_mean_codes: np.ndarray,
+    negative_weights: np.ndarray | None = None,
+    metric: np.ndarray | None = None,
+) -> ContributionKernels:
+    """Build contribution kernels directly from sparse codes and decoders.
+
+    The code means must come from the independent mean split.  Centering is
+    performed algebraically, so sparse code matrices remain sparse and the
+    dense ``[tokens, features, hook_dim]`` contribution bank is never built.
+    Callers should pass a discovery-frozen local feature universe; this helper
+    intentionally does not perform candidate selection.
+    """
+
+    source_decoder = _matrix(source_decoders, "source_decoders")
+    target_decoder = _matrix(target_decoders, "target_decoders")
+    if source_decoder.shape[1] != target_decoder.shape[1]:
+        raise ValueError("source and target decoders must share hook_dim")
+    source_shape = _code_shape(source_codes, "source_codes")
+    target_shape = _code_shape(target_codes, "target_codes")
+    if source_shape[0] != target_shape[0]:
+        raise ValueError("source and target codes must share observations")
+    if source_shape[1] != source_decoder.shape[0] or target_shape[1] != target_decoder.shape[0]:
+        raise ValueError("code and decoder feature dimensions differ")
+    source_mean = _vector(source_mean_codes, "source_mean_codes", source_shape[1])
+    target_mean = _vector(target_mean_codes, "target_mean_codes", target_shape[1])
+    positive = _weights(positive_weights, source_shape[0])
+
+    if metric is None:
+        source_metric_decoder = source_decoder
+        target_metric_decoder = target_decoder
+    else:
+        factor, _ = metric_factor(metric)
+        if factor.shape[0] != source_decoder.shape[1] or factor.shape[1] == 0:
+            raise ValueError("metric and hook dimensions differ or metric rank is zero")
+        source_metric_decoder = source_decoder @ factor
+        target_metric_decoder = target_decoder @ factor
+
+    positive_kernels = _kernel_triplet(
+        source_codes, target_codes, source_metric_decoder, target_metric_decoder,
+        positive, source_mean, target_mean,
+    )
+    if negative_weights is None:
+        return ContributionKernels(*positive_kernels)
+    negative = _weights(negative_weights, source_shape[0])
+    negative_kernels = _kernel_triplet(
+        source_codes, target_codes, source_metric_decoder, target_metric_decoder,
+        negative, source_mean, target_mean,
+    )
+    return ContributionKernels(*positive_kernels, *negative_kernels)
+
+
+def fit_fuzzy_correspondence_from_kernels(
+    kernels: ContributionKernels,
+    *,
+    rank: int = 1,
+    contrast_strength: float = 0.0,
+    ridge_fraction: float = 1e-6,
+) -> FuzzyCorrespondence:
+    """Fit FCC from frozen contribution Gram and cross-kernel matrices."""
+
+    source_gram = _square(kernels.source_gram, "source_gram")
+    target_gram = _square(kernels.target_gram, "target_gram")
+    cross = _matrix(kernels.cross_gram, "cross_gram")
+    if cross.shape != (source_gram.shape[0], target_gram.shape[0]):
+        raise ValueError("cross kernel dimensions differ from marginal kernels")
+    if rank <= 0 or rank > min(cross.shape):
+        raise ValueError("rank exceeds the available feature dimensions")
+    if contrast_strength < 0 or ridge_fraction <= 0:
+        raise ValueError("contrast_strength must be nonnegative and ridge positive")
+    negative_parts = (
+        kernels.negative_source_gram,
+        kernels.negative_target_gram,
+        kernels.negative_cross_gram,
+    )
+    if contrast_strength > 0:
+        if any(part is None for part in negative_parts):
+            raise ValueError("contrastive fitting requires negative kernels")
+        negative_source = _square(negative_parts[0], "negative_source_gram")
+        negative_target = _square(negative_parts[1], "negative_target_gram")
+        negative_cross = _matrix(negative_parts[2], "negative_cross_gram")
+        if negative_source.shape != source_gram.shape or negative_target.shape != target_gram.shape or negative_cross.shape != cross.shape:
+            raise ValueError("negative and positive kernel dimensions differ")
+        source_gram = source_gram + contrast_strength * negative_source
+        target_gram = target_gram + contrast_strength * negative_target
+        cross = cross - contrast_strength * negative_cross
+
     source_whitener = _inverse_sqrt(source_gram, ridge_fraction)
     target_whitener = _inverse_sqrt(target_gram, ridge_fraction)
     whitened_cross = source_whitener @ cross @ target_whitener
@@ -205,9 +327,107 @@ def soft_membership_overlap(left: np.ndarray, right: np.ndarray) -> float:
     return float(np.sum(np.sqrt(first * second)))
 
 
+def evaluate_fixed_correspondence(
+    source_contributions: np.ndarray,
+    target_contributions: np.ndarray,
+    weights: np.ndarray,
+    source_loadings: np.ndarray,
+    target_loadings: np.ndarray,
+    *,
+    metric: np.ndarray | None = None,
+    energy_epsilon: float = 1e-12,
+) -> FixedRelationMetrics:
+    """Evaluate discovery-frozen paired loadings on another weighted sample."""
+
+    source = _contribution_bank(source_contributions, "source_contributions")
+    target = _contribution_bank(target_contributions, "target_contributions")
+    if source.shape[0] != target.shape[0] or source.shape[2] != target.shape[2]:
+        raise ValueError("source and target banks must share observations and hook_dim")
+    sample_weights = _weights(weights, source.shape[0])
+    if metric is None:
+        factor = np.eye(source.shape[2])
+    else:
+        factor, _ = metric_factor(metric)
+        if factor.shape[0] != source.shape[2] or factor.shape[1] == 0:
+            raise ValueError("metric and hook dimensions differ or metric rank is zero")
+    source_metric = np.einsum("npd,dk->npk", source, factor, optimize=True)
+    target_metric = np.einsum("nqd,dk->nqk", target, factor, optimize=True)
+    source_matrix = _weighted_feature_matrix(source_metric, sample_weights)
+    target_matrix = _weighted_feature_matrix(target_metric, sample_weights)
+    left = _matrix(source_loadings, "source_loadings")
+    right = _matrix(target_loadings, "target_loadings")
+    if left.shape[0] != source.shape[1] or right.shape[0] != target.shape[1] or left.shape[1] != right.shape[1]:
+        raise ValueError("loading and contribution-bank dimensions differ")
+    source_latent = source_matrix @ left
+    target_latent = target_matrix @ right
+    source_energy = float(np.sum(source_latent * source_latent))
+    target_energy = float(np.sum(target_latent * target_latent))
+    cross_energy = float(np.sum(source_latent * target_latent))
+    denominator = source_energy + target_energy
+    residual = max(0.0, denominator - 2.0 * cross_energy)
+    return FixedRelationMetrics(
+        source_energy=source_energy,
+        target_energy=target_energy,
+        cross_energy=cross_energy,
+        normalized_residual=(residual / source_energy if source_energy > energy_epsilon else None),
+        bcc=(2.0 * cross_energy / denominator if denominator > energy_epsilon else None),
+    )
+
+
 def _weighted_feature_matrix(bank: np.ndarray, weights: np.ndarray) -> np.ndarray:
     weighted = bank * np.sqrt(weights)[:, None, None]
     return weighted.transpose(0, 2, 1).reshape(-1, bank.shape[1])
+
+
+def _kernel_triplet(
+    source_codes,
+    target_codes,
+    source_decoders: np.ndarray,
+    target_decoders: np.ndarray,
+    weights: np.ndarray,
+    source_mean: np.ndarray,
+    target_mean: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    source_cov = _centered_code_cross(
+        source_codes, source_codes, weights, source_mean, source_mean,
+    )
+    target_cov = _centered_code_cross(
+        target_codes, target_codes, weights, target_mean, target_mean,
+    )
+    cross_cov = _centered_code_cross(
+        source_codes, target_codes, weights, source_mean, target_mean,
+    )
+    source_decoder_gram = source_decoders @ source_decoders.T
+    target_decoder_gram = target_decoders @ target_decoders.T
+    decoder_cross = source_decoders @ target_decoders.T
+    source_kernel = source_cov * source_decoder_gram
+    target_kernel = target_cov * target_decoder_gram
+    cross_kernel = cross_cov * decoder_cross
+    return (
+        0.5 * (source_kernel + source_kernel.T),
+        0.5 * (target_kernel + target_kernel.T),
+        cross_kernel,
+    )
+
+
+def _centered_code_cross(
+    left_codes,
+    right_codes,
+    weights: np.ndarray,
+    left_mean: np.ndarray,
+    right_mean: np.ndarray,
+) -> np.ndarray:
+    weighted_right = right_codes.multiply(weights[:, None]) if hasattr(right_codes, "multiply") else np.asarray(right_codes, dtype=np.float64) * weights[:, None]
+    raw = left_codes.T @ weighted_right
+    raw_array = raw.toarray() if hasattr(raw, "toarray") else np.asarray(raw, dtype=np.float64)
+    left_weighted = np.asarray(left_codes.T @ weights, dtype=np.float64).reshape(-1)
+    right_weighted = np.asarray(right_codes.T @ weights, dtype=np.float64).reshape(-1)
+    return (
+        raw_array
+        - np.outer(left_weighted, right_mean)
+        - np.outer(left_mean, right_weighted)
+        + np.outer(left_mean, right_mean) * float(np.sum(weights))
+    )
 
 
 def _inverse_sqrt(gram: np.ndarray, ridge_fraction: float) -> np.ndarray:
@@ -248,6 +468,33 @@ def _matrix(values: np.ndarray, name: str) -> np.ndarray:
     if matrix.ndim != 2 or not np.all(np.isfinite(matrix)):
         raise ValueError(f"{name} must be a finite matrix")
     return matrix
+
+
+def _square(values: np.ndarray, name: str) -> np.ndarray:
+    matrix = _matrix(values, name)
+    if matrix.shape[0] != matrix.shape[1]:
+        raise ValueError(f"{name} must be square")
+    return 0.5 * (matrix + matrix.T)
+
+
+def _vector(values: np.ndarray, name: str, size: int) -> np.ndarray:
+    vector = np.asarray(values, dtype=np.float64).reshape(-1)
+    if vector.size != size or not np.all(np.isfinite(vector)):
+        raise ValueError(f"{name} must be a finite vector with the feature dimension")
+    return vector
+
+
+def _code_shape(values, name: str) -> tuple[int, int]:
+    shape = getattr(values, "shape", None)
+    if shape is None or len(shape) != 2:
+        raise ValueError(f"{name} must be a two-dimensional code matrix")
+    if not hasattr(values, "multiply"):
+        array = np.asarray(values, dtype=np.float64)
+        if not np.all(np.isfinite(array)):
+            raise ValueError(f"{name} must be finite")
+    elif hasattr(values, "data") and not np.all(np.isfinite(values.data)):
+        raise ValueError(f"{name} must be finite")
+    return int(shape[0]), int(shape[1])
 
 
 def _contribution_bank(values: np.ndarray, name: str) -> np.ndarray:
