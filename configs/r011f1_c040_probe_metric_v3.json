@@ -1,0 +1,8 @@
+{
+  "inherits_config": "configs/r011f1_c040_probe_metric_v1.json",
+  "overrides": {
+    "run_id": "R011_F1_C040_probe_metric_v3_20260904T163500Z",
+    "correction_from": "R011_F1_C040_probe_metric_v2_20260904T160500Z",
+    "correction_reason": "Convert NumPy boolean check values to native JSON booleans in the artifact finalizer; no probe, model, split, metric, threshold, or scientific gate changes"
+  }
+}

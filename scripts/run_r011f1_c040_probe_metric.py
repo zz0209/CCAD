@@ -232,6 +232,7 @@ def main() -> int:
             "nonzero_numerical_rank": 0 < fitted.rank <= cfg["hook_hidden_size"],
             "audit_not_opened": not cfg["audit_opened"],
         }
+        checks = {name: bool(value) for name, value in checks.items()}
         record = {
             "checks": checks, "probe_states": len(states), "blocked_documents": len(document_counts),
             "maximum_states_per_blocking_document": max(document_counts.values()), "probe_directions": len(probes),
