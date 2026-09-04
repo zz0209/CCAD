@@ -2757,3 +2757,23 @@ v7于22:09:47 UTC创建run并真实启动，run manifest覆盖为实际cpu-heavy
 **图与下一笔投入。** 复用stdlib SVG脚本，按scientific-visualization的全分母、共同log尺度、色/形双编码原则，修正target数量和实际dose脚注，加入逐target pair中位数min–max须线（不是CI）。图含正负两panel、全部48query-method点/48须线，x为实际限量source hook能量，zero=1、缺失pair和依赖均说明；无平滑。`difference_energy.svg` SHA256=7490b436bb615c3b44891e9ee67b15b4accb321fc53bb6f0658222d7ac5b3d35，CSV/provenance同目录。XML/范围数量检查通过，未声称像素预览或出版合规；Codex文件预览已排入当前任务。先前自然幅度图不覆盖。
 
 下一步优先在未选开发文档复制既有有源范围，排除全部已用IDs，规则与预算只维护tracker，不再添加一列无关门。tracker本地SHA256=1fc44eca44ca5d8ff2bcae3a48f7bd92864cd79d3289febd4338c827eb09d6aa；plan路径无需改变。automation仍ACTIVE/5分钟。本轮图脚本与日志成组白名单同步，全部原始结果留本地。
+
+## 2026-09-04 22:36 UTC — 新文档source支持变化，尚未读取target误差
+
+v8已按v2/v7两份hash固定selection的document IDs并集排除68个旧ID，选出24个新ID、交集0；64pair中60有有效donor，s5:710负条件4pair因正条件donor只有2–3个可用位置而无法对应负条件4位置，原样保留零差分/缺失。尚未读取本run target误差，不据此调整已运行规则。
+
+仅从本次selection的source差分能量可见支持变化：正条件中位数s4:801=26040.727，s3:1230=23.579，s4:693=6.320，s2:2176=.4355，其余为.002895–.274961。原来最强的s2:2176在新文档中变弱，原弱s4:801变强。按先前source有源解释，预期本轮有效范围更接近source能量前三者，而不应只期待固定三个query ID永远成功；这是运行中的source-only开发预测，不是假称预注册/独立确认。完整8query继续运行，同时报告原三例复现和source支持迁移，不用target结果筛掉失败。等待当前完整真实反馈后再更新结论。
+
+## 2026-09-04 22:44 UTC — 未选文档上的有源范围保持与固定query复现边界
+
+`F4_source_reference_causal_dev_v8_newdocs_20260904`于22:39:14完成，1472 forwards/330.102656秒、1280行、allocated VRAM841,839,104 bytes；session10139退出0。旧文档并集68、新选24、交集0。仅新增多份hash固定排除清单的并集支持，query/mapping/rank/剂量/source-only选择规则不改，discovery无新拟合、audit封存。锁定环境warm spec仍8348de46，按run-experiment复用，CPU/GPU租约运行，不因D盘路径附加整盘独占。原始metrics SHA256=2b53f3c09efc9b14231c84e6b9b033d2bc21487facbd50b80665574d801c621d。
+
+**原有query复现与新有源例分开报告。** 旧三例中s3:1230和s4:693在全部target、两个endpoint继续优于zero和wrong-matched；但source变弱的s2:2176 centered-logit误差范围.960850–4.252971（raw2.577617），没有整体复现。前条在未读取target误差时记录的source能量前三者，全部target/两个endpoint均优于zero与wrong：新强s4:801 centered-logit target=.002601–.004446/raw=.074432/wrong=.942599–.943085；s3:1230=.052970–.133480/.173016/1.803019–3.283003；s4:693=.168998–.609854/.152650/.697957–.845977。s3相对raw的关系与前轮反转、现为全部target更好；s4:693的centered-logit则raw全部更好，不抹去这些异质性。三个query的next-state target范围分别.002345–.004174、.031813–.089943、.117685–.374424。源活动范围比永久query ID更符合目前开发证据；不声称正式确认、一般语义或native等价。
+
+完整8query正条件centered-logit target/raw/wrong中位数=2.043614/4.838597/1.444604，target7/8优于raw但仅3/8优于zero；next-state=2.172924/4.859082/1.307954，同为3/8优于zero。负条件只有7/8支持query，centered-logit=.826308/2.565668/1.241014（4/7优于zero），next-state=1.413416/2.462274/1.397970（3/7）。s5:710负条件4pair没有足够donor位置，保留为80零source行/240个缺失endpoint；它们mask非空，不能将empty-mask计数0写成无缺失。source=0的归一化误差缺失，不是成功或概念不存在。
+
+**动态分解。** 同一差分参与分析中，新强s4:801 source/target effective-energy atoms约26.43/52.02，s3约4.71/9.18，s4:693约2.15/21.16；变弱的旧s2 source降到1.0，target仍约135。多atom代数参与和活动范围有值得检验的关联，但target分散本身不说明功能价值。参与summary SHA256=f509b80c8874767d4093a3373534a6050a98195f9c287c6a604d993461de80c8，逐字段有效query计数显式记录：负条件参与比值7query，aggregate energy包括真实零值为8query。
+
+**缺失处理与图表。** 汇总器补requested_query_count、unsupported_query_conditions、zero_source_hook_rows；图跳过整个不支持的negative s5:710组并显式标注，而不崩溃或画成成功。参与分析仅对有定义的比值汇总并记录分母，零能量本身仍保留。文档并集/mean差分/公共剂量3项短fixture、py_compile、6项运行自检、artifact契约PASS；no-op0/replay1.34689e-5。不称独立科学审查。图保留正负全部可定义45点及45个target中位数min–max须线，非CI，source-dose及缺失明确；XML数量与标签检查通过，无像素预览合格声明，旧图未覆盖。SVG SHA256=2e1a9e434dada177d3df0ef66e44fbf403b8420b8948158081e81509edbdd752；query_summary.json=89cc6ca1d21cd14f7563a491f479c6643f8a568dba1ba0069ae419f18dbcb5ec；target_summary.csv=a25b7141603b217a508131f615d7723d5d7b4b33ed76a5a1b4bcf4dcb0721f0f。
+
+重启累计6976 forwards/1366.906463秒，不含排队；无自己的进程/队列，automation仍ACTIVE/5分钟。下一步从实际单atom功能对照检验分布式增量，先在discovery拟合/选baseline，不能在v8 endpoint上挑atom；当前操作与预算只留tracker。plan补query及输入条件共同定义有效范围、参与不代替功能对照；忽略文件tracker SHA256=e5201a3e4f5beb31d5b519ac037278d545b0641840bcf51fe1faec0b3969f1cc，plan=77d88f72b19ad4a7e67bcb0647db71c0afe6e59989e24c2972481213059b0fad。runner/分析/图/短测试/配置与日志同单元白名单同步，原始数据不上传。

@@ -28,3 +28,9 @@ def test_source_dose_is_common_and_only_downscales():
     assert causal.source_dose_scale(source,hook,0.8)==1
     assert causal.source_dose_scale(source,hook,None)==1
     assert causal.source_dose_scale(np.zeros_like(source),hook,0.1)==1
+
+
+def test_document_exclusion_covers_recipient_and_donor_union():
+    first={'queries':[{'sequences':[{'document_ids':['a','b'],'donor_document_ids':['b','c']}]}]}
+    second={'queries':[{'sequences':[{'document_ids':['c','d']}]}]}
+    assert causal.selection_document_ids(first)|causal.selection_document_ids(second)=={'a','b','c','d'}

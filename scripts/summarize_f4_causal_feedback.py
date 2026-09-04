@@ -49,6 +49,9 @@ def main():
             if 'source_mean_only' in available_methods:
                 summaries[f'{condition}/r{rank}/{endpoint}']['target_better_than_source_mean_only_queries']=sum(by[s,a,'target']['median_error']<by[s,a,'source_mean_only']['median_error'] for s,a in queries)
     report={'source_sha256':hashlib.sha256(raw.read_bytes()).hexdigest(),'summary_script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'aggregation':'Within each condition, median over targets and document sequences within query, then median across queries. Descriptive; shared seeds and documents are dependent. See observations column.','normalization':'sum((source_effect-candidate_effect)^2)/sum(source_effect^2), across all sequence positions and endpoint dimensions. Logits centered across vocabulary.','denominators':{'raw_rows':len(rows),'missing_normalized_endpoint_errors':sum(v['normalized_error'] is None for r in rows for v in r['endpoints'].values()),'empty_intervention_masks':sum(not r.get('intervention_positions',[]) for r in rows),'observations_per_query_method_endpoint':sorted({r['observations'] for r in table})},'summary':summaries}
+    requested={(r['condition'],r['source_seed'],r['source_atom']) for r in rows}
+    observed={(r['condition'],r['source_seed'],r['source_atom']) for r in table}
+    report['denominators'].update(requested_query_count=len({(r['source_seed'],r['source_atom']) for r in rows}),unsupported_query_conditions=sorted(requested-observed),zero_source_hook_rows=sum(r['hook']['source_energy']==0 for r in rows))
     (run/'query_summary.json').write_text(json.dumps(report,indent=2)+'\n')
     if args.no_plot:
         print(json.dumps(report,indent=2));return

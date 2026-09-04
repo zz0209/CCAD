@@ -69,16 +69,21 @@ def main():
                     out.append(dict(common,side='target',target_seed=t,**participation(z[t],active_means[t],dec[t].astype(np.float64)@w)))
     groups={}
     for r in out:groups.setdefault((r['condition'],r['side'],r['rank'],r['source_seed'],r['source_atom']),[]).append(r)
-    summaries={}
+    summaries={};valid_query_counts={}
     fields=list(source)
     for condition,side,rank,_,_ in groups:
         label=f'{condition}/{side}/r{rank}'
         if label in summaries:continue
         selected=[g for key,g in groups.items() if key[:3]==(condition,side,rank)]
-        summaries[label]={field:statistics.median(statistics.median(r[field] for r in g if r[field] is not None) for g in selected) for field in fields}
+        summaries[label]={};valid_query_counts[label]={}
+        for field in fields:
+            values=[statistics.median(r[field] for r in g if r[field] is not None) for g in selected if any(r[field] is not None for r in g)]
+            summaries[label][field]=statistics.median(values) if values else None
+            valid_query_counts[label][field]=len(values)
     report={'metrics_raw_sha256':hashlib.sha256(raw.read_bytes()).hexdigest(),'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'definition':'e_j=sum_position,rank(((z_j-mean_j)*decoder_j@factor)^2); effective=(sum e)^2/sum(e^2). Means from independent mean split.','aggregation':'Median within query/condition/side/rank then across queries. Source counted once per sequence, not per target.','scope':'Descriptive coordinate-energy participation and mean/dynamic decomposition, not necessity or semantic evidence.','summary':summaries}
     if cfg.get('donor_difference'):
         report['definition']='e_j=sum_position,rank(((z_recipient,j-z_donor,j)*decoder_j@factor)^2); effective=(sum e)^2/sum(e^2). Mean cancels exactly. Participation and cancellation ratios are invariant to the shared nonzero dose; aggregate_energy is natural unscaled energy.'
+    report['valid_query_counts_by_field']=valid_query_counts
     (run/'atom_participation.raw.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in out))
     (run/'atom_participation.summary.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))

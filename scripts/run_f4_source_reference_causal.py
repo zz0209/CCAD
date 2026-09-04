@@ -73,6 +73,11 @@ def source_dose_scale(source, masked_hook, maximum_fraction=None):
     return min(1.0,maximum_fraction*float(np.linalg.norm(masked_hook))/norm) if norm else 1.0
 
 
+def selection_document_ids(selection):
+    return {d for q in selection['queries'] for e in q['sequences']
+            for d in e['document_ids']+e.get('donor_document_ids',[])}
+
+
 def main():
     parser = argparse.ArgumentParser(); parser.add_argument("--config", type=Path, required=True); args = parser.parse_args()
     task = json.loads(args.config.read_text(encoding="utf-8"))
@@ -113,6 +118,9 @@ def main():
         if cfg.get('exclude_selection_path'):
             paths['excluded_selection']=ROOT/cfg['exclude_selection_path']
             expected['excluded_selection']=cfg['exclude_selection_sha256']
+        for i,entry in enumerate(cfg.get('additional_exclude_selections',[])):
+            key=f'excluded_selection_extra_{i}'
+            paths[key]=ROOT/entry['path'];expected[key]=entry['sha256']
         if any(sha256(p).lower()!=expected[k].lower() for k,p in paths.items()): raise ValueError("Input identity mismatch")
         write(run/"inputs.json",{"inputs":[{"path":str(p.resolve()),"sha256":sha256(p),"bytes":p.stat().st_size,"source":"CCAD saved artifact","license_or_access_boundary":"internal","role":k} for k,p in paths.items()]})
         surface={(r["source_seed"],r["source_atom"],r["target_seed"]):r for r in jsonl(paths["surface"]) if r["query_role"]=="anchor" and r["rank"]==1}
@@ -141,9 +149,9 @@ def main():
         if sha256(token_path).lower()!=tm["sha256"]: raise ValueError("Token identity mismatch")
         tokens=np.memmap(token_path,dtype="<u2",mode="r").reshape(-1,length)
         excluded=set()
-        if 'excluded_selection' in paths:
-            prior=json.loads(paths['excluded_selection'].read_text())
-            excluded={d for q in prior['queries'] for e in q['sequences'] for d in e['document_ids']}
+        for key,path in paths.items():
+            if key.startswith('excluded_selection'):
+                excluded.update(selection_document_ids(json.loads(path.read_text())))
         selections=[]
         for s,a in queries:
             targets=[(s-1+j)%5+1 for j in range(1,cfg.get('targets_per_query',2)+1)]
@@ -190,6 +198,8 @@ def main():
                         entry.update(donor_sequence=donor['sequence'],donor_positions=dp,donor_document_ids=donor['document_ids'],donor_source_difference_energy=energy,donor_status='SELECTED_SOURCE_ONLY')
                     else:
                         entry.update(donor_sequence=entry['sequence'],donor_positions=positions,donor_document_ids=entry['document_ids'],donor_source_difference_energy=0.0,donor_status='NO_ELIGIBLE_PAIR')
+        if selection_document_ids({'queries':selections}) & excluded:
+            raise ValueError('Selected recipient/donor document intersects prior exclusion union')
         write(run/"selection.json",{"rule":"source-only hashes and activation energies; no F4 FOUND filtering","queries":selections,'excluded_document_count':len(excluded),'requested_sequences_per_condition':cfg['documents_per_condition'],'actual_sequences_per_query':[{"query":[x['source_seed'],x['source_atom']],"positive":sum(e['condition']=='positive' for e in x['sequences']),"negative":sum(e['condition']=='negative' for e in x['sequences'])} for x in selections]})
         os.environ.update(HF_HUB_OFFLINE="1",TRANSFORMERS_OFFLINE="1",CUBLAS_WORKSPACE_CONFIG=cfg["cublas_workspace_config"])
         import torch

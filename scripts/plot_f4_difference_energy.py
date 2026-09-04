@@ -16,11 +16,14 @@ def main():
     assert json.loads((run/'status.json').read_text())['status']=='PASS'
     assert all(r['mean_terms_cancelled_in_intervention'] for r in rows)
     methods=['target','raw','wrong_query_matched_energy'];colors=['#157b80','#b26917','#8e4f99']
-    points=[]
+    points=[];missing_groups=[]
     for condition in ('positive','negative'):
         for s,a in sorted({(r['source_seed'],r['source_atom']) for r in rows}):
             selected=[r for r in rows if r['condition']==condition and (r['source_seed'],r['source_atom'])==(s,a) and r['rank']==1]
             source=[r for r in selected if r['method']=='target' and r['endpoints']['centered_logits']['normalized_error'] is not None]
+            if not source:
+                missing_groups.append(f'{condition} s{s}:{a}')
+                continue
             for method in methods:
                 valid=[r for r in selected if r['method']==method and r['endpoints']['centered_logits']['normalized_error'] is not None]
                 target_medians=[statistics.median(r['endpoints']['centered_logits']['normalized_error'] for r in valid if r['target_seed']==t) for t in sorted({r['target_seed'] for r in valid})]
@@ -67,14 +70,17 @@ def main():
     for k,label in enumerate(('Target relation','Raw map','Wrong query, matched energy')):
         x=120+330*k;svg.append(marker(x,590,k)+f'<text x="{x+14}" y="595" style="font-size:14px">{label}</text>')
     dose_note=f'Common source-defined dose: source norm / masked recipient hook norm at most {cfg["maximum_source_hook_fraction"]:g}; candidates share scale.' if cfg.get('maximum_source_hook_fraction') else 'Natural dose: positive s2:2176 source norm is 4.87x recipient hook norm; do not interpret as moderate-dose evidence.'
+    pair_status={(r['source_seed'],r['source_atom'],r['condition'],r['sequence']):r.get('donor_status') for r in rows}
+    missing_note=f'{sum(s=="NO_ELIGIBLE_PAIR" for s in pair_status.values())}/{len(pair_status)} pairs unsupported, retained as missing, not success. Entire missing groups: '+(', '.join(missing_groups) if missing_groups else 'none')+'.'
     svg.extend(['<text x="50" y="631">Points pool pairs and targets within query; whiskers span target medians, not CI. Shared documents/seeds are dependent.</text>',
-                '<text x="50" y="652">s5:710 positive has 2 valid pairs; all other query/condition groups have 4. Two unsupported pairs retained as missing, not success.</text>',
+                f'<text x="50" y="652">{missing_note}</text>',
                 '<text x="50" y="673">Error = sum((source effect - candidate effect)^2) / sum(source effect^2); vocabulary-centered logits; no smoothing or CI.</text>',
                 f'<text x="50" y="696">{dose_note}</text></svg>'])
     output=run/'difference_energy.svg';output.write_text('\n'.join(svg),encoding='utf-8')
     manifest={'raw_sha256':hashlib.sha256(raw.read_bytes()).hexdigest(),'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'svg_sha256':hashlib.sha256(output.read_bytes()).hexdigest(),'points':len(points),'log10_limits':{'x':[xmin,xmax],'y':[ymin,ymax]},'scope':'Provisional development plot; no visual pixel-preview or publisher compliance claim.'}
     manifest['whiskers']='Minimum to maximum of within-target pair medians; not confidence intervals.'
     manifest['targets_per_query']=target_count
+    manifest['missing_query_conditions']=missing_groups
     (run/'difference_energy.provenance.json').write_text(json.dumps(manifest,indent=2)+'\n')
     print(json.dumps(manifest,indent=2))
 
