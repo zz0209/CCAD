@@ -72,6 +72,16 @@ def specificity(positive, negative) -> float | None:
     return positive.bcc - (0.0 if negative.bcc is None else negative.bcc)
 
 
+def pad_columns(matrix: np.ndarray, columns: int) -> np.ndarray:
+    """Pad a rank-deficient factor matrix without changing its effective rank."""
+
+    if matrix.ndim != 2 or matrix.shape[1] > columns:
+        raise ValueError("factor matrix cannot be padded to requested columns")
+    padded = np.zeros((matrix.shape[0], columns), dtype=np.float32)
+    padded[:, :matrix.shape[1]] = matrix.astype(np.float32, copy=False)
+    return padded
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(); parser.add_argument("--config", type=Path, required=True); args = parser.parse_args()
     cfg = json.loads(args.config.read_text(encoding="utf-8")); run_dir = ROOT / "runs" / cfg["run_id"]
@@ -168,7 +178,7 @@ def main() -> int:
                     "source_rank_boundary_relative_gap": rank_gap(q["singular"], rank), "query_positive": serial_metrics(query_pos), "query_negative": serial_metrics(query_neg), "query_specificity": specificity(query_pos, query_neg),
                     "raw_positive": serial_metrics(raw_result["positive"]), "raw_negative": serial_metrics(raw_result["negative"]), "raw_specificity": raw_result["specificity"],
                     "global_positive": serial_metrics(global_pos), "global_negative": serial_metrics(global_neg), "global_specificity": specificity(global_pos, global_neg)})
-                if base["query_role"] == "anchor" and rank == max(cfg["candidate_ranks"]): anchor_payload.append((source_seed, atom, target_seed, basis, query_fit.target_factors, raw_result["transport"].target_factors, global_fit.target_factors))
+                if base["query_role"] == "anchor" and rank == max(cfg["candidate_ranks"]): anchor_payload.append((source_seed, atom, target_seed, basis, query_fit.target_factors, raw_result["transport"].target_factors, global_fit.target_factors, query_fit.effective_rank, raw_result["transport"].effective_rank, global_fit.effective_rank))
 
         row_map = {(row["source_seed"], row["source_atom"], row["target_seed"], row["rank"]): row for row in output_rows if row["evaluable"]}
         anchors = [row for row in output_rows if row["query_role"] == "anchor" and row["evaluable"]]
@@ -200,7 +210,7 @@ def main() -> int:
         progression = coverage >= cfg["minimum_progression_coverage"] and len(strata) >= cfg["minimum_covered_strata"] and directions == all_directions
         surface_path = run_dir / "hook_transport_surface.jsonl"; surface_path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in output_rows), encoding="utf-8")
         decision_path = run_dir / "hook_transport_decisions.jsonl"; decision_path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in decisions), encoding="utf-8")
-        loading_path = run_dir / "anchor_maxrank_hook_factors.npz"; np.savez_compressed(loading_path, source_seed=np.asarray([x[0] for x in anchor_payload]), source_atom=np.asarray([x[1] for x in anchor_payload]), target_seed=np.asarray([x[2] for x in anchor_payload]), source_basis=np.stack([x[3] for x in anchor_payload]).astype(np.float32), query_target=np.stack([x[4] for x in anchor_payload]).astype(np.float32), raw_target=np.stack([x[5] for x in anchor_payload]).astype(np.float32), global_target=np.stack([x[6] for x in anchor_payload]).astype(np.float32))
+        loading_path = run_dir / "anchor_maxrank_hook_factors.npz"; maximum_rank = max(cfg["candidate_ranks"]); np.savez_compressed(loading_path, source_seed=np.asarray([x[0] for x in anchor_payload]), source_atom=np.asarray([x[1] for x in anchor_payload]), target_seed=np.asarray([x[2] for x in anchor_payload]), source_basis=np.stack([x[3] for x in anchor_payload]).astype(np.float32), query_target=np.stack([pad_columns(x[4], maximum_rank) for x in anchor_payload]), raw_target=np.stack([pad_columns(x[5], maximum_rank) for x in anchor_payload]), global_target=np.stack([pad_columns(x[6], maximum_rank) for x in anchor_payload]), query_effective_rank=np.asarray([x[7] for x in anchor_payload]), raw_effective_rank=np.asarray([x[8] for x in anchor_payload]), global_effective_rank=np.asarray([x[9] for x in anchor_payload]))
         decision = "PROCEED_HOOK_TRANSPORT_TO_MATCHED_CAUSAL_GATE" if progression else "STOP_HOOK_TRANSPORT_REPRESENTATION"
         rank_summaries = {}
         for rank in cfg["candidate_ranks"]:

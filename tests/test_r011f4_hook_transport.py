@@ -89,7 +89,7 @@ class HookTransportProtocolTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         root = Path(__file__).resolve().parents[1]
-        cls.cfg = json.loads((root / "configs/r011f4_hook_transport_real_v1.json").read_text(encoding="utf-8"))
+        cls.cfg = json.loads((root / "configs/r011f4_hook_transport_real_v2.json").read_text(encoding="utf-8"))
 
     def test_audit_and_execution_boundary(self) -> None:
         self.assertTrue(self.cfg["execution_enabled"])

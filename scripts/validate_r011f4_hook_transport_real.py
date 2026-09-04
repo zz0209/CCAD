@@ -52,6 +52,7 @@ def main() -> int:
         "outcome_recomputed": record["screen_decision"] == outcome,
         "strong_controls_present": all(all(key in row for key in ("query_positive", "raw_positive", "global_positive", "query_specificity", "raw_specificity", "global_specificity")) for row in anchors),
         "loading_shapes": saved["source_basis"].shape == saved["query_target"].shape == saved["raw_target"].shape == saved["global_target"].shape == (cfg["anchor_units"], cfg["hook_hidden_size"], max_rank),
+        "effective_rank_ledger": all(saved[name].shape == (cfg["anchor_units"],) and np.all((saved[name] >= 0) & (saved[name] <= max_rank)) for name in ("query_effective_rank", "raw_effective_rank", "global_effective_rank")),
         "audit_closed": cfg["audit_opened"] is False and cfg["forbidden_splits"] == ["audit"],
     }
     print(json.dumps({"run_id": run_dir.name, "checks": checks, "checks_passed": sum(checks.values()), "checks_total": len(checks), "screen_decision": outcome, "found": len(found), "coverage": coverage}, indent=2, sort_keys=True))
