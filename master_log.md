@@ -2519,3 +2519,11 @@ R011-F1转`BLOCKED`，但母对象FCC不变；`execution_enabled=false`，calibr
 **Raw calibration signal与边界。** 160/160 anchor ordered units在每个rank可评估。Rank1/2/4/8的median calibration BCC=`.16742/.11806/.06781/.04995`，median positive-minus-hard-negative contrast=`.16949/.12014/.08175/.06568`，positive contrast fraction=`.975/.975/.98125/.975`，median collision improvement over global=`.22742/.24981/.26890/.30494`。这些量显示query contrast与collision separation存在，但rank增加时BCC下降，不能从单一aggregate挑赢家。Artifact明确没有FOUND、阈值、causal outcome或C1/C2-FCC claim；surface SHA-256=`45DEF786ED2341010FD2F5953E1ABBE900443ECE9D3DF169D23442CB203BEED3`，loadings=`224B5A1A20C606C42FAFC4AE4B3E4BB1AA8AB1A88A36E8AAC4FB36707B86A2E8`。
 
 **Gate与下一步。** R011-F1保持`RUNNING`，C040 lane停止而Euclidean FCC继续。下一工作单元是在固定surface上冻结最小rank、numerical/refusal cutoffs，随后执行协议既定、matched rank/RMS的next-state causal specificity screen及global/raw、native/MSCC、SCT、stitching/MAS与matched-random controls。只有coverage、strata/direction、contrast、collision和独立因果门全部满足才可扩到full-640；audit继续关闭，automation保持常态5分钟。
+
+## 2026-09-04 12:31 EDT — Euclidean FCC calibration rank/refusal冻结PASS
+
+**冻结规则。** 在固定surface上按rank `{1,2,4,8}`选择第一个同时满足calibration BCC>0、positive-minus-hard-negative contrast>0、collision improvement over global≥`.05`和rank-boundary relative gap≥`.001`的关系；无rank通过则`UNRESOLVED_RELATION`。该规则只用calibration，query/candidate/loadings/mean不重学，audit禁止读取。实现与配置在执行前以`bda31ba`提交；全项目212/212与py_compile PASS。
+
+**失败保留与修复。** `R011_F1_euclidean_calibration_freeze_v1_20260904T162500Z`科学checks 10/10且决策完整，但manifest缺`resource_lease_reason`导致artifact contract FAIL。V1不覆盖。Fresh v2只增加该manifest字段并以`db46e29`预先提交；科学配置与输出未变。
+
+**V2结果与边界。** `R011_F1_euclidean_calibration_freeze_v2_20260904T163000Z`为10/10与contract PASS，决策SHA-256=`4D4C68843866975A77EE4A89F8D92B5C17BA5E2FF57ED1F47F1EEDF10FC34305`。157/160 units冻结为`FOUND_RELATION`，coverage=`.98125`；rank1/2/4/8计数125/22/7/3，覆盖8 strata与20 ordered directions。Found median BCC=`.15118`、contrast=`.16075`、collision improvement=`.23759`。前三个progression gate通过，但`progression_state=AWAIT_MATCHED_CAUSAL_GATE`；这不是C1/C2-FCC结果，不授权full-640或audit。下一步是冻结endpoint-blind causal subset与matched controls并执行next-state screen。
