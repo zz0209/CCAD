@@ -8,7 +8,9 @@ import numpy as np
 
 from ccad.hook_transport import (
     decide_transport_gate,
+    fit_basis_constrained_transport,
     fit_hook_space_transport,
+    transport_prefix,
     transport_metrics,
 )
 
@@ -67,6 +69,20 @@ class HookTransportTests(unittest.TestCase):
         fitted = fit_hook_space_transport(target, source, np.ones(len(latent)), rank=2)
         self.assertEqual(fitted.status, "RANK_DEFICIENT")
         self.assertEqual(fitted.effective_rank, 1)
+
+    def test_basis_constrained_prefixes_are_nested(self) -> None:
+        rng = np.random.default_rng(52)
+        target = rng.normal(size=(300, 5))
+        basis, _ = np.linalg.qr(rng.normal(size=(6, 3)))
+        coefficient = rng.normal(size=(5, 3))
+        coordinates = target @ coefficient
+        fitted = fit_basis_constrained_transport(target, coordinates, basis, np.ones(300), ridge_fraction=1e-6)
+        rank_one = transport_prefix(fitted, 1)
+        rank_two = transport_prefix(fitted, 2)
+        np.testing.assert_allclose(rank_one.target_factors, rank_two.target_factors[:, :1])
+        np.testing.assert_allclose(rank_one.source_factors, rank_two.source_factors[:, :1])
+        metric = transport_metrics(coordinates[:, :2] @ basis[:, :2].T, rank_two.predict(target), np.ones(300))
+        self.assertGreater(metric.bcc, .999)
 
 
 class HookTransportProtocolTests(unittest.TestCase):

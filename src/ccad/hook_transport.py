@@ -117,6 +117,83 @@ def fit_hook_space_transport(
     )
 
 
+def fit_basis_constrained_transport(
+    target_process: np.ndarray,
+    source_coordinates: np.ndarray,
+    source_basis: np.ndarray,
+    weights: np.ndarray,
+    *,
+    ridge_fraction: float = 1e-3,
+    rank_relative_tolerance: float = 1e-10,
+) -> HookTransport:
+    """Fit ridge transport into a frozen ordered source-query basis.
+
+    This is the efficient real-screen form: the source-only conditional PCA
+    basis is frozen first, then one dual solve learns all ordered coordinates.
+    Prefixes therefore implement the pre-registered nested rank family without
+    refitting or changing the source query after calibration is observed.
+    """
+
+    target = _matrix(target_process, "target_process")
+    coordinates = _matrix(source_coordinates, "source_coordinates")
+    basis = _matrix(source_basis, "source_basis")
+    if target.shape[0] != coordinates.shape[0]:
+        raise ValueError("target process and source coordinates must share observations")
+    if coordinates.shape[1] == 0 or basis.shape[1] != coordinates.shape[1]:
+        raise ValueError("source basis columns must match positive source coordinates")
+    if ridge_fraction <= 0 or rank_relative_tolerance <= 0:
+        raise ValueError("ridge fraction and rank tolerance must be positive")
+    gram = basis.T @ basis
+    if not np.allclose(gram, np.eye(gram.shape[0]), atol=1e-8, rtol=1e-8):
+        raise ValueError("source basis must have orthonormal columns")
+    sample_weights = _weights(weights, target.shape[0])
+    root = np.sqrt(sample_weights)[:, None]
+    x = target * root
+    y = coordinates * root
+    trace = float(np.sum(x * x))
+    if trace <= np.finfo(np.float64).eps:
+        return HookTransport(
+            target_factors=np.empty((target.shape[1], 0)),
+            source_factors=np.empty((basis.shape[0], 0)),
+            full_singular_values=np.empty(0), requested_rank=basis.shape[1], effective_rank=0,
+            rank_boundary_relative_gap=None, ridge=0.0, status="TARGET_INACTIVE",
+        )
+    ridge = ridge_fraction * trace / min(target.shape)
+    coefficient = x.T @ np.linalg.solve(x @ x.T + ridge * np.eye(x.shape[0]), y)
+    fitted = x @ coefficient
+    singular = np.linalg.svd(fitted, compute_uv=False)
+    numerical_rank = int(np.sum(singular > rank_relative_tolerance * singular[0])) if singular.size and singular[0] > 0 else 0
+    requested = basis.shape[1]
+    return HookTransport(
+        target_factors=coefficient[:, :numerical_rank],
+        source_factors=basis[:, :numerical_rank],
+        full_singular_values=singular,
+        requested_rank=requested,
+        effective_rank=min(requested, numerical_rank),
+        rank_boundary_relative_gap=None,
+        ridge=ridge,
+        status="OK" if numerical_rank >= requested else "RANK_DEFICIENT",
+    )
+
+
+def transport_prefix(transport: HookTransport, rank: int) -> HookTransport:
+    """Return a nested prefix of a basis-constrained transport."""
+
+    if rank <= 0 or rank > transport.requested_rank:
+        raise ValueError("rank is outside the fitted transport family")
+    keep = min(rank, transport.effective_rank)
+    return HookTransport(
+        target_factors=transport.target_factors[:, :keep],
+        source_factors=transport.source_factors[:, :keep],
+        full_singular_values=transport.full_singular_values,
+        requested_rank=rank,
+        effective_rank=keep,
+        rank_boundary_relative_gap=None,
+        ridge=transport.ridge,
+        status="OK" if keep == rank else "RANK_DEFICIENT",
+    )
+
+
 def transport_metrics(
     source_process: np.ndarray,
     transported_process: np.ndarray,
