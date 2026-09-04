@@ -58,6 +58,37 @@ class ContributionKernels:
     negative_cross_gram: np.ndarray | None = None
 
 
+def membership_weighted_contribution(
+    codes,
+    decoders: np.ndarray,
+    mean_codes: np.ndarray,
+    membership: np.ndarray,
+) -> np.ndarray:
+    """Return the dynamic hook contribution induced by an FCC soft marginal.
+
+    The marginal comes from ``|K| / ||K||_1``.  It is a property of the
+    relation operator, unlike individual CCA factor coordinates, so this
+    intervention does not depend on a signed permutation or rotation of those
+    factor coordinates.
+    """
+
+    decoder = _matrix(decoders, "decoders")
+    shape = _code_shape(codes, "codes")
+    if shape[1] != decoder.shape[0]:
+        raise ValueError("code and decoder feature dimensions differ")
+    mean = _vector(mean_codes, "mean_codes", shape[1])
+    weights = _probability_vector(membership, "membership")
+    if weights.size != shape[1]:
+        raise ValueError("membership and feature dimensions differ")
+    centered = (
+        codes.toarray().astype(np.float64)
+        if hasattr(codes, "toarray")
+        else np.asarray(codes, dtype=np.float64).copy()
+    )
+    centered -= mean[None, :]
+    return (centered * weights[None, :]) @ decoder
+
+
 def fit_probe_metric(
     probe_directions: np.ndarray,
     output_effects: np.ndarray,

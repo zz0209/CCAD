@@ -10,6 +10,7 @@ from ccad.fuzzy_correspondence import (
     fit_fuzzy_correspondence,
     fit_fuzzy_correspondence_from_kernels,
     fit_probe_metric,
+    membership_weighted_contribution,
     metric_factor,
     sparse_contribution_kernels,
     soft_membership_overlap,
@@ -17,6 +18,21 @@ from ccad.fuzzy_correspondence import (
 
 
 class FuzzyCorrespondenceTests(unittest.TestCase):
+    def test_membership_intervention_is_relation_marginal_weighted(self) -> None:
+        codes = np.asarray([[2.0, 0.0], [4.0, 1.0]])
+        decoders = np.eye(2)
+        means = np.asarray([1.0, 0.5])
+        membership = np.asarray([0.75, 0.25])
+        actual = membership_weighted_contribution(codes, decoders, means, membership)
+        expected = (codes - means[None, :]) * membership[None, :]
+        np.testing.assert_allclose(actual, expected)
+
+    def test_membership_intervention_rejects_zero_marginal(self) -> None:
+        with self.assertRaises(ValueError):
+            membership_weighted_contribution(
+                np.ones((2, 2)), np.eye(2), np.zeros(2), np.zeros(2),
+            )
+
     def test_probe_metric_recovers_output_sensitive_subspace(self) -> None:
         rng = np.random.default_rng(3)
         directions = rng.normal(size=(2000, 4))
