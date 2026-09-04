@@ -20,6 +20,18 @@ def main() -> int:
     parser = argparse.ArgumentParser(); parser.add_argument("--run-dir", type=Path, required=True); args = parser.parse_args()
     run_dir = args.run_dir.resolve(); cfg = json.loads((run_dir / "config.resolved.json").read_text(encoding="utf-8")); record = json.loads((run_dir / "metrics.raw.jsonl").read_text(encoding="utf-8"))
     residual_mode = "nuisance_state_count" in cfg
+    if record.get("screen_decision") == "STOP_NUISANCE_VARIANCE_THRESHOLD_NOT_REACHED":
+        checks = {
+            "artifact_contract": validate_run_directory(run_dir).ok,
+            "status_pass": json.loads((run_dir / "status.json").read_text(encoding="utf-8"))["status"] == "PASS",
+            "residual_mode": residual_mode and record.get("residual_mode") is True,
+            "rank_cap_reached": record.get("nuisance_rank") == cfg["nuisance_maximum_rank"],
+            "threshold_not_reached": record.get("nuisance_explained_variance_fraction", 1.0) < cfg["nuisance_explained_variance_threshold"],
+            "no_screen_or_progression": record.get("surface_rows") == 0 and record.get("decision_rows") == 0 and record.get("progression_pass") is False,
+            "audit_closed": cfg["audit_opened"] is False and cfg["forbidden_splits"] == ["audit"],
+        }
+        print(json.dumps({"run_id": run_dir.name, "checks": checks, "checks_passed": sum(checks.values()), "checks_total": len(checks), "screen_decision": record["screen_decision"], "nuisance_rank": record["nuisance_rank"], "nuisance_explained_variance_fraction": record["nuisance_explained_variance_fraction"]}, indent=2, sort_keys=True))
+        return 0 if all(checks.values()) else 1
     rows = [json.loads(line) for line in (run_dir / "hook_transport_surface.jsonl").read_text(encoding="utf-8").splitlines() if line]
     decisions = [json.loads(line) for line in (run_dir / "hook_transport_decisions.jsonl").read_text(encoding="utf-8").splitlines() if line]
     anchors = [row for row in rows if row["query_role"] == "anchor" and row["evaluable"]]
