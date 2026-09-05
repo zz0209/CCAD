@@ -1,0 +1,41 @@
+{
+  "run_id": "F4_source_components_interleaved_v2_20260905",
+  "purpose": "Test source-defined 16/16 contribution components across five long-k128 recipients",
+  "evidence_level": "exposed_document_source_component_development",
+  "audit_opened": false,
+  "old_fit": {
+    "path": "runs/F4_long_recipient_fit_v1_20260905",
+    "config_sha256": "793cbc9878ae671ffc1c68d119b3bc0af2184847da5b45ba0f0c35f6179f3d89",
+    "metadata_sha256": "ea7966d507d5fbcadbddc2bb8f7216e76e86dd68d0d074cfaa55c2051e9ddf43",
+    "coefficients_sha256": "9bafd702488df19b2a6cd65eed782f4aa4e614a250345ebbf73355799fc7ee37"
+  },
+  "new_fit": {
+    "path": "runs/F4_long_k128_newseeds_fit_v1_20260905",
+    "config_sha256": "7acba8217042ce3374bbdb6fd94076a37fcf2f14b57d9872645787ad375b3858",
+    "metadata_sha256": "5ac578e861b74f06bda9c3b6dbfe65c48ec98cb0d5c19c4cfbdb3e9ee0504686",
+    "coefficients_sha256": "f444401cc8081758c966688874c8a8a247849e8cc38e800871f99927ed135a37"
+  },
+  "source_group_size": 16,
+  "source_group_rule": "Within frozen32 source members, alternate odd/even ranks in weighted conditional-variation energy on unchanged positive256 discovery rows, atom-ID ties. Two16-member groups. This development refinement follows v1 head/tail zero source-tail effect, not newdata confirmation; no target endpoints choose group membership.",
+  "ridge_fraction": 0.001,
+  "maximum_source_hook_fraction": 0.1,
+  "scale_rule": "One family scale from max norm(full,A,B) relative to recipient masked hook; applied unchanged to all source/long/raw components. Full is rerun at this common scale.",
+  "target_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "expected_cases": 5,
+  "expected_requests": 8,
+  "expected_forwards": 100,
+  "fit_budget_seconds": 180,
+  "causal_budget_seconds": 180,
+  "cpu_threads": 4,
+  "budget": "Original caches only, <=180s preparation including five SAE encodings at32 unique hook rows; <=100LM forwards/180s numerical plus90s model load. No training/download/newenvironment. About a few MB new coefficient/coordinate artifacts. CPU-heavy then GPU0 leases, no whole-disk monopoly.",
+  "scope": "Same five exposed cases/three active source queries/all8 requests; five matched long recipients excluding equal source index. Source32 scalar projected components, not native operations, two noncollinear mechanisms, or fresh-document confirmation. Existing full maps must replay as component coefficient sums. Raw receives the same two source targets, paired rows, independent mean, ridge, basis and family dose. All cases and targets retained. Original audit closed.",
+  "partition_mode": "interleaved",
+  "previous_run": "F4_source_components_v1_20260905",
+  "replay_tolerance_rule": "Existing source-reference causal consumer uses <=1e-4 for cached batch4 versus live batch1 hook replay. v1 mistakenly imposed1e-5; old v1 FAIL retained, its max1.1723889e-5 equals the previously accepted same-case replay1.1723891e-5. Future consumer restores the existing1e-4 rule, not a new data-tuned threshold."
+}
