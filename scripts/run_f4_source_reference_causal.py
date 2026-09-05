@@ -491,6 +491,8 @@ def main():
         code_paths.extend(ROOT/'scripts'/name for name in ('inspect_f4_atom_participation.py','summarize_f4_source_scope.py'))
     if cfg.get('fixed_support_refit'):
         code_paths.append(ROOT/'src/ccad/hook_transport.py')
+    if cfg.get('case_replay'):
+        code_paths.append(ROOT/'scripts/f4_case_details.py')
     code = sorted([{"path": p.relative_to(ROOT).as_posix(), "sha256": sha256(p), "bytes": p.stat().st_size} for p in code_paths], key=lambda x:x["path"])
     code_hash = hashlib.sha256("".join(f"{x['path']}:{x['sha256']}\n" for x in code).encode()).hexdigest()
     for entry,p in zip(code, sorted(code_paths,key=lambda p:p.relative_to(ROOT).as_posix())):
@@ -520,6 +522,8 @@ def main():
                 paths[key]=ROOT/entry[f'{kind}_path'];expected[key]=entry[f'{kind}_sha256']
         if cfg.get('source_scope'):
             paths['source_scope']=ROOT/cfg['source_scope']['path'];expected['source_scope']=cfg['source_scope']['sha256']
+        if cfg.get('case_replay'):
+            paths['case_selection']=ROOT/cfg['case_replay']['path'];expected['case_selection']=cfg['case_replay']['sha256']
         if cfg.get('readout_ablation',{}).get('saved_readout'):
             entry=cfg['readout_ablation']['saved_readout']
             paths['saved_readout']=ROOT/entry['path'];expected['saved_readout']=entry['sha256']
@@ -714,11 +718,20 @@ def main():
                     'median_natural_difference_energy':float(np.median([e.get('donor_source_difference_energy',0) for e in group])) if group else None}
                     for condition in ('positive','negative') for group in [[e for e in u['sequences'] if e['condition']==condition]]}}
               for u in selections]}),flush=True)
+        if cfg.get('case_replay'):
+            from f4_case_details import select_cases, export_case
+            if cfg['ranks']!=[1] or not cfg.get('donor_difference'):
+                raise ValueError('Case export requires rank1 donor differences')
+            case_payload=json.loads(paths['case_selection'].read_text())
+            selections=select_cases(selections,case_payload)
+            write(run/'case_selection.json',case_payload)
+            write(run/'replay_selection.json',{'queries':selections})
         os.environ.update(HF_HUB_OFFLINE="1",TRANSFORMERS_OFFLINE="1",CUBLAS_WORKSPACE_CONFIG=cfg["cublas_workspace_config"])
         import torch
         import transformers
         torch.set_num_threads(4); torch.use_deterministic_algorithms(True)
         model=transformers.AutoModelForCausalLM.from_pretrained(cfg["model_local_dir"],local_files_only=True,dtype=torch.float32,attn_implementation="eager").eval().to(cfg["device"])
+        tokenizer=transformers.AutoTokenizer.from_pretrained(cfg['model_local_dir'],local_files_only=True) if cfg.get('case_replay') else None
         contract=HookPointContract(cfg["hook_module_path"],5,"resid_post",hidden)
         hook=model.get_submodule(cfg["hook_module_path"]); nxt=model.get_submodule(cfg["next_module_path"])
         forwards=0; noop=[]; replay=[]
@@ -811,6 +824,17 @@ def main():
                                 if cfg.get("centered_logit_endpoint"):
                                     candidate_effects["centered_logits"]=candidate_effects["next_logits"]-candidate_effects["next_logits"].mean(axis=-1,keepdims=True)
                                 endpoints={e:compare(effects[e],candidate_effects[e]) for e in effects}
+                                if cfg.get('case_replay'):
+                                    mapped_beta=None
+                                    if method in ('target','global_rows'):
+                                        factor='query_target' if method=='target' else 'global_target'
+                                        mapped_beta=(dec[t]@np.asarray(factors[factor][ix,:,:1],dtype=np.float64))[:,0]
+                                    elif method=='readout_top16':
+                                        mapped_beta=np.zeros(cfg['num_latents']);keep=family['order'][:16];mapped_beta[keep]=family['beta'][keep]
+                                    elif method!='raw': raise ValueError('Unsupported case-export method')
+                                    export_case(run/'case_details.jsonl',tokenizer=tokenizer,tokens=tokens,entry=entry,s=s,a=a,t=t,method=method,z=z,
+                                                ids=ids,dec=dec,b=bt,mapped_beta=mapped_beta,scale=dose_scale,source=source,delta=delta,
+                                                baseline=baseline,ref=ref,out=out,endpoints=endpoints)
                                 row={"source_seed":s,"source_atom":a,"target_seed":t,"stratum":unit["stratum"],"rank":rank,"method":method,**entry,"wrong_atom":unit["wrong_atom"],"wrong_norm_scale":wrongscale,"hook":compare(source,delta),"source_mean_projected_norm":float(np.linalg.norm(means[s][ids]@dec[s][ids]@b@b.T)),"target_mean_mapped_norm":float(np.linalg.norm(means[t]@dec[t]@np.asarray(factors["query_target"][ix,:,:rank],dtype=np.float64)@bt.T)),"endpoints":endpoints}
                                 row['mean_terms_cancelled_in_intervention']=bool(cfg.get('donor_difference'))
                                 if method=='global_rows':

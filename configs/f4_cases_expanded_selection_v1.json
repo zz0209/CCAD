@@ -1,0 +1,839 @@
+{
+  "panel": "expanded",
+  "rule": "Within each original query-condition ordered list, first source-selected supported entry; if none first supported entry; if none record missing. Never inspect target metrics for selection.",
+  "prior_endpoint_exposure": true,
+  "selection_inputs": [
+    {
+      "path": "runs/F4_fit_scope_confirmation_expanded_v1_20260905/selection.json",
+      "sha256": "6c3ddfd93bfb8e54ae989f7eeb81ada371cae06b4d87b058db89df8898f72fda"
+    },
+    {
+      "path": "runs/F4_fit_scope_confirmation_expanded_v1_20260905/source_scope_selection.json",
+      "sha256": "0c229678170ff9b91aa6e53341cff6f9de8bd46cf197248f96a19720325af027"
+    }
+  ],
+  "choices": [
+    {
+      "source_seed": 3,
+      "source_atom": 1144,
+      "condition": "positive",
+      "entry": {
+        "condition": "positive",
+        "document_ids": [
+          "<urn:uuid:2d2fdea4-9152-4aac-bd37-5f997c227232>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:657f2c59-79bb-45f0-88d1-bf5bdd4782d8>",
+          "<urn:uuid:fd6833d7-23d9-4f52-86dc-969fcbea5760>"
+        ],
+        "donor_positions": [
+          35,
+          52,
+          64,
+          126
+        ],
+        "donor_sequence": 44,
+        "donor_source_difference_energy": 19.134829423766135,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          81,
+          90,
+          91,
+          95
+        ],
+        "negative_energy": 0.2647053659387808,
+        "positive_energy": 3.036062733612307,
+        "sequence": 213
+      },
+      "source_scope": {
+        "aggregate_energy": 19.134829423766142,
+        "condition": "positive",
+        "dynamic_energy_over_centered_aggregate": 1,
+        "effective_energy_atoms": 3.0098112289383936,
+        "largest_atom_energy_share": 0.39215237880192283,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.10850954303632981,
+        "rank": 1,
+        "selected": true,
+        "sequence": 213,
+        "source_atom": 1144,
+        "source_seed": 3,
+        "sum_atom_energy_over_aggregate": 0.3070834273092624,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 3,
+      "selected": 1
+    },
+    {
+      "source_seed": 3,
+      "source_atom": 1144,
+      "condition": "negative",
+      "entry": {
+        "condition": "negative",
+        "document_ids": [
+          "<urn:uuid:33ee784b-4ba5-418c-92d8-d225da57f9b8>",
+          "<urn:uuid:c1dc66f4-0434-46d7-a251-ca545bd3c48e>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:2d2fdea4-9152-4aac-bd37-5f997c227232>"
+        ],
+        "donor_positions": [
+          81,
+          90,
+          91,
+          95
+        ],
+        "donor_sequence": 213,
+        "donor_source_difference_energy": 15.577748029646521,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          82,
+          83,
+          93,
+          94
+        ],
+        "negative_energy": 5.964016009783311,
+        "positive_energy": 0,
+        "sequence": 439
+      },
+      "source_scope": {
+        "aggregate_energy": 15.577748029646523,
+        "condition": "negative",
+        "dynamic_energy_over_centered_aggregate": 1,
+        "effective_energy_atoms": 3.0354278489769415,
+        "largest_atom_energy_share": 0.4026587678529024,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.13329349570756172,
+        "rank": 1,
+        "selected": true,
+        "sequence": 439,
+        "source_atom": 1144,
+        "source_seed": 3,
+        "sum_atom_energy_over_aggregate": 0.3136210182427757,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 3
+    },
+    {
+      "source_seed": 1,
+      "source_atom": 2641,
+      "condition": "positive",
+      "entry": {
+        "condition": "positive",
+        "document_ids": [
+          "<urn:uuid:b0cc3a9a-1b00-42bf-af44-0a356a76e35c>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:866401cc-3a1d-49ed-aca9-ec4a54257bee>"
+        ],
+        "donor_positions": [
+          78,
+          92,
+          102,
+          117
+        ],
+        "donor_sequence": 117,
+        "donor_source_difference_energy": 157.46473927403702,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          19,
+          33,
+          57,
+          109
+        ],
+        "negative_energy": 3.0251496648750953,
+        "positive_energy": 3.641676403828371,
+        "sequence": 241
+      },
+      "source_scope": {
+        "aggregate_energy": 157.464739274037,
+        "condition": "positive",
+        "dynamic_energy_over_centered_aggregate": 1,
+        "effective_energy_atoms": 5.0957842534513,
+        "largest_atom_energy_share": 0.2785349958704123,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.3450634987583843,
+        "rank": 1,
+        "selected": true,
+        "sequence": 241,
+        "source_atom": 2641,
+        "source_seed": 1,
+        "sum_atom_energy_over_aggregate": 0.16505100686016683,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 4
+    },
+    {
+      "source_seed": 1,
+      "source_atom": 2641,
+      "condition": "negative",
+      "entry": {
+        "condition": "negative",
+        "document_ids": [
+          "<urn:uuid:8cf36f02-f9f1-45c7-be54-5f9c167b5cfa>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:b0cc3a9a-1b00-42bf-af44-0a356a76e35c>"
+        ],
+        "donor_positions": [
+          19,
+          33,
+          57,
+          109
+        ],
+        "donor_sequence": 241,
+        "donor_source_difference_energy": 82.9204543705405,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          17,
+          43,
+          53,
+          83
+        ],
+        "negative_energy": 10.813949634587157,
+        "positive_energy": 0.3377956613181965,
+        "sequence": 269
+      },
+      "source_scope": {
+        "aggregate_energy": 82.92045437054051,
+        "condition": "negative",
+        "dynamic_energy_over_centered_aggregate": 0.9999999999999998,
+        "effective_energy_atoms": 4.815992319241707,
+        "largest_atom_energy_share": 0.31834780385437156,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.25812810985462403,
+        "rank": 1,
+        "selected": true,
+        "sequence": 269,
+        "source_atom": 2641,
+        "source_seed": 1,
+        "sum_atom_energy_over_aggregate": 0.16435727969813635,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 4
+    },
+    {
+      "source_seed": 3,
+      "source_atom": 1093,
+      "condition": "positive",
+      "entry": {
+        "condition": "positive",
+        "document_ids": [
+          "<urn:uuid:8524afc9-4e58-4faa-8bf7-519884d3bef4>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:77948918-dd44-461f-a3fe-97b601a9a32e>"
+        ],
+        "donor_positions": [
+          23,
+          44,
+          66,
+          121
+        ],
+        "donor_sequence": 159,
+        "donor_source_difference_energy": 44.82309327981485,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          20,
+          58,
+          80,
+          95
+        ],
+        "negative_energy": 0.41872272008149736,
+        "positive_energy": 13.622929045234411,
+        "sequence": 166
+      },
+      "source_scope": {
+        "aggregate_energy": 44.823093279814834,
+        "condition": "positive",
+        "dynamic_energy_over_centered_aggregate": 0.9999999999999999,
+        "effective_energy_atoms": 14.629311706023344,
+        "largest_atom_energy_share": 0.16838315997139433,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.19702119187592101,
+        "rank": 1,
+        "selected": true,
+        "sequence": 166,
+        "source_atom": 1093,
+        "source_seed": 3,
+        "sum_atom_energy_over_aggregate": 0.04698874954537026,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 4
+    },
+    {
+      "source_seed": 3,
+      "source_atom": 1093,
+      "condition": "negative",
+      "entry": {
+        "condition": "negative",
+        "document_ids": [
+          "<urn:uuid:1ecb62d6-ab31-4e4e-aeb3-42095d4a6345>",
+          "<urn:uuid:88a4019d-dd72-4a35-a467-a897f866ac3a>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:2d2fdea4-9152-4aac-bd37-5f997c227232>"
+        ],
+        "donor_positions": [
+          52,
+          92,
+          106,
+          119
+        ],
+        "donor_sequence": 202,
+        "donor_source_difference_energy": 460.50430667388923,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          41,
+          61,
+          73,
+          78
+        ],
+        "negative_energy": 10.417871619651555,
+        "positive_energy": 0.12466738362093199,
+        "sequence": 470
+      },
+      "source_scope": {
+        "aggregate_energy": 460.5043066738891,
+        "condition": "negative",
+        "dynamic_energy_over_centered_aggregate": 1.0000000000000002,
+        "effective_energy_atoms": 13.579043466853145,
+        "largest_atom_energy_share": 0.18458426108106143,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.6048155581440805,
+        "rank": 1,
+        "selected": true,
+        "sequence": 470,
+        "source_atom": 1093,
+        "source_seed": 3,
+        "sum_atom_energy_over_aggregate": 0.040663470293488414,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 4
+    },
+    {
+      "source_seed": 1,
+      "source_atom": 2298,
+      "condition": "positive",
+      "entry": {
+        "condition": "positive",
+        "document_ids": [
+          "<urn:uuid:b6e22249-9fa9-466b-b9fa-bc43fd5336d8>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:d223e4e1-e2fd-489f-a992-ab44635433ea>"
+        ],
+        "donor_positions": [
+          36,
+          48,
+          54,
+          89
+        ],
+        "donor_sequence": 148,
+        "donor_source_difference_energy": 1.9077959393374133,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          62,
+          65,
+          87,
+          93
+        ],
+        "negative_energy": 3.1855289310789967,
+        "positive_energy": 7.842157239294678,
+        "sequence": 195
+      },
+      "source_scope": {
+        "aggregate_energy": 1.9077959393374133,
+        "condition": "positive",
+        "dynamic_energy_over_centered_aggregate": 1,
+        "effective_energy_atoms": 1.9616141821309718,
+        "largest_atom_energy_share": 0.5880661583683942,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.03431581104267715,
+        "rank": 1,
+        "selected": false,
+        "sequence": 195,
+        "source_atom": 2298,
+        "source_seed": 1,
+        "sum_atom_energy_over_aggregate": 0.4907864728162028,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 0
+    },
+    {
+      "source_seed": 1,
+      "source_atom": 2298,
+      "condition": "negative",
+      "entry": {
+        "condition": "negative",
+        "document_ids": [
+          "<urn:uuid:ad5d0ac6-118d-456c-9225-72c4f6b8fb3f>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:291b2bc8-5d65-45a6-a460-fe3c8fc2e25a>",
+          "<urn:uuid:b59e03a1-f6c7-4787-8fdc-cb9c0b286065>"
+        ],
+        "donor_positions": [
+          61,
+          84,
+          112,
+          122
+        ],
+        "donor_sequence": 386,
+        "donor_source_difference_energy": 0.9755899758476325,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          59,
+          77,
+          118,
+          127
+        ],
+        "negative_energy": 16.08326177076675,
+        "positive_energy": 0,
+        "sequence": 25
+      },
+      "source_scope": {
+        "aggregate_energy": 0.9755899758476319,
+        "condition": "negative",
+        "dynamic_energy_over_centered_aggregate": 1,
+        "effective_energy_atoms": 1.9841167158738537,
+        "largest_atom_energy_share": 0.5447359380928002,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.02545627829552986,
+        "rank": 1,
+        "selected": false,
+        "sequence": 25,
+        "source_atom": 2298,
+        "source_seed": 1,
+        "sum_atom_energy_over_aggregate": 0.5526388252831398,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 0
+    },
+    {
+      "source_seed": 1,
+      "source_atom": 615,
+      "condition": "positive",
+      "entry": {
+        "condition": "positive",
+        "document_ids": [
+          "<urn:uuid:7992c3a5-f6e9-4dec-8dcd-2b4f97013309>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:e38b4ea8-ac7d-493c-98e1-c94de3b0cf1c>"
+        ],
+        "donor_positions": [
+          33,
+          54,
+          99,
+          100
+        ],
+        "donor_sequence": 301,
+        "donor_source_difference_energy": 49.525553802398036,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          19,
+          20,
+          75,
+          118
+        ],
+        "negative_energy": 3.1815388570302794,
+        "positive_energy": 21.819572616783788,
+        "sequence": 83
+      },
+      "source_scope": {
+        "aggregate_energy": 49.52555380239802,
+        "condition": "positive",
+        "dynamic_energy_over_centered_aggregate": 1.0000000000000007,
+        "effective_energy_atoms": 5.423514957652785,
+        "largest_atom_energy_share": 0.3528472607696915,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.21893367952990536,
+        "rank": 1,
+        "selected": true,
+        "sequence": 83,
+        "source_atom": 615,
+        "source_seed": 1,
+        "sum_atom_energy_over_aggregate": 0.11847109093539973,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 3
+    },
+    {
+      "source_seed": 1,
+      "source_atom": 615,
+      "condition": "negative",
+      "entry": {
+        "condition": "negative",
+        "document_ids": [
+          "<urn:uuid:e38b4ea8-ac7d-493c-98e1-c94de3b0cf1c>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:7992c3a5-f6e9-4dec-8dcd-2b4f97013309>"
+        ],
+        "donor_positions": [
+          19,
+          20,
+          75,
+          118
+        ],
+        "donor_sequence": 83,
+        "donor_source_difference_energy": 49.525553802398036,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          33,
+          54,
+          99,
+          100
+        ],
+        "negative_energy": 17.42710450064071,
+        "positive_energy": 0,
+        "sequence": 301
+      },
+      "source_scope": {
+        "aggregate_energy": 49.52555380239802,
+        "condition": "negative",
+        "dynamic_energy_over_centered_aggregate": 1.0000000000000007,
+        "effective_energy_atoms": 5.423514957652785,
+        "largest_atom_energy_share": 0.3528472607696915,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.2085665168062003,
+        "rank": 1,
+        "selected": true,
+        "sequence": 301,
+        "source_atom": 615,
+        "source_seed": 1,
+        "sum_atom_energy_over_aggregate": 0.11847109093539973,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 4
+    },
+    {
+      "source_seed": 2,
+      "source_atom": 2645,
+      "condition": "positive",
+      "entry": {
+        "condition": "positive",
+        "document_ids": [
+          "<urn:uuid:c1dc66f4-0434-46d7-a251-ca545bd3c48e>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:7c5bc4ed-1941-4c75-be15-5d9ea602d3cc>",
+          "<urn:uuid:b18aaf97-078d-4b36-9366-23c18b21f22f>"
+        ],
+        "donor_positions": [
+          23,
+          91,
+          97,
+          103
+        ],
+        "donor_sequence": 354,
+        "donor_source_difference_energy": 8223.577236167697,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          41,
+          64,
+          73,
+          109
+        ],
+        "negative_energy": 4.84723479019711,
+        "positive_energy": 13.90397211586277,
+        "sequence": 451
+      },
+      "source_scope": {
+        "aggregate_energy": 8223.577236167699,
+        "condition": "positive",
+        "dynamic_energy_over_centered_aggregate": 1.0000000000000002,
+        "effective_energy_atoms": 18.964797091012894,
+        "largest_atom_energy_share": 0.10261854933385012,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 2.8481227155461872,
+        "rank": 1,
+        "selected": true,
+        "sequence": 451,
+        "source_atom": 2645,
+        "source_seed": 2,
+        "sum_atom_energy_over_aggregate": 0.043219182897478524,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 4
+    },
+    {
+      "source_seed": 2,
+      "source_atom": 2645,
+      "condition": "negative",
+      "entry": {
+        "condition": "negative",
+        "document_ids": [
+          "<urn:uuid:2c6c7d7e-3947-447f-8f80-277465b073d3>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:c1dc66f4-0434-46d7-a251-ca545bd3c48e>"
+        ],
+        "donor_positions": [
+          41,
+          64,
+          73,
+          109
+        ],
+        "donor_sequence": 451,
+        "donor_source_difference_energy": 42.858288308346005,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          48,
+          49,
+          71,
+          81
+        ],
+        "negative_energy": 18.676773418891912,
+        "positive_energy": 0.11609887008337783,
+        "sequence": 11
+      },
+      "source_scope": {
+        "aggregate_energy": 42.858288308346,
+        "condition": "negative",
+        "dynamic_energy_over_centered_aggregate": 1,
+        "effective_energy_atoms": 5.767132481046071,
+        "largest_atom_energy_share": 0.2834569631776619,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.1958084685805283,
+        "rank": 1,
+        "selected": true,
+        "sequence": 11,
+        "source_atom": 2645,
+        "source_seed": 2,
+        "sum_atom_energy_over_aggregate": 0.14967935037906643,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 4
+    },
+    {
+      "source_seed": 1,
+      "source_atom": 1441,
+      "condition": "positive",
+      "entry": {
+        "condition": "positive",
+        "document_ids": [
+          "<urn:uuid:a553bdf2-a690-4d20-9303-bb1d34e250f8>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:77948918-dd44-461f-a3fe-97b601a9a32e>",
+          "<urn:uuid:b2cd4fb3-7f2b-4017-95c7-3376f5f902ef>"
+        ],
+        "donor_positions": [
+          50,
+          59,
+          60,
+          61
+        ],
+        "donor_sequence": 162,
+        "donor_source_difference_energy": 0.5331448746942472,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          22,
+          26,
+          72,
+          75
+        ],
+        "negative_energy": 14.270459775325673,
+        "positive_energy": 13.287415126854905,
+        "sequence": 484
+      },
+      "source_scope": {
+        "aggregate_energy": 0.5331448746942474,
+        "condition": "positive",
+        "dynamic_energy_over_centered_aggregate": 1,
+        "effective_energy_atoms": 1,
+        "largest_atom_energy_share": 1,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.021733312196547106,
+        "rank": 1,
+        "selected": false,
+        "sequence": 484,
+        "source_atom": 1441,
+        "source_seed": 1,
+        "sum_atom_energy_over_aggregate": 1,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 0
+    },
+    {
+      "source_seed": 1,
+      "source_atom": 1441,
+      "condition": "negative",
+      "entry": {
+        "condition": "negative",
+        "document_ids": [
+          "<urn:uuid:8cf36f02-f9f1-45c7-be54-5f9c167b5cfa>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:c14be4e0-a827-4555-9bf7-5fe0538d24d3>"
+        ],
+        "donor_positions": [
+          17,
+          77,
+          91,
+          108
+        ],
+        "donor_sequence": 53,
+        "donor_source_difference_energy": 0.5772130706313484,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          32,
+          37,
+          43,
+          51
+        ],
+        "negative_energy": 144.40481497958677,
+        "positive_energy": 1.8651329936217653,
+        "sequence": 268
+      },
+      "source_scope": {
+        "aggregate_energy": 0.5772130706313485,
+        "condition": "negative",
+        "dynamic_energy_over_centered_aggregate": 1,
+        "effective_energy_atoms": 1,
+        "largest_atom_energy_share": 1,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.024358172815433506,
+        "rank": 1,
+        "selected": false,
+        "sequence": 268,
+        "source_atom": 1441,
+        "source_seed": 1,
+        "sum_atom_energy_over_aggregate": 1,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 0
+    },
+    {
+      "source_seed": 5,
+      "source_atom": 2194,
+      "condition": "positive",
+      "entry": {
+        "condition": "positive",
+        "document_ids": [
+          "<urn:uuid:e38b4ea8-ac7d-493c-98e1-c94de3b0cf1c>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:705703c5-b8ab-4bda-b163-004c2dcf74bc>"
+        ],
+        "donor_positions": [
+          22,
+          81,
+          126,
+          127
+        ],
+        "donor_sequence": 179,
+        "donor_source_difference_energy": 5017.590048028294,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          31,
+          65,
+          94,
+          119
+        ],
+        "negative_energy": 1054.1625402045045,
+        "positive_energy": 13.140475446929937,
+        "sequence": 302
+      },
+      "source_scope": {
+        "aggregate_energy": 5017.590048028293,
+        "condition": "positive",
+        "dynamic_energy_over_centered_aggregate": 1.0000000000000004,
+        "effective_energy_atoms": 14.47400725939832,
+        "largest_atom_energy_share": 0.12445381478452884,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 2.2050898316908283,
+        "rank": 1,
+        "selected": true,
+        "sequence": 302,
+        "source_atom": 2194,
+        "source_seed": 5,
+        "sum_atom_energy_over_aggregate": 0.055225578899527505,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 4
+    },
+    {
+      "source_seed": 5,
+      "source_atom": 2194,
+      "condition": "negative",
+      "entry": {
+        "condition": "negative",
+        "document_ids": [
+          "<urn:uuid:a961e2e5-ba30-4f5a-bb90-1d80130eafdb>"
+        ],
+        "donor_document_ids": [
+          "<urn:uuid:e38b4ea8-ac7d-493c-98e1-c94de3b0cf1c>"
+        ],
+        "donor_positions": [
+          31,
+          65,
+          94,
+          119
+        ],
+        "donor_sequence": 302,
+        "donor_source_difference_energy": 69.73229913223645,
+        "donor_status": "SELECTED_SOURCE_ONLY",
+        "intervention_positions": [
+          24,
+          80,
+          112,
+          113
+        ],
+        "negative_energy": 1049.5531005781231,
+        "positive_energy": 0,
+        "sequence": 431
+      },
+      "source_scope": {
+        "aggregate_energy": 69.73229913223645,
+        "condition": "negative",
+        "dynamic_energy_over_centered_aggregate": 1.0000000000000004,
+        "effective_energy_atoms": 5.891538958695521,
+        "largest_atom_energy_share": 0.30373248189391583,
+        "mean_energy_over_centered_aggregate": 0,
+        "natural_source_hook_fraction": 0.269710178685516,
+        "rank": 1,
+        "selected": true,
+        "sequence": 431,
+        "source_atom": 2194,
+        "source_seed": 5,
+        "sum_atom_energy_over_aggregate": 0.09642333700574533,
+        "supported": true
+      },
+      "candidates": 4,
+      "supported": 4,
+      "selected": 4
+    }
+  ]
+}
