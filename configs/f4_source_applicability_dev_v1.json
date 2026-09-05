@@ -1,0 +1,19 @@
+{
+  "analysis_id": "F4_source_applicability_dev_v1_20260905",
+  "evidence_level": "development_selected_applicability_rule",
+  "rule": {
+    "require_supported_pair": true,
+    "maximum_largest_source_atom_energy_share": 0.5,
+    "minimum_natural_source_hook_fraction": 0.1
+  },
+  "meaning": "Source difference is at least the existing 0.1 intervention cap before common scaling, and no one source atom carries over half the sum of source-coordinate atom energies. Rule evaluated per recipient/donor pair, not fixed query ID.",
+  "selection_history": "One simple conjunction chosen after examining previously exposed v7/v8/v11 development effects and source-only feature tables; no threshold sweep in this unit. Not held-out confirmation, semantic concept evidence, or native necessity.",
+  "run_names": [
+    "F4_source_reference_causal_dev_v7_alltargets_20260904",
+    "F4_source_reference_causal_dev_v8_newdocs_20260904",
+    "F4_source_reference_causal_dev_v11_newshard_20260904"
+  ],
+  "endpoints": ["next_state", "centered_logits"],
+  "aggregation": "Median selected documents within query/target/condition, then median across four dependent targets; retain full query coverage and rejected or unsupported rows. No independent confidence interval.",
+  "future_confirmation": "Freeze this exact pair rule and existing rank1, source dose0.1, endpoints and comparators before unexposed document evaluation. Report all candidate inputs and selected coverage; do not adapt rule on new evaluation errors."
+}
