@@ -45,6 +45,25 @@ def entry(path: Path, source: str, boundary: str, role: str) -> dict:
             "source": source, "license_or_access_boundary": boundary, "role": role}
 
 
+def read_document_exclusions(path: Path) -> list[dict]:
+    """Read existing JSONL or the long-training {documents: [...]} manifest."""
+    text = path.read_text(encoding="utf-8")
+    if path.suffix.lower() == ".json":
+        payload = json.loads(text)
+        rows = payload["documents"]
+    else:
+        rows = [json.loads(line) for line in text.splitlines() if line.strip()]
+    if not isinstance(rows, list) or not rows:
+        raise ValueError(f"Empty or invalid document exclusion ledger: {path}")
+    for row in rows:
+        if not isinstance(row.get("document_id"), str) or not row["document_id"]:
+            raise ValueError(f"Missing document ID in exclusion ledger: {path}")
+        digest = row.get("text_sha256", "")
+        if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+            raise ValueError(f"Invalid text hash in exclusion ledger: {path}")
+    return rows
+
+
 def pack(rows: list[dict], tokenizer, target_sequences: int, context_length: int, max_tokens: int) -> tuple[list[int], list[dict], list[dict]]:
     target = target_sequences * context_length
     eos = int(tokenizer.eos_token_id)
@@ -125,9 +144,9 @@ def main() -> int:
         import transformers
         from transformers import AutoTokenizer
 
-        excluded = [json.loads(line) for line in excluded_path.read_text(encoding="utf-8").splitlines() if line]
+        excluded = read_document_exclusions(excluded_path)
         for path in additional_exclusions:
-            excluded.extend(json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line)
+            excluded.extend(read_document_exclusions(path))
         excluded_ids = {row["document_id"] for row in excluded}
         excluded_text = {row["text_sha256"] for row in excluded}
         old_catalog = json.loads(catalog_path.read_text(encoding="utf-8"))

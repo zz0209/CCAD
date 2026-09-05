@@ -77,6 +77,16 @@ def saved_coordinate_key(s, a, t, entry, method):
     return (s, a, t, entry['condition'], entry['sequence'], method)
 
 
+def restrict_source_queries(queries, subset):
+    """Restrict a pre-existing source-only panel without changing its ordering."""
+    if subset is None:
+        return queries
+    wanted=[tuple(q) for q in subset]
+    if not wanted or len(set(wanted))!=len(wanted) or not set(wanted).issubset(queries):
+        raise ValueError('Invalid frozen source query subset')
+    return [q for q in queries if q in set(wanted)]
+
+
 def validate_saved_coordinate(value, entry, length, rank):
     """Saved candidates are unscaled coordinates in the unchanged source basis."""
     value=np.asarray(value,dtype=np.float64)
@@ -607,6 +617,7 @@ def main():
         findex={(int(s),int(a),int(t)):i for i,(s,a,t) in enumerate(zip(factors["source_seed"],factors["source_atom"],factors["target_seed"]))}
         available=sorted({(s,a) for s,a,t in surface})
         queries=source_hash_queries(available,panel,cfg.get('query_hash_offset',0))
+        queries=restrict_source_queries(queries,cfg.get('source_query_subset'))
         means={s:np.zeros(cfg["num_latents"]) for s in cfg["source_seeds"]}
         for r in jsonl(paths["census"]): means[r["seed"]][r["atom"]]=r["mean_code"]
         asset=Path(cfg["bulk_asset_dir"]); length=cfg["context_length"]; hidden=cfg["hook_hidden_size"]
@@ -792,7 +803,7 @@ def main():
             inputs=json.loads((run/'inputs.json').read_text())['inputs']
             matched=prepare(panel,inputs);write(run/'matching.json',matched);write(run/'inputs.json',{'inputs':inputs})
             (run/'metrics.raw.jsonl').write_text(''.join(json.dumps(r,sort_keys=True)+'\n' for r in matched['choices']))
-            checks={'sixteen_requested_conditions':len(matched['choices'])==16,'no_endpoint_forward':True,'audit_closed':True}
+            checks={'requested_conditions':len(matched['choices'])==2*len(queries),'no_endpoint_forward':True,'audit_closed':True}
             summary={'checks':checks,'model_forwards':0,'wall_seconds':time.perf_counter()-start,'rows':len(matched['choices']),
                 'selected_pairs':sum(bool(r['entry'] and r['source_scope']['selected']) for r in matched['choices']),
                 'supported_pairs':sum(r['entry'] is not None for r in matched['choices']),
@@ -964,7 +975,7 @@ def main():
         if ot_fits: method_names.append('paired_correlation_uot')
         method_names.extend(saved_ot_families)
         if cfg.get('methods'): method_names=cfg['methods']
-        checks={"noop":max(noop)<=1e-6,"raw_replay_relative":max(replay)<=1e-4,"eight_source_queries":len(selections)==8,"rows":len(rows)==sum(len(x["sequences"])*len(x["targets"])*len(cfg["ranks"])*len(method_names) for x in selections),"audit_closed":True}
+        checks={"noop":max(noop)<=1e-6,"raw_replay_relative":max(replay)<=1e-4,"source_query_count":len(selections)==len(queries),"rows":len(rows)==sum(len(x["sequences"])*len(x["targets"])*len(cfg["ranks"])*len(method_names) for x in selections),"audit_closed":True}
         if cfg.get('maximum_source_hook_fraction'):
             checks['source_dose_bound']=all(r['source_hook_fraction'] is None or r['source_hook_fraction']<=cfg['maximum_source_hook_fraction']+1e-12 for r in rows)
         if cfg.get('expected_evaluated_cases') is not None:

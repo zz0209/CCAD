@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from run_f4_source_reference_causal import validate_saved_coordinate, saved_coordinate_key
+from run_f4_source_reference_causal import validate_saved_coordinate, saved_coordinate_key, restrict_source_queries
 
 
 class SavedCoordinatesTests(unittest.TestCase):
@@ -19,6 +19,13 @@ class SavedCoordinatesTests(unittest.TestCase):
     def test_method_and_condition_keys_differ(self):
         entry={'condition':'positive','sequence':1}
         self.assertNotEqual(saved_coordinate_key(1,2,3,entry,'a'),saved_coordinate_key(1,2,3,entry,'b'))
+
+    def test_frozen_source_subset_preserves_original_order(self):
+        old=[(3,1230),(2,2645),(5,2194)]
+        self.assertEqual(restrict_source_queries(old,None),old)
+        self.assertEqual(restrict_source_queries(old,[[5,2194],[3,1230]]),[(3,1230),(5,2194)])
+        for bad in ([],[[8,99]],[[3,1230],[3,1230]]):
+            with self.assertRaises(ValueError):restrict_source_queries(old,bad)
 
 
 if __name__=='__main__':unittest.main()
