@@ -121,15 +121,19 @@ def main():
     for name in ('model_id','model_local_dir','model_revision','model_license','hook_module_path','hook_hidden_size',
                  'num_latents','k','saes','device','sparsify_source_dir','sparsify_overlay_dir','sparsify_commit'):
         cfg[name]=asset[name]
-    task_mode=cfg.get('source_reference_mode')=='task_contrast'
+    frozen_task=cfg.get('source_reference_mode')=='frozen_task'
+    task_mode=cfg.get('source_reference_mode') in ('task_contrast','frozen_task')
     if task_mode:
-        cfg['saes']=[s for s in cfg['saes'] if s['seed']==cfg['source_seed']]
-        if len(cfg['saes'])!=1 or cfg['queries']:raise ValueError('Task contrast requires one source SAE and no query pool')
+        if not frozen_task:cfg['saes']=[s for s in cfg['saes'] if s['seed']==cfg['source_seed']]
+        if (not frozen_task and len(cfg['saes'])!=1) or cfg['queries']:raise ValueError('Task mode requires fixed source SAE and no query pool')
+    if frozen_task and (cfg['split']!='reserved' or not cfg.get('source_native',{}).get('frozen_path') or cfg['source_native'].get('objective')):
+        raise ValueError('Reserved confirmation requires frozen native group and no gradient/fit objective')
     run=ROOT/'runs'/cfg['run_id'];run.mkdir(parents=True,exist_ok=False)
     write(run/'config.resolved.json',cfg)
     code_paths=[Path(__file__),ROOT/'scripts/run_r011s1_raw_hook_asset.py',ROOT/'src/ccad/artifacts.py',ROOT/'src/ccad/activation_contract.py']
     if cfg.get('source_native'):
         code_paths += [ROOT/'scripts/fit_f4_agreement_relations.py',ROOT/'src/ccad/causal_metric_probe.py',ROOT/'src/ccad/hook_transport.py']
+    if frozen_task:code_paths.append(ROOT/'scripts/assemble_f4_paired_panel.py')
     codes=[]
     for path in code_paths:
         rel=path.relative_to(ROOT).as_posix();snap=run/'source_snapshot'/rel;snap.parent.mkdir(parents=True,exist_ok=True);snap.write_bytes(path.read_bytes())
@@ -141,6 +145,7 @@ def main():
         evidence_level=cfg['evidence_level'],started_utc=now,started_local=datetime.now().astimezone().isoformat(),
         trigger='ccad heartbeat',project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),
         code_snapshot_hash=aggregate(codes),source_snapshot_required=True,audit_opened=False,candidate_family_frozen=True,
+        reserved_confirmation_opened=frozen_task,
         mean_constants_source_split='original mean cancels in donor differences',threshold_source_split=cfg.get('selection','development ranking only'),
         statistics_unit='lexicalized template; 4number conditions and shared SAE directions dependent',device=cfg['device'],
         seeds=sorted(set([r['seed'] for r in cfg['saes']]+cfg.get('target_seeds',[]))),resource_lease=cfg['resource_lease'],resource_lease_reason='bounded model forwards and existing SAE encoder/cache',
@@ -151,12 +156,12 @@ def main():
     (run/'stdout.log').touch();(run/'stderr.log').touch();(run/'metrics.raw.jsonl').touch()
     forwards=0;start=time.perf_counter();rows=[];status='FAIL';summary={}
     try:
-        if cfg['split']!='development' or cfg['audit_opened']:raise ValueError('Source screen may only expose development')
+        if cfg['split']!=('reserved' if frozen_task else 'development') or cfg['audit_opened']:raise ValueError('Task split mismatch')
         paths={'surface':ROOT/cfg['surface_path'],'factors':ROOT/cfg['factors_path'],'asset_config':ROOT/cfg['asset_config'],
                'environment_spec':ROOT/'.aris/compute/local-r006b1-env-spec.json'}
         for role in ('surface','factors'):
             if sha256(paths[role])!=cfg[role+'_sha256']:raise ValueError(f'{role} identity mismatch')
-        if task_mode:
+        if task_mode and not frozen_task:
             for role in ('replay_activations','replay_tokens'):
                 paths[role]=ROOT/cfg[role+'_path']
                 if sha256(paths[role])!=cfg[role+'_sha256']:raise ValueError(f'{role} identity mismatch')
@@ -167,6 +172,11 @@ def main():
         if cfg.get('source_native',{}).get('frozen_path'):
             paths['source_native_frozen']=ROOT/cfg['source_native']['frozen_path']
             if sha256(paths['source_native_frozen'])!=cfg['source_native']['frozen_sha256']:raise ValueError('Frozen source group changed')
+        if frozen_task:
+            for role,spec in cfg['frozen_relations'].items():
+                paths[role]=ROOT/spec['path']
+                if sha256(paths[role])!=spec['sha256']:raise ValueError(f'Frozen relation changed: {role}')
+            if cfg['design']!=json.loads(paths['original_task_design'].read_text())['design']:raise ValueError('Original reserved task design changed')
         if sha256(paths['environment_spec'])!='3129a184d787ae9be38ac6d8d97dbf5087e5c838c112473fe45f3862064bb60f':raise ValueError('Environment spec changed')
         for sae in cfg['saes']:
             paths[f'sae_{sae["seed"]}']=ROOT/sae['path']/'sae.safetensors'
@@ -176,7 +186,7 @@ def main():
         for name in ('config.json','tokenizer.json','tokenizer_config.json'):
             paths['model_'+name]=modeldir/name
         write(run/'inputs.json',dict(inputs=[entry(p,'CCAD saved input / model revision',role) for role,p in paths.items()]))
-        all_prompts=make_prompts(cfg['design']);write(run/'task_prompts.json',dict(rows=all_prompts,reserved_forwarded=False))
+        all_prompts=make_prompts(cfg['design']);write(run/'task_prompts.json',dict(rows=all_prompts,reserved_forwarded=frozen_task))
         prompts=[r for r in all_prompts if r['split']==cfg['split']]
         random.Random(cfg['random_seed']).shuffle(prompts)
         if len(prompts)!=64 or len({r['text'] for r in all_prompts})!=128:raise ValueError('Incomplete factorial task')
@@ -198,8 +208,9 @@ def main():
         if length>64:raise ValueError('Prompt exceeds bounded length')
         tokens=np.full((64,length),tokenizer.eos_token_id,dtype=np.int64);attention=np.zeros_like(tokens)
         for i,ids in enumerate(encoded):tokens[i,:len(ids)]=ids;attention[i,:len(ids)]=1
-        write(run/'tokenized_development.json',dict(rows=[dict(r,token_ids=ids,final_position=int(p)) for r,ids,p in zip(prompts,encoded,last)],
-              continuation_ids=continuation_ids,tokenizer_revision=cfg['model_revision'],right_padding=True,reserved_tokenized=False))
+        token_artifact='tokenized_reserved.json' if frozen_task else 'tokenized_development.json'
+        write(run/token_artifact,dict(rows=[dict(r,token_ids=ids,final_position=int(p)) for r,ids,p in zip(prompts,encoded,last)],
+              continuation_ids=continuation_ids,tokenizer_revision=cfg['model_revision'],right_padding=True,reserved_tokenized=frozen_task))
         model=transformers.AutoModelForCausalLM.from_pretrained(modeldir,local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to(cfg['device'])
         saes={r['seed']:SparseCoder.load_from_disk(ROOT/r['path'],device=cfg['device']).eval() for r in cfg['saes']}
         hook=model.get_submodule(cfg['hook_module_path']);contract=HookPointContract(cfg['hook_module_path'],5,'resid_post',cfg['hook_hidden_size'])
@@ -244,9 +255,10 @@ def main():
             with torch.no_grad():sparse=sae.encode(torch.tensor(hidden,dtype=torch.float32,device=cfg['device']))
             z[seed]=np.zeros((64,cfg['num_latents']));np.put_along_axis(z[seed],sparse.top_indices.cpu().numpy(),sparse.top_acts.cpu().numpy(),axis=1)
             dec[seed]=sae.W_dec.detach().cpu().numpy().astype(np.float64)
-        np.savez_compressed(run/'development_activations.npz',hidden=hidden,logprobs=base,**{f'codes_{s}':v for s,v in z.items()})
+        cache_artifact='reserved_activations.npz' if frozen_task else 'development_activations.npz'
+        np.savez_compressed(run/cache_artifact,hidden=hidden,logprobs=base,**{f'codes_{s}':v for s,v in z.items()})
         replay_ok=True
-        if task_mode:
+        if task_mode and not frozen_task:
             old=np.load(paths['replay_activations'],allow_pickle=False)
             old_tokens=json.loads(paths['replay_tokens'].read_text())
             current_tokens=json.loads((run/'tokenized_development.json').read_text())
@@ -261,6 +273,12 @@ def main():
                 rule='Mean plural-minus-singular full source decoded contribution over 32 matched template/attractor pairs; normalized once',
                 input_split='development',target_endpoints_used=False,task_effects_used_to_fit_direction=False,
                 sae_config=json.loads(paths[f'sae_cfg_{cfg["source_seed"]}'].read_text())))
+        if frozen_task:
+            task_b=np.load(paths['frozen_direction'],allow_pickle=False)['basis'];task_y=z[cfg['source_seed']]@dec[cfg['source_seed']]
+            if task_b.shape!=(cfg['hook_hidden_size'],) or not np.isclose(np.linalg.norm(task_b),1):raise ValueError('Frozen basis invalid')
+            np.savez_compressed(run/'source_task_direction.npz',basis=task_b,source_contributions=task_y)
+            write(run/'source_task_direction.json',dict(source_seed=cfg['source_seed'],rule='Frozen development basis, no reserved contrasts fitted',
+                frozen_sha256=sha256(paths['frozen_direction']),input_split='reserved_application_only',refitted=False,target_endpoints_used=False))
         surface=[json.loads(x) for x in paths['surface'].read_text().splitlines() if x]
         factors=np.load(paths['factors'],allow_pickle=False)
         findex={(int(s),int(a),int(t)):i for i,(s,a,t) in enumerate(zip(factors['source_seed'],factors['source_atom'],factors['target_seed']))}
@@ -314,9 +332,19 @@ def main():
             write(run/'source_native_fit.json',native_info)
             specs.append(('source_native_group',s,None))
         compiled={};panel=np.arange(len(prompts));bank=None
-        if 'compiled_deltas_path' in cfg:
+        if frozen_task:
+            from assemble_f4_paired_panel import compile_frozen_task_panel
+            application_cache=dict(hidden=hidden,**{f'codes_{s}':v for s,v in z.items()})
+            with np.load(paths['decoded_relations'],allow_pickle=False) as decoded, np.load(paths['code_relations'],allow_pickle=False) as code, np.load(paths['source_native_frozen'],allow_pickle=False) as native:
+                bank,methods=compile_frozen_task_panel(prompts,application_cache,dec,decoded,code,native,cfg['source_seed'])
+            cm=dict(methods=methods,sample_ids=[p['id'] for p in prompts],basis=task_b.tolist(),source_native_sha256=sha256(paths['source_native_frozen']),target_endpoints_used=False,refitted=False)
+            np.savez_compressed(run/'compiled_natural_deltas.npz',**bank);write(run/'compiled_methods.json',cm)
+            write(run/'application_before_target_forward.json',dict(frozen_relations=cfg['frozen_relations'],
+                compiled_delta_sha256=sha256(run/'compiled_natural_deltas.npz'),compiled_methods_sha256=sha256(run/'compiled_methods.json'),
+                forward_count=forwards,target_interventions_started=False,refitted=False,scope='Reserved codes applied to frozen parameters; no target behavior/gradients used to select or fit'))
+        if 'compiled_deltas_path' in cfg or frozen_task:
             if not task_mode:raise ValueError('Compiled operations require the frozen task source reference')
-            cm=json.loads(paths['compiled_methods'].read_text());bank=np.load(paths['compiled_deltas'],allow_pickle=False)
+            if not frozen_task:cm=json.loads(paths['compiled_methods'].read_text());bank=np.load(paths['compiled_deltas'],allow_pickle=False)
             if cm['sample_ids']!=[p['id'] for p in prompts] or not np.allclose(cm['basis'],task_b,rtol=0,atol=1e-12):raise ValueError('Compiled input order/source basis changed')
             native_reference=cfg.get('compiled_reference_method')=='source_native_group'
             if native_reference:
@@ -328,15 +356,21 @@ def main():
             if len(panel)!=cfg['panel_size']:raise ValueError('Compiled panel size mismatch')
             compiled={r['key']:r for r in cm['methods']}
             if len(compiled)!=cfg['compiled_method_count']:raise ValueError('Compiled method count mismatch')
-            source_rows=[json.loads(line) for line in paths['source_predictions'].read_text().splitlines() if line]
-            source_predictions={(r['id'],r['axis']):r['margin_loss'] for r in source_rows if r['method']==cfg.get('compiled_reference_method','source_task_projection')}
-            predictions=[dict(method=method,target_seed=compiled[method]['target_seed'],sample_id=prompts[i]['id'],axis=axis,
-                              predicted_margin_loss=source_predictions[prompts[i]['id'],axis])
-                         for method in compiled for axis in ('subject','attractor') for i in panel]
-            write(run/'predictions_before_target_forward.json',dict(rows=predictions,rule='Matched operation should reproduce previously observed source reference effects on same development input',
-                limitation='Prospective target-response prediction, not unseen-input prediction; source effects were already observed',target_forward_started=False))
+            if not frozen_task:
+                source_rows=[json.loads(line) for line in paths['source_predictions'].read_text().splitlines() if line]
+                source_predictions={(r['id'],r['axis']):r['margin_loss'] for r in source_rows if r['method']==cfg.get('compiled_reference_method','source_task_projection')}
+                predictions=[dict(method=method,target_seed=compiled[method]['target_seed'],sample_id=prompts[i]['id'],axis=axis,
+                                  predicted_margin_loss=source_predictions[prompts[i]['id'],axis])
+                             for method in compiled for axis in ('subject','attractor') for i in panel]
+                write(run/'predictions_before_target_forward.json',dict(rows=predictions,rule='Matched operation should reproduce previously observed source reference effects on same development input',
+                    limitation='Prospective target-response prediction, not unseen-input prediction; source effects were already observed',target_forward_started=False))
             specs += [(method,cfg['source_seed'],None) for method in compiled]
         for method,s,a in specs:
+            if frozen_task and method in compiled and not (run/'predictions_before_target_forward.json').exists():
+                source_predictions={(r['id'],r['axis']):r['margin_loss'] for r in rows if r['method']=='source_native_group'}
+                predictions=[dict(method=m,target_seed=compiled[m]['target_seed'],sample_id=prompts[i]['id'],axis=axis,predicted_margin_loss=source_predictions[prompts[i]['id'],axis]) for m in compiled for axis in ('subject','attractor') for i in panel]
+                write(run/'predictions_before_target_forward.json',dict(rows=predictions,rule='Predict reserved target effects from measured frozen source-native effects, no refit or outcome selection',
+                    limitation='New-input transport test with source effects measured first, not source-free numerical forecast',forward_count=forwards,target_forward_started=False))
             for axis in ('subject','attractor'):
                 donor=swap_indices(prompts,axis)
                 if method in compiled:natural=np.asarray(bank[f'{method}_{axis}'])
@@ -379,7 +413,7 @@ def main():
                 attractor_mean_abs_loss=float(np.abs(vals['attractor'][:,0]).mean()),
                 subject_mean_past_loss=float(vals['subject'][:,1].mean()),subject_mean_abs_tense_shift=float(np.abs(vals['subject'][:,2]).mean())))
         ranking.sort(key=lambda r:(-r['subject_mean_loss'],r['source_atom'],r['source_seed']))
-        write(run/'source_shortlist.json',dict(rule=cfg['selection'],ranking=ranking,selected=ranking[:2],target_endpoints_used=False,reserved_forwarded=False))
+        write(run/'source_shortlist.json',dict(rule=cfg['selection'],ranking=ranking,selected=ranking[:2],target_endpoints_used=False,reserved_forwarded=frozen_task))
         by_condition={}
         for sn in (0,1):
             for an in (0,1):
@@ -387,8 +421,10 @@ def main():
                 by_condition[f'{sn}/{an}']=dict(n=len(values),primary_correct=int((values[:,0]>0).sum()),primary_mean_margin=float(values[:,0].mean()),past_correct=int((values[:,1]>0).sum()))
         expected_rows=len(prompts)*(1+2*(len(specs)-len(compiled)))+2*len(panel)*len(compiled)
         checks=dict(noop=noop<=1e-6,padding_equivalence=padding_ok,all_rows=len(rows)==expected_rows,
-                    all_finite=all(np.isfinite(r['logprobs']).all() for r in rows),source_cap=max(r.get('hook_fraction',0) for r in rows if r['method'] not in compiled)<=.10000001,reserved_not_forwarded=True)
-        if task_mode:checks['saved_input_replay']=replay_ok
+                    all_finite=all(np.isfinite(r['logprobs']).all() for r in rows),source_cap=max(r.get('hook_fraction',0) for r in rows if r['method'] not in compiled)<=.10000001)
+        if frozen_task:checks['reserved_parameters_not_refitted']=native_info['frozen'] and not native_info['refitted'] and not ranking
+        else:checks['reserved_not_forwarded']=True
+        if task_mode and not frozen_task:checks['saved_input_replay']=replay_ok
         method_summary=[]
         for method,s,a in specs:
             for axis in ('subject','attractor'):

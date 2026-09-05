@@ -2,13 +2,23 @@ import copy
 import json
 import sys
 import unittest
+import numpy as np
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
 from run_f4_task_paired_asset import generate
+from assemble_f4_paired_panel import match_norm
 
 
 class TaskPairedTests(unittest.TestCase):
+    def test_raw_norm_match_preserves_direction_and_zero(self):
+        raw=np.array([[3.,4.],[0.,0.],[2.,0.]])
+        ref=np.array([[0.,10.],[0.,0.],[0.,0.]])
+        actual,scale=match_norm(raw,ref)
+        np.testing.assert_allclose(actual,[[6.,8.],[0.,0.],[0.,0.]])
+        np.testing.assert_allclose(scale,[2.,0.,0.])
+        with self.assertRaises(ValueError):match_norm(np.zeros((1,2)),np.ones((1,2)))
+
     def setUp(self):
         self.cfg=json.loads((ROOT/'configs/f4_task_paired_asset_v1.json').read_text())
         self.old=json.loads((ROOT/self.cfg['excluded_task_config']).read_text())

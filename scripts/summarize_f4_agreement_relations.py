@@ -16,25 +16,30 @@ def main():
     parser=argparse.ArgumentParser();parser.add_argument('--fit',default='F4_agreement_relations_fit_v1_20260905');parser.add_argument('--run',default='F4_agreement_relations_causal_v1_20260905');parser.add_argument('--source',default='F4_agreement_task_contrast_v1_20260905');args=parser.parse_args()
     source=ROOT/'runs'/args.source;fit=ROOT/'runs'/args.fit;run=ROOT/'runs'/args.run
     if (run/'relation_summary.json').exists():raise FileExistsError('Immutable summary output exists')
+    taskcfg=json.loads((run/'config.resolved.json').read_text());reserved=taskcfg['split']=='reserved'
     allrows=rows(run/'metrics.raw.jsonl');old=rows(source/'metrics.raw.jsonl');base={r['id']:r for r in allrows if r['method']=='baseline'}
     anchors={(r['method'],r.get('axis'),r['id']):{k:v for k,v in r.items() if k!='run_id'} for r in old}
     for r in allrows:
         np.testing.assert_allclose(margins(np.array([r['logprobs']]),[r])[0],r['margins'],rtol=0,atol=1e-12)
         if r['method']!='baseline':np.testing.assert_allclose(np.array(base[r['id']]['margins'])-r['margins'],r['margin_loss'],rtol=0,atol=1e-12)
-        if 'target_seed' not in r:assert anchors[r['method'],r.get('axis'),r['id']]=={k:v for k,v in r.items() if k!='run_id'}
+        if 'target_seed' not in r and not reserved:assert anchors[r['method'],r.get('axis'),r['id']]=={k:v for k,v in r.items() if k!='run_id'}
     predicted=json.loads((run/'predictions_before_target_forward.json').read_text())['rows']
     pred={(r['method'],r['axis'],r['sample_id']):np.array(r['predicted_margin_loss']) for r in predicted}
-    taskcfg=json.loads((run/'config.resolved.json').read_text());tasks=json.loads((run/'tokenized_development.json').read_text())['rows']
+    tasks=json.loads((run/('tokenized_reserved.json' if reserved else 'tokenized_development.json')).read_text())['rows']
     native_reference=taskcfg.get('compiled_reference_method')=='source_native_group'
     panel=np.array([i for i,r in enumerate(tasks) if r['template'] in taskcfg['panel_templates']]);ids={r['id']:i for i,r in enumerate(tasks)}
-    cache=np.load(ROOT/taskcfg['replay_activations_path'],allow_pickle=False);factors=np.load(fit/'relation_factors.npz',allow_pickle=False)
-    bank_path=ROOT/taskcfg['compiled_deltas_path']
+    cache_path=run/'reserved_activations.npz' if reserved else ROOT/taskcfg['replay_activations_path']
+    cache=np.load(cache_path,allow_pickle=False);factors=np.load(fit/'relation_factors.npz',allow_pickle=False)
+    bank_path=run/'compiled_natural_deltas.npz' if reserved else ROOT/taskcfg['compiled_deltas_path']
     bank=np.load(bank_path,allow_pickle=False);b=factors['basis'];source_y=np.load(source/'source_task_direction.npz',allow_pickle=False)['source_contributions']
     table=[];supports=[]
     for method in sorted({r['method'] for r in allrows if 'target_seed' in r}):
         for axis in ('subject','attractor'):
             rr=[r for r in allrows if r['method']==method and r['axis']==axis];assert len(rr)==len(panel)
             observed=np.array([r['margin_loss'] for r in rr]);expected=np.array([pred[method,axis,r['id']] for r in rr])
+            if reserved:
+                actual_source={r['id']:r['margin_loss'] for r in allrows if r['method']=='source_native_group' and r['axis']==axis}
+                np.testing.assert_array_equal(expected,np.array([actual_source[r['id']] for r in rr]))
             denom=np.sum(expected**2,axis=0);error=np.sum((observed-expected)**2,axis=0)
             donor=swap_indices(tasks,axis);ref=bank[f'source_native_reference_{axis}'] if native_reference else ((source_y-source_y[donor])@b)[:,None]*b
             _,scale=capped(ref,cache['hidden'],taskcfg['maximum_source_hook_fraction'])
@@ -69,10 +74,11 @@ def main():
             assert len(rr)==64
             source_table.append(dict(method=method,source_atom=atom,axis=axis,mean_margin_loss=np.mean([r['margin_loss'] for r in rr],axis=0).tolist(),
                 mean_hook_fraction=float(np.mean([r['hook_fraction'] for r in rr])),historical_diagnostic=True))
-    evidence=[entry(p,'CCAD observed artifact','evidence') for p in [source/'metrics.raw.jsonl',run/'metrics.raw.jsonl',fit/'metrics.raw.jsonl',fit/'relation_factors.npz',bank_path,ROOT/taskcfg['compiled_methods_path'],run/'predictions_before_target_forward.json',ROOT/'runs/F4_agreement_source_remaining_v1_20260905/metrics.raw.jsonl']]
+    methods_path=run/'compiled_methods.json' if reserved else ROOT/taskcfg['compiled_methods_path']
+    evidence=[entry(p,'CCAD observed artifact','evidence') for p in [source/'metrics.raw.jsonl',run/'metrics.raw.jsonl',fit/'metrics.raw.jsonl',fit/'relation_factors.npz',bank_path,methods_path,cache_path,run/'predictions_before_target_forward.json',ROOT/'runs/F4_agreement_source_remaining_v1_20260905/metrics.raw.jsonl']]
     summary=dict(source_table=source_table,method_table=table,support_diagnostics=supports,inputs=evidence,
-        checks=dict(source_anchor_rows_replayed=len(old),prediction_rows_compared=len(pred),raw_margin_rows_recomputed=len(allrows),all_candidate_source_scales_replayed=True),
-        statistics=f'{len(taskcfg["panel_templates"])} lexicalized templates;{len(panel)} dependent number conditions;4targets share same source. No independent-seed p-values or unseen-input claim.',
+        checks=dict(source_anchor_rows_replayed=0 if reserved else len(old),prediction_rows_compared=len(pred),raw_margin_rows_recomputed=len(allrows),all_candidate_source_scales_replayed=True),
+        statistics=f'{len(taskcfg["panel_templates"])} lexicalized templates;{len(panel)} dependent number conditions;4targets share same source. No independent-seed p-values. Split={taskcfg["split"]}.',
         generator_script_sha256=sha256(Path(__file__)))
     write(run/'relation_summary.json',summary)
     lines=['# 任务方向与跨seed组成操作：开发结果','',
@@ -116,6 +122,13 @@ def main():
             lines.insert(2,'本次配对为全新词汇128完整模板/512输入的source定义任务条件化discovery，仅主语数变化差分。原development/reserved词汇全部排除；不是task-agnostic、human证据或排除底模预训练。Decoded输入768维，code输入3072维；native/raw对照在两fit逐值相同，不能把code收益写成等参数容量优势。')
     if len(panel)!=8:
         lines=[line.replace('8条输入来自两个开发词汇模板',f'{len(panel)}条输入来自{len(taskcfg["panel_templates"])}个开发词汇模板') for line in lines]
+    if reserved:
+        lines=['# 原reserved64：冻结方法确认','','首次使用原reserved新词汇/介词，16模板64条件，同across-PP结构族；所有25方法、source ids/g/b、两fit和操作点在编码前固定。无reserved拟合/梯度/筛选。原始raw与等范数raw均保留。','','|方法|主语mean|主语误差|past误差|主语dose|','|---|---:|---:|---:|---:|']
+        for r in table:
+            if r['axis']=='subject':lines.append(f"|{r['method']}|{r['observed_mean']:.6f}|{r['primary_normalized_error']:.6f}|{r['past_normalized_error']:.6f}|{r['mean_hook_fraction']:.6f}|")
+        lines+=['','误差=Σ(candidate−source作用)^2/Σ(source作用)^2；零操作为1。全部两axis/副作用/剂量在METHOD_TABLE.csv。等范数比较和模板区间在NORM_COMPARISON.md。',
+            '',f'复核{len(allrows)}逐行margin、{len(pred)}个事前target预测及共同source-native scale。新输入source实际作用先测，再作为target预测；没有旧source锚点重放，不能称source-free数值预测。新词汇不是新句法族；四target共享source，不作独立seed统计。',
+            '', '这批reserved从本次起已暴露；任何根据其结果改变的方法都必须使用新数据确认。paired audit未打开。','']
     (run/'RESULTS_FOR_REVIEW.md').write_text('\n'.join(lines),encoding='utf-8')
     print(json.dumps(dict(checks=summary['checks'],rows=len(allrows),methods=len(table)//2,report=str(run/'RESULTS_FOR_REVIEW.md'),supports=[r for r in supports if r['method']=='native' and r['axis']=='subject']),indent=2))
 

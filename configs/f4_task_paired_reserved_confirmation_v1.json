@@ -1,0 +1,197 @@
+{
+  "run_id": "F4_task_paired_reserved_confirmation_v1_20260905",
+  "asset_config": "configs/f4_probability_confirmation_codes_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "queries": [],
+  "query_rule": "One source seed2 plural-minus-singular contrast from all full decoded contributions, balanced over template and attractor; no target task endpoints.",
+  "design": {
+    "development": {
+      "subjects": [
+        [
+          "singer",
+          "singers"
+        ],
+        [
+          "lawyer",
+          "lawyers"
+        ],
+        [
+          "teacher",
+          "teachers"
+        ],
+        [
+          "pilot",
+          "pilots"
+        ]
+      ],
+      "attractors": [
+        [
+          "guard",
+          "guards"
+        ],
+        [
+          "actor",
+          "actors"
+        ],
+        [
+          "dancer",
+          "dancers"
+        ],
+        [
+          "driver",
+          "drivers"
+        ]
+      ],
+      "prepositions": [
+        "near",
+        "behind",
+        "beside",
+        "with"
+      ]
+    },
+    "reserved": {
+      "subjects": [
+        [
+          "doctor",
+          "doctors"
+        ],
+        [
+          "author",
+          "authors"
+        ],
+        [
+          "farmer",
+          "farmers"
+        ],
+        [
+          "baker",
+          "bakers"
+        ]
+      ],
+      "attractors": [
+        [
+          "student",
+          "students"
+        ],
+        [
+          "clerk",
+          "clerks"
+        ],
+        [
+          "painter",
+          "painters"
+        ],
+        [
+          "worker",
+          "workers"
+        ]
+      ],
+      "prepositions": [
+        "in front of",
+        "next to",
+        "across from",
+        "alongside"
+      ]
+    },
+    "construction": "The {subject} {preposition} the {attractor}",
+    "lexical_pairing": "attractor index=(subject index+preposition index)%4",
+    "scope": "One across-PP structural family, 16 lexicalized templates per split; not 32 independent syntactic structures. Programmatic synthetic grammatical labels, not human annotations. No claim of exclusion from base-model pretraining. Reserved prompts generated but not tokenized or forwarded this run."
+  },
+  "split": "reserved",
+  "continuations": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "primary": "log P(correct is/are)-log P(incorrect is/are) in recipient context; interventions measured as baseline minus intervened margin",
+  "secondary": "past was/were agreement margin and present-versus-past total probability log ratio; neither is independent human semantic evidence",
+  "intervention": "Final valid layer5resid_post only; frozen source-native signed donor differences. Source cap.1 sets shared per-input scale. Decoded/codeFCC/raw/native/single/random retain original natural magnitudes. Four rawmatched directions additionally have per-input/axis codeFCC norm before common scale.",
+  "maximum_source_hook_fraction": 0.1,
+  "batch_size": 8,
+  "cpu_threads": 4,
+  "random_seed": 5091621,
+  "budget_seconds": 180,
+  "budget_forwards": 464,
+  "budget_description": "466forwards total:66source/reference/noop +25methods*2axes*8batches. Five SAE reserved encoding included in baseline collection, no extra asset run or training. <=180s numerical/loading90s expected; <1.5GiB VRAM observed on prior panels, no new weights.",
+  "selection": "No reserved filtering or refitting. Original4reservedsubjects/4attractors/4prepositions and all16templates/64numberconditions. All25methods retained. Frozen sourceids/g and originaldevelopmentb unchanged; same paired512 fit weights.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "evidence_level": "frozen_task_new_lexical_preposition_confirmation",
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "padding_tolerances": {
+    "logprob_absolute": 0.001,
+    "hook_relative_l2": 0.00001,
+    "scope": "Separate unit-scaled float32 diagnostic after v1 max0.0003752576; fixed before v2 source interventions, not a scientific acceptance threshold."
+  },
+  "source_reference_mode": "frozen_task",
+  "source_seed": 2,
+  "purpose": "Frozen task-conditioned FCC, raw and native operations on original unencoded reserved64",
+  "target_seeds": [
+    1,
+    3,
+    4,
+    5
+  ],
+  "panel_templates": [
+    "reserved:0:0",
+    "reserved:0:1",
+    "reserved:0:2",
+    "reserved:0:3",
+    "reserved:1:0",
+    "reserved:1:1",
+    "reserved:1:2",
+    "reserved:1:3",
+    "reserved:2:0",
+    "reserved:2:1",
+    "reserved:2:2",
+    "reserved:2:3",
+    "reserved:3:0",
+    "reserved:3:1",
+    "reserved:3:2",
+    "reserved:3:3"
+  ],
+  "panel_size": 64,
+  "compiled_method_count": 25,
+  "scope": "First encoding/forward of original reserved64, lexicon and prepositions excluded from source development and new paired fitting; same across-PP structural family, not new syntax or base pretraining exclusion. New-input transfer confirmation, source response measured first to forecast target response before any target intervention. No source-free numerical forecast or human semantic evidence.",
+  "source_native": {
+    "frozen_path": "runs/F4_agreement_source_adjoint_box_v1_20260905/source_native_factors.npz",
+    "frozen_sha256": "24b40579f060146ec27b17bbc7db6314d03f4bd2f5d4af36eb954df6287ee366",
+    "fit_budget_seconds": 60
+  },
+  "compiled_reference_method": "source_native_group",
+  "frozen_relations": {
+    "decoded_relations": {
+      "path": "runs/F4_task_paired_decoded_fit_v1_20260905/relation_factors.npz",
+      "sha256": "7aa2ac706444dd2b407a00cfb83251cc6babf79bf66ab720a862ac6f6e1459e7"
+    },
+    "code_relations": {
+      "path": "runs/F4_task_paired_codes_fit_v1_20260905/relation_factors.npz",
+      "sha256": "a51a73f8eed9b19a0aee084804b907af9384cb9f3ea6262a40f75b97ae09aef9"
+    },
+    "frozen_direction": {
+      "path": "runs/F4_agreement_task_contrast_v1_20260905/source_task_direction.npz",
+      "sha256": "f430ba893d85a357caa36408a1d3c435834592abb58daf7989934651efc04d7a"
+    },
+    "original_task_design": {
+      "path": "configs/f4_agreement_source_v2.json",
+      "sha256": "422e5bbbec2fb890b3397ff7cfd6cfc766daa69931970e701d85b2e8b2c4f0b2"
+    }
+  },
+  "confirmation": {
+    "primary": "For every target, compare codeFCC and normmatchedraw source-normalized squared error of subject is/are margin loss. Report all directions, point estimates and template bootstrap5000 seed9051916 pointwise intervals.",
+    "secondary": [
+      "past was/were source-effect error",
+      "attractor absolute primary collateral",
+      "attractor absolute tense collateral",
+      "original raw source-effect error and dose",
+      "native64/single/random signed controls"
+    ],
+    "expectations": "CodeFCC preserves some source task effect and improves average subject primary/past error over normmatchedraw; smaller attractor tense shifts may persist, but no claim of smaller attractor primary effect. Primary with originalraw may remain worse. These are hypotheses, not pass/fail implementation gates.",
+    "statistics": "16 whole lexical templates,4numberconditions each; four targets share source. No independent-seed p-value. No confirmatory universal claim from majority vote. Retain negative results; further changes require new confirmation data.",
+    "prohibited": "No coefficient/group/query/rank/ridge/threshold fitting or method selection on reserved. No gradients on reserved. Paired audit remains unencoded. Once run exposes reserved, future method selection cannot reuse it as unseen."
+  }
+}

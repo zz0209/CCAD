@@ -1,0 +1,183 @@
+{
+  "run_id": "F4_task_norm_matched_causal_v1_20260905",
+  "asset_config": "configs/f4_probability_confirmation_codes_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "queries": [],
+  "query_rule": "One source seed2 plural-minus-singular contrast from all full decoded contributions, balanced over template and attractor; no target task endpoints.",
+  "design": {
+    "development": {
+      "subjects": [
+        [
+          "singer",
+          "singers"
+        ],
+        [
+          "lawyer",
+          "lawyers"
+        ],
+        [
+          "teacher",
+          "teachers"
+        ],
+        [
+          "pilot",
+          "pilots"
+        ]
+      ],
+      "attractors": [
+        [
+          "guard",
+          "guards"
+        ],
+        [
+          "actor",
+          "actors"
+        ],
+        [
+          "dancer",
+          "dancers"
+        ],
+        [
+          "driver",
+          "drivers"
+        ]
+      ],
+      "prepositions": [
+        "near",
+        "behind",
+        "beside",
+        "with"
+      ]
+    },
+    "reserved": {
+      "subjects": [
+        [
+          "doctor",
+          "doctors"
+        ],
+        [
+          "author",
+          "authors"
+        ],
+        [
+          "farmer",
+          "farmers"
+        ],
+        [
+          "baker",
+          "bakers"
+        ]
+      ],
+      "attractors": [
+        [
+          "student",
+          "students"
+        ],
+        [
+          "clerk",
+          "clerks"
+        ],
+        [
+          "painter",
+          "painters"
+        ],
+        [
+          "worker",
+          "workers"
+        ]
+      ],
+      "prepositions": [
+        "in front of",
+        "next to",
+        "across from",
+        "alongside"
+      ]
+    },
+    "construction": "The {subject} {preposition} the {attractor}",
+    "lexical_pairing": "attractor index=(subject index+preposition index)%4",
+    "scope": "One across-PP structural family, 16 lexicalized templates per split; not 32 independent syntactic structures. Programmatic synthetic grammatical labels, not human annotations. No claim of exclusion from base-model pretraining. Reserved prompts generated but not tokenized or forwarded this run."
+  },
+  "split": "development",
+  "continuations": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "primary": "log P(correct is/are)-log P(incorrect is/are) in recipient context; interventions measured as baseline minus intervened margin",
+  "secondary": "past was/were agreement margin and present-versus-past total probability log ratio; neither is independent human semantic evidence",
+  "intervention": "Final valid layer5 resid_post only. Compare full source SAE donor difference with its projection on one normalized source task direction. Each operation has its own natural magnitude and cap0.1; dose reported, not claimed equal-energy. Historical raw/1655 diagnostics reused only in report.",
+  "maximum_source_hook_fraction": 0.1,
+  "batch_size": 8,
+  "cpu_threads": 4,
+  "random_seed": 5091621,
+  "budget_seconds": 180,
+  "budget_forwards": 208,
+  "budget_description": "210forward total:66source/reference plus9methods*2axes*8batches. Unchanged parameters and original64 development inputs, no re-fit. <=180s numerical/loading90s expected.",
+  "selection": "All4codeFCC,4raw normmatched to each FCC per input/axis,and originalraw. No behavioral ranking or coefficient optimization.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "evidence_level": "synthetic_task_cross_seed_component_development",
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "padding_tolerances": {
+    "logprob_absolute": 0.001,
+    "hook_relative_l2": 0.00001,
+    "scope": "Separate unit-scaled float32 diagnostic after v1 max0.0003752576; fixed before v2 source interventions, not a scientific acceptance threshold."
+  },
+  "source_reference_mode": "task_contrast",
+  "source_seed": 2,
+  "replay_activations_path": "runs/F4_agreement_source_v2_20260905/development_activations.npz",
+  "replay_activations_sha256": "91ecc32b178d08f460ce275d1d6a9317468a5acffb0d25297d7df02a5fd0528b",
+  "replay_tokens_path": "runs/F4_agreement_source_v2_20260905/tokenized_development.json",
+  "replay_tokens_sha256": "9e62660c4f8534645e55dc6378b3fbb4c9fe7e747bbfcd85082a266ec4c842e7",
+  "purpose": "Task-basis cross-seed transport versus native signed edits on a fixed small development panel",
+  "source_predictions_path": "runs/F4_agreement_source_adjoint_box_v1_20260905/metrics.raw.jsonl",
+  "source_predictions_sha256": "8073a550975b8ea577f3204f609ea1cf6795c20a968e2f7c7ac725f61211e0a1",
+  "target_seeds": [
+    1,
+    3,
+    4,
+    5
+  ],
+  "compiled_deltas_path": "artifacts/f4_task_norm_matched_panel_v1/compiled_natural_deltas.npz",
+  "compiled_deltas_sha256": "1c3c1022e8b7c45a004402eb7b2ce01679780af18e05fd3f239dcf7e69e716f3",
+  "compiled_methods_path": "artifacts/f4_task_norm_matched_panel_v1/compiled_methods.json",
+  "compiled_methods_sha256": "5ae876a9617c34654d610bdc83b12e10de563f43cdbeb8b551da1bd1e3271a1a",
+  "panel_templates": [
+    "development:0:0",
+    "development:0:1",
+    "development:0:2",
+    "development:0:3",
+    "development:1:0",
+    "development:1:1",
+    "development:1:2",
+    "development:1:3",
+    "development:2:0",
+    "development:2:1",
+    "development:2:2",
+    "development:2:3",
+    "development:3:0",
+    "development:3:1",
+    "development:3:2",
+    "development:3:3"
+  ],
+  "panel_size": 64,
+  "compiled_method_count": 9,
+  "scope": "Development dose control, not independent confirmation. Raw direction preserved; per-input norm equals paired codeFCC, both then multiplied by common source-native scale. No target-native equivalence claim; raw inherits norms from FCC and is an informed dose control.",
+  "source_native": {
+    "frozen_path": "runs/F4_agreement_source_adjoint_box_v1_20260905/source_native_factors.npz",
+    "frozen_sha256": "24b40579f060146ec27b17bbc7db6314d03f4bd2f5d4af36eb954df6287ee366",
+    "fit_budget_seconds": 60
+  },
+  "compiled_reference_method": "source_native_group",
+  "comparison_endpoints": [
+    "primary source-effect normalized squared error",
+    "past source-effect normalized squared error",
+    "attractor absolute primary collateral",
+    "attractor absolute tense collateral",
+    "per-input hook norm"
+  ]
+}
