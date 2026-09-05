@@ -57,6 +57,18 @@ def capped(delta,hidden,fraction):
     return delta*scale[:,None],scale
 
 
+def task_contrast_basis(codes,decoder,rows):
+    """Source-only plural-minus-singular decoded contrast, balanced over attractors."""
+    y=codes@decoder
+    donors=swap_indices(rows,'subject')
+    plural=np.array([r['subject_number']==1 for r in rows])
+    contrast=(y[plural]-y[donors[plural]]).mean(axis=0)
+    norm=float(np.linalg.norm(contrast))
+    if not np.isfinite(norm) or norm<=1e-12:
+        raise ValueError('No nonzero source task contrast in this representation')
+    return contrast/norm,y,norm
+
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--config',type=Path,required=True)
     args=parser.parse_args();cfg=json.loads(args.config.read_text())
@@ -64,6 +76,10 @@ def main():
     for name in ('model_id','model_local_dir','model_revision','model_license','hook_module_path','hook_hidden_size',
                  'num_latents','k','saes','device','sparsify_source_dir','sparsify_overlay_dir','sparsify_commit'):
         cfg[name]=asset[name]
+    task_mode=cfg.get('source_reference_mode')=='task_contrast'
+    if task_mode:
+        cfg['saes']=[s for s in cfg['saes'] if s['seed']==cfg['source_seed']]
+        if len(cfg['saes'])!=1 or cfg['queries']:raise ValueError('Task contrast requires one source SAE and no query pool')
     run=ROOT/'runs'/cfg['run_id'];run.mkdir(parents=True,exist_ok=False)
     write(run/'config.resolved.json',cfg)
     code_paths=[Path(__file__),ROOT/'scripts/run_r011s1_raw_hook_asset.py',ROOT/'src/ccad/artifacts.py',ROOT/'src/ccad/activation_contract.py']
@@ -74,13 +90,13 @@ def main():
     write(run/'code_hashes.json',dict(files=codes,aggregate_sha256=aggregate(codes),snapshot_root='source_snapshot'))
     now=datetime.now(timezone.utc).isoformat()
     write(run/'manifest.json',dict(schema_version='fcc.agreement.source.v1',run_id=cfg['run_id'],run_parent='F4',
-        purpose='Task-specific source intervention screening before target evaluation',milestone='M4',
+        purpose=cfg.get('purpose','Task-specific source intervention screening before target evaluation'),milestone='M4',
         evidence_level=cfg['evidence_level'],started_utc=now,started_local=datetime.now().astimezone().isoformat(),
         trigger='ccad heartbeat',project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),
         code_snapshot_hash=aggregate(codes),source_snapshot_required=True,audit_opened=False,candidate_family_frozen=True,
-        mean_constants_source_split='original mean cancels in donor differences',threshold_source_split='development ranking only',
+        mean_constants_source_split='original mean cancels in donor differences',threshold_source_split=cfg.get('selection','development ranking only'),
         statistics_unit='lexicalized template; 4number conditions and shared SAE directions dependent',device=cfg['device'],
-        seeds=[r['seed'] for r in cfg['saes']],resource_lease=cfg['resource_lease'],resource_lease_reason='bounded model forwards and five existing SAE encoders',
+        seeds=sorted(set([r['seed'] for r in cfg['saes']]+cfg.get('target_seeds',[]))),resource_lease=cfg['resource_lease'],resource_lease_reason='bounded model forwards and existing SAE encoder/cache',
         model_id=cfg['model_id'],model_revision=cfg['model_revision'],tokenizer_revision=cfg['model_revision'],sae_framework_revision=cfg['sparsify_commit'],
         git_head_at_run=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         git_status_porcelain=subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).splitlines()))
@@ -93,6 +109,14 @@ def main():
                'environment_spec':ROOT/'.aris/compute/local-r006b1-env-spec.json'}
         for role in ('surface','factors'):
             if sha256(paths[role])!=cfg[role+'_sha256']:raise ValueError(f'{role} identity mismatch')
+        if task_mode:
+            for role in ('replay_activations','replay_tokens'):
+                paths[role]=ROOT/cfg[role+'_path']
+                if sha256(paths[role])!=cfg[role+'_sha256']:raise ValueError(f'{role} identity mismatch')
+        if 'compiled_deltas_path' in cfg:
+            for role in ('compiled_deltas','compiled_methods','source_predictions'):
+                paths[role]=ROOT/cfg[role+'_path']
+                if sha256(paths[role])!=cfg[role+'_sha256']:raise ValueError(f'{role} identity mismatch')
         if sha256(paths['environment_spec'])!='3129a184d787ae9be38ac6d8d97dbf5087e5c838c112473fe45f3862064bb60f':raise ValueError('Environment spec changed')
         for sae in cfg['saes']:
             paths[f'sae_{sae["seed"]}']=ROOT/sae['path']/'sae.safetensors'
@@ -171,6 +195,22 @@ def main():
             z[seed]=np.zeros((64,cfg['num_latents']));np.put_along_axis(z[seed],sparse.top_indices.cpu().numpy(),sparse.top_acts.cpu().numpy(),axis=1)
             dec[seed]=sae.W_dec.detach().cpu().numpy().astype(np.float64)
         np.savez_compressed(run/'development_activations.npz',hidden=hidden,logprobs=base,**{f'codes_{s}':v for s,v in z.items()})
+        replay_ok=True
+        if task_mode:
+            old=np.load(paths['replay_activations'],allow_pickle=False)
+            old_tokens=json.loads(paths['replay_tokens'].read_text())
+            current_tokens=json.loads((run/'tokenized_development.json').read_text())
+            replay={name:float(np.max(np.abs(current-old[name]))) for name,current in
+                    [('hidden',hidden),('logprobs',base),(f'codes_{cfg["source_seed"]}',z[cfg['source_seed']])]}
+            replay_ok=old_tokens==current_tokens and all(v<=1e-8 for v in replay.values())
+            write(run/'input_replay.json',dict(max_abs_errors=replay,tokenized_rows_equal=old_tokens==current_tokens,passed=replay_ok))
+            if not replay_ok:raise ValueError(f'Saved development input replay changed: {replay}')
+            task_b,task_y,contrast_norm=task_contrast_basis(z[cfg['source_seed']],dec[cfg['source_seed']],prompts)
+            np.savez_compressed(run/'source_task_direction.npz',basis=task_b,source_contributions=task_y)
+            write(run/'source_task_direction.json',dict(source_seed=cfg['source_seed'],contrast_norm=contrast_norm,
+                rule='Mean plural-minus-singular full source decoded contribution over 32 matched template/attractor pairs; normalized once',
+                input_split='development',target_endpoints_used=False,task_effects_used_to_fit_direction=False,
+                sae_config=json.loads(paths[f'sae_cfg_{cfg["source_seed"]}'].read_text())))
         surface=[json.loads(x) for x in paths['surface'].read_text().splitlines() if x]
         factors=np.load(paths['factors'],allow_pickle=False)
         findex={(int(s),int(a),int(t)):i for i,(s,a,t) in enumerate(zip(factors['source_seed'],factors['source_atom'],factors['target_seed']))}
@@ -184,19 +224,49 @@ def main():
                 if other['source_candidate_ids']!=support or not np.allclose(np.outer(b,b),np.outer(ob,ob),atol=1e-8):raise ValueError('Target-dependent source reference')
             families[s,a]=(support,b)
         for i,p in enumerate(prompts):rows.append(dict(run_id=cfg['run_id'],method='baseline',**p,logprobs=base[i].tolist(),margins=baseline[i].tolist()))
-        specs=[('raw_hook_swap',None,None)]+[('source_query',s,a) for s,a in cfg['queries']]
+        specs=([('source_task_projection',cfg['source_seed'],None),('source_full_sae_swap',cfg['source_seed'],None)] if task_mode
+               else [('raw_hook_swap',None,None)]+[('source_query',s,a) for s,a in cfg['queries']])
+        compiled={};panel=np.arange(len(prompts));bank=None
+        if 'compiled_deltas_path' in cfg:
+            if not task_mode:raise ValueError('Compiled operations require the frozen task source reference')
+            cm=json.loads(paths['compiled_methods'].read_text());bank=np.load(paths['compiled_deltas'],allow_pickle=False)
+            if cm['sample_ids']!=[p['id'] for p in prompts] or not np.allclose(cm['basis'],task_b,rtol=0,atol=1e-12):raise ValueError('Compiled input order/source basis changed')
+            panel=np.array([i for i,p in enumerate(prompts) if p['template'] in cfg['panel_templates']])
+            if len(panel)!=cfg['panel_size']:raise ValueError('Compiled panel size mismatch')
+            compiled={r['key']:r for r in cm['methods']}
+            if len(compiled)!=cfg['compiled_method_count']:raise ValueError('Compiled method count mismatch')
+            source_rows=[json.loads(line) for line in paths['source_predictions'].read_text().splitlines() if line]
+            source_predictions={(r['id'],r['axis']):r['margin_loss'] for r in source_rows if r['method']=='source_task_projection'}
+            predictions=[dict(method=method,target_seed=compiled[method]['target_seed'],sample_id=prompts[i]['id'],axis=axis,
+                              predicted_margin_loss=source_predictions[prompts[i]['id'],axis])
+                         for method in compiled for axis in ('subject','attractor') for i in panel]
+            write(run/'predictions_before_target_forward.json',dict(rows=predictions,rule='Matched operation should reproduce previously observed source reference effects on same development input',
+                limitation='Prospective target-response prediction, not unseen-input prediction; source effects were already observed',target_forward_started=False))
+            specs += [(method,cfg['source_seed'],None) for method in compiled]
         for method,s,a in specs:
             for axis in ('subject','attractor'):
                 donor=swap_indices(prompts,axis)
-                if method=='raw_hook_swap':natural=hidden-hidden[donor]
+                if method in compiled:natural=np.asarray(bank[f'{method}_{axis}'])
+                elif method=='raw_hook_swap':natural=hidden-hidden[donor]
+                elif method=='source_full_sae_swap':natural=task_y-task_y[donor]
+                elif method=='source_task_projection':natural=((task_y-task_y[donor])@task_b)[:,None]*task_b[None,:]
                 else:
                     support,b=families[s,a];local=(z[s][:,support]-z[s][donor][:,support])@dec[s][support]
                     natural=(local@b)[:,None]*b[None,:]
-                delta,scale=capped(natural,hidden,cfg['maximum_source_hook_fraction']);lp=np.empty_like(base)
-                for ix in batches:lp[ix],_=forward(ix,delta[ix])
+                if method in compiled:
+                    ref=((task_y-task_y[donor])@task_b)[:,None]*task_b
+                    _,scale=capped(ref,hidden,cfg['maximum_source_hook_fraction'])
+                    delta=natural*scale[:,None];indices=panel
+                    work_batches=[panel[i:i+batchsize] for i in range(0,len(panel),batchsize)]
+                else:
+                    delta,scale=capped(natural,hidden,cfg['maximum_source_hook_fraction']);indices=np.arange(len(prompts));work_batches=batches
+                lp=base.copy()
+                for ix in work_batches:lp[ix],_=forward(ix,delta[ix])
                 changed=margins(lp,prompts)
-                for i,p in enumerate(prompts):
+                for i in indices:
+                    p=prompts[i]
                     rows.append(dict(run_id=cfg['run_id'],method=method,source_seed=s,source_atom=a,axis=axis,**p,
+                        **(dict(target_seed=compiled[method]['target_seed'],operation=compiled[method]['operation'],scale_rule='common_source_projection_scale') if method in compiled else {}),
                         donor_id=prompts[donor[i]]['id'],dose_scale=float(scale[i]),hook_fraction=float(np.linalg.norm(delta[i])/np.linalg.norm(hidden[i])),
                         natural_norm=float(np.linalg.norm(natural[i])),logprobs=lp[i].tolist(),margins=changed[i].tolist(),
                         margin_loss=(baseline[i]-changed[i]).tolist()))
@@ -221,12 +291,27 @@ def main():
             for an in (0,1):
                 values=np.array([r['margins'] for r in baseline_rows if r['subject_number']==sn and r['attractor_number']==an])
                 by_condition[f'{sn}/{an}']=dict(n=len(values),primary_correct=int((values[:,0]>0).sum()),primary_mean_margin=float(values[:,0].mean()),past_correct=int((values[:,1]>0).sum()))
-        checks=dict(noop=noop<=1e-6,padding_equivalence=padding_ok,all_rows=len(rows)==len(prompts)*(1+2*len(specs)),
-                    all_finite=all(np.isfinite(r['logprobs']).all() for r in rows),source_cap=max(r.get('hook_fraction',0) for r in rows)<=.10000001,reserved_not_forwarded=True)
+        expected_rows=len(prompts)*(1+2*(len(specs)-len(compiled)))+2*len(panel)*len(compiled)
+        checks=dict(noop=noop<=1e-6,padding_equivalence=padding_ok,all_rows=len(rows)==expected_rows,
+                    all_finite=all(np.isfinite(r['logprobs']).all() for r in rows),source_cap=max(r.get('hook_fraction',0) for r in rows if r['method'] not in compiled)<=.10000001,reserved_not_forwarded=True)
+        if task_mode:checks['saved_input_replay']=replay_ok
+        method_summary=[]
+        for method,s,a in specs:
+            for axis in ('subject','attractor'):
+                obs=[r for r in rows if r['method']==method and r['axis']==axis and r['source_seed']==s and r['source_atom']==a]
+                values=np.array([r['margin_loss'] for r in obs]);template_means={t:float(np.mean([r['margin_loss'][0] for r in obs if r['template']==t])) for t in sorted({r['template'] for r in obs})}
+                method_summary.append(dict(method=method,source_seed=s,source_atom=a,axis=axis,n=len(obs),
+                    mean_margin_loss=values.mean(axis=0).tolist(),mean_abs_margin_loss=np.abs(values).mean(axis=0).tolist(),
+                    median_primary_loss=float(np.median(values[:,0])),positive_primary=int((values[:,0]>0).sum()),
+                    primary_range=[float(values[:,0].min()),float(values[:,0].max())],template_means=template_means,
+                    positive_templates=sum(v>0 for v in template_means.values()),
+                    mean_hook_fraction=float(np.mean([r['hook_fraction'] for r in obs])),
+                    mean_natural_norm=float(np.mean([r['natural_norm'] for r in obs]))))
+        summary['method_summary']=method_summary
         summary.update(checks=checks,baseline_by_condition=by_condition,source_ranking=ranking,model_forwards=forwards,numeric_seconds=time.perf_counter()-numeric_start,
             peak_allocated_vram_bytes=torch.cuda.max_memory_allocated(),max_noop=noop,max_unpadded_error=unpad_error,rows=len(rows),
             primary_correct=sum(r['margins'][0]>0 for r in baseline_rows),primary_total=len(baseline_rows),
-            scope='Synthetic source-only development; no cross-seed correspondence claim or reserved results')
+            scope=cfg.get('scope','Synthetic source-only development; no cross-seed correspondence claim or reserved results'))
         status='PASS' if all(checks.values()) else 'FAIL'
         write(run/'environment.json',dict(platform=platform.platform(),python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,
              transformers=transformers.__version__,numpy=np.__version__,cuda=torch.version.cuda,gpu=torch.cuda.get_device_name(),sae=cfg['sparsify_commit']))

@@ -5,10 +5,22 @@ from pathlib import Path
 import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
-from run_f4_agreement_source import make_prompts,swap_indices,margins,capped
+from run_f4_agreement_source import make_prompts,swap_indices,margins,capped,task_contrast_basis
 
 
 class AgreementTests(unittest.TestCase):
+    def test_task_contrast_balances_nuisance_and_order(self):
+        rows=[dict(template=str(t),subject_number=s,attractor_number=a) for t in range(3) for s in (0,1) for a in (0,1)]
+        codes=np.array([[r['subject_number'],r['attractor_number']+int(r['template'])] for r in rows],dtype=float)
+        decoder=np.array([[3.,4.,0.],[0.,0.,20.]])
+        b,y,norm=task_contrast_basis(codes,decoder,rows)
+        np.testing.assert_allclose(b,[.6,.8,0.]);self.assertAlmostEqual(norm,5.)
+        np.testing.assert_array_equal(y,codes@decoder)
+        order=np.random.default_rng(91).permutation(len(rows))
+        other,_,_=task_contrast_basis(codes[order],decoder,[rows[i] for i in order])
+        np.testing.assert_allclose(b,other)
+        with self.assertRaises(ValueError):task_contrast_basis(np.zeros_like(codes),decoder,rows)
+
     def test_factorial_and_swaps(self):
         cfg=json.loads((ROOT/'configs/f4_agreement_source_v1.json').read_text());rows=make_prompts(cfg['design'])
         self.assertEqual(len(rows),128);self.assertEqual(len({r['text'] for r in rows}),128)
