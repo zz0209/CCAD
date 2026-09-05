@@ -28,11 +28,12 @@ def main():
     native_reference=taskcfg.get('compiled_reference_method')=='source_native_group'
     panel=np.array([i for i,r in enumerate(tasks) if r['template'] in taskcfg['panel_templates']]);ids={r['id']:i for i,r in enumerate(tasks)}
     cache=np.load(ROOT/taskcfg['replay_activations_path'],allow_pickle=False);factors=np.load(fit/'relation_factors.npz',allow_pickle=False)
-    bank=np.load(fit/'compiled_natural_deltas.npz',allow_pickle=False);b=factors['basis'];source_y=np.load(source/'source_task_direction.npz',allow_pickle=False)['source_contributions']
+    bank_path=ROOT/taskcfg['compiled_deltas_path']
+    bank=np.load(bank_path,allow_pickle=False);b=factors['basis'];source_y=np.load(source/'source_task_direction.npz',allow_pickle=False)['source_contributions']
     table=[];supports=[]
     for method in sorted({r['method'] for r in allrows if 'target_seed' in r}):
         for axis in ('subject','attractor'):
-            rr=[r for r in allrows if r['method']==method and r['axis']==axis];assert len(rr)==8
+            rr=[r for r in allrows if r['method']==method and r['axis']==axis];assert len(rr)==len(panel)
             observed=np.array([r['margin_loss'] for r in rr]);expected=np.array([pred[method,axis,r['id']] for r in rr])
             denom=np.sum(expected**2,axis=0);error=np.sum((observed-expected)**2,axis=0)
             donor=swap_indices(tasks,axis);ref=bank[f'source_native_reference_{axis}'] if native_reference else ((source_y-source_y[donor])@b)[:,None]*b
@@ -41,9 +42,9 @@ def main():
             for r in rr:
                 i=ids[r['id']];np.testing.assert_allclose(r['dose_scale'],scale[i],rtol=0,atol=1e-12)
                 np.testing.assert_allclose(r['hook_fraction'],np.linalg.norm(delta[i])/np.linalg.norm(cache['hidden'][i]),rtol=1e-10,atol=1e-12)
-            table.append(dict(method=method,axis=axis,target_seed=rr[0]['target_seed'],n=8,
+            table.append(dict(method=method,axis=axis,target_seed=rr[0]['target_seed'],n=len(rr),
                 source_mean=float(expected[:,0].mean()),observed_mean=float(observed[:,0].mean()),
-                primary_normalized_error=float(error[0]/denom[0]),primary_rmse=float(np.sqrt(error[0]/8)),
+                primary_normalized_error=float(error[0]/denom[0]),primary_rmse=float(np.sqrt(error[0]/len(rr))),
                 past_normalized_error=float(error[1]/denom[1]),mean_abs_tense_shift=float(np.abs(observed[:,2]).mean()),
                 source_mean_abs_tense_shift=float(np.abs(expected[:,2]).mean()),
                 mean_hook_fraction=float(np.mean([r['hook_fraction'] for r in rr])),
@@ -68,10 +69,10 @@ def main():
             assert len(rr)==64
             source_table.append(dict(method=method,source_atom=atom,axis=axis,mean_margin_loss=np.mean([r['margin_loss'] for r in rr],axis=0).tolist(),
                 mean_hook_fraction=float(np.mean([r['hook_fraction'] for r in rr])),historical_diagnostic=True))
-    evidence=[entry(p,'CCAD observed artifact','evidence') for p in [source/'metrics.raw.jsonl',run/'metrics.raw.jsonl',fit/'metrics.raw.jsonl',fit/'relation_factors.npz',run/'predictions_before_target_forward.json',ROOT/'runs/F4_agreement_source_remaining_v1_20260905/metrics.raw.jsonl']]
+    evidence=[entry(p,'CCAD observed artifact','evidence') for p in [source/'metrics.raw.jsonl',run/'metrics.raw.jsonl',fit/'metrics.raw.jsonl',fit/'relation_factors.npz',bank_path,ROOT/taskcfg['compiled_methods_path'],run/'predictions_before_target_forward.json',ROOT/'runs/F4_agreement_source_remaining_v1_20260905/metrics.raw.jsonl']]
     summary=dict(source_table=source_table,method_table=table,support_diagnostics=supports,inputs=evidence,
         checks=dict(source_anchor_rows_replayed=len(old),prediction_rows_compared=len(pred),raw_margin_rows_recomputed=len(allrows),all_candidate_source_scales_replayed=True),
-        statistics='2 lexicalized templates;8 dependent number conditions;4targets share same source. No independent-seed p-values or unseen-input claim.',
+        statistics=f'{len(taskcfg["panel_templates"])} lexicalized templates;{len(panel)} dependent number conditions;4targets share same source. No independent-seed p-values or unseen-input claim.',
         generator_script_sha256=sha256(Path(__file__)))
     write(run/'relation_summary.json',summary)
     lines=['# 任务方向与跨seed组成操作：开发结果','',
@@ -109,7 +110,12 @@ def main():
         lines=['# 冻结source原生教师：跨seed开发对照','','Source ids/g冻结，teacher是实际native donor差分，不投影回原b。独立discovery512行/256差分拟合；FCC与raw共用rank64 source decoder span/ridge。target native64/single/random使用实际vector teacher。不是与旧rank1结果的等复杂度比较。','','|方法|主语平均作用|相对source平方误差|past误差|主语dose|','|---|---:|---:|---:|---:|']
         for r in table:
             if r['axis']=='subject':lines.append(f"|{r['method']}|{r['observed_mean']:.6f}|{r['primary_normalized_error']:.6f}|{r['past_normalized_error']:.6f}|{r['mean_hook_fraction']:.6f}|")
-        lines+=['','误差=Σ(candidate−source margin loss)^2/Σ(source margin loss)^2；零操作为1。两axis与时态连带影响、剂量、native支持参与见METHOD_TABLE.csv和relation_summary.json。所有候选共用source-native cap的scale，不是候选各自等剂量放大。','','参数拟合未使用target任务code/梯度/标签/端点；source primary梯度曾用于source组开发，现不重选。四target共享一个source，8条输入来自两个开发词汇模板，不作独立seed统计。事前target预测使用同开发输入已观测source效应，不是未见输入预测。reserved/audit未使用。','','448source锚点逐值重放，720原始margin与272预测/实际共同scale核对；仅为计算复核，不是独立科学审查。原投影/global/邻域结果原样保留。','']
+        lines+=['','误差=Σ(candidate−source margin loss)^2/Σ(source margin loss)^2；零操作为1。两axis与时态连带影响、剂量、native支持参与见METHOD_TABLE.csv和relation_summary.json。所有候选共用source-native cap的scale，不是候选各自等剂量放大。','','参数拟合未使用target任务code/梯度/标签/端点；source primary梯度曾用于source组开发，现不重选。四target共享一个source，8条输入来自两个开发词汇模板，不作独立seed统计。事前target预测使用同开发输入已观测source效应，不是未见输入预测。reserved/audit未使用。','',f"{len(old)}source锚点逐值重放，{len(allrows)}原始margin与{len(pred)}预测/实际共同scale核对；仅为计算复核，不是独立科学审查。原投影/global/邻域结果原样保留。",'']
+        fitcfg=json.loads((fit/'config.resolved.json').read_text())
+        if fitcfg.get('selection_mode')=='task_paired':
+            lines.insert(2,'本次配对为全新词汇128完整模板/512输入的source定义任务条件化discovery，仅主语数变化差分。原development/reserved词汇全部排除；不是task-agnostic、human证据或排除底模预训练。Decoded输入768维，code输入3072维；native/raw对照在两fit逐值相同，不能把code收益写成等参数容量优势。')
+    if len(panel)!=8:
+        lines=[line.replace('8条输入来自两个开发词汇模板',f'{len(panel)}条输入来自{len(taskcfg["panel_templates"])}个开发词汇模板') for line in lines]
     (run/'RESULTS_FOR_REVIEW.md').write_text('\n'.join(lines),encoding='utf-8')
     print(json.dumps(dict(checks=summary['checks'],rows=len(allrows),methods=len(table)//2,report=str(run/'RESULTS_FOR_REVIEW.md'),supports=[r for r in supports if r['method']=='native' and r['axis']=='subject']),indent=2))
 

@@ -1,0 +1,21 @@
+{
+  "run_id": "F4_task_paired_asset_v1_20260905",
+  "asset_config": "configs/f4_probability_confirmation_codes_v1.json",
+  "excluded_task_config": "configs/f4_agreement_source_v2.json",
+  "audit_opened": false,
+  "dataset_version": "ccad-task-near-pp-v1",
+  "split_salt": "ccad-task-near-document-split-v1",
+  "selection_salt": "ccad-task-near-discovery-selection-v1",
+  "template_count": 128,
+  "subjects": [["nurse","nurses"],["chef","chefs"],["soldier","soldiers"],["scientist","scientists"],["engineer","engineers"],["musician","musicians"],["athlete","athletes"],["manager","managers"],["customer","customers"],["neighbor","neighbors"],["tourist","tourists"],["librarian","librarians"],["dentist","dentists"],["mechanic","mechanics"],["journalist","journalists"],["officer","officers"]],
+  "attractors": [["sailor","sailors"],["carpenter","carpenters"],["plumber","plumbers"],["cashier","cashiers"],["waiter","waiters"],["surgeon","surgeons"],["professor","professors"],["architect","architects"],["photographer","photographers"],["gardener","gardeners"],["barber","barbers"],["tailor","tailors"],["visitor","visitors"],["cyclist","cyclists"],["hiker","hikers"],["swimmer","swimmers"]],
+  "prepositions": ["near","behind","beside","with"],
+  "construction": "The {subject} {preposition} the {attractor}",
+  "batch_size": 8,
+  "cpu_threads": 4,
+  "budget_forwards": 67,
+  "budget_seconds": 180,
+  "padding_relative_tolerance": 0.00001,
+  "budget": "512 prompts in 64 batches plus 2 unpadded and 1 normal-forward equivalence checks; <=180 seconds numerical work, loading <=90 seconds expected; existing weights, compressed local artifact under 40MB.",
+  "scope": "Programmatic synthetic, source-defined task-conditioned paired data; not human annotations or task-agnostic correspondence. Complete four-condition lexical templates assigned hash10/40/20/30; only discovery encoded. No task behavioral endpoints read, original development/reserved nouns excluded; no pretraining exclusion claim. Adjacent rows are singular/plural subject pairs with fixed attractor. Independent original means cancel in differences."
+}

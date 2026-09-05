@@ -94,9 +94,14 @@ def main():
             inputs.append(entry(path,'CCAD fixed input',role))
         write(run/'inputs.json',dict(inputs=inputs))
         asset=json.loads(p['asset_manifest'].read_text());meta=next(x for x in asset['splits'] if x['split']=='discovery')
-        records=json.loads(p['sequences'].read_text())['sequences']
+        task_paired=cfg.get('selection_mode')=='task_paired'
+        records=[] if task_paired else json.loads(p['sequences'].read_text())['sequences']
         neighborhood=cfg.get('selection_mode')=='source_neighborhood'
-        states=select_document_balanced_states(records,split='discovery',count=cfg.get('candidate_count',cfg['state_count']),token_positions=(31,63,95,127),salt=cfg['state_salt'])
+        if task_paired:
+            states=json.loads(p['paired_rows'].read_text())['rows']
+            if len(states)!=cfg['state_count'] or any(r['split']!='discovery' for r in states):raise ValueError('Paired discovery scope mismatch')
+            if not all(a['template']==b['template'] and a['attractor_number']==b['attractor_number'] and a['subject_number']==0 and b['subject_number']==1 for a,b in zip(states[::2],states[1::2])):raise ValueError('Subject pairing mismatch')
+        else:states=select_document_balanced_states(records,split='discovery',count=cfg.get('candidate_count',cfg['state_count']),token_positions=(31,63,95,127),salt=cfg['state_salt'])
         if neighborhood:
             candidates=np.array([r['sequence_index']*128+r['token_position'] for r in states])
             z,ix,act=read_codes(meta,cfg['source_seed'],candidates,cfg['num_latents'])
@@ -106,20 +111,29 @@ def main():
             np.savez_compressed(run/'source_retrieval.npz',candidate_indices=candidates,indices=ix,acts=act,chosen=chosen,prototypes=prototypes,cosines=scores,source_task_codes=source_task_codes)
             write(run/'retrieval.json',dict(candidate_rows=states,selected_cosine_min=float(scores.min()),selected_cosine_mean=float(scores.mean()),selected_cosine_max=float(scores.max()),source_seed=cfg['source_seed'],target_task_codes_read=False,source_retrieval_sha256=sha256(run/'source_retrieval.npz')))
             states=[dict(states[j],task_prototype=int(t),source_cosine=float(s)) for j,t,s in zip(chosen,prototypes,scores)]
-        selected=np.array([r['sequence_index']*128+r['token_position'] for r in states])
-        write(run/'selected_states.json',dict(rows=states,pairing='adjacent source-nearest endpoints for each task subject pair; corpus neighbors are not verified linguistic counterfactuals' if neighborhood else 'adjacent selected rows; global corpus differences, not task-matched counterfactuals'))
+        selected=np.arange(len(states)) if task_paired else np.array([r['sequence_index']*128+r['token_position'] for r in states])
+        pairing='adjacent singular/plural subject; fixed attractor; source-defined task-conditioned synthetic discovery' if task_paired else ('adjacent source-nearest endpoints for each task subject pair; corpus neighbors are not verified linguistic counterfactuals' if neighborhood else 'adjacent selected rows; global corpus differences, not task-matched counterfactuals')
+        write(run/'selected_states.json',dict(rows=states,pairing=pairing))
         b=np.load(p['direction'],allow_pickle=False)['basis'];codes={};decoders={};snapshots={}
+        paired=np.load(p['paired_cache'],allow_pickle=False) if task_paired else None
         for seed in cfg['seeds']:
-            z,ix,act=read_codes(meta,seed,selected,cfg['num_latents'])
+            if task_paired:
+                z=paired[f'codes_{seed}'].astype(np.float64)
+                if z.shape!=(len(states),cfg['num_latents']):raise ValueError('Paired code shape mismatch')
+                snapshots[f'codes_{seed}']=z
+            else:z,ix,act=read_codes(meta,seed,selected,cfg['num_latents'])
             codes[seed]=z;dm=next(f for f in asset['decoders'] if f['seed']==seed)
             if sha256(Path(dm['path']))!=dm['sha256']:raise ValueError('Decoder identity changed')
             decoders[seed]=np.asarray(np.memmap(dm['path'],dtype='<f4',mode='r',shape=tuple(dm['shape'])),dtype=np.float64)
-            snapshots[f'indices_{seed}']=ix;snapshots[f'acts_{seed}']=act
-        rm=next(x for x in json.loads(p['raw_manifest'].read_text())['splits'] if x['split']=='discovery')
-        h=np.asarray(np.memmap(rm['path'],dtype='<f4',mode='r',shape=tuple(rm['shape']))[selected],dtype=np.float64)
+            if not task_paired:snapshots[f'indices_{seed}']=ix;snapshots[f'acts_{seed}']=act
+        if task_paired:h=paired['hidden'].astype(np.float64);paired.close()
+        else:
+            rm=next(x for x in json.loads(p['raw_manifest'].read_text())['splits'] if x['split']=='discovery')
+            h=np.asarray(np.memmap(rm['path'],dtype='<f4',mode='r',shape=tuple(rm['shape']))[selected],dtype=np.float64)
         snapshots['raw_hook']=h;snapshots['selected_indices']=selected
         np.savez_compressed(run/'selected_discovery_data.npz',**snapshots)
         write(run/'read_scope.json',dict(materialized_splits=['discovery'],rows=len(selected),
+            selection_mode=cfg.get('selection_mode','global'),task_conditioned_synthetic=task_paired,
             source_retrieval_rows=cfg.get('candidate_count',0),source_task_codes_used_for_selection=neighborhood,target_task_codes_used_for_fit=False,
             whole_bulk_file_hashes_recomputed=False,identity='Parent manifests bound; decoder full hashes verified; actually read selected rows retained in NPZ with run hash',
             selected_data_sha256=sha256(run/'selected_discovery_data.npz'),mean_materialized=False,calibration_materialized=False,audit_materialized=False))
