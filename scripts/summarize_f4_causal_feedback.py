@@ -32,6 +32,10 @@ def main():
             key=(row['condition'],row['source_seed'],row['source_atom'],row['rank'],endpoint,row['method'])
             groups.setdefault(key,[]).append(x)
     table=[dict(zip(['condition','source_seed','source_atom','rank','endpoint','method'],key),median_error=statistics.median(x['normalized_error'] for x in values),median_source_rms=statistics.median(x['source_rms'] for x in values),observations=len(values)) for key,values in sorted(groups.items())]
+    target_errors={(r['condition'],r['source_seed'],r['source_atom'],r['rank'],r['endpoint']):r['median_error'] for r in table if r['method']=='target'}
+    for row in table:
+        target_error=target_errors.get((row['condition'],row['source_seed'],row['source_atom'],row['rank'],row['endpoint']))
+        row['target_relative_error_reduction_vs_this_method']=1-target_error/row['median_error'] if target_error is not None and row['median_error']>0 else None
     with (run/'query_summary.csv').open('w',newline='',encoding='utf-8') as f:
         writer=csv.DictWriter(f,fieldnames=list(table[0]));writer.writeheader();writer.writerows(table)
     per_target=target_table(rows)
@@ -48,6 +52,8 @@ def main():
             summaries[f'{condition}/r{rank}/{endpoint}']={'query_count':len(queries),'median_error_across_query_medians':{method:statistics.median(r['median_error'] for r in g if r['method']==method) for method in available_methods},'target_better_than_raw_queries':sum(by[s,a,'target']['median_error']<by[s,a,'raw']['median_error'] for s,a in queries),'target_better_than_wrong_matched_queries':sum(by[s,a,'target']['median_error']<by[s,a,'wrong_query_matched_energy']['median_error'] for s,a in queries),'median_source_rms':statistics.median(by[s,a,'target']['median_source_rms'] for s,a in queries)}
             if 'source_mean_only' in available_methods:
                 summaries[f'{condition}/r{rank}/{endpoint}']['target_better_than_source_mean_only_queries']=sum(by[s,a,'target']['median_error']<by[s,a,'source_mean_only']['median_error'] for s,a in queries)
+            summaries[f'{condition}/r{rank}/{endpoint}']['target_better_than_each_comparator_queries']={method:sum(by[s,a,'target']['median_error']<by[s,a,method]['median_error'] for s,a in queries) for method in available_methods if method!='target'}
+            summaries[f'{condition}/r{rank}/{endpoint}']['target_below_zero_queries']=sum(by[s,a,'target']['median_error']<1 for s,a in queries)
     report={'source_sha256':hashlib.sha256(raw.read_bytes()).hexdigest(),'summary_script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'aggregation':'Within each condition, median over targets and document sequences within query, then median across queries. Descriptive; shared seeds and documents are dependent. See observations column.','normalization':'sum((source_effect-candidate_effect)^2)/sum(source_effect^2), across all sequence positions and endpoint dimensions. Logits centered across vocabulary.','denominators':{'raw_rows':len(rows),'missing_normalized_endpoint_errors':sum(v['normalized_error'] is None for r in rows for v in r['endpoints'].values()),'empty_intervention_masks':sum(not r.get('intervention_positions',[]) for r in rows),'observations_per_query_method_endpoint':sorted({r['observations'] for r in table})},'summary':summaries}
     requested={(r['condition'],r['source_seed'],r['source_atom']) for r in rows}
     observed={(r['condition'],r['source_seed'],r['source_atom']) for r in table}

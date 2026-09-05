@@ -38,6 +38,9 @@ def main() -> int:
     parser.add_argument("--config", type=Path, required=True)
     args = parser.parse_args()
     cfg = json.loads(args.config.read_text(encoding="utf-8"))
+    requested_splits=cfg.get('splits',['mean','discovery','calibration','audit'])
+    if set(requested_splits)&set(cfg.get('forbidden_splits',[])):
+        raise ValueError('Requested a forbidden split')
     run_dir = ROOT / "runs" / cfg["run_id"]
     bulk_dir = Path(cfg["bulk_output_dir"])
     if run_dir.exists() or bulk_dir.exists():
@@ -49,6 +52,9 @@ def main() -> int:
     code_paths = [Path(__file__).resolve(), ROOT / "src/ccad/artifacts.py"]
     code_rows = [{"path": path.relative_to(ROOT).as_posix(), "sha256": sha256(path), "bytes": path.stat().st_size} for path in code_paths]
     code_hash = aggregate(code_rows)
+    for item,path in zip(code_rows,code_paths):
+        snapshot=run_dir/'source_snapshot'/item['path'];snapshot.parent.mkdir(parents=True,exist_ok=True)
+        snapshot.write_bytes(path.read_bytes());item['snapshot_path']=snapshot.relative_to(run_dir).as_posix()
     write_json(run_dir / "code_hashes.json", {"files": code_rows, "aggregate_sha256": code_hash})
     token_manifest_path = ROOT / cfg["token_manifest_path"]
     token_manifest = json.loads(token_manifest_path.read_text(encoding="utf-8"))
@@ -59,6 +65,8 @@ def main() -> int:
     for item in cfg["saes"]:
         inputs.append(file_entry(ROOT / item["path"] / "sae.safetensors", f"CCAD {item['run_id']}", "internal", f"seed_{item['seed']}_sae"))
         inputs.append(file_entry(ROOT / item["path"] / "cfg.json", f"CCAD {item['run_id']}", "internal", f"seed_{item['seed']}_sae_config"))
+    if cfg.get('borrowed_raw_mean_manifest'):
+        inputs.append(file_entry(Path(cfg['borrowed_raw_mean_manifest']['path']),'Original independent mean asset','internal','borrowed_raw_mean_manifest'))
     write_json(run_dir / "inputs.json", {"inputs": inputs})
     git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     git_status = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True, capture_output=True).stdout.splitlines()
@@ -68,13 +76,19 @@ def main() -> int:
         "config_hash": sha256(run_dir / "config.resolved.json"), "code_snapshot_hash": code_hash, "audit_opened": False,
         "candidate_family_frozen": False, "mean_constants_source_split": cfg["mean_constants_source_split"],
         "threshold_source_split": cfg["threshold_source_split"], "statistics_unit": cfg["statistics_unit"], "device": cfg["device"],
-        "seeds": [item["seed"] for item in cfg["saes"]], "resource_lease": "gpu-0 + disk-d-io via nested SAE Lab resource_manager.run",
+        "seeds": [item["seed"] for item in cfg["saes"]], "resource_lease": cfg.get('resource_lease',"gpu-0 + disk-d-io via nested SAE Lab resource_manager.run"),
         "resource_lease_reason": "shared-hook inference and paired sparse-code writes", "git_head_at_run": git_head, "git_status_porcelain": git_status,
         "bulk_output_dir": str(bulk_dir),
     })
     write_json(run_dir / "status.json", {"status": "RUNNING", "updated_utc": started})
     record, error, status = None, None, "FAIL"
     try:
+        raw_rows=[]
+        if cfg.get('borrowed_raw_mean_manifest'):
+            reference=cfg['borrowed_raw_mean_manifest'];path=Path(reference['path'])
+            if sha256(path)!=reference['sha256']: raise ValueError('Borrowed mean manifest identity mismatch')
+            raw_rows.extend(row for row in json.loads(path.read_text())['splits'] if row['split']=='mean')
+            if len(raw_rows)!=1: raise ValueError('Expected one original raw mean split')
         if sha256(token_manifest_path) != cfg["token_manifest_sha256"]:
             raise ValueError("token manifest hash mismatch")
         for item in cfg["saes"]:
@@ -89,6 +103,7 @@ def main() -> int:
         from transformers import AutoModelForCausalLM
 
         torch.use_deterministic_algorithms(True)
+        torch.set_num_threads(cfg.get('cpu_threads',4))
         device = torch.device(cfg["device"])
         torch.cuda.set_device(device)
         torch.cuda.empty_cache()
@@ -99,7 +114,7 @@ def main() -> int:
         saes = {item["seed"]: SparseCoder.load_from_disk(ROOT / item["path"], device=device).eval() for item in cfg["saes"]}
         output_rows, total_forwards, total_tokens = [], 0, 0
         start_time = time.perf_counter()
-        for split in ("mean", "discovery", "calibration", "audit"):
+        for split in requested_splits:
             info = token_manifest["outputs"][split]
             token_path = ROOT / "runs" / cfg["paired_corpus_run"] / info["path"]
             tokens = np.memmap(token_path, dtype="<u2", mode="r").reshape(info["sequences"], cfg["context_length"])
@@ -107,6 +122,10 @@ def main() -> int:
             split_dir.mkdir()
             writers = {}
             rows = info["tokens"]
+            raw_writer=None
+            if cfg.get('save_raw_hook'):
+                raw_path=bulk_dir/f'{split}.float32.bin'
+                raw_writer=np.memmap(raw_path,dtype='<f4',mode='w+',shape=(rows,cfg['hook_hidden_size']))
             for seed in saes:
                 seed_dir = split_dir / f"seed_{seed}"
                 seed_dir.mkdir()
@@ -130,6 +149,8 @@ def main() -> int:
                 hidden = captured["hidden"].reshape(-1, cfg["hook_hidden_size"])
                 offset = begin * cfg["context_length"]
                 end = offset + hidden.shape[0]
+                if raw_writer is not None:
+                    raw_writer[offset:end]=hidden.detach().float().cpu().numpy()
                 for seed, sae in saes.items():
                     with torch.no_grad():
                         encoded = sae.encode(hidden)
@@ -141,6 +162,10 @@ def main() -> int:
                     nonzero_slots += int(np.count_nonzero(acts))
                 observed_rows += hidden.shape[0]
                 total_forwards += 1
+                if total_forwards%32==0: print(json.dumps({'split':split,'forwards':total_forwards,'tokens':observed_rows}),flush=True)
+            if raw_writer is not None:
+                raw_writer.flush();del raw_writer
+                raw_rows.append({'split':split,'path':str(raw_path),'shape':[rows,cfg['hook_hidden_size']],'dtype':'float32','tokens':rows,'observed_rows':observed_rows,'documents':info['documents'],'bytes':raw_path.stat().st_size,'sha256':sha256(raw_path)})
             files = []
             for seed, (index_writer, act_writer) in writers.items():
                 index_writer.flush(); act_writer.flush()
@@ -164,8 +189,8 @@ def main() -> int:
         expected_sae_count = cfg.get("expected_sae_count", 5)
         checks = {
             "frozen_sae_set": len(saes) == expected_sae_count and sorted(saes) == expected_seed_ids,
-            "four_splits_complete": len(output_rows) == 4,
-            "shared_forward_count": total_forwards == sum((info["sequences"] + cfg["batch_size_sequences"] - 1) // cfg["batch_size_sequences"] for info in token_manifest["outputs"].values()),
+            "requested_splits_complete": [row['split'] for row in output_rows] == requested_splits,
+            "shared_forward_count": total_forwards == sum((token_manifest['outputs'][split]["sequences"] + cfg["batch_size_sequences"] - 1) // cfg["batch_size_sequences"] for split in requested_splits),
             "all_rows_encoded": all(row["observed_rows"] == row["tokens"] for row in output_rows),
             "selected_l0_exact": all(row["selected_l0"] == cfg["k"] for row in output_rows),
             "indices_fit_uint16": cfg["num_latents"] <= 65536,
@@ -176,6 +201,8 @@ def main() -> int:
                   "shared_base_forwards": total_forwards, "wall_seconds": elapsed, "tokens_per_second": total_tokens / elapsed,
                   "peak_allocated_vram_bytes": int(torch.cuda.max_memory_allocated(device)), "peak_reserved_vram_bytes": int(torch.cuda.max_memory_reserved(device))}
         write_json(bulk_dir / "asset_manifest.json", {"schema_version": "r008.paired_sparse_codes.v1", "run_id": cfg["run_id"], "splits": output_rows, "decoders": decoder_files})
+        if cfg.get('save_raw_hook'):
+            write_json(bulk_dir/'raw_hook_manifest.json',{'schema_version':'r011s1.shared_hook.v1','run_id':cfg['run_id'],'splits':raw_rows,'borrowed_mean_manifest':cfg.get('borrowed_raw_mean_manifest')})
         status = "PASS" if all(checks.values()) else "FAIL"
         write_json(run_dir / "environment.json", {"python": platform.python_version(), "torch": torch.__version__, "transformers": transformers.__version__, "cuda": torch.version.cuda, "gpu": torch.cuda.get_device_name(device)})
     except Exception as exc:

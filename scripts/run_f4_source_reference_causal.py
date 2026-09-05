@@ -183,6 +183,10 @@ def main():
     try:
         paths={"surface":ROOT/cfg["surface_path"], "factors":ROOT/cfg["factors_path"], "census":ROOT/cfg["source_census_path"], "panel":ROOT/cfg["query_panel_path"], "sequences":ROOT/cfg["sequence_records_path"], "tokens":ROOT/cfg["token_manifest_path"], "assets":Path(cfg["bulk_asset_dir"])/"asset_manifest.json", "raw":Path(cfg["raw_hook_asset_dir"])/"raw_hook_manifest.json"}
         expected={"surface":cfg["surface_sha256"],"factors":cfg["factors_sha256"],"census":cfg["source_census_sha256"],"panel":cfg["query_panel_sha256"],"sequences":cfg["sequence_records_sha256"],"tokens":cfg["token_manifest_sha256"],"assets":cfg["asset_manifest_sha256"],"raw":cfg["raw_hook_manifest_sha256"]}
+        for i,entry in enumerate(cfg.get('saved_atom_families',[])):
+            for kind in ('fit','config'):
+                key=f'saved_atom_{i}_{kind}'
+                paths[key]=ROOT/entry[f'{kind}_path'];expected[key]=entry[f'{kind}_sha256']
         if cfg.get('single_atom_fit'):
             paths['original_fit_config']=ROOT/cfg['original_fit_config_path']
             expected['original_fit_config']=cfg['original_fit_config_sha256']
@@ -212,6 +216,7 @@ def main():
         nt=split_tokens['calibration']
         dec={s:np.asarray(np.memmap(asset/"decoders"/f"seed_{s}.float32.bin",dtype="<f4",mode="r",shape=(cfg["num_latents"],hidden)),dtype=np.float64) for s in cfg["source_seeds"]}
         single_fits={}
+        atom_families={}
         if cfg.get('single_atom_fit'):
             if cfg['ranks']!=[1]: raise ValueError('Single-atom baseline currently supports rank1 only')
             if cfg['single_atom_fit'].get('conditional_variation') and not cfg.get('donor_difference'):
@@ -219,6 +224,20 @@ def main():
             single_fits,fit_record=fit_single_atoms(cfg,queries,surface,factors,findex,means,dec,split_tokens)
             write(run/'single_atom_fits.json',fit_record)
             print(json.dumps({'single_atom_fits':len(single_fits),'fit_split':'discovery'}),flush=True)
+            atom_families['single_atom']=single_fits
+        for i,entry in enumerate(cfg.get('saved_atom_families',[])):
+            oldcfg=json.loads(paths[f'saved_atom_{i}_config'].read_text())
+            if cfg['ranks']!=[1] or not cfg.get('donor_difference'):
+                raise ValueError('Saved atom replication requires rank1 donor differences')
+            identity_fields=('factors_sha256','source_census_sha256','query_panel_sha256','model_revision','hook_module_path','num_latents','hook_hidden_size')
+            if any(oldcfg[k]!=cfg[k] for k in identity_fields):
+                raise ValueError('Saved atom model/basis/mean identity mismatch')
+            payload=json.loads(paths[f'saved_atom_{i}_fit'].read_text())
+            if payload['fit_split']!='discovery' or payload['calibration_used_for_fit'] or payload['rank']!=1:
+                raise ValueError('Saved atom fitting boundary mismatch')
+            atom_families[entry['method']]={(r['source_seed'],r['source_atom'],r['target_seed']):r for r in payload['fits']}
+        if atom_families:
+            write(run/'atom_fit_reuse.json',{'refitted':False if not single_fits else True,'families':{name:len(fits) for name,fits in atom_families.items()},'saved_inputs':cfg.get('saved_atom_families',[])})
         indices={s:np.memmap(asset/"calibration"/f"seed_{s}"/"top_indices.uint16.bin",dtype="<u2",mode="r",shape=(nt,cfg["k"])) for s in cfg["source_seeds"]}
         acts={s:np.memmap(asset/"calibration"/f"seed_{s}"/"top_acts.float32.bin",dtype="<f4",mode="r",shape=(nt,cfg["k"])) for s in cfg["source_seeds"]}
         def atom_values(seed, atoms):
@@ -287,6 +306,11 @@ def main():
         if selection_document_ids({'queries':selections}) & excluded:
             raise ValueError('Selected recipient/donor document intersects prior exclusion union')
         write(run/"selection.json",{"rule":"source-only hashes and activation energies; no F4 FOUND filtering","queries":selections,'excluded_document_count':len(excluded),'requested_sequences_per_condition':cfg['documents_per_condition'],'actual_sequences_per_query':[{"query":[x['source_seed'],x['source_atom']],"positive":sum(e['condition']=='positive' for e in x['sequences']),"negative":sum(e['condition']=='negative' for e in x['sequences'])} for x in selections]})
+        print(json.dumps({'source_preflight':[{'query':[u['source_seed'],u['source_atom']],
+              'conditions':{condition:{'pairs':len(group),'supported_pairs':sum(e.get('donor_status')=='SELECTED_SOURCE_ONLY' for e in group),
+                    'median_natural_difference_energy':float(np.median([e.get('donor_source_difference_energy',0) for e in group])) if group else None}
+                    for condition in ('positive','negative') for group in [[e for e in u['sequences'] if e['condition']==condition]]}}
+              for u in selections]}),flush=True)
         os.environ.update(HF_HUB_OFFLINE="1",TRANSFORMERS_OFFLINE="1",CUBLAS_WORKSPACE_CONFIG=cfg["cublas_workspace_config"])
         import torch
         import transformers
@@ -350,10 +374,10 @@ def main():
                                       "wrong_query":wrong,"wrong_query_matched_energy":wrong*wrongscale}
                             if cfg.get('include_source_mean_only'):
                                 variants['source_mean_only']=np.zeros_like(source) if cfg.get('donor_difference') else np.broadcast_to(-means[s][ids]@dec[s][ids]@b@b.T,source.shape)*mask[:,None]
-                            if single_fits:
-                                fit=single_fits[s,a,t];atom=fit['atom']
+                            for atom_method,fit_family in atom_families.items():
+                                fit=fit_family[s,a,t];atom=fit['atom']
                                 code=z[t][:,atom] if cfg.get('donor_difference') else z[t][:,atom]-means[t][atom]
-                                variants['single_atom']=(code*fit['coefficient'])[:,None]@bt.T*mask[:,None]
+                                variants[atom_method]=(code*fit['coefficient'])[:,None]@bt.T*mask[:,None]
                             if cfg.get('methods'):
                                 variants={name:variants[name] for name in cfg['methods']}
                             for method,delta in variants.items():
@@ -369,7 +393,7 @@ def main():
                                 rows.append(row);sink.write(json.dumps(row,sort_keys=True)+"\n");sink.flush()
                     print(json.dumps({"query":[s,a],"sequence":seq,"rows":len(rows),"forwards":forwards}),flush=True)
         method_names=['target','raw','wrong_query','wrong_query_matched_energy']+(['source_mean_only'] if cfg.get('include_source_mean_only') else [])
-        if single_fits: method_names.append('single_atom')
+        method_names.extend(atom_families)
         if cfg.get('methods'): method_names=cfg['methods']
         checks={"noop":max(noop)<=1e-6,"raw_replay_relative":max(replay)<=1e-4,"eight_source_queries":len(selections)==8,"rows":len(rows)==sum(len(x["sequences"])*len(x["targets"])*len(cfg["ranks"])*len(method_names) for x in selections),"audit_closed":True}
         if cfg.get('maximum_source_hook_fraction'):

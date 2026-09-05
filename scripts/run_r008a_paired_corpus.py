@@ -88,17 +88,21 @@ def main() -> int:
     artifacts.mkdir()
     started = datetime.now(timezone.utc).isoformat()
     write_json(run_dir / "config.resolved.json", cfg)
-    code_paths = [Path(__file__).resolve(), ROOT / "src/ccad/data_manifest.py", ROOT / "src/ccad/http_range.py"]
+    code_paths = [Path(__file__).resolve(), ROOT / "src/ccad/data_manifest.py", ROOT / "src/ccad/http_range.py", ROOT / "src/ccad/artifacts.py"]
     code_rows = [{"path": path.relative_to(ROOT).as_posix(), "sha256": sha256(path), "bytes": path.stat().st_size} for path in code_paths]
     code_hash = aggregate(code_rows)
+    for item,path in zip(code_rows,code_paths):
+        snapshot=run_dir/'source_snapshot'/item['path'];snapshot.parent.mkdir(parents=True,exist_ok=True)
+        snapshot.write_bytes(path.read_bytes());item['snapshot_path']=snapshot.relative_to(run_dir).as_posix()
     write_json(run_dir / "code_hashes.json", {"files": code_rows, "aggregate_sha256": code_hash})
     excluded_path = ROOT / cfg["excluded_document_path"]
     catalog_path = ROOT / cfg["source_catalog_path"]
+    additional_exclusions=[ROOT/item['path'] for item in cfg.get('additional_exclusions',[])]
     write_json(run_dir / "inputs.json", {"inputs": [
         entry(config_path, "CCAD frozen config", "internal", "protocol"),
         entry(excluded_path, "R006 SAE corpus", "internal", "exclusion_ledger"),
         entry(catalog_path, "FineWeb source catalog", cfg["dataset_license"], "source_catalog"),
-    ]})
+    ] + [entry(path,'Prior paired corpus document identities','internal; no audit token or metric read','paired_document_exclusion') for path in additional_exclusions]})
     git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     git_status = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True, capture_output=True).stdout.splitlines()
     write_json(run_dir / "manifest.json", {
@@ -107,12 +111,14 @@ def main() -> int:
         "config_hash": sha256(run_dir / "config.resolved.json"), "code_snapshot_hash": code_hash, "audit_opened": False,
         "candidate_family_frozen": False, "mean_constants_source_split": cfg["mean_constants_source_split"],
         "threshold_source_split": cfg["threshold_source_split"], "statistics_unit": "document", "device": "cpu_network_range_and_tokenizer",
-        "seeds": {"selection_salt": cfg["selection_salt"], "split_salt": cfg["split_salt"]}, "resource_lease": "disk-e-io via SAE Lab resource_manager.run",
+        "seeds": {"selection_salt": cfg["selection_salt"], "split_salt": cfg["split_salt"]}, "resource_lease": cfg.get('resource_lease',"disk-e-io via SAE Lab resource_manager.run"),
         "resource_lease_reason": "revision-pinned range reads and paired token asset writes", "git_head_at_run": git_head, "git_status_porcelain": git_status,
     })
     write_json(run_dir / "status.json", {"status": "RUNNING", "updated_utc": started})
     checks, details, error = {}, {}, None
     try:
+        for path,item in zip(additional_exclusions,cfg.get('additional_exclusions',[])):
+            if sha256(path)!=item['sha256']: raise ValueError('Exclusion ledger identity mismatch')
         sys.path[:0] = [cfg["data_overlay_dir"], cfg["dependency_overlay_dir"]]
         import pyarrow.parquet as pq
         import requests
@@ -120,6 +126,8 @@ def main() -> int:
         from transformers import AutoTokenizer
 
         excluded = [json.loads(line) for line in excluded_path.read_text(encoding="utf-8").splitlines() if line]
+        for path in additional_exclusions:
+            excluded.extend(json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line)
         excluded_ids = {row["document_id"] for row in excluded}
         excluded_text = {row["text_sha256"] for row in excluded}
         old_catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
@@ -160,6 +168,7 @@ def main() -> int:
                 sources.append({"path": path, "lfs_sha256": source["lfs_sha256"], "selected_row_group": group, "rows": len(rows), "range_requests": reader.range_requests, "range_bytes": reader.bytes_received})
                 total_requests += reader.range_requests
                 total_bytes += reader.bytes_received
+                print(json.dumps({'source':path,'sampled_documents':len(sampled),'range_bytes':total_bytes}),flush=True)
         tokenizer_dir = Path(cfg["tokenizer_local_dir"])
         tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir, local_files_only=True)
         checks["tokenizer_local"] = Path(tokenizer.name_or_path).resolve() == tokenizer_dir.resolve()

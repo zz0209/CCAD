@@ -1,0 +1,67 @@
+{
+  "run_id": "F4_source_reference_causal_dev_v11_newshard_20260904",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "additional_exclude_selections": [
+    {
+      "path": "runs/F4_source_reference_causal_dev_v7_alltargets_20260904/selection.json",
+      "sha256": "be3e99750071e0407b0e4c16c9ae579613c69a28254424833b25ee91d9a0c944"
+    },
+    {
+      "path": "runs/F4_source_reference_causal_dev_v8_newdocs_20260904/selection.json",
+      "sha256": "ed8a800e50544b1bf5be103205309ca2c527bb336d99f775f5b50d03674f2f1f"
+    }
+  ],
+  "ranks": [
+    1
+  ],
+  "documents_per_condition": 4,
+  "targets_per_query": 4,
+  "local_content_positions": 4,
+  "centered_logit_endpoint": true,
+  "include_source_mean_only": false,
+  "donor_difference": true,
+  "maximum_source_hook_fraction": 0.1,
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "resource_lease_reason": "Reads existing assets for bounded CPU/GPU inference; no whole-disk monopoly for ordinary reads or downloads.",
+  "selection": "Same eight source-only hash queries, full four targets, source activation recipient ranking and opposite-condition source-difference donor rule. All new shard document IDs/text hashes disjoint from training and ALL prior paired splits. No endpoint-based input selection.",
+  "intervention": "Fixed F4 rank1 map and both saved discovery atom objectives, no fitting or mean changes. Source relative-dose cap0.1 common to all candidates; source-aligned difference, not native deletion.",
+  "budget": "At most1472 causal forwards (64pairs*(2base+1source+4targets*5methods)), expected5-8min incl load from recent1472forward330s run, <1GiB allocated VRAM. Record zero-source unsupported pairs. Fresh development data, not final audit confirmation.",
+  "bulk_asset_dir": "D:/CCAD_Storage/paired_assets/F4_development_codes_v1_20260904",
+  "asset_manifest_sha256": "5fd51763a6422785a7170669b7fd8746f27fabf08a5e9fc9e2fe3493b7b5e1dc",
+  "raw_hook_asset_dir": "D:/CCAD_Storage/paired_assets/F4_development_codes_v1_20260904",
+  "raw_hook_manifest_sha256": "e394eb21d09c46ab685b5a78f8836a3d9dad6fed1966b8cf10b4ba5e9c239ced",
+  "paired_corpus_run": "F4_development_corpus_v1_20260904",
+  "token_manifest_path": "runs/F4_development_corpus_v1_20260904/artifacts/token_manifest.json",
+  "token_manifest_sha256": "45abfa97fdc3a809b916ed5f27d365c67364c48bb44ffe11b216cac8e6d7b9da",
+  "sequence_records_path": "runs/F4_development_corpus_v1_20260904/artifacts/sequence_records.json",
+  "sequence_records_sha256": "4b7a271532e7dfce0ef5290448e615610314d5fb17bd217a00d7ef9c67deb9de",
+  "methods": [
+    "target",
+    "raw",
+    "wrong_query_matched_energy",
+    "single_atom_level",
+    "single_atom_dynamic"
+  ],
+  "saved_atom_families": [
+    {
+      "method": "single_atom_level",
+      "fit_path": "runs/F4_source_reference_causal_dev_v9_atom_20260904/single_atom_fits.json",
+      "fit_sha256": "dfdc339ec0f164636f5ecde8ba2cc658a6e8b7491b0fe68bcb476a082e8c3b3c",
+      "config_path": "runs/F4_source_reference_causal_dev_v9_atom_20260904/config.resolved.json",
+      "config_sha256": "20fd7b5f5d08446a3ac8310e1f12960deba066af7cbcfe92bd94b3097c652572"
+    },
+    {
+      "method": "single_atom_dynamic",
+      "fit_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/single_atom_fits.json",
+      "fit_sha256": "bf9d1ff74ad695ab0b0d0ccace91960a9abfa00cb7e866662acb08f004d3bf7c",
+      "config_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/config.resolved.json",
+      "config_sha256": "cdf6fab8433b6333fb75ba7b5844d0f709cc87fe1a683c81a285907a4ff94f76"
+    }
+  ]
+}
