@@ -23,22 +23,28 @@ def main():
     parser=argparse.ArgumentParser();parser.add_argument('--run',type=Path,required=True);args=parser.parse_args()
     run=args.run if args.run.is_absolute() else ROOT/args.run
     if (run/'compact_component_summary.json').exists():raise FileExistsError('Already summarized')
-    cfg=json.loads((run/'config.resolved.json').read_text());summary=json.loads((run/'metrics.summary.json').read_text())
+    cfg=json.loads((run/'config.resolved.json').read_text());confirmation=bool(cfg.get('confirmation_inputs'));count=cfg['expected_cases'];summary=json.loads((run/'metrics.summary.json').read_text())
     assert summary['status']=='PASS' and json.loads((run/'contract_validation.json').read_text())['ok']
     parent=ROOT/cfg['frozen_components']['path'];raw=run/'metrics.raw.jsonl';parent_raw=parent/'metrics.raw.jsonl'
     assert sha256(parent_raw)==cfg['frozen_components']['raw_sha256']
-    rows=jsonl(raw);old=jsonl(parent_raw);assert len(rows)==315 and len(old)==90
-    source={(r['case_id'],r['component']):r for r in rows if r['method']=='source'}
-    oldsource={(r['case_id'],r['component']):r for r in old if r['method']=='source'}
-    for key,r in source.items():
-        p=oldsource[key]
-        for field in ('common_family_scale','old_full_scale','sequence','donor_sequence','document_ids','donor_document_ids','intervention_positions','donor_positions'):assert r[field]==p[field]
-        assert r['probability_endpoints']==p['probability_endpoints'],'Old controls require identical measured source anchors'
-    for r in old:
-        if r['method']!='source':
-            r=dict(r);r['method']=r['method'].replace('long_','long_full_');rows.append(r)
-    assert len(rows)==390
-    lookup={(r['case_id'],r['method'],r['component']):r for r in rows};assert len(lookup)==390
+    rows=jsonl(raw);source={(r['case_id'],r['component']):r for r in rows if r['method']=='source'}
+    if confirmation:
+        assert len(rows)==cfg['expected_rows']==count*78
+        assert sha256(run/'component_fits.json')==cfg['frozen_components']['fits_sha256']
+        with np.load(run/'component_coefficients.npz',allow_pickle=False) as current, np.load(parent/'component_coefficients.npz',allow_pickle=False) as saved:
+            assert set(current.files)==set(saved.files) and all(np.array_equal(current[k],saved[k]) for k in saved.files)
+    else:
+        old=jsonl(parent_raw);assert len(rows)==315 and len(old)==90
+        oldsource={(r['case_id'],r['component']):r for r in old if r['method']=='source'}
+        for key,r in source.items():
+            p=oldsource[key]
+            for field in ('common_family_scale','old_full_scale','sequence','donor_sequence','document_ids','donor_document_ids','intervention_positions','donor_positions'):assert r[field]==p[field]
+            assert r['probability_endpoints']==p['probability_endpoints'],'Old controls require identical measured source anchors'
+        for r in old:
+            if r['method']!='source':
+                r=dict(r);r['method']=r['method'].replace('long_','long_full_');rows.append(r)
+        assert len(rows)==390
+    lookup={(r['case_id'],r['method'],r['component']):r for r in rows};assert len(lookup)==len(rows)
     table=[];ratios=0
     for r in rows:
         for scope,p in r['probability_endpoints'].items():
@@ -52,7 +58,7 @@ def main():
                 component=r['component'],scope=scope,**{k:p[k] for k in METRICS},source_nll_delta_rms=p['source_nll_delta_rms'],source_kl_mean=p['source_kl_mean'],
                 source_hook_fraction=r['source_hook_fraction'],candidate_hook_fraction=r['candidate_hook_fraction'],common_family_scale=r['common_family_scale']))
     cases=[];aggregates=[];comparisons=[];interactions=[]
-    for cid in range(5):
+    for cid in range(count):
         for scope in ('intervention_positions','same_document_downstream'):
             for component in ('full','A','B'):
                 for method in METHODS:
@@ -81,8 +87,8 @@ def main():
     assert len(supports)==24 and all(len(r['support'])==len(set(r['support']))==16 and r['union_budget']==16 for r in supports) and len(atoms)==24
     inputs=[dict(path=str(p),sha256=sha256(p)) for p in (raw,run/'config.resolved.json',run/'component_fits.json',run/'component_coordinates.npz',parent_raw,parent/'component_fits.json')]
     result=dict(scope=cfg['scope'],cases=cases,aggregates=aggregates,comparisons=comparisons,interactions=interactions,shared_supports=supports,joint_atoms=atoms,inputs=inputs,
-        checks=dict(parent_source_anchors_exact=True,all_controls_and_targets_retained=True,probability_ratios_recomputed=ratios,shared_union16=True),
-        model_forwards=summary['model_forwards'],parent_control_forwards_reused_not_new=75,timings=summary['timings'],generator_sha256=sha256(Path(__file__)))
+        checks=dict(parent_source_anchors_exact=None if confirmation else True,all_parent_coefficients_exact=True if confirmation else None,all_controls_and_targets_retained=True,probability_ratios_recomputed=ratios,shared_union16=True),
+        model_forwards=summary['model_forwards'],parent_control_forwards_reused_not_new=0 if confirmation else 75,timings=summary['timings'],generator_sha256=sha256(Path(__file__)))
     write(run/'compact_component_summary.json',result)
     for name,rr in [('COMPACT_COMPONENT_ROWS.csv',table),('COMPACT_COMPONENT_CASES.csv',cases),('COMPACT_COMPONENT_INTERACTIONS.csv',interactions)]:
         with (run/name).open('w',newline='',encoding='utf-8') as f:
@@ -90,18 +96,18 @@ def main():
     def fmt(v):return 'NA' if v is None else f'{v:.6g}'
     lines=['# 一个共享16成员接口：两个source部分的作用复用','',cfg['scope'],'',
         'A、B使用完全相同的16个target成员，支持并集16；full是两列相加，不是为full另选16。joint单atom同样只用一个atom拟合两列。',
-        '源分组、配对、basis、dose均冻结；长/短按同一规则。long/full及raw原75行直接复用，所有新source实测端点逐值相同后才合并；父run的旧负结果不改。',
-        '下表先取同case四target中位，再跨五case中位；5case/3query/20target-case有依赖。短长训练流不同，不能归因为单独训练时长的严格学习曲线。',
+        ('源分组、所有系数与共享支持完全冻结，source-only规则在新文档选配对；basis和family dose规则不变。所有方法在本批实测，不合并旧文档端点。' if confirmation else '源分组、配对、basis、dose均冻结；长/短按同一规则。long/full及raw原75行直接复用，所有新source实测端点逐值相同后才合并；父run的旧负结果不改。'),
+        f'下表先取同case四target中位，再跨{count}case中位；{count}case/3query/{4*count}target-case有依赖。短长训练流不同，不能归因为单独训练时长的严格学习曲线。',
         '', '## 主端点全部方法','', '|部分|方法|KL误差|NLL变化平方误差|','|---|---|---:|---:|']
     for r in aggregates:
         if r['scope']=='intervention_positions':lines.append(f"|{r['component']}|{r['method']}|{fmt(r[METRICS[0]])}|{fmt(r[METRICS[1]])}|")
     lines+=['','## 逐case共享16比较（主端点）','','|case/source/condition|部分|short KL|long KL|short NLL|long NLL|','|---|---|---:|---:|---:|---:|']
-    for cid in range(5):
+    for cid in range(count):
         for component in ('full','A','B'):
             rr={r['method']:r for r in cases if r['case_id']==cid and r['component']==component and r['scope']=='intervention_positions'};a=rr['short_shared16'];b=rr['long_shared16']
             lines.append('|'+ '|'.join([f"{cid}/{a['source_seed']}:{a['source_atom']}/{a['condition']}",component,fmt(a[METRICS[0]]),fmt(b[METRICS[0]]),fmt(a[METRICS[1]]),fmt(b[METRICS[1]])])+'|')
-    lines+=['','该排序是忽略项间协方差的固定能量启发式，不是最优稀疏拟合。组成操作仍位于source rank1方向，不是target native或独立语义机制；原八请求的三项未评估保持缺失。',
-        '全逐target、两端点范围、joint单atom、source剂量和非线性交互见CSV/JSON。开发正信号须冻结后在新输入确认。']
+    lines+=['',('本次冻结三query的六请求均评估；原第四query3:1144两请求没有冻结组成fit，仍是覆盖边界。' if confirmation else '原八请求的三项未评估保持缺失。')+'该排序是忽略项间协方差的固定能量启发式，不是最优稀疏拟合。组成操作仍位于source rank1方向，不是target native或独立语义机制。',
+        '全逐target、两端点范围、joint单atom、source剂量和非线性交互见CSV/JSON。'+('本次是预先冻结的新文档确认；不能在该数据上调参后再称确认。' if confirmation else '开发正信号须冻结后在新输入确认。')]
     (run/'COMPACT_COMPONENT_COMPARISON.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     print(json.dumps(dict(aggregates=[r for r in aggregates if r['scope']=='intervention_positions'],comparisons=[r for r in comparisons if r['scope']=='intervention_positions'],checks=result['checks'])),flush=True)
 

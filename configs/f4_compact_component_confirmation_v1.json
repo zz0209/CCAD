@@ -1,0 +1,80 @@
+{
+  "run_id": "F4_compact_component_confirmation_v1_20260905",
+  "purpose": "Confirm frozen shared16 component transfer on fresh documents",
+  "evidence_level": "fresh_document_frozen_component_confirmation",
+  "audit_opened": false,
+  "old_fit": {
+    "path": "runs/F4_long_recipient_fit_v1_20260905",
+    "config_sha256": "793cbc9878ae671ffc1c68d119b3bc0af2184847da5b45ba0f0c35f6179f3d89",
+    "metadata_sha256": "ea7966d507d5fbcadbddc2bb8f7216e76e86dd68d0d074cfaa55c2051e9ddf43",
+    "coefficients_sha256": "9bafd702488df19b2a6cd65eed782f4aa4e614a250345ebbf73355799fc7ee37"
+  },
+  "new_fit": {
+    "path": "runs/F4_long_k128_newseeds_fit_v1_20260905",
+    "config_sha256": "7acba8217042ce3374bbdb6fd94076a37fcf2f14b57d9872645787ad375b3858",
+    "metadata_sha256": "5ac578e861b74f06bda9c3b6dbfe65c48ec98cb0d5c19c4cfbdb3e9ee0504686",
+    "coefficients_sha256": "f444401cc8081758c966688874c8a8a247849e8cc38e800871f99927ed135a37"
+  },
+  "source_group_size": 16,
+  "source_group_rule": "Within frozen32 source members, alternate odd/even ranks in weighted conditional-variation energy on unchanged positive256 discovery rows, atom-ID ties. Two16-member groups. This development refinement follows v1 head/tail zero source-tail effect, not newdata confirmation; no target endpoints choose group membership.",
+  "ridge_fraction": 0.001,
+  "maximum_source_hook_fraction": 0.1,
+  "scale_rule": "One family scale from max norm(full,A,B) relative to recipient masked hook; applied unchanged to all source/long/raw components. Full is rerun at this common scale.",
+  "target_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "expected_cases": 6,
+  "expected_requests": 6,
+  "expected_forwards": 480,
+  "fit_budget_seconds": 180,
+  "causal_budget_seconds": 240,
+  "cpu_threads": 4,
+  "budget": "New108documents/512x128tokens pre-excluded from all old assets. Restore all parent maps/groups/supports without fitting; five longSAEs encode only selectedhookpositions. <=180s preparation, <=480LM=6cases*(2base+3source+3raw+4targets*3parts*6methods), <=240s numerical+90sload. No training/new downloads/environment/audit.",
+  "scope": "Frozen three-query/six-sign component family on 108 new documents; original3:1144 two requests lack frozen component fit and are outside this confirmation. Same source rank1 parts and common familycap.1; A/B use one identical shared16 target support. All seven methods/full/A/B/fourtargets/two scopes retained. Primary A/B long_shared16 vs short_shared16 KL and NLL errors. No fitting, support search, or target-feedback selection. Not independent semantic/native/optimal sparsity/long-long5source proof.",
+  "partition_mode": "interleaved",
+  "previous_run": "F4_source_components_v1_20260905",
+  "replay_tolerance_rule": "Existing source-reference causal consumer uses <=1e-4 for cached batch4 versus live batch1 hook replay. v1 mistakenly imposed1e-5; old v1 FAIL retained, its max1.1723889e-5 equals the previously accepted same-case replay1.1723891e-5. Future consumer restores the existing1e-4 rule, not a new data-tuned threshold.",
+  "compact_shared_interface": true,
+  "readout_budget": 16,
+  "expected_rows": 468,
+  "frozen_components": {
+    "path": "runs/F4_compact_source_components_v1_20260905",
+    "fits_sha256": "90c704e2919a3ee38155df9386ff3865e5b866cfcf46e8828ecfc20c2108b024",
+    "coefficients_sha256": "c44cd9ce1365c9b426411b1cdaa94cef4b438a35386640b2edd9701433ddf833",
+    "coordinates_sha256": "82096af9235817424c71154dc274fac5bb0af1d0cb64ae96c36331dfe17edc93",
+    "cases_sha256": "c072f3ea761371bc3f6f12c1a4edbb02149e660545cffcc0c38893cddb41f304",
+    "raw_sha256": "7b75ddd0c77d7001f95a32f46bdc2f2eb39fcd7b87e0f45cb9be277453a7a5c0"
+  },
+  "shared_support_rule": "Rank Var_Q(z_j)*(beta_jA^2+beta_jB^2) on fixed source discovery rows; same16 atom IDs serve A and B, union16. No endpoint selection or sparse refit. Short and long use the identical rule.",
+  "single_rule": "One atom for both output columns, minimizes summed weighted conditional-variation error over all3072 candidates with same ridge_fraction. Intercepts cancel in donor differences.",
+  "preparation_only": false,
+  "check_parent_coordinates": false,
+  "confirmation_inputs": {
+    "source_asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+    "evaluation_asset_config": "configs/f4_compact_component_confirmation_codes_v1.json",
+    "reference_config_template": "configs/f4_compact_component_source_{panel}_v1.json",
+    "panels": [
+      "original",
+      "expanded"
+    ],
+    "source_selections": {
+      "expanded": {
+        "path": "runs/F4_compact_component_source_expanded_v1_20260905/matching.json",
+        "sha256": "e4736a05650567e27bbf95f2e850dee7182e63c1831d7df75df5db518061adc0"
+      },
+      "original": {
+        "path": "runs/F4_compact_component_source_original_v1_20260905/matching.json",
+        "sha256": "bdea767342dc829008d2c92d110cb351d8238776bcaac3d9b413cc0e1797dfa0"
+      }
+    }
+  },
+  "frozen_corpus_config": {
+    "path": "configs/f4_compact_component_confirmation_corpus_v1.json",
+    "sha256": "f021535423c3736c6ee47826374c25acb633836086e7acb6f0a91e947f4e7d2e",
+    "note": "causal_runner_sha256 inherited there records pre-probability ancestor a091d18, not current source preparer. Current source preparation identity0049740 is captured in its run snapshots; rules/maps unchanged. Current component apply implementationd3b6ded passed exact parent replay before new endpoints. Corpus and scientific freeze unchanged."
+  }
+}

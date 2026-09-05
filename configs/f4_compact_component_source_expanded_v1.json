@@ -1,0 +1,86 @@
+{
+  "run_id": "F4_compact_component_source_expanded_v1_20260905",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "additional_exclude_selections": [
+    {
+      "path": "runs/F4_source_reference_causal_dev_v7_alltargets_20260904/selection.json",
+      "sha256": "be3e99750071e0407b0e4c16c9ae579613c69a28254424833b25ee91d9a0c944"
+    },
+    {
+      "path": "runs/F4_source_reference_causal_dev_v8_newdocs_20260904/selection.json",
+      "sha256": "ed8a800e50544b1bf5be103205309ca2c527bb336d99f775f5b50d03674f2f1f"
+    }
+  ],
+  "ranks": [
+    1
+  ],
+  "documents_per_condition": 4,
+  "targets_per_query": 4,
+  "local_content_positions": 4,
+  "centered_logit_endpoint": true,
+  "include_source_mean_only": false,
+  "donor_difference": true,
+  "maximum_source_hook_fraction": 0.1,
+  "resource_lease": "cpu-heavy resource_manager.run",
+  "resource_lease_reason": "Bounded source-code selection and old means/hash reads, no GPU or endpoint forward",
+  "selection": "First original ordered source-selected supported recipient else first supported; unchanged coarse-class compatible donor rule and source dose; no target results.",
+  "intervention": "Original difference formulas andfourmaps/rank1/common sourcecap.1 unchanged; donor constraint only, no position permutations or enlarged pools.",
+  "budget": "Both source-only panels <=120s CPU total; no LM forwards or new fitting.",
+  "bulk_asset_dir": "D:/CCAD_Storage/paired_assets/F4_compact_component_confirmation_codes_v1_20260905",
+  "asset_manifest_sha256": "29d5bcce439eb1ef9458224215de1db04b5ec8f692b35a6b4ac57339ce01d9e4",
+  "raw_hook_asset_dir": "D:/CCAD_Storage/paired_assets/F4_compact_component_confirmation_codes_v1_20260905",
+  "raw_hook_manifest_sha256": "05cf836c869a85b48a09f6eb65e34f8ec04604be9c703f6fff8cbd42e240de8d",
+  "paired_corpus_run": "F4_compact_component_confirmation_corpus_v1_20260905",
+  "token_manifest_path": "runs/F4_compact_component_confirmation_corpus_v1_20260905/artifacts/token_manifest.json",
+  "token_manifest_sha256": "ec4572e39f60e76c11c5ff1dd98ed2d4a165912c5e54330cb88651dd96cbcb61",
+  "sequence_records_path": "runs/F4_compact_component_confirmation_corpus_v1_20260905/artifacts/sequence_records.json",
+  "sequence_records_sha256": "f16bf9dad5da86d61f0c95fcf4cbfab872b20ed73144f662bf3d328ef1d459dc",
+  "methods": [
+    "target",
+    "global_rows",
+    "raw",
+    "readout_top16"
+  ],
+  "source_scope": {
+    "path": "configs/f4_source_applicability_dev_v1.json",
+    "sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74"
+  },
+  "frozen_corpus_config_sha256": "f021535423c3736c6ee47826374c25acb633836086e7acb6f0a91e947f4e7d2e",
+  "evidence_level": "fresh_document_confirmation_source_only",
+  "scope_limit": "Three frozen component queries, six signs across two panels; exact original source-only choice/class matching; no new fits or target endpoint feedback. Query3:1144 excluded as lacks frozen component maps, retained as original coverage boundary.",
+  "readout_ablation": {
+    "budgets": [
+      16
+    ],
+    "native_budget": 16,
+    "saved_readout": {
+      "path": "runs/F4_query_expansion_fits_v1_20260905/readout_ablation.json",
+      "sha256": "c69cbac174109a125f71830e4751311192b8cb824f373c5584c48ce61308e865"
+    }
+  },
+  "frozen_policy": {
+    "path": "configs/f4_source_adaptive_readout_dev_v1.json",
+    "sha256": "e3047e5d3719529ff1d487d7553764d2bbe58b6713a4759cc2506636fed76d67"
+  },
+  "query_hash_offset": 1,
+  "source_preparation_only": {
+    "panel": "expanded",
+    "prior_endpoint_exposure": false
+  },
+  "source_query_subset": [
+    [
+      2,
+      2645
+    ],
+    [
+      5,
+      2194
+    ]
+  ]
+}

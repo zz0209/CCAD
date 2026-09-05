@@ -1,0 +1,75 @@
+{
+  "run_id": "F4_compact_component_apply_replay_v1_20260905",
+  "purpose": "Verify frozen component application exactly replays all old case coordinates, without model forwards",
+  "evidence_level": "implementation_replay_not_new_science",
+  "audit_opened": false,
+  "old_fit": {
+    "path": "runs/F4_long_recipient_fit_v1_20260905",
+    "config_sha256": "793cbc9878ae671ffc1c68d119b3bc0af2184847da5b45ba0f0c35f6179f3d89",
+    "metadata_sha256": "ea7966d507d5fbcadbddc2bb8f7216e76e86dd68d0d074cfaa55c2051e9ddf43",
+    "coefficients_sha256": "9bafd702488df19b2a6cd65eed782f4aa4e614a250345ebbf73355799fc7ee37"
+  },
+  "new_fit": {
+    "path": "runs/F4_long_k128_newseeds_fit_v1_20260905",
+    "config_sha256": "7acba8217042ce3374bbdb6fd94076a37fcf2f14b57d9872645787ad375b3858",
+    "metadata_sha256": "5ac578e861b74f06bda9c3b6dbfe65c48ec98cb0d5c19c4cfbdb3e9ee0504686",
+    "coefficients_sha256": "f444401cc8081758c966688874c8a8a247849e8cc38e800871f99927ed135a37"
+  },
+  "source_group_size": 16,
+  "source_group_rule": "Within frozen32 source members, alternate odd/even ranks in weighted conditional-variation energy on unchanged positive256 discovery rows, atom-ID ties. Two16-member groups. This development refinement follows v1 head/tail zero source-tail effect, not newdata confirmation; no target endpoints choose group membership.",
+  "ridge_fraction": 0.001,
+  "maximum_source_hook_fraction": 0.1,
+  "scale_rule": "One family scale from max norm(full,A,B) relative to recipient masked hook; applied unchanged to all source/long/raw components. Full is rerun at this common scale.",
+  "target_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "expected_cases": 5,
+  "expected_requests": 8,
+  "expected_forwards": 0,
+  "fit_budget_seconds": 180,
+  "causal_budget_seconds": 180,
+  "cpu_threads": 4,
+  "budget": "<=180s preparation only, encode old selected32rows using existing weights. Zero LM forwards. CPU/GPU leases; no fitting, download, audit or environment change.",
+  "scope": "Replay old component application with restored coefficients and no refitting/ranking; exact coordinate/case/dose equality before new document consumer. No endpoint forwards.",
+  "partition_mode": "interleaved",
+  "previous_run": "F4_source_components_v1_20260905",
+  "replay_tolerance_rule": "Existing source-reference causal consumer uses <=1e-4 for cached batch4 versus live batch1 hook replay. v1 mistakenly imposed1e-5; old v1 FAIL retained, its max1.1723889e-5 equals the previously accepted same-case replay1.1723891e-5. Future consumer restores the existing1e-4 rule, not a new data-tuned threshold.",
+  "compact_shared_interface": true,
+  "readout_budget": 16,
+  "expected_rows": 0,
+  "frozen_components": {
+    "path": "runs/F4_compact_source_components_v1_20260905",
+    "fits_sha256": "90c704e2919a3ee38155df9386ff3865e5b866cfcf46e8828ecfc20c2108b024",
+    "coefficients_sha256": "c44cd9ce1365c9b426411b1cdaa94cef4b438a35386640b2edd9701433ddf833",
+    "coordinates_sha256": "82096af9235817424c71154dc274fac5bb0af1d0cb64ae96c36331dfe17edc93",
+    "cases_sha256": "c072f3ea761371bc3f6f12c1a4edbb02149e660545cffcc0c38893cddb41f304",
+    "raw_sha256": "7b75ddd0c77d7001f95a32f46bdc2f2eb39fcd7b87e0f45cb9be277453a7a5c0"
+  },
+  "shared_support_rule": "Rank Var_Q(z_j)*(beta_jA^2+beta_jB^2) on fixed source discovery rows; same16 atom IDs serve A and B, union16. No endpoint selection or sparse refit. Short and long use the identical rule.",
+  "single_rule": "One atom for both output columns, minimizes summed weighted conditional-variation error over all3072 candidates with same ridge_fraction. Intercepts cancel in donor differences.",
+  "preparation_only": true,
+  "check_parent_coordinates": true,
+  "confirmation_inputs": {
+    "source_asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+    "evaluation_asset_config": "configs/f4_long_recipient_confirmation_codes_v1.json",
+    "reference_config_template": "configs/f4_long_recipient_source_{panel}_v1.json",
+    "panels": [
+      "original",
+      "expanded"
+    ],
+    "source_selections": {
+      "expanded": {
+        "path": "runs/F4_long_recipient_source_expanded_v1_20260905/matching.json",
+        "sha256": "b87df467387ef2a1c0872e03feade3bec64e328e48a9ccd88b02f958e0ac6838"
+      },
+      "original": {
+        "path": "runs/F4_long_recipient_source_original_v1_20260905/matching.json",
+        "sha256": "7c9c7ebb9efd8ba0fe24ec6c736effcde9831cad6d62c957f04de276bf7485a9"
+      }
+    }
+  }
+}
