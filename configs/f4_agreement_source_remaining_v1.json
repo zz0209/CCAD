@@ -1,0 +1,227 @@
+{
+  "run_id": "F4_agreement_source_remaining_v1_20260905",
+  "asset_config": "configs/f4_probability_confirmation_codes_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "queries": [
+    [
+      1,
+      432
+    ],
+    [
+      1,
+      1064
+    ],
+    [
+      1,
+      1127
+    ],
+    [
+      1,
+      2734
+    ],
+    [
+      2,
+      1146
+    ],
+    [
+      2,
+      1645
+    ],
+    [
+      2,
+      1655
+    ],
+    [
+      2,
+      1919
+    ],
+    [
+      2,
+      2618
+    ],
+    [
+      2,
+      2903
+    ],
+    [
+      3,
+      138
+    ],
+    [
+      3,
+      1551
+    ],
+    [
+      3,
+      1610
+    ],
+    [
+      3,
+      1628
+    ],
+    [
+      3,
+      2602
+    ],
+    [
+      4,
+      309
+    ],
+    [
+      4,
+      329
+    ],
+    [
+      4,
+      1008
+    ],
+    [
+      4,
+      1921
+    ],
+    [
+      4,
+      2679
+    ],
+    [
+      4,
+      2847
+    ],
+    [
+      5,
+      248
+    ],
+    [
+      5,
+      2187
+    ],
+    [
+      5,
+      2450
+    ]
+  ],
+  "query_rule": "Remaining24 saved source anchors after initial16 task screen; full40 attempted pool retained, no target endpoints used",
+  "design": {
+    "development": {
+      "subjects": [
+        [
+          "singer",
+          "singers"
+        ],
+        [
+          "lawyer",
+          "lawyers"
+        ],
+        [
+          "teacher",
+          "teachers"
+        ],
+        [
+          "pilot",
+          "pilots"
+        ]
+      ],
+      "attractors": [
+        [
+          "guard",
+          "guards"
+        ],
+        [
+          "actor",
+          "actors"
+        ],
+        [
+          "dancer",
+          "dancers"
+        ],
+        [
+          "driver",
+          "drivers"
+        ]
+      ],
+      "prepositions": [
+        "near",
+        "behind",
+        "beside",
+        "with"
+      ]
+    },
+    "reserved": {
+      "subjects": [
+        [
+          "doctor",
+          "doctors"
+        ],
+        [
+          "author",
+          "authors"
+        ],
+        [
+          "farmer",
+          "farmers"
+        ],
+        [
+          "baker",
+          "bakers"
+        ]
+      ],
+      "attractors": [
+        [
+          "student",
+          "students"
+        ],
+        [
+          "clerk",
+          "clerks"
+        ],
+        [
+          "painter",
+          "painters"
+        ],
+        [
+          "worker",
+          "workers"
+        ]
+      ],
+      "prepositions": [
+        "in front of",
+        "next to",
+        "across from",
+        "alongside"
+      ]
+    },
+    "construction": "The {subject} {preposition} the {attractor}",
+    "lexical_pairing": "attractor index=(subject index+preposition index)%4",
+    "scope": "One across-PP structural family, 16 lexicalized templates per split; not 32 independent syntactic structures. Programmatic synthetic grammatical labels, not human annotations. No claim of exclusion from base-model pretraining. Reserved prompts generated but not tokenized or forwarded this run."
+  },
+  "split": "development",
+  "continuations": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "primary": "log P(correct is/are)-log P(incorrect is/are) in recipient context; interventions measured as baseline minus intervened margin",
+  "secondary": "past was/were agreement margin and present-versus-past total probability log ratio; neither is independent human semantic evidence",
+  "intervention": "Only final valid prompt position at existing layer5 resid_post. Donor differs only in subject number or only in attractor number. Source local candidate-code donor difference projected onto saved rank1 b, shared per-input source hook cap0.1; independent means cancel. Raw-hook donor swap uses its own cap0.1 and is a capacity diagnostic, not identical-energy FCC control.",
+  "maximum_source_hook_fraction": 0.1,
+  "batch_size": 8,
+  "cpu_threads": 4,
+  "random_seed": 5091621,
+  "budget_seconds": 60,
+  "budget_forwards": 416,
+  "budget_description": "64dev prompts atbatch8:8baseline+8noop+16raw+24*16source=416, plus2equivalence checks; measured v2 290forwards 7.29s numeric, budget<=60s numeric/<=60s loading. No reserved evaluation",
+  "selection": "Rank all24remaining source queries by mean signed subject margin loss, preserve first16screen, combine all40 externally before any target/reserved evaluation",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "evidence_level": "synthetic_task_source_development",
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "padding_tolerances": {
+    "logprob_absolute": 0.001,
+    "hook_relative_l2": 0.00001,
+    "scope": "Separate unit-scaled float32 diagnostic after v1 max0.0003752576; fixed before v2 source interventions, not a scientific acceptance threshold."
+  }
+}

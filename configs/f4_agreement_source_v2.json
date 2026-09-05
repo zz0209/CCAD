@@ -1,0 +1,195 @@
+{
+  "run_id": "F4_agreement_source_v2_20260905",
+  "asset_config": "configs/f4_probability_confirmation_codes_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "queries": [
+    [
+      5,
+      710
+    ],
+    [
+      3,
+      1230
+    ],
+    [
+      4,
+      693
+    ],
+    [
+      5,
+      369
+    ],
+    [
+      5,
+      1352
+    ],
+    [
+      5,
+      336
+    ],
+    [
+      2,
+      2176
+    ],
+    [
+      4,
+      801
+    ],
+    [
+      3,
+      1144
+    ],
+    [
+      1,
+      2641
+    ],
+    [
+      3,
+      1093
+    ],
+    [
+      1,
+      2298
+    ],
+    [
+      1,
+      615
+    ],
+    [
+      2,
+      2645
+    ],
+    [
+      1,
+      1441
+    ],
+    [
+      5,
+      2194
+    ]
+  ],
+  "query_rule": "All 16 existing source-hash-panel queries, not previous target winners. Source-only task screening; no target map coefficients or target endpoints used.",
+  "design": {
+    "development": {
+      "subjects": [
+        [
+          "singer",
+          "singers"
+        ],
+        [
+          "lawyer",
+          "lawyers"
+        ],
+        [
+          "teacher",
+          "teachers"
+        ],
+        [
+          "pilot",
+          "pilots"
+        ]
+      ],
+      "attractors": [
+        [
+          "guard",
+          "guards"
+        ],
+        [
+          "actor",
+          "actors"
+        ],
+        [
+          "dancer",
+          "dancers"
+        ],
+        [
+          "driver",
+          "drivers"
+        ]
+      ],
+      "prepositions": [
+        "near",
+        "behind",
+        "beside",
+        "with"
+      ]
+    },
+    "reserved": {
+      "subjects": [
+        [
+          "doctor",
+          "doctors"
+        ],
+        [
+          "author",
+          "authors"
+        ],
+        [
+          "farmer",
+          "farmers"
+        ],
+        [
+          "baker",
+          "bakers"
+        ]
+      ],
+      "attractors": [
+        [
+          "student",
+          "students"
+        ],
+        [
+          "clerk",
+          "clerks"
+        ],
+        [
+          "painter",
+          "painters"
+        ],
+        [
+          "worker",
+          "workers"
+        ]
+      ],
+      "prepositions": [
+        "in front of",
+        "next to",
+        "across from",
+        "alongside"
+      ]
+    },
+    "construction": "The {subject} {preposition} the {attractor}",
+    "lexical_pairing": "attractor index=(subject index+preposition index)%4",
+    "scope": "One across-PP structural family, 16 lexicalized templates per split; not 32 independent syntactic structures. Programmatic synthetic grammatical labels, not human annotations. No claim of exclusion from base-model pretraining. Reserved prompts generated but not tokenized or forwarded this run."
+  },
+  "split": "development",
+  "continuations": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "primary": "log P(correct is/are)-log P(incorrect is/are) in recipient context; interventions measured as baseline minus intervened margin",
+  "secondary": "past was/were agreement margin and present-versus-past total probability log ratio; neither is independent human semantic evidence",
+  "intervention": "Only final valid prompt position at existing layer5 resid_post. Donor differs only in subject number or only in attractor number. Source local candidate-code donor difference projected onto saved rank1 b, shared per-input source hook cap0.1; independent means cancel. Raw-hook donor swap uses its own cap0.1 and is a capacity diagnostic, not identical-energy FCC control.",
+  "maximum_source_hook_fraction": 0.1,
+  "batch_size": 8,
+  "cpu_threads": 4,
+  "random_seed": 5091621,
+  "budget_seconds": 180,
+  "budget_forwards": 288,
+  "budget_description": "64 dev prompts: 8 baseline+8 noop+16 raw swaps+256 source query swap batches at8. Short unpadded-length<=64, <=3min numerical run, model loading/hash prep separate<=1min; existing runtime and five SAEs, no fitting/audit/new weights. Extra2 unpadded equivalence forwards allowed as correctness checks.",
+  "selection": "Rank all16 source queries by mean signed subject-swap primary margin loss across64development prompts (equal template weights), atom/seed tie; shortlist top2 with entire ranking/attractor effects retained. No target results used; negative/weak signal reported rather than silently excluded.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "evidence_level": "synthetic_task_source_development",
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "padding_tolerances": {
+    "logprob_absolute": 0.001,
+    "hook_relative_l2": 0.00001,
+    "scope": "Separate unit-scaled float32 diagnostic after v1 max0.0003752576; fixed before v2 source interventions, not a scientific acceptance threshold."
+  }
+}
