@@ -3241,3 +3241,33 @@ runs/F4_agreement_neighborhood_causal_v1_20260905/RESULTS_FOR_REVIEW.md:42990b1d
 runs/F4_agreement_neighborhood_causal_v1_20260905/relation_summary.json:ca4879ae07e22d881be768c25999f69b85fb265e178680d390b8793d5987e071
 runs/F4_agreement_neighborhood_causal_v1_20260905/global_comparison.json:010022ded12f39d5c200b8c741169b318956b9fb443c09f1684abb42bf5a4267
 runs/F4_agreement_neighborhood_causal_v1_20260905/INTERPRETATION.md:b0676b626be0d644bc382c77cc417defbdd3dbe3b48639ae9f2e66f74ba46646
+
+## 2026-09-05 source native teacher pilot — launch
+
+F4_agreement_source_native_v1_20260905: source2 only, existing64developed task inputs,32unique subject pairs. Rank source atoms by vector-error reduction against fixed task projection;native64 signed ridge.001 then clip[-1,1]. Measure actual native donor edit against existing projection/fullSAE anchors, each own natural cap0.1 without upscaling. No target task fitting/behavioral labels as fit targets; all source development. Budget66forwards180s numeric including60s fit,90s expected loading. Starting HEAD065b81d,CPU/GPU free;spec3129 unchanged. Old routes/results retained;native success is not a new FCC gate.
+
+Native source run PASS/7checks/contract PASS66forwards,1.670409400s numeric/6.677345400s wall;fit.118191900s,normalized vector error.797781950,clip0. Native primary mean−.001525879,39/64positive10/16templates,dose.027465880;projection.125188828,fullSAE.039382935 replayed. Native attractor absolute primary.081701279. This local source result motivates one operation-sensitive fit, not target-gating attribution.
+
+Follow-on frozen F4_agreement_source_adjoint_v1_20260905: per-input source primary margin gradients J_i, A_ij=delta_z_ij*(D_j dot J_i), teacher=(deltaY_i dot b)*(b dot J_i). Same64source development;native64/ridge.001/clipping retained. Primary used to fit, past/tense gradients and all target task info absent. No average-Jacobian Gram approximation. 76modelforwards including8gradient backwards and2finite-difference witness forwards,<=180s numerical/60s fit/loading90s expected. Source effect optimization is development, not independent causal semantic proof; actual forward and non-fit auxiliary endpoints reported separately.
+
+Adjoint v1 PASS/7checks/contract PASS76forwards2.407641400s numeric24.341393900s wall;gradient witness1.526038759 vs analytic1.529919947. Native primary mean.033967018,46/64positive15/16templates,past.022359848,dose.041765513;attractor absolute primary.107273102. Fit residual.650607514 after44/64coefficients clipped(max18.89957),source fit.927561500s. Positive source development signal but no specificity/unseen/crossseed claim. Same-support optimization follow-on F4_agreement_source_adjoint_box_v1_20260905 replaces clipping with cyclic exact box-coordinate updates(max2000sweeps,tol1e-8 projected-gradient residual), allotherchoices unchanged;76forward budget and original negative/vector/clip outputs preserved.
+
+
+### Source-native positive checkpoint completion
+
+Box run PASS/7checks/contract PASS76model-forwards1.912647400s numeric6.828535400s wall;fit.335322300s,121sweeps,projected-gradient residual9.725366956e-9,converged. Same support/gradients/ridge as clip verified. Native primary mean.100981712,50/64positive16/16templates;past(not fitted).084545135;source dose.045290246. Attractor absolute primary.162438393 and dose.090540007 show remaining collateral effect, not clean selectivity. Training scalar-error.074466272 vs clipped.650607514,48coefficients at bounds. Native vector prior−.001525879,adjoint clip.033967018 all preserved;not claimed same-information or equal-dose advantage over originalprojection/fullSAE. Primary gradients used to fit;past/tense gradients absent. Adjoint fit pair_count64 denotes directional recipient states/32unique subject pairs, not64independentpairs;vector fit used32unique pairs.
+
+Unit total218model-forward calls(including16gradient forwards/backwards),37.847274700s wall; cumulative29035/6069.8202407, assets768/103.068996 unchanged. Source1344raw margins recomputed,960anchors replayed,all3coefficients/doses rederived.7targeted tests PASS;CPU/GPU free at completion. No reserved/audit access, no target fit, no environment or automation changes. Source success is not crossseed explanatory claim. Next: freeze box ids/g,fit independent-discovery actual native teacher using its decoder span<=64 rather than artificialrank1 projection;FCC/raw samebasis anddata,targetnative/single/random,existing8devpanel and common-source-native scale. BudgetCPU180s,target~100modelcalls numeric180s/loading90s;alloldroutes retained.
+
+Figure source_native_development.png1600x1040 RGB150dpi83,551bytes inspected visually;metadata4checksPASS. General internal review,not journal-ready. All16template points,noCI,noexclusions;common subject/past scale;attractor abs separatequantity;dose circles/squares withlabels. Palette first2whitecontrasts5.185/3.867;grayscale pairDeltaL8.214belowheuristic10,handledbyshape/directlabels not claimed accessibilitycertification. Scientific-visualization principles made collateral effects/doses and exposed-development limits explicit. Bundled Pillow/NumPy used becausematplotlib absent;no installation orMLenv change. Standard chain rule/boxQP not a novelty claim;registryupdated localcomponents only,no fabricated newofficialreading.
+
+Local ignored artifacts retained/not uploaded:
+EXPERIMENT_PLAN.md:96ba1e95c5c3acfeba84fe70942a4195dfe03ec5c3f59ba9e2346022cfd809ef
+EXPERIMENT_TRACKER.md:17f41be308d60a72ba0b8641520873ffcf74639736d0c64a48f251c88fa1c73e
+REFERENCE_REGISTRY.md:dfc0ca210cb0eabc2c12b29697b2b56acc0d45d773c64310807c6ebe1fea0368
+runs/F4_agreement_source_adjoint_box_v1_20260905/source_native_factors.npz:24b40579f060146ec27b17bbc7db6314d03f4bd2f5d4af36eb954df6287ee366
+runs/F4_agreement_source_adjoint_box_v1_20260905/RESULTS_FOR_REVIEW.md:1b0021f33eefcd2a72f86ec73dfdbcb4b7e428dee426c836520a990e3bfc7eaf
+runs/F4_agreement_source_adjoint_box_v1_20260905/source_comparison.json:8ce0f0733427ffdd274645793c5bef926fc5a351eaf5e254a81aec6e9b26a8d1
+runs/F4_agreement_source_adjoint_box_v1_20260905/SOURCE_COMPARISON.csv:11e2638311af18b04a8de0f60c7195a4743661f51e56c2fcdfdcb8a8b4c6dfef
+runs/F4_agreement_source_adjoint_box_v1_20260905/source_native_development.png:5c2973eb81b9349ce3162d3b8a4621555de6c3b9e5ba6029e0a625256abe665e
+runs/F4_agreement_source_adjoint_box_v1_20260905/figure_provenance.json:7473954b7b3b19db3220744ef1708ee60f020a34c19ef193ccc267089ea1e003

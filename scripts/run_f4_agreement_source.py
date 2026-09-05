@@ -69,6 +69,51 @@ def task_contrast_basis(codes,decoder,rows):
     return contrast/norm,y,norm
 
 
+def box_ridge(gram,rhs,bound=1.,max_sweeps=2000,tolerance=1e-8):
+    """Cyclic exact coordinate minimization of a positive-definite box QP."""
+    g=np.zeros(len(rhs))
+    for sweep in range(max_sweeps):
+        for j in range(len(g)):
+            g[j]=np.clip(g[j]+(rhs[j]-gram[j]@g)/gram[j,j],-bound,bound)
+        residual=float(np.max(np.abs(g-np.clip(g-(gram@g-rhs),-bound,bound))))
+        if residual<=tolerance:break
+    return g,dict(sweeps=sweep+1,projected_gradient_residual=residual,converged=residual<=tolerance)
+
+
+def source_native_group(codes,decoder,rows,b,spec,gradients=None):
+    """Fit only source task differences to the existing projected teacher."""
+    from fit_f4_agreement_relations import native_fit
+    donor=swap_indices(rows,'subject');keep=np.arange(len(rows))<donor
+    if gradients is not None:
+        # Per-input Jacobian design, not a squared average Jacobian.
+        x=codes-codes[donor];design=x*(gradients@decoder.T)
+        c=(x@decoder@b)*(gradients@b)
+        diag=np.mean(design*design,axis=0);rhs=design.T@c/len(c)
+        score=rhs*rhs/np.maximum(diag,1e-30);order=np.lexsort((np.arange(len(score)),-score))
+        ids=order[diag[order]>1e-12][:spec['support_size']]
+        if len(ids)!=spec['support_size']:raise ValueError('Insufficient source adjoint support')
+        a=design[:,ids];gram=a.T@a/len(c);ridge=spec['ridge_fraction']*float(np.trace(gram))/len(ids)
+        regularized=gram+max(ridge,1e-12)*np.eye(len(ids));target=a.T@c/len(c)
+        u=np.linalg.solve(regularized,target);g=np.clip(u,-1.,1.);solver_info=dict(solver='ridge_then_clip')
+        if spec.get('solver')=='box_coordinate_descent':
+            g,solver_info=box_ridge(regularized,target,max_sweeps=spec['max_sweeps'],tolerance=spec['solver_tolerance'])
+            solver_info['solver']='box_coordinate_descent'
+        return ids,g,dict(ridge=ridge,unconstrained_exceeds_bounds=int(np.sum(np.abs(u)>1)),at_bounds=int(np.sum(np.abs(g)>=1)),max_unclipped=float(np.max(np.abs(u))),pair_count=len(c),**solver_info,
+            training_normalized_error=float(np.sum((a@g-c)**2)/np.sum(c*c)),objective='per-input primary-margin adjoint prediction of source projection',
+            source_only=True,target_task_codes_used=False,behavioral_endpoints_used_for_fit=True,
+            scope='Source primary-gradient development only; past/tense gradients absent; actual forward and unseen-input validation distinct')
+    x=(codes-codes[donor])[keep];c=x@decoder@b
+    diag=np.mean(x*x,axis=0)*np.sum(decoder*decoder,axis=1)
+    rhs=(x.T@c/len(c))*(decoder@b);score=rhs*rhs/np.maximum(diag,1e-30)
+    order=np.lexsort((np.arange(len(score)),-score));ids=order[diag[order]>1e-12][:spec['support_size']]
+    if len(ids)!=spec['support_size']:raise ValueError('Insufficient active source support')
+    g,info=native_fit(x,decoder,c,b,ids,spec['ridge_fraction'])
+    predicted=(x[:,ids]*g)@decoder[ids]
+    return ids,g,dict(**info,pair_count=len(c),training_normalized_error=float(np.sum((predicted-c[:,None]*b)**2)/np.sum(c*c)),
+        source_only=True,target_task_codes_used=False,behavioral_endpoints_used_for_fit=False,objective='unweighted hook vector error',
+        scope='Source task development vector fit; not unseen-input validation or optimal box-QP')
+
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--config',type=Path,required=True)
     args=parser.parse_args();cfg=json.loads(args.config.read_text())
@@ -83,6 +128,8 @@ def main():
     run=ROOT/'runs'/cfg['run_id'];run.mkdir(parents=True,exist_ok=False)
     write(run/'config.resolved.json',cfg)
     code_paths=[Path(__file__),ROOT/'scripts/run_r011s1_raw_hook_asset.py',ROOT/'src/ccad/artifacts.py',ROOT/'src/ccad/activation_contract.py']
+    if cfg.get('source_native'):
+        code_paths += [ROOT/'scripts/fit_f4_agreement_relations.py',ROOT/'src/ccad/causal_metric_probe.py',ROOT/'src/ccad/hook_transport.py']
     codes=[]
     for path in code_paths:
         rel=path.relative_to(ROOT).as_posix();snap=run/'source_snapshot'/rel;snap.parent.mkdir(parents=True,exist_ok=True);snap.write_bytes(path.read_bytes())
@@ -226,6 +273,39 @@ def main():
         for i,p in enumerate(prompts):rows.append(dict(run_id=cfg['run_id'],method='baseline',**p,logprobs=base[i].tolist(),margins=baseline[i].tolist()))
         specs=([('source_task_projection',cfg['source_seed'],None),('source_full_sae_swap',cfg['source_seed'],None)] if task_mode
                else [('raw_hook_swap',None,None)]+[('source_query',s,a) for s,a in cfg['queries']])
+        if cfg.get('source_native'):
+            if not task_mode:raise ValueError('Source native teacher requires task mode')
+            fit_start=time.perf_counter();s=cfg['source_seed']
+            gradients=None
+            if cfg['source_native'].get('objective')=='primary_adjoint':
+                gradients=np.empty_like(hidden)
+                for parameter in model.parameters():parameter.requires_grad_(False)
+                for ix in batches:
+                    cap={};pos=torch.tensor(last[ix],device=cfg['device']);rr=torch.arange(len(ix),device=cfg['device'])
+                    def gradient_hook(m,i,out):
+                        leaf=extract_primary_hook_tensor(out,contract).detach().clone().requires_grad_(True);cap['leaf']=leaf
+                        return replace_primary_hook_tensor(out,leaf,contract)
+                    handle=hook.register_forward_hook(gradient_hook)
+                    try:
+                        logits=model(torch.tensor(tokens[ix],device=cfg['device']),attention_mask=torch.tensor(attention[ix],device=cfg['device']),use_cache=False).logits[rr,pos]
+                        sign=torch.tensor([1. if prompts[i]['subject_number']==0 else -1. for i in ix],device=cfg['device'])
+                        goal=((logits[:,ids4[0]]-logits[:,ids4[1]])*sign).sum()
+                        gradients[ix]=torch.autograd.grad(goal,cap['leaf'])[0][rr,pos].detach().cpu().numpy()
+                        forwards+=1
+                    finally:handle.remove()
+                np.savez_compressed(run/'source_primary_gradients.npz',gradients=gradients)
+                v=gradients[:1]/np.linalg.norm(gradients[:1]);eps=.001*np.linalg.norm(hidden[0])
+                plus,_=forward(np.array([0]),-eps*v);minus,_=forward(np.array([0]),eps*v)
+                observed=float((margins(plus,prompts[:1])[0,0]-margins(minus,prompts[:1])[0,0])/(2*eps));predicted=float(gradients[0]@v[0])
+                witness=dict(observed_derivative=observed,predicted_derivative=predicted,epsilon=float(eps),passed=bool(np.isclose(observed,predicted,rtol=.03,atol=.001)),gradient_batches=len(batches),source_only=True)
+                write(run/'gradient_witness.json',witness)
+                if not witness['passed']:raise ValueError('Source gradient finite-difference mismatch')
+            native_ids,native_g,native_info=source_native_group(z[s],dec[s],prompts,task_b,cfg['source_native'],gradients)
+            native_info.update(fit_seconds=time.perf_counter()-fit_start,support=native_ids.tolist(),coefficients=native_g.tolist())
+            if native_info['fit_seconds']>cfg['source_native']['fit_budget_seconds']:raise TimeoutError('Source native fit budget')
+            np.savez_compressed(run/'source_native_factors.npz',ids=native_ids,g=native_g,basis=task_b)
+            write(run/'source_native_fit.json',native_info)
+            specs.append(('source_native_group',s,None))
         compiled={};panel=np.arange(len(prompts));bank=None
         if 'compiled_deltas_path' in cfg:
             if not task_mode:raise ValueError('Compiled operations require the frozen task source reference')
@@ -250,6 +330,7 @@ def main():
                 elif method=='raw_hook_swap':natural=hidden-hidden[donor]
                 elif method=='source_full_sae_swap':natural=task_y-task_y[donor]
                 elif method=='source_task_projection':natural=((task_y-task_y[donor])@task_b)[:,None]*task_b[None,:]
+                elif method=='source_native_group':natural=((z[s][:,native_ids]-z[s][donor][:,native_ids])*native_g)@dec[s][native_ids]
                 else:
                     support,b=families[s,a];local=(z[s][:,support]-z[s][donor][:,support])@dec[s][support]
                     natural=(local@b)[:,None]*b[None,:]

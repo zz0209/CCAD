@@ -5,10 +5,30 @@ from pathlib import Path
 import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
-from run_f4_agreement_source import make_prompts,swap_indices,margins,capped,task_contrast_basis
+from run_f4_agreement_source import make_prompts,swap_indices,margins,capped,task_contrast_basis,source_native_group,box_ridge
 
 
 class AgreementTests(unittest.TestCase):
+    def test_box_solver_is_not_naive_clipping(self):
+        gram=np.array([[2.,1.],[1.,2.]]);rhs=np.array([4.,1.])
+        g,info=box_ridge(gram,rhs)
+        np.testing.assert_allclose(g,[1.,0.],atol=1e-8)
+        self.assertTrue(info['converged'])
+        naive=np.clip(np.linalg.solve(gram,rhs),-1,1)
+        loss=lambda v:.5*v@gram@v-rhs@v
+        self.assertLess(loss(g),loss(naive))
+
+    def test_native_teacher_recovers_available_source_operation(self):
+        rows=[dict(template=str(t),subject_number=s,attractor_number=a) for t in range(3) for s in (0,1) for a in (0,1)]
+        codes=np.array([[r['subject_number'],r['attractor_number']+int(r['template'])] for r in rows],dtype=float)
+        ids,g,info=source_native_group(codes,np.eye(2),rows,np.array([1.,0.]),dict(support_size=1,ridge_fraction=.001))
+        np.testing.assert_array_equal(ids,[0]);np.testing.assert_allclose(g,[1/1.001])
+        self.assertEqual(info['pair_count'],6);self.assertLess(info['training_normalized_error'],1e-6)
+        adjoint=np.tile([1.,0.],(len(rows),1))
+        aid,ag,ai=source_native_group(codes,np.eye(2),rows,np.array([1.,0.]),dict(support_size=1,ridge_fraction=.001),adjoint)
+        np.testing.assert_array_equal(aid,ids);np.testing.assert_allclose(ag,g)
+        self.assertEqual(ai['pair_count'],12);self.assertTrue(ai['behavioral_endpoints_used_for_fit'])
+
     def test_task_contrast_balances_nuisance_and_order(self):
         rows=[dict(template=str(t),subject_number=s,attractor_number=a) for t in range(3) for s in (0,1) for a in (0,1)]
         codes=np.array([[r['subject_number'],r['attractor_number']+int(r['template'])] for r in rows],dtype=float)

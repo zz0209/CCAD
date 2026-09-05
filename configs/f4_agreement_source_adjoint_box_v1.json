@@ -1,0 +1,149 @@
+{
+  "run_id": "F4_agreement_source_adjoint_box_v1_20260905",
+  "asset_config": "configs/f4_probability_confirmation_codes_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "queries": [],
+  "query_rule": "One source seed2 plural-minus-singular contrast from all full decoded contributions, balanced over template and attractor; no target task endpoints.",
+  "design": {
+    "development": {
+      "subjects": [
+        [
+          "singer",
+          "singers"
+        ],
+        [
+          "lawyer",
+          "lawyers"
+        ],
+        [
+          "teacher",
+          "teachers"
+        ],
+        [
+          "pilot",
+          "pilots"
+        ]
+      ],
+      "attractors": [
+        [
+          "guard",
+          "guards"
+        ],
+        [
+          "actor",
+          "actors"
+        ],
+        [
+          "dancer",
+          "dancers"
+        ],
+        [
+          "driver",
+          "drivers"
+        ]
+      ],
+      "prepositions": [
+        "near",
+        "behind",
+        "beside",
+        "with"
+      ]
+    },
+    "reserved": {
+      "subjects": [
+        [
+          "doctor",
+          "doctors"
+        ],
+        [
+          "author",
+          "authors"
+        ],
+        [
+          "farmer",
+          "farmers"
+        ],
+        [
+          "baker",
+          "bakers"
+        ]
+      ],
+      "attractors": [
+        [
+          "student",
+          "students"
+        ],
+        [
+          "clerk",
+          "clerks"
+        ],
+        [
+          "painter",
+          "painters"
+        ],
+        [
+          "worker",
+          "workers"
+        ]
+      ],
+      "prepositions": [
+        "in front of",
+        "next to",
+        "across from",
+        "alongside"
+      ]
+    },
+    "construction": "The {subject} {preposition} the {attractor}",
+    "lexical_pairing": "attractor index=(subject index+preposition index)%4",
+    "scope": "One across-PP structural family, 16 lexicalized templates per split; not 32 independent syntactic structures. Programmatic synthetic grammatical labels, not human annotations. No claim of exclusion from base-model pretraining. Reserved prompts generated but not tokenized or forwarded this run."
+  },
+  "split": "development",
+  "continuations": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "primary": "log P(correct is/are)-log P(incorrect is/are) in recipient context; interventions measured as baseline minus intervened margin",
+  "secondary": "past was/were agreement margin and present-versus-past total probability log ratio; neither is independent human semantic evidence",
+  "intervention": "Source native D_s diag(g_s)(z_s(recipient)-z_s(donor)), compared with projected direction and full SAE difference. Each natural operation independently capped0.1 without upscaling; not equal-dose or equal-search comparison.",
+  "maximum_source_hook_fraction": 0.1,
+  "batch_size": 8,
+  "cpu_threads": 4,
+  "random_seed": 5091621,
+  "budget_seconds": 180,
+  "budget_forwards": 74,
+  "budget_description": "Same64dev;66ordinary forwards plus8source-gradient forwards/backwards+2finite-difference forwards=76total model forwards. <=180s numeric including<=60s gradient/fit,loading<=90s expected.",
+  "selection": "One source-only primary-adjoint native64 signed ridge.001+clip[-1,1]. Design per-input A_ij=delta_z_ij*(D_j dot grad_primary_i), teacher=(deltaY_i dot b)*(b dot grad_primary_i). Source primary used for fitting, source past/tense not used, no target task information. Same developed inputs, not heldout. Same source-adjoint support and ridge as prior run; replace posthoc clipping with cyclic box-constrained coordinate solve. Projected-gradient residual and convergence recorded, not assumed.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "evidence_level": "synthetic_task_source_development",
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "padding_tolerances": {
+    "logprob_absolute": 0.001,
+    "hook_relative_l2": 0.00001,
+    "scope": "Separate unit-scaled float32 diagnostic after v1 max0.0003752576; fixed before v2 source interventions, not a scientific acceptance threshold."
+  },
+  "source_reference_mode": "task_contrast",
+  "source_seed": 2,
+  "replay_activations_path": "runs/F4_agreement_source_v2_20260905/development_activations.npz",
+  "replay_activations_sha256": "91ecc32b178d08f460ce275d1d6a9317468a5acffb0d25297d7df02a5fd0528b",
+  "replay_tokens_path": "runs/F4_agreement_source_v2_20260905/tokenized_development.json",
+  "replay_tokens_sha256": "9e62660c4f8534645e55dc6378b3fbb4c9fe7e747bbfcd85082a266ec4c842e7",
+  "source_native": {
+    "support_size": 64,
+    "ridge_fraction": 0.001,
+    "coefficient_bounds": [
+      -1,
+      1
+    ],
+    "fit_budget_seconds": 60,
+    "objective": "primary_adjoint",
+    "solver": "box_coordinate_descent",
+    "max_sweeps": 2000,
+    "solver_tolerance": 1e-8
+  }
+}
