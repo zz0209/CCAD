@@ -775,6 +775,9 @@ def main():
                             variants={"target":(target@np.asarray(factors["query_target"][ix,:,:rank],dtype=np.float64)@bt.T)*mask[:,None],
                                       "raw":(rawinput@np.asarray(factors["raw_target"][ix,:,:rank],dtype=np.float64)@bt.T)*mask[:,None],
                                       "wrong_query":wrong,"wrong_query_matched_energy":wrong*wrongscale}
+                            if 'global_rows' in cfg.get('methods',[]):
+                                # Same query-specific output basis; only discovery fit rows/weights differ.
+                                variants['global_rows']=(target@np.asarray(factors['global_target'][ix,:,:rank],dtype=np.float64)@bt.T)*mask[:,None]
                             if cfg.get('include_source_mean_only'):
                                 variants['source_mean_only']=np.zeros_like(source) if cfg.get('donor_difference') else np.broadcast_to(-means[s][ids]@dec[s][ids]@b@b.T,source.shape)*mask[:,None]
                             for atom_method,fit_family in atom_families.items():
@@ -810,6 +813,10 @@ def main():
                                 endpoints={e:compare(effects[e],candidate_effects[e]) for e in effects}
                                 row={"source_seed":s,"source_atom":a,"target_seed":t,"stratum":unit["stratum"],"rank":rank,"method":method,**entry,"wrong_atom":unit["wrong_atom"],"wrong_norm_scale":wrongscale,"hook":compare(source,delta),"source_mean_projected_norm":float(np.linalg.norm(means[s][ids]@dec[s][ids]@b@b.T)),"target_mean_mapped_norm":float(np.linalg.norm(means[t]@dec[t]@np.asarray(factors["query_target"][ix,:,:rank],dtype=np.float64)@bt.T)),"endpoints":endpoints}
                                 row['mean_terms_cancelled_in_intervention']=bool(cfg.get('donor_difference'))
+                                if method=='global_rows':
+                                    row['mapping_factor']='global_target'
+                                    row['saved_mapping_effective_rank']=int(factors['global_effective_rank'][ix])
+                                    row['target_mean_mapped_norm']=float(np.linalg.norm(means[t]@dec[t]@np.asarray(factors['global_target'][ix,:,:rank],dtype=np.float64)@bt.T))
                                 row.update(common_source_dose_scale=dose_scale,source_natural_hook_energy=float(np.sum(source_natural**2)),recipient_masked_hook_norm=masked_hook_norm,source_hook_fraction=float(np.linalg.norm(source)/masked_hook_norm) if masked_hook_norm else None,candidate_hook_fraction=float(np.linalg.norm(delta)/masked_hook_norm) if masked_hook_norm else None)
                                 rows.append(row);sink.write(json.dumps(row,sort_keys=True)+"\n");sink.flush()
                     print(json.dumps({"query":[s,a],"sequence":seq,"rows":len(rows),"forwards":forwards}),flush=True)
