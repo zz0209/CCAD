@@ -493,6 +493,8 @@ def main():
         code_paths.append(ROOT/'src/ccad/hook_transport.py')
     if cfg.get('case_replay'):
         code_paths.append(ROOT/'scripts/f4_case_details.py')
+    if cfg.get('probability_endpoints'):
+        code_paths.append(ROOT/'scripts/f4_probability_endpoints.py')
     code = sorted([{"path": p.relative_to(ROOT).as_posix(), "sha256": sha256(p), "bytes": p.stat().st_size} for p in code_paths], key=lambda x:x["path"])
     code_hash = hashlib.sha256("".join(f"{x['path']}:{x['sha256']}\n" for x in code).encode()).hexdigest()
     for entry,p in zip(code, sorted(code_paths,key=lambda p:p.relative_to(ROOT).as_posix())):
@@ -699,8 +701,8 @@ def main():
             from transformers import AutoTokenizer
             class_tokenizer=AutoTokenizer.from_pretrained(cfg['model_local_dir'],local_files_only=True)
             write(run/'all_source_candidates.json',json.loads((run/'selection.json').read_text()))
-            selections=select_cases(selections,case_payload,tokenizer=class_tokenizer,tokens=tokens)
-            write(run/'selection.json',{'rule':case_payload['rule'],'queries':selections,'scope':'Only changed class-matched cases; unchanged pairs reused externally, unavailable pairs retained in case_selection.json'})
+            selections=select_cases(selections,case_payload,tokenizer=class_tokenizer,tokens=tokens,selected_only=cfg['case_replay'].get('selected_only',False))
+            write(run/'selection.json',{'rule':case_payload['rule'],'queries':selections,'scope':'Frozen source-selected matched cases, including previously unchanged pairs' if cfg['case_replay'].get('selected_only') else 'Only changed class-matched cases; unchanged pairs reused externally, unavailable pairs retained in case_selection.json'})
         if cfg.get('source_scope'):
             from inspect_f4_atom_participation import participation
             from summarize_f4_source_scope import selected
@@ -746,6 +748,9 @@ def main():
         torch.set_num_threads(4); torch.use_deterministic_algorithms(True)
         model=transformers.AutoModelForCausalLM.from_pretrained(cfg["model_local_dir"],local_files_only=True,dtype=torch.float32,attn_implementation="eager").eval().to(cfg["device"])
         tokenizer=transformers.AutoTokenizer.from_pretrained(cfg['model_local_dir'],local_files_only=True) if cfg.get('case_replay') else None
+        if cfg.get('probability_endpoints'):
+            from f4_probability_endpoints import endpoint_positions, probability_metrics
+            if cfg['probability_endpoints']['version']!='v1':raise ValueError('Unknown probability endpoint version')
         contract=HookPointContract(cfg["hook_module_path"],5,"resid_post",hidden)
         hook=model.get_submodule(cfg["hook_module_path"]); nxt=model.get_submodule(cfg["next_module_path"])
         forwards=0; noop=[]; replay=[]
@@ -774,6 +779,9 @@ def main():
                     local=(z[s][:,ids] if cfg.get('donor_difference') else z[s][:,ids]-means[s][ids])@dec[s][ids]
                     batch=torch.from_numpy(np.asarray(tokens[seq:seq+1],dtype=np.int64)).to(cfg["device"])
                     baseline=forward(batch); zero=forward(batch,torch.zeros_like(baseline["hook"]))
+                    if cfg.get('probability_endpoints'):
+                        probability_positions=endpoint_positions(tokens[seq],entry['intervention_positions'])
+                        probability_baseline=baseline['next_logits'][0].cpu().numpy()
                     noop.append(max(float((baseline[e]-zero[e]).abs().max()) for e in ("next_state","next_logits")))
                     rawseq=np.asarray(raw["calibration"][seq*length:(seq+1)*length],dtype=np.float64)
                     live=baseline["hook"][0].cpu().numpy(); replay.append(float(np.linalg.norm(rawseq-live)/max(np.linalg.norm(live),1e-12)))
@@ -790,6 +798,7 @@ def main():
                         dose_scale=source_dose_scale(source_natural,rawseq*mask[:,None],cfg.get('maximum_source_hook_fraction'))
                         source=source_natural*dose_scale
                         ref=forward(batch,torch.tensor(source[None],dtype=torch.float32,device=cfg["device"]))
+                        if cfg.get('probability_endpoints'):probability_source=ref['next_logits'][0].cpu().numpy()
                         effects={e:(baseline[e]-ref[e]).cpu().numpy() for e in ("next_state","next_logits")}
                         if cfg.get("centered_logit_endpoint"):
                             effects["centered_logits"]=effects["next_logits"]-effects["next_logits"].mean(axis=-1,keepdims=True)
@@ -851,6 +860,9 @@ def main():
                                                 baseline=baseline,ref=ref,out=out,endpoints=endpoints)
                                 row={"source_seed":s,"source_atom":a,"target_seed":t,"stratum":unit["stratum"],"rank":rank,"method":method,**entry,"wrong_atom":unit["wrong_atom"],"wrong_norm_scale":wrongscale,"hook":compare(source,delta),"source_mean_projected_norm":float(np.linalg.norm(means[s][ids]@dec[s][ids]@b@b.T)),"target_mean_mapped_norm":float(np.linalg.norm(means[t]@dec[t]@np.asarray(factors["query_target"][ix,:,:rank],dtype=np.float64)@bt.T)),"endpoints":endpoints}
                                 row['mean_terms_cancelled_in_intervention']=bool(cfg.get('donor_difference'))
+                                if cfg.get('probability_endpoints'):
+                                    probability_candidate=out['next_logits'][0].cpu().numpy()
+                                    row['probability_endpoints']={name:probability_metrics(probability_baseline,probability_source,probability_candidate,tokens[seq],positions) for name,positions in probability_positions.items()}
                                 if method=='global_rows':
                                     row['mapping_factor']='global_target'
                                     row['saved_mapping_effective_rank']=int(factors['global_effective_rank'][ix])

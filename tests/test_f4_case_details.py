@@ -34,6 +34,10 @@ class CaseDetailsTests(unittest.TestCase):
         payload=dict(donor_override=True,evaluate_changed_only=True,choices=[choice,dict(source_seed=1,source_atom=2,condition='negative',original_entry=None,entry=None)])
         unit=dict(source_seed=1,source_atom=2,sequences=[original]+donors);tokens=np.array([[1],[2],[3]])
         self.assertEqual(len(select_cases([unit],payload,tokenizer=ClassTokenizer(),tokens=tokens)[0]['sequences']),1)
+        choice['source_scope']['selected']=False
+        self.assertEqual(len(select_cases([unit],payload,tokenizer=ClassTokenizer(),tokens=tokens,selected_only=True)[0]['sequences']),0)
+        choice['source_scope']['selected']=True
+        self.assertEqual(len(select_cases([unit],payload,tokenizer=ClassTokenizer(),tokens=tokens,selected_only=True)[0]['sequences']),1)
         tokens[2,0]=2
         with self.assertRaises(ValueError):select_cases([unit],payload,tokenizer=ClassTokenizer(),tokens=tokens)
         tokens[2,0]=3;entry['sequence']=1

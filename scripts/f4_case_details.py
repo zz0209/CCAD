@@ -24,7 +24,7 @@ def ordered_class_donor(recipient, positions, donors, coordinates, classes):
     return (max(candidates,key=lambda x:x[:2]) if candidates else None),tested
 
 
-def select_cases(selections, payload, *, tokenizer=None, tokens=None):
+def select_cases(selections, payload, *, tokenizer=None, tokens=None, selected_only=False):
     choices={(r['source_seed'],r['source_atom'],r['condition']):r for r in payload['choices']}
     if len(choices)!=len(payload['choices']): raise ValueError('Duplicate case choice')
     result=[];seen=set()
@@ -52,7 +52,8 @@ def select_cases(selections, payload, *, tokenizer=None, tokens=None):
                 if tokenizer is None or tokens is None:raise ValueError('Donor override needs token-class verification')
                 if any(token_class(tokenizer.decode([int(tokens[entry['sequence'],p])]))!=token_class(tokenizer.decode([int(tokens[entry['donor_sequence'],d])])) for p,d in zip(pos,dp)):
                     raise ValueError('Frozen donor token classes no longer match')
-                if payload.get('evaluate_changed_only') and choice['matching_status']=='UNCHANGED_REUSABLE':
+                if selected_only and not choice['source_scope']['selected']:continue
+                if not selected_only and payload.get('evaluate_changed_only') and choice['matching_status']=='UNCHANGED_REUSABLE':
                     if any(entry[k]!=original[k] for k in ('donor_sequence','donor_positions','donor_document_ids')):
                         raise ValueError('Unchanged case has changed donor')
                     continue
