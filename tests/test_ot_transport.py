@@ -5,10 +5,27 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
-from ccad.ot_transport import signed_ot_readout
+from ccad.ot_transport import signed_ot_readout, discovery_document_partition, weighted_difference_error
 
 
 class OTReadoutTests(unittest.TestCase):
+    def test_document_partition_excludes_packed_contexts(self):
+        seq=[dict(sequence_index=i,split='discovery',document_ids=[str(i//2)]) for i in range(40)]
+        seq.append(dict(sequence_index=40,split='discovery',document_ids=['0','1']))
+        rows=list(range(0,41*128,128))
+        part=discovery_document_partition(rows,seq,128,salt='test')
+        self.assertEqual(part['excluded_multidoc_indices'],[40])
+        self.assertFalse(set(part['train_documents']) & set(part['validation_documents']))
+        self.assertTrue(part['train_indices'] and part['validation_indices'])
+        for i in range(0,40,2):
+            self.assertEqual(i in part['train_indices'],i+1 in part['train_indices'])
+
+    def test_validation_difference_error_matches_all_pairs(self):
+        s=np.array([1.,4.,8.]);p=np.array([-1.,2.,5.]);w=np.array([1.,3.,2.])
+        ds=s[:,None]-s;dp=p[:,None]-p;ww=w[:,None]*w
+        expected=np.sum(ww*(ds-dp)**2)/np.sum(ww*ds**2)
+        self.assertAlmostEqual(weighted_difference_error(s,p+100,w)['normalized_error'],expected)
+
     def fixture(self):
         t=np.arange(128)*2*np.pi/128
         source=np.column_stack([np.sin(t),np.cos(t)])

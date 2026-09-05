@@ -147,7 +147,7 @@ def fit_single_atoms(cfg, queries, surface, factors, findex, means, dec, split_t
 
 
 def fit_ot_maps(cfg, queries, surface, factors, findex, dec, run, paths):
-    from ccad.ot_transport import signed_ot_readout
+    from ccad.ot_transport import signed_ot_readout, discovery_document_partition, weighted_difference_error
     original=json.loads(paths['ot_reference_config'].read_text())
     identity_fields=('factors_sha256','source_census_sha256','query_panel_sha256','model_revision','hook_module_path','num_latents','hook_hidden_size')
     if any(original[k]!=cfg[k] for k in identity_fields):
@@ -172,6 +172,53 @@ def fit_ot_maps(cfg, queries, surface, factors, findex, dec, run, paths):
         z=np.zeros((len(rows),cfg['num_latents']))
         np.add.at(z,(np.arange(len(rows))[:,None],indices[seed][rows]),acts[seed][rows])
         return z
+    fit_spec=dict(cfg['ot_fit'])
+    if cfg.get('ot_tuning'):
+        spec=cfg['ot_tuning']
+        sequences=json.loads(paths['ot_discovery_sequences'].read_text())['sequences']
+        tuning_rows=[];partitions=[]
+        for s,a in queries:
+            prior=[r for r in reference['fits'] if (r['source_seed'],r['source_atom'])==(s,a)]
+            row_ids=prior[0]['discovery_rows'];weights=np.asarray(prior[0]['discovery_weights'])
+            if any(r['discovery_rows']!=row_ids or r['discovery_weights']!=prior[0]['discovery_weights'] for r in prior):
+                raise ValueError('OT tuning rows are not target-independent')
+            part=discovery_document_partition(row_ids,sequences,cfg['context_length'],salt=spec['document_hash_salt'])
+            partitions.append(dict(source_seed=s,source_atom=a,discovery_rows=row_ids,**part))
+            tr=part['train_indices'];va=part['validation_indices']
+            if len(tr)<2 or len(va)<2:
+                raise ValueError('Insufficient single-document discovery fit/validation rows')
+            targets=[t for t in cfg['source_seeds'] if t!=s]
+            ids=surface[s,a,targets[0]]['source_candidate_ids']
+            basis=factors['source_basis'][findex[s,a,targets[0]],:,:1].astype(np.float64)
+            coordinate=(dec[s][ids]@basis)[:,0];xs=dense(s,row_ids)[:,ids]
+            for t in targets:
+                xt=dense(t,row_ids)
+                for epsilon in spec['regularization_grid']:
+                    candidate=dict(fit_spec,regularization=epsilon)
+                    beta,_,diagnostic=signed_ot_readout(xs[tr],xt[tr],coordinate,weights[tr],**candidate)
+                    error=weighted_difference_error(xs[va]@coordinate,xt[va]@beta,weights[va])
+                    tuning_rows.append(dict(source_seed=s,source_atom=a,target_seed=t,regularization=epsilon,
+                                            train_rows=len(tr),validation_rows=len(va),fit_status=diagnostic['status'],**error))
+                    with (run/'ot_tuning.raw.jsonl').open('a',encoding='utf-8') as stream:
+                        stream.write(json.dumps(tuning_rows[-1],sort_keys=True)+'\n')
+            write(run/'ot_tuning_partitions.json',partitions)
+            print(json.dumps({'ot_tuning_query':[s,a],'completed_fits':len(tuning_rows)}),flush=True)
+        scores=[]
+        for epsilon in spec['regularization_grid']:
+            per_query=[]
+            for s,a in queries:
+                values=[r['normalized_error'] for r in tuning_rows if (r['source_seed'],r['source_atom'],r['regularization'])==(s,a,epsilon) and r['normalized_error'] is not None]
+                per_query.append(dict(source_seed=s,source_atom=a,valid_targets=len(values),error=float(np.median(values)) if values else None))
+            valid=[r['error'] for r in per_query if r['error'] is not None]
+            scores.append(dict(regularization=epsilon,mean_query_error=float(np.mean(valid)) if valid else None,valid_queries=len(valid),query_errors=per_query))
+        if not all(r['valid_queries']==len(queries) for r in scores):
+            raise ValueError('OT tuning has unsupported queries; do not silently select a subset')
+        chosen=min(scores,key=lambda r:(r['mean_query_error'],r['regularization']))['regularization']
+        fit_spec['regularization']=chosen
+        write(run/'ot_tuning.json',{'partitions':partitions,'raw_validation':tuning_rows,'scores':scores,
+              'chosen_regularization':chosen,'fit_spec':fit_spec,'selection':'lowest mean across query median across targets of held-out-discovery weighted all-pair-difference error',
+              'scope':'Single-document contexts only during tuning; original fixed source basis is reused, not independently fitted in this inner split. No calibration endpoints. Refit chosen epsilon on original full256 discovery rows including packed contexts for matched final budget.'})
+        print(json.dumps({'ot_selected_regularization':chosen,'scores':scores}),flush=True)
     fits={};records=[];arrays={}
     for s,a in queries:
         prior=[r for r in reference['fits'] if (r['source_seed'],r['source_atom'])==(s,a)]
@@ -188,7 +235,7 @@ def fit_ot_maps(cfg, queries, surface, factors, findex, dec, run, paths):
         for t in targets:
             if not np.array_equal(basis,factors['source_basis'][findex[s,a,t],:,:1]):
                 raise ValueError('OT requires target-independent source basis')
-            coefficients,plan,diagnostics=signed_ot_readout(source_codes,dense(t,row_ids),coordinate,weights,**cfg['ot_fit'])
+            coefficients,plan,diagnostics=signed_ot_readout(source_codes,dense(t,row_ids),coordinate,weights,**fit_spec)
             key=f's{s}_a{a}_t{t}';arrays[key]=coefficients;arrays[key+'_plan']=plan
             fits[s,a,t]=coefficients
             records.append(dict(source_seed=s,source_atom=a,target_seed=t,array_key=key,source_candidate_ids=ids,discovery_rows=row_ids,discovery_weights=weights,**diagnostics))
@@ -252,6 +299,9 @@ def main():
             oldcfg=json.loads(paths['ot_reference_config'].read_text())
             paths['ot_discovery_manifest']=Path(oldcfg['bulk_asset_dir'])/'asset_manifest.json'
             expected['ot_discovery_manifest']=oldcfg['asset_manifest_sha256']
+            if cfg.get('ot_tuning'):
+                paths['ot_discovery_sequences']=ROOT/oldcfg['sequence_records_path']
+                expected['ot_discovery_sequences']=oldcfg['sequence_records_sha256']
         if cfg.get('single_atom_fit'):
             paths['original_fit_config']=ROOT/cfg['original_fit_config_path']
             expected['original_fit_config']=cfg['original_fit_config_sha256']

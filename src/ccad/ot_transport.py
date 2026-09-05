@@ -7,8 +7,41 @@ projection onto the fixed source coordinate. No endpoint labels are consumed.
 from __future__ import annotations
 
 import numpy as np
+import hashlib
 
 from ccad.nip_baselines import _unbalanced_log_sinkhorn
+
+
+def discovery_document_partition(row_ids, sequences, context_length, *, salt, modulus=5):
+    """Exclude multi-document contexts; hold out hash bucket zero by document."""
+    by_index={r['sequence_index']:r for r in sequences if r['split']=='discovery'}
+    train=[];validation=[];excluded=[];train_docs=set();validation_docs=set()
+    for j,row in enumerate(row_ids):
+        docs=by_index[int(row)//context_length]['document_ids']
+        if len(docs)!=1:
+            excluded.append(j);continue
+        doc=docs[0]
+        holdout=int(hashlib.sha256((salt+'|'+doc).encode()).hexdigest(),16)%modulus==0
+        (validation if holdout else train).append(j)
+        (validation_docs if holdout else train_docs).add(doc)
+    if train_docs & validation_docs:
+        raise ValueError('Document partition overlap')
+    return {'train_indices':train,'validation_indices':validation,'excluded_multidoc_indices':excluded,
+            'train_documents':sorted(train_docs),'validation_documents':sorted(validation_docs),
+            'salt':salt,'modulus':modulus,'validation_bucket':0}
+
+
+def weighted_difference_error(source, prediction, weights):
+    """Error ratio for all weighted pair differences; None for zero source."""
+    source=np.asarray(source,dtype=np.float64);prediction=np.asarray(prediction,dtype=np.float64)
+    w=np.asarray(weights,dtype=np.float64)
+    if source.shape!=prediction.shape or source.shape!=w.shape or source.ndim!=1:
+        raise ValueError('Expected matching vectors')
+    if not len(w) or np.any(w<0) or not all(np.isfinite(a).all() for a in (source,prediction,w)) or w.sum()<=0:
+        raise ValueError('Invalid difference-error inputs')
+    w=w/w.sum();source=source-w@source;residual=source-(prediction-w@prediction)
+    energy=float(w@(source*source));error=float(w@(residual*residual))
+    return {'source_variance':energy,'error_variance':error,'normalized_error':error/energy if energy>0 else None}
 
 
 def signed_ot_readout(source_codes, target_codes, source_coordinate, weights, *,

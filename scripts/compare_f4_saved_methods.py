@@ -10,6 +10,7 @@ from compare_f4_single_atom import digest, key, median, read_rows
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--run-dir', type=Path, required=True)
+    parser.add_argument('--previous-method-run', type=Path)
     args = parser.parse_args()
     run = args.run_dir
     cfg = json.loads((run / 'config.resolved.json').read_text())
@@ -83,6 +84,37 @@ def main():
         'source_artifacts': {str(p): digest(p) for p in [run / 'metrics.raw.jsonl', other / 'metrics.raw.jsonl', run / 'selection.json', run / 'config.resolved.json', run / 'ot_fits.json', run / 'ot_fits.npz']},
         'analysis_code': {str(p): digest(p) for p in [Path(__file__), Path(__file__).with_name('compare_f4_single_atom.py')]},
         'scope': 'All8 development queries and all4 dependent target seeds retained, query medians pool target/document rows; no independent confidence interval. Same source rank and dose, not candidate-energy-matched or behavior-trained OT. Not Semantic OT, SCOTM or MAS replication. No native-deletion or uniqueness claim.'}
+    if (run / 'ot_tuning.json').exists():
+        report['source_artifacts'][str(run / 'ot_tuning.json')] = digest(run / 'ot_tuning.json')
+    if args.previous_method_run:
+        previous = args.previous_method_run
+        assert json.loads((previous / 'status.json').read_text())['status'] == 'PASS'
+        assert json.loads((previous / 'selection.json').read_text()) == json.loads((run / 'selection.json').read_text())
+        old_rows = read_rows(previous / 'metrics.raw.jsonl')
+        old = {key(r): r for r in old_rows if r['method'] == method}
+        assert len(old) == len(old_rows) == len(added)
+        changes = {}
+        for row in added:
+            before = old[key(row)]
+            for field in ('common_source_dose_scale', 'source_natural_hook_energy', 'donor_positions', 'intervention_positions'):
+                assert before[field] == row[field]
+            for endpoint in row['endpoints']:
+                assert before['endpoints'][endpoint]['source_energy'] == row['endpoints'][endpoint]['source_energy']
+            for endpoint in ('next_state', 'centered_logits'):
+                group = tuple(row[k] for k in ('condition', 'source_seed', 'source_atom', 'rank')) + (endpoint,)
+                changes.setdefault(group, []).append((before['endpoints'][endpoint]['normalized_error'], row['endpoints'][endpoint]['normalized_error']))
+        change_table = []
+        for group, values in sorted(changes.items()):
+            before = median(v[0] for v in values); after = median(v[1] for v in values)
+            change_table.append({**dict(zip(('condition', 'source_seed', 'source_atom', 'rank', 'endpoint'), group)),
+                'previous_error': before, 'current_error': after,
+                'current_better': after < before if before is not None and after is not None else None,
+                'relative_error_reduction': 1 - after / before if before is not None and before > 0 and after is not None else None,
+                'valid_pairs': sum(a is not None and b is not None for a, b in values), 'requested_pairs': len(values)})
+        with (run / 'method_change_query.csv').open('w', newline='', encoding='utf-8') as stream:
+            writer = csv.DictWriter(stream, fieldnames=list(change_table[0])); writer.writeheader(); writer.writerows(change_table)
+        report['previous_method_comparison'] = change_table
+        report['source_artifacts'][str(previous / 'metrics.raw.jsonl')] = digest(previous / 'metrics.raw.jsonl')
     (run / 'method_comparison.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({'matched_rows': len(added), 'summary': summary, 'query_table': tables['query']}, indent=2))
 
