@@ -1,0 +1,56 @@
+{
+  "run_id": "F4_agreement_neighborhood_fit_v1_20260905",
+  "inputs": {
+    "asset_manifest": {
+      "path": "D:/CCAD_Storage/paired_assets/R008b_paired_codes_v1_20260904T000500Z/asset_manifest.json",
+      "sha256": "35a873fb9821369e45e589432a7bc94b361908c5e8e5f6c167846d4e0b0374a5"
+    },
+    "raw_manifest": {
+      "path": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+      "sha256": "4f37665d7dd8a86435ad89d21e85531b346b38dd3db3268e39c09015f48cb596"
+    },
+    "sequences": {
+      "path": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/sequence_records.json",
+      "sha256": "b6ef97004b00f586220fda3dc5ffed0a70cf1f601dd45949b735df22b988de84"
+    },
+    "direction": {
+      "path": "runs/F4_agreement_task_contrast_v1_20260905/source_task_direction.npz",
+      "sha256": "f430ba893d85a357caa36408a1d3c435834592abb58daf7989934651efc04d7a"
+    },
+    "task_tokens": {
+      "path": "runs/F4_agreement_source_v2_20260905/tokenized_development.json",
+      "sha256": "9e62660c4f8534645e55dc6378b3fbb4c9fe7e747bbfcd85082a266ec4c842e7"
+    },
+    "task_cache": {
+      "path": "runs/F4_agreement_source_v2_20260905/development_activations.npz",
+      "sha256": "91ecc32b178d08f460ce275d1d6a9317468a5acffb0d25297d7df02a5fd0528b"
+    }
+  },
+  "source_seed": 2,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "target_seeds": [
+    1,
+    3,
+    4,
+    5
+  ],
+  "num_latents": 3072,
+  "split": "discovery",
+  "audit_opened": false,
+  "state_count": 512,
+  "state_salt": "ccad-agreement-global-paired-differences-v1",
+  "ridge_fraction": 0.001,
+  "support_size": 64,
+  "random_seed": 9051720,
+  "budget_seconds": 180,
+  "selection": "4096 document-balanced discovery candidates. Source seed2 code cosine to64 developed task prototypes;32 subject pairs,8 rounds, greedy unique endpoints, fixed task order and candidate-index ties. No target task codes/labels/endpoints for selection or fit. All methods share512 selected states/256 differences. Retrieval is not verified linguistic pairing.",
+  "budget": "CPU-heavy <=180s including retrieval and fitting,512fit rows;4096 source-only search rows is additional search versus prior global512; no GPU, training, reserved or audit access.",
+  "selection_mode": "source_neighborhood",
+  "candidate_count": 4096
+}

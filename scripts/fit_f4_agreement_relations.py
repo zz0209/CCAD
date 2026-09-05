@@ -32,6 +32,30 @@ def native_fit(dz,dec,c,b,ids,ridge_fraction):
     return g,dict(ridge=ridge,clipped=int(np.sum(g!=unconstrained)),max_unclipped=float(np.max(np.abs(unconstrained))))
 
 
+def neighborhood_pairs(candidate_codes,task_codes,donors,count):
+    """Source-only cosine retrieval, unique endpoints, round-robin task pairs."""
+    pairs=[(i,int(j)) for i,j in enumerate(donors) if i<j]
+    if count%(2*len(pairs)) or count>len(candidate_codes):raise ValueError('Invalid retrieval budget')
+    a=candidate_codes/np.maximum(np.linalg.norm(candidate_codes,axis=1,keepdims=True),1e-30)
+    b=task_codes/np.maximum(np.linalg.norm(task_codes,axis=1,keepdims=True),1e-30)
+    similarity=a@b.T;used=np.zeros(len(a),dtype=bool);selected=[];prototypes=[];scores=[]
+    for _ in range(count//(2*len(pairs))):
+        for pair in pairs:
+            for prototype in pair:
+                score=np.where(used,-np.inf,similarity[:,prototype]);j=int(np.argmax(score))
+                used[j]=True;selected.append(j);prototypes.append(prototype);scores.append(float(score[j]))
+    return np.array(selected),np.array(prototypes),np.array(scores)
+
+
+def read_codes(meta,seed,selected,num_latents):
+    files=[f for f in meta['files'] if f['seed']==seed]
+    im=next(f for f in files if f['dtype']=='uint16');am=next(f for f in files if f['dtype']=='float32')
+    ix=np.asarray(np.memmap(im['path'],dtype='<u2',mode='r',shape=tuple(im['shape']))[selected])
+    act=np.asarray(np.memmap(am['path'],dtype='<f4',mode='r',shape=tuple(am['shape']))[selected])
+    z=np.zeros((len(selected),num_latents));np.put_along_axis(z,ix,act,axis=1)
+    return z,ix,act
+
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--config',type=Path,required=True);args=parser.parse_args()
     cfg=json.loads(args.config.read_text());run=ROOT/'runs'/cfg['run_id'];run.mkdir(parents=True,exist_ok=False)
@@ -63,16 +87,22 @@ def main():
         write(run/'inputs.json',dict(inputs=inputs))
         asset=json.loads(p['asset_manifest'].read_text());meta=next(x for x in asset['splits'] if x['split']=='discovery')
         records=json.loads(p['sequences'].read_text())['sequences']
-        states=select_document_balanced_states(records,split='discovery',count=cfg['state_count'],token_positions=(31,63,95,127),salt=cfg['state_salt'])
+        neighborhood=cfg.get('selection_mode')=='source_neighborhood'
+        states=select_document_balanced_states(records,split='discovery',count=cfg.get('candidate_count',cfg['state_count']),token_positions=(31,63,95,127),salt=cfg['state_salt'])
+        if neighborhood:
+            candidates=np.array([r['sequence_index']*128+r['token_position'] for r in states])
+            z,ix,act=read_codes(meta,cfg['source_seed'],candidates,cfg['num_latents'])
+            tasks=json.loads(p['task_tokens'].read_text())['rows']
+            with np.load(p['task_cache'],allow_pickle=False) as cache:source_task_codes=cache[f"codes_{cfg['source_seed']}"]
+            chosen,prototypes,scores=neighborhood_pairs(z,source_task_codes,swap_indices(tasks,'subject'),cfg['state_count'])
+            np.savez_compressed(run/'source_retrieval.npz',candidate_indices=candidates,indices=ix,acts=act,chosen=chosen,prototypes=prototypes,cosines=scores,source_task_codes=source_task_codes)
+            write(run/'retrieval.json',dict(candidate_rows=states,selected_cosine_min=float(scores.min()),selected_cosine_mean=float(scores.mean()),selected_cosine_max=float(scores.max()),source_seed=cfg['source_seed'],target_task_codes_read=False,source_retrieval_sha256=sha256(run/'source_retrieval.npz')))
+            states=[dict(states[j],task_prototype=int(t),source_cosine=float(s)) for j,t,s in zip(chosen,prototypes,scores)]
         selected=np.array([r['sequence_index']*128+r['token_position'] for r in states])
-        write(run/'selected_states.json',dict(rows=states,pairing='adjacent selected rows; global corpus differences, not task-matched counterfactuals'))
+        write(run/'selected_states.json',dict(rows=states,pairing='adjacent source-nearest endpoints for each task subject pair; corpus neighbors are not verified linguistic counterfactuals' if neighborhood else 'adjacent selected rows; global corpus differences, not task-matched counterfactuals'))
         b=np.load(p['direction'],allow_pickle=False)['basis'];codes={};decoders={};snapshots={}
         for seed in cfg['seeds']:
-            files=[f for f in meta['files'] if f['seed']==seed]
-            im=next(f for f in files if f['dtype']=='uint16');am=next(f for f in files if f['dtype']=='float32')
-            ix=np.asarray(np.memmap(im['path'],dtype='<u2',mode='r',shape=tuple(im['shape']))[selected])
-            act=np.asarray(np.memmap(am['path'],dtype='<f4',mode='r',shape=tuple(am['shape']))[selected])
-            z=np.zeros((len(selected),cfg['num_latents']));np.put_along_axis(z,ix,act,axis=1)
+            z,ix,act=read_codes(meta,seed,selected,cfg['num_latents'])
             codes[seed]=z;dm=next(f for f in asset['decoders'] if f['seed']==seed)
             if sha256(Path(dm['path']))!=dm['sha256']:raise ValueError('Decoder identity changed')
             decoders[seed]=np.asarray(np.memmap(dm['path'],dtype='<f4',mode='r',shape=tuple(dm['shape'])),dtype=np.float64)
@@ -82,6 +112,7 @@ def main():
         snapshots['raw_hook']=h;snapshots['selected_indices']=selected
         np.savez_compressed(run/'selected_discovery_data.npz',**snapshots)
         write(run/'read_scope.json',dict(materialized_splits=['discovery'],rows=len(selected),
+            source_retrieval_rows=cfg.get('candidate_count',0),source_task_codes_used_for_selection=neighborhood,target_task_codes_used_for_fit=False,
             whole_bulk_file_hashes_recomputed=False,identity='Parent manifests bound; decoder full hashes verified; actually read selected rows retained in NPZ with run hash',
             selected_data_sha256=sha256(run/'selected_discovery_data.npz'),mean_materialized=False,calibration_materialized=False,audit_materialized=False))
         dz={s:z[::2]-z[1::2] for s,z in codes.items()};dh=h[::2]-h[1::2]
@@ -126,7 +157,7 @@ def main():
             donor=swap_indices(tasks,axis);bank[f'raw_fitted_{axis}']=((cache['hidden']-cache['hidden'][donor])@factors['raw_w'])[:,None]*b
         np.savez_compressed(run/'compiled_natural_deltas.npz',**bank)
         write(run/'compiled_methods.json',dict(methods=methods,sample_ids=[r['id'] for r in tasks],basis=b.tolist(),
-            target_endpoints_used=False,task_codes_used_for_fit=False,scope='development application; no task-data or target-response fit; no held-out causal claim'))
+            target_endpoints_used=False,target_task_codes_used_for_fit=False,source_task_codes_used_for_selection=neighborhood,scope='development application; source task prototypes used only when configured; no target-task or target-response fit; no held-out causal claim'))
         with (run/'metrics.raw.jsonl').open('w') as out:
             for row in obs:out.write(json.dumps(row,sort_keys=True)+'\n')
         summary=dict(checks=dict(all_finite=all(np.isfinite(v).all() for v in bank.values()),discovery_only=True,no_target_task_fit=True),

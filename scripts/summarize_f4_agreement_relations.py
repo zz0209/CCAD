@@ -1,5 +1,6 @@
 """Replay task-contrast and cross-seed component observations; keep all methods."""
 import csv
+import argparse
 import json
 from pathlib import Path
 import numpy as np
@@ -12,7 +13,8 @@ def rows(path):return [json.loads(x) for x in path.read_text().splitlines() if x
 
 
 def main():
-    source=ROOT/'runs/F4_agreement_task_contrast_v1_20260905';fit=ROOT/'runs/F4_agreement_relations_fit_v1_20260905';run=ROOT/'runs/F4_agreement_relations_causal_v1_20260905'
+    parser=argparse.ArgumentParser();parser.add_argument('--fit',default='F4_agreement_relations_fit_v1_20260905');parser.add_argument('--run',default='F4_agreement_relations_causal_v1_20260905');args=parser.parse_args()
+    source=ROOT/'runs/F4_agreement_task_contrast_v1_20260905';fit=ROOT/'runs'/args.fit;run=ROOT/'runs'/args.run
     if (run/'relation_summary.json').exists():raise FileExistsError('Immutable summary output exists')
     allrows=rows(run/'metrics.raw.jsonl');old=rows(source/'metrics.raw.jsonl');base={r['id']:r for r in allrows if r['method']=='baseline'}
     anchors={(r['method'],r.get('axis'),r['id']):{k:v for k,v in r.items() if k!='run_id'} for r in old}
@@ -93,6 +95,15 @@ def main():
         '保留本次source任务方向，优先让旧的source-conditioned/操作匹配拟合路线服务任务消费者：从独立discovery按source任务状态构造邻域/差分，与现有全局差分共用样本数、正则和source参考，比较full FCC/raw及native支持的作用。最终query与邻域规则只用source信息；target端点只作开发反馈。若可用paired任务邻域不足，明确报告支持范围，再做一次门前候选→原k128执行的有针对性分支，不扩全query/多维阈值网格。','',
         '本轮的272项target预测在target前向前保存，但复制的是同开发输入已经测过的source响应，尚不是新输入的语义组合预测。reserved64未tokenize/编码/前向；无audit、重训或环境改动。五同配置SAE资产被使用，不把共享source的4方向当4独立重复。','',
         '复核：320source锚点逐值重放，592逐行margin重算，272项预测/共同scale核对。该复核只验证计算与身份，不是独立科学评审。','']
+    if args.run!='F4_agreement_relations_causal_v1_20260905':
+        previous=json.loads((ROOT/'runs/F4_agreement_relations_causal_v1_20260905/relation_summary.json').read_text())
+        before={(r['method'],r['axis']):r for r in previous['method_table']}
+        comparison=[dict(method=r['method'],axis=r['axis'],old_error=before[r['method'],r['axis']]['primary_normalized_error'],new_error=r['primary_normalized_error'],old_mean=before[r['method'],r['axis']]['observed_mean'],new_mean=r['observed_mean']) for r in table]
+        write(run/'global_comparison.json',dict(rows=comparison,old_summary_sha256=sha256(ROOT/'runs/F4_agreement_relations_causal_v1_20260905/relation_summary.json')))
+        lines=['# Source邻域配对：与原全局拟合的直接比较','','固定原source方向、512拟合状态/256差分、ridge、native64、8个开发输入和共同source剂量缩放。新增4096行source-only候选检索，未匹配原全局方法的检索预算；所有方法共享新配对。target任务code/行为未参与选样或拟合。邻域不保证语法反事实。','','|方法|全局误差|邻域误差|全局平均作用|邻域平均作用|','|---|---:|---:|---:|---:|']
+        for r in comparison:
+            if r['axis']=='subject':lines.append(f"|{r['method']}|{r['old_error']:.6f}|{r['new_error']:.6f}|{r['old_mean']:.6f}|{r['new_mean']:.6f}|")
+        lines+=['','主要误差=Σ(candidate−source margin loss)^2/Σ(source margin loss)^2；零操作为1。全部两轴、辅助端点和实际剂量见METHOD_TABLE.csv；支持参与情况见relation_summary.json。不同方法不是等能量操作。','','320source锚点逐值重放，592原始margin和272预测及共同scale重算；仅为计算重放，不是独立科学审查。预测复制同开发输入source响应，不是新输入泛化。四方向共享source，8条共享两词汇模板，不计算伪独立p值。reserved/audit仍未使用。','']
     (run/'RESULTS_FOR_REVIEW.md').write_text('\n'.join(lines),encoding='utf-8')
     print(json.dumps(dict(checks=summary['checks'],rows=len(allrows),methods=len(table)//2,report=str(run/'RESULTS_FOR_REVIEW.md'),supports=[r for r in supports if r['method']=='native' and r['axis']=='subject']),indent=2))
 

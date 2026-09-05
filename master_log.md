@@ -3218,3 +3218,26 @@ REFERENCE_REGISTRY.md:6777fd7b0ac1330191f2cceb8c100e5fa11be5b1a406f2df17d4e8f747
 runs/F4_agreement_relations_causal_v1_20260905/RESULTS_FOR_REVIEW.md:c8958e20848f54b6a7a303f6689c946e89083c56f4cb4ce0531fc9138b8eed6e
 runs/F4_agreement_relations_causal_v1_20260905/relation_summary.json:7eb0b2d0d05b83e6c7609956f4c43b0d8726f7d890e8494de15a670e11a0c614
 runs/F4_agreement_relations_causal_v1_20260905/METHOD_TABLE.csv:1cac6bfeb66cd097e1f38221464c5899aeca33a054f957f1796699f10e48fb1e
+
+## 2026-09-05 source-neighborhood agreement development — launch
+
+F4_agreement_neighborhood_fit_v1_20260905 starts from acbd2f4 with frozen source direction and original discovery assets. One change: source-only cosine retrieval4096 candidates ->512 unique endpoints/256 subject-prototype pairs. No target task fitting, no linguistic counterfactual claim, no audit/reserved access. Same ridge/native64/fullFCC/raw/random consumers; bounded180s CPU fit followed by existing8-input panel<=84forwards. Environment spec unchanged3129a184; CPU/GPU free at preflight. All historical global fits/results retained.
+
+
+### Completion and scoped interpretation
+
+Fit PASS/contract PASS20.434126700s CPU. Causal PASS/7checks/contract PASS84forwards,4.399680200s numeric/9.816657600s wall. CPU/GPU released; cumulative task/causal28817forwards6031.972966s wall, fit separate; assets unchanged768/103.068996. Source320 anchors replayed;592 raw margins and272 predictions/scales recomputed;5 targeted tests PASS. No new environment, audit, reserved encoding, target task fit, automation/config-period change or extra code dependency.
+
+Subject FCC error target1/3/4/5=.784859/.701793/.669572/.495993 versus old.802931/.569521/.619270/.675142;raw.452098 remains better. Native64 errors.997744–1.003445 and mean effects−.000511..+.000206. Source-neighbor endpoint cosine mean.153973404;pair deltaY cosine mean.065695275,min−.142385071,max.254698358,213/256positive,512unique endpoints. Coordinates recomputed from retained NPZs and bound seed2decoder; formula in INTERPRETATION.md. Retrieval budget4096 versus old512 selection is disclosed, not equal search. No claim neighbor matching gives linguistic counterfactuals, no TopK causal attribution or main explanatory claim.
+
+Next scoped action: source-only native64 signed teacher development using actual source operation, then operation-matched independent-discovery transport if active; original projection, natural-text, global/neighborhood and gating paths retained. Motivation is operation-class mismatch hypothesis, not proven explanation or native-success gate. Source fit<=60s,causal<=66forwards/180s numeric,loading<=90s. No runtime left running. Analyze-results used separate effects,doses,supports and old/new tables; computational replay is not independent scientific review.
+
+Local ignored artifact identities (not uploaded):
+EXPERIMENT_PLAN.md:07cfa4dbe5dd59017dff1b0658b4deb941d3327033ca238628a13a8f358a93a5
+EXPERIMENT_TRACKER.md:25655fc561115709f5ad74146da39b97d1bd226e78ebc0dc5264e4dc33892da0
+runs/F4_agreement_neighborhood_fit_v1_20260905/metrics.summary.json:7187144c8510ab82fe246408d661e0d8521f3d71a3a7afebe30c5a2764f946df
+runs/F4_agreement_neighborhood_fit_v1_20260905/source_retrieval.npz:7132a470bd7b88de38fc677bb5d77a9575405b68e4ee3db28db3674625113407
+runs/F4_agreement_neighborhood_causal_v1_20260905/RESULTS_FOR_REVIEW.md:42990b1d3cd6f616f28d085e6bce949880111916f51b87d67d42bd1179431769
+runs/F4_agreement_neighborhood_causal_v1_20260905/relation_summary.json:ca4879ae07e22d881be768c25999f69b85fb265e178680d390b8793d5987e071
+runs/F4_agreement_neighborhood_causal_v1_20260905/global_comparison.json:010022ded12f39d5c200b8c741169b318956b9fb443c09f1684abb42bf5a4267
+runs/F4_agreement_neighborhood_causal_v1_20260905/INTERPRETATION.md:b0676b626be0d644bc382c77cc417defbdd3dbe3b48639ae9f2e66f74ba46646

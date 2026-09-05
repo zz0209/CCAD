@@ -3,10 +3,17 @@ import unittest
 from pathlib import Path
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from fit_f4_agreement_relations import native_fit
+from fit_f4_agreement_relations import native_fit,neighborhood_pairs
 
 
 class NativeFitTests(unittest.TestCase):
+    def test_neighborhood_unique_paired_deterministic(self):
+        candidates=np.array([[1.,0.],[0.,1.],[2.,0.],[0.,2.]])
+        selected,prototypes,scores=neighborhood_pairs(candidates,np.eye(2),[1,0],4)
+        np.testing.assert_array_equal(selected,[0,1,2,3])
+        np.testing.assert_array_equal(prototypes,[0,1,0,1])
+        np.testing.assert_allclose(scores,1.)
+
     def test_hadamard_gram_matches_explicit_vector_design(self):
         rng=np.random.default_rng(91);x=rng.normal(size=(12,7));d=rng.normal(size=(7,3));b=np.array([1.,0.,0.]);c=rng.normal(size=12)*.02;ids=np.array([1,3,5])
         g,info=native_fit(x,d,c,b,ids,.001)
