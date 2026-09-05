@@ -128,8 +128,13 @@ def li15_spectral_proposal(
     max_clusters: int,
     kmeans_seed: int,
     max_neighborhood_atoms: int,
+    absolute_correlation: bool = True,
 ) -> SpectralProposalResult:
-    """Independent implementation of Li et al.'s joint-correlation spectral baseline."""
+    """Joint-correlation spectral proposal, based on Li et al. S.3.
+
+    Historical CCAD runs used absolute correlation. Keep that default for
+    replay; use absolute_correlation=False for the paper's positive graph.
+    """
     left = np.asarray(z_left, dtype=np.float64)
     right = np.asarray(z_right, dtype=np.float64)
     if left.ndim != 2 or right.ndim != 2 or left.shape[0] != right.shape[0] or left.shape[0] == 0:
@@ -137,7 +142,9 @@ def li15_spectral_proposal(
     if not 0.0 <= correlation_threshold < 1.0:
         raise ValueError("correlation_threshold must be in [0, 1)")
     combined = np.concatenate([left, right], axis=1)
-    correlation = np.abs(_correlation_matrix(combined))
+    correlation = _correlation_matrix(combined)
+    if absolute_correlation:
+        correlation = np.abs(correlation)
     adjacency = np.where(correlation > correlation_threshold, correlation, 0.0)
     np.fill_diagonal(adjacency, 0.0)
     laplacian = np.diag(np.sum(adjacency, axis=1)) - adjacency

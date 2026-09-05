@@ -193,6 +193,15 @@ class UnknownSupportProposalTests(unittest.TestCase):
         self.assertEqual(set(result.proposal.edges), {(0, 0), (1, 1)})
         self.assertTrue(all(item.status == "OK" for item in result.proposal.neighborhoods))
 
+    def test_li15_positive_graph_does_not_turn_anticorrelation_into_edges(self) -> None:
+        t=np.arange(128)*2*np.pi/128
+        signals=np.column_stack([np.sin(t),np.cos(t)])
+        options=dict(correlation_threshold=0.2,max_clusters=3,kmeans_seed=82,max_neighborhood_atoms=4)
+        positive=li15_spectral_proposal(signals,-signals,absolute_correlation=False,**options)
+        historical=li15_spectral_proposal(signals,-signals,**options)
+        self.assertLess(max(positive.eigenvalues),1e-10)
+        self.assertGreater(max(historical.eigenvalues),1.9)
+
     def test_arbitrary_candidate_solver_is_truth_blind_and_recovers_f03(self) -> None:
         names = set(inspect.signature(search_candidate_family).parameters)
         self.assertTrue(names.isdisjoint({"truth", "labels", "eval", "planted_hyperedges"}))

@@ -146,6 +146,62 @@ def fit_single_atoms(cfg, queries, surface, factors, findex, means, dec, split_t
                  'operation':'source-aligned single-atom map, not native deletion','fits':records}
 
 
+def fit_ot_maps(cfg, queries, surface, factors, findex, dec, run, paths):
+    from ccad.ot_transport import signed_ot_readout
+    original=json.loads(paths['ot_reference_config'].read_text())
+    identity_fields=('factors_sha256','source_census_sha256','query_panel_sha256','model_revision','hook_module_path','num_latents','hook_hidden_size')
+    if any(original[k]!=cfg[k] for k in identity_fields):
+        raise ValueError('OT reference model/basis/mean identity mismatch')
+    asset=Path(original['bulk_asset_dir'])
+    manifest_path=asset/'asset_manifest.json'
+    if sha256(manifest_path)!=original['asset_manifest_sha256']:
+        raise ValueError('OT discovery manifest changed')
+    manifest=json.loads(manifest_path.read_text())
+    for entry in manifest['decoders']:
+        current=Path(cfg['bulk_asset_dir'])/'decoders'/f"seed_{entry['seed']}.float32.bin"
+        if sha256(current)!=entry['sha256']:
+            raise ValueError('OT discovery and evaluation decoder differ')
+    tokens=next(r['tokens'] for r in manifest['splits'] if r['split']=='discovery')
+    reference=json.loads(paths['ot_reference_fit'].read_text())
+    if reference['fit_split']!='discovery' or reference['calibration_used_for_fit']:
+        raise ValueError('OT fit-row provenance is not discovery-only')
+    shape=(tokens,cfg['k'])
+    indices={s:np.memmap(asset/'discovery'/f'seed_{s}'/'top_indices.uint16.bin',dtype='<u2',mode='r',shape=shape) for s in cfg['source_seeds']}
+    acts={s:np.memmap(asset/'discovery'/f'seed_{s}'/'top_acts.float32.bin',dtype='<f4',mode='r',shape=shape) for s in cfg['source_seeds']}
+    def dense(seed,rows):
+        z=np.zeros((len(rows),cfg['num_latents']))
+        np.add.at(z,(np.arange(len(rows))[:,None],indices[seed][rows]),acts[seed][rows])
+        return z
+    fits={};records=[];arrays={}
+    for s,a in queries:
+        prior=[r for r in reference['fits'] if (r['source_seed'],r['source_atom'])==(s,a)]
+        row_ids=prior[0]['discovery_rows'];weights=prior[0]['discovery_weights']
+        if any(r['discovery_rows']!=row_ids or r['discovery_weights']!=weights for r in prior):
+            raise ValueError('OT source-only discovery rows differ by target')
+        if min(row_ids)<0 or max(row_ids)>=tokens:
+            raise ValueError('OT fit rows outside discovery')
+        targets=[t for t in cfg['source_seeds'] if t!=s];t0=targets[0]
+        ids=surface[s,a,t0]['source_candidate_ids']
+        basis=factors['source_basis'][findex[s,a,t0],:,:1].astype(np.float64)
+        source_codes=dense(s,row_ids)[:,ids]
+        coordinate=(dec[s][ids]@basis)[:,0]
+        for t in targets:
+            if not np.array_equal(basis,factors['source_basis'][findex[s,a,t],:,:1]):
+                raise ValueError('OT requires target-independent source basis')
+            coefficients,plan,diagnostics=signed_ot_readout(source_codes,dense(t,row_ids),coordinate,weights,**cfg['ot_fit'])
+            key=f's{s}_a{a}_t{t}';arrays[key]=coefficients;arrays[key+'_plan']=plan
+            fits[s,a,t]=coefficients
+            records.append(dict(source_seed=s,source_atom=a,target_seed=t,array_key=key,source_candidate_ids=ids,discovery_rows=row_ids,discovery_weights=weights,**diagnostics))
+        print(json.dumps({'ot_fit_query':[s,a],'completed_maps':len(fits)}),flush=True)
+    np.savez_compressed(run/'ot_fits.npz',**arrays)
+    write(run/'ot_fits.json',{'fit_split':'discovery','calibration_used_for_fit':False,'rank':1,
+          'reference_rows':'reused source-only rows/weights from saved atom fit; atom choices/coefficients unused',
+          'method':'paired-correlation UOT signed readout; not SCOTM/Semantic OT/MAS/native deletion',
+          'discovery_manifest_path':str(manifest_path),'discovery_manifest_sha256':sha256(manifest_path),
+          'arrays_sha256':sha256(run/'ot_fits.npz'),'fits':records})
+    return fits
+
+
 def main():
     parser = argparse.ArgumentParser(); parser.add_argument("--config", type=Path, required=True); args = parser.parse_args()
     task = json.loads(args.config.read_text(encoding="utf-8"))
@@ -165,6 +221,8 @@ def main():
     start = time.perf_counter(); now = datetime.now(timezone.utc).isoformat()
     write(run / "config.resolved.json", cfg)
     code_paths = [Path(__file__), ROOT / "src/ccad/activation_contract.py", ROOT / "src/ccad/artifacts.py"]
+    if cfg.get('ot_fit'):
+        code_paths.extend(ROOT/'src/ccad'/name for name in ('ot_transport.py','nip_baselines.py','proposal.py'))
     code = sorted([{"path": p.relative_to(ROOT).as_posix(), "sha256": sha256(p), "bytes": p.stat().st_size} for p in code_paths], key=lambda x:x["path"])
     code_hash = hashlib.sha256("".join(f"{x['path']}:{x['sha256']}\n" for x in code).encode()).hexdigest()
     for entry,p in zip(code, sorted(code_paths,key=lambda p:p.relative_to(ROOT).as_posix())):
@@ -187,6 +245,13 @@ def main():
             for kind in ('fit','config'):
                 key=f'saved_atom_{i}_{kind}'
                 paths[key]=ROOT/entry[f'{kind}_path'];expected[key]=entry[f'{kind}_sha256']
+        if cfg.get('ot_fit'):
+            for kind in ('fit','config'):
+                entry=cfg['ot_fit_reference'];key=f'ot_reference_{kind}'
+                paths[key]=ROOT/entry[f'{kind}_path'];expected[key]=entry[f'{kind}_sha256']
+            oldcfg=json.loads(paths['ot_reference_config'].read_text())
+            paths['ot_discovery_manifest']=Path(oldcfg['bulk_asset_dir'])/'asset_manifest.json'
+            expected['ot_discovery_manifest']=oldcfg['asset_manifest_sha256']
         if cfg.get('single_atom_fit'):
             paths['original_fit_config']=ROOT/cfg['original_fit_config_path']
             expected['original_fit_config']=cfg['original_fit_config_sha256']
@@ -215,6 +280,11 @@ def main():
         split_tokens={r['split']:int(r['tokens']) for r in json.loads(paths['assets'].read_text())['splits']}
         nt=split_tokens['calibration']
         dec={s:np.asarray(np.memmap(asset/"decoders"/f"seed_{s}.float32.bin",dtype="<f4",mode="r",shape=(cfg["num_latents"],hidden)),dtype=np.float64) for s in cfg["source_seeds"]}
+        ot_fits={}
+        if cfg.get('ot_fit'):
+            if cfg['ranks']!=[1] or not cfg.get('donor_difference'):
+                raise ValueError('OT readout requires rank1 donor differences')
+            ot_fits=fit_ot_maps(cfg,queries,surface,factors,findex,dec,run,paths)
         single_fits={}
         atom_families={}
         if cfg.get('single_atom_fit'):
@@ -378,6 +448,8 @@ def main():
                                 fit=fit_family[s,a,t];atom=fit['atom']
                                 code=z[t][:,atom] if cfg.get('donor_difference') else z[t][:,atom]-means[t][atom]
                                 variants[atom_method]=(code*fit['coefficient'])[:,None]@bt.T*mask[:,None]
+                            if ot_fits:
+                                variants['paired_correlation_uot']=(z[t]@ot_fits[s,a,t])[:,None]@bt.T*mask[:,None]
                             if cfg.get('methods'):
                                 variants={name:variants[name] for name in cfg['methods']}
                             for method,delta in variants.items():
@@ -394,6 +466,7 @@ def main():
                     print(json.dumps({"query":[s,a],"sequence":seq,"rows":len(rows),"forwards":forwards}),flush=True)
         method_names=['target','raw','wrong_query','wrong_query_matched_energy']+(['source_mean_only'] if cfg.get('include_source_mean_only') else [])
         method_names.extend(atom_families)
+        if ot_fits: method_names.append('paired_correlation_uot')
         if cfg.get('methods'): method_names=cfg['methods']
         checks={"noop":max(noop)<=1e-6,"raw_replay_relative":max(replay)<=1e-4,"eight_source_queries":len(selections)==8,"rows":len(rows)==sum(len(x["sequences"])*len(x["targets"])*len(cfg["ranks"])*len(method_names) for x in selections),"audit_closed":True}
         if cfg.get('maximum_source_hook_fraction'):
