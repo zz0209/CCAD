@@ -65,6 +65,24 @@ def select_cases(selections, payload, *, tokenizer=None, tokens=None, selected_o
     return result
 
 
+def freeze_source_cases(selections, scope_rows, panel, prior_endpoint_exposure=False):
+    """One recipient per query/condition, preserving the original ordered rule."""
+    index={(r['source_seed'],r['source_atom'],r['condition'],r['sequence']):r for r in scope_rows}
+    if len(index)!=len(scope_rows):raise ValueError('Duplicate source scope row')
+    choices=[]
+    for unit in selections:
+        s,a=unit['source_seed'],unit['source_atom']
+        for condition in ('positive','negative'):
+            candidates=[e for e in unit['sequences'] if e['condition']==condition]
+            supported=[e for e in candidates if index[s,a,condition,e['sequence']]['supported']]
+            preferred=[e for e in supported if index[s,a,condition,e['sequence']]['selected']]
+            entry=(preferred or supported or [None])[0]
+            choices.append(dict(source_seed=s,source_atom=a,condition=condition,entry=entry,
+                source_scope=index[s,a,condition,entry['sequence']] if entry else None))
+    return dict(panel=panel,prior_endpoint_exposure=prior_endpoint_exposure,choices=choices,
+        rule='Within each original query-condition ordered list, first source-selected supported entry; if none first supported entry; if none record missing. Never inspect target metrics for selection.')
+
+
 def atom_terms(ids, difference, beta, scale):
     """All nonzero signed scalar terms; sum reconstructs the rank-one coordinate."""
     ids=np.asarray(ids,dtype=int);difference=np.asarray(difference);beta=np.asarray(beta)

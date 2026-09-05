@@ -480,6 +480,9 @@ def main():
     cfg = {key: asset_cfg[key] for key in asset_keys}
     cfg.update(task)
     cfg['audit_opened']=False
+    if cfg.get('source_preparation_only'):
+        if any(cfg.get(k) for k in ('case_replay','single_atom_fit','ot_fit','fixed_support_refit')) or not cfg.get('source_scope') or (cfg.get('readout_ablation') and not cfg['readout_ablation'].get('saved_readout')):
+            raise ValueError('Source-only preparation cannot fit or replay cases')
     run = ROOT / "runs" / cfg["run_id"]
     run.mkdir(exist_ok=False)
     start = time.perf_counter(); now = datetime.now(timezone.utc).isoformat()
@@ -491,8 +494,10 @@ def main():
         code_paths.extend(ROOT/'scripts'/name for name in ('inspect_f4_atom_participation.py','summarize_f4_source_scope.py'))
     if cfg.get('fixed_support_refit'):
         code_paths.append(ROOT/'src/ccad/hook_transport.py')
-    if cfg.get('case_replay'):
+    if cfg.get('case_replay') or cfg.get('source_preparation_only'):
         code_paths.append(ROOT/'scripts/f4_case_details.py')
+    if cfg.get('source_preparation_only'):
+        code_paths.append(ROOT/'scripts/prepare_f4_token_class_donors.py')
     if cfg.get('probability_endpoints'):
         code_paths.append(ROOT/'scripts/f4_probability_endpoints.py')
     code = sorted([{"path": p.relative_to(ROOT).as_posix(), "sha256": sha256(p), "bytes": p.stat().st_size} for p in code_paths], key=lambda x:x["path"])
@@ -729,6 +734,30 @@ def main():
                     if any(row[k]!=prior[k] for k in ('selected','supported')) or not np.isclose(row['natural_source_hook_fraction'],prior['natural_source_hook_fraction'],rtol=1e-10,atol=1e-12):
                         raise ValueError('Prepared matched source scope changed')
             print(json.dumps({'source_scope_selected':sum(r['selected'] for r in scope_rows),'candidate_pairs':len(scope_rows)}),flush=True)
+        if cfg.get('source_preparation_only'):
+            from f4_case_details import freeze_source_cases
+            from prepare_f4_token_class_donors import prepare
+            label=cfg['source_preparation_only']['panel'];exposed=cfg['source_preparation_only'].get('prior_endpoint_exposure',False)
+            choices=freeze_source_cases(selections,scope_rows,label,exposed);write(run/'case_selection.json',choices)
+            panel={'id':label,'prior_endpoint_exposure':exposed}
+            for key,name in [('reference_config','config.resolved.json'),('selection','selection.json'),('case_selection','case_selection.json')]:
+                panel[key+'_path']=(run/name).relative_to(ROOT).as_posix();panel[key+'_sha256']=sha256(run/name)
+            inputs=json.loads((run/'inputs.json').read_text())['inputs']
+            matched=prepare(panel,inputs);write(run/'matching.json',matched);write(run/'inputs.json',{'inputs':inputs})
+            (run/'metrics.raw.jsonl').write_text(''.join(json.dumps(r,sort_keys=True)+'\n' for r in matched['choices']))
+            checks={'sixteen_requested_conditions':len(matched['choices'])==16,'no_endpoint_forward':True,'audit_closed':True}
+            summary={'checks':checks,'model_forwards':0,'wall_seconds':time.perf_counter()-start,'rows':len(matched['choices']),
+                'selected_pairs':sum(bool(r['entry'] and r['source_scope']['selected']) for r in matched['choices']),
+                'supported_pairs':sum(r['entry'] is not None for r in matched['choices']),
+                'status':'PASS' if all(checks.values()) else 'FAIL','error':None,'metrics_raw_sha256':sha256(run/'metrics.raw.jsonl'),
+                'generator_script_path':'scripts/run_f4_source_reference_causal.py','generator_script_sha256':sha256(Path(__file__)),
+                'scope_limit':'Source-code selections and class matching only; saved target maps loaded but no endpoint results or model forward used to select.'}
+            write(run/'metrics.summary.json',summary)
+            write(run/'environment.json',{'python':sys.executable,'python_version':platform.python_version(),'numpy':np.__version__,'platform':platform.platform(),'device':'cpu','cuda':'not_used','torch':'no_tensors_or_forwards','transformers':'local_tokenizer_only','sae':'existing_codes_only'})
+            write(run/'stdout.log',summary);write(run/'status.json',{'status':summary['status'],'error':None,'updated_utc':datetime.now(timezone.utc).isoformat()})
+            result=validate_run_directory(run);write(run/'contract_validation.json',{'ok':result.ok,'errors':list(result.errors)})
+            print(json.dumps({'run':str(run),'summary':summary,'contract_ok':result.ok,'contract_errors':list(result.errors)}),flush=True)
+            return 0 if summary['status']=='PASS' and result.ok else 1
         print(json.dumps({'source_preflight':[{'query':[u['source_seed'],u['source_atom']],
               'conditions':{condition:{'pairs':len(group),'supported_pairs':sum(e.get('donor_status')=='SELECTED_SOURCE_ONLY' for e in group),
                     'median_natural_difference_energy':float(np.median([e.get('donor_source_difference_energy',0) for e in group])) if group else None}

@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from f4_case_details import atom_terms, select_cases, context, effect_tokens, token_class, ordered_class_donor
+from f4_case_details import atom_terms, select_cases, context, effect_tokens, token_class, ordered_class_donor, freeze_source_cases
 
 
 class Tokenizer:
@@ -12,6 +12,16 @@ class Tokenizer:
 
 
 class CaseDetailsTests(unittest.TestCase):
+    def test_source_case_preference_and_missing(self):
+        entries=[dict(condition='positive',sequence=s) for s in [8,2,4]]
+        unit=dict(source_seed=1,source_atom=2,sequences=entries)
+        scope=[dict(source_seed=1,source_atom=2,condition='positive',sequence=s,supported=True,selected=s!=8) for s in [8,2,4]]
+        result=freeze_source_cases([unit],scope,'test')
+        self.assertEqual(result['choices'][0]['entry']['sequence'],2)
+        self.assertIsNone(result['choices'][1]['entry']);self.assertFalse(result['prior_endpoint_exposure'])
+        for r in scope:r['selected']=False
+        self.assertEqual(freeze_source_cases([unit],scope,'test')['choices'][0]['entry']['sequence'],8)
+
     def test_token_classes_not_semantic_labels(self):
         self.assertEqual([token_class(v) for v in (' is',"'s",' 2','.', '\n', '\ufffd','')],
                          ['word_number','word_number','word_number','punctuation_symbol','whitespace','byte_fragment','empty'])

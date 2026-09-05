@@ -84,9 +84,10 @@ def prepare(panel,inputs):
             record.update(entry=matched if scope['supported'] else None,source_scope=scope,positions=positional,source_dose_scale=scale,
                           matching_status=('UNCHANGED_REUSABLE' if unchanged else 'CHANGED_SUPPORTED') if scope['supported'] else 'NO_SOURCE_DIFFERENCE')
             output.append(record)
-    return dict(panel=panel['id'],donor_override=True,evaluate_changed_only=True,choices=output,
+    exposed=panel.get('prior_endpoint_exposure',True)
+    return dict(panel=panel['id'],donor_override=True,evaluate_changed_only=exposed,choices=output,
         rule='Freeze recipient and original allowed positions. For each opposite-condition donor use its first n sorted original positions, as before; retain only exact coarse token-class sequence matches, choose largest source difference energy with smallest donor sequence tie. No permutation, extra position pool, target coordinates or endpoints.',
-        prior_endpoint_exposure=True,scope='Exposed-document development, coarse character class not POS/semantics. Unchanged pairs reuse previous raw outcomes.',tokenizer_revision=cfg['model_revision'])
+        prior_endpoint_exposure=exposed,scope='Exposed-document development, coarse character class not POS/semantics. Unchanged pairs reuse previous raw outcomes.' if exposed else 'Fresh-document frozen source workflow. Coarse character class not POS/semantics. Matching status unchanged refers only to original donor, not reused outcomes; all selected pairs require new forwards.',tokenizer_revision=cfg['model_revision'])
 
 
 def main():

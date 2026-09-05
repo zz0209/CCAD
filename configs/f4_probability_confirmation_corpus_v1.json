@@ -1,0 +1,198 @@
+{
+  "schema_version": "0.1.0",
+  "run_id": "F4_probability_confirmation_corpus_v1_20260905",
+  "run_parent": "F4",
+  "purpose": "Fresh-document confirmation of frozen source-recipient, coarse-token-class donor matching, source scope and predictive probability correspondence",
+  "milestone": "M4",
+  "evidence_level": "fresh_document_confirmation_asset_only",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "dataset_id": "HuggingFaceFW/fineweb",
+  "dataset_config": "sample-10BT",
+  "dataset_revision_name": "v1.4.0",
+  "dataset_commit": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "dataset_license": "ODC-By-1.0",
+  "expected_shard_count": 15,
+  "shards_to_sample": 5,
+  "source_catalog_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/source_catalog.json",
+  "excluded_document_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/sampled_documents.jsonl",
+  "additional_exclusions": [
+    {
+      "path": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+      "sha256": "33421f067172f0322551346c1985e3799cf8bb90d9950a55f4cf1b0de38fe201"
+    },
+    {
+      "path": "runs/F4_development_corpus_v1_20260904/artifacts/documents.jsonl",
+      "sha256": "7958b0057368b4936acdee77fbd43f6f5e126770164b3d5506ff95c2b63fa706"
+    },
+    {
+      "path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "fbb1da0a9a0fa86ba20cec2eb7a2c0afa7fa93695c7909352c0a7b1e1a873a85"
+    },
+    {
+      "path": "runs/F4_adaptive_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "b5107db3a5a964759876f9edb58f764e6245ee136886154ba1c4cab49a47c1a2"
+    },
+    {
+      "path": "runs/F4_query_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "2269629a04e6033e70236a67f6840df82e56596e6874bc4e5c9deacfe85ec8d5"
+    },
+    {
+      "path": "runs/F4_fit_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "21fedcfa6ef0411e99b04b241b895ddf43b505816730d32b020a6e6b0569d8d0"
+    }
+  ],
+  "selection_salt": "ccad-f4-probability-confirmation-20260905-v1",
+  "split_salt": "ccad-r008-paired-split-v1",
+  "range_block_bytes": 1048576,
+  "context_length": 128,
+  "max_tokens_per_document": 2048,
+  "token_dtype": "uint16-little-endian",
+  "target_sequences": {
+    "calibration": 512
+  },
+  "minimum_documents": {
+    "calibration": 40
+  },
+  "tokenizer_id": "EleutherAI/pythia-160m-deduped",
+  "tokenizer_revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "tokenizer_local_dir": "D:/CCAD_Storage/models/pythia-160m-deduped/582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "data_overlay_dir": "D:/CCAD_Storage/environments/r008_data_overlay",
+  "dependency_overlay_dir": "D:/CCAD_Storage/environments/r005a_sparsify_overlay",
+  "mean_constants_source_split": "unchanged original independent mean; no estimation in this run",
+  "threshold_source_split": "Source applicability chosen on prior development and frozen before this corpus; no new-data tuning",
+  "statistics_unit": "document",
+  "resource_lease": "cpu-heavy resource_manager.run; bounded ~40-100MB range reads and small local tokens, no disk monopoly",
+  "scope_limit": "New calibration-hash-bucket documents; exclude SAE training, all paired splits and all five previous F4 corpus batches by full document ID and exact text SHA256. Original audit sealed. Both fixed query panels share new documents and five SAEs. Source-only workflow frozen before sampling, no fit or winner selection.",
+  "budget": "65536tokens; range reads <=5min/~40-100MB network separate;128asset forwards<=1min/~500MB bounded output. Atmost32selected pairs608causal forwards, budget6min including probability metrics/detail export from previous209/108.244763s; CPU source preparation<=2min. Actual support reduces compute. No paid resource or whole-disk monopoly.",
+  "frozen_scope": {
+    "rule_config": "configs/f4_source_applicability_dev_v1.json",
+    "rule_sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74",
+    "ranks": [
+      1
+    ],
+    "maximum_source_hook_fraction": 0.1,
+    "documents_per_condition": 4,
+    "targets_per_query": 4,
+    "local_content_positions": 4,
+    "endpoints": [
+      "next_state",
+      "centered_logits",
+      "primary_intervention_position_KL_ratio",
+      "primary_observed_NLL_delta_squared_error",
+      "secondary_same_document_downstream_probability"
+    ],
+    "methods": [
+      "target",
+      "global_rows",
+      "raw",
+      "readout_top16"
+    ],
+    "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+    "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+    "no_refit": true,
+    "decision_scope": "All32requested conditions retained. For each condition, take first original ordered source-selected supported recipient, otherwise first supported, else missing. Among its original opposite-condition4donors use first-n original sorted positions, filter exact coarse token-class sequence, max source coordinate difference energy with smallest sequence tie. Recompute source applicability; evaluate all selected pairs with all4methods, missing/rejected kept, no target endpoint selection. Report continuous errors and source scales. No new-data changes.",
+    "causal_runner_sha256": "df4697cae141f3b152fe0cc3fa61bd1ff8cb39d335f138ca50a0627fd204cc7d",
+    "panels": [
+      {
+        "label": "original",
+        "query_hash_offset": 0,
+        "base_causal_config": "configs/f4_probability_original_v1.json",
+        "fixed_queries": [
+          [
+            5,
+            710
+          ],
+          [
+            3,
+            1230
+          ],
+          [
+            4,
+            693
+          ],
+          [
+            5,
+            369
+          ],
+          [
+            5,
+            1352
+          ],
+          [
+            5,
+            336
+          ],
+          [
+            2,
+            2176
+          ],
+          [
+            4,
+            801
+          ]
+        ],
+        "saved_readout": {
+          "path": "runs/F4_readout_structure_dev_v1_20260905/readout_ablation.json",
+          "sha256": "9e3cb3eb21d0f6bffea056dfa4fa79a7b7ea960dc134e8cf9a82e626d9f6d1b4"
+        },
+        "base_causal_config_sha256": "683827839b427c67a1a891fb6077cba112b2dbf5f34fff2e276beb3f79f2b853"
+      },
+      {
+        "label": "expanded",
+        "query_hash_offset": 1,
+        "base_causal_config": "configs/f4_probability_expanded_v1.json",
+        "fixed_queries": [
+          [
+            3,
+            1144
+          ],
+          [
+            1,
+            2641
+          ],
+          [
+            3,
+            1093
+          ],
+          [
+            1,
+            2298
+          ],
+          [
+            1,
+            615
+          ],
+          [
+            2,
+            2645
+          ],
+          [
+            1,
+            1441
+          ],
+          [
+            5,
+            2194
+          ]
+        ],
+        "saved_readout": {
+          "path": "runs/F4_query_expansion_fits_v1_20260905/readout_ablation.json",
+          "sha256": "c69cbac174109a125f71830e4751311192b8cb824f373c5584c48ce61308e865"
+        },
+        "base_causal_config_sha256": "f091710cec409b5e98f900bc38e856b37f9cd58e5686de805f439ba57c9aff36"
+      }
+    ],
+    "source_case_helper_sha256": "4e9aa3f9a0019a201106479d261fe3a043fdc5aa9a6a36f35367d98ebbfaa759",
+    "class_matching_helper_sha256": "d2be67cea948823d6f0eab30c1c62df93840da351e2ef7a6443e949065107f38",
+    "probability_helper_sha256": "3235deab681154473cc1c162a9882b6675279354d6a8ecc8dba439b9eb746328",
+    "probability_endpoints": {
+      "version": "v1",
+      "primary": "intervention_positions with valid within-document observed next token",
+      "secondary": "union of same-document positions downstream from an intervention, excludes EOS predictions and final unavailable token",
+      "kl": "sum KL(P_source||P_candidate) / sum KL(P_source||P_baseline); float64 log-softmax; denominator <=1e-12*positions yields null",
+      "nll": "observed next-token NLL intervention-minus-baseline vector; report signed means, RMS and normalized squared vector error; source squared energy <=1e-12*positions yields null",
+      "scope": "joint multi-position interventions, not independent position attribution; secondary suffix may condition on preceding packed documents but no later document positions scored"
+    }
+  }
+}
