@@ -3115,3 +3115,16 @@ REFERENCE_REGISTRY.md:5b44a77f090a8afb73e95a05d8d7ec51340c6e32e7d96e777fb79c53c1
 runs/F4_probability_confirmation_expanded_v1_20260905/RESULTS_FOR_REVIEW.md:3e3136c1fa5bcacd729c3ed92833e9ac76405f711a5e3ff9b2be5af103cf60d1
 runs/F4_probability_confirmation_expanded_v1_20260905/probability_summary.json:b076924fc2398f902dc5c43559374fa23ce8926b25dcd4e2cfb0f84becdfaf1a
 runs/F4_probability_confirmation_expanded_v1_20260905/probability_confirmation.png:54d4857294f8f9ea7c49a1996149adb74762fae3ee3cabef18a95743c1d3ad45
+
+## 2026-09-05 15:28 UTC user direction: demonstrable component value and method optimization
+
+User clarified FCC need not beat raw on every error, but component-level interpretability and cross-seed correspondence must have demonstrable use, not verbal claims; actively optimize the derivation/fitting/evaluation workflow and avoid gate inflation, overengineering and research procrastination. Safe nonduplicative tool/package installation authorized, with paid/major external resources and protected runtime boundaries unchanged. Updated AGENTS persistent principles/install scope, EXPERIMENT_PLAN compact claim-driven evidence and optimization opportunities, and tracker current next-work framing. No automation prompt/state change, no experiments/model forwards/new metrics/results, no environment install or scientific code change.
+
+Focused source inspection: current rank1 signed atom terms share output basis b; additive reconstruction or exact addback is algebraic, not proof of independent semantic components. Raw already uses discovery-conditioned basis-constrained fitting; missing raw atom export is an interface limitation, not noninterpretability. Fit currently optimizes hook-space coordinates, while deployed donor differences and probability/NLL consumers can expose distribution/objective mismatch. Operation-matched full/raw fitting and input-dependent behavioral weighting/rank extension are hypotheses, not established fixes; prior sparse-refit failures retained. Fixed rank1 output metric can reduce to a scalar, so do not add decorative metric machinery. Retain the small existing strong-control run, then prioritize predictive component interventions/target-versus-other effects; no requirement all baselines fail first.
+
+Read mother reference index, SAEBench v4 TPP method and local native-ablation/cross-class code, plus official ICLR/ICML2026 reviewer guidance; provenance and pending code-license check recorded in registry. Borrowed experiment-plan claim-to-evidence/small-block approach; user/project single-entry records override duplicate templates, default seed counts, gate tables and review loops. No new protocol files or agents. Existing result report and raw artifacts unchanged. Only master_log is upload-allowlisted among this unit's documentation changes; ignored files stay local with hashes below.
+
+AGENTS.md:a8325b670e298bbae2ac29dad0e9ade35bdb9c51f932da358c7a2e574fdd9aa1
+EXPERIMENT_PLAN.md:31d806ac119c45f407cce26f56ca5b697584cb85492e15549f395741809b2916
+EXPERIMENT_TRACKER.md:d987533e4684c2967fc0c28054a72008dc0c3bbfe343818c30e1f076c7c49790
+REFERENCE_REGISTRY.md:2a15b79fef59fd0e0d99272d3126d54d7bd2871aae51536193026f72bf7dd85f
