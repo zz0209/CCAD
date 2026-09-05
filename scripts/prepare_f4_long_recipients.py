@@ -176,7 +176,7 @@ def main():
                 else:rel=None
                 evcodes[name,t]=z;encoding.append(dict(configuration=name,seed=t,rows=len(rowids),nonzero_l0=float(np.count_nonzero(z)/len(z)) if len(z) else None,short_replay_relative=rel))
                 del sae
-        newmethods=['short_single_atom']+[f'{name}_{method}' for name in ('long128','long32') for method in ('target','top16','single_atom')]
+        newmethods=['short_single_atom']+[f'{name}_{method}' for name in configs if name!='short' for method in ('target','top16','single_atom')]
         arrays={};indexrows=[]
         for e in case_rows:
             s,a=e['source_seed'],e['source_atom'];rr=[rowindex[e['sequence']*length+p] for p in e['intervention_positions']];dd=[rowindex[e['donor_sequence']*length+p] for p in e['donor_positions']]

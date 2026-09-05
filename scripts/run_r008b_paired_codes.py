@@ -33,6 +33,17 @@ def aggregate(rows: list[dict]) -> str:
     return hashlib.sha256(payload.encode()).hexdigest()
 
 
+def validate_cached_hook_config(cfg, source, manifest, requested_splits):
+    for key in ('model_id','model_revision','hook_module_path','hook_hidden_size',
+                'context_length','paired_corpus_run','token_manifest_sha256','attn_implementation'):
+        if cfg[key]!=source[key]:raise ValueError(f'Cached hook identity mismatch: {key}')
+    if cfg.get('save_raw_hook'):raise ValueError('Do not duplicate a cached raw hook asset')
+    rows={row['split']:row for row in manifest['splits']}
+    if len(rows)!=len(manifest['splits']) or not set(requested_splits).issubset(rows):
+        raise ValueError('Cached hook split missing or duplicated')
+    return {split:rows[split] for split in requested_splits}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
@@ -61,6 +72,7 @@ def main() -> int:
     inputs = [file_entry(args.config.resolve(), "CCAD frozen config", "internal", "protocol"),
               file_entry(token_manifest_path, "R008a paired token manifest", "internal", "paired_tokens")]
     for split, info in token_manifest["outputs"].items():
+        if split not in requested_splits:continue
         inputs.append(file_entry(ROOT / "runs" / cfg["paired_corpus_run"] / info["path"], "R008a paired corpus", "ODC-By-1.0", f"{split}_tokens"))
     for item in cfg["saes"]:
         inputs.append(file_entry(ROOT / item["path"] / "sae.safetensors", f"CCAD {item['run_id']}", "internal", f"seed_{item['seed']}_sae"))
@@ -102,22 +114,65 @@ def main() -> int:
         from sparsify.sparse_coder import SparseCoder
         from transformers import AutoModelForCausalLM
 
+        cached={}
+        if cfg.get('cached_raw_hook'):
+            spec=cfg['cached_raw_hook'];cp=Path(spec['config_path']);mp=Path(spec['manifest_path'])
+            if sha256(cp)!=spec['config_sha256'] or sha256(mp)!=spec['manifest_sha256']:
+                raise ValueError('Cached hook provenance hash mismatch')
+            source=json.loads(cp.read_text());manifest=json.loads(mp.read_text())
+            cached=validate_cached_hook_config(cfg,source,manifest,requested_splits)
+            inputs.extend([file_entry(cp,'Existing raw hook config','internal','cached_hook_config'),file_entry(mp,'Existing raw hook manifest','internal','cached_hook_manifest')])
+            for split,row in cached.items():
+                if (row['shape']!=[token_manifest['outputs'][split]['tokens'],cfg['hook_hidden_size']]
+                        or row['dtype']!='float32' or sha256(Path(row['path']))!=row['sha256']):
+                    raise ValueError('Cached hook array identity mismatch')
+                inputs.append(file_entry(Path(row['path']),'Existing shared hook','internal',f'{split}_cached_hook'))
+            write_json(run_dir/'inputs.json',{'inputs':inputs})
+
         torch.use_deterministic_algorithms(True)
         torch.set_num_threads(cfg.get('cpu_threads',4))
         device = torch.device(cfg["device"])
         torch.cuda.set_device(device)
         torch.cuda.empty_cache()
         torch.cuda.reset_peak_memory_stats(device)
-        model = AutoModelForCausalLM.from_pretrained(cfg["model_local_dir"], local_files_only=True, dtype=torch.float32, attn_implementation=cfg["attn_implementation"]).eval().to(device)
-        model.config.use_cache = False
-        module = model.get_submodule(cfg["hook_module_path"])
+        if not cached:
+            model = AutoModelForCausalLM.from_pretrained(cfg["model_local_dir"], local_files_only=True, dtype=torch.float32, attn_implementation=cfg["attn_implementation"]).eval().to(device)
+            model.config.use_cache = False
+            module = model.get_submodule(cfg["hook_module_path"])
         saes = {item["seed"]: SparseCoder.load_from_disk(ROOT / item["path"], device=device).eval() for item in cfg["saes"]}
-        output_rows, total_forwards, total_tokens = [], 0, 0
+        cache_replay=[]
+        if cfg.get('cached_code_replay'):
+            if not cached:raise ValueError('Cached code replay requires cached hook input')
+            witness=cfg['cached_code_replay'];mp=Path(witness['manifest_path']);wp=ROOT/witness['sae_path']/'sae.safetensors'
+            if sha256(mp)!=witness['manifest_sha256'] or sha256(wp)!=witness['sae_sha256']:
+                raise ValueError('Cached code replay identity mismatch')
+            previous=json.loads(mp.read_text());reference_sae=SparseCoder.load_from_disk(wp.parent,device=device).eval()
+            inputs.extend([file_entry(mp,'Existing paired codes','internal','cached_code_replay_manifest'),file_entry(wp,'Existing unchanged SAE','internal','cached_code_replay_weight')])
+            for split in requested_splits:
+                row=cached[split];h=np.memmap(row['path'],dtype='<f4',mode='r',shape=tuple(row['shape']))
+                n=min(witness['rows_per_split'],len(h));rr=np.linspace(0,len(h)-1,n,dtype=int)
+                sm=next(r for r in previous['splits'] if r['split']==split);parts={}
+                for item in sm['files']:
+                    if item['seed']==witness['seed']:
+                        if sha256(Path(item['path']))!=item['sha256']:raise ValueError('Old code replay array changed')
+                        parts[item['dtype']]=np.memmap(item['path'],dtype='<u2' if item['dtype']=='uint16' else '<f4',mode='r',shape=tuple(item['shape']))
+                        inputs.append(file_entry(Path(item['path']),'Existing paired codes','internal',f'{split}_code_replay'))
+                with torch.no_grad():out=reference_sae.encode(torch.tensor(np.asarray(h[rr]),device=device))
+                fresh=np.zeros((n,cfg['num_latents']));old=np.zeros_like(fresh)
+                np.add.at(fresh,(np.arange(n)[:,None],out.top_indices.cpu().numpy()),out.top_acts.cpu().numpy())
+                np.add.at(old,(np.arange(n)[:,None],parts['uint16'][rr]),parts['float32'][rr])
+                rel=float(np.linalg.norm(fresh-old)/max(np.linalg.norm(old),1e-20))
+                cache_replay.append(dict(split=split,seed=witness['seed'],rows=n,relative_code_error=rel))
+                if rel>1e-5:raise ValueError('Cached encoder input does not replay old code asset')
+            del reference_sae
+            write_json(run_dir/'inputs.json',{'inputs':inputs})
+        output_rows, total_forwards, total_tokens, encoder_batches = [], 0, 0, 0
         start_time = time.perf_counter()
         for split in requested_splits:
             info = token_manifest["outputs"][split]
             token_path = ROOT / "runs" / cfg["paired_corpus_run"] / info["path"]
             tokens = np.memmap(token_path, dtype="<u2", mode="r").reshape(info["sequences"], cfg["context_length"])
+            raw_cache=np.memmap(cached[split]['path'],dtype='<f4',mode='r',shape=tuple(cached[split]['shape'])) if cached else None
             split_dir = bulk_dir / split
             split_dir.mkdir()
             writers = {}
@@ -135,19 +190,22 @@ def main() -> int:
                 )
             observed_rows = selected_slots = nonzero_slots = 0
             for begin in range(0, len(tokens), cfg["batch_size_sequences"]):
-                batch_np = np.asarray(tokens[begin:begin + cfg["batch_size_sequences"]], dtype=np.int64)
-                batch = torch.from_numpy(batch_np).to(device)
-                captured = {}
-                def hook(_module, _inputs, output):
-                    captured["hidden"] = output[0] if isinstance(output, tuple) else output
-                handle = module.register_forward_hook(hook)
-                try:
-                    with torch.no_grad():
-                        model(batch, use_cache=False)
-                finally:
-                    handle.remove()
-                hidden = captured["hidden"].reshape(-1, cfg["hook_hidden_size"])
                 offset = begin * cfg["context_length"]
+                if raw_cache is not None:
+                    stop=min(begin+cfg['batch_size_sequences'],len(tokens))*cfg['context_length']
+                    hidden=torch.tensor(np.asarray(raw_cache[offset:stop]),device=device)
+                else:
+                    batch_np = np.asarray(tokens[begin:begin + cfg["batch_size_sequences"]], dtype=np.int64)
+                    batch = torch.from_numpy(batch_np).to(device)
+                    captured = {}
+                    def hook(_module, _inputs, output):
+                        captured["hidden"] = output[0] if isinstance(output, tuple) else output
+                    handle = module.register_forward_hook(hook)
+                    try:
+                        with torch.no_grad():model(batch, use_cache=False)
+                    finally:handle.remove()
+                    hidden = captured["hidden"].reshape(-1, cfg["hook_hidden_size"])
+                    total_forwards += 1
                 end = offset + hidden.shape[0]
                 if raw_writer is not None:
                     raw_writer[offset:end]=hidden.detach().float().cpu().numpy()
@@ -161,8 +219,8 @@ def main() -> int:
                     selected_slots += indices.size
                     nonzero_slots += int(np.count_nonzero(acts))
                 observed_rows += hidden.shape[0]
-                total_forwards += 1
-                if total_forwards%32==0: print(json.dumps({'split':split,'forwards':total_forwards,'tokens':observed_rows}),flush=True)
+                encoder_batches += 1
+                if encoder_batches%32==0: print(json.dumps({'split':split,'forwards':total_forwards,'encoder_batches':encoder_batches,'tokens':observed_rows}),flush=True)
             if raw_writer is not None:
                 raw_writer.flush();del raw_writer
                 raw_rows.append({'split':split,'path':str(raw_path),'shape':[rows,cfg['hook_hidden_size']],'dtype':'float32','tokens':rows,'observed_rows':observed_rows,'documents':info['documents'],'bytes':raw_path.stat().st_size,'sha256':sha256(raw_path)})
@@ -190,15 +248,18 @@ def main() -> int:
         checks = {
             "frozen_sae_set": len(saes) == expected_sae_count and sorted(saes) == expected_seed_ids,
             "requested_splits_complete": [row['split'] for row in output_rows] == requested_splits,
-            "shared_forward_count": total_forwards == sum((token_manifest['outputs'][split]["sequences"] + cfg["batch_size_sequences"] - 1) // cfg["batch_size_sequences"] for split in requested_splits),
+            "shared_forward_count": total_forwards == (0 if cached else sum((token_manifest['outputs'][split]["sequences"] + cfg["batch_size_sequences"] - 1) // cfg["batch_size_sequences"] for split in requested_splits)),
+            "encoder_batch_count": encoder_batches == sum((token_manifest['outputs'][split]["sequences"] + cfg["batch_size_sequences"] - 1) // cfg["batch_size_sequences"] for split in requested_splits),
             "all_rows_encoded": all(row["observed_rows"] == row["tokens"] for row in output_rows),
             "selected_l0_exact": all(row["selected_l0"] == cfg["k"] for row in output_rows),
             "indices_fit_uint16": cfg["num_latents"] <= 65536,
             "all_output_files_present": all(Path(item["path"]).is_file() for row in output_rows for item in row["files"]) and all(Path(item["path"]).is_file() for item in decoder_files),
             "audit_metrics_not_computed": True,
         }
+        if cache_replay:checks['cached_code_replay']=all(r['relative_code_error']<=1e-5 for r in cache_replay)
         record = {"checks": checks, "splits": output_rows, "decoders": decoder_files, "total_tokens": total_tokens,
-                  "shared_base_forwards": total_forwards, "wall_seconds": elapsed, "tokens_per_second": total_tokens / elapsed,
+                  "shared_base_forwards": total_forwards, "encoder_batches":encoder_batches, "cached_raw_hook_used":bool(cached), "wall_seconds": elapsed, "tokens_per_second": total_tokens / elapsed,
+                  "cached_code_replay":cache_replay,
                   "peak_allocated_vram_bytes": int(torch.cuda.max_memory_allocated(device)), "peak_reserved_vram_bytes": int(torch.cuda.max_memory_reserved(device))}
         write_json(bulk_dir / "asset_manifest.json", {"schema_version": "r008.paired_sparse_codes.v1", "run_id": cfg["run_id"], "splits": output_rows, "decoders": decoder_files})
         if cfg.get('save_raw_hook'):

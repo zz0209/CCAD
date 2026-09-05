@@ -1,0 +1,63 @@
+{
+  "run_id": "F4_long_k128_newseeds_fit_v1_20260905",
+  "source_asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "evaluation_asset_config": "configs/f4_long_recipient_confirmation_codes_v1.json",
+  "panels": [
+    "original",
+    "expanded"
+  ],
+  "reference_config_template": "configs/f4_long_recipient_source_{panel}_v1.json",
+  "target_seeds": [
+    3,
+    4,
+    5
+  ],
+  "long_configurations": [
+    {
+      "name": "long128",
+      "asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+      "asset_manifest_sha256": "23da54dd82631c91194ce1219a9080d21df3aa03890de5f3826331bc13d93ef3"
+    }
+  ],
+  "long_training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "original_paired_documents": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+  "evaluation_documents": "runs/F4_long_recipient_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+  "exclusion_rule": "Entire fresh corpus pre-excluded against training by ID/text hash; retain all8source requests, evaluate only the5 frozen source-selected class-matched cases without further selection.",
+  "fit_rule": "Same original positive256 discovery states, source weights, independent mean,32atom source group/rank1 basis. Original short full maps replay required. New long targets fitted once at originalridge.001; top16 energy and conditional variation single atom rules unchanged. Only newrecipientseed assets vary.",
+  "ridge_fraction": 0.001,
+  "readout_budget": 16,
+  "atom_rule": "Best all3072 conditional-variation scalar predictor on the same positive256 rows; intercept cancels in donor differences. One per configuration, not native deletion.",
+  "expected_remaining_cases": {
+    "original": 1,
+    "expanded": 4
+  },
+  "cpu_threads": 4,
+  "budget_seconds": 180,
+  "encoding_batch_rows": 256,
+  "scope": "Original four source queries/all8sign requests and five selected pairs on previously evaluated109documents. New long-k128 target seeds3/4/5 only, excluding equal-index source seed as original target policy. Existing long targets1/2 fits/results remain unchanged. Seven methods: short full/raw/top16/single and long128 full/top16/single. No long32 seeds3/4/5 exist; keep its two-seed secondary panel separately, never count missing as zero. Seed replication, not fresh-document confirmation or long-to-long FCC suite.",
+  "budget": "Fit14source-target-configuration maps on unchanged positive256 paired discovery rows/weights and originalmean, ridge.001. <=180sCPU/GPU prep,0LM. Thenoriginal17+expanded82=99LMforwards<=180s numerical+90sload. Oldtarget1/2 fits never modified; no newquery/ridge/support grid.",
+  "audit_opened": false,
+  "expected_requested_conditions": 8,
+  "require_no_evaluation_overlap": true,
+  "source_selections": {
+    "original": {
+      "path": "runs/F4_long_recipient_source_original_v1_20260905/matching.json",
+      "sha256": "7c9c7ebb9efd8ba0fe24ec6c736effcde9831cad6d62c957f04de276bf7485a9"
+    },
+    "expanded": {
+      "path": "runs/F4_long_recipient_source_expanded_v1_20260905/matching.json",
+      "sha256": "b87df467387ef2a1c0872e03feade3bec64e328e48a9ccd88b02f958e0ac6838"
+    }
+  },
+  "probability_endpoints": {
+    "version": "v1",
+    "primary": "intervention_positions with valid within-document observed next token",
+    "secondary": "union of same-document positions downstream from an intervention, excludes EOS predictions and final unavailable token",
+    "kl": "sum KL(P_source||P_candidate) / sum KL(P_source||P_baseline); float64 log-softmax; denominator <=1e-12*positions yields null",
+    "nll": "observed next-token NLL intervention-minus-baseline vector; report signed means, RMS and normalized squared vector error; source squared energy <=1e-12*positions yields null",
+    "scope": "joint multi-position interventions, not independent position attribution; secondary suffix may condition on preceding packed documents but no later document positions scored"
+  },
+  "causal_run_template": "F4_long_k128_newseeds_{panel}_v1_20260905",
+  "purpose": "Extend identical fixed-source recipient comparison to long-k128 target seeds3/4/5",
+  "evidence_level": "exposed_document_new_recipient_seed_replication"
+}

@@ -13,9 +13,10 @@ METHODS=('target','raw','readout_top16','short_single_atom','long128_target',
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--confirmation-apply',type=Path);args=parser.parse_args()
-    fresh=args.confirmation_apply is not None
-    output=args.confirmation_apply if fresh else ROOT/'runs/F4_long_recipient_fit_v1_20260905'
+    parser=argparse.ArgumentParser();modes=parser.add_mutually_exclusive_group();modes.add_argument('--confirmation-apply',type=Path);modes.add_argument('--five-seed-fit',type=Path);args=parser.parse_args()
+    five=args.five_seed_fit is not None
+    fresh=args.confirmation_apply is not None or five
+    output=(args.five_seed_fit if five else args.confirmation_apply) if fresh else ROOT/'runs/F4_long_recipient_fit_v1_20260905'
     output=output if output.is_absolute() else ROOT/output
     if (output/'recipient_comparison.json').exists():raise ValueError('Already summarized')
     table=[];cases=[];aggregates=[];comparisons=[];checks={};inputs=[];forwards=0;wall=0
@@ -24,8 +25,26 @@ def main():
         old=ROOT/'runs'/f'F4_probability_confirmation_{panel}_v1_20260905'
         summary=json.loads((run/'metrics.summary.json').read_text())
         assert summary['status']=='PASS'
-        rows=jsonl(run/'metrics.raw.jsonl');oldrows={key(r):r for r in (rows if fresh else jsonl(old/'metrics.raw.jsonl'))}
+        rows=jsonl(run/'metrics.raw.jsonl')
         assert len(rows)==(20 if panel=='original' else (60 if fresh else 80))
+        if five:
+            extension=ROOT/'runs'/f'F4_long_k128_newseeds_{panel}_v1_20260905'
+            es=json.loads((extension/'metrics.summary.json').read_text());assert es['status']=='PASS'
+            extra=jsonl(extension/'metrics.raw.jsonl');assert len(extra)==(14 if panel=='original' else 70)
+            ec=json.loads((extension/'config.resolved.json').read_text());pc=json.loads((run/'config.resolved.json').read_text())
+            for field in ('source_query_subset','probability_endpoints','source_scope','factors_sha256','ranks','maximum_source_hook_fraction'):
+                assert ec[field]==pc[field],field
+            assert ec['target_seed_subset']==[3,4,5] and ec['methods']==[m for m in METHODS if not m.startswith('long32')]
+            prior={(r['source_seed'],r['source_atom'],r['condition'],r['sequence']):r for r in rows if r['method']=='target'}
+            for r in extra:
+                anchor=prior[r['source_seed'],r['source_atom'],r['condition'],r['sequence']]
+                for field in ('sequence','donor_sequence','document_ids','donor_document_ids','intervention_positions','donor_positions','common_source_dose_scale','source_natural_hook_energy','source_hook_fraction'):assert r[field]==anchor[field],field
+                for scope,p in r['probability_endpoints'].items():
+                    for field in ('positions','observed_next_token_ids','source_to_baseline_kl','source_nll_deltas'):assert p[field]==anchor['probability_endpoints'][scope][field],field
+            rows.extend(extra);assert len({key(r) for r in rows})==len(rows)
+            forwards+=es['model_forwards'];wall+=es['wall_seconds']
+            inputs.extend(dict(path=str(p),sha256=sha256(p)) for p in (extension/'metrics.raw.jsonl',extension/'config.resolved.json'))
+        oldrows={key(r):r for r in (rows if fresh else jsonl(old/'metrics.raw.jsonl'))}
         if fresh:
             frozen_path=ROOT/'configs/f4_long_recipient_confirmation_corpus_v1.json'
             frozen=json.loads(frozen_path.read_text());rc=json.loads((run/'config.resolved.json').read_text())
@@ -44,7 +63,9 @@ def main():
             for choice in matched['choices']:
                 e=choice['entry'];active=bool(e and choice['source_scope']['selected'])
                 subset=[r for r in rows if (r['source_seed'],r['source_atom'],r['condition'])==(choice['source_seed'],choice['source_atom'],choice['condition'])]
-                assert len(subset)==(10*len([t for t in scope['target_seed_subset'] if t!=choice['source_seed']]) if active else 0)
+                expected_rows=10*len([t for t in scope['target_seed_subset'] if t!=choice['source_seed']])
+                if five:expected_rows+=7*len([t for t in [3,4,5] if t!=choice['source_seed']])
+                assert len(subset)==(expected_rows if active else 0)
                 for r in subset:
                     for field in ('sequence','donor_sequence','document_ids','donor_document_ids','intervention_positions','donor_positions'):assert r[field]==e[field]
             inputs.extend(dict(path=str(p),sha256=sha256(p)) for p in (frozen_path,prep/'matching.json'))
@@ -107,16 +128,31 @@ def main():
     if fresh:
         result['scope']='Fresh-document confirmation of frozen cross-configuration compactness: 109 documents sampled after ID/text-hash exclusions; 4 fixed source queries and all8sign requests,6class-matched,5source-selected cases/3active queries/8target-case pairs. No refit or support changes. Median over dependent targets within case, then cases; combined5 is descriptive, not independent repetitions. Two long target seeds, not five-seed main suite. Original paired audit closed.'
         result['coverage']=[dict(panel=panel,source_seed=r['source_seed'],source_atom=r['source_atom'],condition=r['condition'],matched=r['entry'] is not None,selected=bool(r['entry'] and r['source_scope']['selected']),matching_status=r.get('matching_status')) for panel in ('original','expanded') for r in json.loads((output/f'{panel}_case_selection.json').read_text())['choices']]
+    if five:
+        result['scope']='Five long-k128 recipient seeds, fixed short-source interface. Same5selectedcases/3activequeries/20dependenttarget-casepairs,all8requests retained. Originaltargets1/2 were fresh-document confirmation; addedtargets3/4/5 are seed replication on now-exposed109documents. Common7methods cover4targets/case (exclude source index); long32secondary remains onlytargets1/2. Not a long-to-long five-seed FCC or renewed unseen-document claim.'
+        newcases=[]
+        for scope,s,a,condition,method in sorted({(r['scope'],r['source_seed'],r['source_atom'],r['condition'],r['method']) for r in table if r['target_seed']>=3}):
+            rr=[r for r in table if r['target_seed']>=3 and (r['scope'],r['source_seed'],r['source_atom'],r['condition'],r['method'])==(scope,s,a,condition,method)]
+            newcases.append(dict(scope=scope,source_seed=s,source_atom=a,condition=condition,method=method,targets=len(rr),**{k:median([r[k] for r in rr]) for k in METRICS}))
+        result['new_seed_cases']=newcases
+        result['new_seed_aggregates']=[dict(scope=scope,method=method,cases=len(rr),**{k:median([r[k] for r in rr]) for k in METRICS}) for scope in ('intervention_positions','same_document_downstream') for method in METHODS if not method.startswith('long32') for rr in [[r for r in newcases if r['scope']==scope and r['method']==method]]]
+        result['new_seed_top16_comparisons']=[]
+        for metric in METRICS:
+            rr=[r for r in newcases if r['scope']=='intervention_positions' and r['method']=='long128_top16'];lookup={(r['source_seed'],r['source_atom'],r['condition']):r for r in newcases if r['scope']=='intervention_positions' and r['method']=='readout_top16'}
+            result['new_seed_top16_comparisons'].append(dict(metric=metric,cases=len(rr),candidate_lower=sum(r[metric]<lookup[r['source_seed'],r['source_atom'],r['condition']][metric] for r in rr)))
     for name,values in [('RECIPIENT_ROWS.csv',table),('RECIPIENT_CASES.csv',cases)]:
         with (output/name).open('w',newline='',encoding='utf-8') as f:
             writer=csv.DictWriter(f,fieldnames=list(values[0]));writer.writeheader();writer.writerows(values)
     write(output/'recipient_comparison.json',result)
     lines=['# 长训练接收端：同一source作用与组成预算','',result['scope'],'',
         '误差越低越好；0为精确保留source作用，1为不干预。source dose相同，但candidate实际能量不强制相同，完整剂量见逐行CSV。',
-        'short是旧k128；long128/long32均使用既有4194304token权重。训练流不同，不是嵌套学习曲线；两seed不能冒充五seed长配置主套件。',
+        ('short是旧k128；long128已具五个同配置4194304token SAE，long32仍仅两seed。这里是固定short source到long recipients，尚非long-to-long五seed对应；短长训练流不同，不是嵌套学习曲线。' if five else 'short是旧k128；long128/long32均使用既有4194304token权重。训练流不同，不是嵌套学习曲线；两seed不能冒充五seed长配置主套件。'),
         'full经decoded hook拟合；top16是固定conditional-energy排序截断；single是相同discovery上全3072列的最佳conditional-variation单atom。不是最优稀疏拟合。',
         '', '|面板|端点范围|方法|case|KL误差|NLL变化平方误差|','|---|---|---|---:|---:|---:|']
     for r in aggregates:lines.append('|'+ '|'.join([r['panel'],r['scope'],r['method'],str(r['cases'])]+[fmt(r[k]) for k in METRICS])+'|')
+    if five:
+        lines+=['','## 新增target3/4/5单列（不借旧target1/2优势）','', '|范围|方法|case|KL|NLL|','|---|---|---:|---:|---:|']
+        for r in result['new_seed_aggregates']:lines.append('|'+ '|'.join([r['scope'],r['method'],str(r['cases'])]+[fmt(r[k]) for k in METRICS])+'|')
     lines+=['','## 逐案例主端点','', '|面板|source|条件|target数|方法|KL|NLL|','|---|---|---|---:|---|---:|---:|']
     for r in cases:
         if r['scope']=='intervention_positions':lines.append('|'+ '|'.join([r['panel'],f"{r['source_seed']}:{r['source_atom']}",r['condition'],str(r['targets']),r['method']]+[fmt(r[k]) for k in METRICS])+'|')
