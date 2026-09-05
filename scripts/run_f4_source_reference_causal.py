@@ -500,6 +500,8 @@ def main():
         code_paths.append(ROOT/'scripts/prepare_f4_token_class_donors.py')
     if cfg.get('probability_endpoints'):
         code_paths.append(ROOT/'scripts/f4_probability_endpoints.py')
+    if cfg.get('component_interventions'):
+        code_paths.append(ROOT/'scripts/f4_component_interventions.py')
     code = sorted([{"path": p.relative_to(ROOT).as_posix(), "sha256": sha256(p), "bytes": p.stat().st_size} for p in code_paths], key=lambda x:x["path"])
     code_hash = hashlib.sha256("".join(f"{x['path']}:{x['sha256']}\n" for x in code).encode()).hexdigest()
     for entry,p in zip(code, sorted(code_paths,key=lambda p:p.relative_to(ROOT).as_posix())):
@@ -607,6 +609,13 @@ def main():
         if atom_families:
             write(run/'atom_fit_reuse.json',{'refitted':False if not single_fits else True,'families':{name:len(fits) for name,fits in atom_families.items()},'saved_inputs':cfg.get('saved_atom_families',[])})
         readout_families=prepare_readout_ablation(cfg,factors,findex,dec,run,paths) if cfg.get('readout_ablation') else {}
+        component_groups={}
+        if cfg.get('component_interventions'):
+            from f4_component_interventions import prepare_groups,group_coordinates
+            if not readout_families or cfg['component_interventions']['budget']!=16:
+                raise ValueError('Component interventions require saved rank1 readout and budget16')
+            component_groups,extra=prepare_groups(cfg,readout_families,run,paths,sha256,readout_atom_order)
+            input_record=json.loads((run/'inputs.json').read_text());input_record['inputs'].append(extra);write(run/'inputs.json',input_record)
         refit_families=prepare_fixed_support_refit(cfg,surface,factors,findex,dec,run,paths) if cfg.get('fixed_support_refit') else {}
         saved_ot_families={}
         for i,entry in enumerate(cfg.get('saved_ot_families',[])):
@@ -864,6 +873,11 @@ def main():
                                 native=z[t][:,keep]@dec[t][keep]*mask[:,None]
                                 variants['native_top16_difference']=native
                                 variants['native_top16_difference_matched']=norm_match(native,source_natural)
+                                if component_groups:
+                                    group=component_groups[s,a,t]
+                                    coordinates=group_coordinates(z[t],beta,group['top_atoms'],group['random_atoms'])
+                                    variants['readout_tail16']=coordinates['tail'][:,None]@bt.T*mask[:,None]
+                                    variants['readout_random16']=coordinates['random'][:,None]@bt.T*mask[:,None]
                             if refit_families:
                                 keep,beta=refit_families[s,a,t]
                                 variants['readout_top16_refit']=(z[t][:,keep]@beta)[:,None]@bt.T*mask[:,None]
@@ -876,7 +890,7 @@ def main():
                                 if cfg.get("centered_logit_endpoint"):
                                     candidate_effects["centered_logits"]=candidate_effects["next_logits"]-candidate_effects["next_logits"].mean(axis=-1,keepdims=True)
                                 endpoints={e:compare(effects[e],candidate_effects[e]) for e in effects}
-                                if cfg.get('case_replay'):
+                                if cfg.get('case_replay') and cfg['case_replay'].get('export_details',True):
                                     mapped_beta=None
                                     if method in ('target','global_rows'):
                                         factor='query_target' if method=='target' else 'global_target'
@@ -889,6 +903,9 @@ def main():
                                                 baseline=baseline,ref=ref,out=out,endpoints=endpoints)
                                 row={"source_seed":s,"source_atom":a,"target_seed":t,"stratum":unit["stratum"],"rank":rank,"method":method,**entry,"wrong_atom":unit["wrong_atom"],"wrong_norm_scale":wrongscale,"hook":compare(source,delta),"source_mean_projected_norm":float(np.linalg.norm(means[s][ids]@dec[s][ids]@b@b.T)),"target_mean_mapped_norm":float(np.linalg.norm(means[t]@dec[t]@np.asarray(factors["query_target"][ix,:,:rank],dtype=np.float64)@bt.T)),"endpoints":endpoints}
                                 row['mean_terms_cancelled_in_intervention']=bool(cfg.get('donor_difference'))
+                                if component_groups:
+                                    positions=entry['intervention_positions']
+                                    row['component_coordinates']={name:(value[positions]*dose_scale).tolist() for name,value in coordinates.items()}
                                 if cfg.get('probability_endpoints'):
                                     probability_candidate=out['next_logits'][0].cpu().numpy()
                                     row['probability_endpoints']={name:probability_metrics(probability_baseline,probability_source,probability_candidate,tokens[seq],positions) for name,positions in probability_positions.items()}
