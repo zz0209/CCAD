@@ -1,0 +1,25 @@
+{
+  "run_id": "F4_full_operation_fit_v1_20260905",
+  "parent_asset_config": "configs/r011f4_hook_transport_real_v2.json",
+  "original_corpus_run": "R008a_paired_corpus_v3_20260903T234000Z",
+  "parent_factors": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "parent_factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "surface": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "panels": [
+    {"name": "original", "reference_config": "configs/f4_probability_confirmation_original_v1.json"},
+    {"name": "expanded", "reference_config": "configs/f4_probability_confirmation_expanded_v1.json"}
+  ],
+  "rank": 1,
+  "ridge_fraction": 0.001,
+  "maximum_pairs": 128,
+  "maximum_distinct_endpoint_rows": 256,
+  "negative_pool_size": 128,
+  "pairing": "First128 saved positive discovery rows; top128 opposite source-score candidates excluding all256 positive rows; greedy maximum absolute frozen source-coordinate difference, same coarse token class, disjoint context document sets, without replacement. Missing pairs remain missing, no pool expansion.",
+  "selection": "All source-selected cases from both existing probability confirmation panels, including unfavorable target cases. Selection metadata only; no endpoint values used for fitting.",
+  "objective": "Difference ridge with zero intercept into original rank1 source-local reference. Full decoded target SAE and raw hook each use768 input coordinates, exactly the same rows/weights/ridge-fraction rule. This is not the old fixed16-code refit.",
+  "budget_seconds": 180,
+  "budget": "CPU-heavy lease, at most7queries x4target plus7raw fits; original discovery source scans and small selected dense matrices, existing dual ridge. No model forward or new download. Followed by121 model forwards on11 exposed cases across2 panels, <=180s numerical plus90s expected loading/export.",
+  "audit_opened": false,
+  "scope": "Development method test. Old confirmation data now exposed; new method requires fresh confirmation if useful. Different sampling/weight distribution from original positive256 state fit, not isolated centering. Coarse class is not semantic/POS equivalence; fixed source reference and all old results retained. No new causal-metric or native claim."
+}
