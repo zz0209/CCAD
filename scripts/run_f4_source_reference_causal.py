@@ -78,6 +78,17 @@ def selection_document_ids(selection):
             for d in e['document_ids']+e.get('donor_document_ids',[])}
 
 
+def source_hash_queries(available, panel, offset=0):
+    """Fixed source-only hash position within each of eight energy strata."""
+    if not isinstance(offset,int) or offset<0:
+        raise ValueError('Query hash offset must be a nonnegative integer')
+    groups=[sorted((q for q in available if panel[q]['energy_stratum']==st),
+                   key=lambda q:panel[q]['selection_hash']) for st in range(8)]
+    if any(len(group)<=offset for group in groups):
+        raise ValueError('Query hash offset exceeds a source stratum')
+    return [group[offset] for group in groups]
+
+
 def best_single_atom(x, y, weights, ridge_fraction, conditional_variation=False):
     """All scalar predictors, same trace/min(shape) ridge rule as F4.
 
@@ -411,7 +422,7 @@ def main():
         factors=np.load(paths["factors"],allow_pickle=False)
         findex={(int(s),int(a),int(t)):i for i,(s,a,t) in enumerate(zip(factors["source_seed"],factors["source_atom"],factors["target_seed"]))}
         available=sorted({(s,a) for s,a,t in surface})
-        queries=[min([q for q in available if panel[q]["energy_stratum"]==st],key=lambda q:panel[q]["selection_hash"]) for st in range(8)]
+        queries=source_hash_queries(available,panel,cfg.get('query_hash_offset',0))
         means={s:np.zeros(cfg["num_latents"]) for s in cfg["source_seeds"]}
         for r in jsonl(paths["census"]): means[r["seed"]][r["atom"]]=r["mean_code"]
         asset=Path(cfg["bulk_asset_dir"]); length=cfg["context_length"]; hidden=cfg["hook_hidden_size"]

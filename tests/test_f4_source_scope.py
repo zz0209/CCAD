@@ -9,10 +9,18 @@ import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from inspect_f4_atom_participation import participation
 from summarize_f4_source_scope import selected
-from run_f4_source_reference_causal import readout_atom_order, norm_match, prepare_readout_ablation
+from run_f4_source_reference_causal import readout_atom_order, norm_match, prepare_readout_ablation, source_hash_queries
 
 
 class SourceScopeTests(unittest.TestCase):
+    def test_source_hash_offset_is_disjoint_and_preserves_default(self):
+        panel={(s,a):dict(energy_stratum=s,selection_hash=str(a)) for s in range(8) for a in range(3)}
+        available=sorted(panel)
+        self.assertEqual(source_hash_queries(available,panel),[(s,0) for s in range(8)])
+        self.assertEqual(source_hash_queries(available,panel,1),[(s,1) for s in range(8)])
+        self.assertFalse(set(source_hash_queries(available,panel)) & set(source_hash_queries(available,panel,1)))
+        with self.assertRaises(ValueError):source_hash_queries(available,panel,3)
+
     def test_saved_readout_reuses_support_and_rejects_changed_coefficients(self):
         beta=np.arange(20,dtype=float);signs=np.random.default_rng(7).choice([-1.,1.],size=20)
         record=dict(source_seed=2,source_atom=3,target_seed=1,top_atoms=list(range(19,-1,-1)),

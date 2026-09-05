@@ -1,0 +1,68 @@
+{
+  "run_id": "F4_query_expansion_fits_v1_20260905",
+  "reference_config_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/config.resolved.json",
+  "reference_config_sha256": "cdf6fab8433b6333fb75ba7b5844d0f709cc87fe1a683c81a285907a4ff94f76",
+  "query_hash_offset": 1,
+  "expected_queries": [
+    [
+      3,
+      1144
+    ],
+    [
+      1,
+      2641
+    ],
+    [
+      3,
+      1093
+    ],
+    [
+      1,
+      2298
+    ],
+    [
+      1,
+      615
+    ],
+    [
+      2,
+      2645
+    ],
+    [
+      1,
+      1441
+    ],
+    [
+      5,
+      2194
+    ]
+  ],
+  "audit_opened": false,
+  "device": "cpu",
+  "ot_families": {
+    "uot_default": {
+      "regularization": 0.05,
+      "marginal_relaxation": 1,
+      "ridge_fraction": 0.001,
+      "tolerance": 1e-9,
+      "max_iterations": 1000
+    },
+    "uot_discovery_tuned": {
+      "regularization": 0.01,
+      "marginal_relaxation": 1,
+      "ridge_fraction": 0.001,
+      "tolerance": 1e-9,
+      "max_iterations": 5000
+    }
+  },
+  "readout_ablation": {
+    "discovery_reference_method": "single_atom_dynamic",
+    "budgets": [
+      16
+    ],
+    "native_budget": 16,
+    "sign_seed": "ccad-f4-structure-20260905-v1"
+  },
+  "selection": "Second source-only hash candidate in each energy stratum, disjoint original8querypanel. Source/factors were built in earlier full40queryscreen, not completely unseen historical queries; new to current causal-method selection.",
+  "budget": "CPU-only preparation:64scalar selections,64OT fits,32readout rankings <=256discovery rows each. FourCPUthreads;provisional6min based on prior32OT+448forwards172s,noGPU,noevaluationarrays,no new download. Follow-up64pairs*35=2240forwards6-9min with same4target/8method budget."
+}
