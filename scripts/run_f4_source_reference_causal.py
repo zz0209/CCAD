@@ -273,7 +273,7 @@ def norm_match(delta, reference):
     return delta*(float(np.linalg.norm(reference))/norm) if norm>0 else np.zeros_like(delta)
 
 
-def fixed_support_ridge(x, y, weights, ridge_fraction):
+def fixed_support_ridge(x, y, weights, ridge_fraction, *, center=True, norm_bound=None):
     """Conditional fixed-support regression via the existing hook RRR kernel."""
     from ccad.hook_transport import fit_hook_space_transport
     x=np.asarray(x,dtype=np.float64);y=np.asarray(y,dtype=np.float64)
@@ -282,13 +282,53 @@ def fixed_support_ridge(x, y, weights, ridge_fraction):
         raise ValueError('Invalid fixed-support shapes')
     if not all(np.isfinite(v).all() for v in (x,y,weights)) or np.any(weights<0) or weights.sum()<=0:
         raise ValueError('Invalid fixed-support values/weights')
-    weights=weights/weights.sum();xm=weights@x;ym=float(weights@y)
+    weights=weights/weights.sum()
+    xm=weights@x if center else np.zeros(x.shape[1]);ym=float(weights@y) if center else 0.0
     xc=x-xm;yc=y-ym
     fit=fit_hook_space_transport(xc,yc[:,None],weights,rank=1,ridge_fraction=ridge_fraction)
     beta=(fit.target_factors@fit.source_factors.T)[:,0]
-    return beta,dict(ridge=fit.ridge,weighted_error=float(np.sum(weights*(yc-xc@beta)**2)),
+    ridge=fit.ridge;active=False
+    if norm_bound is not None:
+        if not np.isfinite(norm_bound) or norm_bound<0:raise ValueError('Invalid coefficient norm bound')
+        if np.linalg.norm(beta)>norm_bound:
+            active=True
+            if norm_bound==0:beta=np.zeros_like(beta)
+            else:
+                gram=xc.T@(weights[:,None]*xc);cross=xc.T@(weights*yc)
+                values,vectors=np.linalg.eigh(gram);values=np.maximum(values,0);rhs=vectors.T@cross
+                def solution(penalty):return vectors@(rhs/(values+penalty))
+                lo=ridge;hi=max(ridge,float(np.linalg.norm(cross))/norm_bound,np.finfo(float).eps)
+                while np.linalg.norm(solution(hi))>norm_bound:hi*=2
+                for _ in range(64):
+                    mid=(lo+hi)/2
+                    if np.linalg.norm(solution(mid))>norm_bound:lo=mid
+                    else:hi=mid
+                ridge=hi;beta=solution(ridge)
+    return beta,dict(ridge=ridge,base_ridge=fit.ridge,norm_bound=norm_bound,norm_constraint_active=active,
+        coefficient_norm=float(np.linalg.norm(beta)),weighted_error=float(np.sum(weights*(yc-xc@beta)**2)),
         source_variation=float(np.sum(weights*yc**2)),intercept=float(ym-xm@beta),
         effective_rank=fit.effective_rank,status=fit.status)
+
+
+def source_contrast_pairs(positive_rows, negative_scores, source_coordinate, length, max_rows=256):
+    """Source-only, without-replacement opposite-condition row pairing."""
+    positive_rows=np.asarray(positive_rows,dtype=int)
+    scores=np.asarray(negative_scores,dtype=np.float64)
+    coordinate=np.asarray(source_coordinate,dtype=np.float64)
+    if scores.ndim!=1 or coordinate.shape!=scores.shape or max_rows<2 or length<1:
+        raise ValueError('Invalid contrast pairing inputs')
+    count=min(len(positive_rows),max_rows//2)
+    recipients=positive_rows[:count]
+    candidates=np.flatnonzero((scores>0)&~np.isin(np.arange(len(scores)),positive_rows))
+    candidates=candidates[np.lexsort((candidates,-scores[candidates]))[:count]]
+    if len(candidates)!=count:raise ValueError('Insufficient negative discovery rows')
+    unused=set(candidates.tolist());donors=[]
+    for row in recipients:
+        eligible=[d for d in unused if d//length!=row//length]
+        if not eligible:raise ValueError('No different-context discovery donor')
+        donor=max(eligible,key=lambda d:(abs(coordinate[row]-coordinate[d]),-d))
+        donors.append(donor);unused.remove(donor)
+    return recipients,np.asarray(donors,dtype=int)
 
 
 def prepare_fixed_support_refit(cfg, surface, factors, findex, dec, run, paths):
@@ -305,7 +345,7 @@ def prepare_fixed_support_refit(cfg, surface, factors, findex, dec, run, paths):
     def dense(s,rows):
         z=np.zeros((len(rows),cfg['num_latents']))
         np.add.at(z,(np.arange(len(rows))[:,None],indices[s][rows]),acts[s][rows]);return z
-    families={};records=[];source_rows={};started=time.perf_counter()
+    families={};records=[];source_rows={};contrast_cache={};started=time.perf_counter()
     for record in payload['families']:
         s,a,t=(record[k] for k in ('source_seed','source_atom','target_seed'))
         rows=np.asarray(record['discovery_rows'],dtype=int);weights=np.asarray(record['discovery_weights'])
@@ -322,21 +362,43 @@ def prepare_fixed_support_refit(cfg, surface, factors, findex, dec, run, paths):
         if not np.array_equal(b,factors['source_basis'][findex[s,a,t0],:,:1]):
             raise ValueError('Refit requires the same source basis across targets')
         ids=surface[s,a,t]['source_candidate_ids']
-        y=(dense(s,rows)[:,ids]@dec[s][ids]@b)[:,0];x=dense(t,rows)[:,keep]
-        beta,diagnostics=fixed_support_ridge(x,y,weights,spec['ridge_fraction'])
+        pair_info={};contrast=spec.get('source_contrast',False)
+        if contrast:
+            if (s,a) not in contrast_cache:
+                neg_ids=surface[s,a,t]['negative_source_atoms']
+                score=np.zeros(shape[0]);coordinate=np.zeros(shape[0]);direction=(dec[s][ids]@b)[:,0]
+                for begin in range(0,shape[0],4096):
+                    sl=slice(begin,begin+4096);ii=indices[s][sl];aa=acts[s][sl]
+                    positive=np.sum(np.where(ii==a,aa,0),axis=1,dtype=np.float64)
+                    negative=np.sum(np.where(np.isin(ii,neg_ids),aa,0),axis=1,dtype=np.float64)
+                    score[sl]=negative**2/(1+positive**2)
+                    coefficients=np.zeros(cfg['num_latents']);coefficients[ids]=direction
+                    coordinate[sl]=np.sum(aa*coefficients[ii],axis=1,dtype=np.float64)
+                rr,dd=source_contrast_pairs(rows,score,coordinate,cfg['context_length'])
+                ww=weights[:len(rr)];ww=ww/ww.sum()
+                contrast_cache[s,a]=(rr,dd,ww,coordinate[rr]-coordinate[dd],neg_ids)
+            rows,donors,weights,y,neg_ids=contrast_cache[s,a]
+            x=dense(t,rows)[:,keep]-dense(t,donors)[:,keep]
+            pair_info=dict(donor_rows=donors.tolist(),negative_source_atoms=neg_ids,
+                distinct_fit_rows=len(set(rows.tolist()+donors.tolist())),source_scan_rows=shape[0],
+                source_coordinate_differences=y.tolist(),pairing='source maximum coordinate difference without replacement among negative-score top128; different context, not guaranteed different document')
+        else:
+            y=(dense(s,rows)[:,ids]@dec[s][ids]@b)[:,0];x=dense(t,rows)[:,keep]
         full=(dec[t]@factors['query_target'][findex[s,a,t],:,:1].astype(np.float64))[:,0]
-        wc=weights/weights.sum();xc=x-wc@x;yc=y-wc@y
+        bound=float(np.linalg.norm(full[keep])) if spec.get('original_coefficient_norm_budget') else None
+        beta,diagnostics=fixed_support_ridge(x,y,weights,spec['ridge_fraction'],center=not contrast,norm_bound=bound)
+        wc=weights/weights.sum();xc=x-wc@x if not contrast else x;yc=y-wc@y if not contrast else y
         diagnostics['truncated_weighted_error']=float(np.sum(wc*(yc-xc@full[keep])**2))
         families[s,a,t]=(keep,beta)
         records.append(dict(source_seed=s,source_atom=a,target_seed=t,support=keep.tolist(),
-            coefficients=beta.tolist(),discovery_rows=rows.tolist(),discovery_weights=weights.tolist(),**diagnostics))
+            coefficients=beta.tolist(),discovery_rows=rows.tolist(),discovery_weights=weights.tolist(),**pair_info,**diagnostics))
     if len(families)!=32:raise ValueError('Expected32 fixed-support maps')
     write(run/'fixed_support_refit.json',dict(fit_split='discovery',calibration_used_for_fit=False,
         support_reselected=False,rank=1,ridge_fraction=spec['ridge_fraction'],wall_seconds=time.perf_counter()-started,
         discovery_manifest_path=str(manifest_path),discovery_manifest_sha256=sha256(manifest_path),
         saved_support_path=str(paths['saved_readout']),saved_support_sha256=sha256(paths['saved_readout']),
-        operation='Conditional-centered code-space ridge on fixed support; intercept cancels in donor difference. Not native deletion or LASSO.',
-        regularizer='fraction*weighted centered design energy/min(n,16); same fraction rule, not identical full-hook penalty geometry',fits=records))
+        operation='Source-only opposite-condition difference ridge, no intercept' if spec.get('source_contrast') else 'Conditional-centered code-space ridge on fixed support; intercept cancels in donor difference. Not native deletion or LASSO.',
+        regularizer='fraction*weighted fitted design energy/min(n,16); same fraction rule, not identical full-hook penalty geometry',fits=records))
     print(json.dumps({'fixed_support_refit_maps':len(families),'fit_split':'discovery'}),flush=True)
     return families
 
