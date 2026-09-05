@@ -1,0 +1,45 @@
+{
+  "run_id": "F4_fit_scope_confirmation_figures_v1_20260905",
+  "audit_opened": false,
+  "destination": "Provisional internal manuscript figures of fixed fit-scope confirmation; final venue sizing/export rules pending verification",
+  "width_pixels": 2160,
+  "height_pixels": 1800,
+  "dpi": 300,
+  "budget": "Light CPU saved-JSON/CSV replay and Pillow rendering only, no model/cache access/GPU; expected under60s.",
+  "panels": [
+    {
+      "id": "original",
+      "label": "Original queries",
+      "tier": "frozen new-document confirmation",
+      "summary_dir": "runs/F4_fit_scope_confirmation_original_summary_v1_20260905",
+      "raw_sha256": "a1665d92c7a1ca935586cc231c0b23778f2e9d068acef52262ea7bd341ff5a45"
+    },
+    {
+      "id": "expanded",
+      "label": "Expanded queries",
+      "tier": "frozen new-document confirmation",
+      "summary_dir": "runs/F4_fit_scope_confirmation_expanded_summary_v1_20260905",
+      "raw_sha256": "128e2b7c173fd5dc9412b04dd42b06251edaac521759138bd8bcfdf5fca9507f"
+    }
+  ],
+  "methods": [
+    "source_adaptive_top16",
+    "target",
+    "global_rows",
+    "raw",
+    "readout_top16"
+  ],
+  "scope_methods": [
+    "target",
+    "global_rows",
+    "raw",
+    "readout_top16"
+  ],
+  "skip_refit_development": true,
+  "confirmation_title": "Fixed correspondence maps: new-document confirmation",
+  "confirmation_footer": [
+    "Both fixed query panels share 115 fresh documents, five SAE seeds and one hook.",
+    "Points are document-then-target medians, not independent replicates; bars are descriptive, not confidence intervals.",
+    "Unsupported source inputs: original 7/64, expanded 1/64; missing groups remain explicit."
+  ]
+}

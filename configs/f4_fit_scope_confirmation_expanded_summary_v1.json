@@ -1,0 +1,24 @@
+{
+  "analysis_id": "F4_fit_scope_confirmation_expanded_summary_v1_20260905",
+  "evidence_level": "fresh_document_confirmation_fixed_fit_scope",
+  "rule": {
+    "require_supported_pair": true,
+    "maximum_largest_source_atom_energy_share": 0.5,
+    "minimum_natural_source_hook_fraction": 0.1
+  },
+  "run_names": [
+    "F4_fit_scope_confirmation_expanded_v1_20260905"
+  ],
+  "endpoints": [
+    "next_state",
+    "centered_logits"
+  ],
+  "derived_policy": {
+    "name": "source_adaptive_top16",
+    "selected_method": "target",
+    "rejected_method": "readout_top16"
+  },
+  "aggregation": "Median inputs within query/target/condition then median across four dependent targets; panels share115freshdocuments. All, selected and fallback separate.",
+  "selection_history": "Exact old source gate and full/top16 branch frozen in corpus config before sampling; no parameters selected on this batch.",
+  "limitations": "Fresh calibration-hash-bucket documents excluded by document ID and exact text SHA256 from SAE training, all original paired splits and all four prior F4 corpus batches. Both fixed original and expanded panels share these new documents and five existing seeds/hook. No new fit, threshold, query or winner-based routing selection; original audit remains sealed."
+}

@@ -1,0 +1,183 @@
+{
+  "schema_version": "0.1.0",
+  "run_id": "F4_fit_scope_confirmation_corpus_v1_20260905",
+  "run_parent": "F4",
+  "purpose": "Fresh-document confirmation of fixed conditional/global-row/raw/top16 correspondence maps on both frozen query panels",
+  "milestone": "M4",
+  "evidence_level": "fresh_document_confirmation_asset_only",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "dataset_id": "HuggingFaceFW/fineweb",
+  "dataset_config": "sample-10BT",
+  "dataset_revision_name": "v1.4.0",
+  "dataset_commit": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "dataset_license": "ODC-By-1.0",
+  "expected_shard_count": 15,
+  "shards_to_sample": 5,
+  "source_catalog_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/source_catalog.json",
+  "excluded_document_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/sampled_documents.jsonl",
+  "additional_exclusions": [
+    {
+      "path": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+      "sha256": "33421f067172f0322551346c1985e3799cf8bb90d9950a55f4cf1b0de38fe201"
+    },
+    {
+      "path": "runs/F4_development_corpus_v1_20260904/artifacts/documents.jsonl",
+      "sha256": "7958b0057368b4936acdee77fbd43f6f5e126770164b3d5506ff95c2b63fa706"
+    },
+    {
+      "path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "fbb1da0a9a0fa86ba20cec2eb7a2c0afa7fa93695c7909352c0a7b1e1a873a85"
+    },
+    {
+      "path": "runs/F4_adaptive_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "b5107db3a5a964759876f9edb58f764e6245ee136886154ba1c4cab49a47c1a2"
+    },
+    {
+      "path": "runs/F4_query_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "2269629a04e6033e70236a67f6840df82e56596e6874bc4e5c9deacfe85ec8d5"
+    }
+  ],
+  "selection_salt": "ccad-f4-fit-scope-confirmation-20260905-v1",
+  "split_salt": "ccad-r008-paired-split-v1",
+  "range_block_bytes": 1048576,
+  "context_length": 128,
+  "max_tokens_per_document": 2048,
+  "token_dtype": "uint16-little-endian",
+  "target_sequences": {
+    "calibration": 512
+  },
+  "minimum_documents": {
+    "calibration": 40
+  },
+  "tokenizer_id": "EleutherAI/pythia-160m-deduped",
+  "tokenizer_revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "tokenizer_local_dir": "D:/CCAD_Storage/models/pythia-160m-deduped/582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "data_overlay_dir": "D:/CCAD_Storage/environments/r008_data_overlay",
+  "dependency_overlay_dir": "D:/CCAD_Storage/environments/r005a_sparsify_overlay",
+  "mean_constants_source_split": "unchanged original independent mean; no estimation in this run",
+  "threshold_source_split": "Source applicability chosen on prior development and frozen before this corpus; no new-data tuning",
+  "statistics_unit": "document",
+  "resource_lease": "cpu-heavy resource_manager.run; bounded ~40-100MB range reads and small local tokens, no disk monopoly",
+  "scope_limit": "Fresh calibration-hash-bucket documents excluded by document ID and exact text SHA256 from SAE training, all original paired splits and all four prior F4 corpus batches. Both fixed original and expanded panels share these new documents and five existing seeds/hook. No new fit, threshold, query or winner-based routing selection; original audit remains sealed.",
+  "budget": "Corpus range reads <=5min/~40-100MB; 65536tokens. Shared128 asset forwards expected<=1min/~500MB output; two causal panels1216forwards each,2432total expected<=8min from previous896/168.187928s; 4CPUthreads,<1.5GiBallocatedVRAM. No payment/training/whole-disk monopoly.",
+  "frozen_scope": {
+    "rule_config": "configs/f4_source_applicability_dev_v1.json",
+    "rule_sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74",
+    "ranks": [
+      1
+    ],
+    "maximum_source_hook_fraction": 0.1,
+    "documents_per_condition": 4,
+    "targets_per_query": 4,
+    "local_content_positions": 4,
+    "endpoints": [
+      "next_state",
+      "centered_logits"
+    ],
+    "methods": [
+      "target",
+      "global_rows",
+      "raw",
+      "readout_top16"
+    ],
+    "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+    "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+    "no_refit": true,
+    "decision_scope": "Report all/source-selected/fallback groups, continuous errors, below-zero counts and failures. Conditional/global are alternatives, no claim that one must win every query. Same sampled row count does not isolate weights from fitting distribution/absolute trace-scaled regularization. Global has query-specific source basis. No new endpoint selection or routing.",
+    "adaptive_policy": {
+      "path": "configs/f4_source_adaptive_readout_dev_v1.json",
+      "sha256": "e3047e5d3719529ff1d487d7553764d2bbe58b6713a4759cc2506636fed76d67"
+    },
+    "derived_policy": "Unchanged source_adaptive_top16: selected uses target, rejected uses readout_top16; no additional forwards.",
+    "causal_runner_sha256": "306236ae72c7f207d8dafab2ef2367099069b22e8437dd9bc8cf2cdd9270995a",
+    "panels": [
+      {
+        "label": "original",
+        "query_hash_offset": 0,
+        "base_causal_config": "configs/f4_global_rows_original_dev_v1.json",
+        "fixed_queries": [
+          [
+            5,
+            710
+          ],
+          [
+            3,
+            1230
+          ],
+          [
+            4,
+            693
+          ],
+          [
+            5,
+            369
+          ],
+          [
+            5,
+            1352
+          ],
+          [
+            5,
+            336
+          ],
+          [
+            2,
+            2176
+          ],
+          [
+            4,
+            801
+          ]
+        ],
+        "saved_readout": {
+          "path": "runs/F4_readout_structure_dev_v1_20260905/readout_ablation.json",
+          "sha256": "9e3cb3eb21d0f6bffea056dfa4fa79a7b7ea960dc134e8cf9a82e626d9f6d1b4"
+        }
+      },
+      {
+        "label": "expanded",
+        "query_hash_offset": 1,
+        "base_causal_config": "configs/f4_global_rows_expanded_dev_v1.json",
+        "fixed_queries": [
+          [
+            3,
+            1144
+          ],
+          [
+            1,
+            2641
+          ],
+          [
+            3,
+            1093
+          ],
+          [
+            1,
+            2298
+          ],
+          [
+            1,
+            615
+          ],
+          [
+            2,
+            2645
+          ],
+          [
+            1,
+            1441
+          ],
+          [
+            5,
+            2194
+          ]
+        ],
+        "saved_readout": {
+          "path": "runs/F4_query_expansion_fits_v1_20260905/readout_ablation.json",
+          "sha256": "c69cbac174109a125f71830e4751311192b8cb824f373c5584c48ce61308e865"
+        }
+      }
+    ]
+  }
+}

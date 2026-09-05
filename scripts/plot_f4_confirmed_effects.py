@@ -109,7 +109,8 @@ def verify_panel(spec, inputs):
 LABELS = {'source_adaptive_top16': 'Adaptive', 'target': 'Full', 'readout_top16': 'Top16',
     'raw': 'Raw', 'single_atom_dynamic': 'Atom\ndynamic', 'single_atom_level': 'Atom\nlevel',
     'uot_default': 'OT\nfixed', 'uot_discovery_tuned': 'OT\ntuned', 'wrong_query_matched_energy': 'Wrong\nquery',
-    'conditional': 'Conditional\nrefit', 'contrast': 'Contrast\nrefit', 'bounded': 'Bounded\nrefit'}
+    'conditional': 'Conditional\nrefit', 'contrast': 'Contrast\nrefit', 'bounded': 'Bounded\nrefit',
+    'global_rows': 'Global\nrows'}
 
 
 def render(run, cfg, panels, name, title, cells, footer, row_specific_limits=False):
@@ -190,7 +191,7 @@ def main():
     inputs=[];result={};error=None
     try:
         panels={s['id']:verify_panel(s,inputs) for s in cfg['panels']}
-        cells=[];methods=list(LABELS)[:9]
+        cells=[];methods=cfg.get('methods',list(LABELS)[:9])
         for key in ('original','expanded'):
             p=panels[key];n=p['counts']
             for ep,title in [('centered_logits','Logits'),('next_state','Next state')]:
@@ -199,7 +200,7 @@ def main():
         foot=['Two fixed-query new-document confirmations; both panels use the same five SAE seeds and hook.',
             'Points are document-then-target medians, not independent replicates; bars are descriptive, not confidence intervals.',
             'Original panel: 3 unsupported source inputs (12 target rows per method missing); expanded panel: none.']
-        plotted,exports=render(run,cfg,panels,'confirmed_effects','Frozen source-adaptive correspondence: confirmed effects',cells,foot)
+        plotted,exports=render(run,cfg,panels,'confirmed_effects',cfg.get('confirmation_title','Frozen source-adaptive correspondence: confirmed effects'),cells,cfg.get('confirmation_footer',foot))
         allpoints=plotted;outputs=[exports];cells=[]
         for key in ('original','expanded'):
             p=panels[key];n=p['counts']
@@ -208,24 +209,25 @@ def main():
                 groups=len({(r['source_seed'],r['source_atom'],r['condition']) for r in rows})
                 ni=n['selected_inputs'] if subset=='selected' else 64-n['selected_inputs']
                 cells.append(dict(title=f"{p['spec']['label']} | {title}",subtitle=f"Next-state endpoint; {ni}/64 input pairs; {groups} query-condition groups",rows=rows,
-                    methods=['target','readout_top16','raw','single_atom_dynamic','uot_discovery_tuned'],highlight='target' if subset=='selected' else 'readout_top16'))
+                    methods=cfg.get('scope_methods',['target','readout_top16','raw','single_atom_dynamic','uot_discovery_tuned']),highlight='target' if subset=='selected' else 'readout_top16'))
         plotted,exports=render(run,cfg,panels,'source_scope','Separate the full-relation range from the sparse fallback',cells,
             ['Same frozen source rule; each method is compared on the same within-panel subset.',
              'A query-condition group may occur in both subsets. No independent-seed confidence intervals.',
              'All group points shown. Logit counterpart and complete denominators are available in the source tables.'])
         allpoints+=plotted;outputs.append(exports);cells=[]
-        for key in ('original','expanded'):
-            for ep,title in [('centered_logits','Logits'),('next_state','Next state')]:
-                rows=[r for r in panels[key]['rows'] if r['subset']=='all' and r['endpoint']==ep and r['method'] in ('target','readout_top16')]
-                for extra,method in [(key+'_refit','conditional')]+([('contrast','contrast'),('bounded','bounded')] if key=='original' else []):
-                    rows += [dict(r,method=method) for r in panels[extra]['rows'] if r['subset']=='all' and r['endpoint']==ep]
-                cells.append(dict(title=f"{panels[key]['spec']['label']} | {title}",subtitle='Development comparison; same 16 groups; log limits differ by row',rows=rows,
-                    methods=['target','readout_top16','conditional','contrast','bounded'],highlight='conditional'))
-        plotted,exports=render(run,cfg,panels,'refit_development','Development boundary: truncation is not optimal sparse fitting',cells,
-            ['Refits were developed after document exposure; these are not new independent confirmations.',
-             'Original panel retains severe unbounded failures. Contrast/bounded fits were not run on the expanded panel.',
-             'Each row has its own explicitly labeled log10 limits. Points and medians are descriptive, not confidence intervals.'],True)
-        allpoints+=plotted;outputs.append(exports)
+        if not cfg.get('skip_refit_development',False):
+            for key in ('original','expanded'):
+                for ep,title in [('centered_logits','Logits'),('next_state','Next state')]:
+                    rows=[r for r in panels[key]['rows'] if r['subset']=='all' and r['endpoint']==ep and r['method'] in ('target','readout_top16')]
+                    for extra,method in [(key+'_refit','conditional')]+([('contrast','contrast'),('bounded','bounded')] if key=='original' else []):
+                        rows += [dict(r,method=method) for r in panels[extra]['rows'] if r['subset']=='all' and r['endpoint']==ep]
+                    cells.append(dict(title=f"{panels[key]['spec']['label']} | {title}",subtitle='Development comparison; same 16 groups; log limits differ by row',rows=rows,
+                        methods=['target','readout_top16','conditional','contrast','bounded'],highlight='conditional'))
+            plotted,exports=render(run,cfg,panels,'refit_development','Development boundary: truncation is not optimal sparse fitting',cells,
+                ['Refits were developed after document exposure; these are not new independent confirmations.',
+                 'Original panel retains severe unbounded failures. Contrast/bounded fits were not run on the expanded panel.',
+                 'Each row has its own explicitly labeled log10 limits. Points and medians are descriptive, not confidence intervals.'],True)
+            allpoints+=plotted;outputs.append(exports)
         rows=[r for p in panels.values() for r in p['rows']]
         (run/'metrics.raw.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in rows))
         for name,data in [('query_source_data',rows),('plotted_points',allpoints),('method_summary',[r for p in panels.values() for r in p['stats']])]:
