@@ -3271,3 +3271,29 @@ runs/F4_agreement_source_adjoint_box_v1_20260905/source_comparison.json:8ce0f073
 runs/F4_agreement_source_adjoint_box_v1_20260905/SOURCE_COMPARISON.csv:11e2638311af18b04a8de0f60c7195a4743661f51e56c2fcdfdcb8a8b4c6dfef
 runs/F4_agreement_source_adjoint_box_v1_20260905/source_native_development.png:5c2973eb81b9349ce3162d3b8a4621555de6c3b9e5ba6029e0a625256abe665e
 runs/F4_agreement_source_adjoint_box_v1_20260905/figure_provenance.json:7473954b7b3b19db3220744ef1708ee60f020a34c19ef193ccc267089ea1e003
+
+## 2026-09-05 frozen native-teacher correspondence — launch
+
+F4_native_teacher_relations_fit_v1_20260905 launched frombc8691b;original512global discovery states/256differences, frozen source-native box ids/g. Actual native teacher vector and source weighted-decoder fullnumerical span<=64,tol1e-10;FCC/raw samedata,basis,ridge. Native64/single/random boxvectorfit. CPU180s then8development-input17method2axis panel+66sourceanchors=100forwards,180s numeric90s loadingexpected. No targettaskdata usedforfit,nosourcegrouprefit,noreserved/audit. Added explicit preserve_basis to existing dualridge to avoid numerical-rank prefix dropping valid later coordinates;default oldbehavior unchanged. Rank-deficiency reports effective rank but keeps fullcoordinate predictions. Fixturechecks later active coordinate andvectorHadamard RHS;9agreement testsPASS. Initial test_hook_transport*.py matched0tests(no passclaim); actual test filenames to be resolved beforecommit. Environment3129unchanged,CPU/GPUfreepreflight.
+
+Decoded-sum fit PASS14.1544133sCPU,rank64alltargets;causal PASS100forwards7.5117002swall. Source448anchors,720margins,272predictions/scales replay. Native closezero,FCCprimary errors1.068034/1.027341/.834164/1.330172,raw1.013739. Adhoc retained-bank analysis64devinputs subjecthook normalizedsquared error raw.973290848,FCC1.077782575/1.073728741/1.053920213/1.062803486;source native64meanactive discovery2.94921875vs task17.828125. These support examining representational pooling and data distribution,not a proof that no FCC exists. Actual11hooktransport testsPASS withPYTHONPATH=src (initialmissingPYTHONPATHimporterror preserved in console),9agreement testsPASS.
+
+Bounded follow-on F4_native_teacher_codes_fit_v1_20260905 changes onlyFCC predictorinput fromsum decoded contributions768 to3072sparsecodes,source frozen/native/raw/data/basis/ridge identical. CPU180s;compiled vector predictions compared before allocating targetforwards. Extra inputdimension/parameters disclosed,not equalcapacityraw victory ornew algorithm. No new task data or reserved access.
+
+
+### Completion and scoped next experiment
+
+Code-input fit PASS/contract PASS1.616778600sCPU;64devsubjecthook errors target1/3/4/5=1.000988727/1.014442428/.984371000/.991138869,raw.973290848unchanged. AllnonFCC compiled arraysmaxdiff0;no additionaltargetforwards because it remains nearzero prediction. Doesnot ruleout code relations with appropriate paired-data coverage. Currentunit100modelforwards2.556202000numeric7.511700200wall,cumulative29135/6077.3319409;CPUfits14.154413300+1.616778600separate;assets768/103.068996unchanged. Sourcebox group unchanged,all448sourceanchors match oldsource run. Native Teacher decoder spanrank64residual1.666806458e-15. 720margins272prediction/scales replayed. 9agreement and11actualhooktransport testsPASS;initial0-test glob and missingPYTHONPATH diagnostic corrected withoutenvchanges.
+
+Next authorized bounded scientificcard: independent task-near paired pool using source-defined programmatic grammar templates,document-level hash10/40/20/30,discoveryonly128templates*4numberconditions=512inputs/256subjectpairs. Freeze vocabulary/selection beforetargetcodes;exclude original task/reserved lexicalitems/combinations,keeporiginalreserveduntouched. Target supplies sameinputcodes butno targetbehaviorlabels/gradients/interventions for selectionorfit. This is task-conditioned source-defined structure,not whollyunsupervised ortask-agnostic. Sourceids/gfrozen,512fitdata sharedFCCdecoded/code/raw/native,initial8devcausalpanel thenexpandonlymeaningfulrange. Hook/code collection<=66modelcalls atbatch8,180snumeric90sloadingexpected;actualconfig/inputmanifest stilltofreeze beforelaunch. No newdata generatedthisunit. Preserve globalnegative andoldpositive naturaltext/projectionroutes;automationnotpaused,no jobsleft. Codebasis dimensionandfullrank64 vsoldrank1explicitly disclosed. Standardvectorridge/box/SVDnotnovelalgorithm;registryupdatedlocaluseboundariesonly.
+
+Local ignored artifact identities:
+EXPERIMENT_PLAN.md:b18d70aa13a4ae5591ff8545682b13b854c93276ec149e2a63caa5f5660727a0
+EXPERIMENT_TRACKER.md:b51f1e6ec36d7ef69bdfdb72ba95c2b09764bca44d7f53fac1bf49d3664fcff1
+REFERENCE_REGISTRY.md:b521babc259cf58c5467c8603288841e32a01a7206ea77ff7c8c47ef39368c2c
+runs/F4_native_teacher_relations_causal_v1_20260905/RESULTS_FOR_REVIEW.md:ad884a6af81b8533854c31e4178facd3eb69337f3b36663b328f2d4355dc1a54
+runs/F4_native_teacher_relations_causal_v1_20260905/relation_summary.json:3e945e6e569a7db95d991f4ab556fa863643d81dc276a8581d7f73d073ce488e
+runs/F4_native_teacher_relations_fit_v1_20260905/teacher_basis.json:888f86e76a0083a12615aa3a619de350c4ee866e956eb643d4fa9c7f4cb45254
+runs/F4_native_teacher_codes_fit_v1_20260905/NUMERICAL_COMPARISON.md:ce706de632f0c72f40ad29f9ee1735f84aac0bb8da54002532fb1e9957533e52
+
+18:44UTC final resource read: CCAD leases released; CPU/GPU now held by EndoSAE_EndoFM/kumc-dictionary-cv. No interference or new CCAD queue. Next unit can prepare synthetic paired rules/code without heavy lease, recheck before collection. Tracker resource-snapshot hash updated: b82277c48a8f468bbc8b67a92ddaed774f04f32360ab8594271d61ae19b4ce40

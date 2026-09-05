@@ -164,6 +164,9 @@ def main():
             for role in ('compiled_deltas','compiled_methods','source_predictions'):
                 paths[role]=ROOT/cfg[role+'_path']
                 if sha256(paths[role])!=cfg[role+'_sha256']:raise ValueError(f'{role} identity mismatch')
+        if cfg.get('source_native',{}).get('frozen_path'):
+            paths['source_native_frozen']=ROOT/cfg['source_native']['frozen_path']
+            if sha256(paths['source_native_frozen'])!=cfg['source_native']['frozen_sha256']:raise ValueError('Frozen source group changed')
         if sha256(paths['environment_spec'])!='3129a184d787ae9be38ac6d8d97dbf5087e5c838c112473fe45f3862064bb60f':raise ValueError('Environment spec changed')
         for sae in cfg['saes']:
             paths[f'sae_{sae["seed"]}']=ROOT/sae['path']/'sae.safetensors'
@@ -300,7 +303,11 @@ def main():
                 witness=dict(observed_derivative=observed,predicted_derivative=predicted,epsilon=float(eps),passed=bool(np.isclose(observed,predicted,rtol=.03,atol=.001)),gradient_batches=len(batches),source_only=True)
                 write(run/'gradient_witness.json',witness)
                 if not witness['passed']:raise ValueError('Source gradient finite-difference mismatch')
-            native_ids,native_g,native_info=source_native_group(z[s],dec[s],prompts,task_b,cfg['source_native'],gradients)
+            if 'source_native_frozen' in paths:
+                frozen=np.load(paths['source_native_frozen'],allow_pickle=False);native_ids=frozen['ids'];native_g=frozen['g']
+                if not np.allclose(frozen['basis'],task_b,rtol=0,atol=1e-12):raise ValueError('Frozen source task basis changed')
+                native_info=dict(frozen=True,source_native_sha256=sha256(paths['source_native_frozen']),refitted=False)
+            else:native_ids,native_g,native_info=source_native_group(z[s],dec[s],prompts,task_b,cfg['source_native'],gradients)
             native_info.update(fit_seconds=time.perf_counter()-fit_start,support=native_ids.tolist(),coefficients=native_g.tolist())
             if native_info['fit_seconds']>cfg['source_native']['fit_budget_seconds']:raise TimeoutError('Source native fit budget')
             np.savez_compressed(run/'source_native_factors.npz',ids=native_ids,g=native_g,basis=task_b)
@@ -311,12 +318,18 @@ def main():
             if not task_mode:raise ValueError('Compiled operations require the frozen task source reference')
             cm=json.loads(paths['compiled_methods'].read_text());bank=np.load(paths['compiled_deltas'],allow_pickle=False)
             if cm['sample_ids']!=[p['id'] for p in prompts] or not np.allclose(cm['basis'],task_b,rtol=0,atol=1e-12):raise ValueError('Compiled input order/source basis changed')
+            native_reference=cfg.get('compiled_reference_method')=='source_native_group'
+            if native_reference:
+                if cm.get('source_native_sha256')!=sha256(paths['source_native_frozen']):raise ValueError('Compiled native teacher identity mismatch')
+                for axis in ('subject','attractor'):
+                    donor=swap_indices(prompts,axis);reference=((z[cfg['source_seed']][:,native_ids]-z[cfg['source_seed']][donor][:,native_ids])*native_g)@dec[cfg['source_seed']][native_ids]
+                    np.testing.assert_allclose(bank[f'source_native_reference_{axis}'],reference,rtol=1e-10,atol=1e-12)
             panel=np.array([i for i,p in enumerate(prompts) if p['template'] in cfg['panel_templates']])
             if len(panel)!=cfg['panel_size']:raise ValueError('Compiled panel size mismatch')
             compiled={r['key']:r for r in cm['methods']}
             if len(compiled)!=cfg['compiled_method_count']:raise ValueError('Compiled method count mismatch')
             source_rows=[json.loads(line) for line in paths['source_predictions'].read_text().splitlines() if line]
-            source_predictions={(r['id'],r['axis']):r['margin_loss'] for r in source_rows if r['method']=='source_task_projection'}
+            source_predictions={(r['id'],r['axis']):r['margin_loss'] for r in source_rows if r['method']==cfg.get('compiled_reference_method','source_task_projection')}
             predictions=[dict(method=method,target_seed=compiled[method]['target_seed'],sample_id=prompts[i]['id'],axis=axis,
                               predicted_margin_loss=source_predictions[prompts[i]['id'],axis])
                          for method in compiled for axis in ('subject','attractor') for i in panel]
@@ -335,7 +348,7 @@ def main():
                     support,b=families[s,a];local=(z[s][:,support]-z[s][donor][:,support])@dec[s][support]
                     natural=(local@b)[:,None]*b[None,:]
                 if method in compiled:
-                    ref=((task_y-task_y[donor])@task_b)[:,None]*task_b
+                    ref=np.asarray(bank[f'source_native_reference_{axis}']) if native_reference else ((task_y-task_y[donor])@task_b)[:,None]*task_b
                     _,scale=capped(ref,hidden,cfg['maximum_source_hook_fraction'])
                     delta=natural*scale[:,None];indices=panel
                     work_batches=[panel[i:i+batchsize] for i in range(0,len(panel),batchsize)]
@@ -347,7 +360,7 @@ def main():
                 for i in indices:
                     p=prompts[i]
                     rows.append(dict(run_id=cfg['run_id'],method=method,source_seed=s,source_atom=a,axis=axis,**p,
-                        **(dict(target_seed=compiled[method]['target_seed'],operation=compiled[method]['operation'],scale_rule='common_source_projection_scale') if method in compiled else {}),
+                        **(dict(target_seed=compiled[method]['target_seed'],operation=compiled[method]['operation'],scale_rule='common_source_native_scale' if native_reference else 'common_source_projection_scale') if method in compiled else {}),
                         donor_id=prompts[donor[i]]['id'],dose_scale=float(scale[i]),hook_fraction=float(np.linalg.norm(delta[i])/np.linalg.norm(hidden[i])),
                         natural_norm=float(np.linalg.norm(natural[i])),logprobs=lp[i].tolist(),margins=changed[i].tolist(),
                         margin_loss=(baseline[i]-changed[i]).tolist()))

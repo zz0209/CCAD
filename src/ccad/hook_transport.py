@@ -134,6 +134,7 @@ def fit_basis_constrained_transport(
     *,
     ridge_fraction: float = 1e-3,
     rank_relative_tolerance: float = 1e-10,
+    preserve_basis: bool = False,
 ) -> HookTransport:
     """Fit ridge transport into a frozen ordered source-query basis.
 
@@ -141,6 +142,10 @@ def fit_basis_constrained_transport(
     basis is frozen first, then one dual solve learns all ordered coordinates.
     Prefixes therefore implement the pre-registered nested rank family without
     refitting or changing the source query after calibration is observed.
+
+    preserve_basis retains every fitted coordinate even if their predictions
+    are linearly dependent. Numerical rank then remains a diagnostic; it does
+    not identify which ordered source columns are safe to discard.
     """
 
     target = _matrix(target_process, "target_process")
@@ -174,8 +179,8 @@ def fit_basis_constrained_transport(
     numerical_rank = int(np.sum(singular > rank_relative_tolerance * singular[0])) if singular.size and singular[0] > 0 else 0
     requested = basis.shape[1]
     return HookTransport(
-        target_factors=coefficient[:, :numerical_rank],
-        source_factors=basis[:, :numerical_rank],
+        target_factors=coefficient if preserve_basis else coefficient[:, :numerical_rank],
+        source_factors=basis if preserve_basis else basis[:, :numerical_rank],
         full_singular_values=singular,
         requested_rank=requested,
         effective_rank=min(requested, numerical_rank),

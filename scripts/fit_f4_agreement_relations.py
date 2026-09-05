@@ -18,7 +18,7 @@ from ccad.artifacts import sha256,validate_run_directory
 from ccad.causal_metric_probe import select_document_balanced_states
 from ccad.hook_transport import fit_basis_constrained_transport
 from run_r011s1_raw_hook_asset import entry,aggregate,write_json as write
-from run_f4_agreement_source import swap_indices
+from run_f4_agreement_source import swap_indices,box_ridge
 
 
 def native_fit(dz,dec,c,b,ids,ridge_fraction):
@@ -30,6 +30,14 @@ def native_fit(dz,dec,c,b,ids,ridge_fraction):
     unconstrained=np.linalg.solve(gram+max(ridge,1e-12)*np.eye(len(ids)),rhs)
     g=np.clip(unconstrained,-1.,1.)
     return g,dict(ridge=ridge,clipped=int(np.sum(g!=unconstrained)),max_unclipped=float(np.max(np.abs(unconstrained))))
+
+
+def native_vector_fit(x,d,teacher,ids,ridge_fraction):
+    a=x[:,ids];decoder=d[ids];n=len(x)
+    gram=(a.T@a/n)*(decoder@decoder.T);rhs=np.sum((a.T@teacher/n)*decoder,axis=1)
+    ridge=ridge_fraction*float(np.trace(gram))/len(ids)
+    g,info=box_ridge(gram+max(ridge,1e-12)*np.eye(len(ids)),rhs)
+    return g,dict(ridge=ridge,**info)
 
 
 def neighborhood_pairs(candidate_codes,task_codes,donors,count):
@@ -116,25 +124,37 @@ def main():
             whole_bulk_file_hashes_recomputed=False,identity='Parent manifests bound; decoder full hashes verified; actually read selected rows retained in NPZ with run hash',
             selected_data_sha256=sha256(run/'selected_discovery_data.npz'),mean_materialized=False,calibration_materialized=False,audit_materialized=False))
         dz={s:z[::2]-z[1::2] for s,z in codes.items()};dh=h[::2]-h[1::2]
-        c=dz[cfg['source_seed']]@(decoders[cfg['source_seed']]@b);weights=np.full(len(c),1/len(c));factors={'basis':b};obs=[]
-        rawfit=fit_basis_constrained_transport(dh,c[:,None],b[:,None],weights,ridge_fraction=cfg['ridge_fraction'])
-        factors['raw_w']=rawfit.target_factors[:,0]
+        native_teacher=cfg.get('teacher_mode')=='source_native'
+        c=dz[cfg['source_seed']]@(decoders[cfg['source_seed']]@b);basis=b[:,None];teacher=c[:,None]*b
+        frozen=None
+        if native_teacher:
+            frozen=np.load(p['source_native'],allow_pickle=False);sid=frozen['ids'];sg=frozen['g'];sd=decoders[cfg['source_seed']][sid]
+            teacher=(dz[cfg['source_seed']][:,sid]*sg)@sd
+            _,singular,vt=np.linalg.svd(sg[:,None]*sd,full_matrices=False)
+            rank=int(np.sum(singular>cfg['basis_relative_tolerance']*singular[0]));basis=vt[:rank].T;c=teacher@basis
+            write(run/'teacher_basis.json',dict(rank=rank,singular_values=singular.tolist(),span_relative_error=float(np.linalg.norm(teacher-c@basis.T)/np.linalg.norm(teacher)),rule='Full numerical source weighted-decoder span, not variance truncation',source_native_sha256=sha256(p['source_native'])))
+        else:c=c[:,None]
+        weights=np.full(len(c),1/len(c));factors={'basis':basis if native_teacher else b};obs=[]
+        rawfit=fit_basis_constrained_transport(dh,c,basis,weights,ridge_fraction=cfg['ridge_fraction'],preserve_basis=native_teacher)
+        factors['raw_w']=rawfit.target_factors if native_teacher else rawfit.target_factors[:,0]
         for target in cfg['target_seeds']:
             if time.perf_counter()-started>cfg['budget_seconds']:raise TimeoutError('Fit budget exceeded')
-            d=decoders[target];x=dz[target];fit=fit_basis_constrained_transport(x@d,c[:,None],b[:,None],weights,ridge_fraction=cfg['ridge_fraction'])
-            if fit.status!='OK':raise ValueError(f'No target transport rank: {target}')
-            factors[f'fcc_w_{target}']=fit.target_factors[:,0]
+            d=decoders[target];x=dz[target];regressor=x if cfg.get('fcc_input')=='codes' else x@d
+            fit=fit_basis_constrained_transport(regressor,c,basis,weights,ridge_fraction=cfg['ridge_fraction'],preserve_basis=native_teacher)
+            if fit.status!='OK' and not (native_teacher and fit.status=='RANK_DEFICIENT'):raise ValueError(f'No target transport rank: {target}')
+            factors[f'fcc_w_{target}']=fit.target_factors if native_teacher else fit.target_factors[:,0]
             diag=np.mean(x*x,axis=0)*np.sum(d*d,axis=1)
-            rhs=(x.T@c/len(c))*(d@b);score=rhs*rhs/np.maximum(diag,1e-30)
+            rhs=np.sum((x.T@teacher/len(c))*d,axis=1) if native_teacher else (x.T@c[:,0]/len(c))*(d@b)
+            score=rhs*rhs/np.maximum(diag,1e-30)
             ranking=np.lexsort((np.arange(len(score)),-score));active=ranking[diag[ranking]>1e-12]
             chosen=active[:cfg['support_size']];random=np.random.default_rng(cfg['random_seed']+target).choice(active,len(chosen),replace=False)
             for label,ids in [('native',chosen),('single',active[:1]),('random',random)]:
-                g,detail=native_fit(x,d,c,b,ids,cfg['ridge_fraction'])
+                g,detail=native_vector_fit(x,d,teacher,ids,cfg['ridge_fraction']) if native_teacher else native_fit(x,d,c[:,0],b,ids,cfg['ridge_fraction'])
                 factors[f'{label}_ids_{target}']=ids;factors[f'{label}_g_{target}']=g
                 predicted=(x[:,ids]*g)@d[ids]
                 obs.append(dict(run_id=cfg['run_id'],target_seed=target,method=label,support=ids.tolist(),coefficients=g.tolist(),
-                    training_normalized_error=float(np.sum((predicted-c[:,None]*b)**2)/np.sum(c*c)),**detail))
-            obs.append(dict(run_id=cfg['run_id'],target_seed=target,method='fcc',training_normalized_error=float(np.mean((x@d@fit.target_factors[:,0]-c)**2)/np.mean(c*c))))
+                    training_normalized_error=float(np.sum((predicted-teacher)**2)/np.sum(teacher*teacher)),**detail))
+            obs.append(dict(run_id=cfg['run_id'],target_seed=target,method='fcc',input_kind=cfg.get('fcc_input','decoded_sum'),input_dimension=regressor.shape[1],effective_rank=fit.effective_rank,requested_rank=fit.requested_rank,training_normalized_error=float(np.sum((regressor@fit.target_factors@basis.T-teacher)**2)/np.sum(teacher*teacher))))
             progress=json.dumps(dict(fitted_target=target,seconds=time.perf_counter()-started))
             with (run/'stdout.log').open('a') as log:log.write(progress+'\n')
             print(progress,flush=True)
@@ -148,15 +168,19 @@ def main():
                 key=f'{label}_target{target}';methods.append(dict(key=key,target_seed=target,operation=label))
                 for axis in ('subject','attractor'):
                     donor=swap_indices(tasks,axis);x=cache[f'codes_{target}']-cache[f'codes_{target}'][donor]
-                    if label=='fcc':delta=(x@d@factors[f'fcc_w_{target}'])[:,None]*b
+                    if label=='fcc':
+                        regressor=x if cfg.get('fcc_input')=='codes' else x@d
+                        delta=(regressor@factors[f'fcc_w_{target}'])@basis.T if native_teacher else (regressor@factors[f'fcc_w_{target}'])[:,None]*b
                     else:
                         ids=factors[f'{label}_ids_{target}'];g=factors[f'{label}_g_{target}'];delta=(x[:,ids]*g)@d[ids]
                     bank[f'{key}_{axis}']=delta
         methods.append(dict(key='raw_fitted',target_seed=None,operation='raw_basis_transport'))
         for axis in ('subject','attractor'):
-            donor=swap_indices(tasks,axis);bank[f'raw_fitted_{axis}']=((cache['hidden']-cache['hidden'][donor])@factors['raw_w'])[:,None]*b
+            donor=swap_indices(tasks,axis);raw_value=(cache['hidden']-cache['hidden'][donor])@factors['raw_w']
+            bank[f'raw_fitted_{axis}']=raw_value@basis.T if native_teacher else raw_value[:,None]*b
+            if native_teacher:bank[f'source_native_reference_{axis}']=((cache[f"codes_{cfg['source_seed']}"][:,sid]-cache[f"codes_{cfg['source_seed']}"][donor][:,sid])*sg)@sd
         np.savez_compressed(run/'compiled_natural_deltas.npz',**bank)
-        write(run/'compiled_methods.json',dict(methods=methods,sample_ids=[r['id'] for r in tasks],basis=b.tolist(),
+        write(run/'compiled_methods.json',dict(methods=methods,sample_ids=[r['id'] for r in tasks],basis=b.tolist(),teacher_mode=cfg.get('teacher_mode','projection'),output_rank=basis.shape[1],source_native_sha256=sha256(p['source_native']) if native_teacher else None,
             target_endpoints_used=False,target_task_codes_used_for_fit=False,source_task_codes_used_for_selection=neighborhood,scope='development application; source task prototypes used only when configured; no target-task or target-response fit; no held-out causal claim'))
         with (run/'metrics.raw.jsonl').open('w') as out:
             for row in obs:out.write(json.dumps(row,sort_keys=True)+'\n')
