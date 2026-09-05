@@ -3179,3 +3179,18 @@ REFERENCE_REGISTRY.md:4c6e24a9c5782d05104c4d4c36781b211a52a50d99a73b0b98c6f3bc89
 runs/F4_agreement_source_remaining_v1_20260905/RESULTS_FOR_REVIEW.md:933130900d6d417b8513e3f75569f5bde345c588fe3992e97a7e9c4174ec4a01
 runs/F4_agreement_source_remaining_v1_20260905/agreement_summary.json:f54ca7835c5296ab3d9f1f330cbc67447f410b416ade5018e78429a1a8b9b39f
 runs/F4_agreement_source_remaining_v1_20260905/ALL_SOURCE_QUERIES.csv:5f9f1712853e5b41a980bedfc2022d21506862cbd0a8a938872cdcc2e85a4bd2
+
+## 2026-09-05 17:07 UTC — user-directed core-contribution planning
+
+Planning and read-only method inspection only: no new experiment, model forward, fitting, training, reserved-data exposure, environment change or automation mutation. Previous source/target results and failures remain unchanged. Starting Git HEAD was 42a12d899a7c55e7e90edd9f57d8847144e998cc with a clean tracked tree.
+
+Updated the existing plan and current tracker card around a concrete proposed contribution: a source-derived intervention explanation transferred through independent paired SAE representations, predicting target component-edit effects and collateral behavior on new inputs without target task labels/gradients/endpoint-based selection. This is a planned claim, not an established result. Source task-contrast pilot remains first; pre-TopK evidence is one bounded alternative, followed by refitting and execution on the actual sparse code. Relaxed-code execution is a different representation experiment. Non-projected target signed edits distinguish component utility from a common rank1 output direction; a second genuinely active task factor enables held-out composition tests. No mandatory all-pass gate, added validator, new workflow directory or broad training grid.
+
+Read user-supplied discussion as hypotheses, local encoder/ReLU/TopK/decoder and training-loss code, and official fixed versions Gao2406.04093v1 Sections2/4/5.3, DAS2303.02536v3 Section3, SCOTM2503.24204v1 SectionsII/III-A. In particular, larger inference k can degrade reconstruction, Multi-TopK is prior art, and the local optional 4k term can enter training loss; actual checkpoint flags must be checked before attributing a gating effect. No external source code copied or new dependency installed. Registry separates source versions, uses, licensing boundaries and proposed differences. Standard projection-residual identity in the plan is not a new theorem.
+
+experiment-plan skill supplied claim/evidence/run-order organization; project instructions override its duplicate output trees/default gates and three-seed default. Five controlled SAEs, source-only selection and new-data confirmation remain. Atlas/multiview/metric/OT/calibration suggestions are symptom-triggered candidates, not a sequential checklist. Documentation received a focused scope/math/information-budget read; no code changes, so no repeated model/unit suite. Only this allowlisted master_log entry is staged for grouped sync; ignored plans stay local, no whitelist expansion.
+
+Ignored local artifact path/SHA256 ledger:
+EXPERIMENT_PLAN.md:e1347b4a6fc1853c97ccbb8916c38b228c4c1bca0962dcac3ba6d2b610f04ceb
+EXPERIMENT_TRACKER.md:1404086f904a30e6ec8dec9eb01b99f305a28b6eb7b86f7f4683b8913ebdeabd
+REFERENCE_REGISTRY.md:b3367c6813d0961a16f7c752890ed61c0b1bc0d50846f31b4190ba4818e8137d
