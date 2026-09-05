@@ -249,6 +249,63 @@ def fit_ot_maps(cfg, queries, surface, factors, findex, dec, run, paths):
     return fits
 
 
+def readout_atom_order(x, beta, weights):
+    """Rank fixed readout terms by discovery conditional-variation energy."""
+    weights=np.asarray(weights,dtype=np.float64);weights=weights/weights.sum()
+    centered=x-weights@x
+    energies=np.sum(weights[:,None]*centered**2,axis=0)*beta**2
+    return np.lexsort((np.arange(len(beta)),-energies)),energies
+
+
+def norm_match(delta, reference):
+    norm=float(np.linalg.norm(delta))
+    return delta*(float(np.linalg.norm(reference))/norm) if norm>0 else np.zeros_like(delta)
+
+
+def prepare_readout_ablation(cfg, factors, findex, dec, run, paths):
+    spec=cfg['readout_ablation']
+    if cfg['ranks']!=[1] or not cfg.get('donor_difference') or spec['native_budget']!=16:
+        raise ValueError('Readout structure consumer requires rank1 donor differences and native budget16')
+    if any(not isinstance(m,int) or m<=0 or m>cfg['num_latents'] for m in spec['budgets']):
+        raise ValueError('Invalid readout truncation budget')
+    i=next(i for i,e in enumerate(cfg['saved_atom_families']) if e['method']==spec['discovery_reference_method'])
+    oldcfg=json.loads(paths[f'saved_atom_{i}_config'].read_text())
+    reference=json.loads(paths[f'saved_atom_{i}_fit'].read_text())
+    asset=Path(oldcfg['bulk_asset_dir']);manifest_path=asset/'asset_manifest.json'
+    if sha256(manifest_path)!=oldcfg['asset_manifest_sha256']:
+        raise ValueError('Readout-ablation discovery manifest changed')
+    manifest=json.loads(manifest_path.read_text())
+    for entry in manifest['decoders']:
+        if sha256(Path(cfg['bulk_asset_dir'])/'decoders'/f"seed_{entry['seed']}.float32.bin")!=entry['sha256']:
+            raise ValueError('Readout-ablation discovery decoder mismatch')
+    shape=(next(r['tokens'] for r in manifest['splits'] if r['split']=='discovery'),cfg['k'])
+    families={};records=[]
+    for record in reference['fits']:
+        s,a,t=(record[k] for k in ('source_seed','source_atom','target_seed'))
+        ids=np.asarray(record['discovery_rows']);weights=np.asarray(record['discovery_weights'])
+        indices=np.memmap(asset/'discovery'/f'seed_{t}'/'top_indices.uint16.bin',dtype='<u2',mode='r',shape=shape)
+        acts=np.memmap(asset/'discovery'/f'seed_{t}'/'top_acts.float32.bin',dtype='<f4',mode='r',shape=shape)
+        x=np.zeros((len(ids),cfg['num_latents']))
+        np.add.at(x,(np.arange(len(ids))[:,None],indices[ids]),acts[ids])
+        beta=(dec[t]@factors['query_target'][findex[s,a,t],:,:1].astype(np.float64))[:,0]
+        order,energies=readout_atom_order(x,beta,weights)
+        seed=int.from_bytes(hashlib.sha256(f"{spec['sign_seed']}:{s}:{a}:{t}".encode()).digest()[:8],'little')
+        signs=np.random.default_rng(seed).choice([-1.,1.],size=len(beta))
+        families[s,a,t]={'beta':beta,'order':order,'signs':signs}
+        top=order[:max(spec['budgets'])]
+        records.append(dict(source_seed=s,source_atom=a,target_seed=t,discovery_rows=ids.tolist(),
+                            discovery_weights=weights.tolist(),top_atoms=top.tolist(),top_atom_energies=energies[top].tolist(),
+                            total_atom_energy=float(energies.sum()),nonzero_energy_atoms=int(np.sum(energies>0)),
+                            sign_seed=seed,beta_sha256=hashlib.sha256(beta.tobytes()).hexdigest(),
+                            sign_sha256=hashlib.sha256(signs.tobytes()).hexdigest()))
+    write(run/'readout_ablation.json',{'fit_split':'discovery','calibration_used_for_ranking':False,
+          'refitted':False,'ranking':'weighted conditional variance(z_j) * (decoder_j @ W)^2; atom ID breaks ties',
+          'discovery_manifest_path':str(manifest_path),'discovery_manifest_sha256':sha256(manifest_path),
+          'scope':'Truncation of the deployed signed readout, not optimal sparse refitting or optimal native support.',
+          'spec':spec,'families':records})
+    return families
+
+
 def main():
     parser = argparse.ArgumentParser(); parser.add_argument("--config", type=Path, required=True); args = parser.parse_args()
     task = json.loads(args.config.read_text(encoding="utf-8"))
@@ -367,6 +424,7 @@ def main():
             atom_families[entry['method']]={(r['source_seed'],r['source_atom'],r['target_seed']):r for r in payload['fits']}
         if atom_families:
             write(run/'atom_fit_reuse.json',{'refitted':False if not single_fits else True,'families':{name:len(fits) for name,fits in atom_families.items()},'saved_inputs':cfg.get('saved_atom_families',[])})
+        readout_families=prepare_readout_ablation(cfg,factors,findex,dec,run,paths) if cfg.get('readout_ablation') else {}
         saved_ot_families={}
         for i,entry in enumerate(cfg.get('saved_ot_families',[])):
             oldcfg=json.loads(paths[f'saved_ot_{i}_config'].read_text())
@@ -555,6 +613,17 @@ def main():
                                 variants['paired_correlation_uot']=(z[t]@ot_fits[s,a,t])[:,None]@bt.T*mask[:,None]
                             for ot_method,family in saved_ot_families.items():
                                 variants[ot_method]=(z[t]@family[s,a,t])[:,None]@bt.T*mask[:,None]
+                            if readout_families:
+                                family=readout_families[s,a,t];beta=family['beta'];order=family['order']
+                                for budget in cfg['readout_ablation']['budgets']:
+                                    keep=order[:budget]
+                                    variants[f'readout_top{budget}']=(z[t][:,keep]@beta[keep])[:,None]@bt.T*mask[:,None]
+                                scrambled=(z[t]@(beta*family['signs']))[:,None]@bt.T*mask[:,None]
+                                variants['readout_sign_scrambled_matched']=norm_match(scrambled,variants['target'])
+                                keep=order[:cfg['readout_ablation']['native_budget']]
+                                native=z[t][:,keep]@dec[t][keep]*mask[:,None]
+                                variants['native_top16_difference']=native
+                                variants['native_top16_difference_matched']=norm_match(native,source_natural)
                             if cfg.get('methods'):
                                 variants={name:variants[name] for name in cfg['methods']}
                             for method,delta in variants.items():

@@ -45,10 +45,15 @@ def main():
         folder=ROOT/'runs'/name;path=folder/'metrics.raw.jsonl';provenance[str(path)]=digest(path)
         for row in read(path):
             choice=by_run[name][pair_key(row)]
-            for endpoint in cfg['endpoints']:
-                for subset in ('all','selected' if choice else 'rejected'):
-                    key=(name,subset,row['condition'],row['source_seed'],row['source_atom'],row['target_seed'],row['method'],endpoint)
-                    groups.setdefault(key,[]).append(row['endpoints'][endpoint]['normalized_error'])
+            methods=[row['method']]
+            policy=cfg.get('derived_policy')
+            if policy and row['method']==policy['selected_method' if choice else 'rejected_method']:
+                methods.append(policy['name'])
+            for method in methods:
+                for endpoint in cfg['endpoints']:
+                    for subset in ('all','selected' if choice else 'rejected'):
+                        key=(name,subset,row['condition'],row['source_seed'],row['source_atom'],row['target_seed'],method,endpoint)
+                        groups.setdefault(key,[]).append(row['endpoints'][endpoint]['normalized_error'])
     targets=[];query_groups={}
     fields=('run','subset','condition','source_seed','source_atom','target_seed','method','endpoint')
     for key,values in sorted(groups.items()):

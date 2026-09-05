@@ -1,0 +1,81 @@
+{
+  "run_id": "F4_readout_structure_dev_v1_20260905",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "additional_exclude_selections": [
+    {
+      "path": "runs/F4_source_reference_causal_dev_v7_alltargets_20260904/selection.json",
+      "sha256": "be3e99750071e0407b0e4c16c9ae579613c69a28254424833b25ee91d9a0c944"
+    },
+    {
+      "path": "runs/F4_source_reference_causal_dev_v8_newdocs_20260904/selection.json",
+      "sha256": "ed8a800e50544b1bf5be103205309ca2c527bb336d99f775f5b50d03674f2f1f"
+    }
+  ],
+  "ranks": [
+    1
+  ],
+  "documents_per_condition": 4,
+  "targets_per_query": 4,
+  "local_content_positions": 4,
+  "centered_logit_endpoint": true,
+  "include_source_mean_only": false,
+  "donor_difference": true,
+  "maximum_source_hook_fraction": 0.1,
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "resource_lease_reason": "Reads existing assets for bounded CPU/GPU inference; no whole-disk monopoly for ordinary reads or downloads.",
+  "selection": "Exact replay of all 64 inputs and frozen source-only scope from prior confirmation. Existing evaluation documents now exposed; this is a mechanism-development experiment, not a new independent confirmation.",
+  "intervention": "Fixed signed readout truncated by discovery conditional-variation atom energy, no refit; full-support random-sign control norm-matched to full FCC per input; same-support 16-atom native donor difference with common source dose and separate source-energy-matched variant.",
+  "budget": "2240 forwards=64*(3+4*8), expected 6-8 minutes including preparation/load, four CPU threads and <1.5GiB allocated VRAM. Reuse encoded assets, no downloads or training. User resumed active 15-minute loop.",
+  "bulk_asset_dir": "D:/CCAD_Storage/paired_assets/F4_scope_confirmation_codes_v1_20260905",
+  "asset_manifest_sha256": "3df615a6720e15e7abe0c89166049c7e4692b7fae57549fe3b2833c71efd13dc",
+  "raw_hook_asset_dir": "D:/CCAD_Storage/paired_assets/F4_scope_confirmation_codes_v1_20260905",
+  "raw_hook_manifest_sha256": "8a6e684361a5c6b9b7c136fa0756dee569c8e9464b9767c31a783654431fad92",
+  "paired_corpus_run": "F4_scope_confirmation_corpus_v1_20260905",
+  "token_manifest_path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/token_manifest.json",
+  "token_manifest_sha256": "e0d984a7a58c47a169d0882d0324f5105eb3b009854d06c179849e09283310ea",
+  "sequence_records_path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/sequence_records.json",
+  "sequence_records_sha256": "a4515715d5399763363bda6e3255cdd628bb905b9628a2c95e4e5e24340f3b27",
+  "methods": [
+    "target",
+    "readout_top1",
+    "readout_top4",
+    "readout_top16",
+    "readout_top64",
+    "readout_sign_scrambled_matched",
+    "native_top16_difference",
+    "native_top16_difference_matched"
+  ],
+  "saved_atom_families": [
+    {
+      "method": "single_atom_dynamic",
+      "fit_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/single_atom_fits.json",
+      "fit_sha256": "bf9d1ff74ad695ab0b0d0ccace91960a9abfa00cb7e866662acb08f004d3bf7c",
+      "config_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/config.resolved.json",
+      "config_sha256": "cdf6fab8433b6333fb75ba7b5844d0f709cc87fe1a683c81a285907a4ff94f76"
+    }
+  ],
+  "source_scope": {
+    "path": "configs/f4_source_applicability_dev_v1.json",
+    "sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74"
+  },
+  "saved_ot_families": [],
+  "evidence_level": "readout_structure_mechanism_development_existing_documents",
+  "scope_limit": "Mechanism ablation of a fixed deployed FCC relation. No optimal sparse refit/native-support search, no new independent document confirmation. Native and source-aligned operations reported separately; original audit closed.",
+  "readout_ablation": {
+    "discovery_reference_method": "single_atom_dynamic",
+    "budgets": [
+      1,
+      4,
+      16,
+      64
+    ],
+    "native_budget": 16,
+    "sign_seed": "ccad-f4-structure-20260905-v1"
+  }
+}
