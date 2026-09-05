@@ -1,0 +1,172 @@
+{
+  "schema_version": "0.1.0",
+  "run_id": "F4_query_confirmation_corpus_v1_20260905",
+  "run_parent": "F4",
+  "purpose": "Fresh-document confirmation of the frozen eight-query expansion and source-adaptive full/top16 policy",
+  "milestone": "M4",
+  "evidence_level": "fresh_document_confirmation_asset_only",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "dataset_id": "HuggingFaceFW/fineweb",
+  "dataset_config": "sample-10BT",
+  "dataset_revision_name": "v1.4.0",
+  "dataset_commit": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "dataset_license": "ODC-By-1.0",
+  "expected_shard_count": 15,
+  "shards_to_sample": 5,
+  "source_catalog_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/source_catalog.json",
+  "excluded_document_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/sampled_documents.jsonl",
+  "additional_exclusions": [
+    {
+      "path": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+      "sha256": "33421f067172f0322551346c1985e3799cf8bb90d9950a55f4cf1b0de38fe201"
+    },
+    {
+      "path": "runs/F4_development_corpus_v1_20260904/artifacts/documents.jsonl",
+      "sha256": "7958b0057368b4936acdee77fbd43f6f5e126770164b3d5506ff95c2b63fa706"
+    },
+    {
+      "path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "fbb1da0a9a0fa86ba20cec2eb7a2c0afa7fa93695c7909352c0a7b1e1a873a85"
+    },
+    {
+      "path": "runs/F4_adaptive_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "b5107db3a5a964759876f9edb58f764e6245ee136886154ba1c4cab49a47c1a2"
+    }
+  ],
+  "selection_salt": "ccad-f4-query-confirmation-20260905-v1",
+  "split_salt": "ccad-r008-paired-split-v1",
+  "range_block_bytes": 1048576,
+  "context_length": 128,
+  "max_tokens_per_document": 2048,
+  "token_dtype": "uint16-little-endian",
+  "target_sequences": {
+    "calibration": 512
+  },
+  "minimum_documents": {
+    "calibration": 40
+  },
+  "tokenizer_id": "EleutherAI/pythia-160m-deduped",
+  "tokenizer_revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "tokenizer_local_dir": "D:/CCAD_Storage/models/pythia-160m-deduped/582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "data_overlay_dir": "D:/CCAD_Storage/environments/r008_data_overlay",
+  "dependency_overlay_dir": "D:/CCAD_Storage/environments/r005a_sparsify_overlay",
+  "mean_constants_source_split": "unchanged original independent mean; no estimation in this run",
+  "threshold_source_split": "Source applicability chosen on prior development and frozen before this corpus; no new-data tuning",
+  "statistics_unit": "document",
+  "resource_lease": "cpu-heavy resource_manager.run; bounded ~40-100MB range reads and small local tokens, no disk monopoly",
+  "scope_limit": "Fresh calibration-hash-bucket documents excluded by document ID and exact text SHA256 from SAE training, all original paired splits and all three prior F4 corpora (113,118,106 documents). Existing five seeds, shared hook and fixed expanded eight-query panel. No parameter selection on these new documents; original audit tokens and metrics remain closed.",
+  "budget": "At most 5min / about 40-100MB range reads and tokenization;65536tokens.128 shared asset forwards expected under4min / about500MB persisted codes;2240causal forwards expected6-9min based on previous348.784s.4CPUthreads,<1.5GiBallocatedVRAM;provisional18min excluding resource waits. No payment/training/whole-disk monopoly.",
+  "frozen_scope": {
+    "rule_config": "configs/f4_source_applicability_dev_v1.json",
+    "rule_sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74",
+    "base_causal_config": "configs/f4_query_expansion_dev_v1.json",
+    "ranks": [
+      1
+    ],
+    "maximum_source_hook_fraction": 0.1,
+    "documents_per_condition": 4,
+    "targets_per_query": 4,
+    "local_content_positions": 4,
+    "query_rule": "Second source-only hash candidate per energy stratum,8queries disjoint original causalpanel. Same source-recipient/donor rule on fresh documents without target-based selection. All64pairs.",
+    "endpoints": [
+      "next_state",
+      "centered_logits"
+    ],
+    "methods": [
+      "target",
+      "readout_top16",
+      "raw",
+      "wrong_query_matched_energy",
+      "single_atom_level",
+      "single_atom_dynamic",
+      "uot_default",
+      "uot_discovery_tuned"
+    ],
+    "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+    "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+    "saved_atom_families": [
+      {
+        "method": "single_atom_level",
+        "fit_path": "runs/F4_query_expansion_fits_v1_20260905/single_atom_level.json",
+        "fit_sha256": "a747eecd6c7f737355c2dee19affbfb2b082d5b30c15a737cd26055cc0b8df6b",
+        "config_path": "runs/F4_query_expansion_fits_v1_20260905/config.resolved.json",
+        "config_sha256": "0307d03d5eb0bbc54eed3733ac94b0935ec94708847266d939a43e7c0d46b39b"
+      },
+      {
+        "method": "single_atom_dynamic",
+        "fit_path": "runs/F4_query_expansion_fits_v1_20260905/single_atom_dynamic.json",
+        "fit_sha256": "6a37adbdc004673185ca14e59515e5ad4b88a580cc5d9f615b00cd83e51c7a76",
+        "config_path": "runs/F4_query_expansion_fits_v1_20260905/config.resolved.json",
+        "config_sha256": "0307d03d5eb0bbc54eed3733ac94b0935ec94708847266d939a43e7c0d46b39b"
+      }
+    ],
+    "ot_default_arrays_sha256": "a439987e2854546377d42a06f281b6706204efad79965766e306b1da8c59696c",
+    "ot_tuned_arrays_sha256": "f211d1e9a515d55017f7b67581245a9cf5d36a615859afda2c10719773f861a7",
+    "no_refit": true,
+    "decision_scope": "Fixed adaptive full/top16, fixedfull,fixedtop16,raw,wrong,twoatoms,twoOT: compare continuous errors and count valid query-condition groups belowzero; preserve all missing denominators. No threshold,ranking,fallback or parameter adaptation. Shared seeds, no independent-seed CI.",
+    "adaptive_policy": {
+      "path": "configs/f4_source_adaptive_readout_dev_v1.json",
+      "sha256": "e3047e5d3719529ff1d487d7553764d2bbe58b6713a4759cc2506636fed76d67"
+    },
+    "saved_readout": {
+      "path": "runs/F4_query_expansion_fits_v1_20260905/readout_ablation.json",
+      "sha256": "c69cbac174109a125f71830e4751311192b8cb824f373c5584c48ce61308e865"
+    },
+    "query_hash_offset": 1,
+    "fixed_queries": [
+      [
+        3,
+        1144
+      ],
+      [
+        1,
+        2641
+      ],
+      [
+        3,
+        1093
+      ],
+      [
+        1,
+        2298
+      ],
+      [
+        1,
+        615
+      ],
+      [
+        2,
+        2645
+      ],
+      [
+        1,
+        1441
+      ],
+      [
+        5,
+        2194
+      ]
+    ],
+    "saved_ot_families": [
+      {
+        "method": "uot_default",
+        "fit_path": "runs/F4_query_expansion_fits_v1_20260905/uot_default/ot_fits.json",
+        "fit_sha256": "3bd233d1e1f7ae9b6a02f64b9e7db9b4ec4557507e8d3abfc7e904796cdfcf1f",
+        "arrays_path": "runs/F4_query_expansion_fits_v1_20260905/uot_default/ot_fits.npz",
+        "arrays_sha256": "a439987e2854546377d42a06f281b6706204efad79965766e306b1da8c59696c",
+        "config_path": "runs/F4_query_expansion_fits_v1_20260905/config.resolved.json",
+        "config_sha256": "0307d03d5eb0bbc54eed3733ac94b0935ec94708847266d939a43e7c0d46b39b"
+      },
+      {
+        "method": "uot_discovery_tuned",
+        "fit_path": "runs/F4_query_expansion_fits_v1_20260905/uot_discovery_tuned/ot_fits.json",
+        "fit_sha256": "f3188267830c0a1a87154d3f631db5e7d8115a86ea451ea15089c539a7067518",
+        "arrays_path": "runs/F4_query_expansion_fits_v1_20260905/uot_discovery_tuned/ot_fits.npz",
+        "arrays_sha256": "f211d1e9a515d55017f7b67581245a9cf5d36a615859afda2c10719773f861a7",
+        "config_path": "runs/F4_query_expansion_fits_v1_20260905/config.resolved.json",
+        "config_sha256": "0307d03d5eb0bbc54eed3733ac94b0935ec94708847266d939a43e7c0d46b39b"
+      }
+    ]
+  }
+}

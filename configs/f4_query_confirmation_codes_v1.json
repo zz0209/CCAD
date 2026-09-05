@@ -1,0 +1,88 @@
+{
+  "attn_implementation": "eager",
+  "audit_opened": false,
+  "batch_size_sequences": 4,
+  "bulk_output_dir": "D:/CCAD_Storage/paired_assets/F4_query_confirmation_codes_v1_20260905",
+  "candidate_family_frozen": true,
+  "code_dtypes": {
+    "decoder": "float32",
+    "top_acts": "float32",
+    "top_indices": "uint16"
+  },
+  "context_length": 128,
+  "cublas_workspace_config": ":4096:8",
+  "device": "cuda:0",
+  "evidence_level": "fresh_document_confirmation_asset_only",
+  "hook_hidden_size": 768,
+  "hook_module_path": "gpt_neox.layers.5",
+  "k": 128,
+  "mean_constants_source_split": "not_estimated_codes_only",
+  "milestone": "M3",
+  "model_id": "EleutherAI/pythia-160m-deduped",
+  "model_license": "Apache-2.0",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-160m-deduped\\582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "model_revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "num_latents": 3072,
+  "paired_corpus_run": "F4_query_confirmation_corpus_v1_20260905",
+  "purpose": "Encode fresh disjoint documents for frozen expanded-query confirmation",
+  "run_id": "F4_query_confirmation_codes_v1_20260905",
+  "run_parent": "F4",
+  "saes": [
+    {
+      "path": "runs/R006c_k128_seed1_v1_20260903T220000Z/sae",
+      "run_id": "R006c_k128_seed1_v1_20260903T220000Z",
+      "seed": 1,
+      "sha256": "e626b524c02c20f67f2fe5e2e437c29f52b3bf76d314da9b59c665ece446702b"
+    },
+    {
+      "path": "runs/R006c_k128_seed2_v1_20260903T220000Z/sae",
+      "run_id": "R006c_k128_seed2_v1_20260903T220000Z",
+      "seed": 2,
+      "sha256": "76bc6c85726f0c81d3c72823de3f003747d4d1defd19a18fd729505ec298d40f"
+    },
+    {
+      "path": "runs/R007_k128_seed3_v1_20260903T223000Z/sae",
+      "run_id": "R007_k128_seed3_v1_20260903T223000Z",
+      "seed": 3,
+      "sha256": "9f54b52ed1c81ed2f3cd340d6d792015eb8a994f88820b846aec30647d4207a9"
+    },
+    {
+      "path": "runs/R007_k128_seed4_v1_20260903T223000Z/sae",
+      "run_id": "R007_k128_seed4_v1_20260903T223000Z",
+      "seed": 4,
+      "sha256": "36086492d7755fb107d5c411e588202fa0cf1e360a9335c16d2aa0f70f468987"
+    },
+    {
+      "path": "runs/R007_k128_seed5_v1_20260903T223000Z/sae",
+      "run_id": "R007_k128_seed5_v1_20260903T223000Z",
+      "seed": 5,
+      "sha256": "2fbb83f96e9e55aa4b7d273b73d541cd0ba2984058131d753108616a31fbfa52"
+    }
+  ],
+  "schema_version": "0.1.0",
+  "scope_limit": "Five fixed SAEs and shared hook encoding only, original independent mean reused; no fitting, ranking or audit access.",
+  "sparsify_commit": "42c064525b1cdd2b97f4a4807e247e89025d552c",
+  "sparsify_overlay_dir": "D:\\CCAD_Storage\\environments\\r005a_sparsify_overlay",
+  "sparsify_source_dir": "D:\\CCAD_Storage\\references\\source\\sparsify_42c0645",
+  "statistics_unit": "document_and_seed_pair",
+  "threshold_source_split": "not_applicable_asset_build",
+  "token_manifest_path": "runs/F4_query_confirmation_corpus_v1_20260905/artifacts/token_manifest.json",
+  "token_manifest_sha256": "03568abd120ae1e49875ea2c8fd9133f2abbef8d7e2731e8cb80428beac20e12",
+  "splits": [
+    "calibration"
+  ],
+  "forbidden_splits": [
+    "audit",
+    "mean",
+    "discovery"
+  ],
+  "save_raw_hook": true,
+  "cpu_threads": 4,
+  "borrowed_raw_mean_manifest": {
+    "path": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+    "sha256": "4f37665d7dd8a86435ad89d21e85531b346b38dd3db3268e39c09015f48cb596"
+  },
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run; bounded ~500MB writes, no disk monopoly",
+  "budget": "65536 tokens through128 shared base forwards at batch4; ~500MB disk output incl five decoders and raw; <4min expected incl cold load, <1.5GiB allocated VRAM.",
+  "frozen_corpus_config_sha256": "ba1f2009fc92cbdbabb6c94353e78cb88727a6702693ba6a4a5694116fc85257"
+}
