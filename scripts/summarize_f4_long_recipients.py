@@ -1,5 +1,6 @@
 """Fixed-source recipient/complexity pilot; retain every frozen eligible case."""
 import csv
+import argparse
 import json
 import math
 from collections import defaultdict
@@ -12,16 +13,41 @@ METHODS=('target','raw','readout_top16','short_single_atom','long128_target',
 
 
 def main():
-    output=ROOT/'runs/F4_long_recipient_fit_v1_20260905'
+    parser=argparse.ArgumentParser();parser.add_argument('--confirmation-apply',type=Path);args=parser.parse_args()
+    fresh=args.confirmation_apply is not None
+    output=args.confirmation_apply if fresh else ROOT/'runs/F4_long_recipient_fit_v1_20260905'
+    output=output if output.is_absolute() else ROOT/output
     if (output/'recipient_comparison.json').exists():raise ValueError('Already summarized')
     table=[];cases=[];aggregates=[];comparisons=[];checks={};inputs=[];forwards=0;wall=0
     for panel in ('original','expanded'):
-        run=ROOT/'runs'/f'F4_long_recipient_{panel}_dev_v1_20260905'
+        run=ROOT/'runs'/(f'F4_long_recipient_confirmation_{panel}_v1_20260905' if fresh else f'F4_long_recipient_{panel}_dev_v1_20260905')
         old=ROOT/'runs'/f'F4_probability_confirmation_{panel}_v1_20260905'
         summary=json.loads((run/'metrics.summary.json').read_text())
         assert summary['status']=='PASS'
-        rows=jsonl(run/'metrics.raw.jsonl');oldrows={key(r):r for r in jsonl(old/'metrics.raw.jsonl')}
-        assert len(rows)==(20 if panel=='original' else 80)
+        rows=jsonl(run/'metrics.raw.jsonl');oldrows={key(r):r for r in (rows if fresh else jsonl(old/'metrics.raw.jsonl'))}
+        assert len(rows)==(20 if panel=='original' else (60 if fresh else 80))
+        if fresh:
+            frozen_path=ROOT/'configs/f4_long_recipient_confirmation_corpus_v1.json'
+            frozen=json.loads(frozen_path.read_text());rc=json.loads((run/'config.resolved.json').read_text())
+            assert rc['frozen_corpus_config_sha256']==sha256(frozen_path)
+            scope=frozen['frozen_scope']
+            assert rc['methods']==scope['methods'] and rc['probability_endpoints']==scope['probability_endpoints']
+            assert rc['target_seed_subset']==scope['target_seed_subset'] and rc['ranks']==scope['ranks']
+            assert rc['maximum_source_hook_fraction']==scope['maximum_source_hook_fraction']
+            assert rc['factors_sha256']==scope['factors_sha256']
+            prep=ROOT/'runs'/f'F4_long_recipient_source_{panel}_v1_20260905'
+            matched=json.loads((prep/'matching.json').read_text())
+            assert not matched['prior_endpoint_exposure']
+            assert json.loads((run/'all_source_candidates.json').read_text())['queries']==json.loads((prep/'selection.json').read_text())['queries']
+            expected=next(p['fixed_queries'] for p in scope['panels'] if p['label']==panel)
+            assert rc['source_query_subset']==expected
+            for choice in matched['choices']:
+                e=choice['entry'];active=bool(e and choice['source_scope']['selected'])
+                subset=[r for r in rows if (r['source_seed'],r['source_atom'],r['condition'])==(choice['source_seed'],choice['source_atom'],choice['condition'])]
+                assert len(subset)==(10*len([t for t in scope['target_seed_subset'] if t!=choice['source_seed']]) if active else 0)
+                for r in subset:
+                    for field in ('sequence','donor_sequence','document_ids','donor_document_ids','intervention_positions','donor_positions'):assert r[field]==e[field]
+            inputs.extend(dict(path=str(p),sha256=sha256(p)) for p in (frozen_path,prep/'matching.json'))
         sourcechecks=0;replay=0;recomputed=0;groups=defaultdict(list)
         for r in rows:
             anchor=dict(r,method='target');parent=oldrows[key(anchor)]
@@ -35,8 +61,9 @@ def main():
                 kb=sum(p['source_to_baseline_kl']);kc=sum(p['source_to_candidate_kl'])
                 se=sum(x*x for x in p['source_nll_deltas'])
                 ne=sum((s-c)**2 for s,c in zip(p['source_nll_deltas'],p['candidate_nll_deltas']))
-                assert math.isclose(kc/kb,p[METRICS[0]],rel_tol=1e-10,abs_tol=1e-12)
-                assert math.isclose(ne/se,p[METRICS[1]],rel_tol=1e-10,abs_tol=1e-12)
+                for num,den,metric in ((kc,kb,METRICS[0]),(ne,se,METRICS[1])):
+                    if den<=1e-12*len(p['positions']):assert p[metric] is None
+                    else:assert math.isclose(num/den,p[metric],rel_tol=1e-10,abs_tol=1e-12)
                 recomputed+=2
                 row=dict(panel=panel,source_seed=r['source_seed'],source_atom=r['source_atom'],condition=r['condition'],
                     target_seed=r['target_seed'],method=r['method'],scope=scope,
@@ -44,7 +71,7 @@ def main():
                     **{k:p[k] for k in METRICS})
                 table.append(row);groups[scope,r['source_seed'],r['source_atom'],r['condition'],r['method']].append(row)
             sourcechecks+=1
-            if r['method'] in ('target','raw','readout_top16'):
+            if not fresh and r['method'] in ('target','raw','readout_top16'):
                 prior=oldrows[key(r)]
                 assert r['probability_endpoints']==prior['probability_endpoints']
                 assert r['endpoints']==prior['endpoints'] and r['hook']==prior['hook']
@@ -52,9 +79,9 @@ def main():
         for (scope,s,a,condition,method),values in groups.items():
             cases.append(dict(panel=panel,scope=scope,source_seed=s,source_atom=a,condition=condition,method=method,
                 targets=len(values),**{k:median([r[k] for r in values]) for k in METRICS}))
-        checks[panel]=dict(source_anchor_rows_exact=sourcechecks,old_method_rows_exact=replay,probability_ratios_recomputed=recomputed)
+        checks[panel]=dict(source_anchor_rows_exact=sourcechecks,source_anchor_reference='within_same_new_case' if fresh else 'old_run',old_method_rows_exact=replay,probability_ratios_recomputed=recomputed)
         forwards+=summary['model_forwards'];wall+=summary['wall_seconds']
-        for path in (run/'metrics.raw.jsonl',run/'config.resolved.json',old/'metrics.raw.jsonl'):
+        for path in ((run/'metrics.raw.jsonl',run/'config.resolved.json') if fresh else (run/'metrics.raw.jsonl',run/'config.resolved.json',old/'metrics.raw.jsonl')):
             inputs.append(dict(path=str(path),sha256=sha256(path)))
     for panel in ('original','expanded','combined_descriptive'):
         pc=[r for r in cases if panel=='combined_descriptive' or r['panel']==panel]
@@ -70,13 +97,16 @@ def main():
                     ('long128_top16','long128_target'),('long32_top16','long32_target')]:
                 values=[r for r in pc if r['scope']==scope and r['method']==candidate]
                 for metric in METRICS:
-                    diff=[r[metric]-lookup[r['panel'],r['source_seed'],r['source_atom'],r['condition'],baseline][metric] for r in values]
+                    diff=[r[metric]-lookup[r['panel'],r['source_seed'],r['source_atom'],r['condition'],baseline][metric] for r in values if r[metric] is not None and lookup[r['panel'],r['source_seed'],r['source_atom'],r['condition'],baseline][metric] is not None]
                     comparisons.append(dict(panel=panel,scope=scope,candidate=candidate,baseline=baseline,metric=metric,
                         cases=len(diff),candidate_lower=sum(d<0 for d in diff),median_paired_difference=median(diff)))
     result=dict(aggregates=aggregates,cases=cases,comparisons=comparisons,checks=checks,inputs=inputs,
         model_forwards=forwards,wall_seconds=wall,fit_seconds=json.loads((output/'metrics.summary.json').read_text())['wall_seconds'],
         generator_sha256=sha256(Path(__file__)),
         scope='Exposed cross-configuration development. Fixed source and dose. 6 eligible cases / 4 source queries / 10 target-case pairs; 5 of original11 excluded before target encoding for long-training document overlap. Median across available dependent target seeds within each case, then across cases. Combined6 is supplementary descriptive; no independence or confirmation claim.')
+    if fresh:
+        result['scope']='Fresh-document confirmation of frozen cross-configuration compactness: 109 documents sampled after ID/text-hash exclusions; 4 fixed source queries and all8sign requests,6class-matched,5source-selected cases/3active queries/8target-case pairs. No refit or support changes. Median over dependent targets within case, then cases; combined5 is descriptive, not independent repetitions. Two long target seeds, not five-seed main suite. Original paired audit closed.'
+        result['coverage']=[dict(panel=panel,source_seed=r['source_seed'],source_atom=r['source_atom'],condition=r['condition'],matched=r['entry'] is not None,selected=bool(r['entry'] and r['source_scope']['selected']),matching_status=r.get('matching_status')) for panel in ('original','expanded') for r in json.loads((output/f'{panel}_case_selection.json').read_text())['choices']]
     for name,values in [('RECIPIENT_ROWS.csv',table),('RECIPIENT_CASES.csv',cases)]:
         with (output/name).open('w',newline='',encoding='utf-8') as f:
             writer=csv.DictWriter(f,fieldnames=list(values[0]));writer.writeheader();writer.writerows(values)
@@ -91,7 +121,7 @@ def main():
     for r in cases:
         if r['scope']=='intervention_positions':lines.append('|'+ '|'.join([r['panel'],f"{r['source_seed']}:{r['source_atom']}",r['condition'],str(r['targets']),r['method']]+[fmt(r[k]) for k in METRICS])+'|')
     lines+=['','Checks: '+json.dumps(checks),'',f'Actual LM forwards={forwards}, causal wall_seconds={wall}, preparation wall_seconds={result["fit_seconds"]}. No new training, downloads, or audit.','',
-        'case_exclusions.json保留原选择及5项排除原因。旧短SAE的完整120文档结果不因长训练重叠而作废；本次不能把该完整语料称为长SAE未见。',
+        ('八请求覆盖详见recipient_comparison.json：三请求未评估，不能从分母中隐去或当作成功。旧开发与本次确认分别报告。' if fresh else 'case_exclusions.json保留原选择及5项排除原因。旧短SAE的完整120文档结果不因长训练重叠而作废；本次不能把该完整语料称为长SAE未见。'),
         '数学消费者见DERIVATION_PACKAGE.md §13：操作类、适用分布、donor差分、joint Jacobian及component-error Gram。代数边界不替代实际端点。']
     (output/'RECIPIENT_COMPARISON.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     print(json.dumps(dict(aggregates=aggregates,comparisons=comparisons,checks=checks,model_forwards=forwards,wall_seconds=wall)))

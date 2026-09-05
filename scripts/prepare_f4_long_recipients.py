@@ -15,6 +15,28 @@ from run_r011s1_raw_hook_asset import entry, aggregate
 from ccad.artifacts import validate_run_directory
 
 
+def restore_fits(records, arrays, width, budget):
+    """Restore signed coefficients and frozen supports; never fit or rank."""
+    fits={}
+    for r in records:
+        key=(r['configuration'],r['source_seed'],r['source_atom'],r['target_seed'])
+        beta=np.asarray(arrays[r['array_key']],dtype=float)
+        keep=np.asarray(r['top_atoms'],dtype=int);atom=r['single_atom']
+        if (key in fits or beta.shape!=(width,) or not np.isfinite(beta).all()
+                or len(keep)!=budget or len(set(keep.tolist()))!=budget
+                or np.any(keep<0) or np.any(keep>=width)
+                or not 0<=atom['atom']<width or not np.isfinite(atom['coefficient'])):
+            raise ValueError('Invalid or duplicated frozen recipient fit')
+        fits[key]=dict(beta=beta.copy(),keep=keep.copy(),atom=copy.deepcopy(atom))
+    return fits
+
+
+def apply_recipient_fit(z, fit):
+    keep=fit['keep'];atom=fit['atom']
+    return {'target':z@fit['beta'], 'top16':z[:,keep]@fit['beta'][keep],
+            'single_atom':z[:,atom['atom']]*atom['coefficient']}
+
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--config',type=Path,required=True);args=parser.parse_args()
     cfg=json.loads(args.config.read_text());run=ROOT/'runs'/cfg['run_id'];run.mkdir(exist_ok=False)
@@ -27,7 +49,7 @@ def main():
         code.append(dict(path=rel,sha256=sha256(path),bytes=path.stat().st_size,snapshot_path=f'source_snapshot/{rel}'))
     write(run/'code_hashes.json',dict(files=code,aggregate_sha256=aggregate(code),snapshot_root='source_snapshot'))
     write(run/'manifest.json',dict(schema_version='fcc.long.recipient.fit.v1',run_id=cfg['run_id'],run_parent='F4',
-        purpose='Fixed-source recipient representation/complexity development',milestone='M4',evidence_level='exposed_development_cross_configuration',
+        purpose=cfg.get('purpose','Fixed-source recipient representation/complexity development'),milestone='M4',evidence_level=cfg.get('evidence_level','exposed_development_cross_configuration'),
         started_utc=now,project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),code_snapshot_hash=aggregate(code),
         source_snapshot_required=True,audit_opened=False,candidate_family_frozen=True,mean_constants_source_split='original mean',
         threshold_source_split='fixed source cases; training-document exclusions before new target encoding',statistics_unit='query/document/seed dependencies',
@@ -51,13 +73,18 @@ def main():
         paired=jsonl(checked(cfg['original_paired_documents']));evaluation=jsonl(checked(cfg['evaluation_documents']))
         overlap=lambda rows:[r['document_id'] for r in rows if r['document_id'] in train_ids or r['text_sha256'] in train_hashes]
         if overlap(paired):raise ValueError('Paired fit data overlap long training')
-        excluded=set(overlap(evaluation));panels={};case_rows=[];exclusions=[]
+        excluded=set(overlap(evaluation));panels={};case_rows=[];exclusions=[];active_requested=0;requested=0
+        saved_spec=cfg.get('saved_recipient_fit')
+        if saved_spec and cfg.get('require_no_evaluation_overlap') and excluded:raise ValueError('Fresh corpus overlaps long training')
         for label in cfg['panels']:
             ref=json.loads(checked(cfg['reference_config_template'].format(panel=label)).read_text())
-            selection=copy.deepcopy(json.loads(checked(ref['case_replay']['path'],ref['case_replay']['sha256']).read_text()))
+            selection_spec=cfg.get('source_selections',{}).get(label,ref.get('case_replay'))
+            selection=copy.deepcopy(json.loads(checked(selection_spec['path'],selection_spec['sha256']).read_text()))
+            requested+=len(selection['choices'])
             for choice in selection['choices']:
                 e=choice['entry'];bad=sorted(set(e['document_ids']+e['donor_document_ids'])&excluded) if e else []
                 active=bool(e and choice['source_scope']['selected'])
+                active_requested+=int(active)
                 if active and bad:
                     exclusions.append(dict(panel=label,source_seed=choice['source_seed'],source_atom=choice['source_atom'],condition=choice['condition'],entry=e,excluded_document_ids=bad))
                     choice['excluded_matched_entry']=e;choice['entry']=None;choice['matching_status']='EXCLUDED_LONG_SAE_TRAINING_DOCUMENT'
@@ -76,7 +103,7 @@ def main():
             spec=ref['readout_ablation']['saved_readout']
             for r in json.loads(checked(spec['path'],spec['sha256']).read_text())['families']:families[r['source_seed'],r['source_atom'],r['target_seed']]=r
         manifests={};dec={};means={};sparse={}
-        for name,c in configs.items():
+        for name,c in ([] if saved_spec else configs.items()):
             manifest=json.loads(checked(Path(c['bulk_asset_dir'])/'asset_manifest.json',c['asset_manifest_sha256']).read_text());manifests[name]=manifest
             seeds=sorted(set(cfg['target_seeds'])|{s for s,a in queries}) if name=='short' else cfg['target_seeds']
             for seed in seeds:
@@ -92,7 +119,14 @@ def main():
         def dense(name,seed,rows):
             ii,aa=sparse[name,seed,'discovery'];z=np.zeros((len(rows),configs[name]['num_latents']));np.add.at(z,(np.arange(len(rows))[:,None],ii[rows]),aa[rows]);return z
         fits={};fit_arrays={};replay=[]
-        for s,a in queries:
+        if saved_spec:
+            records=jsonl(checked(saved_spec['metadata_path'],saved_spec['metadata_sha256'],'frozen_fit_metadata'))
+            with np.load(checked(saved_spec['coefficients_path'],saved_spec['coefficients_sha256'],'frozen_coefficients'),allow_pickle=False) as saved_arrays:
+                fits=restore_fits(records,saved_arrays,base['num_latents'],cfg['readout_budget'])
+                fit_arrays={r['array_key']:fits[r['configuration'],r['source_seed'],r['source_atom'],r['target_seed']]['beta'] for r in records}
+            if any((name,s,a,t) not in fits for s,a in queries for t in cfg['target_seeds'] if t!=s for name in configs):raise ValueError('Missing frozen fit for requested source/target')
+            checks['saved_fit_identity_and_support']=True
+        for s,a in ([] if saved_spec else queries):
             targets=[t for t in cfg['target_seeds'] if t!=s];first=targets[0];family=families[s,a,first]
             rr=np.array(family['discovery_rows'],dtype=int);ww=np.array(family['discovery_weights']);b=f['source_basis'][fi[s,a,first],:,:1].astype(float)
             ids=surface[s,a,first]['source_candidate_ids'];y=((dense('short',s,rr)[:,ids]-means['short',s][ids])@dec['short',s][ids]@b)[:,0]
@@ -140,7 +174,7 @@ def main():
                     rel=float(np.linalg.norm(z-oldz)/max(np.linalg.norm(oldz),1e-20));checks[f'short_encoding_replay_{t}']=rel<1e-5
                     z=oldz # exact original cached codes for baseline scalar predictor
                 else:rel=None
-                evcodes[name,t]=z;encoding.append(dict(configuration=name,seed=t,rows=len(rowids),nonzero_l0=float(np.count_nonzero(z)/len(z)),short_replay_relative=rel))
+                evcodes[name,t]=z;encoding.append(dict(configuration=name,seed=t,rows=len(rowids),nonzero_l0=float(np.count_nonzero(z)/len(z)) if len(z) else None,short_replay_relative=rel))
                 del sae
         newmethods=['short_single_atom']+[f'{name}_{method}' for name in ('long128','long32') for method in ('target','top16','single_atom')]
         arrays={};indexrows=[]
@@ -148,8 +182,7 @@ def main():
             s,a=e['source_seed'],e['source_atom'];rr=[rowindex[e['sequence']*length+p] for p in e['intervention_positions']];dd=[rowindex[e['donor_sequence']*length+p] for p in e['donor_positions']]
             for t in e['targets']:
                 for name in configs:
-                    z=evcodes[name,t][rr]-evcodes[name,t][dd];fit=fits[name,s,a,t];keep=fit['keep'];atom=fit['atom']
-                    values={'target':z@fit['beta'],'top16':z[:,keep]@fit['beta'][keep],'single_atom':z[:,atom['atom']]*atom['coefficient']}
+                    z=evcodes[name,t][rr]-evcodes[name,t][dd];values=apply_recipient_fit(z,fits[name,s,a,t])
                     for method,value in values.items():
                         if name=='short' and method!='single_atom':continue
                         key=f'candidate_{len(arrays)}';coord=np.zeros((length,1));coord[e['intervention_positions'],0]=value;arrays[key]=coord
@@ -157,13 +190,22 @@ def main():
         arraypath=run/'candidate_coordinates.npz';np.savez_compressed(arraypath,**arrays)
         for label,(ref,sp) in panels.items():
             indexpath=run/f'{label}_candidate_index.json';write(indexpath,dict(rows=[r for r in indexrows if r['panel']==label],factors_sha256=ref['factors_sha256'],surface_sha256=ref['surface_sha256'],sequence_records_sha256=ref['sequence_records_sha256'],case_selection_sha256=sha256(sp),scale='unscaled_source_basis_coordinates'))
-            new=copy.deepcopy(ref);new['run_id']=f'F4_long_recipient_{label}_dev_v1_20260905';new['case_replay']=dict(path=str(sp),sha256=sha256(sp),selected_only=True,export_details=False)
+            new=copy.deepcopy(ref);new.pop('source_preparation_only',None);new['run_id']=cfg.get('causal_run_template','F4_long_recipient_{panel}_dev_v1_20260905').format(panel=label);new['case_replay']=dict(path=str(sp),sha256=sha256(sp),selected_only=True,export_details=False)
             new['target_seed_subset']=cfg['target_seeds'];new['methods']=['target','raw','readout_top16']+newmethods;new['expected_evaluated_cases']=cfg['expected_remaining_cases'][label]
             new['saved_candidate_coordinates']=dict(index_path=str(indexpath),index_sha256=sha256(indexpath),arrays_path=str(arraypath),arrays_sha256=sha256(arraypath),methods=newmethods)
-            new['scope_limit']=cfg['scope'];new['evidence_level']='exposed_development_cross_configuration';new['budget']=cfg['budget'];new['intervention']='Original source reference/common dose; only recipient SAE and its fit/readout vary. Long training exclusions frozen before target encoding.'
+            new['scope_limit']=cfg['scope'];new['evidence_level']=cfg.get('evidence_level','exposed_development_cross_configuration');new['budget']=cfg['budget'];new['intervention']='Original source reference/common dose; only recipient SAE and its fit/readout vary. Long training exclusions frozen before target encoding.'
+            new['resource_lease']='cpu-heavy -> gpu-0 resource_manager.run'
+            if cfg.get('probability_endpoints'):new['probability_endpoints']=cfg['probability_endpoints']
             dest=run/f'{label}_causal_config.json';write(dest,new);output_configs.append(str(dest))
         write(run/'encoding_summary.json',dict(rows=encoding,sae_encoding_seconds=time.perf_counter()-numeric,unique_hook_rows=rowids.tolist(),model_forwards=0))
-        checks.update(all_short_map_replay=max(replay)<1e-5,training_fit_disjoint=True,training_evaluation_disjoint=True,all_cases_accounted=len(case_rows)+len(exclusions)==11,finite_candidates=all(np.isfinite(x).all() for x in arrays.values()))
+        checks.update(training_fit_disjoint=True,training_evaluation_disjoint=True,all_cases_accounted=len(case_rows)+len(exclusions)==active_requested,finite_candidates=all(np.isfinite(x).all() for x in arrays.values()))
+        if not saved_spec:checks['all_short_map_replay']=max(replay,default=0)<1e-5
+        if cfg.get('expected_requested_conditions') is not None:checks['all_requests_retained']=requested==cfg['expected_requested_conditions']
+        if cfg.get('coordinate_replay_witness'):
+            witness=cfg['coordinate_replay_witness']
+            with np.load(checked(witness['path'],witness['sha256'],'old_coordinate_replay'),allow_pickle=False) as old:
+                checks['old_coordinates_exact_replay']=set(old.files)==set(arrays) and all(np.array_equal(old[k],v) for k,v in arrays.items())
+        checks['within_preparation_budget']=time.perf_counter()-started<=cfg['budget_seconds']
         env.update(torch=torch.__version__,transformers=transformers.__version__,cuda=torch.version.cuda,gpu=torch.cuda.get_device_name(),sae=evasset['sparsify_commit'])
     except Exception as exc:
         error=f'{type(exc).__name__}: {exc}';(run/'stderr.log').write_text(traceback.format_exc())
@@ -171,7 +213,7 @@ def main():
     write(run/'inputs.json',dict(inputs=inputs));write(run/'environment.json',env)
     (run/'metrics.raw.jsonl').write_text(''.join(json.dumps(r,sort_keys=True)+'\n' for r in records))
     status='PASS' if error is None and checks and all(checks.values()) else 'FAIL'
-    summary=dict(status=status,error=error,checks=checks,fit_records=len(records),model_forwards=0,wall_seconds=time.perf_counter()-started,causal_configs=output_configs,metrics_raw_sha256=sha256(run/'metrics.raw.jsonl'),generator_script_path='scripts/prepare_f4_long_recipients.py',generator_script_sha256=sha256(Path(__file__)))
+    summary=dict(status=status,error=error,checks=checks,fit_records=len(records),new_fits=0 if cfg.get('saved_recipient_fit') else len(records),model_forwards=0,wall_seconds=time.perf_counter()-started,causal_configs=output_configs,metrics_raw_sha256=sha256(run/'metrics.raw.jsonl'),generator_script_path='scripts/prepare_f4_long_recipients.py',generator_script_sha256=sha256(Path(__file__)))
     write(run/'metrics.summary.json',summary);write(run/'status.json',dict(status=status,error=error,updated_utc=datetime.now(timezone.utc).isoformat()));write(run/'stdout.log',summary)
     if not (run/'stderr.log').exists():(run/'stderr.log').write_text('')
     validation=validate_run_directory(run);write(run/'contract_validation.json',dict(ok=validation.ok,errors=list(validation.errors)))

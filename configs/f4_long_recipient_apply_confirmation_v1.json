@@ -1,0 +1,74 @@
+{
+  "run_id": "F4_long_recipient_confirmation_apply_v1_20260905",
+  "source_asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "evaluation_asset_config": "configs/f4_long_recipient_confirmation_codes_v1.json",
+  "panels": [
+    "original",
+    "expanded"
+  ],
+  "reference_config_template": "configs/f4_long_recipient_source_{panel}_v1.json",
+  "target_seeds": [
+    1,
+    2
+  ],
+  "long_configurations": [
+    {
+      "name": "long128",
+      "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+      "asset_manifest_sha256": "15a7a8531adcbde994673725fab6fcb1fee60cb4125c02b8db9b8b3e1b9a479c"
+    },
+    {
+      "name": "long32",
+      "asset_config": "configs/r011_nr1_k32_paired_codes_v1.json",
+      "asset_manifest_sha256": "43e036939f257e7bcfd6557adc344fde88b20e532368214c9cee96f3460af066"
+    }
+  ],
+  "long_training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "original_paired_documents": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+  "evaluation_documents": "runs/F4_long_recipient_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+  "exclusion_rule": "Entire fresh corpus pre-excluded against training by ID/text hash; retain all8source requests, evaluate only the5 frozen source-selected class-matched cases without further selection.",
+  "fit_rule": "Replay frozen beta, top16 support and single atom/coefficient exactly. No discovery/mean array materialization or refit.",
+  "ridge_fraction": 0.001,
+  "readout_budget": 16,
+  "atom_rule": "Best all3072 conditional-variation scalar predictor on the same positive256 rows; intercept cancels in donor differences. One per configuration, not native deletion.",
+  "expected_remaining_cases": {
+    "original": 1,
+    "expanded": 4
+  },
+  "cpu_threads": 4,
+  "budget_seconds": 120,
+  "encoding_batch_rows": 256,
+  "scope": "New109documents excluded by ID/text hash against long and short training/validation, original paired and all six old F4 corpora. Frozen4source queries/all8sign requests,5selected/8targetcasepairs,10methods; no fit/support/rank change. Two long target seeds, not five-seed suite. Original paired audit remains closed.",
+  "budget": "Apply saved21fits:0newfits/0LMforwards,<=120s CPU/GPU cached-hook encoding only. Causal original23/expanded72 forwards, total95 <=180s numerical+90s loading. No full-disk monopoly.",
+  "audit_opened": false,
+  "saved_recipient_fit": {
+    "coefficients_path": "runs/F4_long_recipient_fit_v1_20260905/fit_coefficients.npz",
+    "coefficients_sha256": "9bafd702488df19b2a6cd65eed782f4aa4e614a250345ebbf73355799fc7ee37",
+    "metadata_path": "runs/F4_long_recipient_fit_v1_20260905/metrics.raw.jsonl",
+    "metadata_sha256": "ea7966d507d5fbcadbddc2bb8f7216e76e86dd68d0d074cfaa55c2051e9ddf43",
+    "note": "Replay beta, fixed top16 support and single atom/coefficient exactly; no new-data refit."
+  },
+  "expected_requested_conditions": 8,
+  "require_no_evaluation_overlap": true,
+  "source_selections": {
+    "original": {
+      "path": "runs/F4_long_recipient_source_original_v1_20260905/matching.json",
+      "sha256": "7c9c7ebb9efd8ba0fe24ec6c736effcde9831cad6d62c957f04de276bf7485a9"
+    },
+    "expanded": {
+      "path": "runs/F4_long_recipient_source_expanded_v1_20260905/matching.json",
+      "sha256": "b87df467387ef2a1c0872e03feade3bec64e328e48a9ccd88b02f958e0ac6838"
+    }
+  },
+  "probability_endpoints": {
+    "version": "v1",
+    "primary": "intervention_positions with valid within-document observed next token",
+    "secondary": "union of same-document positions downstream from an intervention, excludes EOS predictions and final unavailable token",
+    "kl": "sum KL(P_source||P_candidate) / sum KL(P_source||P_baseline); float64 log-softmax; denominator <=1e-12*positions yields null",
+    "nll": "observed next-token NLL intervention-minus-baseline vector; report signed means, RMS and normalized squared vector error; source squared energy <=1e-12*positions yields null",
+    "scope": "joint multi-position interventions, not independent position attribution; secondary suffix may condition on preceding packed documents but no later document positions scored"
+  },
+  "causal_run_template": "F4_long_recipient_confirmation_{panel}_v1_20260905",
+  "purpose": "Pure application of frozen recipient fits to fresh documents before causal confirmation",
+  "evidence_level": "fresh_document_confirmation_fixed_recipient_cross_configuration"
+}

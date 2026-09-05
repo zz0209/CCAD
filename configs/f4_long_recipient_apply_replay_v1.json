@@ -1,0 +1,57 @@
+{
+  "run_id": "F4_long_recipient_apply_replay_v1_20260905",
+  "source_asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "evaluation_asset_config": "configs/f4_probability_confirmation_codes_v1.json",
+  "panels": [
+    "original",
+    "expanded"
+  ],
+  "reference_config_template": "configs/f4_probability_confirmation_{panel}_v1.json",
+  "target_seeds": [
+    1,
+    2
+  ],
+  "long_configurations": [
+    {
+      "name": "long128",
+      "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+      "asset_manifest_sha256": "15a7a8531adcbde994673725fab6fcb1fee60cb4125c02b8db9b8b3e1b9a479c"
+    },
+    {
+      "name": "long32",
+      "asset_config": "configs/r011_nr1_k32_paired_codes_v1.json",
+      "asset_manifest_sha256": "43e036939f257e7bcfd6557adc344fde88b20e532368214c9cee96f3460af066"
+    }
+  ],
+  "long_training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "original_paired_documents": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+  "evaluation_documents": "runs/F4_probability_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+  "exclusion_rule": "Before new target encoding/fitting/endpoints: remove any previously source-selected case whose recipient or donor context document ID or exact text hash occurs in the long SAE train/validation manifest. Retain every original choice and exclusion reason. Short and long evaluated on identical remaining cases; no endpoint-based exclusions.",
+  "fit_rule": "Original positive256 discovery states and original source weights/independent mean/source32atom group/rank1 basis. Short and long full-decoded768 ridge share all these; ridge fraction .001. Original short map replay required. No new operation-difference refit or grid.",
+  "ridge_fraction": 0.001,
+  "readout_budget": 16,
+  "atom_rule": "Best all3072 conditional-variation scalar predictor on the same positive256 rows; intercept cancels in donor differences. One per configuration, not native deletion.",
+  "expected_remaining_cases": {
+    "original": 1,
+    "expanded": 5
+  },
+  "cpu_threads": 4,
+  "budget_seconds": 120,
+  "encoding_batch_rows": 256,
+  "scope": "Exposed development cross-configuration recipient pilot with fixed short-SAE source interface. Two long target seeds, not five-seed long-trained suite or nested learning curve. Original paired data disjoint from long training. Old confirmation remains a short-SAE result; the full120doc corpus is NOT entirely unseen by long SAEs.",
+  "budget": "Zero new fits/LM forwards; <=120s CPU/GPU cached-hook encoder replay. Generated causal configs not to be run.",
+  "audit_opened": false,
+  "saved_recipient_fit": {
+    "coefficients_path": "runs/F4_long_recipient_fit_v1_20260905/fit_coefficients.npz",
+    "coefficients_sha256": "9bafd702488df19b2a6cd65eed782f4aa4e614a250345ebbf73355799fc7ee37",
+    "metadata_path": "runs/F4_long_recipient_fit_v1_20260905/metrics.raw.jsonl",
+    "metadata_sha256": "ea7966d507d5fbcadbddc2bb8f7216e76e86dd68d0d074cfaa55c2051e9ddf43",
+    "note": "Replay beta, fixed top16 support and single atom/coefficient exactly; no new-data refit."
+  },
+  "coordinate_replay_witness": {
+    "path": "runs/F4_long_recipient_fit_v1_20260905/candidate_coordinates.npz",
+    "sha256": "c9f364a02e2bb739ee2eb496162579fcffe6ebeca874eb89836cef74ce296bd6"
+  },
+  "causal_run_template": "F4_long_recipient_replay_unused_{panel}_v1_20260905",
+  "purpose": "Apply saved recipient fits to old cases solely as coordinate replay witness"
+}
