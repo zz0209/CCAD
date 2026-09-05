@@ -1,0 +1,17 @@
+{
+  "run_id": "F4_effect_figure_package_v1_20260905",
+  "audit_opened": false,
+  "destination": "Provisional internal manuscript figures; publisher and final submission dimensions pending verification",
+  "width_pixels": 2160,
+  "height_pixels": 1800,
+  "dpi": 300,
+  "budget": "Light CPU: six small saved-result packages, no model/code-array materialization, GPU, downloads or training. Expected under 60 seconds, no heavy-resource lease.",
+  "panels": [
+    {"id": "original", "label": "Original queries", "tier": "frozen new-document confirmation", "summary_dir": "runs/F4_adaptive_confirmation_summary_v1_20260905", "raw_sha256": "9ec82534885c6a1fc85da52e6a44bc6a1356ee74de22a9936b0fdb9e6189869c"},
+    {"id": "expanded", "label": "Expanded queries", "tier": "frozen new-document confirmation", "summary_dir": "runs/F4_query_confirmation_summary_v1_20260905", "raw_sha256": "257006fd53dfb4bec2a172971424c5d2ba7261425dbd5543c19e819673ecb5d4"},
+    {"id": "original_refit", "label": "Original queries: refit", "tier": "development on exposed documents", "summary_dir": "runs/F4_fixed_support_refit_original_summary_v1_20260905", "raw_sha256": "66f985c47141ffeac187c51725b5a06a1ff7a731e6a151508727b8e11474d08d"},
+    {"id": "expanded_refit", "label": "Expanded queries: refit", "tier": "development on exposed documents", "summary_dir": "runs/F4_fixed_support_refit_summary_v1_20260905", "raw_sha256": "06b8e203d57036d708d8785573ce7b9d4618a9664ca4ba233da7258b2dabed4d"},
+    {"id": "contrast", "label": "Unbounded contrast refit", "tier": "development on exposed documents", "summary_dir": "runs/F4_contrast_refit_summary_v1_20260905", "raw_sha256": "ece6daf253ae36e776dd6b11fdfc9e27ab92d0b997115e2b02ed6fe710e93dd7"},
+    {"id": "bounded", "label": "Bounded contrast refit", "tier": "development on exposed documents", "summary_dir": "runs/F4_bounded_contrast_refit_summary_v1_20260905", "raw_sha256": "12aa128c286d103ec316deff0bbb012724e0fe012016697475aa218b0819e255"}
+  ]
+}
