@@ -17,8 +17,80 @@ def med(values): return statistics.median(values)
 def f(v): return f'{v:.6g}'
 
 
+def summarize_matched(args):
+    """Merge exact unchanged cases with new changed-donor rows, retaining missingness."""
+    preparation=ROOT/'runs'/args.matching;output=ROOT/'runs'/args.expanded
+    if (output/'matched_summary.json').exists():raise ValueError('Matched summary already exists')
+    cases=[];table=[];inputs=[];checks={};forwards=0;seconds=0
+    def median_valid(values):
+        values=[v for v in values if v is not None]
+        return med(values) if values else None
+    for panel,name in [('original',args.original),('expanded',args.expanded)]:
+        run=ROOT/'runs'/name;old=ROOT/'runs'/f'F4_cases_{panel}_v1_20260905'
+        assert json.loads((run/'status.json').read_text())['status']=='PASS'
+        match_path=preparation/(panel+'_matching.json');payload=json.loads(match_path.read_text())
+        oldrows=jsonl(old/'metrics.raw.jsonl');newrows=jsonl(run/'metrics.raw.jsonl');details=jsonl(run/'case_details.jsonl')
+        assert len(newrows)==len(details)
+        detail_index={key(r):r for r in details};summary=json.loads((run/'metrics.summary.json').read_text())
+        forwards+=summary['model_forwards'];seconds+=summary['wall_seconds'];evaluated=set()
+        for choice in payload['choices']:
+            s,a,c=choice['source_seed'],choice['source_atom'],choice['condition'];original=choice['original_entry'];entry=choice['entry']
+            before=[r for r in oldrows if (r['source_seed'],r['source_atom'],r['condition'])==(s,a,c)]
+            status=choice['matching_status'];after=before if status=='UNCHANGED_REUSABLE' else [r for r in newrows if (r['source_seed'],r['source_atom'],r['condition'])==(s,a,c)] if status=='CHANGED_SUPPORTED' else []
+            if original is not None:assert len(before)==16
+            else:assert len(before)==0
+            if entry is not None:assert len(after)==16
+            else:assert len(after)==0
+            detail_positions=None
+            for r in after:
+                assert all(r[k]==entry[k] for k in ('sequence','donor_sequence','intervention_positions','donor_positions','document_ids','donor_document_ids'))
+                if status=='CHANGED_SUPPORTED':
+                    evaluated.add(key(r));d=detail_index[key(r)];assert d['endpoints']==r['endpoints'];detail_positions=d['positions'] if detail_positions is None else detail_positions
+                    for p in d['positions']:
+                        assert p['source_reconstruction_residual']<1e-8 and (p['target_reconstruction_residual'] is None or p['target_reconstruction_residual']<1e-8)
+            record=dict(panel=panel,source_seed=s,source_atom=a,condition=c,status=status,
+                        original_entry=original,entry=entry,old_selected=choice['original_source_scope']['selected'] if original else None,
+                        new_selected=choice['source_scope']['selected'] if entry else None,source_scope=choice['source_scope'],
+                        positions=choice.get('positions'),changed_case_positions=detail_positions,before={},after={})
+            for stage,rows in [('before',before),('after',after)]:
+                for method in METHODS:
+                    sub=[r for r in rows if r['method']==method]
+                    record[stage][method]=[median_valid([r['endpoints'][ep]['normalized_error'] for r in sub]) for ep in ('centered_logits','next_state')]
+                    for r in sub:table.append(dict(panel=panel,stage=stage,status=status,source_seed=s,source_atom=a,condition=c,sequence=r['sequence'],target_seed=r['target_seed'],method=method,logits_error=r['endpoints']['centered_logits']['normalized_error'],state_error=r['endpoints']['next_state']['normalized_error']))
+                record[stage+'_source_rms']=[rows[0]['endpoints'][ep]['source_rms'] for ep in ('centered_logits','next_state')] if rows else None
+            cases.append(record)
+        assert len(evaluated)==len(newrows)
+        checks[panel]=dict(new_method_rows=len(newrows),raw_detail_exact=True,all_frozen_changed_rows_consumed=True)
+        for path in (match_path,run/'config.resolved.json',run/'metrics.raw.jsonl',run/'case_details.jsonl',old/'metrics.raw.jsonl'):
+            inputs.append(dict(path=str(path),sha256=sha256(path),bytes=path.stat().st_size))
+    aggregates=[]
+    for panel in ('original','expanded'):
+        for subset in ('compatible','new_selected','new_fallback','changed'):
+            subset_cases=[r for r in cases if r['panel']==panel and r['entry'] is not None and (subset=='compatible' or subset=='new_selected' and r['new_selected'] or subset=='new_fallback' and not r['new_selected'] or subset=='changed' and r['status']=='CHANGED_SUPPORTED')]
+            for stage in ('before','after'):
+                for method in METHODS:
+                    values=[[r[stage][method][i] for r in subset_cases] for i in (0,1)]
+                    aggregates.append(dict(panel=panel,subset=subset,stage=stage,method=method,cases=len(subset_cases),medians=[median_valid(v) for v in values],both_below_zero=sum(all(v is not None and v<1 for v in r[stage][method]) for r in subset_cases)))
+    result=dict(checks=checks,cases=cases,aggregates=aggregates,model_forwards=forwards,wall_seconds=seconds,inputs=inputs,generator_script_sha256=sha256(Path(__file__)),
+                scope='Exposed-document development. Before/after donor interventions have different source references; compare methods within each operation, not raw medians across changing support as causal improvement. Unchanged outcomes reused, not new validation.')
+    write(output/'matched_summary.json',result)
+    with (output/'matched_comparison_rows.csv').open('w',encoding='utf-8',newline='') as stream:
+        writer=csv.DictWriter(stream,fieldnames=list(table[0]));writer.writeheader();writer.writerows(table)
+    lines=['# Token类别匹配：完整请求与对照表','',result['scope'],'','原有31对recipient不变，32请求保留。Only CHANGED_SUPPORTED执行新前向；UNCHANGED_REUSABLE读取旧raw，NO_CLASS_COMPATIBLE_DONOR不是无概念或零误差。字符类别不是词性/语义标签。','',
+           '| 面板/query/条件 | 匹配状态 | old→new donor | old→new selected | full logits/state | global logits/state | raw logits/state | top16 logits/state |','|---|---|---|---|---:|---:|---:|---:|']
+    def pair(v):return '/'.join(f(x) if x is not None else 'missing' for x in v)
+    for r in cases:
+        old=r['original_entry'];new=r['entry']
+        lines.append(f"| {r['panel']} s{r['source_seed']}:{r['source_atom']} {r['condition']} | {r['status']} | {old['donor_sequence'] if old else '-'}→{new['donor_sequence'] if new else '-'} | {r['old_selected']}→{r['new_selected']} | "+' | '.join(pair(r['after'][m]) for m in METHODS)+' |')
+    lines+=['','## 原始数据核对','',f'新增{forwards}前向/{f(seconds)}秒；{sum(v["new_method_rows"] for v in checks.values())}新方法行与detail端点一致，固定recipient/donor/位置和signed重建已核对。逐target before/after行共{len(table)}条在matched_comparison_rows.csv，不是独立重复数。','',
+            'matched_summary.json包含before/after source RMS、所有请求、new_selected/new_fallback分层和输入hash。两run的case_details.jsonl包含改变配对的真实上下文及signed项。这里的source规则在新donor后重新计算，不能沿用旧selected标签。']
+    (output/'MATCHED_CASE_TABLE.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+    print(json.dumps(dict(checks=checks,model_forwards=forwards,wall_seconds=seconds,case_count=len(cases),table_rows=len(table)),indent=2))
+
+
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--original',required=True);parser.add_argument('--expanded',required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--original',required=True);parser.add_argument('--expanded',required=True);parser.add_argument('--matching');args=parser.parse_args()
+    if args.matching:return summarize_matched(args)
     output=ROOT/'runs'/args.expanded
     if (output/'CASEBOOK.md').exists(): raise ValueError('Casebook already exists')
     table=[];cases=[];inputs=[];checks={};details_count=0;residuals=[];forwards=0;seconds=0

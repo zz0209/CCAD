@@ -1,0 +1,26 @@
+{
+  "run_id": "F4_token_class_donor_preparation_v1_20260905",
+  "audit_opened": false,
+  "panels": [
+    {
+      "id": "original",
+      "reference_config_path": "runs/F4_cases_original_v1_20260905/config.resolved.json",
+      "reference_config_sha256": "6878e3fd82046f18917269a90e0993ecedf0cd8f75bc03c5d352ac42a79c718d",
+      "selection_path": "runs/F4_fit_scope_confirmation_original_v1_20260905/selection.json",
+      "selection_sha256": "1692c74e89de7fbc218109a881c8f05864cfae974baeed6e5c425e6a461cd085",
+      "case_selection_path": "configs/f4_cases_original_selection_v1.json",
+      "case_selection_sha256": "35aea063336e8d51fc50fe7119c088150752bfad7c3c35d459c36b8133bf302f"
+    },
+    {
+      "id": "expanded",
+      "reference_config_path": "runs/F4_cases_expanded_v1_20260905/config.resolved.json",
+      "reference_config_sha256": "783058aec94ffe5eedbb8b124fdcece5754cdecc473288f79890164fe5a3b9b6",
+      "selection_path": "runs/F4_fit_scope_confirmation_expanded_v1_20260905/selection.json",
+      "selection_sha256": "6c3ddfd93bfb8e54ae989f7eeb81ada371cae06b4d87b058db89df8898f72fda",
+      "case_selection_path": "configs/f4_cases_expanded_selection_v1.json",
+      "case_selection_sha256": "a294c5f6dc3e97715fa3c1bf57ce0c9e3b2c1d9460f6aff33ce2641b9f37f5e6"
+    }
+  ],
+  "budget": "Bounded CPU source-row preparation <=30s, no GPU/full arrays/fitting. Fixed31recipients; all32requests retained including original missing. Only changed supported pairs need causal forwards<=589 acrosspanels,3min inference+2min detail export upper bound.",
+  "class_rule": "Unicode .isspace, any .isalnum (word_number), remaining punctuation_symbol; empty and replacement-byte fragments separate. No POS or semantic parser. Same sorted position pairing/no permutation."
+}

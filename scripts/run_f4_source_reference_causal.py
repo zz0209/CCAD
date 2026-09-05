@@ -693,6 +693,14 @@ def main():
         if selection_document_ids({'queries':selections}) & excluded:
             raise ValueError('Selected recipient/donor document intersects prior exclusion union')
         write(run/"selection.json",{"rule":"source-only hashes and activation energies; no F4 FOUND filtering","queries":selections,'excluded_document_count':len(excluded),'requested_sequences_per_condition':cfg['documents_per_condition'],'actual_sequences_per_query':[{"query":[x['source_seed'],x['source_atom']],"positive":sum(e['condition']=='positive' for e in x['sequences']),"negative":sum(e['condition']=='negative' for e in x['sequences'])} for x in selections]})
+        case_payload=json.loads(paths['case_selection'].read_text()) if cfg.get('case_replay') else None
+        if case_payload and case_payload.get('donor_override'):
+            from f4_case_details import select_cases
+            from transformers import AutoTokenizer
+            class_tokenizer=AutoTokenizer.from_pretrained(cfg['model_local_dir'],local_files_only=True)
+            write(run/'all_source_candidates.json',json.loads((run/'selection.json').read_text()))
+            selections=select_cases(selections,case_payload,tokenizer=class_tokenizer,tokens=tokens)
+            write(run/'selection.json',{'rule':case_payload['rule'],'queries':selections,'scope':'Only changed class-matched cases; unchanged pairs reused externally, unavailable pairs retained in case_selection.json'})
         if cfg.get('source_scope'):
             from inspect_f4_atom_participation import participation
             from summarize_f4_source_scope import selected
@@ -712,6 +720,12 @@ def main():
                     row['selected']=selected(row,rule);scope_rows.append(row)
             write(run/'source_scope_selection.json',{'rule':rule,'rule_sha256':expected['source_scope'],'endpoint_results_read':False,'rows':scope_rows,
                   'scope':'Frozen rule applied before loading model or materializing target-code rows for endpoint evaluation; all candidate pairs still evaluated.'})
+            if case_payload and case_payload.get('donor_override'):
+                predicted={(r['source_seed'],r['source_atom'],r['condition']):r['source_scope'] for r in case_payload['choices']}
+                for row in scope_rows:
+                    prior=predicted[row['source_seed'],row['source_atom'],row['condition']]
+                    if any(row[k]!=prior[k] for k in ('selected','supported')) or not np.isclose(row['natural_source_hook_fraction'],prior['natural_source_hook_fraction'],rtol=1e-10,atol=1e-12):
+                        raise ValueError('Prepared matched source scope changed')
             print(json.dumps({'source_scope_selected':sum(r['selected'] for r in scope_rows),'candidate_pairs':len(scope_rows)}),flush=True)
         print(json.dumps({'source_preflight':[{'query':[u['source_seed'],u['source_atom']],
               'conditions':{condition:{'pairs':len(group),'supported_pairs':sum(e.get('donor_status')=='SELECTED_SOURCE_ONLY' for e in group),
@@ -722,8 +736,8 @@ def main():
             from f4_case_details import select_cases, export_case
             if cfg['ranks']!=[1] or not cfg.get('donor_difference'):
                 raise ValueError('Case export requires rank1 donor differences')
-            case_payload=json.loads(paths['case_selection'].read_text())
-            selections=select_cases(selections,case_payload)
+            if not case_payload.get('donor_override'):
+                selections=select_cases(selections,case_payload)
             write(run/'case_selection.json',case_payload)
             write(run/'replay_selection.json',{'queries':selections})
         os.environ.update(HF_HUB_OFFLINE="1",TRANSFORMERS_OFFLINE="1",CUBLAS_WORKSPACE_CONFIG=cfg["cublas_workspace_config"])
@@ -857,6 +871,9 @@ def main():
             for rank in cfg["ranks"]:
                 for method in method_names:
                     group=[r for r in rows if r["condition"]==condition and r["rank"]==rank and r["method"]==method]
+                    if not group:
+                        summary['by_method'][f'{condition}/r{rank}/{method}']={'evaluated_rows':0}
+                        continue
                     summary["by_method"][f"{condition}/r{rank}/{method}"]={e:{k:float(np.median([r["endpoints"][e][k] for r in group if r["endpoints"][e][k] is not None])) for k in ("normalized_error","bcc","source_rms")} for e in group[0]["endpoints"]}
         status="PASS" if all(checks.values()) else "FAIL"
         write(run/"environment.json",{"python":sys.executable,"python_version":platform.python_version(),"numpy":np.__version__,"scipy":"not_used","torch":torch.__version__,"transformers":transformers.__version__,"cuda":torch.version.cuda,"device":torch.cuda.get_device_name(),"platform":platform.platform()})

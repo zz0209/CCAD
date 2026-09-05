@@ -3,7 +3,28 @@ import json
 import numpy as np
 
 
-def select_cases(selections, payload):
+def token_class(text):
+    """Coarse character class, not POS/semantics; byte fragments stay separate."""
+    if not text:return 'empty'
+    if '\ufffd' in text:return 'byte_fragment'
+    if text.isspace():return 'whitespace'
+    if any(c.isalnum() for c in text):return 'word_number'
+    return 'punctuation_symbol'
+
+
+def ordered_class_donor(recipient, positions, donors, coordinates, classes):
+    """Original sorted-position pairing and energy/tie rule, with a class constraint."""
+    candidates=[];n=len(positions);tested=[]
+    for donor in donors:
+        dp=donor['intervention_positions'][:n];seq=donor['sequence']
+        compatible=bool(n and len(dp)==n and [classes[recipient,p] for p in positions]==[classes[seq,p] for p in dp])
+        energy=float(np.sum((coordinates[recipient][positions]-coordinates[seq][dp])**2)) if len(dp)==n else None
+        tested.append(dict(sequence=seq,positions=dp,compatible=compatible,source_difference_energy=energy))
+        if compatible:candidates.append((energy,-seq,dp,donor))
+    return (max(candidates,key=lambda x:x[:2]) if candidates else None),tested
+
+
+def select_cases(selections, payload, *, tokenizer=None, tokens=None):
     choices={(r['source_seed'],r['source_atom'],r['condition']):r for r in payload['choices']}
     if len(choices)!=len(payload['choices']): raise ValueError('Duplicate case choice')
     result=[];seen=set()
@@ -11,12 +32,33 @@ def select_cases(selections, payload):
         chosen=[]
         for condition in ('positive','negative'):
             key=(unit['source_seed'],unit['source_atom'],condition);seen.add(key)
-            choice=choices[key];entry=choice['entry']
+            choice=choices[key];entry=choice['entry'];override=payload.get('donor_override',False)
+            original=choice['original_entry'] if override else entry
+            if original is not None and sum(e==original for e in unit['sequences'])!=1:
+                raise ValueError('Frozen original recipient no longer matches')
             if entry is None: continue
-            matches=[e for e in unit['sequences'] if e==entry]
-            if len(matches)!=1 or not choice['source_scope']['supported']:
+            if not choice['source_scope']['supported']:
                 raise ValueError('Frozen case entry no longer matches source-only selection')
-            chosen.append(matches[0])
+            if override:
+                allowed={'donor_sequence','donor_positions','donor_document_ids','donor_source_difference_energy','donor_status'}
+                if original is None or any(entry.get(k)!=original.get(k) for k in (set(entry)|set(original))-allowed):
+                    raise ValueError('Donor override changed recipient fields')
+                donors=[e for e in unit['sequences'] if e['sequence']==entry['donor_sequence'] and e['condition']!=condition]
+                pos=entry['intervention_positions'];dp=entry['donor_positions']
+                if len(donors)!=1 or dp!=donors[0]['intervention_positions'][:len(pos)] or len(dp)!=len(pos) or len(set(dp))!=len(dp):
+                    raise ValueError('Donor override left original ordered position pool')
+                if entry['donor_document_ids']!=donors[0]['document_ids'] or set(entry['document_ids'])&set(entry['donor_document_ids']):
+                    raise ValueError('Donor document identity mismatch')
+                if tokenizer is None or tokens is None:raise ValueError('Donor override needs token-class verification')
+                if any(token_class(tokenizer.decode([int(tokens[entry['sequence'],p])]))!=token_class(tokenizer.decode([int(tokens[entry['donor_sequence'],d])])) for p,d in zip(pos,dp)):
+                    raise ValueError('Frozen donor token classes no longer match')
+                if payload.get('evaluate_changed_only') and choice['matching_status']=='UNCHANGED_REUSABLE':
+                    if any(entry[k]!=original[k] for k in ('donor_sequence','donor_positions','donor_document_ids')):
+                        raise ValueError('Unchanged case has changed donor')
+                    continue
+            elif sum(e==entry for e in unit['sequences'])!=1:
+                raise ValueError('Frozen case entry no longer matches source-only selection')
+            chosen.append(entry)
         result.append(dict(unit,sequences=chosen))
     if seen!=set(choices): raise ValueError('Case query panel mismatch')
     return result
