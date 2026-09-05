@@ -73,6 +73,20 @@ def source_dose_scale(source, masked_hook, maximum_fraction=None):
     return min(1.0,maximum_fraction*float(np.linalg.norm(masked_hook))/norm) if norm else 1.0
 
 
+def saved_coordinate_key(s, a, t, entry, method):
+    return (s, a, t, entry['condition'], entry['sequence'], method)
+
+
+def validate_saved_coordinate(value, entry, length, rank):
+    """Saved candidates are unscaled coordinates in the unchanged source basis."""
+    value=np.asarray(value,dtype=np.float64)
+    if value.shape!=(length,rank) or not np.isfinite(value).all():
+        raise ValueError('Invalid saved candidate coordinate shape/value')
+    outside=np.ones(length,dtype=bool);outside[entry['intervention_positions']]=False
+    if np.any(value[outside]!=0):raise ValueError('Saved candidate acts outside selected positions')
+    return value
+
+
 def selection_document_ids(selection):
     return {d for q in selection['queries'] for e in q['sequences']
             for d in e['document_ids']+e.get('donor_document_ids',[])}
@@ -533,6 +547,10 @@ def main():
             paths['source_scope']=ROOT/cfg['source_scope']['path'];expected['source_scope']=cfg['source_scope']['sha256']
         if cfg.get('case_replay'):
             paths['case_selection']=ROOT/cfg['case_replay']['path'];expected['case_selection']=cfg['case_replay']['sha256']
+        if cfg.get('saved_candidate_coordinates'):
+            for kind in ('index','arrays'):
+                spec=cfg['saved_candidate_coordinates']
+                paths[f'candidate_{kind}']=ROOT/spec[f'{kind}_path'];expected[f'candidate_{kind}']=spec[f'{kind}_sha256']
         if cfg.get('readout_ablation',{}).get('saved_readout'):
             entry=cfg['readout_ablation']['saved_readout']
             paths['saved_readout']=ROOT/entry['path'];expected['saved_readout']=entry['sha256']
@@ -568,6 +586,21 @@ def main():
             if any(spec[k]!=original[old] for k,old in [('ridge_fraction','ridge_fraction'),('condition_weight_power','condition_weight_power'),('max_condition_tokens','max_condition_tokens_per_split')]):
                 raise ValueError('Single-atom fit must match original discovery weighting and ridge fraction')
         write(run/"inputs.json",{"inputs":[{"path":str(p.resolve()),"sha256":sha256(p),"bytes":p.stat().st_size,"source":"CCAD saved artifact","license_or_access_boundary":"internal","role":k} for k,p in paths.items()]})
+        saved_coordinates={};saved_coordinate_metadata={}
+        if cfg.get('saved_candidate_coordinates'):
+            if cfg['ranks']!=[1] or not cfg.get('donor_difference'):
+                raise ValueError('Saved coordinate consumer currently requires rank1 differences')
+            payload=json.loads(paths['candidate_index'].read_text())
+            for field in ('factors_sha256','surface_sha256','sequence_records_sha256'):
+                if payload[field]!=cfg[field]:raise ValueError('Saved candidate source/input identity changed')
+            if payload['case_selection_sha256']!=expected['case_selection'] or payload['scale']!='unscaled_source_basis_coordinates':
+                raise ValueError('Saved candidate case/dose contract changed')
+            with np.load(paths['candidate_arrays'],allow_pickle=False) as arrays:
+                for r in payload['rows']:
+                    k=saved_coordinate_key(r['source_seed'],r['source_atom'],r['target_seed'],r,r['method'])
+                    if k in saved_coordinates:raise ValueError('Duplicate saved candidate key')
+                    saved_coordinates[k]=validate_saved_coordinate(arrays[r['array_key']],r,cfg['context_length'],len(cfg['ranks']))
+                    saved_coordinate_metadata[k]=r
         surface={(r["source_seed"],r["source_atom"],r["target_seed"]):r for r in jsonl(paths["surface"]) if r["query_role"]=="anchor" and r["rank"]==1}
         panel={(r["seed"],r["atom"]):r for r in jsonl(paths["panel"])}
         factors=np.load(paths["factors"],allow_pickle=False)
@@ -716,6 +749,11 @@ def main():
             class_tokenizer=AutoTokenizer.from_pretrained(cfg['model_local_dir'],local_files_only=True)
             write(run/'all_source_candidates.json',json.loads((run/'selection.json').read_text()))
             selections=select_cases(selections,case_payload,tokenizer=class_tokenizer,tokens=tokens,selected_only=cfg['case_replay'].get('selected_only',False))
+            if cfg.get('target_seed_subset'):
+                subset=cfg['target_seed_subset']
+                if len(set(subset))!=len(subset) or not set(subset).issubset(cfg['source_seeds']):raise ValueError('Invalid target subset')
+                selections=[dict(u,targets=[t for t in u['targets'] if t in subset]) for u in selections]
+                if any(not u['targets'] for u in selections):raise ValueError('Empty target subset')
             write(run/'selection.json',{'rule':case_payload['rule'],'queries':selections,'scope':'Frozen source-selected matched cases, including previously unchanged pairs' if cfg['case_replay'].get('selected_only') else 'Only changed class-matched cases; unchanged pairs reused externally, unavailable pairs retained in case_selection.json'})
         if cfg.get('source_scope'):
             from inspect_f4_atom_participation import participation
@@ -881,6 +919,11 @@ def main():
                             if refit_families:
                                 keep,beta=refit_families[s,a,t]
                                 variants['readout_top16_refit']=(z[t][:,keep]@beta)[:,None]@bt.T*mask[:,None]
+                            for method in cfg.get('saved_candidate_coordinates',{}).get('methods',[]):
+                                k=saved_coordinate_key(s,a,t,entry,method);meta=saved_coordinate_metadata[k]
+                                if any(meta[field]!=entry[field] for field in ('donor_sequence','intervention_positions','donor_positions','document_ids','donor_document_ids')):
+                                    raise ValueError('Saved candidate recipient/donor changed')
+                                variants[method]=saved_coordinates[k]@bt.T
                             if cfg.get('methods'):
                                 variants={name:variants[name] for name in cfg['methods']}
                             for method,delta in variants.items():
@@ -924,6 +967,8 @@ def main():
         checks={"noop":max(noop)<=1e-6,"raw_replay_relative":max(replay)<=1e-4,"eight_source_queries":len(selections)==8,"rows":len(rows)==sum(len(x["sequences"])*len(x["targets"])*len(cfg["ranks"])*len(method_names) for x in selections),"audit_closed":True}
         if cfg.get('maximum_source_hook_fraction'):
             checks['source_dose_bound']=all(r['source_hook_fraction'] is None or r['source_hook_fraction']<=cfg['maximum_source_hook_fraction']+1e-12 for r in rows)
+        if cfg.get('expected_evaluated_cases') is not None:
+            checks['frozen_case_count']=sum(len(u['sequences']) for u in selections)==cfg['expected_evaluated_cases']
         summary={"checks":checks,"model_forwards":forwards,"rows":len(rows),"wall_seconds":time.perf_counter()-start,"peak_allocated_vram_bytes":torch.cuda.max_memory_allocated(),"max_noop":max(noop),"max_replay_relative":max(replay),"by_method":{}}
         for condition in ("positive","negative"):
             for rank in cfg["ranks"]:
