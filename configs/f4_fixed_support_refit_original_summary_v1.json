@@ -1,0 +1,19 @@
+{
+  "analysis_id": "F4_fixed_support_refit_original_summary_v1_20260905",
+  "evidence_level": "fixed_support_refit_original_panel_development",
+  "rule": {
+    "require_supported_pair": true,
+    "maximum_largest_source_atom_energy_share": 0.5,
+    "minimum_natural_source_hook_fraction": 0.1
+  },
+  "run_names": [
+    "F4_fixed_support_refit_original_panel_v1_20260905"
+  ],
+  "endpoints": [
+    "next_state",
+    "centered_logits"
+  ],
+  "aggregation": "Same policy and median inputs within query/target/condition, then median across four dependent targets. All supported/missing/selected/rejected rows retained.",
+  "selection_history": "Exact same original8source-only hashpanel,recipients/donors/sourcegate as F4_adaptive_confirmation_v1_20260905; no target-based reselection.",
+  "limitations": "Unchanged refit algorithm extended to original8querypanel on exposed106documents/fiveexistingseeds/hook. Discovery-only refit, fixed supports/rows/weights, no endpoint tuning. Not new-document confirmation or full-dictionary LASSO. Original audit closed."
+}

@@ -1,0 +1,19 @@
+{
+  "analysis_id": "F4_fixed_support_refit_summary_v1_20260905",
+  "evidence_level": "fixed_support_refit_development_existing_documents",
+  "rule": {
+    "require_supported_pair": true,
+    "maximum_largest_source_atom_energy_share": 0.5,
+    "minimum_natural_source_hook_fraction": 0.1
+  },
+  "run_names": [
+    "F4_fixed_support_refit_dev_v1_20260905"
+  ],
+  "endpoints": [
+    "next_state",
+    "centered_logits"
+  ],
+  "aggregation": "Same policy and median inputs within query/target/condition, then median across four dependent targets. All supported/missing/selected/rejected rows retained.",
+  "selection_history": "Exactly same frozen source-hash offset1,recipient/donor and44/64sourcegate as reference confirmation; independently recompute then verify exact equality before comparing.",
+  "limitations": "Existing exposed116documents, same8source queries/five seeds/hook andsource choices; fixed16support refit only on originaldiscovery. Not new-document confirmation, full-dictionaryLASSO, MAS, or native deletion. Original audit closed; regularization fraction matched but code-space ridge is not full-hook metric equivalence."
+}

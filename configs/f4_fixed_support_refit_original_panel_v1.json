@@ -1,0 +1,75 @@
+{
+  "run_id": "F4_fixed_support_refit_original_panel_v1_20260905",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "additional_exclude_selections": [
+    {
+      "path": "runs/F4_source_reference_causal_dev_v7_alltargets_20260904/selection.json",
+      "sha256": "be3e99750071e0407b0e4c16c9ae579613c69a28254424833b25ee91d9a0c944"
+    },
+    {
+      "path": "runs/F4_source_reference_causal_dev_v8_newdocs_20260904/selection.json",
+      "sha256": "ed8a800e50544b1bf5be103205309ca2c527bb336d99f775f5b50d03674f2f1f"
+    }
+  ],
+  "ranks": [
+    1
+  ],
+  "documents_per_condition": 4,
+  "targets_per_query": 4,
+  "local_content_positions": 4,
+  "centered_logit_endpoint": true,
+  "include_source_mean_only": false,
+  "donor_difference": true,
+  "maximum_source_hook_fraction": 0.1,
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "resource_lease_reason": "Reads existing assets for bounded CPU/GPU inference; no whole-disk monopoly for ordinary reads or downloads.",
+  "selection": "Exact same original8source-only hashpanel,recipients/donors/sourcegate as F4_adaptive_confirmation_v1_20260905; no target-based reselection.",
+  "intervention": "Same fixed-support top16 conditional-centered ridge .001 as expandedpanel; rank1 sourcealigned donor difference andcommon sourcecap0.1.",
+  "budget": "Additional448forwards expected<=3min and<=2min integratedCPUfit based on prior32maps1.637s+448forwards72.03s.4CPUthreads,<1.5GiBallocatedVRAM.No newdata/training/payment.",
+  "bulk_asset_dir": "D:/CCAD_Storage/paired_assets/F4_adaptive_confirmation_codes_v1_20260905",
+  "asset_manifest_sha256": "4b42dc7fda5d948b63c0048e90d82fc2ce2efe92b11a74c1fe17701a4f188fe9",
+  "raw_hook_asset_dir": "D:/CCAD_Storage/paired_assets/F4_adaptive_confirmation_codes_v1_20260905",
+  "raw_hook_manifest_sha256": "4dde97fab7b46d120ee87f773cd8c56c2aeec72e9b61008fd9b9ffbc80b85706",
+  "paired_corpus_run": "F4_adaptive_confirmation_corpus_v1_20260905",
+  "token_manifest_path": "runs/F4_adaptive_confirmation_corpus_v1_20260905/artifacts/token_manifest.json",
+  "token_manifest_sha256": "273c20a009dfa7606a0e72d2f5f71670eb536cd6d8a2ec549419b770ab9f70cc",
+  "sequence_records_path": "runs/F4_adaptive_confirmation_corpus_v1_20260905/artifacts/sequence_records.json",
+  "sequence_records_sha256": "dec3f32a154078ab7183bb9bac0f74fe350cea79b035b74cc8fa46333c6eb3a4",
+  "methods": [
+    "readout_top16_refit"
+  ],
+  "source_scope": {
+    "path": "configs/f4_source_applicability_dev_v1.json",
+    "sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74"
+  },
+  "frozen_corpus_config_sha256": "e7461f4a21e6a99bb6a2ff0ffad25aa672d82fdf0b42bca8a328d9e46bddd2f5",
+  "evidence_level": "fixed_support_refit_original_panel_development",
+  "scope_limit": "Unchanged refit algorithm extended to original8querypanel on exposed106documents/fiveexistingseeds/hook. Discovery-only refit, fixed supports/rows/weights, no endpoint tuning. Not new-document confirmation or full-dictionary LASSO. Original audit closed.",
+  "readout_ablation": {
+    "budgets": [
+      16
+    ],
+    "native_budget": 16,
+    "saved_readout": {
+      "path": "runs/F4_readout_structure_dev_v1_20260905/readout_ablation.json",
+      "sha256": "9e3cb3eb21d0f6bffea056dfa4fa79a7b7ea960dc134e8cf9a82e626d9f6d1b4"
+    }
+  },
+  "frozen_policy": {
+    "path": "configs/f4_source_adaptive_readout_dev_v1.json",
+    "sha256": "e3047e5d3719529ff1d487d7553764d2bbe58b6713a4759cc2506636fed76d67"
+  },
+  "fixed_support_refit": {
+    "ridge_fraction": 0.001,
+    "fit_split": "original_discovery",
+    "support": "same saved top16; no reselection",
+    "objective": "weighted conditional-centered scalar source coordinate MSE plus trace-scaled ridge",
+    "baseline_reference_run": "F4_adaptive_confirmation_v1_20260905"
+  }
+}

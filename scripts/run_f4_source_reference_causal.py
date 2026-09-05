@@ -273,6 +273,74 @@ def norm_match(delta, reference):
     return delta*(float(np.linalg.norm(reference))/norm) if norm>0 else np.zeros_like(delta)
 
 
+def fixed_support_ridge(x, y, weights, ridge_fraction):
+    """Conditional fixed-support regression via the existing hook RRR kernel."""
+    from ccad.hook_transport import fit_hook_space_transport
+    x=np.asarray(x,dtype=np.float64);y=np.asarray(y,dtype=np.float64)
+    weights=np.asarray(weights,dtype=np.float64)
+    if x.ndim!=2 or min(x.shape)==0 or y.shape!=(len(x),) or weights.shape!=y.shape:
+        raise ValueError('Invalid fixed-support shapes')
+    if not all(np.isfinite(v).all() for v in (x,y,weights)) or np.any(weights<0) or weights.sum()<=0:
+        raise ValueError('Invalid fixed-support values/weights')
+    weights=weights/weights.sum();xm=weights@x;ym=float(weights@y)
+    xc=x-xm;yc=y-ym
+    fit=fit_hook_space_transport(xc,yc[:,None],weights,rank=1,ridge_fraction=ridge_fraction)
+    beta=(fit.target_factors@fit.source_factors.T)[:,0]
+    return beta,dict(ridge=fit.ridge,weighted_error=float(np.sum(weights*(yc-xc@beta)**2)),
+        source_variation=float(np.sum(weights*yc**2)),intercept=float(ym-xm@beta),
+        effective_rank=fit.effective_rank,status=fit.status)
+
+
+def prepare_fixed_support_refit(cfg, surface, factors, findex, dec, run, paths):
+    """Read only saved original-discovery rows and fixed top16 support for fitting."""
+    spec=cfg['fixed_support_refit'];payload=json.loads(paths['saved_readout'].read_text())
+    manifest_path=paths['refit_discovery_manifest'];manifest=json.loads(manifest_path.read_text())
+    asset=manifest_path.parent
+    for entry in manifest['decoders']:
+        if sha256(Path(cfg['bulk_asset_dir'])/'decoders'/f"seed_{entry['seed']}.float32.bin")!=entry['sha256']:
+            raise ValueError('Refit discovery/current decoder mismatch')
+    shape=(next(r['tokens'] for r in manifest['splits'] if r['split']=='discovery'),cfg['k'])
+    indices={s:np.memmap(asset/'discovery'/f'seed_{s}'/'top_indices.uint16.bin',dtype='<u2',mode='r',shape=shape) for s in cfg['source_seeds']}
+    acts={s:np.memmap(asset/'discovery'/f'seed_{s}'/'top_acts.float32.bin',dtype='<f4',mode='r',shape=shape) for s in cfg['source_seeds']}
+    def dense(s,rows):
+        z=np.zeros((len(rows),cfg['num_latents']))
+        np.add.at(z,(np.arange(len(rows))[:,None],indices[s][rows]),acts[s][rows]);return z
+    families={};records=[];source_rows={};started=time.perf_counter()
+    for record in payload['families']:
+        s,a,t=(record[k] for k in ('source_seed','source_atom','target_seed'))
+        rows=np.asarray(record['discovery_rows'],dtype=int);weights=np.asarray(record['discovery_weights'])
+        if not 0<len(rows)<=256 or rows.min()<0 or rows.max()>=shape[0]:
+            raise ValueError('Fixed-support fit outside discovery budget')
+        identity=(record['discovery_rows'],record['discovery_weights'])
+        if (s,a) in source_rows and source_rows[s,a]!=identity:
+            raise ValueError('Refit source rows/weights differ across targets')
+        source_rows[s,a]=identity
+        keep=np.asarray(record['top_atoms'][:16],dtype=int)
+        if len(keep)!=16 or len(set(keep.tolist()))!=16:raise ValueError('Refit support must contain16 unique atoms')
+        b=factors['source_basis'][findex[s,a,t],:,:1].astype(np.float64)
+        t0=next(seed for seed in cfg['source_seeds'] if seed!=s)
+        if not np.array_equal(b,factors['source_basis'][findex[s,a,t0],:,:1]):
+            raise ValueError('Refit requires the same source basis across targets')
+        ids=surface[s,a,t]['source_candidate_ids']
+        y=(dense(s,rows)[:,ids]@dec[s][ids]@b)[:,0];x=dense(t,rows)[:,keep]
+        beta,diagnostics=fixed_support_ridge(x,y,weights,spec['ridge_fraction'])
+        full=(dec[t]@factors['query_target'][findex[s,a,t],:,:1].astype(np.float64))[:,0]
+        wc=weights/weights.sum();xc=x-wc@x;yc=y-wc@y
+        diagnostics['truncated_weighted_error']=float(np.sum(wc*(yc-xc@full[keep])**2))
+        families[s,a,t]=(keep,beta)
+        records.append(dict(source_seed=s,source_atom=a,target_seed=t,support=keep.tolist(),
+            coefficients=beta.tolist(),discovery_rows=rows.tolist(),discovery_weights=weights.tolist(),**diagnostics))
+    if len(families)!=32:raise ValueError('Expected32 fixed-support maps')
+    write(run/'fixed_support_refit.json',dict(fit_split='discovery',calibration_used_for_fit=False,
+        support_reselected=False,rank=1,ridge_fraction=spec['ridge_fraction'],wall_seconds=time.perf_counter()-started,
+        discovery_manifest_path=str(manifest_path),discovery_manifest_sha256=sha256(manifest_path),
+        saved_support_path=str(paths['saved_readout']),saved_support_sha256=sha256(paths['saved_readout']),
+        operation='Conditional-centered code-space ridge on fixed support; intercept cancels in donor difference. Not native deletion or LASSO.',
+        regularizer='fraction*weighted centered design energy/min(n,16); same fraction rule, not identical full-hook penalty geometry',fits=records))
+    print(json.dumps({'fixed_support_refit_maps':len(families),'fit_split':'discovery'}),flush=True)
+    return families
+
+
 def prepare_readout_ablation(cfg, factors, findex, dec, run, paths):
     spec=cfg['readout_ablation']
     if cfg['ranks']!=[1] or not cfg.get('donor_difference') or spec['native_budget']!=16:
@@ -359,6 +427,8 @@ def main():
         code_paths.extend(ROOT/'src/ccad'/name for name in ('ot_transport.py','nip_baselines.py','proposal.py'))
     if cfg.get('source_scope'):
         code_paths.extend(ROOT/'scripts'/name for name in ('inspect_f4_atom_participation.py','summarize_f4_source_scope.py'))
+    if cfg.get('fixed_support_refit'):
+        code_paths.append(ROOT/'src/ccad/hook_transport.py')
     code = sorted([{"path": p.relative_to(ROOT).as_posix(), "sha256": sha256(p), "bytes": p.stat().st_size} for p in code_paths], key=lambda x:x["path"])
     code_hash = hashlib.sha256("".join(f"{x['path']}:{x['sha256']}\n" for x in code).encode()).hexdigest()
     for entry,p in zip(code, sorted(code_paths,key=lambda p:p.relative_to(ROOT).as_posix())):
@@ -391,6 +461,12 @@ def main():
         if cfg.get('readout_ablation',{}).get('saved_readout'):
             entry=cfg['readout_ablation']['saved_readout']
             paths['saved_readout']=ROOT/entry['path'];expected['saved_readout']=entry['sha256']
+        if cfg.get('fixed_support_refit'):
+            if cfg['ranks']!=[1] or not cfg.get('donor_difference') or 'saved_readout' not in paths:
+                raise ValueError('Fixed-support refit requires saved support and rank1 donor differences')
+            support=json.loads(paths['saved_readout'].read_text())
+            paths['refit_discovery_manifest']=Path(support['discovery_manifest_path'])
+            expected['refit_discovery_manifest']=support['discovery_manifest_sha256']
         if cfg.get('ot_fit'):
             for kind in ('fit','config'):
                 entry=cfg['ot_fit_reference'];key=f'ot_reference_{kind}'
@@ -458,6 +534,7 @@ def main():
         if atom_families:
             write(run/'atom_fit_reuse.json',{'refitted':False if not single_fits else True,'families':{name:len(fits) for name,fits in atom_families.items()},'saved_inputs':cfg.get('saved_atom_families',[])})
         readout_families=prepare_readout_ablation(cfg,factors,findex,dec,run,paths) if cfg.get('readout_ablation') else {}
+        refit_families=prepare_fixed_support_refit(cfg,surface,factors,findex,dec,run,paths) if cfg.get('fixed_support_refit') else {}
         saved_ot_families={}
         for i,entry in enumerate(cfg.get('saved_ot_families',[])):
             oldcfg=json.loads(paths[f'saved_ot_{i}_config'].read_text())
@@ -657,6 +734,9 @@ def main():
                                 native=z[t][:,keep]@dec[t][keep]*mask[:,None]
                                 variants['native_top16_difference']=native
                                 variants['native_top16_difference_matched']=norm_match(native,source_natural)
+                            if refit_families:
+                                keep,beta=refit_families[s,a,t]
+                                variants['readout_top16_refit']=(z[t][:,keep]@beta)[:,None]@bt.T*mask[:,None]
                             if cfg.get('methods'):
                                 variants={name:variants[name] for name in cfg['methods']}
                             for method,delta in variants.items():

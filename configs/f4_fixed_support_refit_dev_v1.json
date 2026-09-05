@@ -1,0 +1,76 @@
+{
+  "run_id": "F4_fixed_support_refit_dev_v1_20260905",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "additional_exclude_selections": [
+    {
+      "path": "runs/F4_source_reference_causal_dev_v7_alltargets_20260904/selection.json",
+      "sha256": "be3e99750071e0407b0e4c16c9ae579613c69a28254424833b25ee91d9a0c944"
+    },
+    {
+      "path": "runs/F4_source_reference_causal_dev_v8_newdocs_20260904/selection.json",
+      "sha256": "ed8a800e50544b1bf5be103205309ca2c527bb336d99f775f5b50d03674f2f1f"
+    }
+  ],
+  "ranks": [
+    1
+  ],
+  "documents_per_condition": 4,
+  "targets_per_query": 4,
+  "local_content_positions": 4,
+  "centered_logit_endpoint": true,
+  "include_source_mean_only": false,
+  "donor_difference": true,
+  "maximum_source_hook_fraction": 0.1,
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "resource_lease_reason": "Reads existing assets for bounded CPU/GPU inference; no whole-disk monopoly for ordinary reads or downloads.",
+  "selection": "Exactly same frozen source-hash offset1,recipient/donor and44/64sourcegate as reference confirmation; independently recompute then verify exact equality before comparing.",
+  "intervention": "Fixed16support readout refitted on originaldiscovery conditional variation, sourcealigned rank1 donor difference with common source cap0.1; no endpoint parameter selection.",
+  "budget": "Integrated discovery prepare<=2min then448forwards(64*(2noop/referencebaseline+1source+4targets*1method)),expected2-3min,4CPUthreads,<1.5GiBallocatedVRAM. No training/newcorpus/paidresource.",
+  "bulk_asset_dir": "D:/CCAD_Storage/paired_assets/F4_query_confirmation_codes_v1_20260905",
+  "asset_manifest_sha256": "4d9f28f9a268b1e2aef1a09eab686564e7fabbc882ae6b7bec56fe60eb517197",
+  "raw_hook_asset_dir": "D:/CCAD_Storage/paired_assets/F4_query_confirmation_codes_v1_20260905",
+  "raw_hook_manifest_sha256": "1281df1c5c9151032e584c18691e6f84f89702b5c0b5ae11f2bc598ee1daba5e",
+  "paired_corpus_run": "F4_query_confirmation_corpus_v1_20260905",
+  "token_manifest_path": "runs/F4_query_confirmation_corpus_v1_20260905/artifacts/token_manifest.json",
+  "token_manifest_sha256": "03568abd120ae1e49875ea2c8fd9133f2abbef8d7e2731e8cb80428beac20e12",
+  "sequence_records_path": "runs/F4_query_confirmation_corpus_v1_20260905/artifacts/sequence_records.json",
+  "sequence_records_sha256": "04c4c9066803ca670ec485b93574336630971cc04b3d60b1454e56de91837c26",
+  "methods": [
+    "readout_top16_refit"
+  ],
+  "source_scope": {
+    "path": "configs/f4_source_applicability_dev_v1.json",
+    "sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74"
+  },
+  "frozen_corpus_config_sha256": "ba1f2009fc92cbdbabb6c94353e78cb88727a6702693ba6a4a5694116fc85257",
+  "evidence_level": "fixed_support_refit_development_existing_documents",
+  "scope_limit": "Existing exposed116documents, same8source queries/five seeds/hook andsource choices; fixed16support refit only on originaldiscovery. Not new-document confirmation, full-dictionaryLASSO, MAS, or native deletion. Original audit closed; regularization fraction matched but code-space ridge is not full-hook metric equivalence.",
+  "readout_ablation": {
+    "budgets": [
+      16
+    ],
+    "native_budget": 16,
+    "saved_readout": {
+      "path": "runs/F4_query_expansion_fits_v1_20260905/readout_ablation.json",
+      "sha256": "c69cbac174109a125f71830e4751311192b8cb824f373c5584c48ce61308e865"
+    }
+  },
+  "frozen_policy": {
+    "path": "configs/f4_source_adaptive_readout_dev_v1.json",
+    "sha256": "e3047e5d3719529ff1d487d7553764d2bbe58b6713a4759cc2506636fed76d67"
+  },
+  "query_hash_offset": 1,
+  "fixed_support_refit": {
+    "ridge_fraction": 0.001,
+    "fit_split": "original_discovery",
+    "support": "same saved top16; no reselection",
+    "objective": "weighted conditional-centered scalar source coordinate MSE plus trace-scaled ridge",
+    "baseline_reference_run": "F4_query_confirmation_v1_20260905"
+  }
+}
