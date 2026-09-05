@@ -1,0 +1,54 @@
+{
+  "run_id": "F4_compact_source_components_v1_20260905",
+  "purpose": "Use one shared16 latent interface for two functional source components across recipient seeds",
+  "evidence_level": "exposed_document_source_component_development",
+  "audit_opened": false,
+  "old_fit": {
+    "path": "runs/F4_long_recipient_fit_v1_20260905",
+    "config_sha256": "793cbc9878ae671ffc1c68d119b3bc0af2184847da5b45ba0f0c35f6179f3d89",
+    "metadata_sha256": "ea7966d507d5fbcadbddc2bb8f7216e76e86dd68d0d074cfaa55c2051e9ddf43",
+    "coefficients_sha256": "9bafd702488df19b2a6cd65eed782f4aa4e614a250345ebbf73355799fc7ee37"
+  },
+  "new_fit": {
+    "path": "runs/F4_long_k128_newseeds_fit_v1_20260905",
+    "config_sha256": "7acba8217042ce3374bbdb6fd94076a37fcf2f14b57d9872645787ad375b3858",
+    "metadata_sha256": "5ac578e861b74f06bda9c3b6dbfe65c48ec98cb0d5c19c4cfbdb3e9ee0504686",
+    "coefficients_sha256": "f444401cc8081758c966688874c8a8a247849e8cc38e800871f99927ed135a37"
+  },
+  "source_group_size": 16,
+  "source_group_rule": "Within frozen32 source members, alternate odd/even ranks in weighted conditional-variation energy on unchanged positive256 discovery rows, atom-ID ties. Two16-member groups. This development refinement follows v1 head/tail zero source-tail effect, not newdata confirmation; no target endpoints choose group membership.",
+  "ridge_fraction": 0.001,
+  "maximum_source_hook_fraction": 0.1,
+  "scale_rule": "One family scale from max norm(full,A,B) relative to recipient masked hook; applied unchanged to all source/long/raw components. Full is rerun at this common scale.",
+  "target_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "expected_cases": 5,
+  "expected_requests": 8,
+  "expected_forwards": 325,
+  "fit_budget_seconds": 180,
+  "causal_budget_seconds": 180,
+  "cpu_threads": 4,
+  "budget": "<=180s preparation, 12new short two-output maps plus analytic joint atom fits; restore long/raw coefficients rather than refit. Existing sparse short codes and only32hook positions encoded by five longSAEs. <=325LM forwards=5cases*(2base+3source+4targets*3parts*5newmethods), <=180s numerical plus90s load. Parent longfull/raw reused only after exact source/case/dose/coordinate/endpoint-anchor replay. No new training/download/environment/audit.",
+  "scope": "Exposed-development compact component interface; samefivecases/three source queries/all8requests and five recipient seeds excluding source index. One common16-member target support for both A/B (not16each); shortfull/short16/long16/shortjointsingle/longjointsingle measured, parent longfull/raw only overlaid if source anchors exactly replay. Source groups and long/raw full coefficients frozen. Rank1 projected parts, not native editing, independent semantic mechanisms, optimal sparsity, long-to-long five-source suite or fresh-document confirmation.",
+  "partition_mode": "interleaved",
+  "previous_run": "F4_source_components_v1_20260905",
+  "replay_tolerance_rule": "Existing source-reference causal consumer uses <=1e-4 for cached batch4 versus live batch1 hook replay. v1 mistakenly imposed1e-5; old v1 FAIL retained, its max1.1723889e-5 equals the previously accepted same-case replay1.1723891e-5. Future consumer restores the existing1e-4 rule, not a new data-tuned threshold.",
+  "compact_shared_interface": true,
+  "readout_budget": 16,
+  "expected_rows": 315,
+  "frozen_components": {
+    "path": "runs/F4_source_components_interleaved_v2_20260905",
+    "fits_sha256": "ccd8718a066438cd6af914f12c5c5a0355403bd4ab9084be6bd073861e02115e",
+    "coefficients_sha256": "948ed15efd34ddacb26a58333eb13b742052f4ddc7cf26168152d467d448e877",
+    "coordinates_sha256": "200036b57973b88a3a0fd4bde5f6d65765f8bce5b4938b6ce6956514975a46f8",
+    "cases_sha256": "c072f3ea761371bc3f6f12c1a4edbb02149e660545cffcc0c38893cddb41f304",
+    "raw_sha256": "bb7072d5e11e33844f1630f1d829bc6b85c3081f9e39dbda5d131c29b9edd3a7"
+  },
+  "shared_support_rule": "Rank Var_Q(z_j)*(beta_jA^2+beta_jB^2) on fixed source discovery rows; same16 atom IDs serve A and B, union16. No endpoint selection or sparse refit. Short and long use the identical rule.",
+  "single_rule": "One atom for both output columns, minimizes summed weighted conditional-variation error over all3072 candidates with same ridge_fraction. Intercepts cancel in donor differences."
+}

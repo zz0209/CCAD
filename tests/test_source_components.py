@@ -2,7 +2,7 @@ import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from run_f4_source_components import np,partition_source,additive_ridge,family_scale
+from run_f4_source_components import np,partition_source,additive_ridge,family_scale,shared_support,joint_single_atom
 
 
 class SourceComponentTests(unittest.TestCase):
@@ -29,6 +29,26 @@ class SourceComponentTests(unittest.TestCase):
         scale=family_scale(c,b,h,.1)
         self.assertEqual(scale,.125)
         np.testing.assert_allclose((c*scale).sum(axis=1),c.sum(axis=1)*scale)
+
+    def test_shared_support_is_one_union_for_two_outputs(self):
+        z=np.array([[0.,0.,0.,0.],[1.,2.,3.,4.],[2.,4.,6.,8.]])
+        beta=np.array([[9.,0.],[0.,5.],[1.,1.],[1.,0.]])
+        masked,info=shared_support(z,beta,np.ones(3),2)
+        self.assertEqual(info['support'],[1,0])
+        self.assertEqual(np.flatnonzero(np.any(masked!=0,axis=1)).tolist(),[0,1])
+        np.testing.assert_allclose((z@masked).sum(axis=1),z@masked.sum(axis=1))
+
+    def test_joint_atom_matches_explicit_all_candidates(self):
+        rng=np.random.default_rng(94);x=rng.normal(size=(19,6));y=rng.normal(size=(19,2));w=rng.uniform(.1,2.,19);w=w/w.sum()
+        beta,info=joint_single_atom(x,y,w,.001);xc=x-w@x;yc=y-w@y;errors=[]
+        for j in range(x.shape[1]):
+            b=(xc[:,j]@(w[:,None]*yc))/(np.sum(w*xc[:,j]**2)*1.001)
+            errors.append(float(np.sum(w[:,None]*(yc-xc[:,j,None]*b)**2)))
+        self.assertEqual(info['atom'],int(np.argmin(errors)))
+        self.assertAlmostEqual(info['weighted_error'],min(errors),places=12)
+        shifted,other=joint_single_atom(x+17,y-11,w,.001)
+        np.testing.assert_allclose(shifted,beta,rtol=1e-10,atol=1e-12)
+        self.assertEqual(other['atom'],info['atom'])
 
 
 if __name__=='__main__':unittest.main()
