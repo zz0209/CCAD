@@ -270,6 +270,8 @@ def main():
     code_paths = [Path(__file__), ROOT / "src/ccad/activation_contract.py", ROOT / "src/ccad/artifacts.py"]
     if cfg.get('ot_fit'):
         code_paths.extend(ROOT/'src/ccad'/name for name in ('ot_transport.py','nip_baselines.py','proposal.py'))
+    if cfg.get('source_scope'):
+        code_paths.extend(ROOT/'scripts'/name for name in ('inspect_f4_atom_participation.py','summarize_f4_source_scope.py'))
     code = sorted([{"path": p.relative_to(ROOT).as_posix(), "sha256": sha256(p), "bytes": p.stat().st_size} for p in code_paths], key=lambda x:x["path"])
     code_hash = hashlib.sha256("".join(f"{x['path']}:{x['sha256']}\n" for x in code).encode()).hexdigest()
     for entry,p in zip(code, sorted(code_paths,key=lambda p:p.relative_to(ROOT).as_posix())):
@@ -279,6 +281,7 @@ def main():
     write(run / "manifest.json", {"schema_version":"fcc.causal.development.v1", "run_id":cfg["run_id"], "run_parent":"R011-F4", "purpose":"Signed source-reference causal feedback", "milestone":"M4", "evidence_level":"real_sae_development", "started_utc":now, "project_root":str(ROOT), "config_hash":sha256(run / "config.resolved.json"), "code_snapshot_hash":code_hash, "audit_opened":False, "candidate_family_frozen":True, "mean_constants_source_split":"mean", "threshold_source_split":"development_no_selection_threshold", "statistics_unit":"query/seed/document; directions sharing seeds dependent", "device":cfg["device"], "seeds":cfg["source_seeds"], "resource_lease":"disk-d-io -> cpu-heavy -> gpu-0 resource_manager.run", "resource_lease_reason":"paired assets and bounded causal forward feedback", "git_head_at_run":subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip(), "git_status_porcelain":subprocess.check_output(["git","status","--porcelain"],cwd=ROOT,text=True).splitlines()})
     write(run / "status.json", {"status":"RUNNING", "updated_utc":now})
     manifest=json.loads((run/'manifest.json').read_text());manifest['source_snapshot_required']=True
+    manifest['evidence_level']=cfg.get('evidence_level',manifest['evidence_level'])
     if cfg.get('resource_lease'):
         manifest['resource_lease']=cfg['resource_lease']
         manifest['resource_lease_reason']=cfg.get('resource_lease_reason','Compute leases matched to the actual workload')
@@ -292,6 +295,12 @@ def main():
             for kind in ('fit','config'):
                 key=f'saved_atom_{i}_{kind}'
                 paths[key]=ROOT/entry[f'{kind}_path'];expected[key]=entry[f'{kind}_sha256']
+        for i,entry in enumerate(cfg.get('saved_ot_families',[])):
+            for kind in ('fit','config','arrays'):
+                key=f'saved_ot_{i}_{kind}'
+                paths[key]=ROOT/entry[f'{kind}_path'];expected[key]=entry[f'{kind}_sha256']
+        if cfg.get('source_scope'):
+            paths['source_scope']=ROOT/cfg['source_scope']['path'];expected['source_scope']=cfg['source_scope']['sha256']
         if cfg.get('ot_fit'):
             for kind in ('fit','config'):
                 entry=cfg['ot_fit_reference'];key=f'ot_reference_{kind}'
@@ -358,6 +367,30 @@ def main():
             atom_families[entry['method']]={(r['source_seed'],r['source_atom'],r['target_seed']):r for r in payload['fits']}
         if atom_families:
             write(run/'atom_fit_reuse.json',{'refitted':False if not single_fits else True,'families':{name:len(fits) for name,fits in atom_families.items()},'saved_inputs':cfg.get('saved_atom_families',[])})
+        saved_ot_families={}
+        for i,entry in enumerate(cfg.get('saved_ot_families',[])):
+            oldcfg=json.loads(paths[f'saved_ot_{i}_config'].read_text())
+            identity_fields=('factors_sha256','source_census_sha256','query_panel_sha256','model_revision','hook_module_path','num_latents','hook_hidden_size')
+            if cfg['ranks']!=[1] or not cfg.get('donor_difference') or any(oldcfg[k]!=cfg[k] for k in identity_fields):
+                raise ValueError('Saved OT source/model identity mismatch')
+            payload=json.loads(paths[f'saved_ot_{i}_fit'].read_text())
+            if payload['fit_split']!='discovery' or payload['calibration_used_for_fit'] or payload['arrays_sha256']!=expected[f'saved_ot_{i}_arrays']:
+                raise ValueError('Saved OT fitting boundary/array identity mismatch')
+            oldmanifest=Path(oldcfg['bulk_asset_dir'])/'asset_manifest.json'
+            if sha256(oldmanifest)!=oldcfg['asset_manifest_sha256']:
+                raise ValueError('Saved OT decoder manifest changed')
+            for record in json.loads(oldmanifest.read_text())['decoders']:
+                if sha256(asset/'decoders'/f"seed_{record['seed']}.float32.bin")!=record['sha256']:
+                    raise ValueError('Saved OT and current decoder differ')
+            with np.load(paths[f'saved_ot_{i}_arrays'],allow_pickle=False) as arrays:
+                family={(r['source_seed'],r['source_atom'],r['target_seed']):np.array(arrays[r['array_key']],copy=True) for r in payload['fits']}
+            if any(v.shape!=(cfg['num_latents'],) or not np.isfinite(v).all() for v in family.values()):
+                raise ValueError('Invalid saved OT coefficient shape or value')
+            if entry['method'] in saved_ot_families:
+                raise ValueError('Duplicate saved OT method')
+            saved_ot_families[entry['method']]=family
+        if saved_ot_families:
+            write(run/'ot_fit_reuse.json',{'refitted':False,'families':{k:len(v) for k,v in saved_ot_families.items()},'saved_inputs':cfg['saved_ot_families']})
         indices={s:np.memmap(asset/"calibration"/f"seed_{s}"/"top_indices.uint16.bin",dtype="<u2",mode="r",shape=(nt,cfg["k"])) for s in cfg["source_seeds"]}
         acts={s:np.memmap(asset/"calibration"/f"seed_{s}"/"top_acts.float32.bin",dtype="<f4",mode="r",shape=(nt,cfg["k"])) for s in cfg["source_seeds"]}
         def atom_values(seed, atoms):
@@ -426,6 +459,26 @@ def main():
         if selection_document_ids({'queries':selections}) & excluded:
             raise ValueError('Selected recipient/donor document intersects prior exclusion union')
         write(run/"selection.json",{"rule":"source-only hashes and activation energies; no F4 FOUND filtering","queries":selections,'excluded_document_count':len(excluded),'requested_sequences_per_condition':cfg['documents_per_condition'],'actual_sequences_per_query':[{"query":[x['source_seed'],x['source_atom']],"positive":sum(e['condition']=='positive' for e in x['sequences']),"negative":sum(e['condition']=='negative' for e in x['sequences'])} for x in selections]})
+        if cfg.get('source_scope'):
+            from inspect_f4_atom_participation import participation
+            from summarize_f4_source_scope import selected
+            rule=json.loads(paths['source_scope'].read_text())['rule'];scope_rows=[]
+            for unit in selections:
+                s,a=unit['source_seed'],unit['source_atom'];t0=unit['targets'][0]
+                ids=surface[s,a,t0]['source_candidate_ids'];b=factors['source_basis'][findex[s,a,t0],:,:1].astype(np.float64)
+                weights=dec[s][ids]@b
+                for entry in unit['sequences']:
+                    pos=entry['intervention_positions'];dp=entry['donor_positions'];seq=entry['sequence']
+                    zd=dense_seq(s,seq)[pos][:,ids]-dense_seq(s,entry['donor_sequence'])[dp][:,ids]
+                    stats=participation(zd,np.zeros(len(ids)),weights)
+                    hooknorm=float(np.linalg.norm(raw['calibration'][np.asarray(pos,dtype=int)+seq*length].astype(np.float64)))
+                    fraction=np.sqrt(stats['aggregate_energy'])/hooknorm if hooknorm else None
+                    row=dict(source_seed=s,source_atom=a,rank=1,condition=entry['condition'],sequence=seq,**stats,
+                             natural_source_hook_fraction=fraction,supported=bool(stats['aggregate_energy']>0 and entry['donor_status']=='SELECTED_SOURCE_ONLY'))
+                    row['selected']=selected(row,rule);scope_rows.append(row)
+            write(run/'source_scope_selection.json',{'rule':rule,'rule_sha256':expected['source_scope'],'endpoint_results_read':False,'rows':scope_rows,
+                  'scope':'Frozen rule applied before loading model or materializing target-code rows for endpoint evaluation; all candidate pairs still evaluated.'})
+            print(json.dumps({'source_scope_selected':sum(r['selected'] for r in scope_rows),'candidate_pairs':len(scope_rows)}),flush=True)
         print(json.dumps({'source_preflight':[{'query':[u['source_seed'],u['source_atom']],
               'conditions':{condition:{'pairs':len(group),'supported_pairs':sum(e.get('donor_status')=='SELECTED_SOURCE_ONLY' for e in group),
                     'median_natural_difference_energy':float(np.median([e.get('donor_source_difference_energy',0) for e in group])) if group else None}
@@ -500,6 +553,8 @@ def main():
                                 variants[atom_method]=(code*fit['coefficient'])[:,None]@bt.T*mask[:,None]
                             if ot_fits:
                                 variants['paired_correlation_uot']=(z[t]@ot_fits[s,a,t])[:,None]@bt.T*mask[:,None]
+                            for ot_method,family in saved_ot_families.items():
+                                variants[ot_method]=(z[t]@family[s,a,t])[:,None]@bt.T*mask[:,None]
                             if cfg.get('methods'):
                                 variants={name:variants[name] for name in cfg['methods']}
                             for method,delta in variants.items():
@@ -517,6 +572,7 @@ def main():
         method_names=['target','raw','wrong_query','wrong_query_matched_energy']+(['source_mean_only'] if cfg.get('include_source_mean_only') else [])
         method_names.extend(atom_families)
         if ot_fits: method_names.append('paired_correlation_uot')
+        method_names.extend(saved_ot_families)
         if cfg.get('methods'): method_names=cfg['methods']
         checks={"noop":max(noop)<=1e-6,"raw_replay_relative":max(replay)<=1e-4,"eight_source_queries":len(selections)==8,"rows":len(rows)==sum(len(x["sequences"])*len(x["targets"])*len(cfg["ranks"])*len(method_names) for x in selections),"audit_closed":True}
         if cfg.get('maximum_source_hook_fraction'):
@@ -534,6 +590,7 @@ def main():
         write(run/"environment.json",{"python":sys.executable,"error":error})
     if not (run/"metrics.raw.jsonl").exists(): (run/"metrics.raw.jsonl").write_text("",encoding="utf-8")
     summary.update(status=status,error=error,metrics_raw_sha256=sha256(run/"metrics.raw.jsonl"),generator_script_path="scripts/run_f4_source_reference_causal.py",generator_script_sha256=sha256(Path(__file__)),scope_limit="Calibration development, source-aligned transport; not native deletion or held-out confirmation")
+    summary['scope_limit']=cfg.get('scope_limit',summary['scope_limit'])
     write(run/"metrics.summary.json",summary);write(run/"status.json",{"status":status,"error":error,"updated_utc":datetime.now(timezone.utc).isoformat()})
     write(run/"stdout.log",{"status":status,"rows":len(rows),"error":error})
     result=validate_run_directory(run);write(run/"contract_validation.json",{"ok":result.ok,"errors":list(result.errors)})

@@ -74,7 +74,7 @@ def main() -> int:
         "schema_version": cfg["schema_version"], "run_id": cfg["run_id"], "run_parent": cfg["run_parent"], "purpose": cfg["purpose"],
         "milestone": cfg["milestone"], "evidence_level": cfg["evidence_level"], "started_utc": started, "project_root": str(ROOT),
         "config_hash": sha256(run_dir / "config.resolved.json"), "code_snapshot_hash": code_hash, "audit_opened": False,
-        "candidate_family_frozen": False, "mean_constants_source_split": cfg["mean_constants_source_split"],
+        "candidate_family_frozen": cfg.get('candidate_family_frozen',False), "mean_constants_source_split": cfg["mean_constants_source_split"],
         "threshold_source_split": cfg["threshold_source_split"], "statistics_unit": cfg["statistics_unit"], "device": cfg["device"],
         "seeds": [item["seed"] for item in cfg["saes"]], "resource_lease": cfg.get('resource_lease',"gpu-0 + disk-d-io via nested SAE Lab resource_manager.run"),
         "resource_lease_reason": "shared-hook inference and paired sparse-code writes", "git_head_at_run": git_head, "git_status_porcelain": git_status,

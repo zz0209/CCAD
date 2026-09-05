@@ -109,7 +109,7 @@ def main() -> int:
         "schema_version": cfg["schema_version"], "run_id": cfg["run_id"], "run_parent": cfg["run_parent"], "purpose": cfg["purpose"],
         "milestone": cfg["milestone"], "evidence_level": cfg["evidence_level"], "started_utc": started, "project_root": str(ROOT),
         "config_hash": sha256(run_dir / "config.resolved.json"), "code_snapshot_hash": code_hash, "audit_opened": False,
-        "candidate_family_frozen": False, "mean_constants_source_split": cfg["mean_constants_source_split"],
+        "candidate_family_frozen": cfg.get('candidate_family_frozen',False), "mean_constants_source_split": cfg["mean_constants_source_split"],
         "threshold_source_split": cfg["threshold_source_split"], "statistics_unit": "document", "device": "cpu_network_range_and_tokenizer",
         "seeds": {"selection_salt": cfg["selection_salt"], "split_salt": cfg["split_salt"]}, "resource_lease": cfg.get('resource_lease',"disk-e-io via SAE Lab resource_manager.run"),
         "resource_lease_reason": "revision-pinned range reads and paired token asset writes", "git_head_at_run": git_head, "git_status_porcelain": git_status,

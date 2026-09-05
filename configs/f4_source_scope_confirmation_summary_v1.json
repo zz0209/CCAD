@@ -1,0 +1,15 @@
+{
+  "analysis_id": "F4_source_scope_confirmation_summary_v1_20260905",
+  "evidence_level": "frozen_source_rule_new_document_confirmation_existing_seed_models",
+  "rule": {
+    "require_supported_pair": true,
+    "maximum_largest_source_atom_energy_share": 0.5,
+    "minimum_natural_source_hook_fraction": 0.1
+  },
+  "run_names": ["F4_source_scope_confirmation_v1_20260905"],
+  "endpoints": ["next_state", "centered_logits"],
+  "aggregation": "Median selected documents within query/target/condition, then median across four dependent targets. Full coverage and rejected/unsupported rows retained.",
+  "freeze_reference": "configs/f4_scope_confirmation_corpus_v1.json",
+  "selection_reference": "runs/F4_source_scope_confirmation_v1_20260905/source_scope_selection.json",
+  "limitations": "Rule developed on previous documents, then frozen before this disjoint document batch. All maps and comparator fits reused unchanged. Existing seed models and queries are shared; no independent-seed CI or whole-paper audit claim. Native necessity and the full OT/MAS method families are not tested."
+}

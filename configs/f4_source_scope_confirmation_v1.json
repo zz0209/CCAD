@@ -1,0 +1,96 @@
+{
+  "run_id": "F4_source_scope_confirmation_v1_20260905",
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "additional_exclude_selections": [
+    {
+      "path": "runs/F4_source_reference_causal_dev_v7_alltargets_20260904/selection.json",
+      "sha256": "be3e99750071e0407b0e4c16c9ae579613c69a28254424833b25ee91d9a0c944"
+    },
+    {
+      "path": "runs/F4_source_reference_causal_dev_v8_newdocs_20260904/selection.json",
+      "sha256": "ed8a800e50544b1bf5be103205309ca2c527bb336d99f775f5b50d03674f2f1f"
+    }
+  ],
+  "ranks": [
+    1
+  ],
+  "documents_per_condition": 4,
+  "targets_per_query": 4,
+  "local_content_positions": 4,
+  "centered_logit_endpoint": true,
+  "include_source_mean_only": false,
+  "donor_difference": true,
+  "maximum_source_hook_fraction": 0.1,
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "resource_lease_reason": "Reads existing assets for bounded CPU/GPU inference; no whole-disk monopoly for ordinary reads or downloads.",
+  "selection": "Frozen original source-only8hashpanel,4recipient pairs/condition/4targets. Fresh118docs disjointtraining/alloldpaired/F4devcorpus; source-scope classification stored before endpoints,all64candidatepairs retained.",
+  "intervention": "Same rank1 source-aligned donor difference and common0.1source dose as development; exact saved map,2atom,2OT parameters,raw/wrong controls,zero reference. No new fits.",
+  "budget": "1984forwards=64*(3+4*7),expected<=8min incl load at measured0.16–.25s/forward,4CPUthreads,<1.5GiBallocatedVRAM. Complete this one round and pause loop per user.",
+  "bulk_asset_dir": "D:/CCAD_Storage/paired_assets/F4_scope_confirmation_codes_v1_20260905",
+  "asset_manifest_sha256": "3df615a6720e15e7abe0c89166049c7e4692b7fae57549fe3b2833c71efd13dc",
+  "raw_hook_asset_dir": "D:/CCAD_Storage/paired_assets/F4_scope_confirmation_codes_v1_20260905",
+  "raw_hook_manifest_sha256": "8a6e684361a5c6b9b7c136fa0756dee569c8e9464b9767c31a783654431fad92",
+  "paired_corpus_run": "F4_scope_confirmation_corpus_v1_20260905",
+  "token_manifest_path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/token_manifest.json",
+  "token_manifest_sha256": "e0d984a7a58c47a169d0882d0324f5105eb3b009854d06c179849e09283310ea",
+  "sequence_records_path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/sequence_records.json",
+  "sequence_records_sha256": "a4515715d5399763363bda6e3255cdd628bb905b9628a2c95e4e5e24340f3b27",
+  "methods": [
+    "target",
+    "raw",
+    "wrong_query_matched_energy",
+    "single_atom_level",
+    "single_atom_dynamic",
+    "uot_default",
+    "uot_discovery_tuned"
+  ],
+  "saved_atom_families": [
+    {
+      "method": "single_atom_level",
+      "fit_path": "runs/F4_source_reference_causal_dev_v9_atom_20260904/single_atom_fits.json",
+      "fit_sha256": "dfdc339ec0f164636f5ecde8ba2cc658a6e8b7491b0fe68bcb476a082e8c3b3c",
+      "config_path": "runs/F4_source_reference_causal_dev_v9_atom_20260904/config.resolved.json",
+      "config_sha256": "20fd7b5f5d08446a3ac8310e1f12960deba066af7cbcfe92bd94b3097c652572"
+    },
+    {
+      "method": "single_atom_dynamic",
+      "fit_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/single_atom_fits.json",
+      "fit_sha256": "bf9d1ff74ad695ab0b0d0ccace91960a9abfa00cb7e866662acb08f004d3bf7c",
+      "config_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/config.resolved.json",
+      "config_sha256": "cdf6fab8433b6333fb75ba7b5844d0f709cc87fe1a683c81a285907a4ff94f76"
+    }
+  ],
+  "source_scope": {
+    "path": "configs/f4_source_applicability_dev_v1.json",
+    "sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74"
+  },
+  "frozen_corpus_config_sha256": "996307af06446662c6c8b9fd4bfb10f25f914573bd52734d81d3c8155b036b26",
+  "saved_ot_families": [
+    {
+      "method": "uot_default",
+      "fit_path": "runs/F4_source_reference_causal_dev_v12_uot_20260905/ot_fits.json",
+      "fit_sha256": "5b79427d19766057e56959d200b7b4b42176bb6f0dc5bcb6f2f00814e064be38",
+      "config_path": "runs/F4_source_reference_causal_dev_v12_uot_20260905/config.resolved.json",
+      "config_sha256": "141bf2c333b17d923e2f5a11161efe4bd1bb414923ebf00b6e57fa685a304da0",
+      "arrays_path": "runs/F4_source_reference_causal_dev_v12_uot_20260905/ot_fits.npz",
+      "arrays_sha256": "c5fb039e4d3f0e161e756f6430d4fcbdf5a43815ed8c81a61938c50c7a97e930"
+    },
+    {
+      "method": "uot_discovery_tuned",
+      "fit_path": "runs/F4_source_reference_causal_dev_v13_uot_tuned_20260905/ot_fits.json",
+      "fit_sha256": "18ff2c270255a93eb310f8e5af9e3d110009d3eaf763d189dd1acf0c549ef974",
+      "config_path": "runs/F4_source_reference_causal_dev_v13_uot_tuned_20260905/config.resolved.json",
+      "config_sha256": "a33ca94856162ba5d486286ff3cbd8b945413f46a710f609b0c7c929869d078a",
+      "arrays_path": "runs/F4_source_reference_causal_dev_v13_uot_tuned_20260905/ot_fits.npz",
+      "arrays_sha256": "5c6b74cfce2375639d86734e89608636615b0f89dc901e77d6ac610b997d7c65"
+    }
+  ],
+  "evidence_level": "frozen_source_scope_new_document_confirmation",
+  "scope_limit": "New document test of a previously development-selected source-only rule with frozen maps/comparators. Existing seed models/hook unchanged; original audit closed. No refitting, threshold change or whole-paper/native-necessity claim."
+}

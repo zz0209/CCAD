@@ -1,4 +1,4 @@
-"""Describe an explicitly development-selected source-only applicability range."""
+"""Summarize a source-only applicability rule at the configured evidence level."""
 import argparse
 import csv
 import hashlib
@@ -64,7 +64,7 @@ def main():
             writer=csv.DictWriter(stream,fieldnames=list(table[0]));writer.writeheader();writer.writerows(table)
     result={'scope':cfg['evidence_level'],'total_pairs':len(selections),'selected_pairs':sum(r['selected'] for r in selections),
             'inputs':provenance,'selected_target_method_query_rows':[r for r in queries if r['subset']=='selected' and r['method']=='target'],
-            'limitations':'Previously exposed development documents and outcomes informed this rule. Source-only application does not make its development independent. Panels share seed models; no independent CI. Missing/rejected rows retained in separate outputs.'}
+            'limitations':cfg.get('limitations','Previously exposed development documents and outcomes informed this rule. Source-only application does not make its development independent. Panels share seed models; no independent CI. Missing/rejected rows retained in separate outputs.')}
     (run/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result,indent=2))
 

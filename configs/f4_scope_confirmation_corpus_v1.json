@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1.0",
+  "run_id": "F4_scope_confirmation_corpus_v1_20260905",
+  "run_parent": "F4",
+  "purpose": "Fresh document corpus after freezing source-only applicability, for a narrowly scoped new-document test",
+  "milestone": "M4",
+  "evidence_level": "fresh_document_confirmation_asset_only",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "dataset_id": "HuggingFaceFW/fineweb",
+  "dataset_config": "sample-10BT",
+  "dataset_revision_name": "v1.4.0",
+  "dataset_commit": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "dataset_license": "ODC-By-1.0",
+  "expected_shard_count": 15,
+  "shards_to_sample": 5,
+  "source_catalog_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/source_catalog.json",
+  "excluded_document_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/sampled_documents.jsonl",
+  "additional_exclusions": [
+    {
+      "path": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+      "sha256": "33421f067172f0322551346c1985e3799cf8bb90d9950a55f4cf1b0de38fe201"
+    },
+    {
+      "path": "runs/F4_development_corpus_v1_20260904/artifacts/documents.jsonl",
+      "sha256": "7958b0057368b4936acdee77fbd43f6f5e126770164b3d5506ff95c2b63fa706"
+    }
+  ],
+  "selection_salt": "ccad-f4-source-scope-confirmation-20260905-v1",
+  "split_salt": "ccad-r008-paired-split-v1",
+  "range_block_bytes": 1048576,
+  "context_length": 128,
+  "max_tokens_per_document": 2048,
+  "token_dtype": "uint16-little-endian",
+  "target_sequences": {
+    "calibration": 512
+  },
+  "minimum_documents": {
+    "calibration": 40
+  },
+  "tokenizer_id": "EleutherAI/pythia-160m-deduped",
+  "tokenizer_revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "tokenizer_local_dir": "D:/CCAD_Storage/models/pythia-160m-deduped/582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "data_overlay_dir": "D:/CCAD_Storage/environments/r008_data_overlay",
+  "dependency_overlay_dir": "D:/CCAD_Storage/environments/r005a_sparsify_overlay",
+  "mean_constants_source_split": "unchanged original independent mean; no estimation in this run",
+  "threshold_source_split": "Source applicability chosen on prior development and frozen before this corpus; no new-data tuning",
+  "statistics_unit": "document",
+  "resource_lease": "cpu-heavy resource_manager.run; bounded ~40-100MB range reads and small local tokens, no disk monopoly",
+  "scope_limit": "Fresh calibration-hash-bucket documents excluded by ID and text hash from training, all original paired splits and entire first F4 development corpus. Frozen local source-only range test, not a complete paper audit or native-concept claim. Audit tokens/metrics remain closed.",
+  "budget": "Up to5min and expected40–100MB range reads/tokenization;65536tokens,CPUlease no disk monopoly. Follow-up128sharedbaseforwards/~500MBcode+raw assets <=4min; then1984causalforwards(64pairs*(3source/base/noop+4targets*7methods)) <=8min expected at measured0.16–0.25s/forward incl load. Full unit provisional17min compute/network excluding resource waiting, <1.5GiBallocatedVRAM, no payment.",
+  "frozen_scope": {
+    "rule_config": "configs/f4_source_applicability_dev_v1.json",
+    "rule_sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74",
+    "base_causal_config": "configs/f4_source_reference_causal_dev_v11_newshard.json",
+    "ranks": [
+      1
+    ],
+    "maximum_source_hook_fraction": 0.1,
+    "documents_per_condition": 4,
+    "targets_per_query": 4,
+    "local_content_positions": 4,
+    "query_rule": "Same8source-only hashpanel; source-ranked recipient/opposite-condition maximumdifference donor;all64candidatepairs",
+    "endpoints": [
+      "next_state",
+      "centered_logits"
+    ],
+    "methods": [
+      "target",
+      "raw",
+      "wrong_query_matched_energy",
+      "single_atom_level",
+      "single_atom_dynamic",
+      "uot_default",
+      "uot_discovery_tuned"
+    ],
+    "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+    "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+    "saved_atom_families": [
+      {
+        "method": "single_atom_level",
+        "fit_path": "runs/F4_source_reference_causal_dev_v9_atom_20260904/single_atom_fits.json",
+        "fit_sha256": "dfdc339ec0f164636f5ecde8ba2cc658a6e8b7491b0fe68bcb476a082e8c3b3c",
+        "config_path": "runs/F4_source_reference_causal_dev_v9_atom_20260904/config.resolved.json",
+        "config_sha256": "20fd7b5f5d08446a3ac8310e1f12960deba066af7cbcfe92bd94b3097c652572"
+      },
+      {
+        "method": "single_atom_dynamic",
+        "fit_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/single_atom_fits.json",
+        "fit_sha256": "bf9d1ff74ad695ab0b0d0ccace91960a9abfa00cb7e866662acb08f004d3bf7c",
+        "config_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/config.resolved.json",
+        "config_sha256": "cdf6fab8433b6333fb75ba7b5844d0f709cc87fe1a683c81a285907a4ff94f76"
+      }
+    ],
+    "ot_default_arrays_sha256": "c5fb039e4d3f0e161e756f6430d4fcbdf5a43815ed8c81a61938c50c7a97e930",
+    "ot_tuned_arrays_sha256": "5c6b74cfce2375639d86734e89608636615b0f89dc901e77d6ac610b997d7c65",
+    "no_refit": true,
+    "decision_scope": "Report selected coverage and source-effect fidelity versus zero,wrong,raw,atoms,OT with all8panel/failures retained; no threshold/parameter adaptation on fresh results. Descriptive document confirmation, no independent-seed CI."
+  }
+}
