@@ -1,0 +1,28 @@
+{
+  "analysis_id": "F4_adaptive_confirmation_summary_v1_20260905",
+  "evidence_level": "frozen_source_adaptive_readout_new_document_confirmation",
+  "rule": {
+    "require_supported_pair": true,
+    "maximum_largest_source_atom_energy_share": 0.5,
+    "minimum_natural_source_hook_fraction": 0.1
+  },
+  "run_names": [
+    "F4_adaptive_confirmation_v1_20260905"
+  ],
+  "endpoints": [
+    "next_state",
+    "centered_logits"
+  ],
+  "derived_policy": {
+    "name": "source_adaptive_top16",
+    "selected_method": "target",
+    "rejected_method": "readout_top16"
+  },
+  "aggregation": "Choose frozen branch per input; median documents within query/target/condition, then median across four dependent targets. Report all/selected/rejected and all unsupported cases.",
+  "freeze_reference": "configs/f4_adaptive_confirmation_corpus_v1.json",
+  "policy_reference": {
+    "path": "configs/f4_source_adaptive_readout_dev_v1.json",
+    "sha256": "e3047e5d3719529ff1d487d7553764d2bbe58b6713a4759cc2506636fed76d67"
+  },
+  "limitations": "Policy selected on prior development documents then fixed before fresh disjoint corpus retrieval. Exact discovery supports/coefficients, maps and comparator fits reused. Existing seeds/queries; directions dependent; no independent-seed CI. No new-data tuning, original audit closed."
+}

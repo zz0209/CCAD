@@ -1,4 +1,4 @@
-持续推进CCAD，将CBSM理论蓝本落实为跨seed、基于线性代数的模糊many-to-many concept correspondence，积极寻找、复现和发展真实正结果，形成有清楚贡献的完整论文。
+持续推进CCAD，将CBSM理论蓝本落实为跨seed、基于线性代数的模糊many-to-many concept correspondence，积极寻找、复现和发展真实正结果，形成有清楚贡献的完整论文。以ACL、ICLR等主会完整论文的贡献与证据要求为目标。
 
 遵循AGENTS.md，从EXPERIMENT_TRACKER.md读取当前事实、运行与下一工作；科学路径见EXPERIMENT_PLAN.md。当前支线、run、参数、版本和待办只维护在项目文件，不复制进本prompt。历史指令不替代当前计划。
 

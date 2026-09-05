@@ -1,15 +1,36 @@
 import sys
 import unittest
+import hashlib
+import json
+import tempfile
 from pathlib import Path
 import numpy as np
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from inspect_f4_atom_participation import participation
 from summarize_f4_source_scope import selected
-from run_f4_source_reference_causal import readout_atom_order, norm_match
+from run_f4_source_reference_causal import readout_atom_order, norm_match, prepare_readout_ablation
 
 
 class SourceScopeTests(unittest.TestCase):
+    def test_saved_readout_reuses_support_and_rejects_changed_coefficients(self):
+        beta=np.arange(20,dtype=float);signs=np.random.default_rng(7).choice([-1.,1.],size=20)
+        record=dict(source_seed=2,source_atom=3,target_seed=1,top_atoms=list(range(19,-1,-1)),
+                    sign_seed=7,beta_sha256=hashlib.sha256(beta.tobytes()).hexdigest(),
+                    sign_sha256=hashlib.sha256(signs.tobytes()).hexdigest())
+        payload=dict(fit_split='discovery',calibration_used_for_ranking=False,refitted=False,families=[record])
+        cfg=dict(ranks=[1],donor_difference=True,num_latents=20,
+                 readout_ablation=dict(native_budget=16,budgets=[16],saved_readout={'path':'fixture'}))
+        factors={'query_target':beta.reshape(1,20,1)};dec={1:np.eye(20)}
+        with tempfile.TemporaryDirectory() as temp:
+            path=Path(temp)/'saved.json';path.write_text(json.dumps(payload))
+            result=prepare_readout_ablation(cfg,factors,{(2,3,1):0},dec,Path(temp),{'saved_readout':path})
+            np.testing.assert_array_equal(result[2,3,1]['order'],record['top_atoms'])
+            np.testing.assert_array_equal(result[2,3,1]['beta'],beta)
+            factors['query_target'][0,0,0]=1
+            with self.assertRaisesRegex(ValueError,'coefficients changed'):
+                prepare_readout_ablation(cfg,factors,{(2,3,1):0},dec,Path(temp),{'saved_readout':path})
+
     def test_readout_energy_ranking_and_rescaling(self):
         x=np.array([[1.,2.,3.],[3.,2.,1.],[2.,2.,2.]])
         beta=np.array([2.,100.,-1.]);weights=np.array([.2,.3,.5])

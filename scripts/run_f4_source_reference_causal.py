@@ -268,6 +268,25 @@ def prepare_readout_ablation(cfg, factors, findex, dec, run, paths):
         raise ValueError('Readout structure consumer requires rank1 donor differences and native budget16')
     if any(not isinstance(m,int) or m<=0 or m>cfg['num_latents'] for m in spec['budgets']):
         raise ValueError('Invalid readout truncation budget')
+    if spec.get('saved_readout'):
+        path=paths['saved_readout'];payload=json.loads(path.read_text())
+        if payload['fit_split']!='discovery' or payload['calibration_used_for_ranking'] or payload['refitted']:
+            raise ValueError('Saved readout fitting boundary mismatch')
+        families={}
+        for record in payload['families']:
+            s,a,t=(record[k] for k in ('source_seed','source_atom','target_seed'))
+            beta=(dec[t]@factors['query_target'][findex[s,a,t],:,:1].astype(np.float64))[:,0]
+            if hashlib.sha256(beta.tobytes()).hexdigest()!=record['beta_sha256']:
+                raise ValueError('Saved readout coefficients changed')
+            order=np.asarray(record['top_atoms'],dtype=int)
+            if len(order)<max(max(spec['budgets']),spec['native_budget']) or len(set(order.tolist()))!=len(order) or np.any(order<0) or np.any(order>=len(beta)):
+                raise ValueError('Saved readout support invalid')
+            signs=np.random.default_rng(record['sign_seed']).choice([-1.,1.],size=len(beta))
+            if hashlib.sha256(signs.tobytes()).hexdigest()!=record['sign_sha256']:
+                raise ValueError('Saved readout sign identity changed')
+            families[s,a,t]={'beta':beta,'order':order,'signs':signs}
+        write(run/'readout_ablation.json',dict(payload,reuse={'path':str(path),'sha256':sha256(path),'reranked':False,'refitted':False}))
+        return families
     i=next(i for i,e in enumerate(cfg['saved_atom_families']) if e['method']==spec['discovery_reference_method'])
     oldcfg=json.loads(paths[f'saved_atom_{i}_config'].read_text())
     reference=json.loads(paths[f'saved_atom_{i}_fit'].read_text())
@@ -358,6 +377,9 @@ def main():
                 paths[key]=ROOT/entry[f'{kind}_path'];expected[key]=entry[f'{kind}_sha256']
         if cfg.get('source_scope'):
             paths['source_scope']=ROOT/cfg['source_scope']['path'];expected['source_scope']=cfg['source_scope']['sha256']
+        if cfg.get('readout_ablation',{}).get('saved_readout'):
+            entry=cfg['readout_ablation']['saved_readout']
+            paths['saved_readout']=ROOT/entry['path'];expected['saved_readout']=entry['sha256']
         if cfg.get('ot_fit'):
             for kind in ('fit','config'):
                 entry=cfg['ot_fit_reference'];key=f'ot_reference_{kind}'
