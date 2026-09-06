@@ -1,0 +1,281 @@
+{
+  "schema_version": "0.1.0",
+  "run_id": "F4_common_confirmation_corpus_v1_20260906",
+  "run_parent": "F4",
+  "purpose": "Fresh common-document confirmation of frozen FCC versus dynamic atom, raw and full-dictionary one-to-one group operations",
+  "milestone": "M4",
+  "evidence_level": "fresh_document_confirmation_asset_only",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "dataset_id": "HuggingFaceFW/fineweb",
+  "dataset_config": "sample-10BT",
+  "dataset_revision_name": "v1.4.0",
+  "dataset_commit": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "dataset_license": "ODC-By-1.0",
+  "expected_shard_count": 15,
+  "shards_to_sample": 5,
+  "source_catalog_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/source_catalog.json",
+  "excluded_document_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/sampled_documents.jsonl",
+  "additional_exclusions": [
+    {
+      "path": "runs/F4_adaptive_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "b5107db3a5a964759876f9edb58f764e6245ee136886154ba1c4cab49a47c1a2"
+    },
+    {
+      "path": "runs/F4_compact_component_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "f1ce874edaa7b43f72e626ae15a6a52c9ee48dca1f58fd52223c112a448dfd76"
+    },
+    {
+      "path": "runs/F4_development_corpus_v1_20260904/artifacts/documents.jsonl",
+      "sha256": "7958b0057368b4936acdee77fbd43f6f5e126770164b3d5506ff95c2b63fa706"
+    },
+    {
+      "path": "runs/F4_fit_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "21fedcfa6ef0411e99b04b241b895ddf43b505816730d32b020a6e6b0569d8d0"
+    },
+    {
+      "path": "runs/F4_long_recipient_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "15e15d96d617187335e30bd33fe064609669d6bec8fbb04eb039e74a921c94a0"
+    },
+    {
+      "path": "runs/F4_probability_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "46b7f0bcb49825bf0dfebd41a16094df27081c94a00682ff166ab280b82754bb"
+    },
+    {
+      "path": "runs/F4_query_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "2269629a04e6033e70236a67f6840df82e56596e6874bc4e5c9deacfe85ec8d5"
+    },
+    {
+      "path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "fbb1da0a9a0fa86ba20cec2eb7a2c0afa7fa93695c7909352c0a7b1e1a873a85"
+    },
+    {
+      "path": "runs/R006a_fineweb_capacity_manifest_v1_20260902T131000Z/artifacts/document_token_records.json",
+      "sha256": "8d186c6e94965eeaacaafb535953750009e6313cba38f5fe38ae950b6ef2314b"
+    },
+    {
+      "path": "runs/R006a_fineweb_capacity_manifest_v1_20260902T131000Z/artifacts/sampled_documents.jsonl",
+      "sha256": "b3f9c3b753da2fa33ecd1a500df3652dcec7dde370cfea1e8d0ac4ed1620d183"
+    },
+    {
+      "path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/document_token_records.json",
+      "sha256": "8d186c6e94965eeaacaafb535953750009e6313cba38f5fe38ae950b6ef2314b"
+    },
+    {
+      "path": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+      "sha256": "33421f067172f0322551346c1985e3799cf8bb90d9950a55f4cf1b0de38fe201"
+    },
+    {
+      "path": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+      "sha256": "1429667aed740b5acb3f8927ca0dd144943dd18393db3c5755afb7ee89c5f78e"
+    },
+    {
+      "path": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/sampled_documents.jsonl",
+      "sha256": "5eb700319a66b6577f82e02619df58002366bff361fc5241e5e72b4fd31f1178"
+    }
+  ],
+  "selection_salt": "ccad-f4-common-functional-confirmation-20260906-v1",
+  "split_salt": "ccad-r008-paired-split-v1",
+  "range_block_bytes": 1048576,
+  "context_length": 128,
+  "max_tokens_per_document": 2048,
+  "token_dtype": "uint16-little-endian",
+  "target_sequences": {
+    "calibration": 512
+  },
+  "minimum_documents": {
+    "calibration": 40
+  },
+  "tokenizer_id": "EleutherAI/pythia-160m-deduped",
+  "tokenizer_revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "tokenizer_local_dir": "D:/CCAD_Storage/models/pythia-160m-deduped/582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "data_overlay_dir": "D:/CCAD_Storage/environments/r008_data_overlay",
+  "dependency_overlay_dir": "D:/CCAD_Storage/environments/r005a_sparsify_overlay",
+  "mean_constants_source_split": "unchanged original independent mean; no estimation in this run",
+  "threshold_source_split": "Source applicability chosen on prior development and frozen before this corpus; no new-data tuning",
+  "statistics_unit": "document",
+  "resource_lease": "cpu-heavy resource_manager.run; bounded ~40-100MB range reads and small local tokens, no disk monopoly",
+  "scope_limit": "Fresh calibration-hash-bucket, all16fixed queries/32signed requests/5controlled source seeds. Entire prior short/long training-validation, paired and F4 document IDs/text hashes excluded. No target outcome selection, refitting, assignment/support changes or audit arrays.",
+  "budget": "Source sampling<=300s/~40-100MB existing official ranges after cache inventory;512x128tokens. Shared codes/raw<=128LM,120s numerical+90s load/~500MB. Source/map prep<=120s CPU. Consumer<=32*(3+4*5)=736LM/600s wall. No training/new weights/packages/paid compute.",
+  "frozen_scope": {
+    "methods": [
+      "target",
+      "raw",
+      "single_atom_dynamic",
+      "global_matching_geometric",
+      "global_matching_pair_calibrated"
+    ],
+    "panels": [
+      {
+        "label": "original",
+        "query_hash_offset": 0,
+        "fixed_queries": [
+          [
+            5,
+            710
+          ],
+          [
+            3,
+            1230
+          ],
+          [
+            4,
+            693
+          ],
+          [
+            5,
+            369
+          ],
+          [
+            5,
+            1352
+          ],
+          [
+            5,
+            336
+          ],
+          [
+            2,
+            2176
+          ],
+          [
+            4,
+            801
+          ]
+        ],
+        "base_causal_config": "configs/f4_rejected_probability_original_v1.json",
+        "base_causal_config_sha256": "b6db5904b754c6867e164f37591102e83c92bc1480909514c026408673d7119d",
+        "source_preparation_template": "configs/f4_probability_confirmation_source_original_v1.json",
+        "source_preparation_template_sha256": "cb8c4253f033fe0a3b7dc40b23f6b77816d0c6ddd0c1b5187b9bbd57d8b6742c",
+        "saved_atom": {
+          "config_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/config.resolved.json",
+          "config_sha256": "cdf6fab8433b6333fb75ba7b5844d0f709cc87fe1a683c81a285907a4ff94f76",
+          "fit_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/single_atom_fits.json",
+          "fit_sha256": "bf9d1ff74ad695ab0b0d0ccace91960a9abfa00cb7e866662acb08f004d3bf7c",
+          "method": "single_atom_dynamic"
+        }
+      },
+      {
+        "label": "expanded",
+        "query_hash_offset": 1,
+        "fixed_queries": [
+          [
+            3,
+            1144
+          ],
+          [
+            1,
+            2641
+          ],
+          [
+            3,
+            1093
+          ],
+          [
+            1,
+            2298
+          ],
+          [
+            1,
+            615
+          ],
+          [
+            2,
+            2645
+          ],
+          [
+            1,
+            1441
+          ],
+          [
+            5,
+            2194
+          ]
+        ],
+        "base_causal_config": "configs/f4_rejected_probability_expanded_v1.json",
+        "base_causal_config_sha256": "f28506588e4ac656335f490614de4d81b9eee7057dc80d7029870e6b398ab9c8",
+        "source_preparation_template": "configs/f4_probability_confirmation_source_expanded_v1.json",
+        "source_preparation_template_sha256": "005b18a959eb2d1ffa277c9b64c7b868e76fa5627e8248cf56713de575cbbdfd",
+        "saved_atom": {
+          "config_path": "runs/F4_query_expansion_fits_v1_20260905/config.resolved.json",
+          "config_sha256": "0307d03d5eb0bbc54eed3733ac94b0935ec94708847266d939a43e7c0d46b39b",
+          "fit_path": "runs/F4_query_expansion_fits_v1_20260905/single_atom_dynamic.json",
+          "fit_sha256": "6a37adbdc004673185ca14e59515e5ad4b88a580cc5d9f615b00cd83e51c7a76",
+          "method": "single_atom_dynamic"
+        }
+      }
+    ],
+    "requested_conditions": 32,
+    "source_seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "ranks": [
+      1
+    ],
+    "maximum_source_hook_fraction": 0.1,
+    "documents_per_condition": 4,
+    "targets_per_query": 4,
+    "local_content_positions": 4,
+    "rule_config": "configs/f4_source_applicability_dev_v1.json",
+    "rule_sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74",
+    "probability_endpoints": {
+      "kl": "sum KL(P_source||P_candidate) / sum KL(P_source||P_baseline); float64 log-softmax; denominator <=1e-12*positions yields null",
+      "nll": "observed next-token NLL intervention-minus-baseline vector; report signed means, RMS and normalized squared vector error; source squared energy <=1e-12*positions yields null",
+      "primary": "intervention_positions with valid within-document observed next token",
+      "scope": "joint multi-position interventions, not independent position attribution; secondary suffix may condition on preceding packed documents but no later document positions scored",
+      "secondary": "union of same-document positions downstream from an intervention, excludes EOS predictions and final unavailable token",
+      "version": "v1"
+    },
+    "factors": {
+      "path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+      "sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526"
+    },
+    "surface": {
+      "path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+      "sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f"
+    },
+    "matching_coefficients": {
+      "path": "runs/F4_global_matching_prepare_v1_20260906/group_coefficients.npz",
+      "sha256": "31db894904c3aa24fc15f5dc92e21b357b1469d4328ea67109f624bfde08c862"
+    },
+    "matching_details": {
+      "path": "runs/F4_global_matching_prepare_v1_20260906/group_fit_details.json",
+      "sha256": "d94456baf820c21a167390749a9f063b406f11188a94a912e723a0a21b751d81"
+    },
+    "no_refit": true,
+    "decision_scope": "Source-only fixed recipient/class-compatible donor workflow; measure every matched request with unchanged selected/rejected labels. Do not drop rejected/unchanged pairs. No matching means missing, not zero. Never select by target effect.",
+    "primary_comparison": "FCC vs full-dictionary pair-calibrated operation in source-rule-selected scope; geometric/raw/dynamic atom and all matched scope co-reported. Primary intervention-position KL ratio and NLL-change squared error, secondary same-document downstream; absolute errors and source denominators alongside. No method or source rule changes on these documents.",
+    "statistics": "Four dependent-target medians within each request, then descriptive case summaries; queries, documents and shared seeds dependent. No independent-direction significance claim.",
+    "unequal_capacity": "Full FCC target input support exceeds32 one-to-one matched members; frozen alignment-family operation comparison, not equal-support causal mechanism.",
+    "code_identities": [
+      {
+        "path": "scripts/run_f4_source_reference_causal.py",
+        "sha256": "c734dc0cf30479266d9b2f56c6df24f24a73c28529a445730c5dda7bf26f4574"
+      },
+      {
+        "path": "scripts/f4_case_details.py",
+        "sha256": "058a490d4195f03ad0e06f575134c971e87a7b51e0aa94e234ab83f33706557b"
+      },
+      {
+        "path": "scripts/prepare_f4_token_class_donors.py",
+        "sha256": "d2be67cea948823d6f0eab30c1c62df93840da351e2ef7a6443e949065107f38"
+      },
+      {
+        "path": "scripts/f4_probability_endpoints.py",
+        "sha256": "3235deab681154473cc1c162a9882b6675279354d6a8ecc8dba439b9eb746328"
+      },
+      {
+        "path": "scripts/run_r008a_paired_corpus.py",
+        "sha256": "1ec173232474204e0ad711d04309ee40ca68cc241f8da8985cdcb8b9d5c44a34"
+      },
+      {
+        "path": "scripts/run_r008b_paired_codes.py",
+        "sha256": "9f8386b7b9b9792ca3456fcf1e5aa776b64c7cbdf1487b6ed22a52b1943dcf6c"
+      }
+    ]
+  }
+}

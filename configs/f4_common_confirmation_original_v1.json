@@ -1,0 +1,224 @@
+{
+  "additional_exclude_selections": [
+    {
+      "path": "runs/F4_source_reference_causal_dev_v7_alltargets_20260904/selection.json",
+      "sha256": "be3e99750071e0407b0e4c16c9ae579613c69a28254424833b25ee91d9a0c944"
+    },
+    {
+      "path": "runs/F4_source_reference_causal_dev_v8_newdocs_20260904/selection.json",
+      "sha256": "ed8a800e50544b1bf5be103205309ca2c527bb336d99f775f5b50d03674f2f1f"
+    }
+  ],
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "asset_manifest_sha256": "1358c99d97c7bedffc87ed1ea1e949009dd39f27f018dffce17d142628d3688e",
+  "audit_opened": false,
+  "budget": "10cases*(3+4*5)=230LM; both panels<=736LM/600s wall;0refit.",
+  "bulk_asset_dir": "D:\\CCAD_Storage\\paired_assets\\F4_common_confirmation_codes_v1_20260906",
+  "case_replay": {
+    "export_details": false,
+    "path": "runs/F4_common_confirmation_source_original_v1_20260906/matching.json",
+    "selected_only": false,
+    "sha256": "45ac45ac7b267ee58911b03a86b3c3b2aa3c9191641c1d543defc417f5909b3e",
+    "source_selection_scope": "all_supported"
+  },
+  "centered_logit_endpoint": true,
+  "context_length": 128,
+  "cublas_workspace_config": ":4096:8",
+  "device": "cuda:0",
+  "documents_per_condition": 4,
+  "donor_difference": true,
+  "evidence_level": "fresh_document_confirmation_frozen_common_panel",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "expected_evaluated_cases": 10,
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "frozen_corpus_config_sha256": "caa1613a28615546c57a31c246310dd68ab4cdfb26669a5ade5aadc95b744c3b",
+  "frozen_evaluated_requests": [
+    {
+      "condition": "negative",
+      "donor_sequence": 167,
+      "sequence": 210,
+      "source_atom": 710,
+      "source_seed": 5
+    },
+    {
+      "condition": "positive",
+      "donor_sequence": 483,
+      "sequence": 371,
+      "source_atom": 693,
+      "source_seed": 4
+    },
+    {
+      "condition": "negative",
+      "donor_sequence": 371,
+      "sequence": 474,
+      "source_atom": 693,
+      "source_seed": 4
+    },
+    {
+      "condition": "positive",
+      "donor_sequence": 83,
+      "sequence": 471,
+      "source_atom": 369,
+      "source_seed": 5
+    },
+    {
+      "condition": "negative",
+      "donor_sequence": 471,
+      "sequence": 83,
+      "source_atom": 369,
+      "source_seed": 5
+    },
+    {
+      "condition": "positive",
+      "donor_sequence": 254,
+      "sequence": 365,
+      "source_atom": 1352,
+      "source_seed": 5
+    },
+    {
+      "condition": "positive",
+      "donor_sequence": 88,
+      "sequence": 48,
+      "source_atom": 336,
+      "source_seed": 5
+    },
+    {
+      "condition": "negative",
+      "donor_sequence": 48,
+      "sequence": 88,
+      "source_atom": 336,
+      "source_seed": 5
+    },
+    {
+      "condition": "positive",
+      "donor_sequence": 406,
+      "sequence": 361,
+      "source_atom": 2176,
+      "source_seed": 2
+    },
+    {
+      "condition": "positive",
+      "donor_sequence": 212,
+      "sequence": 5,
+      "source_atom": 801,
+      "source_seed": 4
+    }
+  ],
+  "hook_hidden_size": 768,
+  "hook_module_path": "gpt_neox.layers.5",
+  "include_source_mean_only": false,
+  "intervention": "Original difference formulas andfourmaps/rank1/common sourcecap.1 unchanged; donor constraint only, no position permutations or enlarged pools.",
+  "k": 128,
+  "local_content_positions": 4,
+  "maximum_source_hook_fraction": 0.1,
+  "methods": [
+    "target",
+    "raw",
+    "single_atom_dynamic",
+    "global_matching_geometric",
+    "global_matching_pair_calibrated"
+  ],
+  "model_id": "EleutherAI/pythia-160m-deduped",
+  "model_license": "Apache-2.0",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-160m-deduped/582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "model_revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "next_module_path": "gpt_neox.layers.6",
+  "num_latents": 3072,
+  "paired_corpus_run": "F4_common_confirmation_corpus_v1_20260906",
+  "probability_endpoints": {
+    "kl": "sum KL(P_source||P_candidate) / sum KL(P_source||P_baseline); float64 log-softmax; denominator <=1e-12*positions yields null",
+    "nll": "observed next-token NLL intervention-minus-baseline vector; report signed means, RMS and normalized squared vector error; source squared energy <=1e-12*positions yields null",
+    "primary": "intervention_positions with valid within-document observed next token",
+    "scope": "joint multi-position interventions, not independent position attribution; secondary suffix may condition on preceding packed documents but no later document positions scored",
+    "secondary": "union of same-document positions downstream from an intervention, excludes EOS predictions and final unavailable token",
+    "version": "v1"
+  },
+  "query_hash_offset": 0,
+  "query_panel_path": "runs/R009b_query_panel_v2_20260904T013000Z/query_panel.jsonl",
+  "query_panel_sha256": "efba3b06ec13f43e17aa6ff30786d1e908d63ae638ff4282b33fc8d2542ae447",
+  "ranks": [
+    1
+  ],
+  "raw_hook_asset_dir": "D:\\CCAD_Storage\\paired_assets\\F4_common_confirmation_codes_v1_20260906",
+  "raw_hook_manifest_sha256": "58760157346e427cfdd5110f72b91a183d1deff8badb0f34e5344d0b175f3a75",
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "resource_lease_reason": "Actual bounded inference; no whole-disk lease",
+  "run_id": "F4_common_confirmation_original_v1_20260906",
+  "saved_atom_families": [
+    {
+      "config_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/config.resolved.json",
+      "config_sha256": "cdf6fab8433b6333fb75ba7b5844d0f709cc87fe1a683c81a285907a4ff94f76",
+      "fit_path": "runs/F4_source_reference_causal_dev_v10_atom_dynamic_20260904/single_atom_fits.json",
+      "fit_sha256": "bf9d1ff74ad695ab0b0d0ccace91960a9abfa00cb7e866662acb08f004d3bf7c",
+      "method": "single_atom_dynamic"
+    }
+  ],
+  "saved_candidate_coordinates": {
+    "arrays_path": "runs/F4_common_confirmation_apply_v1_20260906/candidate_coordinates.npz",
+    "arrays_sha256": "2d3aec89bc47abefe76e6db7721539042f8455da6ec2a75f3c58f67384d625ea",
+    "index_path": "runs/F4_common_confirmation_apply_v1_20260906/original_candidate_index.json",
+    "index_sha256": "27e72e79f39dc51e70ed6721d4fea9adcb79de0abc0887aa9e3a4eff2b65400d",
+    "methods": [
+      "global_matching_geometric",
+      "global_matching_pair_calibrated"
+    ]
+  },
+  "scope_limit": "Fresh calibration-hash-bucket, all16fixed queries/32signed requests/5controlled source seeds. Entire prior short/long training-validation, paired and F4 document IDs/text hashes excluded. No target outcome selection, refitting, assignment/support changes or audit arrays. Full FCC target input support exceeds32 one-to-one matched members; frozen alignment-family operation comparison, not equal-support causal mechanism.",
+  "selection": "Frozen first source-selected supported recipient in original ordered pool, else firstsupported. Original source-energy donor followed by class constraint and recomputed applicability. No target selection.",
+  "sequence_records_path": "runs/F4_common_confirmation_corpus_v1_20260906/artifacts/sequence_records.json",
+  "sequence_records_sha256": "9eab59f64e66f99af74395a401653d786252906e5300f852ad60bbd840c632a1",
+  "source_census_path": "runs/R009a_source_census_v2_20260904T005000Z/source_census.jsonl",
+  "source_census_sha256": "b1c13ee2dc83c0df51c505934d88b2174e147efc453e427cfc029b7de7f30894",
+  "source_query_subset": [
+    [
+      5,
+      710
+    ],
+    [
+      3,
+      1230
+    ],
+    [
+      4,
+      693
+    ],
+    [
+      5,
+      369
+    ],
+    [
+      5,
+      1352
+    ],
+    [
+      5,
+      336
+    ],
+    [
+      2,
+      2176
+    ],
+    [
+      4,
+      801
+    ]
+  ],
+  "source_scope": {
+    "path": "configs/f4_source_applicability_dev_v1.json",
+    "sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74"
+  },
+  "source_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "targets_per_query": 4,
+  "token_manifest_path": "runs/F4_common_confirmation_corpus_v1_20260906/artifacts/token_manifest.json",
+  "token_manifest_sha256": "96f66f5ca962c4d0c54fa71a287a940c8fc0d4a17dec4cd8516fe13a584f6524"
+}
