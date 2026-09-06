@@ -1,0 +1,37 @@
+{
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "audit_opened": false,
+  "budget": "CPU-heavy only, four threads, first pair<=60s/full<=600s, one75MB matching matrix at a time. Reuse existing immutable sparse assets;0LM here. Subsequent24cases*11=264LM, same source dose and existing exposed inputs.",
+  "calibration": "Independent scalar weighted conditional-covariance fit for each matched pair on the exact old source-positive discovery rows/weights; slope=cov/(var*(1+.001)), inactive predictor0. Offset cancels in donor difference. No cross-pair mixing.",
+  "expected_cases": {
+    "expanded": 10,
+    "original": 14
+  },
+  "first_pair_budget_seconds": 60,
+  "geometric": "Source-code proxy sign(cos)*norm(target decoder)/norm(source decoder) times matched target code, then source decoder dot unchanged source basis. Zero norm/cosine gives0.",
+  "matching": "All3072 rows/columns, maximum absolute decoder cosine; zero norms score0. Ascending seed orientation, fixed row ordering and unmodified SciPy solver ties. Reverse maps are inverses of the same optimum.",
+  "panels": [
+    {
+      "label": "original",
+      "reference_config": "configs/f4_rejected_probability_original_v1.json",
+      "reference_config_sha256": "b6db5904b754c6867e164f37591102e83c92bc1480909514c026408673d7119d"
+    },
+    {
+      "label": "expanded",
+      "reference_config": "configs/f4_rejected_probability_expanded_v1.json",
+      "reference_config_sha256": "f28506588e4ac656335f490614de4d81b9eee7057dc80d7029870e6b398ab9c8"
+    }
+  ],
+  "purpose": "C2 full-dictionary one-to-one source-group operation comparison",
+  "ridge_fraction": 0.001,
+  "run_id": "F4_global_matching_prepare_v1_20260906",
+  "scope_limit": "Exposed-document one-to-one group operation development. Full FCC uses all target decoded contributions; matched comparator uses one target per source member. Pair calibration has same source-defined discovery rows but no target behavior. Not native deletion, new matching solver, independent confirmation or equal target support to full FCC.",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "total_cpu_budget_seconds": 600
+}

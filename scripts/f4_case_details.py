@@ -26,7 +26,7 @@ def ordered_class_donor(recipient, positions, donors, coordinates, classes):
 
 def select_cases(selections, payload, *, tokenizer=None, tokens=None, selected_only=False,
                  source_selection_scope=None):
-    if source_selection_scope not in (None, 'rejected'):
+    if source_selection_scope not in (None, 'rejected', 'all_supported'):
         raise ValueError('Unknown source selection scope')
     if selected_only and source_selection_scope is not None:
         raise ValueError('Conflicting source selection scopes')

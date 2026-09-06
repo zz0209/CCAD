@@ -76,6 +76,7 @@ class CaseDetailsTests(unittest.TestCase):
         self.assertTrue(all(c['source_scope']['selected'] is False for c in choices))
         choices[1]['source_scope']['selected']=True
         self.assertEqual(select_cases(units,payload,source_selection_scope='rejected',**kwargs)[0]['sequences'],[positive])
+        self.assertEqual(select_cases(units,payload,source_selection_scope='all_supported',**kwargs)[0]['sequences'],[positive,negative])
         with self.assertRaises(ValueError):
             select_cases(units,payload,selected_only=True,source_selection_scope='rejected',**kwargs)
         choices[0]['entry']['donor_document_ids']=['changed']

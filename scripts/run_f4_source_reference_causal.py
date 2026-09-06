@@ -767,7 +767,9 @@ def main():
                 if len(set(subset))!=len(subset) or not set(subset).issubset(cfg['source_seeds']):raise ValueError('Invalid target subset')
                 selections=[dict(u,targets=[t for t in u['targets'] if t in subset]) for u in selections]
                 if any(not u['targets'] for u in selections):raise ValueError('Empty target subset')
-            selection_scope=('Frozen supported but source-rejected cases, including unchanged pairs; original selected=false labels preserved'
+            selection_scope=('All frozen supported matched cases, including selected/rejected and unchanged pairs; source labels preserved'
+                             if cfg['case_replay'].get('source_selection_scope')=='all_supported' else
+                             'Frozen supported but source-rejected cases, including unchanged pairs; original selected=false labels preserved'
                              if cfg['case_replay'].get('source_selection_scope')=='rejected' else
                              'Frozen source-selected matched cases, including previously unchanged pairs' if cfg['case_replay'].get('selected_only') else
                              'Only changed class-matched cases; unchanged pairs reused externally, unavailable pairs retained in case_selection.json')
@@ -839,12 +841,13 @@ def main():
         if cfg.get('expected_evaluated_cases') is not None:
             if sum(len(u['sequences']) for u in selections)!=cfg['expected_evaluated_cases']:
                 raise ValueError('Frozen case count mismatch before model loading')
-        if cfg.get('frozen_rejected_requests') is not None:
+        frozen_requests=cfg.get('frozen_evaluated_requests',cfg.get('frozen_rejected_requests'))
+        if frozen_requests is not None:
             actual=[dict(source_seed=u['source_seed'],source_atom=u['source_atom'],
                          **{k:e[k] for k in ('condition','sequence','donor_sequence')})
                     for u in selections for e in u['sequences']]
-            if actual!=cfg['frozen_rejected_requests']:
-                raise ValueError('Frozen rejected request identities changed before model loading')
+            if actual!=frozen_requests:
+                raise ValueError('Frozen request identities changed before model loading')
         os.environ.update(HF_HUB_OFFLINE="1",TRANSFORMERS_OFFLINE="1",CUBLAS_WORKSPACE_CONFIG=cfg["cublas_workspace_config"])
         import torch
         import transformers

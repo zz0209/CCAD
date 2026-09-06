@@ -42,12 +42,13 @@ def csv_write(path, rows):
         w = csv.DictWriter(f, fieldnames=list(rows[0])); w.writeheader()
         w.writerows({k:json.dumps(v) if isinstance(v,(list,dict)) else v for k,v in r.items()} for r in rows)
 
-def figure(run, requests, rows):
+def figure(run, requests, rows, *, methods=None, labels=None, subtitle=None, footer_lines=None,
+           include_rejected=False, alt_text=None):
     image = Image.new('RGB',(2400,2200),'white'); d = ImageDraw.Draw(image)
     points=[]
     def text(x,y,s,size=25,anchor=None,bold=False):
         d.text((x,y),s,font=ImageFont.truetype('C:/Windows/Fonts/arialbd.ttf' if bold else 'C:/Windows/Fonts/arial.ttf',size),fill='#202020',anchor=anchor)
-    colors=['#0072B2','#D55E00','#111111']; methods=['target','single_atom_dynamic','raw']
+    colors=['#0072B2','#D55E00','#111111']; methods=methods or ['target','single_atom_dynamic','raw']
     vals=[r[m] for r in rows if r['method'] in methods for m in METRICS if r[m] is not None]
     assert vals and all(v>0 and math.isfinite(v) for v in vals)
     low=min(-3,math.floor(math.log10(min(vals)))); high=max(1,math.ceil(math.log10(max(vals))))
@@ -57,8 +58,8 @@ def figure(run, requests, rows):
         elif k==1:d.rectangle((x-r,y-r,x+r,y+r),outline=color,width=1 if small else 3)
         else:d.polygon([(x,y-r-1),(x-r-1,y+r),(x+r+1,y+r)],outline=color,width=1 if small else 3)
     text(1200,30,'Which source-defined operations survive a change of SAE seed?',43,'ma',True)
-    text(1200,89,'Existing-data development panel: all 32 requests / 16 queries; 11 selected cases; no new LM forwards',28,'ma')
-    for k,label in enumerate(['FCC full','Best dynamic single atom','Raw hook']):
+    text(1200,89,subtitle or 'Existing-data development panel: all 32 requests / 16 queries; 11 selected cases; no new LM forwards',28,'ma')
+    for k,label in enumerate(labels or ['FCC full','Best dynamic single atom','Raw hook']):
         xx=700+k*470;marker(xx,150,k);text(xx+20,150,label,28,'lm')
     text(35,207,'Panel / seed:atom / sign',26,bold=True)
     text(420,207,'Source rule status',26,bold=True)
@@ -76,7 +77,7 @@ def figure(run, requests, rows):
                 label=q['status'].replace('SOURCE_RULE_REJECTED','source rule: '+','.join(q['failed_source_rules']))
                 text(420,y,label,22,'lm')
             group=[r for r in rows if r['request_id']==q['request_id'] and r['scope']==SCOPES[0]]
-            if not q['selected']:
+            if not q['selected'] and not (include_rejected and q['entry']):
                 text((left+right)/2,y,'not measured (not zero)',23,'mm');continue
             for k,method in enumerate(methods):
                 values=[r[METRICS[j]] for r in group if r['method']==method]
@@ -88,15 +89,17 @@ def figure(run, requests, rows):
                 v=med(values); x=left+(math.log10(v)-low)/(high-low)*(right-left)
                 marker(x,y+7+k*4,k)
                 points.append(dict(request_id=q['request_id'],metric=METRICS[j],method=method,kind='four_target_median',value=v))
-    text(35,1975,'O = original, E = expanded. Rule labels: weak = natural hook fraction < 0.1; concentrated = largest atom energy share > 0.5.',25)
-    text(35,2019,'Small symbols: four dependent targets; large symbols: their median. Log axes identical. 0 = exact source effect; 1 = no intervention.',25)
-    text(35,2063,'Best atom is a discovery-selected source-aligned scalar readout, NOT PW-MCC. Global Hungarian local execution and span operation: unmeasured.',24)
-    text(35,2107,'Selected-only effects do not estimate performance on all 32 requests. Same queries/documents/seeds recur; no independent-replicate CI.',25)
+    footers=footer_lines or [
+        'O = original, E = expanded. Rule labels: weak = natural hook fraction < 0.1; concentrated = largest atom energy share > 0.5.',
+        'Small symbols: four dependent targets; large symbols: their median. Log axes identical. 0 = exact source effect; 1 = no intervention.',
+        'Best atom is a discovery-selected source-aligned scalar readout, NOT PW-MCC. Global Hungarian local execution and span operation: unmeasured.',
+        'Selected-only effects do not estimate performance on all 32 requests. Same queries/documents/seeds recur; no independent-replicate CI.']
+    for i,line in enumerate(footers):text(35,1975+44*i,line,24)
     image.save(run/'common_panel.png',dpi=(300,300))
     write(run/'figure_points.json',points)
     return dict(size_pixels=list(image.size),mode=image.mode,nominal_dpi=300,log10_limits=[low,high],points=len(points),
                 publisher='internal provisional manuscript; submission requirements not asserted',
-                alt='All 32 source-only requests are retained. Eight have no class-compatible donor and thirteen fail the source rule. The eleven measured cases show FCC, best atom and raw errors on the identical interventions; their relative ordering varies. Missing is not zero.')
+                alt=alt_text or 'All 32 source-only requests are retained. Eight have no class-compatible donor and thirteen fail the source rule. The eleven measured cases show FCC, best atom and raw errors on the identical interventions; their relative ordering varies. Missing is not zero.')
 
 def main():
     run=ROOT/'runs/F4_common_request_panel_v2_20260906';run.mkdir(exist_ok=False)
