@@ -1,0 +1,24 @@
+{
+  "run_id": "F4_source_probability_replay_v3_20260906",
+  "purpose": "All eleven exposed source cases: probability mass and use-consumer discovery; v1/v2 export failures preserved",
+  "audit_opened": false,
+  "device": "cuda:0",
+  "expected_cases": 11,
+  "top_k": 8,
+  "anchor_absolute_tolerance": 0.000002,
+  "numeric_budget_seconds": 30,
+  "parents": [
+    {
+      "run": "runs\\F4_probability_confirmation_original_v1_20260905",
+      "config_sha256": "98ec462bad4135adee846904dfc1410fab18211b9c2067f28ad57238b22d22ab",
+      "details_sha256": "f2b10cae0d02b1063e36e19ca9ae683e8c0580e78b0bf952dfad814124f6e39a",
+      "metrics_sha256": "544b8789e0971804831deebe9d5f7b85ec8992faba13e5320490fefe9f8ab57d"
+    },
+    {
+      "run": "runs\\F4_probability_confirmation_expanded_v1_20260905",
+      "config_sha256": "1fa2bfc0d1d81bb9e7d24d4bfdc32ca79b2833a5ea2ab1e1936b89be16b4e47a",
+      "details_sha256": "c8b9ec713b74c0647d37b356f064bcb1d817ce7188316e36ae95374f5360c1e1",
+      "metrics_sha256": "b31c3c39584549cd9787c9058a6615eb0a5d2ece2848da30aad2468be7d9bb3a"
+    }
+  ]
+}
