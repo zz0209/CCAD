@@ -20,4 +20,3 @@ def main():
  fig.subplots_adjust(top=.83,bottom=.22,left=.19,wspace=.25)
  for ext in ['png','pdf','svg']:fig.savefig(out/f'refit_tradeoff.{ext}',dpi=180,bbox_inches='tight')
 if __name__=='__main__':main()
-

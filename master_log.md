@@ -4171,3 +4171,6 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 - PAPER_SNAPSHOT_20260906.md SHA256 26b5794c29498d41fea2068f94510c8680eecb60ba3ca2d413fd7579a1d285b0
 - DERIVATION_PACKAGE.md SHA256 25c490caff79be5ae6578d94bb50c11464c748c249414120b10f94cfb5499f81
 - REFERENCE_REGISTRY.md SHA256 cb53b9a30c35bfdc8652c8cad10e540529e213d1307c712ef8c48773364b6668
+
+## 2026-09-06T15:25:27Z — 图脚本格式补记
+写入时间（written_at_utc）：2026-09-06T15:25:27Z。首次staged diff检查提示plot_fisher_refit.py末尾多余空行，原命令仍完成提交推送；现移除该空行再核对。仅格式变化，不改变图、计算或科学结论，不重复模型运行。
