@@ -1,0 +1,21 @@
+{
+  "run_id": "F4_functional_truth_v1_20260906",
+  "purpose": "C1 actual synthetic counterexample: identical dictionary/span scores, preserved split versus lost or context-aliased source function",
+  "seeds": [1101, 1102, 1103, 1104, 1105],
+  "mean_samples": 256,
+  "discovery_samples": 256,
+  "pairs_per_context": 512,
+  "families": ["context_split_preserved", "source_function_deleted", "context_alias"],
+  "ridge_fraction": 0.000001,
+  "intervention_scale": 0.1,
+  "methods": ["fcc_hook_readout", "best_dynamic_single_atom", "global_matching_operation", "raw_source_hook_oracle"],
+  "budget": "<=60 seconds CPU4threads, arrays under10MB, 0 pretrained LM/SAE train/audit/external assets",
+  "selection_rationale": "Common32request panel supports conditional function but lacks same-operation global matching and cannot identify unselected outcomes. Test nonvacuity first with known lost information rather than add another selected winner.",
+  "model": "Fixed generated 5->9->7 tanh/softmax downstream consumer per seed, shared across families/methods. NOT a language model or trained SAE.",
+  "source_encoder": "h=[u,v,w,c,n], all nonnegative, c binary; source codes=h and decoder=I5. u/v/w/n independently zero-inflated U(.25,1), active probability.25.",
+  "target_decoder": "Six columns [e1,e1,e2,e3,e4,e5], identical in all three families. Codes [u(1-c),u*c,v,w,c,n] in preserved; first two zero in deletion; [u(1-c),n*c,v,w,c,n] in alias. Multiplicative notation is exactly implementable by ReLU(u-c) and ReLU(u+c-1) on this bounded domain. Alias uses ReLU(n+c-1).",
+  "geometry": "Rectangular max-absolute-cosine assignment (MCC min-width definition) via exhaustive small assignment; all three scores1. This is deliberately NOT an atom-inconsistency claim. Span projection score1 even when q decoder columns are dead.",
+  "fit": "Existing fit_hook_space_transport rank1, independent mean centering, uniform discovery weights. Existing best_single_atom conditional_variation=True over all six target codes. Frozen global assignment maps source q=e1 to first tied target e1, sign/norm coefficient1; NOT perquery best atom.",
+  "evaluation": "Independent generated recipient/donor pairs, same binary context within pair; source operation .1*(u_d-u_r)*e1. Target readout difference applied to SAME source recipient h before SAME nonlinear consumer. Report coordinate squared error/source energy, KL to source/source-to-base KL, both contexts and combined. No inference over generated seed pairs as independent real SAE evidence.",
+  "limits": "Handcrafted executable nonnegative encoders with known information loss; no optimization/feature-learning claim. Current hook-based FCC and ordinary source-aligned regression coincide here; no novel solver or advantage over equally informed regression. Zero/negative results retained. No universal GL nonnegative-invariance assertion."
+}
