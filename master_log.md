@@ -3542,3 +3542,23 @@ REFERENCE_REGISTRY.md:72e7930466c80ad999f59edb26f5e9c1e4ff8a894541195adcf6515ad4
 .aris/compute/f4_sparse_install_report.json:02efef84d06864d7f71b642cec1df2ef7c65da68d7062d115e9ad1faf3ed0da3
 runs/F4_joint_sparse_causal_v1_20260905/SPARSE_EXECUTION_FINDINGS.md:d851c1123a89ac1e8e214f0217760db1ee8e8e55f273fcfe827763c5bea1c5f7
 runs/F4_joint_sparse_causal_v1_20260905/compact_component_summary.json:233058000ea31fe7977b5856edcd402710abd25d993fdc7e73f75c7c1df19227
+
+### 2026-09-05 evening user-requested macro paper closure
+
+User explicitly asks to complete only necessary current closeout and urgently consolidate results, mathematics, application meaning and a credible method-driven/result-driven complete-paper narrative. No computation is running; pending new joint-sparse confirmation is not automatically started. Tracker now prioritizes macro synthesis over historical NEXT. Use formula-derivation/research-paper-writing to unify the executed object and writing, and one focused result-to-claim same-family/provisional second view; no score gates, protocol tree or broad retraining. Recheck actual reports/raw data and nearest primary work; historical R001-R003 audit FAIL is scoped historical synthetic, later M1 NIP provisionalPASS also synthetic, neither replaces current F4 evidence. Automation remains active, follows current tracker.
+
+### 2026-09-05 evening macro paper closure completed
+
+Delivered PAPER_SNAPSHOT_20260906.md as an actual paper snapshot: English abstract, coherent Chinese introduction/method, process-to-donor-to-behavior mathematics, aggregate-versus-family counterexample, primary-source related-work table, five evidence panels and concrete application/common-hook challenge. Current supported thesis is conditional operational reproducibility of source-defined signed contributions across SAE seeds; real fresh-document effect/probability evidence is retained, not semantic/canonical recovery or universal raw superiority. Expanded probability medians .044457/.027133 concern eight cases, not all eleven selected requests. Raw competitive/better, rank-one collinear components, grammar matched-norm failure and sparse-B reversal remain explicit.
+
+DERIVATION_PACKAGE §14 consolidates standard estimator/conditional bounds, coordinate-dependent sparsity and the direct-source-write objection; historical §§0-12 unchanged. Primary SemanticOT v1 method and CE/VE replacement evaluation, UnstableFeatures v1 subspace methods and MAS/CLMAS v7 were reread; no categorical prior-art novelty or complete SemanticOT/MAS comparison claimed. One result-to-claim same-family/provisional review returned partial; full trace retained with parent corrections about eight-case aggregation, full-versus-component evidence and same-structure grammar. No reviewer thresholds, extra round or unseen-syntax universal gate.
+
+Scientific allocation changes in plan/tracker: pending joint-sparse fresh-doc confirmation is a retained non-default option, not launched. Next useful unit must test source-defined component predictions/selectivity/use benefit beyond generic shared-hook regression, with cheap source-side feasibility first and fair strong controls; no newly named behavioral variable/run yet. No new corpus, training, fit or LM computation in this synthesis. No running task to interrupt; automation remains active at five minutes and follows current tracker. Paper local links and git diff whitespace passed; no code changes, so no full test rerun. Paper-level method novelty and semantic application are still unfinished, not acceptance-ready.
+
+Ignored local artifacts retained, not force-added or publicly uploaded:
+PAPER_SNAPSHOT_20260906.md:b81b06fa78361e07baa5c09766ff11ba248cc462323b1d9ed9f8e21cb2f07ae4
+DERIVATION_PACKAGE.md:cec330d99ada49a5b53dbae8b2ad71d58cb23d12e49bcbddd04a2ebc3b4f1b0f
+EXPERIMENT_PLAN.md:9cb29985b80a52ea53a9da39cb2b3def2b6c0919bc7de0bd91db4024666aa661
+EXPERIMENT_TRACKER.md:e746b1b05052132402fe935935e46551ab1e08973af41debc3c3825ca590e7d2
+REFERENCE_REGISTRY.md:368636a3093b1da7fd01f26bfcde827885c089ec07eb338203656d3f3b2533cd
+.aris/traces/result-to-claim/2026-09-06_macro01/001-paper-story.response.md:078bcbe7983af612cdd8e55a1b7d749265a9608d49f8d43546a38bcf8b136092
