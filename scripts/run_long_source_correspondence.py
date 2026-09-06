@@ -20,6 +20,7 @@ from f4_probability_endpoints import log_prob
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--config',type=Path,required=True);args=ap.parse_args()
     cfg=json.loads(args.config.read_text(encoding='utf-8-sig'));run=ROOT/'runs'/cfg['run_id'];run.mkdir(exist_ok=False)
+    target_seed=int(cfg.get('target_seed',2));assert target_seed!=1
     start=time.perf_counter();write(run/'config.resolved.json',cfg);code=[]
     for rel in ['scripts/run_long_source_correspondence.py','scripts/run_f4_source_reference_causal.py','scripts/run_r011s1_raw_hook_asset.py','scripts/f4_probability_endpoints.py','src/ccad/artifacts.py','src/ccad/activation_contract.py','src/ccad/hook_transport.py']:
         p=ROOT/rel;dst=run/'source_snapshot'/rel;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_bytes(p.read_bytes())
@@ -28,7 +29,7 @@ def main():
     write(run/'manifest.json',dict(schema_version='long.source.correspondence.v1',run_id=cfg['run_id'],run_parent='F4',purpose=cfg['purpose'],milestone='C2-C3',
         evidence_level='long_source_authored_development',started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),
         code_snapshot_hash=aggregate(code),source_snapshot_required=True,audit_opened=False,candidate_family_frozen=True,mean_constants_source_split='independent paired mean; conditional intercept cancels in donor',
-        threshold_source_split='source-only that discovery rows; no behavioral fitting',statistics_unit='six shared predicate pairs, one source-target seed pair',device='cuda:0',seeds=[1,2],
+        threshold_source_split='source-only that discovery rows; no behavioral fitting',statistics_unit='document/predicate pairs sharing source1 and one target seed; reciprocal operations dependent',device='cuda:0',seeds=[1,target_seed],
         resource_lease='cpu-heavy -> gpu-0 resource_manager.run',resource_lease_reason=cfg['budget']))
     for name in ['stdout.log','stderr.log','metrics.raw.jsonl']:(run/name).touch()
     write(run/'status.json',dict(status='RUNNING'));inputs=[];rows=[];checks={};env={};forwards=0;error=None
@@ -42,6 +43,18 @@ def main():
     try:
         checked(args.config);load('.aris/compute/local-r006b1-env-spec.json');load('.aris/compute/local-f4-sparse-env-spec.json')
         asset=load(cfg['asset_config']);manifest=load(Path(asset['bulk_output_dir'])/'asset_manifest.json');rawmanifest=load(cfg['raw_manifest'])
+        if cfg.get('target_asset_config'):
+            extra=load(cfg['target_asset_config'])
+            for key in ('token_manifest_sha256','paired_corpus_run','model_revision','hook_module_path','num_latents','k'):
+                assert asset[key]==extra[key], key
+            em=load(Path(extra['bulk_output_dir'])/'asset_manifest.json')
+            manifest['decoders']+=em['decoders']
+            for spec in manifest['splits']:
+                if spec['split'] not in ('mean','discovery'):continue
+                match=next(r for r in em['splits'] if r['split']==spec['split'])
+                spec['files']+=match['files']
+            asset['saes']+=extra['saes']
+        assert len([r for r in asset['saes'] if r['seed']==target_seed])==1
         tm=load(asset['token_manifest_path']);dm=tm['outputs']['discovery'];tokenpath=checked(ROOT/'runs'/asset['paired_corpus_run']/dm['path'],dm['sha256'])
         paired=[json.loads(s) for s in checked(ROOT/'runs'/asset['paired_corpus_run']/'artifacts/documents.jsonl').read_text().splitlines() if s]
         train=load(cfg['training_documents'])['documents']
@@ -56,7 +69,7 @@ def main():
         query_token=tok.encode(' that',add_special_tokens=False);assert len(query_token)==1
         if cfg.get('frozen_fit'):
             frozen=cfg['frozen_fit'];parent=ROOT/frozen['path'];pc=load(parent/'config.resolved.json')
-            assert pc['asset_config']==cfg['asset_config'] and pc['source_atom']==cfg['source_atom']
+            assert pc['asset_config']==cfg['asset_config'] and pc['source_atom']==cfg['source_atom'] and int(pc.get('target_seed',2))==target_seed
             fpath=checked(parent/'coefficients.npz',frozen['coefficients_sha256'])
             with np.load(fpath,allow_pickle=False) as arr:
                 beta={k:np.array(arr[k]) for k in ('full','raw','best_atom','geometric_atom','sparse16')}
@@ -70,7 +83,7 @@ def main():
             tokens=np.memmap(tokenpath,dtype='<u2',mode='r');eligible=np.flatnonzero(tokens==query_token[0]);count=min(cfg['fit_rows'],len(eligible))
             selected=eligible[np.linspace(0,len(eligible)-1,count,dtype=int)];assert len(set(selected))==count and count>16
             dense={};means={};dec={}
-            for seed in (1,2):
+            for seed in (1,target_seed):
                 dec[seed]=np.array(mmap(next(r for r in manifest['decoders'] if r['seed']==seed)),dtype=float)
                 for split in ('mean','discovery'):
                     spec=next(r for r in manifest['splits'] if r['split']==split);parts={r['dtype']:mmap(r) for r in spec['files'] if r['seed']==seed}
@@ -79,13 +92,13 @@ def main():
                     else:
                         z=np.zeros((count,3072));np.add.at(z,(np.arange(count)[:,None],ii[selected]),aa[selected]);dense[seed]=z
             rawmeta=next(r for r in rawmanifest['splits'] if r['split']=='discovery');raw=np.array(mmap(rawmeta)[selected],dtype=float)
-            x=dense[2]-means[2];y=dense[1][:,cfg['source_atom']]-means[1][cfg['source_atom']];w=np.ones(count)/count
+            x=dense[target_seed]-means[target_seed];y=dense[1][:,cfg['source_atom']]-means[1][cfg['source_atom']];w=np.ones(count)/count
             beta={};diag={};beta['full'],diag['full']=fixed_support_ridge(x,y,w,cfg['ridge'])
             beta['raw'],diag['raw']=fixed_support_ridge(raw,y,w,cfg['ridge'])
             xc=x-x.mean(0);yc=y-y.mean();var=np.mean(xc*xc,axis=0);cross=xc.T@yc/count
             scalar=np.divide(cross,var*(1+cfg['ridge']),out=np.zeros_like(cross),where=var>0)
             losses=np.mean(yc*yc)-2*scalar*cross+scalar*scalar*var
-            atom=int(np.argmin(losses));cos=dec[2]@dec[1][cfg['source_atom']]/np.linalg.norm(dec[2],axis=1)/np.linalg.norm(dec[1][cfg['source_atom']]);geom=int(np.argmax(abs(cos)))
+            atom=int(np.argmin(losses));cos=dec[target_seed]@dec[1][cfg['source_atom']]/np.linalg.norm(dec[target_seed],axis=1)/np.linalg.norm(dec[1][cfg['source_atom']]);geom=int(np.argmax(abs(cos)))
             for name,j in [('best_atom',atom),('geometric_atom',geom)]:
                 beta[name]=np.zeros(3072);beta[name][j]=scalar[j];diag[name]=dict(atom=j,coefficient=float(scalar[j]),training_error=float(losses[j]),decoder_cosine=float(cos[j]))
             sd=np.sqrt(var);active=sd>1e-12;xx=np.asfortranarray(xc[:,active]/sd[active]);alpha_max=float(np.max(abs(xx.T@yc/count)))
@@ -102,7 +115,7 @@ def main():
                 if len(ids)>32:break
             if best is None:raise RuntimeError('No finite sparse candidate, numerical fit unresolved')
             beta['sparse16']=np.zeros(3072);beta['sparse16'][best[1]]=best[2];diag['sparse16']=dict(**best[3],support=best[1].tolist(),path=path)
-            write(run/'fit_metadata.json',dict(source_atom=cfg['source_atom'],source_mean=float(means[1][cfg['source_atom']]),target_mean=means[2].tolist(),eligible_that_rows=len(eligible),selected_rows=selected.tolist(),methods=diag,
+            write(run/'fit_metadata.json',dict(source_atom=cfg['source_atom'],source_mean=float(means[1][cfg['source_atom']]),target_mean=means[target_seed].tolist(),eligible_that_rows=len(eligible),selected_rows=selected.tolist(),methods=diag,
                 source_conditional_variance=float(np.var(y)),operation='source-decoder aligned donor differences; atom baselines also aligned, not target-native deletion'))
             np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=dec[1][cfg['source_atom']])
             checks['maps_saved_before_consumer']=True;fit_seconds=time.perf_counter()-start
@@ -110,6 +123,7 @@ def main():
         model=transformers.AutoModelForCausalLM.from_pretrained(asset['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to('cuda:0');model.config.use_cache=False
         saes={}
         for item in asset['saes']:
+            if item['seed'] not in (1,target_seed):continue
             p=checked(Path(item['path'])/'sae.safetensors',item['sha256']);saes[item['seed']]=SparseCoder.load_from_disk(p.parent,device='cuda:0').eval()
         module=model.get_submodule(asset['hook_module_path']);contract=HookPointContract(asset['hook_module_path'],5,'resid_post',768)
         original=load(cfg['probe_config'])
@@ -145,7 +159,7 @@ def main():
             scale=min(1.,cfg['max_hook_fraction']*np.linalg.norm(captured[i])/max(np.linalg.norm(source_delta),1e-30));source,_=forward(batches[i],scale*source_delta)
             ps=np.exp(log_prob(source[None])[0]);prob[f'source_{i}']=ps;pb=prob[f'base_{i}'];den=float(np.sum(ps*np.log(np.maximum(ps,1e-300)/np.maximum(pb,1e-300))))
             for method,b in beta.items():
-                inp=captured[donor]-captured[i] if method=='raw' else encoded[donor][2]-encoded[i][2]
+                inp=captured[donor]-captured[i] if method=='raw' else encoded[donor][target_seed]-encoded[i][target_seed]
                 predicted=float(inp@b);lg,_=forward(batches[i],scale*predicted*direction);pc=np.exp(log_prob(lg[None])[0]);prob[f'{method}_{i}']=pc
                 kl=max(0.,float(np.sum(ps*np.log(np.maximum(ps,1e-300)/np.maximum(pc,1e-300)))))
                 r=dict(case_id=i,**c,donor=donor,method=method,source_activation=float(encoded[i][1][cfg['source_atom']]),source_difference=truth,predicted_difference=predicted,preference_direction_matches=bool(truth*predicted>0),

@@ -3933,3 +3933,21 @@ source条件差与旧native激活逐值完全一致；noop0；保存float32概�
 - runs/F4_long_source2379_contexts_v1_20260906/metrics.raw.jsonl SHA256 7ea538f81c83b245013d2a243f6b369e66490fec6b61e672d2793eb0c26d475a
 - artifacts/long_source2379_contexts_20260906/inputs.json SHA256 dc2fef6d9e8f32b1b91c2c70f5d7b9761510a63ecaab5f7db36c2ca598e8195b
 - scripts/prepare_long_source_contexts.py SHA256 0040c245bf8dc859a9646fe1ba70d22e615111cefadc14727af78f9b4a7ef59d
+
+## 2026-09-06T09:12:04Z — long2379固定方法扩target3/4/5启动
+写入时间（written_at_utc）：2026-09-06T09:12:04Z。复用原mean/discovery、512that行、ridge.001、标准Lasso路径与<=16支持，原46输入不变。每target先冻结拟合再观察行为，单run323LM/<=900秒，总<=30分钟/16GB。扩target seed支持稳定性，不能当独立source重复；原target2结果保留不重跑。raw/source输出应逐值相等作针对性实现检查。现有CPU/GPU free，按cpu-heavy→gpu-0申请，未训练/download/audit。
+
+## 2026-09-06T09:12:37Z — seed扩展资产接口修复
+写入时间（written_at_utc）：2026-09-06T09:12:37Z。target3_v1在元数据合并时StopIteration，0forward/0指标/0.018秒；base有calibration/audit条目，新增seed仅mean/discovery。修复合并范围为实际拟合mean/discovery，不读取其余split；失败目录完整保留，target3改唯一v2重试，方法参数和评价输入未变化。
+
+## 2026-09-06T09:16:48Z — long2379四target结果
+写入时间（written_at_utc）：2026-09-06T09:16:48Z。新增target3_v2/4_v1/5_v1各323LM/230行，PASS；累计wall44.417950秒，结束时刻分别见各status.json及本单元FINDINGS.md，原0forward失败保留。
+自然bestatom中位target2/3/4/5 .250374/.752682/1.272581/.481816；sparse .007417/.337986/.129649/.105339；full .004923/.019662/.035230/.023865；raw .001843。稀疏逐操作胜数8/10、6/10、8/10、6/10，保留全部损失。新句框中位均改善，名词插入2/5中位atom更好。支持分布式可恢复性，紧凑幅度随target异质；共享source方向非独立五seed重复，不改变开发/非native边界。源差/源KL/raw全逐值一致，未新增train/download/audit。下一source及条件广度，不再扩2379模板。
+改前逐字归档archive/research_workflow_20260906/long_target_seeds_20260906T091648Z含匹配hash。当前身份：
+- EXPERIMENT_TRACKER.md SHA256 0e5344170d757ed92ecba3a001311c8af6186a4895c7421d6b068ed065dfc6f8
+- PAPER_SNAPSHOT_20260906.md SHA256 84847b329e9e622fd8d2e7b0cd8b7ea4c925ede0deade960bb6fcaf2989e62aa
+- artifacts/long_source2379_seed_extension_20260906/summary.json SHA256 9aee3f37e63dbd071403ea6eb9a6de0593e82bf14fc4be3315b62479dafb1609
+- artifacts/long_source2379_seed_extension_20260906/FINDINGS.md SHA256 2257911846cba3179053e295049df4fe6fd9f98f5f2d1e2116fde611b7c823c1
+- runs/F4_long_source2379_target3_v2_20260906/metrics.raw.jsonl SHA256 664233d402dbfb1a68e5e0e38d5c466d38d248f8013f5b636b81fff87df729c7
+- runs/F4_long_source2379_target4_v1_20260906/metrics.raw.jsonl SHA256 55cc77859b8e3da9dd5a114ca275ade8434bf25717b7a704df25565e61a7d21e
+- runs/F4_long_source2379_target5_v1_20260906/metrics.raw.jsonl SHA256 3ffd0b09e5083dfcf200fd12cb8e61493a273b184df187f2f671c302335fb65f
