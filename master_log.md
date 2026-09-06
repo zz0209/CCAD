@@ -4021,3 +4021,24 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 
 ## 2026-09-06T11:05:56Z — 功能曲线报告小数勘误
 写入时间（written_at_utc）：2026-09-06T11:05:56Z。FINDINGS.md正文两条shared轨迹的小数已按同页表格及summary.json修正为六位舍入；原始统计、图、结论不变。此前hash为修正前身份；artifacts/function_curve_20260906/FINDINGS.md当前SHA256 ebe1f1edc76a562b7ec8b13a71f3d5e2866727dca7969b0ed557d6311270a9c1。
+
+## 2026-09-06T11:25:47Z — 双组成新自然确认启动
+写入时间（written_at_utc）：2026-09-06T11:25:47Z。冻结两个8192终点八方法系数、四操作和.1共同dose规则，先旧数据回放frozen接口再新自然文本。1024x128新calibration文档按既有hashsplit，排除训练/paired/所有既有documents账本；短字段/长句固定词法代理，盐hash最多12对、全部零/反向保留，无target筛选。预算30分钟/16GB无训练/拟合，语料range<=约100MB/300秒。freeze身份 738b98ba0b86cefea5475d18d175615ab97e356546177f1d9683464f78491d73。
+
+## 2026-09-06T11:34:43Z — 冻结双组成新自然确认完成
+写入时间（written_at_utc）：2026-09-06T11:34:43Z。事件结束两target status为2026-09-06T11:29左右，精确各status.json；本块不以事件替代写入。新204文档/1024seq中固定选12对/24不同文档，1778LM/1536行/50.657230秒、0refit，语料25,237,678B公开range。输入条件预测8/12与10/12。第二组成shared比值中位.009636/.013113，对dynamic.255609/.486929、full.060812/.046704，绝对KL/多数逐例同向；第一组成和混合对full不稳，所有Raw中位更强。弱源4例不剔除；time/citation代理错误保留。不得将target1和/差比值中位胜full概括为绝对/逐例优势。
+系数冻结逐值/source与raw跨target逐值/Gram/noop/契约PASS；旧接口384行回放15.13秒独列工程不计新科学。s2replay配置已准备但无需重复同分支，因此未运行。下一同总16预算共享vs逐输出L1支持，以旧自然作开发，改善另新确认。论文/图/registry/plan/tracker已同步，图目检纠正图例遮挡。改前逐字归档archive/research_workflow_20260906/colon_natural_20260906T112632Z。当前文件身份：
+- EXPERIMENT_TRACKER.md SHA256 d172f9835d2d5f74c696913a0f34255fd495a16abb149f2257065e920e1d2ca2
+- EXPERIMENT_PLAN.md SHA256 c32ad2ca9c8c9246298411caf6756930473e5490a3980fa845b82693873e6243
+- PAPER_SNAPSHOT_20260906.md SHA256 8a373a6667f4daa24a5021ef5547b4aac5493fd8b0d15ca804706b817fd41e57
+- REFERENCE_REGISTRY.md SHA256 8286b89559958194d83b29f67422c777b28e1dcae5fd480c82b392db0c6ba162
+- artifacts\colon_natural_20260906\freeze.json SHA256 738b98ba0b86cefea5475d18d175615ab97e356546177f1d9683464f78491d73
+- artifacts\colon_natural_20260906\selection.json SHA256 066861c72560dbaf059c8b85141dffeb736f53b636a78a6d39bb2399affd6049
+- artifacts\colon_natural_20260906\prepared_inputs.json SHA256 3208e09740dca849d9d90b7ac5f9326fad7add5fd0b9d7908b30ea05af0bbb49
+- artifacts\colon_natural_20260906\FINDINGS.md SHA256 abefb4b3dd449af4cd4aa75dfb5e7e2d68a3ce00e7a37bbd22867bf03d1923d3
+- artifacts\colon_natural_20260906\summary.json SHA256 10172daf36243947804ec6197c58915ac71560dd7ba3f867054f157c55bb6a34
+- artifacts\colon_natural_20260906\natural_confirmation.png SHA256 722daa5197a3ba905eeefe239c1e583e5fb5e0beec0577108fa7a381a720b3ae
+- artifacts\colon_natural_20260906\natural_confirmation.pdf SHA256 1cd7fea9b9ba5f76a17981d5d65641ca847c7a7acd1ef1759e41b40b3bc79ddb
+
+## 2026-09-06T11:35:33Z — 自然确认结束时间与资源核对
+写入时间（written_at_utc）：2026-09-06T11:35:33Z。两target精确事件结束时间据status.json分别2026-09-06T11:28:33.881136+00:00、2026-09-06T11:29:16.321159+00:00。共享管理器核对cpu-heavy/gpu-0/disk-d-io/disk-e-io当前free，本轮无残留计算。

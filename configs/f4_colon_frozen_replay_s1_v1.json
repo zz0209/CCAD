@@ -1,0 +1,72 @@
+{
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "audit_opened": false,
+  "budget": "445LMforwards/384method rows percheckpoint; ten<=30minwall/16GB. Encode only32768mean+512selected discovery cachedhook rows percheckpoint, no fullnewcache/train/download/audit.",
+  "budget_seconds": 180,
+  "evaluation_inputs": "artifacts/long_source_breadth_20260906/colon_inputs.json",
+  "fit_rows": 512,
+  "joint_fit": {
+    "alpha_count": 40,
+    "debias_ridge_fraction": 0.001,
+    "max_iter": 5000,
+    "minimum_alpha_fraction": 0.01,
+    "path_stop_support": 32,
+    "per_fit_budget_seconds": 120,
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "support_budget": 16,
+    "tol": 1e-07
+  },
+  "max_hook_fraction": 0.1,
+  "operators": {
+    "clause_component": [
+      0,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ],
+    "field_component": [
+      1,
+      0
+    ],
+    "sum": [
+      1,
+      1
+    ]
+  },
+  "parents": [
+    {
+      "path": "runs/F4_breadth_colon_s3a1850_v1_20260906",
+      "sha256": "18e003ce46930754bed756471c266c2f70b3123c845e9862205ba4797fc283ed"
+    },
+    {
+      "path": "runs/F4_breadth_colon_s3a2897_v1_20260906",
+      "sha256": "52afbb8f14f29e903009a88b17019f66a9bd829bc84484c19901a76933813a81"
+    }
+  ],
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "purpose": "Verify frozen pair application replays original numerical rows",
+  "query_token": ":",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "ridge": 0.001,
+  "run_id": "F4_colon_frozen_replay_s1_v1_20260906",
+  "scope": "Old-data replay only; no scientific increment; zero refitting",
+  "source_atoms": [
+    1850,
+    2897
+  ],
+  "source_seed": 3,
+  "support_budget": 16,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "target_seed": 1,
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "frozen_map": {
+    "path": "runs/F4_function_curve_s1_step8192_v1_20260906",
+    "config_sha256": "70d22f2854d5e99e54833c2be9f63d14a4b7f28189601f6dc68fd2034e63b9b5",
+    "coefficients_sha256": "770b3f209407b5d1eeb6445350608c7c14f5371a2d36c96b16652e994910f5bd"
+  },
+  "evaluation_inputs_sha256": "8ba977f6bd6ac11c1a89d64b43cbe0baecbeb8aa72fa30836f6df26fe5c42e13",
+  "evidence_level": "old_panel_implementation_replay"
+}

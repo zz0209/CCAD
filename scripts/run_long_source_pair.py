@@ -27,7 +27,7 @@ def main():
         code.append(dict(path=rel,sha256=sha256(p),bytes=p.stat().st_size,snapshot_path='source_snapshot/'+rel))
     write(run/'code_hashes.json',dict(files=code,aggregate_sha256=aggregate(code),snapshot_root='source_snapshot'))
     write(run/'manifest.json',dict(schema_version='long.source.correspondence.v1',run_id=cfg['run_id'],run_parent='F4',purpose=cfg['purpose'],milestone='C2-C3',
-        evidence_level='long_source_authored_development',started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),
+        evidence_level=cfg.get('evidence_level','long_source_authored_development'),started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),
         code_snapshot_hash=aggregate(code),source_snapshot_required=True,audit_opened=False,candidate_family_frozen=True,mean_constants_source_split='independent paired mean; conditional intercept cancels in donor',
         threshold_source_split='source-only specified-token discovery rows; no behavioral fitting',statistics_unit='document/predicate pairs sharing one source and one target seed; reciprocal operations dependent',device='cuda:0',seeds=[source_seed,target_seed],
         resource_lease='cpu-heavy -> gpu-0 resource_manager.run',resource_lease_reason=cfg['budget']))
@@ -55,88 +55,112 @@ def main():
                 spec['files']+=match['files']
             asset['saes']+=extra['saes']
         assert len([r for r in asset['saes'] if r['seed']==target_seed])==1
-        tm=load(asset['token_manifest_path']);dm=tm['outputs']['discovery'];tokenpath=checked(ROOT/'runs'/asset['paired_corpus_run']/dm['path'],dm['sha256'])
-        paired=[json.loads(s) for s in checked(ROOT/'runs'/asset['paired_corpus_run']/'artifacts/documents.jsonl').read_text().splitlines() if s]
-        train=load(cfg['training_documents'])['documents']
-        checks['disjoint_sae_training']=all(not({r[k] for r in paired}&{r[k] for r in train}) for k in ['document_id','text_sha256'])
-        assert checks['disjoint_sae_training']
         import torch,transformers,sklearn
-        from sklearn.linear_model import Lasso
-        from sklearn.exceptions import ConvergenceWarning
         from sparsify import SparseCoder
         torch.set_num_threads(4);torch.use_deterministic_algorithms(True);torch.cuda.reset_peak_memory_stats()
         tok=transformers.AutoTokenizer.from_pretrained(asset['model_local_dir'],local_files_only=True)
         query_token=tok.encode(cfg.get('query_token',' that'),add_special_tokens=False);assert len(query_token)==1
-        from fit_f4_joint_sparse import fit_joint
-        atoms=cfg['source_atoms'];assert len(atoms)==2 and len(set(atoms))==2
-        tokens=np.memmap(tokenpath,dtype='<u2',mode='r');eligible=np.flatnonzero(tokens==query_token[0]);count=min(cfg['fit_rows'],len(eligible))
-        selected=eligible[np.linspace(0,len(eligible)-1,count,dtype=int)];assert count>16
-        dense={};means={};dec={};checkpoint_sae=None
-        if cfg.get('target_checkpoint'):
-            cp=cfg['target_checkpoint'];checked(cfg['checkpoint_registry'])
-            cpfile=checked(Path(cp['path'])/'sae.safetensors',cp['sha256']);checkpoint_sae=SparseCoder.load_from_disk(cpfile.parent,device='cuda:0').eval()
-            dec[target_seed]=checkpoint_sae.W_dec.detach().cpu().numpy().astype(float)
-            def encode_rows(hook_rows):
-                result=np.zeros((len(hook_rows),3072))
-                with torch.no_grad():
-                    for off in range(0,len(hook_rows),512):
-                        inp=torch.tensor(np.array(hook_rows[off:off+512]),device='cuda:0',dtype=torch.float32);en=checkpoint_sae.encode(inp)
-                        ii=en.top_indices.cpu().numpy();aa=en.top_acts.cpu().numpy();np.add.at(result,(np.arange(off,off+len(ii))[:,None],ii),aa)
-                return result
-            meanraw=mmap(next(r for r in rawmanifest['splits'] if r['split']=='mean'));total=np.zeros(3072)
-            for off in range(0,len(meanraw),512):total+=encode_rows(meanraw[off:off+512]).sum(0)
-            means[target_seed]=total/len(meanraw)
-            discraw=mmap(next(r for r in rawmanifest['splits'] if r['split']=='discovery'));dense[target_seed]=encode_rows(discraw[selected])
-            write(run/'target_encoding.json',dict(checkpoint=cp,mean_rows=len(meanraw),discovery_rows=len(selected),no_new_base_forward=True,no_full_code_cache_written=True))
-        for seed in ((source_seed,) if checkpoint_sae is not None else (source_seed,target_seed)):
-
-            dec[seed]=np.array(mmap(next(r for r in manifest['decoders'] if r['seed']==seed)),dtype=float)
-            for split in ('mean','discovery'):
-                spec=next(r for r in manifest['splits'] if r['split']==split);parts={r['dtype']:mmap(r) for r in spec['files'] if r['seed']==seed}
-                ii,aa=parts['uint16'],parts['float32']
-                if split=='mean':means[seed]=np.bincount(ii.ravel(),weights=aa.ravel(),minlength=3072)/len(ii)
-                else:
-                    z=np.zeros((count,3072));np.add.at(z,(np.arange(count)[:,None],ii[selected]),aa[selected]);dense[seed]=z
-        x=dense[target_seed]-means[target_seed];y=dense[source_seed][:,atoms]-means[source_seed][atoms];w=np.ones(count)/count
-        direction=dec[source_seed][atoms];dg=direction@direction.T
-        beta={};parents=[];baseline_diagnostics={}
-        for j,parent in enumerate(cfg['parents']):
-            path=ROOT/parent['path'];pc=load(path/'config.resolved.json');assert pc['source_atom']==atoms[j] and pc['source_seed']==source_seed
-            if checkpoint_sae is None:assert pc['target_seed']==target_seed
-            with np.load(checked(path/'coefficients.npz',parent['sha256']),allow_pickle=False) as arr:
-                assert np.array_equal(arr['source_decoder'],direction[j])
-                parents.append({k:np.array(arr[k]) for k in ('full','raw','best_atom','geometric_atom','sparse16')})
-        if checkpoint_sae is None:
-            for name in parents[0]:beta[name]=np.column_stack([r[name] for r in parents])
+        if cfg.get('frozen_map'):
+            freeze=cfg['frozen_map'];parent=Path(freeze['path'])
+            pc=json.loads(checked(parent/'config.resolved.json',freeze['config_sha256']).read_text())
+            for key in ('source_seed','target_seed','source_atoms','operators','max_hook_fraction','asset_config','target_asset_config'):
+                assert cfg[key]==pc[key], key
+            assert load(parent/'status.json')['status']=='PASS'
+            for spec in cfg.get('confirmation_inputs',[]):checked(spec['path'],spec['sha256'])
+            checked(cfg['evaluation_inputs'],cfg['evaluation_inputs_sha256'])
+            with np.load(checked(parent/'coefficients.npz',freeze['coefficients_sha256']),allow_pickle=False) as ar:
+                direction=np.array(ar['source_decoder']);beta={k:np.array(ar[k]) for k in ar.files if k!='source_decoder'}
+            atoms=cfg['source_atoms'];dg=direction@direction.T;checkpoint_sae=None
+            item=next(r for r in asset['saes'] if r['seed']==target_seed)
+            assert item['sha256']==pc['target_checkpoint']['sha256']
+            write(run/'fit_metadata.json',dict(mode='frozen_application',parent=freeze,fit_calls=0,means_cancel_in_differences=True))
+            np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=direction)
+            checks['frozen_no_refit']=True;checks['maps_saved_before_consumer']=True
+            print(json.dumps(dict(stage='FROZEN_MAP_LOADED',methods=list(beta),fit_calls=0)),flush=True)
         else:
-            beta['raw']=np.column_stack([r['raw'] for r in parents]);beta['full']=np.zeros((3072,2));beta['best_atom']=np.zeros((3072,2));beta['geometric_atom']=np.zeros((3072,2))
-            xc=x-x.mean(0);yc=y-y.mean(0);var=np.mean(xc*xc,axis=0)
-            for j in range(2):
-                beta['full'][:,j],fd=fixed_support_ridge(x,y[:,j],w,cfg['ridge']);cross=xc.T@yc[:,j]/count
-                scalar=np.divide(cross,var*(1+cfg['ridge']),out=np.zeros_like(cross),where=var>0);loss=np.mean(yc[:,j]**2)-2*scalar*cross+scalar**2*var
-                atom=int(np.argmin(loss));cos=dec[target_seed]@direction[j]/np.linalg.norm(dec[target_seed],axis=1)/np.linalg.norm(direction[j]);geom=int(np.argmax(abs(cos)))
-                beta['best_atom'][atom,j]=scalar[atom];beta['geometric_atom'][geom,j]=scalar[geom];baseline_diagnostics[str(atoms[j])]=dict(best_atom=atom,geometric_atom=geom,full=fd)
-        beta['shared16'],intercept,diag=fit_joint(x,y,w,cfg['joint_fit'])
-        support=np.flatnonzero(np.linalg.norm(beta['shared16'],axis=1)>0)
-        supports={'same_support_ridge':support}
-        for name,base in [('dynamic_pair_ridge','best_atom'),('geometric_pair_ridge','geometric_atom')]:
-            supports[name]=np.flatnonzero(np.linalg.norm(beta[base],axis=1)>0)
-        refits={}
-        for name,ids in supports.items():
-            beta[name]=np.zeros((3072,2));refits[name]=dict(support=ids.tolist(),outputs=[])
-            for j in range(2):
-                b,d=fixed_support_ridge(x[:,ids],y[:,j],w,cfg['ridge']);beta[name][ids,j]=b;refits[name]['outputs'].append(d)
-        yc=y-y.mean(0);cov=yc.T@yc/count
-        write(run/'fit_metadata.json',dict(baseline_diagnostics=baseline_diagnostics,source_atoms=atoms,source_seed=source_seed,target_seed=target_seed,source_decoder_gram=dg.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance=cov.tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),joint_fit=diag,shared_intercept=intercept.tolist(),refits=refits,source_mean=means[source_seed][atoms].tolist(),target_mean=means[target_seed].tolist(),selected_rows=selected.tolist(),eligible_query_rows=len(eligible),operation='source-decoder aligned two-component donor family, common dose across operators'))
-        np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=direction)
-        checks['maps_saved_before_consumer']=True
-        print(json.dumps(dict(stage='FITS_FROZEN',support=support.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),seconds=time.perf_counter()-start)),flush=True)
+            tm=load(asset['token_manifest_path']);dm=tm['outputs']['discovery'];tokenpath=checked(ROOT/'runs'/asset['paired_corpus_run']/dm['path'],dm['sha256'])
+            paired=[json.loads(s) for s in checked(ROOT/'runs'/asset['paired_corpus_run']/'artifacts/documents.jsonl').read_text().splitlines() if s]
+            train=load(cfg['training_documents'])['documents']
+            checks['disjoint_sae_training']=all(not({r[k] for r in paired}&{r[k] for r in train}) for k in ['document_id','text_sha256'])
+            assert checks['disjoint_sae_training']
+            import torch,transformers,sklearn
+            from sklearn.linear_model import Lasso
+            from sklearn.exceptions import ConvergenceWarning
+            from sparsify import SparseCoder
+            torch.set_num_threads(4);torch.use_deterministic_algorithms(True);torch.cuda.reset_peak_memory_stats()
+            tok=transformers.AutoTokenizer.from_pretrained(asset['model_local_dir'],local_files_only=True)
+            query_token=tok.encode(cfg.get('query_token',' that'),add_special_tokens=False);assert len(query_token)==1
+            from fit_f4_joint_sparse import fit_joint
+            atoms=cfg['source_atoms'];assert len(atoms)==2 and len(set(atoms))==2
+            tokens=np.memmap(tokenpath,dtype='<u2',mode='r');eligible=np.flatnonzero(tokens==query_token[0]);count=min(cfg['fit_rows'],len(eligible))
+            selected=eligible[np.linspace(0,len(eligible)-1,count,dtype=int)];assert count>16
+            dense={};means={};dec={};checkpoint_sae=None
+            if cfg.get('target_checkpoint'):
+                cp=cfg['target_checkpoint'];checked(cfg['checkpoint_registry'])
+                cpfile=checked(Path(cp['path'])/'sae.safetensors',cp['sha256']);checkpoint_sae=SparseCoder.load_from_disk(cpfile.parent,device='cuda:0').eval()
+                dec[target_seed]=checkpoint_sae.W_dec.detach().cpu().numpy().astype(float)
+                def encode_rows(hook_rows):
+                    result=np.zeros((len(hook_rows),3072))
+                    with torch.no_grad():
+                        for off in range(0,len(hook_rows),512):
+                            inp=torch.tensor(np.array(hook_rows[off:off+512]),device='cuda:0',dtype=torch.float32);en=checkpoint_sae.encode(inp)
+                            ii=en.top_indices.cpu().numpy();aa=en.top_acts.cpu().numpy();np.add.at(result,(np.arange(off,off+len(ii))[:,None],ii),aa)
+                    return result
+                meanraw=mmap(next(r for r in rawmanifest['splits'] if r['split']=='mean'));total=np.zeros(3072)
+                for off in range(0,len(meanraw),512):total+=encode_rows(meanraw[off:off+512]).sum(0)
+                means[target_seed]=total/len(meanraw)
+                discraw=mmap(next(r for r in rawmanifest['splits'] if r['split']=='discovery'));dense[target_seed]=encode_rows(discraw[selected])
+                write(run/'target_encoding.json',dict(checkpoint=cp,mean_rows=len(meanraw),discovery_rows=len(selected),no_new_base_forward=True,no_full_code_cache_written=True))
+            for seed in ((source_seed,) if checkpoint_sae is not None else (source_seed,target_seed)):
+
+                dec[seed]=np.array(mmap(next(r for r in manifest['decoders'] if r['seed']==seed)),dtype=float)
+                for split in ('mean','discovery'):
+                    spec=next(r for r in manifest['splits'] if r['split']==split);parts={r['dtype']:mmap(r) for r in spec['files'] if r['seed']==seed}
+                    ii,aa=parts['uint16'],parts['float32']
+                    if split=='mean':means[seed]=np.bincount(ii.ravel(),weights=aa.ravel(),minlength=3072)/len(ii)
+                    else:
+                        z=np.zeros((count,3072));np.add.at(z,(np.arange(count)[:,None],ii[selected]),aa[selected]);dense[seed]=z
+            x=dense[target_seed]-means[target_seed];y=dense[source_seed][:,atoms]-means[source_seed][atoms];w=np.ones(count)/count
+            direction=dec[source_seed][atoms];dg=direction@direction.T
+            beta={};parents=[];baseline_diagnostics={}
+            for j,parent in enumerate(cfg['parents']):
+                path=ROOT/parent['path'];pc=load(path/'config.resolved.json');assert pc['source_atom']==atoms[j] and pc['source_seed']==source_seed
+                if checkpoint_sae is None:assert pc['target_seed']==target_seed
+                with np.load(checked(path/'coefficients.npz',parent['sha256']),allow_pickle=False) as arr:
+                    assert np.array_equal(arr['source_decoder'],direction[j])
+                    parents.append({k:np.array(arr[k]) for k in ('full','raw','best_atom','geometric_atom','sparse16')})
+            if checkpoint_sae is None:
+                for name in parents[0]:beta[name]=np.column_stack([r[name] for r in parents])
+            else:
+                beta['raw']=np.column_stack([r['raw'] for r in parents]);beta['full']=np.zeros((3072,2));beta['best_atom']=np.zeros((3072,2));beta['geometric_atom']=np.zeros((3072,2))
+                xc=x-x.mean(0);yc=y-y.mean(0);var=np.mean(xc*xc,axis=0)
+                for j in range(2):
+                    beta['full'][:,j],fd=fixed_support_ridge(x,y[:,j],w,cfg['ridge']);cross=xc.T@yc[:,j]/count
+                    scalar=np.divide(cross,var*(1+cfg['ridge']),out=np.zeros_like(cross),where=var>0);loss=np.mean(yc[:,j]**2)-2*scalar*cross+scalar**2*var
+                    atom=int(np.argmin(loss));cos=dec[target_seed]@direction[j]/np.linalg.norm(dec[target_seed],axis=1)/np.linalg.norm(direction[j]);geom=int(np.argmax(abs(cos)))
+                    beta['best_atom'][atom,j]=scalar[atom];beta['geometric_atom'][geom,j]=scalar[geom];baseline_diagnostics[str(atoms[j])]=dict(best_atom=atom,geometric_atom=geom,full=fd)
+            beta['shared16'],intercept,diag=fit_joint(x,y,w,cfg['joint_fit'])
+            support=np.flatnonzero(np.linalg.norm(beta['shared16'],axis=1)>0)
+            supports={'same_support_ridge':support}
+            for name,base in [('dynamic_pair_ridge','best_atom'),('geometric_pair_ridge','geometric_atom')]:
+                supports[name]=np.flatnonzero(np.linalg.norm(beta[base],axis=1)>0)
+            refits={}
+            for name,ids in supports.items():
+                beta[name]=np.zeros((3072,2));refits[name]=dict(support=ids.tolist(),outputs=[])
+                for j in range(2):
+                    b,d=fixed_support_ridge(x[:,ids],y[:,j],w,cfg['ridge']);beta[name][ids,j]=b;refits[name]['outputs'].append(d)
+            yc=y-y.mean(0);cov=yc.T@yc/count
+            write(run/'fit_metadata.json',dict(baseline_diagnostics=baseline_diagnostics,source_atoms=atoms,source_seed=source_seed,target_seed=target_seed,source_decoder_gram=dg.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance=cov.tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),joint_fit=diag,shared_intercept=intercept.tolist(),refits=refits,source_mean=means[source_seed][atoms].tolist(),target_mean=means[target_seed].tolist(),selected_rows=selected.tolist(),eligible_query_rows=len(eligible),operation='source-decoder aligned two-component donor family, common dose across operators'))
+            np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=direction)
+            checks['maps_saved_before_consumer']=True
+            print(json.dumps(dict(stage='FITS_FROZEN',support=support.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),seconds=time.perf_counter()-start)),flush=True)
         model=transformers.AutoModelForCausalLM.from_pretrained(asset['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to('cuda:0');model.config.use_cache=False
         saes={target_seed:checkpoint_sae} if checkpoint_sae is not None else {}
         for item in asset['saes']:
             if checkpoint_sae is not None and item['seed']==target_seed:continue
             if item['seed'] not in (source_seed,target_seed):continue
             p=checked(Path(item['path'])/'sae.safetensors',item['sha256']);saes[item['seed']]=SparseCoder.load_from_disk(p.parent,device='cuda:0').eval()
+        assert np.array_equal(saes[source_seed].W_dec.detach().cpu().numpy()[atoms].astype(float),direction)
         module=model.get_submodule(asset['hook_module_path']);contract=HookPointContract(asset['hook_module_path'],5,'resid_post',768)
         original=load(cfg['probe_config'])
         cases=load(cfg['evaluation_inputs'])['cases'] if cfg.get('evaluation_inputs') else [dict(pair=i,role=role,verb=verb,text=original['templates'][0].format(subject=verb)) for i,pair in enumerate(original['pairs']) for role,verb in zip(('report','attitude'),pair)]

@@ -1,0 +1,94 @@
+{
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "audit_opened": false,
+  "budget": "889LM/768method rows pertarget; two targets<=10min16GB, zero refit or training",
+  "budget_seconds": 600,
+  "evaluation_inputs": "artifacts/colon_natural_20260906/prepared_inputs.json",
+  "fit_rows": 512,
+  "joint_fit": {
+    "alpha_count": 40,
+    "debias_ridge_fraction": 0.001,
+    "max_iter": 5000,
+    "minimum_alpha_fraction": 0.01,
+    "path_stop_support": 32,
+    "per_fit_budget_seconds": 120,
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "support_budget": 16,
+    "tol": 1e-07
+  },
+  "max_hook_fraction": 0.1,
+  "operators": {
+    "clause_component": [
+      0,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ],
+    "field_component": [
+      1,
+      0
+    ],
+    "sum": [
+      1,
+      1
+    ]
+  },
+  "parents": [
+    {
+      "path": "runs/F4_breadth_colon_s3a1850_v1_20260906",
+      "sha256": "18e003ce46930754bed756471c266c2f70b3123c845e9862205ba4797fc283ed"
+    },
+    {
+      "path": "runs/F4_breadth_colon_s3a2897_v1_20260906",
+      "sha256": "52afbb8f14f29e903009a88b17019f66a9bd829bc84484c19901a76933813a81"
+    }
+  ],
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "purpose": "Frozen two-component FCC on source-only new natural colon pairs",
+  "query_token": ":",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "ridge": 0.001,
+  "run_id": "F4_colon_natural_apply_s1_v1_20260906",
+  "scope": "24 natural prefixes/12 cross-document donor pairs, source3 two atoms fixed; eight methods and four common-dose operations. No outcome selection/refit, weak/zero/reverse retained; not native or validated semantic mechanisms",
+  "source_atoms": [
+    1850,
+    2897
+  ],
+  "source_seed": 3,
+  "support_budget": 16,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "target_seed": 1,
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "frozen_map": {
+    "path": "runs/F4_function_curve_s1_step8192_v1_20260906",
+    "config_sha256": "70d22f2854d5e99e54833c2be9f63d14a4b7f28189601f6dc68fd2034e63b9b5",
+    "coefficients_sha256": "770b3f209407b5d1eeb6445350608c7c14f5371a2d36c96b16652e994910f5bd"
+  },
+  "evaluation_inputs_sha256": "3208e09740dca849d9d90b7ac5f9326fad7add5fd0b9d7908b30ea05af0bbb49",
+  "evidence_level": "fresh_document_frozen_map_application",
+  "confirmation_inputs": [
+    {
+      "path": "artifacts/colon_natural_20260906/freeze.json",
+      "sha256": "738b98ba0b86cefea5475d18d175615ab97e356546177f1d9683464f78491d73"
+    },
+    {
+      "path": "artifacts/colon_natural_20260906/selection.json",
+      "sha256": "066861c72560dbaf059c8b85141dffeb736f53b636a78a6d39bb2399affd6049"
+    },
+    {
+      "path": "configs/f4_colon_natural_corpus_v1.json",
+      "sha256": "28d3a3163d3b616ad65871b9de0d3c0e6dbf1a8e13acfea4523ee98160b04e49"
+    },
+    {
+      "path": "runs/F4_colon_natural_corpus_v1_20260906/status.json",
+      "sha256": "7848d1961f033df52c837d0ed7de55bc31e28b9494cc1552b97b8b6255b92705"
+    },
+    {
+      "path": "runs/F4_colon_frozen_replay_s1_v1_20260906/replay_check.json",
+      "sha256": "f98fcc9050bd4a05d3c337a122f7299fe12fc78d64f81df5d6cf0b153d5f7ed6"
+    }
+  ]
+}
