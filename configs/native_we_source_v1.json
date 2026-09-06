@@ -1,0 +1,22 @@
+{
+  "run_id": "NATIVE_we_source_v1_20260906",
+  "audit_opened": false,
+  "parent_asset_config": "runs/R011_NR1_k32_paired_codes_v1_20260904T060000Z/config.resolved.json",
+  "source_seed": 2,
+  "source_atom": 2767,
+  "templates": ["In the kitchen, {subject} prepared", "Before the trip, {subject} packed", "After the meeting, {subject} updated", "During the project, {subject} reviewed"],
+  "subjects": ["we", "they", "I", "you"],
+  "first_person_plural_tokens": [" we", " our", " us", " ourselves"],
+  "third_person_plural_tokens": [" they", " their", " them", " themselves"],
+  "hypotheses": {
+    "activation": "At the final predicate, the fixed native atom is more active after we than after each matched they/I/you subject.",
+    "effect": "Removing the native atom at the final position decreases log(first-person-plural mass / third-person-plural mass) on we inputs; adding the same contribution gives the opposite direction. A null or opposite effect limits this output hypothesis."
+  },
+  "operations": ["baseline", "noop", "native_remove", "native_add"],
+  "dose": "Use the actual nonnegative source code times its native decoder, capped at 0.1 of the last hook vector norm; identical magnitude for removal and addition. Do not modify any earlier position.",
+  "maximum_hook_fraction": 0.1,
+  "maximum_forwards": 64,
+  "numeric_budget_seconds": 180,
+  "device": "cuda:0",
+  "scope": "New authored source feasibility inputs, development only. Whole sentence and last-token effects saved; neither natural-distribution confirmation nor FCC/native cross-seed success. All 16 inputs kept, including zero codes."
+}
