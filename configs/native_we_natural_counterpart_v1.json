@@ -1,0 +1,47 @@
+{
+  "run_id": "NATIVE_we_natural_counterpart_v1_20260906",
+  "audit_opened": false,
+  "parent_asset_config": "runs/R011_NR1_k32_paired_codes_v1_20260904T060000Z/config.resolved.json",
+  "source_seed": 1,
+  "source_atom": 207,
+  "subjects": [
+    "we",
+    "they",
+    "I",
+    "you"
+  ],
+  "first_person_plural_tokens": [
+    " we",
+    " our",
+    " us",
+    " ourselves"
+  ],
+  "third_person_plural_tokens": [
+    " they",
+    " their",
+    " them",
+    " themselves"
+  ],
+  "hypotheses": {
+    "activation": "Fixed source and fixed counterpart native atoms have higher activation for we than each matched they/I/you on average across complete cases; all24 matched comparisons retained, no strict all-pass gate",
+    "effect": "On natural we prefixes native_remove decreases log(first-person-plural mass / third-person-plural mass); native_add increases, with all contrary/zero cases retained"
+  },
+  "operations": [
+    "baseline",
+    "noop",
+    "native_remove",
+    "native_add"
+  ],
+  "dose": "Use the actual nonnegative source code times its native decoder, capped at 0.1 of the last hook vector norm; identical magnitude for removal and addition. Do not modify any earlier position.",
+  "maximum_hook_fraction": 0.1,
+  "maximum_forwards": 128,
+  "numeric_budget_seconds": 120,
+  "device": "cuda:0",
+  "scope": "All frozen eight natural we+first predicate-token prefixes and matched they/I/you inputs; natural-prefix evidence, other subjects counterfactual. Broader verb vocabulary than original four templates; same native last-position remove/add operation, own amplitude cap.1, all null/opposite effects kept; no target selection or refitting. Two k32long seeds, not five-seed FCC or equal-budget architecture comparison.",
+  "prepared_inputs_path": "artifacts/interpretability_closeout_20260906/native_prepared_inputs.json",
+  "prepared_inputs_sha256": "b532193229346c577a6337521edb9cd878ae962e54ba49c3757576059ca00a8d",
+  "evidence_level": "prospective_natural_prefix_fixed_native_correspondence",
+  "statistics_unit": "eight natural source documents, four dependent matched subject variants, fixed two-seed correspondence",
+  "selection_config": "configs/native_we_natural_corpus_v1.json",
+  "selection_config_sha256": "ce17704c36596f9fcf90cb80286e0519ea7bb1332383245dde40e7f0688cbec6"
+}

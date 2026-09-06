@@ -28,16 +28,18 @@ def main():
         code.append(dict(path=rel,sha256=sha256(p),bytes=p.stat().st_size,snapshot_path='source_snapshot/'+rel))
     write(run/'code_hashes.json',dict(files=code,aggregate_sha256=aggregate(code),snapshot_root='source_snapshot'))
     write(run/'manifest.json',dict(schema_version='native.explanation.probe.v1',run_id=cfg['run_id'],run_parent='R011-NR1',
-        purpose='Falsify source-native we-context and output-reference hypotheses on fixed new authored inputs',milestone='C2-C3-interpretability',
-        evidence_level='authored_source_feasibility_development',started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),
+        purpose='Test fixed-native we-context and output-reference hypotheses',milestone='C2-C3-interpretability',
+        evidence_level=cfg.get('evidence_level','authored_source_feasibility_development'),started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),
         config_hash=sha256(run/'config.resolved.json'),code_snapshot_hash=aggregate(code),source_snapshot_required=True,audit_opened=False,
         candidate_family_frozen=True,mean_constants_source_split='not_applicable_native_actual_code',threshold_source_split='fixed config before inference',
-        statistics_unit='four authored templates and matched subject variants; not independent documents',device=cfg['device'],seeds=[cfg['source_seed']],
-        resource_lease='gpu-0 resource_manager.run',resource_lease_reason='64 bounded model forwards; four CPU threads, no heavy CPU fit or whole-disk work'))
+        statistics_unit=cfg.get('statistics_unit','four authored templates and matched subject variants; not independent documents'),device=cfg['device'],seeds=[cfg['source_seed']],
+        resource_lease='gpu-0 resource_manager.run',resource_lease_reason='Config-bounded model forwards; four CPU threads, no heavy CPU fit or whole-disk work'))
     write(run/'status.json',dict(status='RUNNING'));inputs=[];rows=[];arrays={};forwards=0
-    def checked(path):
+    def checked(path,expected=None):
         path=Path(path);path=path if path.is_absolute() else ROOT/path
-        inputs.append(entry(path,'existing locked source asset or fixed authored config','input','internal/Apache-2.0 model; no audit'))
+        record=entry(path,'existing locked source asset or fixed input config','input','internal/Apache-2.0 model; no audit')
+        if expected and record['sha256']!=expected:raise ValueError(f'Input hash changed: {path}')
+        inputs.append(record)
         return path
     try:
         lease=json.loads(subprocess.check_output([sys.executable,str(ROOT.parent/'.resource_manager/resource_manager.py'),'status','--resource','gpu-0'],text=True))
@@ -60,7 +62,17 @@ def main():
         third=[tokenizer.encode(t,add_special_tokens=False) for t in cfg['third_person_plural_tokens']]
         if any(len(t)!=1 for t in first+third):raise ValueError('Fixed contrast must consist of single tokens')
         first=[t[0] for t in first];third=[t[0] for t in third];write(run/'contrast_tokens.json',dict(first=first,third=third))
-        prepared=[dict(template=i,subject=s,text=t.format(subject=s),token_ids=tokenizer.encode(t.format(subject=s),add_special_tokens=False)) for i,t in enumerate(cfg['templates']) for s in cfg['subjects']]
+        if 'prepared_inputs_path' in cfg:
+            payload=json.loads(checked(cfg['prepared_inputs_path'],cfg['prepared_inputs_sha256']).read_text());prepared=payload['cases']
+            if payload['subjects']!=cfg['subjects'] or not prepared or len(prepared)>32:raise ValueError('Prepared scope differs')
+            for i in range(0,len(prepared),4):
+                group=prepared[i:i+4]
+                if [c['subject'] for c in group]!=cfg['subjects']:raise ValueError('Missing matched subjects')
+                base=group[0]['token_ids'];pos=group[0]['subject_index']
+                for c in group:
+                    if len(c['token_ids'])!=len(base) or c['token_ids'][:pos]+c['token_ids'][pos+1:]!=base[:pos]+base[pos+1:]:raise ValueError('More than subject changed')
+        else:
+            prepared=[dict(template=i,subject=s,text=t.format(subject=s),token_ids=tokenizer.encode(t.format(subject=s),add_special_tokens=False)) for i,t in enumerate(cfg['templates']) for s in cfg['subjects']]
         write(run/'authored_inputs.json',dict(cases=prepared));write(run/'inputs.json',dict(inputs=inputs));numeric=time.perf_counter()
         maxnoop=0.0
         for caseidx,case in enumerate(prepared):
