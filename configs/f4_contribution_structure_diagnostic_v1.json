@@ -1,0 +1,14 @@
+{
+  "run_id": "F4_contribution_structure_diagnostic_v1_20260906",
+  "parent_run": "F4_contribution_completion_v1_20260906",
+  "grain_run": "F4_contribution_grain_v1_20260906",
+  "natural_run": "F4_contribution_natural_v2_20260906",
+  "purpose": "Determine whether coherent grouping gain is confined to common raw directions or low-dimensional source covariance before developing a concept claim",
+  "audit_opened": false,
+  "pc_ranks": [1,4,16,64],
+  "method": "native64",
+  "budget_seconds": 600,
+  "budget": "<=10min GPU,1 CPU thread auxiliary,<1GB output; existing code caches and maps,zero new SAE/LM forward/training/download",
+  "scope": "All1120 existing source groups and4480 target comparisons; source-output effective rank and raw-PCA error decomposition,plus existing240 natural operations. Post-hoc development diagnosis with all cutpoints retained; not new confirmation or a matched-rank test.",
+  "selection": "No new query/source/target selection. Raw PCA fitted on original discovery activations. Frozen maps unchanged. Spectra on discovery and calibration reported separately. Natural text examples selected from source metadata only."
+}

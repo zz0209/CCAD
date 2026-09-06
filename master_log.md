@@ -4266,3 +4266,32 @@ Prior full640comparison dictionary realization gap and4480group structure, exact
 Actual compute:115.98s completion,84.41s grain,42.09s naturalv2/6755sequence-forwards/823196672peakallocatedVRAMbytes; queue/load scope explicit inrunstats. New corpus21,146,930bytes officialrange/115docs/65536tokens.0newtraining/weights/packages. v1 API failure preserved, scientific rules unchanged beforeeditedoutcomes. One focused review coveredmath/operation/data/fairness; no new large test or follow-on consumer. Source/ref/environment registry updated. Plan andtracker replacecompleted/pendinglocalqueues withthis completedunit and paper-level continuation boundary;AGENTS unchanged,existingautomation kept in place.
 
 Local artifact path/hash ledger: artifacts/core_contribution_20260906/artifact_manifest.json SHA256 170a7dfa40ae824ce443a6e779a0a7f1a75c2cccd9da62f3fdb393a215b37d59. Manuscript SHA256 490b574a4f3928a4603f489559c4daf83985c9762ac2504fcbf974edb01b2373; priorarchive manifest 0a68a0cbfd6b39be205e4cff94deb576af64540f8b0f446adfab5a0d27c9aa6a. Ignoredresearchdocs retained locally; git allowlist unchanged. Stage synchronization follows onlyafter the scientific unit is complete.
+
+
+## Contribution claim reassessment after explicit user correction
+
+Written at UTC: 2026-09-06T19:40:06Z
+Event: user correction on 2026-09-06; prior run outcomes remain unchanged.
+
+The previous assessment conflated completed controlled computations and manuscript sections with publication-level contribution. User explicitly rejected current story, readability, figure information, section depth, material quality, and treatment of simple confounds. The current entries now mark the contribution unresolved; no automatic pause or delegation. Preserved original tracker, plan and paper byte-for-byte at archive/research_workflow_20260906/contribution_reassessment_20260906T194006Z/manifest.json. Next substantive diagnostic separates source covariance rank and common raw directions from coherent-group transfer, using all existing source queries and frozen maps, with source-only interpretation. Existing data are development; no claims of fresh confirmation, solver superiority, or publication readiness. Initial budget <=10min GPU, single CPU thread support,0newLM/training/download,<=1GBoutput.
+
+
+## Source-structure diagnostic and nuisance-matched group result
+
+Written at UTC: 2026-09-06T20:02:50Z
+Run events: structure diagnostic completed 2026-09-06T19:44:26.750589+00:00; matched control completed 2026-09-06T19:49:10.240409+00:00.
+
+All160sourceanchors retained. Original coherent/random native64 medians.652814/.801496; source-only2048-candidate-per-query nuisance-matched random.665432. Paired gap shrinks from-.116583 to-.019207, all5source summaries shrink;377/640 coherent better versus486/640 originally. Full/marginal target controls also close. Source covariance ranks5.973/1.476 oppose the simple coherent-lowrank explanation; original advantage remains after removing rawPC1/4/16/64 and global-reconstruction field. New matching controls energy/frequency/spectrum/common-direction summaries approximately; alltailimbalances/candidates retained. Uniform discovery-energy scaling exact,normalized linear loss invariant; no new matched-control natural LM result. This invalidates the former strong conceptual reading, not all possible FCC concepts.
+
+Source-first s1:1155 example has mixed lexical members and offdiagonal contribution correlation max.0356; deliberately unselected by target success. Diagnostic figure joins workflow, members,relations,spectrum and fullpanel. PNG/PDF/SVG viewed, source data and transformations preserved. Read Mu etal1702.01417§2.1, Gerasimov2606.12138§6.1/7, Bhalla2604.28119§5/6/B.2/E/F; registry distinguishes actual reuse,standard algebra and unimplemented signed/conditional grouping.
+
+Actual run times29.402s/52.704s, GPU-only leases plus1CPUthread auxiliary, peak3.746GB/5.072GB,0newLM/training/download/weights/packages. Both scientific runs PASS and exited; shared leases released. One focused math/data/fairness review; no delegation,newloop,or pause. Reopened publication contribution remains unresolved. Stop default positive-neighborhood consumers; next work targets variable changes, signed/conditional source relationships and suitable material, not a new metric around the residual .019gap. MainpaperAbstract/Intro/5.4/Conclusion,plan/tracker corrected; previous versions atarchive/research_workflow_20260906/contribution_control_20260906T200250Z/manifest.json.
+
+Artifacts:artifacts/contribution_structure_20260906/artifact_manifest.json SHA256 770eb0b2ca21975f0075cd3989ae54acf28961f4e4555995a6620f7a241b9d92. Original records and failures preserved; ignored research files remain local under explicit upload allowlist.
+
+
+### Contribution control focused verification and final local manifest
+
+Written at UTC: 2026-09-06T20:04:34Z
+
+Original coherent/random16 refit reproduces previous relative metrics with max absolute difference6.66e-16. All160 matched source controls have16 unique members,share only the anchor with the coherent group,and all target native64 fits have64 members. Future generator metadata now says rank_and_shares_matching_attempted; prior run flag was an intent label and is explicitly corrected in the report,not a per-row balance certificate. Original immutable run data unchanged. Figure label spacing refined; new final artifact manifest SHA256 e816763734215bf6beddb10b6d6b0b8cc0d1e603f8c83bd55d6d89c1a47177e7, includes focused_review.json and current paper/figure hashes.

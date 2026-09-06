@@ -1,0 +1,18 @@
+{
+ "run_id":"F4_contribution_matched_control_v1_20260906",
+ "parent_run":"F4_contribution_completion_v1_20260906",
+ "purpose":"Test coherent source grouping against source-only energy/frequency/spectrum/common-direction matched random groups",
+ "audit_opened":false,
+ "group_sizes":[16],
+ "target_support":64,
+ "ridge_fraction":0.001,
+ "selection_salt":"ccad-source-grain-20260906",
+ "expected_source_groups":480,
+ "cpu_threads":1,
+ "resource_lease":"gpu-0",
+ "budget_seconds":600,
+ "budget":"<=10min GPU with1CPUthread,<1GBoutputs,0newLM/training/download; reuse original160sourceanchors and exact native/marginal fit",
+ "group_rule":"Coherent16 and original random16 retained. For each coherent group, fixed2048 candidate random groups exclude all coherent members except the anchor. Each member samples from64 closest source atoms by log energy and log firing frequency. Select by source discovery-only energy/effective-rank/top1/top4 spectral shares/rawPC1/16/64 shares/frequency distance. Uniformly scale selected group to exactly match discovery source energy. All balance errors and candidates saved; approximation not exact rank matching. No target information in source choice.",
+ "matched_control":{"pca_path":"runs/F4_contribution_structure_diagnostic_v1_20260906/raw_pca.npz","candidates":2048,"member_pool":64,"salt":"ccad-contribution-nuisance-match-20260906"},
+ "scope":"Existing development data and all160anchors/all20directions. Matched random is an adversarial diagnostic with extra source-only search budget; not a semantic null or claim of exact spectrum/KL matching. Uniform source scaling cancels normalized hook loss; independent calibration retained. Strong target baselines unchanged."
+}
