@@ -4103,3 +4103,19 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 - artifacts\that_prediction_20260906\FINDINGS.md SHA256 35cf48b4868df37e42644af80f63df36d182f8b867325f35125612093259ba77
 - artifacts\that_prediction_20260906\that_prediction.png SHA256 36c4b47b4b370d70b64fbaff22270cf6ef886c89722a8c25fbfeaaa6df04b9f7
 - artifacts\that_prediction_20260906\that_prediction.pdf SHA256 8808d6758bb6853987eb89cd7a8286a7959e1fb04eb479ede5206f0ee7d6c5c6
+
+## 2026-09-06T13:42:02Z — that等能量方向控制启动
+写入时间（written_at_utc）：2026-09-06T13:42:02Z。source-only既有自然候选核对988dominant-token that及12构造激活非零，作为相同token替代，不预称无关机制；不读target选方向。固定988decoder及RNG20260906两个isotropic方向，按2379实际capped native norm对称+/-，保留24已暴露自然文本/原对比/反例。240LM含96次source重放，无新语料/训练，20分钟16GB。freeze/alternative原始依据见artifacts/that_controls_20260906；改前入口逐字归档archive/research_workflow_20260906/that_controls_20260906T134202Z。
+
+## 2026-09-06T13:47:28Z — that方向控制完成与论文收拢
+写入时间（written_at_utc）：2026-09-06T13:47:28Z。实验完成事件：2026-09-06T13:42:34.400862+00:00。240LM/18.009158秒，96次原概率逐值一致/144次新控制，0新语料训练；最大范数差1.1921e-7。2379/988同token有符号响应中位+.116863/-.055541，整体KL.007220/.006618，预期联合21/24vs4/24、988相反17/24。source有符号24/24大，但绝对仅15/24。随机联合17/24、14/24，绝对幅度和整体KL通常较低，不能把方向命中当唯一性或同KL比较。988不是自身native操作，2random非总体检验；全部文档/分组保留。图目检、论文Abstract及过期素材/解释摘要已更新，Paulo A.7复读区别入registry。停止局部续扫，下一整篇贡献与方法机会收拢，不以准备冒充新科学结果。
+- NATIVE_that_controls_s1a2379_v1_20260906/metrics.raw.jsonl SHA256 f28719dce7bb7889828aaab6fd4b1eb8b818d684470d3952bd19676afb32a370
+- EXPERIMENT_TRACKER.md SHA256 c6cc6b1e8107473f47cea2123e0c5ddc3e14bcfd7f9e52ffd7903e010fc563db
+- PAPER_SNAPSHOT_20260906.md SHA256 d32440161050a595aef906278459522ddc5f847c601b581b4511362317d4e879
+- REFERENCE_REGISTRY.md SHA256 1f3de4c901b91ecdf9bec78fec8af1a01bf8a7715d064b0bd064f6ea33fcf7e8
+- artifacts\that_controls_20260906\alternative_selection.json SHA256 a2ca25274243b67dcc875243d95384c9ead1972233ccdda7ecc04a2827f48215
+- artifacts\that_controls_20260906\freeze.json SHA256 ebc0ff57cf1385150b2129db74a418ed565e3ce8dc37ab5f79a2c7a4887ac0e1
+- artifacts\that_controls_20260906\summary.json SHA256 8d5f0b5d7c1c720d21401fee0cca37289e74c017c19bff2a93d7416bcf3e06af
+- artifacts\that_controls_20260906\FINDINGS.md SHA256 e67292bbe3f032077bbd022dcf8ae01f2a0372f6ad48480abf1c06c2b8ec5330
+- artifacts\that_controls_20260906\direction_controls.png SHA256 a3afa7f04c54171edd1db056e419937ac71d364c449715bbf3dcf90b46883f78
+- artifacts\that_controls_20260906\direction_controls.pdf SHA256 3a248cdb3df3481318be4ed659f0ed6a328babba40f7af79910c6730d553eb7b

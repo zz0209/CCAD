@@ -55,6 +55,18 @@ def main():
         model.config.use_cache=False
         tokenizer=transformers.AutoTokenizer.from_pretrained(old['model_local_dir'],local_files_only=True)
         sae=SparseCoder.load_from_disk(sae_path,device=cfg['device']).eval()
+        controls={};control_atoms={}
+        if cfg.get('direction_controls'):
+            spec=cfg['direction_controls'];rng=np.random.default_rng(spec['random_seed'])
+            for atom in spec['alternative_atoms']:
+                assert atom!=cfg['source_atom']
+                name=f'atom_{atom}';controls[name]=sae.W_dec[atom].detach().clone();control_atoms[name]=atom
+            for j in range(spec['random_count']):
+                controls[f'random_{j}']=torch.tensor(rng.standard_normal(sae.W_dec.shape[1]),dtype=sae.W_dec.dtype,device=cfg['device'])
+            for name,v in controls.items():controls[name]=v/v.norm()
+            directions={'source':sae.W_dec[cfg['source_atom']].detach()/sae.W_dec[cfg['source_atom']].detach().norm(),**controls}
+            np.savez_compressed(run/'control_directions.npz',**{k:v.cpu().numpy() for k,v in directions.items()})
+            write(run/'control_metadata.json',dict(spec=spec,names=list(directions),cosines={a:{b:float(x@y) for b,y in directions.items()} for a,x in directions.items()},operation='All controls use source native capped delta norm; alternative decoder is not its own native contribution. Random signs/directions fixed without response selection.'))
         write(run/'environment.json',dict(python=platform.python_version(),os=platform.platform(),numpy=np.__version__,torch=torch.__version__,
             transformers=transformers.__version__,cuda=torch.version.cuda,gpu=torch.cuda.get_device_name(),sae_framework='sparsify '+old['sparsify_commit']))
         contract=HookPointContract(old['hook_module_path'],5,'resid_post',768);module=model.get_submodule(old['hook_module_path'])
@@ -103,6 +115,12 @@ def main():
             scale=min(1.0,cfg['maximum_hook_fraction']/natural) if natural else 1.0;delta=vec*scale
             logits['noop']=forward(torch.zeros_like(delta));maxnoop=max(maxnoop,float(np.max(abs(logits['noop']-logits['baseline']))))
             logits['native_remove']=forward(-delta);logits['native_add']=forward(delta)
+            control_norms={};control_activations={}
+            for name,direction in controls.items():
+                matched=direction*delta.norm();control_norms[name]=float(matched.norm())
+                if abs(control_norms[name]-float(delta.norm()))>1e-5*max(1.,float(delta.norm())):raise ValueError('Control energy mismatch')
+                logits[name+'_remove']=forward(-matched);logits[name+'_add']=forward(matched)
+                if name in control_atoms:control_activations[name]=float(enc.top_acts[0][enc.top_indices[0]==control_atoms[name]].sum())
             probabilities={}
             for op,lg in logits.items():
                 x=lg.astype(np.float64);x-=x.max();pp=np.exp(x);pp/=pp.sum();probabilities[op]=pp;arrays[f'case_{caseidx}_{op}']=pp.astype(np.float32)
@@ -114,6 +132,7 @@ def main():
                     kl_to_base=float(np.sum(p*(np.log(np.maximum(p,1e-300))-np.log(np.maximum(basep,1e-300))))),
                     top_changed=[dict(id=int(j),token=tokenizer.decode([int(j)]),delta=float(p[j]-basep[j])) for j in order])
             row=dict(case,run_id=cfg['run_id'],metric_version='v1',activation=float(act),natural_hook_fraction=natural,dose_scale=scale,effects=source_effects)
+            if controls:row.update(source_delta_norm=float(delta.norm()),control_delta_norms=control_norms,control_activations=control_activations)
             rows.append(row)
             with (run/'metrics.raw.jsonl').open('a',encoding='utf-8') as out:out.write(json.dumps(row,ensure_ascii=False)+'\n')
             if time.perf_counter()-numeric>cfg['numeric_budget_seconds']:raise TimeoutError('Numeric budget exceeded')
@@ -126,7 +145,7 @@ def main():
             metrics_raw_sha256=sha256(run/'metrics.raw.jsonl'),generator_script_path='scripts/run_native_explanation_probe.py',generator_script_sha256=code[0]['sha256'])
         write(run/'metrics.summary.json',summary)
         if maxnoop>1e-6:raise ValueError('Noop mismatch')
-        write(run/'status.json',dict(status='PASS',forwards=forwards));v=validate_run_directory(run);write(run/'contract_validation.json',dict(ok=v.ok,errors=v.errors))
+        write(run/'status.json',dict(status='PASS',forwards=forwards,updated_utc=datetime.now(timezone.utc).isoformat()));v=validate_run_directory(run);write(run/'contract_validation.json',dict(ok=v.ok,errors=v.errors))
         if not v.ok:raise ValueError(v.errors)
         print(json.dumps(summary))
     except Exception:

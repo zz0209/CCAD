@@ -1,0 +1,80 @@
+{
+  "run_id": "NATIVE_that_controls_s1a2379_v1_20260906",
+  "purpose": "Equal-hook-energy decoder and fixed-random direction controls on exposed24natural contexts",
+  "audit_opened": false,
+  "parent_asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "source_seed": 1,
+  "source_atom": 2379,
+  "templates": [],
+  "subjects": [
+    "attitude",
+    "report",
+    "noun_control"
+  ],
+  "first_person_plural_tokens": [
+    " I",
+    " we",
+    " you",
+    " he",
+    " she",
+    " it",
+    " they"
+  ],
+  "third_person_plural_tokens": [
+    " there"
+  ],
+  "legacy_contrast_note": "Field names reused for personal-token mass/there mass, not first/third-person semantics.",
+  "hypotheses": {
+    "primary": "Compare joint expected add/remove sign counts and signed local contrast slope (add-remove)/2 for source versus each equally energetic control, plus absolute slope and full output KL. No significance/uniqueness claim from2random samples.",
+    "scope": "A strong alternative response limits source exclusivity; random weakness alone not semantic evidence. Labels and all native exceptions retained."
+  },
+  "pairs": [
+    [
+      "confirmed",
+      "hoped"
+    ],
+    [
+      "verified",
+      "feared"
+    ],
+    [
+      "observed",
+      "suspected"
+    ],
+    [
+      "discovered",
+      "believed"
+    ],
+    [
+      "reported",
+      "wished"
+    ],
+    [
+      "documented",
+      "expected"
+    ]
+  ],
+  "operations": [
+    "baseline",
+    "noop",
+    "native_remove",
+    "native_add"
+  ],
+  "dose": "Actual native contribution capped at0.1 of final hook norm, same remove/add magnitude.",
+  "maximum_hook_fraction": 0.1,
+  "maximum_forwards": 240,
+  "numeric_budget_seconds": 240,
+  "device": "cuda:0",
+  "statistics_unit": "24distinct documents; threelexical families8each, onefixed source. Remove/add dependent.",
+  "scope": "All24previously observed natural contexts, unchanged lexical contrast. Original2379native rerun checked against frozen parent.988 decoder and2fixed isotropic random directions scaled to the original native capped norm, symmetric +/-; controls are not native deletion or sample from whole dictionary. No direction sign fitting or seed search.",
+  "evidence_level": "exposed_natural_direction_specificity_development",
+  "natural_inputs_path": "artifacts/that_prediction_20260906/natural_inputs.json",
+  "natural_inputs_sha256": "2cf498817e500e9472cda72e401ec12cc870b167a71563765112d71846f711bc",
+  "direction_controls": {
+    "alternative_atoms": [
+      988
+    ],
+    "random_seed": 20260906,
+    "random_count": 2
+  }
+}
