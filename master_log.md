@@ -4005,3 +4005,19 @@ FVE/CE中位五点.968995/.903730、.977218/.953297、.979925/.963541、.982872/
 - runs/R012_same_stream_curve_v1_20260906/training_curve.png SHA256 bd28bb0fd02fcefbb44013739ee4c9f624d3486bcba43958d3ae80a93aafa734
 - runs/R012_same_stream_curve_v1_20260906/training_curve.pdf SHA256 90c6f6d161f8d88c31197fdadfc5718b8df43018f703985912e1bc64fe5eb2f3
 - runs/F4_colon_pair_shared_v1_20260906/pair_operation_figure.png SHA256 952070b0405a788ea8dee8a226c66b532297c5a3035420ca0f81dd12d455018a
+
+## 2026-09-06T10:56:44Z — 同流功能曲线启动
+写入时间（written_at_utc）：2026-09-06T10:56:44Z。固定source3:1850/2897，R012五检查点target1/2，原12input四操作。10配置在本轮target评价前固定。仅编码原独立mean32768+discovery512colon cachedhook，不生成全量激活库；逐checkpoint重拟合full/动态atom/几何atom/共享<=16/同成员ridge/两atom联合，raw源教师不变。每点445LM、总4450/预算30分钟16GB，无新训练/download/audit。旧面板开发，不挑checkpoint改称确认。
+
+## 2026-09-06T11:04:00Z — 同流功能曲线完成
+写入时间（written_at_utc）：2026-09-06T11:04:00Z。10run各445LM/384行全部PASS，总wall174.945873秒；事件结束各status.json可查。40相关单元shared中位对dynamic/geometric/full分别34/35/20胜；终点各4操作均胜这三控制，raw合并仍强。阶段非单调不当概念丢失，包含拟合和开发输入分布影响，所有反例保留。
+source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download/audit/fullcache。下一冻结两个终点，在新自然上下文复核，不挑旧最佳阶段。图已目检。归档archive/research_workflow_20260906/function_curve_20260906T110359Z含bytehash。当前身份：
+- EXPERIMENT_TRACKER.md SHA256 e7159709e7a83c075451d075b5e69af3d3020e4af41004ca68b4a67b83b7c89a
+- PAPER_SNAPSHOT_20260906.md SHA256 3ba8774200d153a3a9e268109cc92e388f7d46e27d2f45f8c7373983c051c7b0
+- artifacts/function_curve_20260906/FINDINGS.md SHA256 835285dd0f38b677551e444bcb9abf084630db23341c4d1e05f2c2f9b75742b4
+- artifacts/function_curve_20260906/summary.json SHA256 15c64192b9d6b69ebb0fd5b91cdab7a339c586814dba6b705463be529c61fc23
+- artifacts/function_curve_20260906/function_curve.png SHA256 5f80a7ea1dd04b2ceedeca6807ee01a4cd0e2efe90cbe66d4e5d03ea6d20d577
+- artifacts/function_curve_20260906/function_curve.pdf SHA256 8748ba6e3f2dfe16f9d2c2ad9e7fc516f1a2b55788a316fc5be90d1a5e053243
+
+## 2026-09-06T11:05:56Z — 功能曲线报告小数勘误
+写入时间（written_at_utc）：2026-09-06T11:05:56Z。FINDINGS.md正文两条shared轨迹的小数已按同页表格及summary.json修正为六位舍入；原始统计、图、结论不变。此前hash为修正前身份；artifacts/function_curve_20260906/FINDINGS.md当前SHA256 ebe1f1edc76a562b7ec8b13a71f3d5e2866727dca7969b0ed557d6311270a9c1。

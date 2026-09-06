@@ -71,8 +71,25 @@ def main():
         atoms=cfg['source_atoms'];assert len(atoms)==2 and len(set(atoms))==2
         tokens=np.memmap(tokenpath,dtype='<u2',mode='r');eligible=np.flatnonzero(tokens==query_token[0]);count=min(cfg['fit_rows'],len(eligible))
         selected=eligible[np.linspace(0,len(eligible)-1,count,dtype=int)];assert count>16
-        dense={};means={};dec={}
-        for seed in (source_seed,target_seed):
+        dense={};means={};dec={};checkpoint_sae=None
+        if cfg.get('target_checkpoint'):
+            cp=cfg['target_checkpoint'];checked(cfg['checkpoint_registry'])
+            cpfile=checked(Path(cp['path'])/'sae.safetensors',cp['sha256']);checkpoint_sae=SparseCoder.load_from_disk(cpfile.parent,device='cuda:0').eval()
+            dec[target_seed]=checkpoint_sae.W_dec.detach().cpu().numpy().astype(float)
+            def encode_rows(hook_rows):
+                result=np.zeros((len(hook_rows),3072))
+                with torch.no_grad():
+                    for off in range(0,len(hook_rows),512):
+                        inp=torch.tensor(np.array(hook_rows[off:off+512]),device='cuda:0',dtype=torch.float32);en=checkpoint_sae.encode(inp)
+                        ii=en.top_indices.cpu().numpy();aa=en.top_acts.cpu().numpy();np.add.at(result,(np.arange(off,off+len(ii))[:,None],ii),aa)
+                return result
+            meanraw=mmap(next(r for r in rawmanifest['splits'] if r['split']=='mean'));total=np.zeros(3072)
+            for off in range(0,len(meanraw),512):total+=encode_rows(meanraw[off:off+512]).sum(0)
+            means[target_seed]=total/len(meanraw)
+            discraw=mmap(next(r for r in rawmanifest['splits'] if r['split']=='discovery'));dense[target_seed]=encode_rows(discraw[selected])
+            write(run/'target_encoding.json',dict(checkpoint=cp,mean_rows=len(meanraw),discovery_rows=len(selected),no_new_base_forward=True,no_full_code_cache_written=True))
+        for seed in ((source_seed,) if checkpoint_sae is not None else (source_seed,target_seed)):
+
             dec[seed]=np.array(mmap(next(r for r in manifest['decoders'] if r['seed']==seed)),dtype=float)
             for split in ('mean','discovery'):
                 spec=next(r for r in manifest['splits'] if r['split']==split);parts={r['dtype']:mmap(r) for r in spec['files'] if r['seed']==seed}
@@ -82,13 +99,23 @@ def main():
                     z=np.zeros((count,3072));np.add.at(z,(np.arange(count)[:,None],ii[selected]),aa[selected]);dense[seed]=z
         x=dense[target_seed]-means[target_seed];y=dense[source_seed][:,atoms]-means[source_seed][atoms];w=np.ones(count)/count
         direction=dec[source_seed][atoms];dg=direction@direction.T
-        beta={};parents=[]
+        beta={};parents=[];baseline_diagnostics={}
         for j,parent in enumerate(cfg['parents']):
-            path=ROOT/parent['path'];pc=load(path/'config.resolved.json');assert pc['source_atom']==atoms[j] and pc['source_seed']==source_seed and pc['target_seed']==target_seed
+            path=ROOT/parent['path'];pc=load(path/'config.resolved.json');assert pc['source_atom']==atoms[j] and pc['source_seed']==source_seed
+            if checkpoint_sae is None:assert pc['target_seed']==target_seed
             with np.load(checked(path/'coefficients.npz',parent['sha256']),allow_pickle=False) as arr:
                 assert np.array_equal(arr['source_decoder'],direction[j])
                 parents.append({k:np.array(arr[k]) for k in ('full','raw','best_atom','geometric_atom','sparse16')})
-        for name in parents[0]:beta[name]=np.column_stack([r[name] for r in parents])
+        if checkpoint_sae is None:
+            for name in parents[0]:beta[name]=np.column_stack([r[name] for r in parents])
+        else:
+            beta['raw']=np.column_stack([r['raw'] for r in parents]);beta['full']=np.zeros((3072,2));beta['best_atom']=np.zeros((3072,2));beta['geometric_atom']=np.zeros((3072,2))
+            xc=x-x.mean(0);yc=y-y.mean(0);var=np.mean(xc*xc,axis=0)
+            for j in range(2):
+                beta['full'][:,j],fd=fixed_support_ridge(x,y[:,j],w,cfg['ridge']);cross=xc.T@yc[:,j]/count
+                scalar=np.divide(cross,var*(1+cfg['ridge']),out=np.zeros_like(cross),where=var>0);loss=np.mean(yc[:,j]**2)-2*scalar*cross+scalar**2*var
+                atom=int(np.argmin(loss));cos=dec[target_seed]@direction[j]/np.linalg.norm(dec[target_seed],axis=1)/np.linalg.norm(direction[j]);geom=int(np.argmax(abs(cos)))
+                beta['best_atom'][atom,j]=scalar[atom];beta['geometric_atom'][geom,j]=scalar[geom];baseline_diagnostics[str(atoms[j])]=dict(best_atom=atom,geometric_atom=geom,full=fd)
         beta['shared16'],intercept,diag=fit_joint(x,y,w,cfg['joint_fit'])
         support=np.flatnonzero(np.linalg.norm(beta['shared16'],axis=1)>0)
         supports={'same_support_ridge':support}
@@ -100,13 +127,14 @@ def main():
             for j in range(2):
                 b,d=fixed_support_ridge(x[:,ids],y[:,j],w,cfg['ridge']);beta[name][ids,j]=b;refits[name]['outputs'].append(d)
         yc=y-y.mean(0);cov=yc.T@yc/count
-        write(run/'fit_metadata.json',dict(source_atoms=atoms,source_seed=source_seed,target_seed=target_seed,source_decoder_gram=dg.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance=cov.tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),joint_fit=diag,shared_intercept=intercept.tolist(),refits=refits,source_mean=means[source_seed][atoms].tolist(),target_mean=means[target_seed].tolist(),selected_rows=selected.tolist(),eligible_query_rows=len(eligible),operation='source-decoder aligned two-component donor family, common dose across operators'))
+        write(run/'fit_metadata.json',dict(baseline_diagnostics=baseline_diagnostics,source_atoms=atoms,source_seed=source_seed,target_seed=target_seed,source_decoder_gram=dg.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance=cov.tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),joint_fit=diag,shared_intercept=intercept.tolist(),refits=refits,source_mean=means[source_seed][atoms].tolist(),target_mean=means[target_seed].tolist(),selected_rows=selected.tolist(),eligible_query_rows=len(eligible),operation='source-decoder aligned two-component donor family, common dose across operators'))
         np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=direction)
         checks['maps_saved_before_consumer']=True
         print(json.dumps(dict(stage='FITS_FROZEN',support=support.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),seconds=time.perf_counter()-start)),flush=True)
         model=transformers.AutoModelForCausalLM.from_pretrained(asset['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to('cuda:0');model.config.use_cache=False
-        saes={}
+        saes={target_seed:checkpoint_sae} if checkpoint_sae is not None else {}
         for item in asset['saes']:
+            if checkpoint_sae is not None and item['seed']==target_seed:continue
             if item['seed'] not in (source_seed,target_seed):continue
             p=checked(Path(item['path'])/'sae.safetensors',item['sha256']);saes[item['seed']]=SparseCoder.load_from_disk(p.parent,device='cuda:0').eval()
         module=model.get_submodule(asset['hook_module_path']);contract=HookPointContract(asset['hook_module_path'],5,'resid_post',768)
