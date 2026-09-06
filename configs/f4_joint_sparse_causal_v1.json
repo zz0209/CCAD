@@ -1,0 +1,59 @@
+{
+  "run_id": "F4_joint_sparse_causal_v1_20260905",
+  "purpose": "Compare frozen short/long joint-sparse component interfaces on exactly the prior exposed five cases",
+  "evidence_level": "exposed_document_joint_sparse_development",
+  "audit_opened": false,
+  "old_fit": {
+    "path": "runs/F4_long_recipient_fit_v1_20260905",
+    "config_sha256": "793cbc9878ae671ffc1c68d119b3bc0af2184847da5b45ba0f0c35f6179f3d89",
+    "metadata_sha256": "ea7966d507d5fbcadbddc2bb8f7216e76e86dd68d0d074cfaa55c2051e9ddf43",
+    "coefficients_sha256": "9bafd702488df19b2a6cd65eed782f4aa4e614a250345ebbf73355799fc7ee37"
+  },
+  "new_fit": {
+    "path": "runs/F4_long_k128_newseeds_fit_v1_20260905",
+    "config_sha256": "7acba8217042ce3374bbdb6fd94076a37fcf2f14b57d9872645787ad375b3858",
+    "metadata_sha256": "5ac578e861b74f06bda9c3b6dbfe65c48ec98cb0d5c19c4cfbdb3e9ee0504686",
+    "coefficients_sha256": "f444401cc8081758c966688874c8a8a247849e8cc38e800871f99927ed135a37"
+  },
+  "source_group_size": 16,
+  "ridge_fraction": 0.001,
+  "maximum_source_hook_fraction": 0.1,
+  "target_seeds": [1,2,3,4,5],
+  "expected_cases": 5,
+  "expected_requests": 8,
+  "expected_forwards": 145,
+  "expected_rows": 135,
+  "fit_budget_seconds": 180,
+  "causal_budget_seconds": 180,
+  "cpu_threads": 4,
+  "partition_mode": "interleaved",
+  "compact_shared_interface": true,
+  "readout_budget": 16,
+  "check_parent_coordinates": true,
+  "frozen_components": {
+    "path": "runs/F4_compact_source_components_v1_20260905",
+    "fits_sha256": "90c704e2919a3ee38155df9386ff3865e5b866cfcf46e8828ecfc20c2108b024",
+    "coefficients_sha256": "c44cd9ce1365c9b426411b1cdaa94cef4b438a35386640b2edd9701433ddf833",
+    "coordinates_sha256": "82096af9235817424c71154dc274fac5bb0af1d0cb64ae96c36331dfe17edc93",
+    "cases_sha256": "c072f3ea761371bc3f6f12c1a4edbb02149e660545cffcc0c38893cddb41f304",
+    "raw_sha256": "7b75ddd0c77d7001f95a32f46bdc2f2eb39fcd7b87e0f45cb9be277453a7a5c0"
+  },
+  "confirmation_inputs": {
+    "source_asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+    "evaluation_asset_config": "configs/f4_long_recipient_confirmation_codes_v1.json",
+    "panels": ["original","expanded"],
+    "reference_config_template": "configs/f4_long_recipient_source_{panel}_v1.json",
+    "source_selections": {
+      "original": {"path":"runs/F4_long_recipient_source_original_v1_20260905/matching.json","sha256":"7c9c7ebb9efd8ba0fe24ec6c736effcde9831cad6d62c957f04de276bf7485a9"},
+      "expanded": {"path":"runs/F4_long_recipient_source_expanded_v1_20260905/matching.json","sha256":"b87df467387ef2a1c0872e03feade3bec64e328e48a9ccd88b02f958e0ac6838"}
+    }
+  },
+  "joint_sparse_execution": {
+    "path": "runs/F4_joint_sparse_fit_v1_20260905",
+    "config_sha256": "43ad9696c1d425cc1b380cc74ebdb17c4a59bac8a7d8bc1ba5653f76c0085e42",
+    "metadata_sha256": "04a87aeb8deaf0e929326c3fd0b25e41931404acc39e3c0fcdf76dafb115769e",
+    "coefficients_sha256": "777530ffba3a4bd3433840f5c53fc19678d58320db785f3bb3c4816e326eea96"
+  },
+  "budget": "0newfits, reuse frozen component application branch (confirmation_inputs is a code reuse field, NOT a fresh-data claim). Old109doc fivecases only, all coordinates/case/dose replay exactly. New2methods x4targets x3parts plus baselines/source =145LM, <=180s numerical+90sload, <=180sprep. Existing checkpoints cached, five long SAEs encode old selected positions; no new LM assets/SAEtraining/download.",
+  "scope": "Exposed development only. Joint group-L1 shared<=16 supports and native-unit coefficients/intercepts frozen before consumer; no support/ridge tuning on these endpoints. Intercepts cancel in signed donor deltas. Compare full/A/B and both probability scopes, retain all old raw/full/shared16/joint single after source-anchor replay. Max16 is a cap, realized support7-16; not exactly16 cardinality or optimalL0, not native editing or independent semantic mechanisms. New108doc prior confirmation is not used to develop this method. No audit."
+}

@@ -70,7 +70,8 @@ def joint_single_atom(z,y,weights,ridge):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--config',type=Path,required=True);args=parser.parse_args()
-    cfg=json.loads(args.config.read_text());compact=cfg.get('compact_shared_interface',False);confirmation=cfg.get('confirmation_inputs');run=ROOT/'runs'/cfg['run_id'];run.mkdir(exist_ok=False)
+    cfg=json.loads(args.config.read_text());compact=cfg.get('compact_shared_interface',False);confirmation=cfg.get('confirmation_inputs');execution=cfg.get('joint_sparse_execution');run=ROOT/'runs'/cfg['run_id'];run.mkdir(exist_ok=False)
+    compact_methods=('short_full','short_shared16','long_shared16','short_single','long_single')
     now=datetime.now(timezone.utc).isoformat();started=time.perf_counter();write(run/'config.resolved.json',cfg)
     files=['scripts/run_f4_source_components.py','scripts/run_f4_source_reference_causal.py',
         'scripts/f4_probability_endpoints.py','scripts/run_r011s1_raw_hook_asset.py',
@@ -216,6 +217,24 @@ def main():
             assert sha256(run/'component_fits.json')==frozen['fits_sha256']
             with np.load(run/'component_coefficients.npz',allow_pickle=False) as restored:
                 assert set(restored.files)==set(frozen_arrays) and all(np.array_equal(restored[k],v) for k,v in frozen_arrays.items())
+        if execution:
+            # Optional frozen sparse interfaces share the existing source/case/
+            # dose consumer. No discovery fitting or support selection here.
+            assert compact and confirmation
+            fitroot=ROOT/execution['path'];ec=load(fitroot/'config.resolved.json',execution['config_sha256'])
+            assert ec['audit_opened'] is False and not ec['pilot'] and ec['support_budget']==cfg['readout_budget']
+            erows=jsonl(checked(fitroot/'metrics.raw.jsonl',execution['metadata_sha256']));expected={(s,a,t,n) for s,a in queries for t in cfg['target_seeds'] if t!=s for n in ('short','long')}
+            assert {(r['source_seed'],r['source_atom'],r['target_seed'],r['configuration']) for r in erows}==expected and len(erows)==len(expected)
+            with np.load(checked(fitroot/'sparse_coefficients.npz',execution['coefficients_sha256']),allow_pickle=False) as saved:
+                for r in erows:
+                    s,a,t=r['source_seed'],r['source_atom'],r['target_seed'];method=r['configuration']+'_joint_sparse';key=r['array_key']
+                    beta=np.array(saved[key]);intercept=np.array(saved[key+'_intercept'])
+                    assert beta.shape==(base['num_latents'],2) and intercept.shape==(2,) and np.isfinite(beta).all() and np.isfinite(intercept).all()
+                    assert np.flatnonzero(np.linalg.norm(beta,axis=1)>0).tolist()==r['shared_support'] and 0<len(r['shared_support'])<=cfg['readout_budget'] and r['selected']['converged']
+                    assert ec['parent_run']==frozen['path'] and ec['parent_fits_sha256']==frozen['fits_sha256'] and ec['parent_coefficients_sha256']==frozen['coefficients_sha256']
+                    compact_coefficients[s,a,t,method]=beta
+            write(run/'execution_fits.json',erows);compact_methods+=('short_joint_sparse','long_joint_sparse')
+            checks['sparse_interfaces_restored_no_fits']=True
         # All fitting/group selection has finished before task-target encoding and endpoints.
         rowids=np.array(sorted({seq*length+p for e in cases for seq,ps in ((e['sequence'],e['intervention_positions']),(e['donor_sequence'],e['donor_positions'])) for p in ps}));rowindex={int(r):i for i,r in enumerate(rowids)}
         os.environ.update(HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',SPARSIFY_DISABLE_TRITON='1',CUBLAS_WORKSPACE_CONFIG=':4096:8')
@@ -244,7 +263,7 @@ def main():
                     if confirmation:coords[f'long_full_{t}']=coords[f'long_{t}']
                     if compact:
                         zdshort=dense('evalshort',t,'calibration',rr)-dense('evalshort',t,'calibration',dd)
-                        for method in ('short_full','short_shared16','long_shared16','short_single','long_single'):
+                        for method in compact_methods:
                             coords[f'{method}_{t}']=embed((zdshort if method.startswith('short') else zdlong)@compact_coefficients[s,a,t,method])
             masked=np.zeros((length,base['hook_hidden_size']));masked[e['intervention_positions']]=eval_raw[rr]
             scale=family_scale(coords['source'],b,masked,cfg['maximum_source_hook_fraction'])
@@ -292,7 +311,9 @@ def main():
                     return value[:,None]*b*scale
                 for component in ('full','A','B'):
                     d=delta('source',component);source_deltas[component]=d;source_logits[component],_=forward(batch,torch.tensor(d[None],dtype=torch.float32,device='cuda:0'))
-                if confirmation:
+                if execution:
+                    methods=['source']+[f'{name}_joint_sparse_{t}' for t in cfg['target_seeds'] if t!=e['source_seed'] for name in ('short','long')]
+                elif confirmation:
                     methods=['source','raw']+[f'{name}_{t}' for t in cfg['target_seeds'] if t!=e['source_seed']
                         for name in ('short_full','short_shared16','long_full','long_shared16','short_single','long_single')]
                 else:

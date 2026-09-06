@@ -1,0 +1,22 @@
+{
+  "run_id": "F4_joint_sparse_pilot_v1_20260905",
+  "purpose": "One preselected source2:2645 to short target1 joint sparse fit for measured convergence and throughput",
+  "parent_run": "runs/F4_compact_source_components_v1_20260905",
+  "parent_config_sha256": "29c9633ec5e67c4156a20b63922dad0b6e0fae5feeaa95f27f0832253ff99ea5",
+  "parent_fits_sha256": "90c704e2919a3ee38155df9386ff3865e5b866cfcf46e8828ecfc20c2108b024",
+  "parent_coefficients_sha256": "c44cd9ce1365c9b426411b1cdaa94cef4b438a35386640b2edd9701433ddf833",
+  "pilot": true,
+  "pilot_alpha_fraction": 0.1,
+  "support_budget": 16,
+  "minimum_alpha_fraction": 0.01,
+  "alpha_count": 40,
+  "path_stop_support": 32,
+  "tol": 0.0000001,
+  "max_iter": 5000,
+  "debias_ridge_fraction": 0.001,
+  "cpu_threads": 4,
+  "per_fit_budget_seconds": 30,
+  "total_fit_budget_seconds": 30,
+  "budget": "First sorted source/query, first target and short configuration only, one alpha=.1*alpha_max. <=30 numerical seconds, original discovery assets only; no LM, GPU, task endpoints, or audit. Parent exact identities fixed.",
+  "scope": "Throughput pilot only. Pilot support may exceed16 and is not a candidate comparison. Full proposed method uses weighted conditional centering, unit input/output variance, shared-row group L1, converged path candidates <=16, then fixed .001 normalized ridge relaxation. Conditional intercept cancels in donor differences. Not exact scalar Li15 or optimal L0; no behavioral claim."
+}
