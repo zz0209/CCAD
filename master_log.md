@@ -4345,3 +4345,39 @@ One cached6.350s diagnostic distinguishes support/class/information: calendar ve
 V1 failed source-freeze int64 serialization before conditional/crossseedforward; keptalloutputs. V2 onlytypefix,sourcearraysreplayexact0. V2 218.2247s/25699seqforwards/1,480,061,952bytespeakVRAM; capacity6.3504s/0forwards/111,317,504bytespeak. Fullunitrunseconds~292;outputsbytes {"F4_calendar_composition_v1_20260906": 430575397, "F4_calendar_composition_v2_20260906": 1056293521, "F4_calendar_operator_capacity_v1_20260906": 82864909}. V2 alone1.056GB exceeds1GBdecimal estimate by5.6%; includingfailure/diagnostic1.570GBretained,notdeletedtohitbudget. FutureunitshouldreusecacheandbudgetactualLPsize. No train/model/download/install; oneauxCPUthread and managerGPUlease,allreleased.
 
 Focused review: explicit field-design Gram maxerror1.2212453270876722e-15,rhs5.551115123125783e-17;positive-fitenergy-matchrelativeerror<1e-12;testtextsdisjointfromprevious114;fitrolepositionsboth3/4;frozenv1v2sourcearraysequal. Figures showallcontrols,newtextinstance,capacity and20directions;rawduplicatesdrawnonce. ReadBhalla2604.28119B.1/B.3 and§6,registryupdated;do notclaimtask-conditionedOTnovel. Mainpaper§7.5,theory§24,plan/trackerupdated afterbytearchive archive/research_workflow_20260906/calendar_composition_result_20260906T213557Z/manifest.json. ArtifactmanifestSHA256 7c1e1040d932b57369dff7c88ea62c6c85e35131a3ddf37d884fde00167b36d5. No agents,newloop,pause,whitelistexpansion,or external publication.
+
+
+## User-directed seven-round manuscript and science rebuild starts
+
+Written at UTC: 2026-09-06T21:53:45Z
+
+The user explicitly rejects all prior claims of paper completion/competitive contribution and allocates exactly seven further research rounds, requiring full science, material, interpretability, figures, manuscript and result organization, then automatic pause and a complete summary. This user turn is round1/7; completed0. Round state is only in EXPERIMENT_TRACKER.md. Context transitions, tool calls and in-progress heartbeat events are not new rounds. The existing ccad automation is to be paused at completion of round7 and not automatically resumed without new authorization.
+
+Read the complete current manuscript and visually inspected all four user-specified PNGs. Findings: accumulated diagnostic narrative, native operator freedom confound dominating the story, source statistical matching undermining coherent-group claim, no continuous concept/member/operation/output example, and low-information aggregate figures. Detailed audit and concrete remedies are in artifacts/seven_round_rebuild_20260906/MANUSCRIPT_AUDIT.md. This is review/preparation, not a scientific positive result. Plan refocuses on reusable functional composition and novel-context/compositional predictions, with native retained as an operation diagnostic.
+
+Preserved byte copies of AGENTS/tracker/plan/paper/prompt and automation config at archive/research_workflow_20260906/seven_round_start_20260906T215345Z/manifest.json. Tracker carries seven deliverables and costs. Official HF metadata read verifies ungated Apache2.0 Pythia1B revision7199d8fc61a6d565cd1f3c62bf11525b563e13b2, safetensors2090701528bytes, and MIT-card CausalGym data revision95349c3a5e53e2506e8b212482ea6dd784978156. No weights/data downloaded by this start record. First-round bound<=2.2GBdownload,<=10minGPU; initial wholecampaign ceiling6GPUhours/70GBbulk,not claimed consumption. No paid/cloud resources,subagent,scope change,publication or whitelist expansion.
+
+
+## Seven-round R1 functional material screen starts
+
+Written at UTC: 2026-09-06T22:02:41Z
+
+Official pinned safetensors/tokenizer and CausalGym train/dev downloads completed using existing hf-cli1.29.0; no token needed, test not downloaded. Public pairs can change lemma and tense/label, so the additional independently authored192input/384pair panel fully crosses subject and distractor number on fixed lemmas and is/are labels. Evaluate both models and three middle-spanning layers/two patch positions without outcome-based case selection. This is material selection, not new FCC/benchmark novelty. Source/config implementation is scripts/run_functional_material.py and configs/seven_r1_functional_material_v1.json. Budget600sGPU/oneCPUaux/<1GBoutputs; actual model weight identity checked while loading, no extra model copy.
+
+
+## Seven-round R1 completed: functional material, manuscript and figure rebuild
+
+Written at UTC: 2026-09-06T22:25:59Z
+Run event: v2 completed2026-09-06T22:04:45.552279+00:00. Document/figure closeout event: 2026-09-06T22:25:59Z.
+
+User acceptance remains NOT_MET. Completed1/7, next2/7; counteronlyinEXPERIMENT_TRACKER.md. Full oldpaper/fourfigureaudit, new single-storyEnglish development manuscript with explicit unexecuted method versus actualmaterialresults, and data-backed vector figures completed. No claimthatpaperiscompetitiveorFCCcontributionestablished. Oldnative/coherentgroupdiagnosticstory archived rather than reused aspositivecontribution.
+
+Actual rawmaterialcomparison: 29publicCausalGymdevtasks(all2900rows,bothdirections),160M4290/5800=.739655;1B4978/5800=.858276. Reciprocalpromptreuseanduniquepromptcounts recorded. Independently authored16lexicalblocks×3syntax×4numbergrid:160M185/192;1B192/192. 1Bsubjectdonorpatch transferlayer3=168/192(PP64,SR53,OR51),layer7=159,layer11=141;final0/1/9. Distractorpatch retainsall192labelsbutmeanabsolute logodds~1.5–1.9nat; signedcancellationnotinterpretedasnoeffect. Firstconfiguredexamplebaseline-5.3579,fulldonor+2.8665,layer3subject+2.8319,final-5.3075. This selects1B/layer3forSAEwork,notnovelgrammarcausaldiscovery.
+
+V1 int64serializationfailure kept:15.591409s,6066forwards,5992persistedrawvs5993inmemorysummary. V2metadatafixonlyPASS44.839442s,16692forwards,16592rows,peakVRAM4167833600bytes. Sum60.430851s/0.016786hGPUtaskwall;noSAEtrain/newFCCfit/audit. Outputsbytes {"SEVEN_R1_functional_material_v1_20260906": 45252568, "SEVEN_R1_functional_material_v2_20260906": 97232800};fixedmodelweight2,090,701,528bytesSHAverifiedagainstupstream. No paidresources/newdependencies/remote code/testdownload/secondmodelcopy. GPUleaseauto-released; managerGPUfreeverified. Numericalexactno-opandboundedpaddingchecksrecordedwithlimitedscope. KLfielddirections clarified inreport;do notdivideopposite-directionKL.
+
+Read originalCausalGymmethods+officialdataMITcard,closestBhallaB.3conditionalOT,author-originaldPCAanddSCAv2§3;registryversions/license/adaptationsupdated. dSCAisadirectbaseline,notournewmethod. Candidate uses source-onlyfactorcontrasts,actualcompactfrozen sourceteacher,signedsharedcoordinates,targetgroupsandcomponentedits;noinventedsolvernovelty. Source-native,source-aligned andrawcontrolsseparated.
+
+Artifacts: artifacts/seven_round_rebuild_20260906/R1_REPORT.md,MANUSCRIPT_AUDIT.md,STORY_AND_EVIDENCE.md,material_summary.json,fourCSVtables,twoPNG/PDF/SVGfigures. Finalfiguresvisuallyinspectedafterfixingfooter/labeloverlapandnegativepointaxisclipping;noresultvaluechanged. AuthoritativePAPER_SNAPSHOTrewritten;oldpaperandentriesbytearchive archive/research_workflow_20260906/seven_r1_result_20260906T221656Z/manifest.json. UnitartifactmanifestSHA256 37dfdcf806c3382b9f017d4b3e030d252f06f73b465a31cc56de3cdf0b83b6f2. Alllocalresearchdocsremainignored;allowlistunchanged.
+
+Nextworkcard specifiesfivecontrolled1BSAEsandfixedvalidation/functioncurves,config-drivenhookcontract (oldrunnerhardcodes5/768),tokenizer/corpusidentitycheck,source/targetfunctionalmethodandmatchedstrongbaselines. Plannedwidth8192/k64plusonek128sparsitycomparison,actualtrainingbudgettobemeasured,within6GPUh/70GBcampaignceiling. OriginalautomationACTIVE15minsametarget,promptnormalizedexactmatch;genericfinite-user-roundstopruleinstalled,actualcountsnotprompt. Afterround7pauseoriginalautomationanddeliverfullsummary,nonewloop/eighthround/autoresume. No agentdelegation.

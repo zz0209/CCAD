@@ -1,0 +1,124 @@
+{
+  "run_id": "SEVEN_R1_functional_material_v2_20260906",
+  "purpose": "Select functional SAE material using all public CausalGym development tasks and a lexical/number-crossed agreement panel before new SAE training",
+  "audit_opened": false,
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_split": "dev",
+  "dataset_license": "MIT as declared in the official dataset card",
+  "models": [
+    {
+      "id": "EleutherAI/pythia-160m-deduped",
+      "name": "160m",
+      "path": "D:/CCAD_Storage/models/pythia-160m-deduped/582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+      "revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+      "layers": [
+        2,
+        5,
+        8
+      ]
+    },
+    {
+      "id": "EleutherAI/pythia-1b-deduped",
+      "name": "1b",
+      "path": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+      "revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+      "layers": [
+        3,
+        7,
+        11
+      ],
+      "model_lfs_sha256": "fdb3f09a4a4d30678e021247e71f5b160bdd147de2aedd2d7d25e01feecc8e13",
+      "model_expected_bytes": 2090701528
+    }
+  ],
+  "noun_pairs": [
+    [
+      "author",
+      "authors"
+    ],
+    [
+      "pilot",
+      "pilots"
+    ],
+    [
+      "doctor",
+      "doctors"
+    ],
+    [
+      "teacher",
+      "teachers"
+    ],
+    [
+      "farmer",
+      "farmers"
+    ],
+    [
+      "student",
+      "students"
+    ],
+    [
+      "lawyer",
+      "lawyers"
+    ],
+    [
+      "singer",
+      "singers"
+    ],
+    [
+      "actor",
+      "actors"
+    ],
+    [
+      "baker",
+      "bakers"
+    ],
+    [
+      "driver",
+      "drivers"
+    ],
+    [
+      "painter",
+      "painters"
+    ],
+    [
+      "nurse",
+      "nurses"
+    ],
+    [
+      "worker",
+      "workers"
+    ],
+    [
+      "dancer",
+      "dancers"
+    ],
+    [
+      "writer",
+      "writers"
+    ]
+  ],
+  "distractor_index_rule": "(5 * subject_index + 3) mod 16; if equal use next index",
+  "templates": [
+    "pp",
+    "subject_relative",
+    "object_relative"
+  ],
+  "label_pair": [
+    " is",
+    " are"
+  ],
+  "crossed_rule": "All sixteen lexical blocks times three syntax templates times subject number2 times distractor number2. Each input has two donors: toggle only subject number, or toggle only distractor number; same lemma and remaining spans preserved. No cases selected by model/SAE/target result.",
+  "patch_sites": [
+    "changed_region_end",
+    "last_region_end"
+  ],
+  "batch_size": 24,
+  "dtype": "float32",
+  "numerical_padding_logprob_tolerance": 0.003,
+  "numerical_note": "Bound fixed from earlier observed float32 batched GPTNeoX logprob differences up to0.00125; actual maximum and label reversals reported. No tolerance tuning on this panel. Within-identical-batch no-op must be exact.",
+  "budget_seconds": 600,
+  "budget": "<=10min GPU,one auxiliary CPU thread,<1GBoutput; all public2900development pairs plus192crossedinputs and384donors for each model. No SAE training,FCC fitting,or task test split.",
+  "scope": "Material/model/layer development, not a novel CausalGym result or FCC contribution. Public pairs can change lemma and labels; authored crossed panel removes those particular confounds. Final confirmation uses new data after method selection.",
+  "revision": "V1 retained after first crossed-patch metadata int64 JSON serialization failure; V2 casts row identities to int and serializes before counting persisted records. Numerical design, inputs and model configuration unchanged."
+}
