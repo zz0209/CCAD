@@ -4316,3 +4316,32 @@ Month-next24pairs: rawlayer5slot donor-labelcorrect16/24,SAEs9–12/24. All5SAEs
 v1run19.8679s failed predefined numericalchecks:maxfullsuffixlogprobdifference.0012494. v2onlyLMfloat64,SAEfloat32; identicalprompts/pairs/checkpoints,baselinepredictionsallunchanged. v2run40.0750s,3781sequenceforwards,1,371,891,712bytespeakallocatedVRAM;fullsuffix<8.4e-13,padding<3e-12,publicpath0; originals preserved,nothresholdrelaxation. BothusedGPUmanagerleaseandoneCPUauxthread,0newmodel/train/download/install. Onefocusedsource/data/operationinterpretationreview,fullrawreferenceKLreplayerror0.0;notindependentrevieworpublicationevidence.
 
 Nextsameworkcard: source-onlymonthvaluecontrasts/signedcomposition,newwordingandsame-tokennoncalendarcontrols,atom/raw-lowrank/statisticalmatchingcomparison; no moreweakcoherent16consumers. All114inputsexposeddevelopment. No subagents,other task,newloop,or globalpause. Archives:archive/research_workflow_20260906/calendar_material_result_20260906T204331Z/manifest.json. Artifacts:artifacts/calendar_material_20260906/artifact_manifest.json SHA256 d4e43db89a0853db475197c1f0dfa64493c8cd6c69fced40c908583ff975dba0; runoutputsbytes{"F4_calendar_material_v1_20260906": 178502085, "F4_calendar_material_v2_20260906": 306723683}. Ignoredresearchdocumentsretainedlocally,noallowlistexpansion.
+
+
+## Conditional month composition unit started
+
+Written at UTC: 2026-09-06T21:10:46Z
+
+144 authored inputs,288 fixed donor pairs;2calendar+2same-token noncalendar fit templates,4+4 newly authored prefix test templates. Five source64 groups preserve raw calendar changes and suppress noncalendar changes under standard weighted Gram/ridge; source-only policy frozen before outputs and all source groups freeze before20cross-seed fits. Controls: source full,atom,raw conditional,random64refit,positive-only same64; target native64,atom,raw linear,fullSAE. Budget<=600sGPU,<1GBoutput,oneauxCPUthread,0newtraining/model/download. Standard supervised task-conditioned fitting is not novelty: actually read Bhalla2604.28119B.3 manifold-conditioned OT andB.1 centroidsteering. Query question is additional role selectivity across new prefixes; all12months/weakoutputs retained. Preparing runner extension,not yet a result. Pre-edit archives archive/research_workflow_20260906/calendar_composition_start_20260906T211046Z/manifest.json. No delegation or loop change.
+
+
+### Conditional month result and bounded operator-capacity follow-up
+
+Written at UTC: 2026-09-06T21:22:23Z
+
+Composition v2 completed218.2247s with25536rows/25699sequenceforwards; all5sources/20directions/newprefix tests retained. Source64 calendar/noncalendar meanKL seedmedians.087454/.009772; positive-only energy-matched.086853/.012168; raw conditional linear.004734/.006293. Strong raw and dose control prevent a claim of distinctive source64 selectivity. V1 retained FAIL (int64 source-freeze metadata, before conditional interventions),v2 onlyserializationfix. Next cached operator-capacity diagnostic uses same fit rows and exposed test rows:64/256/fullactive native masks versus full-code readout andraw;<=180sGPU,0newLM,within original10min unitbudget. No taskdata reclassified as independent confirmation; no SAE-invalidity inference from restrictedmaskfailure.
+
+
+
+## Conditional function and operator class: complete unit result
+
+Written at UTC: 2026-09-06T21:35:58Z
+Run event: composition v2 completed 2026-09-06T21:18:08.932957+00:00; cached-capacity event is recorded in its status.json.
+
+All144 authored inputs/288 donor pairs retained,with96fit and192new-prefix testpairs. Newnextmonth templates11/12,9/12,11/12;previousmonth2/12 retained. Source64 calendar/noncalendar meanKL seedmedians.087454/.009772; source-fit energy-matched same64.086853/.012168; rawconditional.004734/.006293 betterboth. Five source64 weightsallnonnegative,no negativeweightmechanism. This is a defined supervised function,not unsupervised concept discovery. CrossseedKL/noop medians atom.938479,native64.262317,raw.049167,fulltarget3.482495;rawduplicatesexplicit. No new FCC method advantage or publication readiness.
+
+One cached6.350s diagnostic distinguishes support/class/information: calendar vectorrelativeerror64.676935,256.583526,fullfitactive.563862,code_readout.177430,raw.079529; noncalendar leakageenergy.089218/.117321/.124868/.053007/.079932. Fullnativefitactive590–630 and regularized,not an absencecertificate. Code-readout result is geometry,0newLM. This prevents blaming all failure on absent SAE information,and changes nextmethod: nativefixedmasks remain an endpoint/control,not the FCC mother problem. Continue conditional role/value composition with clear source-aligned/general operation classes and real incremental predictions over standardridge/OT.
+
+V1 failed source-freeze int64 serialization before conditional/crossseedforward; keptalloutputs. V2 onlytypefix,sourcearraysreplayexact0. V2 218.2247s/25699seqforwards/1,480,061,952bytespeakVRAM; capacity6.3504s/0forwards/111,317,504bytespeak. Fullunitrunseconds~292;outputsbytes {"F4_calendar_composition_v1_20260906": 430575397, "F4_calendar_composition_v2_20260906": 1056293521, "F4_calendar_operator_capacity_v1_20260906": 82864909}. V2 alone1.056GB exceeds1GBdecimal estimate by5.6%; includingfailure/diagnostic1.570GBretained,notdeletedtohitbudget. FutureunitshouldreusecacheandbudgetactualLPsize. No train/model/download/install; oneauxCPUthread and managerGPUlease,allreleased.
+
+Focused review: explicit field-design Gram maxerror1.2212453270876722e-15,rhs5.551115123125783e-17;positive-fitenergy-matchrelativeerror<1e-12;testtextsdisjointfromprevious114;fitrolepositionsboth3/4;frozenv1v2sourcearraysequal. Figures showallcontrols,newtextinstance,capacity and20directions;rawduplicatesdrawnonce. ReadBhalla2604.28119B.1/B.3 and§6,registryupdated;do notclaimtask-conditionedOTnovel. Mainpaper§7.5,theory§24,plan/trackerupdated afterbytearchive archive/research_workflow_20260906/calendar_composition_result_20260906T213557Z/manifest.json. ArtifactmanifestSHA256 7c1e1040d932b57369dff7c88ea62c6c85e35131a3ddf37d884fde00167b36d5. No agents,newloop,pause,whitelistexpansion,or external publication.

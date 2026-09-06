@@ -1,0 +1,149 @@
+{
+  "run_id": "F4_calendar_composition_v2_20260906",
+  "purpose": "Fit source-only conditional month contribution groups and test cross-seed realization with same-word noncalendar controls and new context prefixes",
+  "audit_opened": false,
+  "model_asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "sae_checkpoints_config": "configs/f4_contribution_completion_v1.json",
+  "model_dtype": "float64",
+  "layers": [
+    5
+  ],
+  "sae_layer": 5,
+  "batch_size": 16,
+  "budget_seconds": 600,
+  "budget": "<=10min existing GPU and one auxiliary CPU thread,<1GB output,0newtraining/models/downloads; 144 controlled inputs and compact source/target native fits",
+  "families": [
+    {
+      "name": "month",
+      "values": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ],
+      "donor_offsets": [
+        1,
+        6
+      ],
+      "templates": [
+        {
+          "id": "fit_calendar_this",
+          "role": "calendar",
+          "phase": "fit",
+          "relation": 1,
+          "prefix": "This month is ",
+          "suffix": ". Next month is"
+        },
+        {
+          "id": "fit_calendar_current",
+          "role": "calendar",
+          "phase": "fit",
+          "relation": 1,
+          "prefix": "The current month is ",
+          "suffix": ". The next month is"
+        },
+        {
+          "id": "fit_password",
+          "role": "noncalendar",
+          "phase": "fit",
+          "relation": 0,
+          "prefix": "The password is ",
+          "suffix": ". The password is"
+        },
+        {
+          "id": "fit_title",
+          "role": "noncalendar",
+          "phase": "fit",
+          "relation": 0,
+          "prefix": "The book title is ",
+          "suffix": ". The book title is"
+        },
+        {
+          "id": "test_calendar_our",
+          "role": "calendar",
+          "phase": "test",
+          "relation": 1,
+          "prefix": "Our current month is ",
+          "suffix": ". The following month is"
+        },
+        {
+          "id": "test_calendar_now",
+          "role": "calendar",
+          "phase": "test",
+          "relation": 1,
+          "prefix": "Right now the month is ",
+          "suffix": ". Next month is"
+        },
+        {
+          "id": "test_calendar_today",
+          "role": "calendar",
+          "phase": "test",
+          "relation": -1,
+          "prefix": "The month today is ",
+          "suffix": ". The previous month was"
+        },
+        {
+          "id": "test_calendar_present",
+          "role": "calendar",
+          "phase": "test",
+          "relation": 1,
+          "prefix": "At present the month is ",
+          "suffix": ". The next month is"
+        },
+        {
+          "id": "test_password_your",
+          "role": "noncalendar",
+          "phase": "test",
+          "relation": 0,
+          "prefix": "Your secret password is ",
+          "suffix": ". Your secret password is"
+        },
+        {
+          "id": "test_password_now",
+          "role": "noncalendar",
+          "phase": "test",
+          "relation": 0,
+          "prefix": "Right now the password is ",
+          "suffix": ". The password is"
+        },
+        {
+          "id": "test_password_today",
+          "role": "noncalendar",
+          "phase": "test",
+          "relation": 0,
+          "prefix": "The password today is ",
+          "suffix": ". The password is"
+        },
+        {
+          "id": "test_password_present",
+          "role": "noncalendar",
+          "phase": "test",
+          "relation": 0,
+          "prefix": "At present the password is ",
+          "suffix": ". The password is"
+        }
+      ]
+    }
+  ],
+  "composition": {
+    "source_support": 64,
+    "target_support": 64,
+    "ridge_fraction": 0.001,
+    "negative_weight": 1.0,
+    "random_seed": 6090621,
+    "query_rule": "For each source seed, use only fit-phase codes and raw slot donor changes. Preserve raw calendar changes while suppressing noncalendar changes under an equally weighted quadratic loss. Select64 members by one-atom loss reduction then jointly fit signed normalized ridge. All source groups freeze before cross-seed target fits; no output logits or test states used for selection.",
+    "cross_seed_rule": "Fit target64 native signed decoder contributions to the frozen source64 actual contribution differences on all fit rows. Compare best-native-atom,raw-linear ridge and target full reconstruction. Fit standard baselines with the same fit rows. Apply all without adjustment to test rows.",
+    "control_rule": "Source full reconstruction, best single conditional atom, raw linear conditional map,64 seeded random active source members jointly refit, and identical support trained without the negative objective. Also include a copy of the positive-only same-support fit scaled ONCE to match conditional64 positive-FIT vector energy,then frozen for test; this separates dose reduction from conditional selectivity. No output-based selection or test re-scaling. Noncalendar negative controls use identical month token IDs in password/title roles.",
+    "endpoint": "Primary development judgment: calendar full-vocabulary KL to raw slot intervention and noncalendar KL to unedited output, plus donor-margin changes and vector errors. Cross-seed matching additionally compares target operation to actual source operation. Geometric fit alone never licenses semantic/selectivity success.",
+    "scope": "One authored conditional month variable and five controlled SAE seeds. Generalization is across newly authored prefix templates with the same12values,not natural documents or unseen concepts. The original Thismonth fit template was already exposed; no old test input is silently relabeled. Standard ridge/Gram/group size not claimed novel."
+  },
+  "revision": "V1 retained after source-freeze metadata NumPy int64 serialization failure. V2 converts fit prompt IDs to Python int. All scientific choices and inputs unchanged; no conditional or cross-seed intervention result existed before this fix."
+}

@@ -36,6 +36,7 @@ def make_prompts(cfg):
                                  prefix=template['prefix'], suffix=template['suffix'],
                                  text=template['prefix'] + value + template['suffix'],
                                  label_source='authored controlled development'))
+                rows[-1].update({key:template[key] for key in ['role','phase'] if key in template})
             for i in range(len(values)):
                 for offset in family['donor_offsets']:
                     pairs.append(dict(pair_id=len(pairs), recipient=first+i,
@@ -60,7 +61,8 @@ def main():
     write(run/'config.resolved.json', cfg)
     files = []
     for rel in ['scripts/run_calendar_material.py', 'scripts/run_r011s1_raw_hook_asset.py',
-                'src/ccad/activation_contract.py', 'src/ccad/artifacts.py']:
+                'src/ccad/activation_contract.py', 'src/ccad/artifacts.py'] + (
+                ['scripts/calendar_composition.py'] if cfg.get('composition') else []):
         p = ROOT/rel
         dst = run/'source_snapshot'/rel
         dst.parent.mkdir(parents=True, exist_ok=True)
@@ -71,7 +73,7 @@ def main():
                                       snapshot_root='source_snapshot'))
     write(run/'manifest.json', dict(schema_version='calendar.material.v1', run_id=cfg['run_id'],
           run_parent='F4', purpose=cfg['purpose'], milestone='variable-material-development',
-          evidence_level='authored_controlled_development_no_FCC_fit',
+          evidence_level=('authored_conditional_composition_development' if cfg.get('composition') else 'authored_controlled_development_no_FCC_fit'),
           started_utc=datetime.now(timezone.utc).isoformat(), project_root=str(ROOT),
           config_hash=sha256(run/'config.resolved.json'), code_snapshot_hash=aggregate(files),
           source_snapshot_required=True, audit_opened=False, candidate_family_frozen=True,
@@ -156,7 +158,9 @@ def main():
             if (a['slot'] != b['slot'] or len(a['token_ids']) != len(b['token_ids']) or
                 [i for i,(x,y) in enumerate(zip(a['token_ids'],b['token_ids'])) if x!=y] != [a['slot']]):
                 raise ValueError('Donor differs outside the one marked value token')
-        checks.update(all_114_prompts=len(rows)==114, all_228_pairs=len(pairs)==228,
+        expected_prompts=sum(len(f['values'])*len(f['templates']) for f in cfg['families'])
+        expected_pairs=sum(len(f['values'])*len(f['templates'])*len(f['donor_offsets']) for f in cfg['families'])
+        checks.update(all_configured_prompts=len(rows)==expected_prompts, all_configured_pairs=len(pairs)==expected_pairs,
                       one_token_slot_and_continuations=True,
                       layer5_is_middle_of_12=modelcfg['num_hidden_layers']==12 and cfg['sae_layer']==5)
         write(run/'prompts_and_pairs.json', dict(rows=rows, pairs=pairs, candidate_ids=candidate_ids,
@@ -351,6 +355,11 @@ def main():
               operations='raw assigns donor states; SAE adds decoded donor-minus-recipient and preserves residual'))
         checks.update(all_operations=len(metrics)==len(pairs)*(len(cfg['layers'])*2+len(cpconfig['checkpoints'])*2),
                       finite_metrics=all(np.isfinite(r['intervention_kl']) for r in metrics))
+        if cfg.get('composition'):
+            from calendar_composition import run_composition
+            extra = run_composition(cfg,run,rows,pairs,raw[5],base,candidate_ids,forward,progress)
+            checks.update(extra['checks'])
+            metrics.extend(extra['metrics'])
         env = dict(python=sys.executable,python_version=platform.python_version(),numpy=np.__version__,
               torch=torch.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),
               peak_vram_bytes=torch.cuda.max_memory_allocated(),cpu_threads=torch.get_num_threads(),
@@ -364,7 +373,7 @@ def main():
           wall_seconds=time.perf_counter()-start,metrics_raw_sha256=sha256(run/'metrics.raw.jsonl'),
           generator_script_path='scripts/run_calendar_material.py',
           generator_script_sha256=sha256(run/'source_snapshot/scripts/run_calendar_material.py'),
-          scope='All authored cases; baseline competence and five SAE material preservation; no FCC fit or natural confirmation')
+          scope=(cfg['composition']['scope'] if cfg.get('composition') else 'All authored cases; baseline competence and five SAE material preservation; no FCC fit or natural confirmation'))
     write(run/'environment.json',env)
     write(run/'inputs.json',dict(inputs=inputs))
     write(run/'metrics.summary.json',summary)

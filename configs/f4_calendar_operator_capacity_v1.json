@@ -1,0 +1,12 @@
+{
+  "run_id":"F4_calendar_operator_capacity_v1_20260906",
+  "parent_run":"F4_calendar_composition_v2_20260906",
+  "purpose":"Separate source64 support limitation, complete native decoder-mask class, and code information after the conditional-month comparison",
+  "audit_opened":false,
+  "supports":[64,256],
+  "ridge_fraction":0.001,
+  "budget_seconds":180,
+  "budget":"<=3min GPU,1CPU auxiliary thread,<100MBoutput,0newmodel/LMforward/training; cached144inputs only,within original10min unit budget",
+  "design":"Reuse the exact96fit and192test donor pairs from the completed parent. Fit conditional raw calendar change/zero noncalendar teacher with full active native mask,64/256 supports,and full-code linear readout. Reproduce parent64 coefficients. All source seeds retained. Test outcomes have already been exposed; this adaptive diagnostic is development,not a new confirmation. Do not attribute a fixed-mask failure to absence of encoded information.",
+  "scope":"Finite fit comparison of standard operator classes; native ridge is not an exact unregularized absence certificate; no new behavioral evaluation or FCC win."
+}
