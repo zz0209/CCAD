@@ -3861,3 +3861,19 @@ automation_update原位修改ccad：ACTIVE、15分钟、target_thread_id=01a06e1
 - REFERENCE_REGISTRY.md SHA256 11D3048E1F45CC109A38862DD29CB14C622110F19C7C94D2C49B7AA8D4F3F5D8
 - configs/CCAD_AUTOMATION_PROMPT.md SHA256 EEA808F973533510F36D8702957E37F0D9837C2DA84AA710F2455821C03351B2
 - archive/research_workflow_20260906/method_restart_20260906T070550Z/manifest.json SHA256 6A0BAFB3918B37151CC0A448826EC9289A3BF0ADBB4BC0665828E848DE02D2E3
+
+## 2026-09-06T07:29:33Z — 素材/读出交互的跨面板稀疏检验启动
+写入时间（written_at_utc）：2026-09-06T07:29:33Z。实际启动事件为本工作单元，尚无结果。
+核查发现现有fixed-source short/long及joint sparse开发已执行，避免重复。选择F4_material_sparse_transfer_v1_20260906：将原冻结24 sparse fits直接用于另一个已暴露compact108面板6case，174LM；对照复用旧480LM结果，随后逐坐标/source概率验证共享操作再合并。无新拟合/训练/下载/audit，不称全新独立确认。cpu-heavy→gpu-0当前free，GPU1395/16303MiB，预算沿tracker30min墙钟上限。该实验检验稀疏拟合削弱long优势能否跨面板延续；优先支持或修正素材/方法主图，非继续and模板。
+
+## 2026-09-06T07:32:58Z — 素材与稀疏读出跨面板结果完成
+写入时间（written_at_utc）：2026-09-06T07:32:58Z；实验完成时刻见run/status.json，脚本wall58.02963秒（准备18.14743、LM39.35581秒），不是此日志写入时间。
+F4_material_sparse_transfer_v1_20260906完成174LM、162新记录；冻结24 sparse fits/源组成，6case/3query/四非自身target。无新拟合/训练/下载/audit。消费者及契约PASS。18source完整记录与compiled_cases和旧compact确认逐值相同，合并450旧control行；重算KL/NLL最大误差3.55e-15，旧前向不计新重复。资源wrapper完成并释放，GPU核对free。
+结果：short full energy16 .128596/.132879(KL/NLL)→sparse .019487/.036001，long sparse .023873/.018858。short sparse对short energy16和单atom两指标均6/6case更低；long sparse对long atom也6/6。long相对short sparse逐case仅2/6更好，不能从聚合NLL排序推出普遍素材优势。B short sparse .018672/.018068，long .029008/.017480，short KL6/6/NLL5/6赢；long A却从energy16 .032833/.033295恶化至sparse .059452/.080169。raw full .007739/.005372仍为强对照。
+科学变化：标准稀疏缩小旧long优势的发现延续到另一面板，支持素材与执行结构共同研究，并保留long上分布式关系超过所测atom的有限证据；不再重复该面板小网格。数据此前为旧energy16消费过，故为跨面板开发扩展而非独立确认；shortsource固定、训练流不同、rank1parts与依赖边界均保留。
+代码：无改动原LM/拟合实现；新增直接合并同面板controls的轻量summary脚本，严格source全字段/输入/dose相同并用原始概率重算，保存全部case与target。没有新增validator体系/依赖安装。论文§5.4与tracker已更新，下一共同输入质量/频率及long-source自然解释。
+改前tracker/paper逐字归档：archive\research_workflow_20260906\material_result_20260906T073258Z，manifest包含源/归档hash。当前本地文档及数据：
+- EXPERIMENT_TRACKER.md SHA256 CBC7237B89B3B9AEAC8296C3CF9172944F1010CDB3C0349048A56FF5E214EBDE
+- PAPER_SNAPSHOT_20260906.md SHA256 CB468424735D19C938DD070EFACA2DEFA0EF91757E58FC44A7BD79A3CD4253F1
+- runs/F4_material_sparse_transfer_v1_20260906/MATERIAL_COMPARISON.json SHA256 BEBBD4A47158B4D081CEF768BE9ECB25B7AAEC5A70872C08B61FA27D9C880660
+- runs/F4_material_sparse_transfer_v1_20260906/metrics.raw.jsonl SHA256 FB2BA2FF886C6BB3C11D6DEF544B7EFF3871B767CD3E35B28EE1E21623F337F1
