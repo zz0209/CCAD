@@ -3982,3 +3982,26 @@ source decoder/保存激活donor差逐值一致；输出概率重算max scaled�
 - runs/F4_colon_pair_shared_v1_20260906/comparison.json SHA256 669d91163bad207113f4da73de097639e2da9deb98e91e1219e7d34677b6f65e
 - runs/F4_colon_pair_shared_v1_20260906/gram_summary.json SHA256 1a321282d8ee6ffb4a78ddab3e57e1a66de1345329b700b806fe3bb61cc40772
 - runs/F4_colon_pair_shared_v1_20260906/metrics.raw.jsonl SHA256 46e42300639ab10a2d7687cd814fd3c77809648517951ad90235a50e4c298037
+
+## 2026-09-06T10:27:33Z — 同流两seed五检查点曲线启动
+写入时间（written_at_utc）：2026-09-06T10:27:33Z。R012_same_stream_curve_v1_20260906复用long4,194,304 packed token有序语料、seed1/2、同Adam/warmup8/总8192step线性日程。5保存点256/1024/2048/4096/8192实际optimizer更新，训练后统一固定64validation评价，doc/text与train分离。保存post-update推理权重不改变训练状态；final单独exact checkpoint。不是分别优化短预算/收敛充分证明。预计旧单seed168–177秒基础上两SAE共享LM前向，可承受总1500秒/16GB/预计<500MB新权重；先实际吞吐，不新下载。暂不声称atom/FCC已测。
+
+## 2026-09-06T10:32:00Z — 隔离绘图依赖与训练阶段记录
+写入时间（written_at_utc）：2026-09-06T10:32:00Z。训练已保存前四检查点并仍在运行；尚未统一验证，不报质量结论。依既有工具安装授权，查官方PyPI/本机无matplotlib后，以binary wheels安装Matplotlib3.10.8及依赖到项目隔离target，所有URL为files.pythonhosted.org，包版本/下载hash见.aris/compute/plot_env_spec.json与plot_install_report.json。仅bundledPython3.12绘图，训练Python3.13环境未改。先将上轮双组成已知结果出PNG/PDF/SVG，不计新科学结果；新训练曲线待评价。
+
+## 2026-09-06T10:36:35Z — 同流学习曲线完成
+写入时间（written_at_utc）：2026-09-06T10:36:35Z。事件结束2026-09-06T10:31:53.603066+00:00，PASS，总229.782098秒，训练212.915838秒含保存2.540558秒，10质量记录/5更新点/2seed。输入8192batch逐hash等于有序语料，终点两权重分别完全等于旧long1/2资产。新增bulk302305376B，final exact状态与中途推理权重分开。
+FVE/CE中位五点.968995/.903730、.977218/.953297、.979925/.963541、.982872/.972314、.985027/.978002；最后翻倍仍+.002156/+.005688。非EOS实际token4187246，packed4194304，两者分列。验证活跃数非单调、L0近128，不能据重建宣称概念/FCC好或充分收敛；完整LR日程prefix非分别优化短预算，复用验证非新确认。
+科学产出为同流真实曲线；PNG/PDF/SVG及上一双组成图已目检，绘图本身不当新发现。下一固定source双组成和旧操作面板，在已存检查点重拟合target关系，测功能随训练变化，不新增训练。改前逐字归档archive/research_workflow_20260906/training_curve_20260906T103635Z含匹配hash。当前身份：
+- EXPERIMENT_TRACKER.md SHA256 27bf7a78d506619dc363330134652594bb716a1939227b0e632eada65ae6eedb
+- PAPER_SNAPSHOT_20260906.md SHA256 0177df01bdcec2edbc48540ef50bde7493f00e4c370aa392505a2d9e260e7975
+- REFERENCE_REGISTRY.md SHA256 5e927ab51d17aca7a1ef9b9d78b709da52d4e79bb06424fd4660d86d7d7b32ba
+- .aris/compute/local.md SHA256 4ae569fbda4d47ec81a522eae8c975abd568c766547762f21f6f2a7579ebd4c5
+- .aris/compute/plot_env_spec.json SHA256 701bbd1b58613032d1906f569eed32f76ba2f093489103b03b7ddffa1118e9bd
+- runs/R012_same_stream_curve_v1_20260906/FINDINGS.md SHA256 3b7073ddf2d3f920b9ae5339f8e9dd98c63b38eb41eaf6224493751c7fecbb6d
+- runs/R012_same_stream_curve_v1_20260906/metrics.raw.jsonl SHA256 b568cf293842ac594e9933d791de5e72c6fa27968759f2cbd73fad61f04b78e7
+- runs/R012_same_stream_curve_v1_20260906/curve_summary.json SHA256 624a01b4c42f25530ced8d10716a5a9bbc3322ce7c4945aad4b0b6d47d788a99
+- runs/R012_same_stream_curve_v1_20260906/trajectory_checks.json SHA256 2329e665afd94b4c483d0e6553b6e818d070a7f5d2fbf8175684e1a7bd45e590
+- runs/R012_same_stream_curve_v1_20260906/training_curve.png SHA256 bd28bb0fd02fcefbb44013739ee4c9f624d3486bcba43958d3ae80a93aafa734
+- runs/R012_same_stream_curve_v1_20260906/training_curve.pdf SHA256 90c6f6d161f8d88c31197fdadfc5718b8df43018f703985912e1bc64fe5eb2f3
+- runs/F4_colon_pair_shared_v1_20260906/pair_operation_figure.png SHA256 952070b0405a788ea8dee8a226c66b532297c5a3035420ca0f81dd12d455018a
