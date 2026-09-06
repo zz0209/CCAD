@@ -3728,3 +3728,29 @@ source_position_diagnostic在已暴露discovery上得到四组边界坐标能量
 - `runs/NATIVE_we_correspondence_v1_20260906/metrics.raw.jsonl` SHA256 `f57786463c5deff71dba754e109dc85b5633dcffb94c82abd5156b80fe18c758` (39067 bytes).
 - `configs/native_we_source_v1.json` SHA256 `7b11b49ddc4c3fb2b8986361a1731da4d56785f8180437af6cf671e0b2460980` (1618 bytes).
 - `configs/native_we_correspondence_v1.json` SHA256 `c08e825567272e4eee1e033d87905b5e113fd8f6ad981143e4fceb8f48da83a7` (1869 bytes).
+
+## 2026-09-06 05:19UTC heartbeat：and源解释可行性
+
+按当前卡继续5:2194非边界残余。source-only discovery提取20片段并固定位置/同组正系数分量匹配，1.1673637秒/0LM，artifacts/and_source_development_20260906保留原始项；and/or/but坐标中位−4.287478/−2.573451/−1.452822，between/range/list and较弱。观察后假说不是确认。冻结configs/f4_and_source_v1.json，8对新构造and/or共16输入（四普通四range/list，每对仅最后token变）；原完整32源组/basis、不拟合，最后位置source donor差分、同能量正交随机和noop，64LM/180秒numeric。主端点是预定pronoun-start与指定并列item词的log概率比，完整概率/反例保存；不是句法真值或native删除。启动F4_and_source_v1_20260906，gpu-0租约，0训练/下载/包/audit/付费。
+
+and源实测F4_and_source_v1_20260906完成64LM/numeric5.0424399秒/wall75.3597299秒/peak706739200B，noop与source系数replay误差均0/契约PASS。输入and比or负8/8、受限范围差分小4/4；原预定output方向普通and/or各0/4，保留FAIL-hypothesis（run实现PASS不当科学方向成功）。反方向普通and/or各4/4，source对比变化and−.4884/−.5680/−.9700/−.6679、or+.0299/+.0907/+.2265/+.1123。已冻结修正方向与全新词汇4普通4range/list上下文configs/f4_and_source_lexical_replication_v1.json，原算子和词集类别不变，启动同名run64LM/180秒numeric；新词汇source复现，不是自然文本/目标或句法独立确认。
+
+修正方向F4_and_source_lexical_replication_v1_20260906新词汇64LM/numeric2.1842445秒/wall8.4130222秒/peak706739200B/noop及系数replay0/契约PASS；普通and删除log比4/4负、or4/4正，同能量随机方向非一致；受限差分幅度4/4更小，between coffee方向反转保留。源端出现可复现作用后冻结configs/f4_and_targets_v1.json，完整16输入原source donor/dose/词集不变，复用原四target FCC/动态atom/raw maps无拟合；主signed对比/绝对误差、辅全概率KL，224LM/180秒numeric，启动同名run。预测范围由source结果确定，不按target选；one source query不称五独立source seed。
+
+本heartbeat科学checkpoint完成：F4_and_targets_v1_20260906固定四target/三旧方法/完整16输入，224LM/numeric7.1849367秒/wall20.7750478秒/peak722158592B/契约PASS。普通8输入×4target方向FCC/atom/raw=32/16/32，pooled绝对log比误差中位.043076/.196719/.030964，归一KL.033447/1/.026701；FCC对atom逐行两误差皆30/32更低，对raw仅12/32、11/32。受限范围方向28/12/24，绝对误差.045484/.102513/.031742；raw总体仍更准确。原atom普通16/32、受限18/32的对比作用为零，不把所有不一致都称反向，更不证明所有atom方案不可能。one source query、四主题/四target依赖，full FCC更多输入，不称等容量、多对多必要性、native或完整自然语义。
+
+首次方向失败保留，修正方向有新词汇源端复现与固定target作用复核，写入AND_INTERPRETABILITY_CHECKPOINT_20260906及论文§5.9/§6/§7，registry标清既读output解释原则实际消费者。完整192方法行、48case表与pooled/先target后case两种汇总保留，主表不改统计口径；192个KL比由保存float32全概率另重算maxrel3.740733874e-5，只是数值核验。cached hook完全重放，baseline/source概率对float32档案maxabs8.896e-9/1.26458e-8；source对比锚点在2e-6内核对。三run合计352LM/numeric14.4116211秒/wall104.5477999秒，轻CPU上下文1.1673637秒另列。无代码变更后重复全套测试，无新训练/下载/包/audit/付费/委派，GPU租约已释放。
+
+已清理完成/过期RUNNING，工作卡49行，下一自然文本前瞻解释检验，先冻结完整旧构造集的代词质量端点检查、source-only文本规则/排除hash/旧关系和预算；不把临时item词或旧文本当独立确认。AGENTS规则未动；本次tracker/plan整理前逐字归档archive/research_workflow_20260906/and_checkpoint并核对hash；native we正例/全部旧负结果/候选恢复点保留，automation ACTIVE5min当前对话继续。被忽略研究产物本地保留，以下path/hash留账：
+- `EXPERIMENT_TRACKER.md` SHA256 `daca3e43a5b7615baeec1e1b67248cbf9a9c560315ba5e29093d1ad2a6b3b4f9` (7811 bytes).
+- `EXPERIMENT_PLAN.md` SHA256 `418842e2ba34d21a6ab6b1df2b22d1d46ef60d6768f00770d62a28f2bf0e9e6f` (13687 bytes).
+- `PAPER_SNAPSHOT_20260906.md` SHA256 `bbd30217d2fc4282e23f93c913539cff05f49e224ae028ac472bb8b04ef1b408` (45252 bytes).
+- `REFERENCE_REGISTRY.md` SHA256 `c8300ea6196e6527fec3d6b85f49f58634e96f88bf1474d0a6ad6ab8c36e889b` (72086 bytes).
+- `AND_INTERPRETABILITY_CHECKPOINT_20260906.md` SHA256 `ab55dbff1f4fb3bebf17c8eeaf4635835ce58f5af16c3635db6e9f1864f1e506` (7153 bytes).
+- `artifacts/retrospective_20260906/inspect_and_contexts.py` SHA256 `fa07e90de0ca33b2ed26587964c592dd3062d44a5c80048679c094d211280a95` (5607 bytes).
+- `artifacts/and_source_development_20260906/contexts.jsonl` SHA256 `f3eca79e9a84bb45b4f48a2a4cfbb0f1d7ac6e65f072ec251155dbda9aa4946a` (90043 bytes).
+- `artifacts/and_source_development_20260906/summary.json` SHA256 `d90873ec48ea974932e28322c940bc34c6a432894391662e769138a82e73eef2` (5395 bytes).
+- `artifacts/and_source_development_20260906/CHECKPOINT_SUMMARY.json` SHA256 `fddd9b23f30be243e21c959cee447225a7fe9411f052e99bf32336462a1e3916` (7019 bytes).
+- `artifacts/and_source_development_20260906/TARGET_ALL_ROWS.csv` SHA256 `fd902b245aada5f050d103a01f7db4e474c59af50a923fd54e8f2549f241fe46` (66466 bytes).
+- `artifacts/and_source_development_20260906/TARGET_CASES.csv` SHA256 `7a56a31db08b2d744142429df98fc3ddbaa919635c052d76b67bb98061179238` (5411 bytes).
+- `artifacts/and_source_development_20260906/VERIFICATION.json` SHA256 `5434df5cbcf1b9b6a97bcfc4ac586fa246ae0d30afe097ba057bf3e6095eeb4c` (325 bytes).

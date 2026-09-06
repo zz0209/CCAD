@@ -1,0 +1,36 @@
+{
+  "run_id": "F4_and_source_v1_20260906",
+  "audit_opened": false,
+  "source_seed": 5,
+  "source_atom": 2194,
+  "asset_config": "runs/R008b_paired_codes_v1_20260904T000500Z/config.resolved.json",
+  "groups_path": "runs/F4_source_contexts_v1_20260906/groups.json",
+  "groups_sha256": "d68c9cf267510fd82a1fc004fa67cf7cd12d5630d461e0993c560f3cfc899d8f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "common_prefix": "Here is a short description of the situation. ",
+  "pairs": [
+    {"family":"ordinary", "topic":"colors", "prefix":"The painter used red", "items":[" blue"," green"]},
+    {"family":"ordinary", "topic":"basket", "prefix":"The picnic basket contained bread", "items":[" butter"," cheese"]},
+    {"family":"ordinary", "topic":"recipe", "prefix":"The recipe calls for salt", "items":[" pepper"," sugar"]},
+    {"family":"ordinary", "topic":"farm", "prefix":"The farm keeps cows", "items":[" sheep"," pigs"]},
+    {"family":"constrained", "topic":"colors", "prefix":"The painter chose between red", "items":[" blue"," green"]},
+    {"family":"constrained", "topic":"basket", "prefix":"The picnic basket contained apples, bread,", "items":[" butter"," cheese"]},
+    {"family":"constrained", "topic":"recipe", "prefix":"The recipe lists flour, salt,", "items":[" pepper"," sugar"]},
+    {"family":"constrained", "topic":"farm", "prefix":"The farm keeps horses, cows,", "items":[" sheep"," pigs"]}
+  ],
+  "conjunctions": [" and", " or"],
+  "clause_start_tokens": [" I"," we"," you"," he"," she"," they"," it"],
+  "hypotheses": {
+    "input": "The signed group coordinate is more negative at and than at matched or; the and-specific difference is smaller in the four explicit range/list contexts than in corresponding ordinary contexts.",
+    "output": "At ordinary and positions, subtracting the and-minus-or source group contribution raises log(clause-start-token mass / specified item-token mass). The reverse swap at or is predicted to lower it. Constrained cases test the scope, with all outcomes retained."
+  },
+  "source_operation": "At the last token only, subtract b times sum_j beta_j*(z_recipient_j-z_sameprefix_otherconjunction_j). Original complete 32-member source group and rank1 basis; independent mean cancels. No target fit or output-conditioned selection.",
+  "operations": ["baseline","noop","source_swap","orthogonal_random_same_norm"],
+  "random_seed": 21940519,
+  "maximum_hook_fraction": 0.1,
+  "maximum_forwards": 64,
+  "numeric_budget_seconds": 180,
+  "device": "cuda:0",
+  "scope": "New authored source feasibility after exposed discovery. Token sets are explicit behavioral proxies, not grammar labels. Range/list versus ordinary changes prefixes and positions; within each and/or pair only the final conjunction changes. Full group projection is not native deletion, coefficient-sign parts share one rank1 direction. No FCC superiority or independent population claim."
+}

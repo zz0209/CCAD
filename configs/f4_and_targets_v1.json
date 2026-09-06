@@ -1,0 +1,26 @@
+{
+  "run_id": "F4_and_targets_v1_20260906",
+  "audit_opened": false,
+  "parent_run": "runs/F4_and_source_lexical_replication_v1_20260906",
+  "parent_config_sha256": "05dadc83e1d3b6c14e0ff577e804558a90d028f2aa560032fc65ce3d9918c1e7",
+  "parent_raw_sha256": "622c8be66ace47eed1b12fffc965395601885a4297184ae65b1d4a8e872a210c",
+  "parent_arrays_sha256": "064019c4e203726046723a2adad4a0253f46efc643282ca9c4c5135679d18aac",
+  "parent_authored_sha256": "90a9951bcbf44d2455b1f5f631b2b4824252769a3f75442f60df4e576b6fab73",
+  "atom_fits_path": "runs/F4_query_expansion_fits_v1_20260905/single_atom_dynamic.json",
+  "atom_fits_sha256": "6a37adbdc004673185ca14e59515e5ad4b88a580cc5d9f615b00cd83e51c7a76",
+  "target_seeds": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "methods": [
+    "fcc",
+    "atom",
+    "raw"
+  ],
+  "maximum_forwards": 224,
+  "numeric_budget_seconds": 180,
+  "device": "cuda:0",
+  "scope": "All sixteen revised source lexical cases, after source effect-only inspection; existing maps and dynamic atom fits reused without new fitting or target outcome selection. Shared source donor/dose/output contrast. Primary signed contrast prediction and absolute error, secondary full probability KL. Full FCC target input exceeds atom; no native or equal-capacity superiority claim. One source query/four targets, not independent five-seed source suite."
+}
