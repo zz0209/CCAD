@@ -28,7 +28,7 @@ def main():
         code.append(dict(path=rel,sha256=sha256(p),bytes=p.stat().st_size,snapshot_path='source_snapshot/'+rel))
     write(run/'code_hashes.json',dict(files=code,aggregate_sha256=aggregate(code),snapshot_root='source_snapshot'))
     write(run/'manifest.json',dict(schema_version='native.explanation.probe.v1',run_id=cfg['run_id'],run_parent='R011-NR1',
-        purpose='Test fixed-native we-context and output-reference hypotheses',milestone='C2-C3-interpretability',
+        purpose=cfg.get('purpose','Test fixed-native we-context and output-reference hypotheses'),milestone='C2-C3-interpretability',
         evidence_level=cfg.get('evidence_level','authored_source_feasibility_development'),started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),
         config_hash=sha256(run/'config.resolved.json'),code_snapshot_hash=aggregate(code),source_snapshot_required=True,audit_opened=False,
         candidate_family_frozen=True,mean_constants_source_split='not_applicable_native_actual_code',threshold_source_split='fixed config before inference',

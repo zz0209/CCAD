@@ -3877,3 +3877,26 @@ F4_material_sparse_transfer_v1_20260906完成174LM、162新记录；冻结24 spa
 - PAPER_SNAPSHOT_20260906.md SHA256 CB468424735D19C938DD070EFACA2DEFA0EF91757E58FC44A7BD79A3CD4253F1
 - runs/F4_material_sparse_transfer_v1_20260906/MATERIAL_COMPARISON.json SHA256 BEBBD4A47158B4D081CEF768BE9ECB25B7AAEC5A70872C08B61FA27D9C880660
 - runs/F4_material_sparse_transfer_v1_20260906/metrics.raw.jsonl SHA256 FB2BA2FF886C6BB3C11D6DEF544B7EFF3871B767CD3E35B28EE1E21623F337F1
+
+## 2026-09-06T07:53:14Z — 共同输入素材质量与source解释候选启动
+写入时间（written_at_utc）：2026-09-06T07:53:14Z。F4_material_common_quality_v1_20260906固定compact512每8取1共64序列/8192token，十个short/long k128资产共用，沿用run_r006b_topk_capacity.evaluate定义（FVE/CE/频率），额外一次cachedhook校验，641LM预算≤1200秒wall。运行前GPUfree约1401/16303MiB。查验短long训练/验证排除文件document ID与text hash，不访问paired audit，无下载/训练。
+自然解释候选仅long source1：在top24activation中按dominant词token比例和sequence覆盖排序、保留32候选/实例，属于机会挖掘而非完整概念质量或语义验证，不读取target行为参与选择。所有十个字典频率保存。目标是共同输入质量—功能/解释图，下一根据source原文形成具体可检验假说。
+
+## 2026-09-06T07:55:53Z — long source that角色解释的最小检验启动
+写入时间（written_at_utc）：2026-09-06T07:55:53Z。共同质量run已PASS，641forward/18.72秒wall，结果待本单元汇总。source1自然top激活显示988多为found/see/noted/determine/say，2379含feeling/certain/sense/argues/surprised；据此提出report/evidence vs attitude的探索假说，不是已有概念真值。
+固定六谓词对confirmed/hoped、verified/feared、observed/suspected、discovered/believed、reported/wished、documented/expected，共用The investigator ... that。各atom独立12输入/48前向，共96；沿现有native消费者实际code删除/加回，激活偏好是主可行性终点，the/a词质量contrast仅为兼容旧字段的描述，不预测输出方向。只检查source1，不按target挑选，不声称自然泛化或FCC成功。
+原native脚本仅将purpose改为可配置（旧默认保留），无干预计算改动；版本与全部输入进入各run。GPU租约分别自动释放，无新拟合/训练/download。
+
+## 2026-09-06T07:59:35Z — 共同素材质量与long-source条件解释结果
+写入时间（written_at_utc）：2026-09-06T07:59:35Z。各实验结束时刻以run记录为准；本条为事后当下补齐本单元结果。
+F4_material_common_quality_v1_20260906 PASS，641batch模型调用、18.71857秒wall、峰值分配VRAM1,389,193,728B。固定64seq/8192tokens涉及65document IDs，整个108池与short/long训练及验证文件ID/textSHA无交集，十SAE共用clean/zero且完全相同。FVE中位short .968698(范围.968633–.968762) vs long .984923(.984864–.984974)；CE recovered .912180(.909914–.913199) vs .975400(.974323–.975952)。L0约128，short频率中位278–285 long163–169，上尾更重/本批9–16未激活，不称永久dead。重建改善已排除评价输入不同，但训练流不同仍不能归因时长或宣称充分。
+long source1词法集中度32候选经自然片段阅读，提出988 report/evidence vs2379 attitude判断。NATIVE_that_roles_s1a988_v1_20260906 / s1a2379两个预定六谓词对run各48LM，wall6.207/6.022秒，noop0/契约PASS。2379态度激活更高6/6，988相反假说仅4/6。2379删除/加回KL中位.00982777/.00411494，988 .00893760/.00932864；KL为实际输出变化而非语义方向验证，旧first/third字段本次仅the/a描述。保留全部12input各atom、零值、原始概率。没有跨seed/自然确认或唯一概念结论。
+实质增量：共同质量比较支持long素材包重建改善；自然片段到新句框的2379条件预测提供长source解释机会，988反例阻止互补双机制叙事。下一把2379接回crossseed atom/FCC与新上下文对照，不继续fixedshort消费者。没有训练/下载/安装/audit；源码只新增复用evaluate的adapter、native purpose可配置默认兼容，无新gate体系。
+论文及tracker更新前逐字归档：archive\research_workflow_20260906\common_quality_20260906T075934Z（manifest记录源/归档hash）。当前本地身份：
+- EXPERIMENT_TRACKER.md SHA256 D36A110A016336E61A2E21BA5AE7C34CDCD6E58D55C425B9BA577CBB568A8830
+- PAPER_SNAPSHOT_20260906.md SHA256 E30417BBC7EF7735DBF8FFFD8CC7CF57109669DCE51A375DFE96AF3F229C2C2A
+- runs/F4_material_common_quality_v1_20260906/MATERIAL_QUALITY_FINDINGS.md SHA256 30EC4A0DF6CBC287E52A2F4A052CC0E1571086C644FC160D57E01CDE0C17F8E9
+- runs/F4_material_common_quality_v1_20260906/metrics.raw.jsonl SHA256 3CD4AE49538549CB380F4E532244BF3C4DEB256FA9FB4B34A1E618C3915818FA
+- runs/F4_material_common_quality_v1_20260906/SOURCE1_CANDIDATES.json SHA256 A59FE8EA7C4F59A1FB18947F65C25FC10573B1B481FD46E39AA4DF899199EF4B
+- runs/NATIVE_that_roles_s1a988_v1_20260906/metrics.raw.jsonl SHA256 7579BB279F7CC210CCFDF47C8B8E0E4C121CE73419C25E7DFF140FCCF88C2FF8
+- runs/NATIVE_that_roles_s1a2379_v1_20260906/metrics.raw.jsonl SHA256 A99CEA6BFBF665A9F2A257926BBB14A33441BA14D54F6A41CCFB921C6EDC1F13

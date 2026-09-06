@@ -1,0 +1,75 @@
+{
+  "run_id": "NATIVE_that_roles_s1a988_v1_20260906",
+  "purpose": "Test exploratory evidence-report versus attitude predicate preference at that, with fixed long source1 atom",
+  "audit_opened": false,
+  "parent_asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "source_seed": 1,
+  "source_atom": 988,
+  "templates": [
+    "The investigator {subject} that"
+  ],
+  "subjects": [
+    "confirmed",
+    "hoped",
+    "verified",
+    "feared",
+    "observed",
+    "suspected",
+    "discovered",
+    "believed",
+    "reported",
+    "wished",
+    "documented",
+    "expected"
+  ],
+  "first_person_plural_tokens": [
+    " the"
+  ],
+  "third_person_plural_tokens": [
+    " a"
+  ],
+  "legacy_contrast_note": "Existing consumer field names are reused for descriptive the/a mass only; no person semantics or directional output hypothesis.",
+  "hypotheses": {
+    "effect": "Native full-probability KL is exploratory descriptive effect; no directional lexical-output hypothesis. Activation preference is the primary feasibility endpoint.",
+    "activation": "Evidence/report predicate gives higher activation than matched attitude predicate"
+  },
+  "pairs": [
+    [
+      "confirmed",
+      "hoped"
+    ],
+    [
+      "verified",
+      "feared"
+    ],
+    [
+      "observed",
+      "suspected"
+    ],
+    [
+      "discovered",
+      "believed"
+    ],
+    [
+      "reported",
+      "wished"
+    ],
+    [
+      "documented",
+      "expected"
+    ]
+  ],
+  "operations": [
+    "baseline",
+    "noop",
+    "native_remove",
+    "native_add"
+  ],
+  "dose": "Actual native contribution capped at0.1 of final hook norm, same remove/add magnitude.",
+  "maximum_hook_fraction": 0.1,
+  "maximum_forwards": 48,
+  "numeric_budget_seconds": 120,
+  "device": "cuda:0",
+  "statistics_unit": "Six authored predicate contrasts in a single sentence frame, one source seed; not independent natural documents",
+  "scope": "Source-only authored development, same that token and common subject. Hypothesis from different natural snippets; lexical and semantic roles can confound. No crossseed/FCC or unique concept claim. All12 inputs retained including zeros. the/a contrast descriptive only."
+}
