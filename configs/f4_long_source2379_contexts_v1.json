@@ -1,0 +1,22 @@
+{
+  "run_id": "F4_long_source2379_contexts_v1_20260906",
+  "purpose": "Apply frozen long-source2379 relations across authored frames, syntactic controls and reused natural corpus",
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "source_atom": 2379,
+  "fit_rows": 512,
+  "ridge": 0.001,
+  "support_budget": 16,
+  "max_hook_fraction": 0.1,
+  "audit_opened": false,
+  "budget_seconds": 900,
+  "budget": "323LMforwards, no fitting/training/download; <=900s wall within30min card; reuse frozen five maps and two existing SAEs. GPUlease, CPU4threads.",
+  "scope": "Frozen maps, no fit.46inputs:12new-frame pairs,6same-verb syntactic pairs,5natural pairs from a previously used unrelated99doc corpus. Development, not independent confirmation; natural pairs not matched on semantic difficulty. No target-dependent selection; all weak/opposite source cases retained. source-aligned operation, not native target deletion.",
+  "frozen_fit": {
+    "path": "runs/F4_long_source2379_correspondence_v1_20260906",
+    "coefficients_sha256": "5f3e788afa5ea199a94ae260a9a180c12709427d67253bb22b6a8b96c6dbfc77"
+  },
+  "evaluation_inputs": "artifacts/long_source2379_contexts_20260906/inputs.json"
+}

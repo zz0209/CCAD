@@ -3919,3 +3919,17 @@ source条件差与旧native激活逐值完全一致；noop0；保存float32概�
 - runs/F4_long_source2379_correspondence_v1_20260906/fit_metadata.json SHA256 BDEB869E3706CAAF0A9BA7B91456FDCF74965697153DE1F1BB2A75F77C56B4EB
 - runs/F4_long_source2379_correspondence_v1_20260906/metrics.raw.jsonl SHA256 3CE45CFE66DEF32FB92F78F6BDD549A55AB9B880A4A328BE05EF18DE1F2AE2FB
 - runs/F4_long_source2379_correspondence_v1_20260906/FINDINGS.md SHA256 228E95B03B7554B3CDFC9F6FB5FDEC9192FC59AE792DE7821E6D594ED9C3876C
+
+## 2026-09-06T08:50:07Z — 冻结long2379的跨句框/自然输入检验启动
+写入时间（written_at_utc）：2026-09-06T08:50:07Z。F4_long_source2379_contexts_v1_20260906复用上轮coefficients hash，不重新拟合。source盲输入选择：12新句框谓词对、6同谓词direct vs noun-that结构对照、5自然谓词对（原native-we99doc池，之前无2379候选筛选）。自然report25/attitude13候选，按预定前词词表、>=12token、hash顺序去重复文档，先report后attitude分配，仅5对可用，未匹配项完整保留；不看source/target激活。46输入、323前向预算900秒。旧语料复用明确development非独立确认。脚本新增frozen/no-refit及prepared token输入分支，原拟合与操作公式未改变，完成后直接核对全部系数。
+
+## 2026-09-06T08:54:42Z — 冻结long2379跨上下文结果
+写入时间（written_at_utc）：2026-09-06T08:54:42Z。实验结束2026-09-06T08:50:24.734668+00:00，PASS，323LM/230行，12.367138秒wall，峰值741596672B；原系数逐数组相等，无重拟合/train/download/audit。
+新句框KL中位bestatom/geometry/sparse/full/raw .653903/.904378/.085704/.052249/.001406；自然 .250374/.792738/.007417/.004923/.001843；名词插入 .037406/1.411942/.055773/.013652/.001312。source条件偏好新句框12/12、自然5/5；原始弱效应全保留。自然复用99doc开发非独立确认，名词插入relative旧标签不证明关系从句且混入语法/邻接混杂，不能称纯句法机制。单atom在名词插入中位更好，raw持续更强。下一固定方法扩现有long target3/4/5，再source广度，不继续单案例模板。
+改前逐字归档：archive/research_workflow_20260906/long_source_contexts_20260906T085442Z，manifest核对hash。当前本地身份：
+- EXPERIMENT_TRACKER.md SHA256 1bc1f8e19f1d8296f948104f1dd836e7a44779c2c76243c180acf1bc09095810
+- PAPER_SNAPSHOT_20260906.md SHA256 2d39b3323d5fd86c54aefd37f23ac3d65ec134d25311f864c179cb8512e8090c
+- runs/F4_long_source2379_contexts_v1_20260906/FINDINGS.md SHA256 1d3ae1cdc6e7015cc39e9b61c4813e97974889fb36d4150dee078d42ee0487aa
+- runs/F4_long_source2379_contexts_v1_20260906/metrics.raw.jsonl SHA256 7ea538f81c83b245013d2a243f6b369e66490fec6b61e672d2793eb0c26d475a
+- artifacts/long_source2379_contexts_20260906/inputs.json SHA256 dc2fef6d9e8f32b1b91c2c70f5d7b9761510a63ecaab5f7db36c2ca598e8195b
+- scripts/prepare_long_source_contexts.py SHA256 0040c245bf8dc859a9646fe1ba70d22e615111cefadc14727af78f9b4a7ef59d

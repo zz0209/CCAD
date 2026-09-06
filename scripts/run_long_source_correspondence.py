@@ -54,52 +54,67 @@ def main():
         torch.set_num_threads(4);torch.use_deterministic_algorithms(True);torch.cuda.reset_peak_memory_stats()
         tok=transformers.AutoTokenizer.from_pretrained(asset['model_local_dir'],local_files_only=True)
         query_token=tok.encode(' that',add_special_tokens=False);assert len(query_token)==1
-        tokens=np.memmap(tokenpath,dtype='<u2',mode='r');eligible=np.flatnonzero(tokens==query_token[0]);count=min(cfg['fit_rows'],len(eligible))
-        selected=eligible[np.linspace(0,len(eligible)-1,count,dtype=int)];assert len(set(selected))==count and count>16
-        dense={};means={};dec={}
-        for seed in (1,2):
-            dec[seed]=np.array(mmap(next(r for r in manifest['decoders'] if r['seed']==seed)),dtype=float)
-            for split in ('mean','discovery'):
-                spec=next(r for r in manifest['splits'] if r['split']==split);parts={r['dtype']:mmap(r) for r in spec['files'] if r['seed']==seed}
-                ii,aa=parts['uint16'],parts['float32']
-                if split=='mean':means[seed]=np.bincount(ii.ravel(),weights=aa.ravel(),minlength=3072)/len(ii)
-                else:
-                    z=np.zeros((count,3072));np.add.at(z,(np.arange(count)[:,None],ii[selected]),aa[selected]);dense[seed]=z
-        rawmeta=next(r for r in rawmanifest['splits'] if r['split']=='discovery');raw=np.array(mmap(rawmeta)[selected],dtype=float)
-        x=dense[2]-means[2];y=dense[1][:,cfg['source_atom']]-means[1][cfg['source_atom']];w=np.ones(count)/count
-        beta={};diag={};beta['full'],diag['full']=fixed_support_ridge(x,y,w,cfg['ridge'])
-        beta['raw'],diag['raw']=fixed_support_ridge(raw,y,w,cfg['ridge'])
-        xc=x-x.mean(0);yc=y-y.mean();var=np.mean(xc*xc,axis=0);cross=xc.T@yc/count
-        scalar=np.divide(cross,var*(1+cfg['ridge']),out=np.zeros_like(cross),where=var>0)
-        losses=np.mean(yc*yc)-2*scalar*cross+scalar*scalar*var
-        atom=int(np.argmin(losses));cos=dec[2]@dec[1][cfg['source_atom']]/np.linalg.norm(dec[2],axis=1)/np.linalg.norm(dec[1][cfg['source_atom']]);geom=int(np.argmax(abs(cos)))
-        for name,j in [('best_atom',atom),('geometric_atom',geom)]:
-            beta[name]=np.zeros(3072);beta[name][j]=scalar[j];diag[name]=dict(atom=j,coefficient=float(scalar[j]),training_error=float(losses[j]),decoder_cosine=float(cos[j]))
-        sd=np.sqrt(var);active=sd>1e-12;xx=np.asfortranarray(xc[:,active]/sd[active]);alpha_max=float(np.max(abs(xx.T@yc/count)))
-        solver=Lasso(fit_intercept=False,warm_start=True,tol=1e-7,max_iter=5000);path=[];best=None
-        for factor in np.geomspace(1.,.01,40):
-            solver.set_params(alpha=alpha_max*factor)
-            with warnings.catch_warnings(record=True) as caught:
-                warnings.simplefilter('always',ConvergenceWarning);solver.fit(xx,yc)
-            ids=np.flatnonzero(active)[np.flatnonzero(solver.coef_)];row=dict(alpha_fraction=float(factor),support=len(ids),converged=not caught,iterations=int(solver.n_iter_))
-            if not caught and 0<len(ids)<=cfg['support_budget']:
-                b,d=fixed_support_ridge(x[:,ids],y,w,cfg['ridge']);row.update(error=d['weighted_error'],atom_ids=ids.tolist())
-                if best is None or d['weighted_error']<best[0]:best=(d['weighted_error'],ids.copy(),b,d)
-            path.append(row)
-            if len(ids)>32:break
-        if best is None:raise RuntimeError('No finite sparse candidate, numerical fit unresolved')
-        beta['sparse16']=np.zeros(3072);beta['sparse16'][best[1]]=best[2];diag['sparse16']=dict(**best[3],support=best[1].tolist(),path=path)
-        write(run/'fit_metadata.json',dict(source_atom=cfg['source_atom'],source_mean=float(means[1][cfg['source_atom']]),target_mean=means[2].tolist(),eligible_that_rows=len(eligible),selected_rows=selected.tolist(),methods=diag,
-            source_conditional_variance=float(np.var(y)),operation='source-decoder aligned donor differences; atom baselines also aligned, not target-native deletion'))
-        np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=dec[1][cfg['source_atom']])
-        checks['maps_saved_before_consumer']=True;fit_seconds=time.perf_counter()-start
-        print(json.dumps(dict(stage='FITS_FROZEN',rows=count,eligible=len(eligible),best_atom=atom,geometric_atom=geom,sparse_support=best[1].tolist(),seconds=fit_seconds)),flush=True)
+        if cfg.get('frozen_fit'):
+            frozen=cfg['frozen_fit'];parent=ROOT/frozen['path'];pc=load(parent/'config.resolved.json')
+            assert pc['asset_config']==cfg['asset_config'] and pc['source_atom']==cfg['source_atom']
+            fpath=checked(parent/'coefficients.npz',frozen['coefficients_sha256'])
+            with np.load(fpath,allow_pickle=False) as arr:
+                beta={k:np.array(arr[k]) for k in ('full','raw','best_atom','geometric_atom','sparse16')}
+                dec={1:np.zeros((3072,768))};dec[1][cfg['source_atom']]=arr['source_decoder']
+            for k,v in beta.items():
+                assert v.shape==((768,) if k=='raw' else (3072,)) and np.isfinite(v).all()
+            write(run/'frozen_fit.json',dict(**frozen,no_refit=True))
+            checks['frozen_coefficients_no_refit']=True
+            np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=dec[1][cfg['source_atom']])
+        else:
+            tokens=np.memmap(tokenpath,dtype='<u2',mode='r');eligible=np.flatnonzero(tokens==query_token[0]);count=min(cfg['fit_rows'],len(eligible))
+            selected=eligible[np.linspace(0,len(eligible)-1,count,dtype=int)];assert len(set(selected))==count and count>16
+            dense={};means={};dec={}
+            for seed in (1,2):
+                dec[seed]=np.array(mmap(next(r for r in manifest['decoders'] if r['seed']==seed)),dtype=float)
+                for split in ('mean','discovery'):
+                    spec=next(r for r in manifest['splits'] if r['split']==split);parts={r['dtype']:mmap(r) for r in spec['files'] if r['seed']==seed}
+                    ii,aa=parts['uint16'],parts['float32']
+                    if split=='mean':means[seed]=np.bincount(ii.ravel(),weights=aa.ravel(),minlength=3072)/len(ii)
+                    else:
+                        z=np.zeros((count,3072));np.add.at(z,(np.arange(count)[:,None],ii[selected]),aa[selected]);dense[seed]=z
+            rawmeta=next(r for r in rawmanifest['splits'] if r['split']=='discovery');raw=np.array(mmap(rawmeta)[selected],dtype=float)
+            x=dense[2]-means[2];y=dense[1][:,cfg['source_atom']]-means[1][cfg['source_atom']];w=np.ones(count)/count
+            beta={};diag={};beta['full'],diag['full']=fixed_support_ridge(x,y,w,cfg['ridge'])
+            beta['raw'],diag['raw']=fixed_support_ridge(raw,y,w,cfg['ridge'])
+            xc=x-x.mean(0);yc=y-y.mean();var=np.mean(xc*xc,axis=0);cross=xc.T@yc/count
+            scalar=np.divide(cross,var*(1+cfg['ridge']),out=np.zeros_like(cross),where=var>0)
+            losses=np.mean(yc*yc)-2*scalar*cross+scalar*scalar*var
+            atom=int(np.argmin(losses));cos=dec[2]@dec[1][cfg['source_atom']]/np.linalg.norm(dec[2],axis=1)/np.linalg.norm(dec[1][cfg['source_atom']]);geom=int(np.argmax(abs(cos)))
+            for name,j in [('best_atom',atom),('geometric_atom',geom)]:
+                beta[name]=np.zeros(3072);beta[name][j]=scalar[j];diag[name]=dict(atom=j,coefficient=float(scalar[j]),training_error=float(losses[j]),decoder_cosine=float(cos[j]))
+            sd=np.sqrt(var);active=sd>1e-12;xx=np.asfortranarray(xc[:,active]/sd[active]);alpha_max=float(np.max(abs(xx.T@yc/count)))
+            solver=Lasso(fit_intercept=False,warm_start=True,tol=1e-7,max_iter=5000);path=[];best=None
+            for factor in np.geomspace(1.,.01,40):
+                solver.set_params(alpha=alpha_max*factor)
+                with warnings.catch_warnings(record=True) as caught:
+                    warnings.simplefilter('always',ConvergenceWarning);solver.fit(xx,yc)
+                ids=np.flatnonzero(active)[np.flatnonzero(solver.coef_)];row=dict(alpha_fraction=float(factor),support=len(ids),converged=not caught,iterations=int(solver.n_iter_))
+                if not caught and 0<len(ids)<=cfg['support_budget']:
+                    b,d=fixed_support_ridge(x[:,ids],y,w,cfg['ridge']);row.update(error=d['weighted_error'],atom_ids=ids.tolist())
+                    if best is None or d['weighted_error']<best[0]:best=(d['weighted_error'],ids.copy(),b,d)
+                path.append(row)
+                if len(ids)>32:break
+            if best is None:raise RuntimeError('No finite sparse candidate, numerical fit unresolved')
+            beta['sparse16']=np.zeros(3072);beta['sparse16'][best[1]]=best[2];diag['sparse16']=dict(**best[3],support=best[1].tolist(),path=path)
+            write(run/'fit_metadata.json',dict(source_atom=cfg['source_atom'],source_mean=float(means[1][cfg['source_atom']]),target_mean=means[2].tolist(),eligible_that_rows=len(eligible),selected_rows=selected.tolist(),methods=diag,
+                source_conditional_variance=float(np.var(y)),operation='source-decoder aligned donor differences; atom baselines also aligned, not target-native deletion'))
+            np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=dec[1][cfg['source_atom']])
+            checks['maps_saved_before_consumer']=True;fit_seconds=time.perf_counter()-start
+            print(json.dumps(dict(stage='FITS_FROZEN',rows=count,eligible=len(eligible),best_atom=atom,geometric_atom=geom,sparse_support=best[1].tolist(),seconds=fit_seconds)),flush=True)
         model=transformers.AutoModelForCausalLM.from_pretrained(asset['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to('cuda:0');model.config.use_cache=False
         saes={}
         for item in asset['saes']:
             p=checked(Path(item['path'])/'sae.safetensors',item['sha256']);saes[item['seed']]=SparseCoder.load_from_disk(p.parent,device='cuda:0').eval()
         module=model.get_submodule(asset['hook_module_path']);contract=HookPointContract(asset['hook_module_path'],5,'resid_post',768)
-        original=load(cfg['probe_config']);cases=[dict(pair=i,role=role,verb=verb,text=original['templates'][0].format(subject=verb)) for i,pair in enumerate(original['pairs']) for role,verb in zip(('report','attitude'),pair)]
+        original=load(cfg['probe_config'])
+        cases=load(cfg['evaluation_inputs'])['cases'] if cfg.get('evaluation_inputs') else [dict(pair=i,role=role,verb=verb,text=original['templates'][0].format(subject=verb)) for i,pair in enumerate(original['pairs']) for role,verb in zip(('report','attitude'),pair)]
+        assert len(cases)>0 and len(cases)%2==0
         captured=[];prob={};encoded=[]
         def forward(tokens,delta=None):
             nonlocal forwards
@@ -116,7 +131,7 @@ def main():
             forwards+=1;return logits,obs['h']
         batches=[]
         for i,c in enumerate(cases):
-            ids=tok.encode(c['text'],add_special_tokens=False);assert ids[-1]==query_token[0];batches.append(torch.tensor([ids],device='cuda:0'))
+            ids=c['token_ids'] if 'token_ids' in c else tok.encode(c['text'],add_special_tokens=False);assert ids[-1]==query_token[0];batches.append(torch.tensor([ids],device='cuda:0'))
             logits,h=forward(batches[-1]);prob[f'base_{i}']=np.exp(log_prob(logits[None])[0]);captured.append(h.cpu().numpy())
             zs={}
             with torch.no_grad():
@@ -133,12 +148,12 @@ def main():
                 inp=captured[donor]-captured[i] if method=='raw' else encoded[donor][2]-encoded[i][2]
                 predicted=float(inp@b);lg,_=forward(batches[i],scale*predicted*direction);pc=np.exp(log_prob(lg[None])[0]);prob[f'{method}_{i}']=pc
                 kl=max(0.,float(np.sum(ps*np.log(np.maximum(ps,1e-300)/np.maximum(pc,1e-300)))))
-                r=dict(case_id=i,**c,donor=donor,method=method,source_difference=truth,predicted_difference=predicted,preference_direction_matches=bool(truth*predicted>0),
+                r=dict(case_id=i,**c,donor=donor,method=method,source_activation=float(encoded[i][1][cfg['source_atom']]),source_difference=truth,predicted_difference=predicted,preference_direction_matches=bool(truth*predicted>0),
                     scalar_squared_error=(predicted-truth)**2,source_delta_energy=float(truth**2),dose=scale,source_kl=den,candidate_kl=kl,normalized_kl_error=kl/den if den>1e-12 else None)
                 rows.append(r)
                 with (run/'metrics.raw.jsonl').open('a') as f:f.write(json.dumps(r)+'\n')
         write(run/'authored_inputs.json',dict(cases=cases));np.savez_compressed(run/'probabilities.npz',**{k:v.astype(np.float32) for k,v in prob.items()})
-        checks.update(expected_forwards=forwards==85,all_cases=len(rows)==60,finite=all(np.isfinite(r['candidate_kl']) for r in rows))
+        checks.update(expected_forwards=forwards==len(cases)*(2+len(beta))+1,all_cases=len(rows)==len(cases)*len(beta),finite=all(np.isfinite(r['candidate_kl']) for r in rows))
         env=dict(python=sys.executable,python_version=platform.python_version(),numpy=np.__version__,torch=torch.__version__,transformers=transformers.__version__,sklearn=sklearn.__version__,gpu=torch.cuda.get_device_name(),peak_vram_bytes=torch.cuda.max_memory_allocated())
         if time.perf_counter()-start>cfg['budget_seconds']:raise TimeoutError('Run exceeded wall budget')
     except Exception as exc:
