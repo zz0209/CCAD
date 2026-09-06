@@ -1,0 +1,530 @@
+{
+  "written_at_utc": "2026-09-06T17:18:15Z",
+  "queries": [
+    {
+      "query": 0,
+      "token": "-",
+      "token_id": 14,
+      "atoms": [
+        8,
+        2177
+      ]
+    },
+    {
+      "query": 1,
+      "token": "’",
+      "token_id": 457,
+      "atoms": [
+        758,
+        116
+      ]
+    },
+    {
+      "query": 2,
+      "token": " the",
+      "token_id": 253,
+      "atoms": [
+        426,
+        1926
+      ]
+    },
+    {
+      "query": 3,
+      "token": " on",
+      "token_id": 327,
+      "atoms": [
+        487,
+        1358
+      ]
+    }
+  ],
+  "cells": [
+    {
+      "query": 0,
+      "token": "-",
+      "atoms": [
+        8,
+        2177
+      ],
+      "seed": 2,
+      "step": 256,
+      "config": "configs/f4_five_fit_q0_s2_step256_v1.json",
+      "run": "F4_five_fit_q0_s2_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q0_s2_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q0_s2_step256_v1.json"
+    },
+    {
+      "query": 0,
+      "token": "-",
+      "atoms": [
+        8,
+        2177
+      ],
+      "seed": 2,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q0_s2_step8192_v1.json",
+      "run": "F4_five_fit_q0_s2_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q0_s2_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q0_s2_step8192_v1.json"
+    },
+    {
+      "query": 0,
+      "token": "-",
+      "atoms": [
+        8,
+        2177
+      ],
+      "seed": 3,
+      "step": 256,
+      "config": "configs/f4_five_fit_q0_s3_step256_v1.json",
+      "run": "F4_five_fit_q0_s3_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q0_s3_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q0_s3_step256_v1.json"
+    },
+    {
+      "query": 0,
+      "token": "-",
+      "atoms": [
+        8,
+        2177
+      ],
+      "seed": 3,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q0_s3_step8192_v1.json",
+      "run": "F4_five_fit_q0_s3_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q0_s3_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q0_s3_step8192_v1.json"
+    },
+    {
+      "query": 0,
+      "token": "-",
+      "atoms": [
+        8,
+        2177
+      ],
+      "seed": 4,
+      "step": 256,
+      "config": "configs/f4_five_fit_q0_s4_step256_v1.json",
+      "run": "F4_five_fit_q0_s4_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q0_s4_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q0_s4_step256_v1.json"
+    },
+    {
+      "query": 0,
+      "token": "-",
+      "atoms": [
+        8,
+        2177
+      ],
+      "seed": 4,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q0_s4_step8192_v1.json",
+      "run": "F4_five_fit_q0_s4_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q0_s4_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q0_s4_step8192_v1.json"
+    },
+    {
+      "query": 0,
+      "token": "-",
+      "atoms": [
+        8,
+        2177
+      ],
+      "seed": 5,
+      "step": 256,
+      "config": "configs/f4_five_fit_q0_s5_step256_v1.json",
+      "run": "F4_five_fit_q0_s5_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q0_s5_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q0_s5_step256_v1.json"
+    },
+    {
+      "query": 0,
+      "token": "-",
+      "atoms": [
+        8,
+        2177
+      ],
+      "seed": 5,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q0_s5_step8192_v1.json",
+      "run": "F4_five_fit_q0_s5_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q0_s5_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q0_s5_step8192_v1.json"
+    },
+    {
+      "query": 1,
+      "token": "’",
+      "atoms": [
+        758,
+        116
+      ],
+      "seed": 2,
+      "step": 256,
+      "config": "configs/f4_five_fit_q1_s2_step256_v1.json",
+      "run": "F4_five_fit_q1_s2_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q1_s2_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q1_s2_step256_v1.json"
+    },
+    {
+      "query": 1,
+      "token": "’",
+      "atoms": [
+        758,
+        116
+      ],
+      "seed": 2,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q1_s2_step8192_v1.json",
+      "run": "F4_five_fit_q1_s2_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q1_s2_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q1_s2_step8192_v1.json"
+    },
+    {
+      "query": 1,
+      "token": "’",
+      "atoms": [
+        758,
+        116
+      ],
+      "seed": 3,
+      "step": 256,
+      "config": "configs/f4_five_fit_q1_s3_step256_v1.json",
+      "run": "F4_five_fit_q1_s3_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q1_s3_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q1_s3_step256_v1.json"
+    },
+    {
+      "query": 1,
+      "token": "’",
+      "atoms": [
+        758,
+        116
+      ],
+      "seed": 3,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q1_s3_step8192_v1.json",
+      "run": "F4_five_fit_q1_s3_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q1_s3_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q1_s3_step8192_v1.json"
+    },
+    {
+      "query": 1,
+      "token": "’",
+      "atoms": [
+        758,
+        116
+      ],
+      "seed": 4,
+      "step": 256,
+      "config": "configs/f4_five_fit_q1_s4_step256_v1.json",
+      "run": "F4_five_fit_q1_s4_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q1_s4_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q1_s4_step256_v1.json"
+    },
+    {
+      "query": 1,
+      "token": "’",
+      "atoms": [
+        758,
+        116
+      ],
+      "seed": 4,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q1_s4_step8192_v1.json",
+      "run": "F4_five_fit_q1_s4_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q1_s4_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q1_s4_step8192_v1.json"
+    },
+    {
+      "query": 1,
+      "token": "’",
+      "atoms": [
+        758,
+        116
+      ],
+      "seed": 5,
+      "step": 256,
+      "config": "configs/f4_five_fit_q1_s5_step256_v1.json",
+      "run": "F4_five_fit_q1_s5_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q1_s5_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q1_s5_step256_v1.json"
+    },
+    {
+      "query": 1,
+      "token": "’",
+      "atoms": [
+        758,
+        116
+      ],
+      "seed": 5,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q1_s5_step8192_v1.json",
+      "run": "F4_five_fit_q1_s5_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q1_s5_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q1_s5_step8192_v1.json"
+    },
+    {
+      "query": 2,
+      "token": " the",
+      "atoms": [
+        426,
+        1926
+      ],
+      "seed": 2,
+      "step": 256,
+      "config": "configs/f4_five_fit_q2_s2_step256_v1.json",
+      "run": "F4_five_fit_q2_s2_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q2_s2_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q2_s2_step256_v1.json"
+    },
+    {
+      "query": 2,
+      "token": " the",
+      "atoms": [
+        426,
+        1926
+      ],
+      "seed": 2,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q2_s2_step8192_v1.json",
+      "run": "F4_five_fit_q2_s2_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q2_s2_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q2_s2_step8192_v1.json"
+    },
+    {
+      "query": 2,
+      "token": " the",
+      "atoms": [
+        426,
+        1926
+      ],
+      "seed": 3,
+      "step": 256,
+      "config": "configs/f4_five_fit_q2_s3_step256_v1.json",
+      "run": "F4_five_fit_q2_s3_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q2_s3_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q2_s3_step256_v1.json"
+    },
+    {
+      "query": 2,
+      "token": " the",
+      "atoms": [
+        426,
+        1926
+      ],
+      "seed": 3,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q2_s3_step8192_v1.json",
+      "run": "F4_five_fit_q2_s3_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q2_s3_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q2_s3_step8192_v1.json"
+    },
+    {
+      "query": 2,
+      "token": " the",
+      "atoms": [
+        426,
+        1926
+      ],
+      "seed": 4,
+      "step": 256,
+      "config": "configs/f4_five_fit_q2_s4_step256_v1.json",
+      "run": "F4_five_fit_q2_s4_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q2_s4_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q2_s4_step256_v1.json"
+    },
+    {
+      "query": 2,
+      "token": " the",
+      "atoms": [
+        426,
+        1926
+      ],
+      "seed": 4,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q2_s4_step8192_v1.json",
+      "run": "F4_five_fit_q2_s4_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q2_s4_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q2_s4_step8192_v1.json"
+    },
+    {
+      "query": 2,
+      "token": " the",
+      "atoms": [
+        426,
+        1926
+      ],
+      "seed": 5,
+      "step": 256,
+      "config": "configs/f4_five_fit_q2_s5_step256_v1.json",
+      "run": "F4_five_fit_q2_s5_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q2_s5_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q2_s5_step256_v1.json"
+    },
+    {
+      "query": 2,
+      "token": " the",
+      "atoms": [
+        426,
+        1926
+      ],
+      "seed": 5,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q2_s5_step8192_v1.json",
+      "run": "F4_five_fit_q2_s5_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q2_s5_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q2_s5_step8192_v1.json"
+    },
+    {
+      "query": 3,
+      "token": " on",
+      "atoms": [
+        487,
+        1358
+      ],
+      "seed": 2,
+      "step": 256,
+      "config": "configs/f4_five_fit_q3_s2_step256_v1.json",
+      "run": "F4_five_fit_q3_s2_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q3_s2_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q3_s2_step256_v1.json"
+    },
+    {
+      "query": 3,
+      "token": " on",
+      "atoms": [
+        487,
+        1358
+      ],
+      "seed": 2,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q3_s2_step8192_v1.json",
+      "run": "F4_five_fit_q3_s2_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q3_s2_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q3_s2_step8192_v1.json"
+    },
+    {
+      "query": 3,
+      "token": " on",
+      "atoms": [
+        487,
+        1358
+      ],
+      "seed": 3,
+      "step": 256,
+      "config": "configs/f4_five_fit_q3_s3_step256_v1.json",
+      "run": "F4_five_fit_q3_s3_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q3_s3_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q3_s3_step256_v1.json"
+    },
+    {
+      "query": 3,
+      "token": " on",
+      "atoms": [
+        487,
+        1358
+      ],
+      "seed": 3,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q3_s3_step8192_v1.json",
+      "run": "F4_five_fit_q3_s3_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q3_s3_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q3_s3_step8192_v1.json"
+    },
+    {
+      "query": 3,
+      "token": " on",
+      "atoms": [
+        487,
+        1358
+      ],
+      "seed": 4,
+      "step": 256,
+      "config": "configs/f4_five_fit_q3_s4_step256_v1.json",
+      "run": "F4_five_fit_q3_s4_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q3_s4_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q3_s4_step256_v1.json"
+    },
+    {
+      "query": 3,
+      "token": " on",
+      "atoms": [
+        487,
+        1358
+      ],
+      "seed": 4,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q3_s4_step8192_v1.json",
+      "run": "F4_five_fit_q3_s4_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q3_s4_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q3_s4_step8192_v1.json"
+    },
+    {
+      "query": 3,
+      "token": " on",
+      "atoms": [
+        487,
+        1358
+      ],
+      "seed": 5,
+      "step": 256,
+      "config": "configs/f4_five_fit_q3_s5_step256_v1.json",
+      "run": "F4_five_fit_q3_s5_step256_v1_20260906",
+      "apply_run": "F4_five_apply_q3_s5_step256_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q3_s5_step256_v1.json"
+    },
+    {
+      "query": 3,
+      "token": " on",
+      "atoms": [
+        487,
+        1358
+      ],
+      "seed": 5,
+      "step": 8192,
+      "config": "configs/f4_five_fit_q3_s5_step8192_v1.json",
+      "run": "F4_five_fit_q3_s5_step8192_v1_20260906",
+      "apply_run": "F4_five_apply_q3_s5_step8192_v1_20260906",
+      "apply_config": "configs/f4_five_apply_q3_s5_step8192_v1.json"
+    }
+  ],
+  "primary": "For each query/target: late-minus-early maximum-operator median absolute KL(source||candidate); report shared16 and all controls. Main summary equal-weight mean over the4queries and4fixedtargets; no query exclusion or favorable operator choice.",
+  "secondary": "Original relative KL denominator>1e-12 missing rule, observed-next-token absolute NLL response difference, all4operators and all9maps. Source apostrophe response at next-token t reported as exploratory signed effect; no prespecified success sign inferred from activation.",
+  "statistics": "2000 paired bootstrap of whole reciprocal document pairs separately within each query, same resample across targets/stages/methods, RNG20260906. Conditional on selected4queries and one source/four dependent targets, not seed-population inference. Allquery fixed mean remains primary even if individual contrasts disagree.",
+  "natural_selection": "Pinned new FineWeb corpus excluding prior documentID/textSHA ledgers. At fixed four single-token IDs, single-document packed sequences, prefix>=10 tokens. Sort SHA256(salt,query,document,sequence,position); greedily first16globally distinct documents per query in frozen query order, adjacent positions form8reciprocal pairs. No source activity or target outcome filtering; if insufficient use complete even subset and retain unmatched/missing requests, no refill.",
+  "methods": [
+    "raw",
+    "full",
+    "best_atom",
+    "geometric_atom",
+    "shared16",
+    "same_support_ridge",
+    "dynamic_pair_ridge",
+    "geometric_pair_ridge",
+    "wrong_query"
+  ],
+  "operators": {
+    "A": [
+      1,
+      0
+    ],
+    "B": [
+      0,
+      1
+    ],
+    "sum": [
+      1,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ]
+  },
+  "budget": "32fits0LM then <=32*657=21024newLM for <=16prefixes/query and9maps; plus75legacywitness. Total30min16GB; newcorpus<=100MB range, no training/fullcodecache. Source probes use the same application probabilities; no extra outcomes.",
+  "scope": "Source-aligned two-component transfer with four source-defined lexical queries. Five same-configuration weights, one fixed source, four targets; not target-native attribution or established human semantic units.",
+  "archive": "E:\\Projects\\SAE_Lab\\CCAD\\archive\\research_workflow_20260906\\five_seed_function_20260906T171815Z",
+  "witness_config": "configs/f4_checkpoint_source_extension_witness_v1.json",
+  "witness_run": "F4_checkpoint_source_extension_witness_v1_20260906",
+  "witness_parent": "F4_frozen_early_checkpoint_witness_v1_20260906"
+}

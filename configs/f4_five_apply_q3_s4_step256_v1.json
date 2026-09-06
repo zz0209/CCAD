@@ -1,0 +1,112 @@
+{
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "audit_opened": false,
+  "budget": "32fits0LM then <=32*657=21024newLM for <=16prefixes/query and9maps; plus75legacywitness. Total30min16GB; newcorpus<=100MB range, no training/fullcodecache. Source probes use the same application probabilities; no extra outcomes.",
+  "budget_seconds": 300,
+  "checkpoint_registry": "artifacts/five_seed_training_20260906/checkpoints.json",
+  "fit_only": false,
+  "fit_rows": 512,
+  "joint_fit": {
+    "alpha_count": 40,
+    "debias_ridge_fraction": 0.001,
+    "max_iter": 5000,
+    "minimum_alpha_fraction": 0.01,
+    "path_stop_support": 32,
+    "per_fit_budget_seconds": 120,
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "support_budget": 16,
+    "tol": 1e-07
+  },
+  "max_hook_fraction": 0.1,
+  "operators": {
+    "A": [
+      1,
+      0
+    ],
+    "B": [
+      0,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ],
+    "sum": [
+      1,
+      1
+    ]
+  },
+  "parents": [],
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "purpose": "Frozen map application to new natural prefixes, all fixed queries and targets retained",
+  "query_token": " on",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "ridge": 0.001,
+  "run_id": "F4_five_apply_q3_s4_step256_v1_20260906",
+  "scope": "Source-aligned two-component transfer with four source-defined lexical queries. Five same-configuration weights, one fixed source, four targets; not target-native attribution or established human semantic units.",
+  "source_atoms": [
+    487,
+    1358
+  ],
+  "source_checkpoint": {
+    "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+    "learning_rate_used": 1.2218963831867057e-07,
+    "packed_train_tokens": 4194304,
+    "parent_run": "R012_same_stream_curve_v1_20260906",
+    "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_8192\\seed_1",
+    "sae_name": "layers.5/seed1",
+    "seconds_since_start": 217.7661267000003,
+    "seed": 1,
+    "sha256": "818aa8bac0aa47aa2ba487df0366aa1049a7a2a65487cbc6f0a4e333aa5938b6",
+    "state_hash": "b44e55f78dc228f4d2e5fcb17d090ddc289fc755ffb4a30d803c425c7826fea0",
+    "step": 8192,
+    "train_sequences": 32768
+  },
+  "source_seed": 1,
+  "support_budget": 16,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "target_checkpoint": {
+    "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+    "learning_rate_used": 0.0009698191593352884,
+    "packed_train_tokens": 131072,
+    "parent_run": "R012_same_stream_extra_seeds_v1_20260906",
+    "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_extra_seeds_v1_20260906\\step_256\\seed_4",
+    "sae_name": "layers.5/seed4",
+    "seconds_since_start": 13.401321400000597,
+    "seed": 4,
+    "sha256": "c48ddb8b0cc679e363d63316cc23e1aaba156349473a9d1b4cf2a4e0f9c687e3",
+    "state_hash": "0da8738445281a91e53575b7aff3b29bdc07636d59f89bf6cb87966b7a47f147",
+    "step": 256,
+    "train_sequences": 1024
+  },
+  "target_seed": 4,
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "wrong_query_control": "swap_components_energy_matched_per_operator",
+  "probability_storage": "observed_and_probe_tokens",
+  "probe_token_ids": [
+    85
+  ],
+  "use_frozen_target_checkpoint": true,
+  "frozen_map": {
+    "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\F4_five_fit_q3_s4_step256_v1_20260906",
+    "config_sha256": "f3665673070e52e6352bfaf495ad557d82cd5b6a5e5d480162188722e1a8f3b7",
+    "coefficients_sha256": "4973a8d554fa59a054e07ca61b6dd6b362e0a2216c70a4470e48fe65be3d495e"
+  },
+  "evaluation_inputs": "artifacts/five_seed_function_20260906/inputs_q3.json",
+  "evaluation_inputs_sha256": "bcecd37b8d11220675d7b8fb3476b9b6734b6a766f8569e08454e84653ee2e26",
+  "confirmation_inputs": [
+    {
+      "path": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\five_seed_function_20260906\\maps_freeze.json",
+      "sha256": "5919950f00a684d2573c5a9b871c3701dbeb8ce425207119706e3383a6c5d4c2"
+    },
+    {
+      "path": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\five_seed_function_20260906\\design_freeze.json",
+      "sha256": "893d06a929b0a9f56d4b7ae836cc1d14f38bb693f49baaa6f189192d28f4bd24"
+    },
+    {
+      "path": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\five_seed_function_20260906\\selection.json",
+      "sha256": "1f2be1da412ec4dbdaeef2eff36e262a9c7b94678aac14657dff822477691072"
+    }
+  ]
+}

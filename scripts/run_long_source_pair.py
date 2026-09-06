@@ -60,11 +60,19 @@ def main():
         torch.set_num_threads(4);torch.use_deterministic_algorithms(True);torch.cuda.reset_peak_memory_stats()
         tok=transformers.AutoTokenizer.from_pretrained(asset['model_local_dir'],local_files_only=True)
         query_token=tok.encode(cfg.get('query_token',' that'),add_special_tokens=False);assert len(query_token)==1
+        source_checkpoint_sae=None
+        if cfg.get('source_checkpoint'):
+            scp=cfg['source_checkpoint'];checked(cfg['checkpoint_registry'])
+            source_weight=checked(Path(scp['path'])/'sae.safetensors',scp['sha256'])
+            source_checkpoint_sae=SparseCoder.load_from_disk(source_weight.parent,device='cuda:0').eval()
+            checks['source_checkpoint_loaded']=True
         if cfg.get('frozen_map'):
             freeze=cfg['frozen_map'];parent=Path(freeze['path'])
             pc=json.loads(checked(parent/'config.resolved.json',freeze['config_sha256']).read_text())
             for key in ('source_seed','target_seed','source_atoms','operators','max_hook_fraction','asset_config','target_asset_config'):
                 assert cfg[key]==pc[key], key
+            assert cfg.get('source_checkpoint')==pc.get('source_checkpoint')
+            assert cfg.get('wrong_query_control')==pc.get('wrong_query_control')
             assert load(parent/'status.json')['status']=='PASS'
             for spec in cfg.get('confirmation_inputs',[]):checked(spec['path'],spec['sha256'])
             checked(cfg['evaluation_inputs'],cfg['evaluation_inputs_sha256'])
@@ -110,11 +118,11 @@ def main():
                 cp=cfg['target_checkpoint'];checked(cfg['checkpoint_registry'])
                 cpfile=checked(Path(cp['path'])/'sae.safetensors',cp['sha256']);checkpoint_sae=SparseCoder.load_from_disk(cpfile.parent,device='cuda:0').eval()
                 dec[target_seed]=checkpoint_sae.W_dec.detach().cpu().numpy().astype(float)
-                def encode_rows(hook_rows):
+                def encode_rows(hook_rows,sae=checkpoint_sae):
                     result=np.zeros((len(hook_rows),3072))
                     with torch.no_grad():
                         for off in range(0,len(hook_rows),512):
-                            inp=torch.tensor(np.array(hook_rows[off:off+512]),device='cuda:0',dtype=torch.float32);en=checkpoint_sae.encode(inp)
+                            inp=torch.tensor(np.array(hook_rows[off:off+512]),device='cuda:0',dtype=torch.float32);en=sae.encode(inp)
                             ii=en.top_indices.cpu().numpy();aa=en.top_acts.cpu().numpy();np.add.at(result,(np.arange(off,off+len(ii))[:,None],ii),aa)
                     return result
                 meanraw=mmap(next(r for r in rawmanifest['splits'] if r['split']=='mean'));total=np.zeros(3072)
@@ -122,7 +130,15 @@ def main():
                 means[target_seed]=total/len(meanraw)
                 discraw=mmap(next(r for r in rawmanifest['splits'] if r['split']=='discovery'));dense[target_seed]=encode_rows(discraw[selected])
                 write(run/'target_encoding.json',dict(checkpoint=cp,mean_rows=len(meanraw),discovery_rows=len(selected),no_new_base_forward=True,no_full_code_cache_written=True))
+            if source_checkpoint_sae is not None:
+                assert checkpoint_sae is not None, 'Explicit source checkpoint requires explicit target checkpoint'
+                dec[source_seed]=source_checkpoint_sae.W_dec.detach().cpu().numpy().astype(float)
+                total=np.zeros(3072)
+                for off in range(0,len(meanraw),512):total+=encode_rows(meanraw[off:off+512],source_checkpoint_sae).sum(0)
+                means[source_seed]=total/len(meanraw);dense[source_seed]=encode_rows(discraw[selected],source_checkpoint_sae)
+                write(run/'source_encoding.json',dict(checkpoint=cfg['source_checkpoint'],mean_rows=len(meanraw),discovery_rows=len(selected),no_new_base_forward=True))
             for seed in ((source_seed,) if checkpoint_sae is not None else (source_seed,target_seed)):
+                if seed in dec:continue
 
                 dec[seed]=np.array(mmap(next(r for r in manifest['decoders'] if r['seed']==seed)),dtype=float)
                 for split in ('mean','discovery'):
@@ -134,7 +150,7 @@ def main():
             x=dense[target_seed]-means[target_seed];y=dense[source_seed][:,atoms]-means[source_seed][atoms];w=np.ones(count)/count
             direction=dec[source_seed][atoms];dg=direction@direction.T
             beta={};parents=[];baseline_diagnostics={}
-            for j,parent in enumerate(cfg['parents']):
+            for j,parent in enumerate(cfg.get('parents',[])):
                 path=ROOT/parent['path'];pc=load(path/'config.resolved.json');assert pc['source_atom']==atoms[j] and pc['source_seed']==source_seed
                 if checkpoint_sae is None and not cfg.get('recompute_target_baselines'):assert pc['target_seed']==target_seed
                 with np.load(checked(path/'coefficients.npz',parent['sha256']),allow_pickle=False) as arr:
@@ -143,7 +159,12 @@ def main():
             if checkpoint_sae is None and not cfg.get('recompute_target_baselines'):
                 for name in parents[0]:beta[name]=np.column_stack([r[name] for r in parents])
             else:
-                beta['raw']=np.column_stack([r['raw'] for r in parents]);beta['full']=np.zeros((3072,2));beta['best_atom']=np.zeros((3072,2));beta['geometric_atom']=np.zeros((3072,2))
+                if parents:beta['raw']=np.column_stack([r['raw'] for r in parents])
+                else:
+                    assert source_checkpoint_sae is not None
+                    raw_x=np.array(discraw[selected],dtype=float)-np.mean(meanraw,axis=0,dtype=float)
+                    beta['raw']=np.column_stack([fixed_support_ridge(raw_x,y[:,j],w,cfg['ridge'])[0] for j in range(2)])
+                beta['full']=np.zeros((3072,2));beta['best_atom']=np.zeros((3072,2));beta['geometric_atom']=np.zeros((3072,2))
                 xc=x-x.mean(0);yc=y-y.mean(0);var=np.mean(xc*xc,axis=0)
                 for j in range(2):
                     beta['full'][:,j],fd=fixed_support_ridge(x,y[:,j],w,cfg['ridge']);cross=xc.T@yc[:,j]/count
@@ -170,70 +191,90 @@ def main():
                     for j,ids in enumerate(ids_by_output):
                         b,d=fixed_support_ridge(x[:,ids],y[:,j],w,cfg['ridge']);beta[name][ids,j]=b;refits[name]['outputs'].append(d)
                 write(run/'separate_support_selection.json',sepdiag)
+            if cfg.get('wrong_query_control'):
+                assert cfg['wrong_query_control']=='swap_components_energy_matched_per_operator'
+                beta['wrong_query']=beta['shared16'][:,::-1].copy()
             yc=y-y.mean(0);cov=yc.T@yc/count
             write(run/'fit_metadata.json',dict(baseline_diagnostics=baseline_diagnostics,source_atoms=atoms,source_seed=source_seed,target_seed=target_seed,source_decoder_gram=dg.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance=cov.tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),joint_fit=diag,shared_intercept=intercept.tolist(),refits=refits,source_mean=means[source_seed][atoms].tolist(),target_mean=means[target_seed].tolist(),selected_rows=selected.tolist(),eligible_query_rows=len(eligible),operation='source-decoder aligned two-component donor family, common dose across operators'))
             np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=direction)
             checks['maps_saved_before_consumer']=True
             print(json.dumps(dict(stage='FITS_FROZEN',support=support.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),seconds=time.perf_counter()-start)),flush=True)
-        model=transformers.AutoModelForCausalLM.from_pretrained(asset['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to('cuda:0');model.config.use_cache=False
-        saes={target_seed:checkpoint_sae} if checkpoint_sae is not None else {}
-        for item in asset['saes']:
-            if checkpoint_sae is not None and item['seed']==target_seed:continue
-            if item['seed'] not in (source_seed,target_seed):continue
-            p=checked(Path(item['path'])/'sae.safetensors',item['sha256']);saes[item['seed']]=SparseCoder.load_from_disk(p.parent,device='cuda:0').eval()
-        assert np.array_equal(saes[source_seed].W_dec.detach().cpu().numpy()[atoms].astype(float),direction)
-        module=model.get_submodule(asset['hook_module_path']);contract=HookPointContract(asset['hook_module_path'],5,'resid_post',768)
-        original=load(cfg['probe_config'])
-        cases=load(cfg['evaluation_inputs'])['cases'] if cfg.get('evaluation_inputs') else [dict(pair=i,role=role,verb=verb,text=original['templates'][0].format(subject=verb)) for i,pair in enumerate(original['pairs']) for role,verb in zip(('report','attitude'),pair)]
-        assert len(cases)>0 and len(cases)%2==0
-        captured=[];prob={};encoded=[]
-        def forward(tokens,delta=None):
-            nonlocal forwards
-            obs={}
-            def hook(m,i,out):
-                h=extract_primary_hook_tensor(out,contract);obs['h']=h[0,-1].detach().clone()
-                if delta is None:return out
-                changed=h.clone();changed[0,-1]+=torch.tensor(delta,device='cuda:0',dtype=h.dtype)
-                return replace_primary_hook_tensor(out,changed,contract)
-            handle=module.register_forward_hook(hook)
-            try:
-                with torch.no_grad(): logits=model(tokens,use_cache=False).logits[0,-1].float().cpu().numpy()
-            finally:handle.remove()
-            forwards+=1;return logits,obs['h']
-        batches=[]
-        for i,c in enumerate(cases):
-            ids=c['token_ids'] if 'token_ids' in c else tok.encode(c['text'],add_special_tokens=False);assert ids[-1]==query_token[0];batches.append(torch.tensor([ids],device='cuda:0'))
-            logits,h=forward(batches[-1]);prob[f'base_{i}']=np.exp(log_prob(logits[None])[0]);captured.append(h.cpu().numpy())
-            zs={}
-            with torch.no_grad():
-                for s,sae in saes.items():
-                    out=sae.encode(h[None]);z=np.zeros(3072);z[out.top_indices[0].cpu().numpy()]=out.top_acts[0].cpu().numpy();zs[s]=z
-            encoded.append(zs)
-        zero,_=forward(batches[0],np.zeros(768));checks['noop_exact']=np.array_equal(np.exp(log_prob(zero[None])[0]),prob['base_0'])
-        operators={k:np.asarray(v,dtype=float) for k,v in cfg['operators'].items()};gram_records=[]
-        for i,c in enumerate(cases):
-            donor=i^1;truth=encoded[donor][source_seed][atoms]-encoded[i][source_seed][atoms]
-            deltas={name:(truth*theta)@direction for name,theta in operators.items()}
-            common_dose=min(1.,cfg['max_hook_fraction']*np.linalg.norm(captured[i])/max(max(np.linalg.norm(v) for v in deltas.values()),1e-30))
-            predicted={method:(captured[donor]-captured[i] if method=='raw' else encoded[donor][target_seed]-encoded[i][target_seed])@b for method,b in beta.items()}
-            for method,pred in predicted.items():
-                residual=(pred-truth)*common_dose;gram_records.append(dict(case_id=i,method=method,error_gram=(residual[:,None]*dg*residual[None,:]).tolist()))
-            for op,theta in operators.items():
-                source,_=forward(batches[i],common_dose*deltas[op]);ps=np.exp(log_prob(source[None])[0]);prob[f'source_{op}_{i}']=ps
-                pb=prob[f'base_{i}'];den=max(0.,float(np.sum(ps*np.log(np.maximum(ps,1e-300)/np.maximum(pb,1e-300)))))
+        if cfg.get('fit_only'):
+            checks['fit_only_no_base_forward']=forwards==0
+            env=dict(python=sys.executable,python_version=platform.python_version(),numpy=np.__version__,torch=torch.__version__,transformers=transformers.__version__,sklearn=sklearn.__version__,gpu=torch.cuda.get_device_name(),peak_vram_bytes=torch.cuda.max_memory_allocated())
+        else:
+            model=transformers.AutoModelForCausalLM.from_pretrained(asset['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to('cuda:0');model.config.use_cache=False
+            saes={target_seed:checkpoint_sae} if checkpoint_sae is not None else {}
+            if source_checkpoint_sae is not None:saes[source_seed]=source_checkpoint_sae
+            for item in asset['saes']:
+                if item['seed'] in saes:continue
+                if item['seed'] not in (source_seed,target_seed):continue
+                p=checked(Path(item['path'])/'sae.safetensors',item['sha256']);saes[item['seed']]=SparseCoder.load_from_disk(p.parent,device='cuda:0').eval()
+            assert np.array_equal(saes[source_seed].W_dec.detach().cpu().numpy()[atoms].astype(float),direction)
+            module=model.get_submodule(asset['hook_module_path']);contract=HookPointContract(asset['hook_module_path'],5,'resid_post',768)
+            original=load(cfg['probe_config'])
+            cases=load(cfg['evaluation_inputs'])['cases'] if cfg.get('evaluation_inputs') else [dict(pair=i,role=role,verb=verb,text=original['templates'][0].format(subject=verb)) for i,pair in enumerate(original['pairs']) for role,verb in zip(('report','attitude'),pair)]
+            assert len(cases)>0 and len(cases)%2==0
+            captured=[];prob={};encoded=[]
+            def forward(tokens,delta=None):
+                nonlocal forwards
+                obs={}
+                def hook(m,i,out):
+                    h=extract_primary_hook_tensor(out,contract);obs['h']=h[0,-1].detach().clone()
+                    if delta is None:return out
+                    changed=h.clone();changed[0,-1]+=torch.tensor(delta,device='cuda:0',dtype=h.dtype)
+                    return replace_primary_hook_tensor(out,changed,contract)
+                handle=module.register_forward_hook(hook)
+                try:
+                    with torch.no_grad(): logits=model(tokens,use_cache=False).logits[0,-1].float().cpu().numpy()
+                finally:handle.remove()
+                forwards+=1;return logits,obs['h']
+            batches=[]
+            for i,c in enumerate(cases):
+                ids=c['token_ids'] if 'token_ids' in c else tok.encode(c['text'],add_special_tokens=False);assert ids[-1]==query_token[0];batches.append(torch.tensor([ids],device='cuda:0'))
+                logits,h=forward(batches[-1]);prob[f'base_{i}']=np.exp(log_prob(logits[None])[0]);captured.append(h.cpu().numpy())
+                zs={}
+                with torch.no_grad():
+                    for s,sae in saes.items():
+                        out=sae.encode(h[None]);z=np.zeros(3072);z[out.top_indices[0].cpu().numpy()]=out.top_acts[0].cpu().numpy();zs[s]=z
+                encoded.append(zs)
+            zero,_=forward(batches[0],np.zeros(768));checks['noop_exact']=np.array_equal(np.exp(log_prob(zero[None])[0]),prob['base_0'])
+            operators={k:np.asarray(v,dtype=float) for k,v in cfg['operators'].items()};gram_records=[]
+            for i,c in enumerate(cases):
+                donor=i^1;truth=encoded[donor][source_seed][atoms]-encoded[i][source_seed][atoms]
+                deltas={name:(truth*theta)@direction for name,theta in operators.items()}
+                common_dose=min(1.,cfg['max_hook_fraction']*np.linalg.norm(captured[i])/max(max(np.linalg.norm(v) for v in deltas.values()),1e-30))
+                predicted={method:(captured[donor]-captured[i] if method=='raw' else encoded[donor][target_seed]-encoded[i][target_seed])@b for method,b in beta.items()}
                 for method,pred in predicted.items():
-                    edit=common_dose*(pred*theta)@direction;lg,_=forward(batches[i],edit);pc=np.exp(log_prob(lg[None])[0]);prob[f'{method}_{op}_{i}']=pc
-                    kl=max(0.,float(np.sum(ps*np.log(np.maximum(ps,1e-300)/np.maximum(pc,1e-300)))))
-                    residual=(pred-truth)*common_dose;g=residual[:,None]*dg*residual[None,:];ve=float(np.sum((edit-common_dose*deltas[op])**2))
-                    assert np.isclose(ve,theta@g@theta,rtol=1e-9,atol=1e-12)
-                    r=dict(case_id=i,**c,donor=donor,operator=op,method=method,source_difference=truth.tolist(),predicted_difference=pred.tolist(),source_activation=encoded[i][source_seed][atoms].tolist(),common_dose=float(common_dose),vector_squared_error=ve,source_delta_energy=float(np.sum((common_dose*deltas[op])**2)),source_kl=den,candidate_kl=kl,normalized_kl_error=kl/den if den>1e-12 else None)
-                    rows.append(r)
-                    with (run/'metrics.raw.jsonl').open('a') as f:f.write(json.dumps(r)+'\n')
-        write(run/'error_grams.json',dict(records=gram_records,scope='Pointwise source-aligned vector error identity; empirical mean is not an unseen-context guarantee'))
-        write(run/'authored_inputs.json',dict(cases=cases));np.savez_compressed(run/'probabilities.npz',**{k:v.astype(np.float32) for k,v in prob.items()})
-        checks.update(expected_forwards=forwards==len(cases)*(1+len(operators)*(1+len(beta)))+1,all_cases=len(rows)==len(cases)*len(beta)*len(operators),finite=all(np.isfinite(r['candidate_kl']) for r in rows))
-        env=dict(python=sys.executable,python_version=platform.python_version(),numpy=np.__version__,torch=torch.__version__,transformers=transformers.__version__,sklearn=sklearn.__version__,gpu=torch.cuda.get_device_name(),peak_vram_bytes=torch.cuda.max_memory_allocated())
-        if time.perf_counter()-start>cfg['budget_seconds']:raise TimeoutError('Run exceeded wall budget')
+                    if method=='wrong_query':continue
+                    residual=(pred-truth)*common_dose;gram_records.append(dict(case_id=i,method=method,error_gram=(residual[:,None]*dg*residual[None,:]).tolist()))
+                for op,theta in operators.items():
+                    source,_=forward(batches[i],common_dose*deltas[op]);ps=np.exp(log_prob(source[None])[0]);prob[f'source_{op}_{i}']=ps
+                    pb=prob[f'base_{i}'];den=max(0.,float(np.sum(ps*np.log(np.maximum(ps,1e-300)/np.maximum(pb,1e-300)))))
+                    for method,pred in predicted.items():
+                        control_scale=1.
+                        if method=='wrong_query':
+                            raw_energy=np.linalg.norm((pred*theta)@direction)
+                            control_scale=np.linalg.norm(deltas[op])/raw_energy if raw_energy>1e-30 else 0.
+                            pred=pred*control_scale
+                        edit=common_dose*(pred*theta)@direction;lg,_=forward(batches[i],edit);pc=np.exp(log_prob(lg[None])[0]);prob[f'{method}_{op}_{i}']=pc
+                        kl=max(0.,float(np.sum(ps*np.log(np.maximum(ps,1e-300)/np.maximum(pc,1e-300)))))
+                        residual=(pred-truth)*common_dose;g=residual[:,None]*dg*residual[None,:];ve=float(np.sum((edit-common_dose*deltas[op])**2))
+                        assert np.isclose(ve,theta@g@theta,rtol=1e-9,atol=1e-12)
+                        r=dict(case_id=i,**c,donor=donor,operator=op,method=method,source_difference=truth.tolist(),predicted_difference=pred.tolist(),source_activation=encoded[i][source_seed][atoms].tolist(),common_dose=float(common_dose),vector_squared_error=ve,source_delta_energy=float(np.sum((common_dose*deltas[op])**2)),source_kl=den,candidate_kl=kl,normalized_kl_error=kl/den if den>1e-12 else None)
+                        if method=='wrong_query':r['control_energy_scale']=float(control_scale);r['control_energy_matched']=bool(np.isclose(np.linalg.norm(edit),np.linalg.norm(common_dose*deltas[op]),rtol=1e-8,atol=1e-12))
+                        rows.append(r)
+                        with (run/'metrics.raw.jsonl').open('a') as f:f.write(json.dumps(r)+'\n')
+            write(run/'error_grams.json',dict(records=gram_records,scope='Pointwise source-aligned vector error identity; excludes per-operator energy-matched wrong-query control which is not one linear operation family; empirical mean is not an unseen-context guarantee'))
+            write(run/'authored_inputs.json',dict(cases=cases))
+            if cfg.get('probability_storage')=='observed_and_probe_tokens':
+                kept=sorted({int(c['observed_next_token_id']) for c in cases if c.get('observed_next_token_id') is not None}|set(cfg['probe_token_ids']))
+                np.savez_compressed(run/'probabilities.npz',retained_token_ids=np.asarray(kept),**{k:v[kept].astype(np.float32) for k,v in prob.items()})
+                write(run/'probability_storage.json',dict(scope='Exact token marginals retained; full-vocabulary KL computed before slicing and stored per row',retained_token_ids=kept,full_vocabulary_probabilities_saved=False))
+            else:np.savez_compressed(run/'probabilities.npz',**{k:v.astype(np.float32) for k,v in prob.items()})
+            checks.update(expected_forwards=forwards==len(cases)*(1+len(operators)*(1+len(beta)))+1,all_cases=len(rows)==len(cases)*len(beta)*len(operators),finite=all(np.isfinite(r['candidate_kl']) for r in rows))
+            env=dict(python=sys.executable,python_version=platform.python_version(),numpy=np.__version__,torch=torch.__version__,transformers=transformers.__version__,sklearn=sklearn.__version__,gpu=torch.cuda.get_device_name(),peak_vram_bytes=torch.cuda.max_memory_allocated())
+            if time.perf_counter()-start>cfg['budget_seconds']:raise TimeoutError('Run exceeded wall budget')
     except Exception as exc:
         error=f'{type(exc).__name__}: {exc}';(run/'stderr.log').write_text(traceback.format_exc())
     status='PASS' if not error and checks and all(checks.values()) else 'FAIL';write(run/'environment.json',env);write(run/'inputs.json',dict(inputs=inputs))

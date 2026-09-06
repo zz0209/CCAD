@@ -1,0 +1,86 @@
+{
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "audit_opened": false,
+  "budget": "32fit-only cells total <=15min16GB; original512same-token discovery and32768mean cached rows,0newLMforward; no new training",
+  "budget_seconds": 300,
+  "checkpoint_registry": "artifacts/five_seed_training_20260906/checkpoints.json",
+  "fit_rows": 512,
+  "joint_fit": {
+    "alpha_count": 40,
+    "debias_ridge_fraction": 0.001,
+    "max_iter": 5000,
+    "minimum_alpha_fraction": 0.01,
+    "path_stop_support": 32,
+    "per_fit_budget_seconds": 120,
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "support_budget": 16,
+    "tol": 1e-07
+  },
+  "max_hook_fraction": 0.1,
+  "operators": {
+    "A": [
+      1,
+      0
+    ],
+    "B": [
+      0,
+      1
+    ],
+    "sum": [
+      1,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ]
+  },
+  "parents": [],
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "purpose": "Discovery-only map fitting for fixed broader controlled five-seed source queries",
+  "query_token": "-",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "ridge": 0.001,
+  "run_id": "F4_five_fit_q0_s4_step8192_v1_20260906",
+  "scope": "Controlled source1 final to four target trajectories early/late; fixed four source-only queries. Fit mean/discovery only before new natural corpus. Wrong-query is component-swapped shared map with per-operator oracle-source energy normalization at application.",
+  "source_atoms": [
+    8,
+    2177
+  ],
+  "source_seed": 1,
+  "support_budget": 16,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "target_checkpoint": {
+    "parent_run": "R012_same_stream_extra_seeds_v1_20260906",
+    "step": 8192,
+    "seed": 4,
+    "sae_name": "layers.5/seed4",
+    "train_sequences": 32768,
+    "packed_train_tokens": 4194304,
+    "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_extra_seeds_v1_20260906\\step_8192\\seed_4",
+    "sha256": "7a1948e833d1137ad5adfbe6beaa600d304d544a2cb4acf700bbe67cabe484be",
+    "state_hash": "e893bc064695f2fb4b6f4b717def3c5927397a7e045960eb4f095825740db727",
+    "learning_rate_used": 1.2218963831867057e-07,
+    "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+    "seconds_since_start": 300.66694159999315
+  },
+  "target_seed": 4,
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "source_checkpoint": {
+    "parent_run": "R012_same_stream_curve_v1_20260906",
+    "step": 8192,
+    "seed": 1,
+    "sae_name": "layers.5/seed1",
+    "train_sequences": 32768,
+    "packed_train_tokens": 4194304,
+    "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_8192\\seed_1",
+    "sha256": "818aa8bac0aa47aa2ba487df0366aa1049a7a2a65487cbc6f0a4e333aa5938b6",
+    "state_hash": "b44e55f78dc228f4d2e5fcb17d090ddc289fc755ffb4a30d803c425c7826fea0",
+    "learning_rate_used": 1.2218963831867057e-07,
+    "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+    "seconds_since_start": 217.7661267000003
+  },
+  "fit_only": true,
+  "wrong_query_control": "swap_components_energy_matched_per_operator"
+}

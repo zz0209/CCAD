@@ -4214,3 +4214,18 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 
 ## 2026-09-06T16:55:43Z — 五seed单元资源释放核对
 写入时间（written_at_utc）：2026-09-06T16:55:43Z。共享管理器gpu-0/cpu-heavy/disk-d-io/disk-e-io均free；tracker已同步当前状态，SHA256 dfcc9365be81714fe350abbf1ed8d4753a60908f5edebf6baeacb17b5e593136。本单元无遗留计算，automation ACTIVE。
+
+## 2026-09-06T17:18:15Z — 四组五seed功能套件冻结启动
+写入时间（written_at_utc）：2026-09-06T17:18:15Z。32cell=4query×target2/3/4/5×早256晚8192，R012source1终点不变；新权重和source-only候选完整绑定，不用旧R011同IDsource。新增显式source_checkpoint/无旧parents raw拟合/fit_only入口；先75forward旧输入回放，再32原discovery拟合全存后才取新文档。九图包含交换组成且逐operator源能量匹配wrong-query（原八图保持），主要absolute最差operator中位晚减早及固定4query4target平均，relative/NLL/各组成全报；2000整pair跨target同步重采样。固定hash每query16不同文档邻接成8pair，跨query文档不重叠，无活动/效果筛选，不足保留缺口。预算21024+75LM/30分钟16GB和100MB以内语料，不训练。设计冻结SHA 893d06a929b0a9f56d4b7ae836cc1d14f38bb693f49baaa6f189192d28f4bd24；改前四文档归档archive/research_workflow_20260906/five_seed_function_20260906T171815Z。
+
+## 2026-09-06T17:24:21Z — 四组32映射全冻结，新文档准备
+写入时间（written_at_utc）：2026-09-06T17:24:21Z。32fit-only均PASS/0LMforward，maps_freeze.json SHA 5919950f00a684d2573c5a9b871c3701dbeb8ce425207119706e3383a6c5d4c2，全部方法/源与target早晚权重固定后才采新语料；排除22份既存文档清单。原输入回放64行八字段精确。新自然请求及九图规则不变。
+
+## 2026-09-06T17:28:00Z — 新自然64文档应用启动及存储口径
+写入时间（written_at_utc）：2026-09-06T17:28:00Z。新池按冻结规则选四query各16prefix、总64不同文档，0缺额；未用活动/target筛选，32原映射全冻结后取数。新应用全词表KL仍当场逐例计算，保存的概率数组仅保留全部observed next-token与预定t token的原值，避免32cell冗余全词表概率造成数GB磁盘IO；全词表概率不另存，故未来新增词表分析需要新计算，非本次端点缺失/改口径。wrong-query控制显式拥有oracle源能量；单组成归一化后仅剩符号，和/差才检验组成方向，不作为同信息预算方法排名。32应用GPU预算21024LM，当前真实执行中。
+
+## 2026-09-06T17:40:20Z — 四query五seed功能结果完成与入稿
+写入时间（written_at_utc）：2026-09-06T17:40:20Z。运行完成时间未从独立时钟确证，不以本写入时间替代；32应用均已PASS，21,024forward/554.163秒。紧凑absoluteKL下降66.44%，13/16cell改善，固定面板条件CI排0；the/on、relative/NLL仍跨0，Raw更强、同支持ridge近同。控制能量统计{'matched': 2048, 'total': 2048, 'zero_predicted_energy': 0}。32冻结映射不变，完整source/raw一致与缺失保留。论文§5.12/两主图、计划及tracker已更新；推导§20和Paulo官方方法附录阅读已记registry，不称标准能量代数创新。下一方法/论文整合，不延长局部任务。忽略文件留本地，SHA256：{"artifacts\\five_seed_function_20260906\\FINDINGS.md": "37ff964495580a598caada56e9ef955a4f1e2785aadcd1af77dca4dca57cc7fd", "artifacts\\five_seed_function_20260906\\summary.json": "6c6fedefbcb2076fc2d807954df68f06070b20be4a6d4acfb153bfd340de149c", "artifacts\\five_seed_function_20260906\\final_checks.json": "fb808da1145dbbef29ccef30fca4ac5cb69f0639da00f67b39444616975757e0", "artifacts\\five_seed_function_20260906\\four_query_function.png": "ab92ff0814e839cad7bcde9628bf917d9f37da0ee4c1ee7b046261b81651d282", "artifacts\\five_seed_function_20260906\\compact_training_change.png": "2f0fddd9a6a4c239ad88fa1c1e8d668b20fb5acd8275b80e61f85b99690d7cc2", "EXPERIMENT_TRACKER.md": "90ba711c67e8b4dbb5f12fafbf702a669c6b1d45b7e89ac77a811fba52230457", "EXPERIMENT_PLAN.md": "89cb332f76eec486f48e3e354dac13d019da0a04bfc35ac3b6ff73ffc059e491", "PAPER_SNAPSHOT_20260906.md": "3d276782999b890262b4a2fd3f75f7ccdfb86345a9d56bd2c41b81d8ef54c9b8", "DERIVATION_PACKAGE.md": "b8d7aa63eb33b4b107600de88dc0d0544e8b8e57fe549c9716e8afa7517812cd", "REFERENCE_REGISTRY.md": "2ff2e74bd16c53d31127a2289b8240ea59855eedadaa3cd4f61c43080ae4c222"}。
+
+## 2026-09-06T17:40:51Z — 完成后资源与排版核对
+写入时间（written_at_utc）：2026-09-06T17:40:51Z。共享管理器四资源均free，无遗留计算。两主图已视觉检查；报告表格与论文标题层级已修正，不改变数值。最终文件SHA256：{'artifacts/five_seed_function_20260906/FINDINGS.md': '629de93abd15c266ad29bd2e89f4c47937870c88d9270de01c58cdec8f32d922', 'PAPER_SNAPSHOT_20260906.md': '8ab1fdd69392027e2c640b70a2bf25a0c8628a3745ce86a7fd757eed0f065c4d', 'EXPERIMENT_TRACKER.md': 'a40b0e2b13222f0333f9babcf80f92c19e0285582a3c8819f5f9f592467d3617'}。
