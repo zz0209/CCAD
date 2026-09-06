@@ -3900,3 +3900,22 @@ long source1词法集中度32候选经自然片段阅读，提出988 report/evid
 - runs/F4_material_common_quality_v1_20260906/SOURCE1_CANDIDATES.json SHA256 A59FE8EA7C4F59A1FB18947F65C25FC10573B1B481FD46E39AA4DF899199EF4B
 - runs/NATIVE_that_roles_s1a988_v1_20260906/metrics.raw.jsonl SHA256 7579BB279F7CC210CCFDF47C8B8E0E4C121CE73419C25E7DFF140FCCF88C2FF8
 - runs/NATIVE_that_roles_s1a2379_v1_20260906/metrics.raw.jsonl SHA256 A99CEA6BFBF665A9F2A257926BBB14A33441BA14D54F6A41CCFB921C6EDC1F13
+
+## 2026-09-06T08:23:00Z — long source2379跨seed功能对应启动
+写入时间（written_at_utc）：2026-09-06T08:23:00Z。执行F4_long_source2379_correspondence_v1_20260906，long source1→target2；原独立mean/discovery，source-only that位置至多512均匀取样，保持所有条件变异。原paired全池与longSAE训练ID/text hash交集已实测0。
+对照为同操作的bestatom、geometricatom、标准Lasso<=16加ridge、full ridge与raw；复用fixed_support_ridge现有RRR核，标量Lasso仅标准方法组件，不宣称solver新颖。独立mean与条件截距单列，donor差分截距抵消。先存系数再新target行为；输入为前轮6对谓词，source已暴露，属于开发非新自然确认。所有candidate对齐source decoder，包括atom，不能写target-native结论；source一atom不用于证明many-to-many必要。
+预算40alpha前缀支持>32停止、至多85LM前向、≤900秒wall；CPU/GPU当前free，按cpu-heavy→gpu-0自动租约。无train/download/audit。主问题是2379条件偏好与实际作用是否跨seed存在以及需要多少target成员，不按结果排除atom充分情形。
+
+## 2026-09-06T08:29:00Z — long source2379跨seed作用结果
+写入时间（written_at_utc）：2026-09-06T08:29:00Z。实验结束见run/status.json；wall32.31343秒、拟合准备29.79950秒，85forward、60method行，PASS与契约通过。GPU租约wrapper已释放。
+Discovery862that位置均匀512、原mean；bestatom800、geometry2562、sparse14（10正4负），full/raw。12相关操作KL中位 .767785/.858097/.120357/.029752/.001754；pooled .887084/.783884/.107902/.032088/.001608。六pair内双方向中位再取中位 .728792/.849755/.125556/.028988/.002110，全部口径保留不切换主排序。sparse对两atom12/12KL更低；偏好方向bestatom5/6，其余6/6。geometry同方向但believed标量-0.0002 vs source-0.6899，显示方向不足以说明幅度保持。
+source条件差与旧native激活逐值完全一致；noop0；保存float32概率重归一化clamp重算KL比最大误差2.1467e-7。初次分析直接log0产生NaN，仅为重算表达式缺0处理，原consumer使用clamp无NaN，修正后通过，不重跑LM。
+意义：long素材上解释线索接到了另seed的分布式功能读出，比所选atom保留更多实际作用；raw显著更强。source单atom故one-to-many，非m2m必要性/最少14/目标native或唯一语义机制。source模板已暴露，target行为拟合后才取，仍为开发；自然/新句框和source广度待扩，下一冻结关系而非旧模板参数网格。
+源码复用RRR/标准Lasso与已有hook干预，原文接口/许可见registry本条。无训练/下载/新依赖/audit。tracker/paper/registry改前逐字归档archive\research_workflow_20260906\long_source2379_20260906T082900Z，manifest源/归档hash保留。当前本地身份：
+- EXPERIMENT_TRACKER.md SHA256 919381A89321A8FB1A0E74BF5BFF401285B1247E84E414073B410C12F30A7C92
+- PAPER_SNAPSHOT_20260906.md SHA256 6A2F10EB9AEE53BFD09EC916FEF3C7020A6DE443AECA33C4B27367EA1FA495F5
+- REFERENCE_REGISTRY.md SHA256 CD720EC320BEDEF6E0199E36894483C3BE1303F3A89FB23821C3F13904B8CF00
+- runs/F4_long_source2379_correspondence_v1_20260906/coefficients.npz SHA256 5F3E788AFA5EA199A94AE260A9A180C12709427D67253BB22B6A8B96C6DBFC77
+- runs/F4_long_source2379_correspondence_v1_20260906/fit_metadata.json SHA256 BDEB869E3706CAAF0A9BA7B91456FDCF74965697153DE1F1BB2A75F77C56B4EB
+- runs/F4_long_source2379_correspondence_v1_20260906/metrics.raw.jsonl SHA256 3CE45CFE66DEF32FB92F78F6BDD549A55AB9B880A4A328BE05EF18DE1F2AE2FB
+- runs/F4_long_source2379_correspondence_v1_20260906/FINDINGS.md SHA256 228E95B03B7554B3CDFC9F6FB5FDEC9192FC59AE792DE7821E6D594ED9C3876C
