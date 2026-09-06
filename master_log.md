@@ -4133,3 +4133,22 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 - DERIVATION_PACKAGE.md SHA256 152d8b9dc89dfe98e7ccb03ad802e8c1335cce522c8d2f302b65d64e6b5b660f
 - REFERENCE_REGISTRY.md SHA256 c1fa111f3edbb1362e52efdc9e5b7415f0eca30320dff14cdb40e13942316fa2
 - artifacts\family_energy_diagnostic_20260906\FINDINGS.md SHA256 23d5eb5f2ac3d70611112b6a35bb84556b60c6cc3b995b20bd46b4db77d2736e
+
+## 2026-09-06T14:43:37Z — 操作匹配逐点Fisher开发启动
+写入时间（written_at_utc）：2026-09-06T14:43:37Z。已核对旧causal_metric_probe及fuzzy_correspondence pooled output-sketch ridge产生全局metric，F1 EOT/平均Jac问题与F4 global native失败范围。新测试沿既有非共线源decoder两维，在每个source操作点计算全词表logit JVP，F=J^T diag(p)J-(p^TJ)^T(p^TJ)，不平均J再平方。固定Euclidean、校准平均Fisher、逐点Fisher三个选择器，十旧训练cell全部保留，≤16target成员信息预算一致，留互逆pair开发对照；主KL、次absoluteKL/TV，TV非独立因果端点。配置在新Fisher计算前冻结，96JVP+8差分普通forward、20分钟16GB，不新增模板/剂量/成员扫描或确认宣称。改前五文件归档archive/research_workflow_20260906/pointwise_fisher_20260906T144337Z。
+
+## 2026-09-06T14:44:58Z — 逐点Fisher差分见证失败，局部数值诊断
+写入时间（written_at_utc）：2026-09-06T14:44:58Z。v1在8 forward/6 JVP/13.25秒后FAIL，case0 field coordinate0 的float32中心差分eps .01相对L2误差.039734>冻结.02；未做候选选择。原run/source快照/错误保留。尚不能判为JVP错误或科学失败。v2仅增加差分步长.03/.1/.3诊断并要求至少两步误差<原.02，不放宽容差，不改变科学选择准则、数据和操作；120forward预算，诊断失败仍停止受影响试验。
+
+## 2026-09-06T14:48:33Z — 逐点Fisher开发结果与局部收口
+写入时间（written_at_utc）：2026-09-06T14:48:33Z；run完成事件：2026-09-06T14:45:33.826969+00:00。v2 PASS120forward/96JVP/16.895秒，v1 FAIL8forward/6JVP/13.246秒另计保留。多步差分原2%容差四见证通过，源概率最大差2.942e-8；数值正确性不等于科学优越。十暴露cell60相关fold，逐点/欧氏/常量主要均值.166632/.176311/.173970，对欧氏6胜5负，对常量6胜10负，绝对KL/TV均值略差；旧full-only .163604仍较优。细分显示主要均值改善集中s1step2048，不能筛掉s2step256恶化或换端点。未成立稳定选择收益，不再扫描固定候选权重。下一有界方法为操作Gram加权拟合本身，同支持/信息普通ridge与未改动sparse对照，独立拟合及新输入/额外端点确认；标准GLS不当首创。论文方法/结果与推导§17已直接更新；automation持续ACTIVE，无新科学暂停或审批，GPU自动释放。
+- runs/F4_pointwise_fisher_v2_20260906/metrics.raw.jsonl SHA256 0d30fc9011f5b234e62d31fdcd30b81fa8870e2bbc40bd738d3a81c3660bcd55
+- runs/F4_pointwise_fisher_v2_20260906/folds.json SHA256 44d2622d74e4f12e40e0d2795582f42502f72303991122ad24627bc992ad124d
+- runs/F4_pointwise_fisher_v2_20260906/logit_jacobians.npz SHA256 62dfe04c052ab92072c286502ef3cc98554ed72401064123ef487c630efd47c7
+- EXPERIMENT_TRACKER.md SHA256 a649b72bba819ccf49baecd12b65bfe67db49ab0c7983aadff257d82ec8710d4
+- EXPERIMENT_PLAN.md SHA256 a8b07c03aed2133befe9a4235a75c5bb447ffc9c3f17efaba398969cdb50538e
+- PAPER_SNAPSHOT_20260906.md SHA256 e6c9d297d87d8c91d29a0e51de0d7d11cfe7d36c3620f86ae338a2006ce6f54b
+- DERIVATION_PACKAGE.md SHA256 7114593e9b2f3b24d9e2b455fda3ab240e752a0995bd343dea0fbe215975624e
+- REFERENCE_REGISTRY.md SHA256 0259b082e5b08b4f0616d696c12539a48ea61c432eaeb3f84521c64235663efd
+- artifacts/pointwise_fisher_20260906/FINDINGS.md SHA256 cea05318485cfb2f5e175c3d2f0c90603172a0e7a495951b55676c14edb14037
+- artifacts/pointwise_fisher_20260906/descriptive_comparison.json SHA256 15d693e9084054926ad3591778c43fc37e1125dc2c9f8aab3421b0f9fd618060

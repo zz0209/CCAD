@@ -1,0 +1,38 @@
+{
+  "run_id": "F4_pointwise_fisher_v2_20260906",
+  "audit_opened": false,
+  "purpose": "Test operation-matched pointwise output Fisher against Euclidean and calibration-average Fisher selection on the same exposed candidate family",
+  "parents": [
+    "F4_function_curve_s1_step256_v1_20260906",
+    "F4_function_curve_s2_step256_v1_20260906",
+    "F4_function_curve_s1_step1024_v1_20260906",
+    "F4_function_curve_s2_step1024_v1_20260906",
+    "F4_function_curve_s1_step2048_v1_20260906",
+    "F4_function_curve_s2_step2048_v1_20260906",
+    "F4_function_curve_s1_step4096_v1_20260906",
+    "F4_function_curve_s2_step4096_v1_20260906",
+    "F4_function_curve_s1_step8192_v1_20260906",
+    "F4_function_curve_s2_step8192_v1_20260906"
+  ],
+  "support_budget": 16,
+  "selectors": [
+    "euclidean_matched",
+    "fisher_constant",
+    "fisher_pointwise"
+  ],
+  "primary": "Held-pair worst-of-four median KL ratio; absolute KL and total variation secondary. Same <=16 target-member candidates, source-only calibration proxy scores, no held-pair selection.",
+  "scope": "Development reuse of ten exposed cells and six dependent reciprocal-pair folds each. Source-only Fisher at each source intervention; not pooled Jacobian squared. Constant control averages calibration Grams only. No new confirmation and no independent60replicates. TV uses the same outputs, not independent scientific validation.",
+  "budget": "96 JVP +24 finite-difference forwards;20min/16GB. Numerical step-size diagnostic only; unchanged statistical selectors/data/tolerance.",
+  "rtol": 1e-12,
+  "source_parent": "F4_function_curve_s1_step8192_v1_20260906",
+  "budget_seconds": 1200,
+  "finite_difference_epsilon": 0.01,
+  "finite_difference_relative_tolerance": 0.02,
+  "probability_match_atol": 1e-05,
+  "finite_difference_epsilons": [
+    0.03,
+    0.1,
+    0.3
+  ],
+  "finite_difference_required_passes": 2
+}
