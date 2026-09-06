@@ -1,0 +1,87 @@
+{
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "audit_opened": false,
+  "budget": "16 late cells <=10 minutes CPU/GPU16GB,0LMforward or new training/data, no audit",
+  "budget_seconds": 300,
+  "checkpoint_registry": "artifacts/five_seed_training_20260906/checkpoints.json",
+  "fit_only": true,
+  "fit_rows": 512,
+  "joint_fit": {
+    "alpha_count": 40,
+    "debias_ridge_fraction": 0.001,
+    "max_iter": 5000,
+    "minimum_alpha_fraction": 0.01,
+    "path_stop_support": 32,
+    "per_fit_budget_seconds": 120,
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "support_budget": 16,
+    "tol": 1e-07
+  },
+  "max_hook_fraction": 0.1,
+  "operators": {
+    "A": [
+      1,
+      0
+    ],
+    "B": [
+      0,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ],
+    "sum": [
+      1,
+      1
+    ]
+  },
+  "parents": [],
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "purpose": "One development comparison of output normalization for compact support selection",
+  "query_token": "\u2019",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "ridge": 0.001,
+  "run_id": "F4_operation_metric_q1_s4_v1_20260906",
+  "scope": "Existing paired discovery fits and calibration hook surrogate; no new independent behavioral confirmation",
+  "source_atoms": [
+    758,
+    116
+  ],
+  "source_checkpoint": {
+    "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+    "learning_rate_used": 1.2218963831867057e-07,
+    "packed_train_tokens": 4194304,
+    "parent_run": "R012_same_stream_curve_v1_20260906",
+    "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_8192\\seed_1",
+    "sae_name": "layers.5/seed1",
+    "seconds_since_start": 217.7661267000003,
+    "seed": 1,
+    "sha256": "818aa8bac0aa47aa2ba487df0366aa1049a7a2a65487cbc6f0a4e333aa5938b6",
+    "state_hash": "b44e55f78dc228f4d2e5fcb17d090ddc289fc755ffb4a30d803c425c7826fea0",
+    "step": 8192,
+    "train_sequences": 32768
+  },
+  "source_seed": 1,
+  "support_budget": 16,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "target_checkpoint": {
+    "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+    "learning_rate_used": 1.2218963831867057e-07,
+    "packed_train_tokens": 4194304,
+    "parent_run": "R012_same_stream_extra_seeds_v1_20260906",
+    "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_extra_seeds_v1_20260906\\step_8192\\seed_4",
+    "sae_name": "layers.5/seed4",
+    "seconds_since_start": 300.66694159999315,
+    "seed": 4,
+    "sha256": "7a1948e833d1137ad5adfbe6beaa600d304d544a2cb4acf700bbe67cabe484be",
+    "state_hash": "e893bc064695f2fb4b6f4b717def3c5927397a7e045960eb4f095825740db727",
+    "step": 8192,
+    "train_sequences": 32768
+  },
+  "target_seed": 4,
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "operation_energy_fit": true,
+  "calibration_fit_diagnostic": true
+}

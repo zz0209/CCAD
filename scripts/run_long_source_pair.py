@@ -172,8 +172,13 @@ def main():
                     atom=int(np.argmin(loss));cos=dec[target_seed]@direction[j]/np.linalg.norm(dec[target_seed],axis=1)/np.linalg.norm(direction[j]);geom=int(np.argmax(abs(cos)))
                     beta['best_atom'][atom,j]=scalar[atom];beta['geometric_atom'][geom,j]=scalar[geom];baseline_diagnostics[str(atoms[j])]=dict(best_atom=atom,geometric_atom=geom,full=fd)
             beta['shared16'],intercept,diag=fit_joint(x,y,w,cfg['joint_fit'])
+            if cfg.get('operation_energy_fit'):
+                energy_cfg=dict(cfg['joint_fit'],output_metric='decoder_energy',output_metric_diagonal=np.diag(dg).tolist())
+                beta['energy16'],energy_intercept,energy_diag=fit_joint(x,y,w,energy_cfg)
+                write(run/'energy_support_selection.json',dict(fit=energy_diag,intercept=energy_intercept.tolist(),scope='Equal A/B/sum/difference expected hook-energy surrogate, not KL or worst-operator optimum'))
             support=np.flatnonzero(np.linalg.norm(beta['shared16'],axis=1)>0)
             supports={'same_support_ridge':support}
+            if cfg.get('operation_energy_fit'):supports['energy_support_ridge']=np.flatnonzero(np.linalg.norm(beta['energy16'],axis=1)>0)
             for name,base in [('dynamic_pair_ridge','best_atom'),('geometric_pair_ridge','geometric_atom')]:
                 supports[name]=np.flatnonzero(np.linalg.norm(beta[base],axis=1)>0)
             refits={}
@@ -198,6 +203,21 @@ def main():
             write(run/'fit_metadata.json',dict(baseline_diagnostics=baseline_diagnostics,source_atoms=atoms,source_seed=source_seed,target_seed=target_seed,source_decoder_gram=dg.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance=cov.tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),joint_fit=diag,shared_intercept=intercept.tolist(),refits=refits,source_mean=means[source_seed][atoms].tolist(),target_mean=means[target_seed].tolist(),selected_rows=selected.tolist(),eligible_query_rows=len(eligible),operation='source-decoder aligned two-component donor family, common dose across operators'))
             np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=direction)
             checks['maps_saved_before_consumer']=True
+            if cfg.get('calibration_fit_diagnostic'):
+                cm=tm['outputs']['calibration'];ct=checked(ROOT/'runs'/asset['paired_corpus_run']/cm['path'],cm['sha256'])
+                ctoken=np.memmap(ct,dtype='<u2',mode='r');ce=np.flatnonzero(ctoken==query_token[0]);nc=min(cfg['fit_rows'],len(ce));cr=ce[np.linspace(0,len(ce)-1,nc,dtype=int)]
+                craw=mmap(next(r for r in rawmanifest['splits'] if r['split']=='calibration'))
+                cx=encode_rows(craw[cr]);cy=encode_rows(craw[cr],source_checkpoint_sae)[:,atoms]
+                stats={};csy=np.std(y,axis=0);op=np.asarray(list(cfg['operators'].values()));om=dg*(op.T@op/len(op))
+                assert np.allclose(om,.75*np.diag(np.diag(dg))), 'This diagnostic assumes the symmetric four-operator family'
+                for name,b in beta.items():
+                    if name=='wrong_query':continue
+                    design=np.asarray(craw[cr],dtype=float) if name=='raw' else cx
+                    residual=cy-design@b;residual-=residual.mean(0);covr=residual.T@residual/nc
+                    donor_gram=2*covr*dg
+                    stats[name]=dict(support=int(np.count_nonzero(np.linalg.norm(b,axis=1))),component_variance=np.diag(covr).tolist(),standardized_error=float(np.sum(np.diag(covr)/csy**2)),mean_iid_donor_hook_error=float(2*np.sum(covr*om)),operator_iid_donor_hook_error={key:float(np.asarray(theta)@donor_gram@np.asarray(theta)) for key,theta in cfg['operators'].items()})
+                write(run/'calibration_diagnostic.json',dict(rows=cr.tolist(),eligible_rows=len(ce),count=nc,methods=stats,scope='Existing calibration empirical iid donor covariance; centered residual removes intercept; no LM endpoint, no common dose, no document independence claim'))
+                checks['calibration_no_base_forward']=forwards==0
             print(json.dumps(dict(stage='FITS_FROZEN',support=support.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),seconds=time.perf_counter()-start)),flush=True)
         if cfg.get('fit_only'):
             checks['fit_only_no_base_forward']=forwards==0

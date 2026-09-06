@@ -38,6 +38,13 @@ def standardized_inputs(z, y, weights):
 
 def fit_joint(z, y, weights, cfg):
     started=time.perf_counter(); x,yy,w,mx,my,sx,sy,active=standardized_inputs(z,y,weights)
+    output_scale=sy
+    if cfg.get('output_metric')=='decoder_energy':
+        metric=np.asarray(cfg['output_metric_diagonal'],dtype=float)
+        if metric.shape!=(2,) or not np.all(np.isfinite(metric)&(metric>0)):raise ValueError('Positive two-component metric required')
+        output_scale=1/np.sqrt(metric)
+        yy=np.asfortranarray(yy*(sy/output_scale))
+    elif cfg.get('output_metric','standardized')!='standardized':raise ValueError('Unknown output metric')
     n=len(x); alpha_max=float(np.max(np.linalg.norm(x.T@yy/n,axis=1)))
     factors=[cfg['pilot_alpha_fraction']] if cfg['pilot'] else np.geomspace(1.,cfg['minimum_alpha_fraction'],cfg['alpha_count'])
     model=MultiTaskLasso(fit_intercept=False,warm_start=True,selection='cyclic',tol=cfg['tol'],max_iter=cfg['max_iter'])
@@ -53,7 +60,7 @@ def fit_joint(z, y, weights, cfg):
         converged=not convergence_warnings and float(model.dual_gap_)<=float(model.eps_)/n*1.01+1e-12
         row=dict(step=step,alpha_fraction=float(factor),alpha=model.alpha,support=len(support),iterations=int(model.n_iter_),
             dual_gap=float(model.dual_gap_),kernel_eps=float(model.eps_),converged=converged,seconds=elapsed,warnings=convergence_warnings)
-        beta=np.zeros((z.shape[1],2));beta[active]=coef*sy/sx[active,None]
+        beta=np.zeros((z.shape[1],2));beta[active]=coef*output_scale/sx[active,None]
         if cfg['pilot']:
             best=(0.,beta,row.copy())
         elif converged and 0<len(support)<=cfg['support_budget']:
@@ -63,8 +70,9 @@ def fit_joint(z, y, weights, cfg):
             lam=cfg['debias_ridge_fraction']*float(np.trace(gram))/len(support)
             refit=np.linalg.solve(gram+lam*np.eye(len(support)),xx.T@yy/n)
             loss=float(np.sum((yy-xx@refit)**2)/n)
-            beta[:]=0.; ids=np.flatnonzero(active)[support]; beta[ids]=refit*sy/sx[ids,None]
+            beta[:]=0.; ids=np.flatnonzero(active)[support]; beta[ids]=refit*output_scale/sx[ids,None]
             row.update(debiased_standardized_error=loss,ridge_lambda=lam,atom_ids=ids.tolist())
+            if cfg.get('output_metric')=='decoder_energy':row['debiased_objective_error']=row.pop('debiased_standardized_error')
             if best is None or loss<best[0]:best=(loss,beta.copy(),row.copy())
         path.append(row)
         if time.perf_counter()-started>cfg['per_fit_budget_seconds']:raise TimeoutError('Per-fit numerical budget exceeded')
@@ -75,6 +83,7 @@ def fit_joint(z, y, weights, cfg):
     residual=(np.asarray(y)-my)-(np.asarray(z)-mx)@beta
     return beta,intercept,dict(path=path,selected=selected,alpha_max=alpha_max,active_inputs=int(active.sum()),
         output_std=sy.tolist(),input_weighted_mean=mx.tolist(),output_weighted_mean=my.tolist(),
+        output_metric=cfg.get('output_metric','standardized'),objective_training_error=float(np.sum(w[:,None]*(residual/output_scale)**2)),
         standardized_training_error=float(np.sum(w[:,None]*(residual/sy)**2)),
         unstandardized_training_error=float(np.sum(w[:,None]*residual**2)),
         fit_seconds=time.perf_counter()-started,stop_reason=stop_reason)

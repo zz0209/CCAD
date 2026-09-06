@@ -35,5 +35,17 @@ class JointSparseTests(unittest.TestCase):
     def test_zero_output_rejected(self):
         with self.assertRaises(ValueError):standardized_inputs(self.z,np.ones_like(self.y),self.w)
 
+    def test_energy_units_and_donor_quadratic(self):
+        metric=np.array([1.,4.]);cfg=dict(self.cfg,output_metric='decoder_energy',output_metric_diagonal=metric.tolist())
+        beta,_,_=fit_joint(self.z,self.y,self.w,cfg)
+        scale=np.array([3.,.2]);changed,_,_=fit_joint(self.z,self.y*scale,self.w,dict(cfg,output_metric_diagonal=(metric/scale**2).tolist()))
+        np.testing.assert_allclose(changed/scale,beta,atol=1e-10)
+        # Independently enumerate all donor pairs and all actual vector edits.
+        residual=(self.y-self.z@beta)[:9];d=np.array([[1.,.4],[0.,1.3],[.2,.5]])
+        operators=np.array([[1.,0.],[0.,1.],[1.,1.],[1.,-1.]])
+        direct=np.mean([np.sum((d@((a-b)*theta))**2) for a in residual for b in residual for theta in operators])
+        centered=residual-residual.mean(0);cov=centered.T@centered/len(residual);g=d.T@d
+        np.testing.assert_allclose(direct,1.5*np.sum(np.diag(g)*np.diag(cov)),rtol=1e-10,atol=1e-14)
+
 
 if __name__=='__main__':unittest.main()

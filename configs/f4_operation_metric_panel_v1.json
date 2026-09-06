@@ -1,0 +1,122 @@
+{
+  "run_id": "F4_operation_metric_panel_v1_20260906",
+  "written_at_utc": "2026-09-06T18:00:42Z",
+  "cells": [
+    {
+      "query": 0,
+      "seed": 2,
+      "parent": "F4_five_fit_q0_s2_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q0_s2_v1.json",
+      "run": "F4_operation_metric_q0_s2_v1_20260906"
+    },
+    {
+      "query": 0,
+      "seed": 3,
+      "parent": "F4_five_fit_q0_s3_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q0_s3_v1.json",
+      "run": "F4_operation_metric_q0_s3_v1_20260906"
+    },
+    {
+      "query": 0,
+      "seed": 4,
+      "parent": "F4_five_fit_q0_s4_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q0_s4_v1.json",
+      "run": "F4_operation_metric_q0_s4_v1_20260906"
+    },
+    {
+      "query": 0,
+      "seed": 5,
+      "parent": "F4_five_fit_q0_s5_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q0_s5_v1.json",
+      "run": "F4_operation_metric_q0_s5_v1_20260906"
+    },
+    {
+      "query": 1,
+      "seed": 2,
+      "parent": "F4_five_fit_q1_s2_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q1_s2_v1.json",
+      "run": "F4_operation_metric_q1_s2_v1_20260906"
+    },
+    {
+      "query": 1,
+      "seed": 3,
+      "parent": "F4_five_fit_q1_s3_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q1_s3_v1.json",
+      "run": "F4_operation_metric_q1_s3_v1_20260906"
+    },
+    {
+      "query": 1,
+      "seed": 4,
+      "parent": "F4_five_fit_q1_s4_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q1_s4_v1.json",
+      "run": "F4_operation_metric_q1_s4_v1_20260906"
+    },
+    {
+      "query": 1,
+      "seed": 5,
+      "parent": "F4_five_fit_q1_s5_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q1_s5_v1.json",
+      "run": "F4_operation_metric_q1_s5_v1_20260906"
+    },
+    {
+      "query": 2,
+      "seed": 2,
+      "parent": "F4_five_fit_q2_s2_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q2_s2_v1.json",
+      "run": "F4_operation_metric_q2_s2_v1_20260906"
+    },
+    {
+      "query": 2,
+      "seed": 3,
+      "parent": "F4_five_fit_q2_s3_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q2_s3_v1.json",
+      "run": "F4_operation_metric_q2_s3_v1_20260906"
+    },
+    {
+      "query": 2,
+      "seed": 4,
+      "parent": "F4_five_fit_q2_s4_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q2_s4_v1.json",
+      "run": "F4_operation_metric_q2_s4_v1_20260906"
+    },
+    {
+      "query": 2,
+      "seed": 5,
+      "parent": "F4_five_fit_q2_s5_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q2_s5_v1.json",
+      "run": "F4_operation_metric_q2_s5_v1_20260906"
+    },
+    {
+      "query": 3,
+      "seed": 2,
+      "parent": "F4_five_fit_q3_s2_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q3_s2_v1.json",
+      "run": "F4_operation_metric_q3_s2_v1_20260906"
+    },
+    {
+      "query": 3,
+      "seed": 3,
+      "parent": "F4_five_fit_q3_s3_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q3_s3_v1.json",
+      "run": "F4_operation_metric_q3_s3_v1_20260906"
+    },
+    {
+      "query": 3,
+      "seed": 4,
+      "parent": "F4_five_fit_q3_s4_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q3_s4_v1.json",
+      "run": "F4_operation_metric_q3_s4_v1_20260906"
+    },
+    {
+      "query": 3,
+      "seed": 5,
+      "parent": "F4_five_fit_q3_s5_step8192_v1_20260906",
+      "config": "configs/f4_operation_metric_q3_s5_v1.json",
+      "run": "F4_operation_metric_q3_s5_v1_20260906"
+    }
+  ],
+  "selection": "All four prior source-only queries, all four late targets. No selection on new calibration results.",
+  "primary": "calibration empirical iid-donor mean hook squared error, descriptive only; all component standardized and per-operator errors retained",
+  "scope": "Development surrogate, no new LM endpoint and no significance claim",
+  "archive": "archive\\research_workflow_20260906\\operation_metric_20260906T180042Z"
+}
