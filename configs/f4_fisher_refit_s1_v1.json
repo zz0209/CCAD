@@ -1,0 +1,98 @@
+{
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "audit_opened": false,
+  "budget": "48 old natural inputs/24 distinct donor pairs,15 fixed support members/30 parameters, anchored ridge. 48 baseline+384JVP<=20min16GB; one seed-direction development first, no SAE training/download. Fresh application separately after coefficient freeze.",
+  "budget_seconds": 1200,
+  "checkpoint_registry": "runs/R012_same_stream_curve_v1_20260906/checkpoints.json",
+  "evaluation_inputs": "artifacts/long_source_breadth_20260906/colon_inputs.json",
+  "fit_rows": 512,
+  "joint_fit": {
+    "alpha_count": 40,
+    "debias_ridge_fraction": 0.001,
+    "max_iter": 5000,
+    "minimum_alpha_fraction": 0.01,
+    "path_stop_support": 32,
+    "per_fit_budget_seconds": 120,
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "support_budget": 16,
+    "tol": 1e-07
+  },
+  "max_hook_fraction": 0.1,
+  "operators": {
+    "clause_component": [
+      0,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ],
+    "field_component": [
+      1,
+      0
+    ],
+    "sum": [
+      1,
+      1
+    ]
+  },
+  "parents": [
+    {
+      "path": "runs/F4_breadth_colon_s3a1850_v1_20260906",
+      "sha256": "18e003ce46930754bed756471c266c2f70b3123c845e9862205ba4797fc283ed"
+    },
+    {
+      "path": "runs/F4_breadth_colon_s3a2897_v1_20260906",
+      "sha256": "52afbb8f14f29e903009a88b17019f66a9bd829bc84484c19901a76933813a81"
+    }
+  ],
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "purpose": "Source-operation-weighted fixed-support regression versus same-support Euclidean and constant-Fisher refits",
+  "query_token": ":",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "ridge": 0.001,
+  "run_id": "F4_fisher_refit_s1_v1_20260906",
+  "scope": "Fitting uses two already-exposed natural panels only,48 distinct docs/24 dependent reciprocal pairs. Source3 atoms1850/2897 and target1 long checkpoint, same supports and same calibration information for3refits. Same input/operator-independent dose. Fitting is supervised by source operation geometry, not task agnostic or MAS replication.",
+  "source_atoms": [
+    1850,
+    2897
+  ],
+  "source_seed": 3,
+  "support_budget": 16,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "target_checkpoint": {
+    "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+    "learning_rate_used": 1.2218963831867057e-07,
+    "packed_train_tokens": 4194304,
+    "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_8192\\seed_1",
+    "sae_name": "layers.5/seed1",
+    "seconds_since_start": 217.7661267000003,
+    "seed": 1,
+    "sha256": "818aa8bac0aa47aa2ba487df0366aa1049a7a2a65487cbc6f0a4e333aa5938b6",
+    "state_hash": "b44e55f78dc228f4d2e5fcb17d090ddc289fc755ffb4a30d803c425c7826fea0",
+    "step": 8192,
+    "train_sequences": 32768
+  },
+  "target_seed": 1,
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "base_map_parent": "runs/F4_function_curve_s1_step8192_v1_20260906",
+  "fit_panels": [
+    {
+      "inputs": "artifacts/colon_natural_20260906/prepared_inputs.json",
+      "source_parent": "runs/F4_colon_natural_apply_s1_v1_20260906",
+      "sha256": "3208e09740dca849d9d90b7ac5f9326fad7add5fd0b9d7908b30ea05af0bbb49"
+    },
+    {
+      "inputs": "artifacts/colon_cohort_20260906/prepared_inputs.json",
+      "source_parent": "runs/F4_colon_cohort_apply_s1_v1_20260906",
+      "sha256": "9a3065ef1cdccd1033e4b95f040f5a5369f26073a459a458f5e2c79578054876"
+    }
+  ],
+  "fit_spec": {
+    "support_method": "shared16",
+    "ridge_fraction": 0.1,
+    "objective": "Absolute source-to-candidate local KL, equal input/operator weighting; Euclidean and calibration-average Fisher controls. Fixed RMS-scaled coefficient ridge anchored to same original map; no sweep.",
+    "primary": "On future fresh natural inputs, worst of four operator medians normalized KL; absolute KL and observed-next-token NLL response error secondary. No method choice or tuning from evaluation."
+  }
+}

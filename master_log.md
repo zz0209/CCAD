@@ -4152,3 +4152,22 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 - REFERENCE_REGISTRY.md SHA256 0259b082e5b08b4f0616d696c12539a48ea61c432eaeb3f84521c64235663efd
 - artifacts/pointwise_fisher_20260906/FINDINGS.md SHA256 cea05318485cfb2f5e175c3d2f0c90603172a0e7a495951b55676c14edb14037
 - artifacts/pointwise_fisher_20260906/descriptive_comparison.json SHA256 15d693e9084054926ad3591778c43fc37e1125dc2c9f8aab3421b0f9fd618060
+
+## 2026-09-06T15:10:56Z — 操作加权拟合单元启动
+写入时间（written_at_utc）：2026-09-06T15:10:56Z。优先改变映射而非继续给旧候选换选择器。核对旧两自然panel48不同文档/24互逆pair，固定已有shared16实际15成员30参数，原discovery支持不重选；RMS列尺度下ridge锚定原图，fraction.1一次冻结、不扫参。三refit：逐点source-operationFisher、平均Fisher、Euclidean，等输入/支持/正则规则；旧八图全部保留。损失为absolute localKL，无弱sourceKL分母加权；主验证仍四operator最差median原normalizedKL，另absoluteKL和未用于拟合的观测next-tokenNLL响应误差。方法/主要终点在新语料之前冻结；旧48输入用于监督开发不能叫新确认。先运行432forward含384JVP预算20分钟16GB，无SAE训练。新自然验证另在系数冻结后准备。逐字归档archive/research_workflow_20260906/fisher_refit_20260906T151056Z。
+
+## 2026-09-06T15:14:53Z — 加权映射已冻结，新自然验证准备
+写入时间（written_at_utc）：2026-09-06T15:14:53Z；fit完成事件：2026-09-06T15:13:25.224138+00:00。拟合PASS432forward含384JVP/26.231秒；设计rank15/参数Gramrank30，各三正规方程相对残差<4e-16。拟合目标下降只算优化检查，不作科学收益。三新映射及原八映射已冻结，coeffSHA c8c5724653719e661aab9d5af66288ab7710f0c0b483c66a7d07651fb760da68。新语料前冻结主要四operator最差median原KL比值、absoluteKL、未用于拟合的自然next-tokenNLL响应误差；同LM输出的另一端点不是独立因果研究。沿用旧词法适用规则与12pair上限、完整拒选/弱例，documentID及textSHA排除所有已物化语料清单（20项）。冻结artifacts/fisher_refit_20260906/freeze.json SHA e584147caf43ea35a146835badab994725e66507cc9fe850e36e1f7baef5eb62。
+
+## 2026-09-06T15:24:27Z — 固定支持功能重拟合新自然验证完成
+写入时间（written_at_utc）：2026-09-06T15:24:27Z；新输入执行完成事件：2026-09-06T15:17:27.734921+00:00。拟合/执行均PASS，432forward含384JVP/26.231秒 +1177forward/32.675秒=1609forward；25,005,562range bytes采样2997文档、物化225、固定规则选24不同文档12pair，无新训练。source3→target1/15固定支持，主要worstoperator medianKLratio point.176313 vsEuclid.151365 vsoriginalshared.246879 vsconstant.192704；point absoluteKL .000419397不如Euclid.000396740与original.000357375。次观测词NLL .013574优于Euclid.020964、原图.014560接近，预冻结bootstrap区间跨0。全部11map/rawfull/每op/弱源保留，不换主要指标。三局部单元后结束Fisher默认队列；下一固定训练阶段的共同自然功能曲线，把素材改进与主图3对齐，不加训练网格或重新命名已暴露数据。图已生成并目视检查、论文§3.7/结果及推导§18同步，automation保持ACTIVE，租约已释放。
+- runs/F4_fisher_refit_s1_v1_20260906/coefficients.npz SHA256 c8c5724653719e661aab9d5af66288ab7710f0c0b483c66a7d07651fb760da68
+- runs/F4_fisher_refit_apply_s1_v1_20260906/metrics.raw.jsonl SHA256 6184cb06e5181bd442ff8d193d832e70b1546c263e0a35d83bd96a2d5d093280
+- artifacts/fisher_refit_20260906/summary.json SHA256 440c41a62a35c1c9c1a87075d5280e7de70e3eeedc1804d1e0504c0eabb4debd
+- artifacts/fisher_refit_20260906/FINDINGS.md SHA256 e79f46b1e502719a0274e3f7133e7c3827b812a50520de6500b390c07d01e3f7
+- artifacts/fisher_refit_20260906/refit_tradeoff.png SHA256 a82664798c46255f666f3f4fa53b45a9827379a3e81ead98ad848d4a97d2f72b
+- EXPERIMENT_TRACKER.md SHA256 88d4c9e2b988cd633624cdda5ac98e763329fcde1a5f84c5f55c88efe282b2d4
+- EXPERIMENT_PLAN.md SHA256 0147ee80a30e3b67e5e79cdf0bb4d7ba4d383e34576208c939265211a7ecd958
+- PAPER_SNAPSHOT_20260906.md SHA256 26b5794c29498d41fea2068f94510c8680eecb60ba3ca2d413fd7579a1d285b0
+- DERIVATION_PACKAGE.md SHA256 25c490caff79be5ae6578d94bb50c11464c748c249414120b10f94cfb5499f81
+- REFERENCE_REGISTRY.md SHA256 cb53b9a30c35bfdc8652c8cad10e540529e213d1307c712ef8c48773364b6668
