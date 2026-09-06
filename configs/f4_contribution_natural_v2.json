@@ -1,0 +1,284 @@
+{
+  "run_id": "F4_contribution_natural_v2_20260906",
+  "parent_run": "F4_contribution_completion_v1_20260906",
+  "grain_run": "F4_contribution_grain_v1_20260906",
+  "corpus_run": "F4_contribution_natural_corpus_v1_20260906",
+  "purpose": "Confirm whether target contribution realizability distinguishes real LM operation preservation from source-aligned readout, and coherent coarsening from random averaging",
+  "query_ids": [
+    0,
+    1,
+    8,
+    9,
+    16,
+    17,
+    24,
+    25,
+    32,
+    33,
+    40,
+    41,
+    48,
+    49,
+    56,
+    57,
+    64,
+    65,
+    72,
+    73,
+    80,
+    81,
+    88,
+    89,
+    96,
+    97,
+    104,
+    105,
+    112,
+    113,
+    120,
+    121,
+    128,
+    129,
+    136,
+    137,
+    144,
+    145,
+    152,
+    153
+  ],
+  "group_sizes": [
+    1,
+    16
+  ],
+  "random_source_sizes": [
+    16
+  ],
+  "native_methods": [
+    "native_full",
+    "native64",
+    "marginal64",
+    "matching_refit",
+    "random64"
+  ],
+  "pairs_per_query": 2,
+  "batch_size": 8,
+  "max_hook_fraction": 0.1,
+  "budget_seconds": 1800,
+  "budget": "<=30min16GBGPU/CPU and2GB outputs; <=7000sequence-forwards128tokens. One fresh512sequence corpus,0training/refit/newweights.",
+  "source_rule": "First two source-frozen anchors in each of four source-energy quartiles per seed,40total,all4targets. Up to2highest source-anchor activations in distinct single-document128token windows; same token donor in another document with minimum source-anchor activation; strictly positive source difference. Missing requests retained. Only positions8..126 with available non-EOS next token. Same chosen pairs for coherent and random source groups; no target outcomes select sources or dose.",
+  "primary": "Within each query-target-kind-size-method aggregate absolute squared hook error and KL over2pairs divided by aggregate source energy/KL; report all query rows and per-source summaries. Fine same64readout-vs-native64 gap and coherent16-vs-random16 native64 are frozen main comparisons. Source-limited cohort, not complete source-dictionary census.",
+  "predictions": [
+    "Fine native64 will preserve less of the source effect than readout using exactly its64inputs, on both hook and KL; tests a grammar distinction, not superiority under same output class.",
+    "Source-coherent16 will have lower native64 relative hook error than size-matched random16; actual KL is a separate confirmatory endpoint that may disagree.",
+    "A target contribution calibration floor is an observed-distribution bound only; its association with unseen operation error is measured, never presumed."
+  ],
+  "scope": "Fresh documents with frozen maps and source-only natural donor pairs across five controlled SAE seeds. Signed native masks, not unweighted deletion. Coherence is source contribution covariance, not a semantic concept label. Target directions share seeds and documents; no independent-direction p values.",
+  "frozen_inputs": [
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/config.resolved.json",
+      "sha256": "e21df3c140ce2f485fe5fd8c37c5eda892491a1cc05ec8d771fb70eca886dad0"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/source_queries.json",
+      "sha256": "cf5a278f1c96663f0b26486193bac0d7421bf19dd388c08a313ef28e9b2b64dd"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/config.resolved.json",
+      "sha256": "9e0987910512db5208b13e07fcd77b9c1fd2c84b4fc535127c4824e446e2faaf"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/source_groups.json",
+      "sha256": "5d8c8c75133ae832a9caf88afe1ee83ac7fe5beac2408cead2487dae06404ccd"
+    },
+    {
+      "path": "configs/f4_contribution_natural_corpus_v1.json",
+      "sha256": "c8c889d756f0ddea7a5860594f6813a6145ef7c741ad3b2a85008b9b10263f76"
+    },
+    {
+      "path": "scripts/run_contribution_natural.py",
+      "sha256": "c2bfcc48b83061776811d3cfa4c3e385f4685bc31559dcb147d559d2c0ecd4b8"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s1_t1.npz",
+      "sha256": "cfa839c32af2b359553314ccbae0e359aac9f0d8836f5c12dfa22de46a4c4465"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s1_t2.npz",
+      "sha256": "c5e6fd68688d35f58958693ef87e140f5c80060dc3d91e045b28df1c334c2cf8"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s1_t3.npz",
+      "sha256": "eb321c12abd80865557f2375bc5c03468ccbefca24a33a4d337e7ccf8085833b"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s1_t4.npz",
+      "sha256": "97a9ded310513e3b44a4d0176947402f4c39acce6bd51022a14e211e771da933"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s1_t5.npz",
+      "sha256": "9fd4a76e98a59c9074e0695ffda90fe43ce79024677d8c16768b2b34f802bf13"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s2_t1.npz",
+      "sha256": "555a739e22321fde64bfb07c2e3bf788f84b12e8868f28d10d90c4d614b6b2ec"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s2_t2.npz",
+      "sha256": "2bf2934fffc42b645692976e5a6b4cb272f5f41e59131fce0e4a0c3b1c54e614"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s2_t3.npz",
+      "sha256": "e04ba66818ced6a2aac8834aeb41a0d69adc419c73103068545d201a2e98ae49"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s2_t4.npz",
+      "sha256": "587867ad8d83b68ce2e3d2b7fa5faccdd1a087b76b329ab90aac7de138f4e1df"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s2_t5.npz",
+      "sha256": "d6d5939c13c8645b7809eeb3ac8277c07efe4f51f26a4886a512221fd1eb0cf1"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s3_t1.npz",
+      "sha256": "c15c0b7e1df7e0d9beed1218559e43e1e597d4440b8856a9f0666bd20f8b6a40"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s3_t2.npz",
+      "sha256": "d3b7e1f6154da6e64399cba3ad46c521627f354b574f5d4058d2a830133a832d"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s3_t3.npz",
+      "sha256": "6c66f8bd2d090deca8209e740f9756d2d2c3113eb76c17d985a09e6496adfd68"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s3_t4.npz",
+      "sha256": "9bc6027744a9023722c9b01f0b37a275e0ea53384c89532a5e13b98e82995dc9"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s3_t5.npz",
+      "sha256": "aa244cd49f0e639bd35ba44eb012fcce1637cf951f1408d049a05e08cf59dca0"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s4_t1.npz",
+      "sha256": "2691c15104a42ff9c1ae8a4b8f9f5c3b0fba8b80404719deeb52a61a9ed22078"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s4_t2.npz",
+      "sha256": "c5d7e55cf3cc0d2e5180f5d18e2e693739ece107bf5a410e6d1feb65d3e256dc"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s4_t3.npz",
+      "sha256": "f30e24b358dcd49f48fc1e219f1800aab4c298d4e12fc17f7d872624be8eee4e"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s4_t4.npz",
+      "sha256": "343f47a8d3ddee568c52dba072c1d9e921a6ca649326b308feddd96b33220272"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s4_t5.npz",
+      "sha256": "54984bc8da5f10e51c6ec68131895847471ea9549ffc24904ec2f0df6cdc9a37"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s5_t1.npz",
+      "sha256": "9bf30bb7c84aa6f126f68c85064d32b17bd9ffefaa6c66259a192146c723c7c6"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s5_t2.npz",
+      "sha256": "0f7b243e11027854431be7e7ee5e145744de00119101f601c7b9a33bc7fa429c"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s5_t3.npz",
+      "sha256": "42e2edd3c5a06f9045152b640b70b1ecae9d6c3fb405af22f9cdb74f75ad00d0"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s5_t4.npz",
+      "sha256": "0ec298889c6f0eec3b193ec13a7beaf4a8261621ea1c4e6756cf0a7e280918ae"
+    },
+    {
+      "path": "runs/F4_contribution_completion_v1_20260906/maps_s5_t5.npz",
+      "sha256": "b4fba0a542824401948332fd4e3148151c77714727e1eb07a7a145131eeaa0e2"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s1_t2.npz",
+      "sha256": "cc1be204e6795d73f503157a0373dd388a66995190d55a9bb48ee309c01e4565"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s1_t3.npz",
+      "sha256": "d5604c50d73bf9b56efe8fa55601766cd310dd7aa862f02b3599358d659371a0"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s1_t4.npz",
+      "sha256": "64b7bf13cb0952f25d4641c4a448dfb3433109937290b25041a352c53cea0ae3"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s1_t5.npz",
+      "sha256": "a96d1de44b529f66d52f58c301e9a51138028a1adcefbb2b59d000035af18f66"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s2_t1.npz",
+      "sha256": "2d44b1c782f7f4943731cb476bf4ae3513bd0950c4397d313a1683c661de48af"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s2_t3.npz",
+      "sha256": "6f7820df9b79dc84a24e441aaa5b00c66cf2d8e6974372815f864fc6897f74bc"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s2_t4.npz",
+      "sha256": "df3438e96aa8ef57bb3fd1ddc7e5e5121bae3fa82eca14c860343f21e91e036b"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s2_t5.npz",
+      "sha256": "baf9dc6727890f90b4e3417718992cc04ce75f1b5b565cd553af67ba5b788b84"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s3_t1.npz",
+      "sha256": "56e898fc361a869769d9ff9d11571f0fdff31084dc6be10dfea490680c9ebff6"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s3_t2.npz",
+      "sha256": "8f7d8c1a026ded63dfcb475685466e4102e4243e3ca32b3ac87c24bed6ac4634"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s3_t4.npz",
+      "sha256": "ac534e9e75d4668f345f7bff01428deaee195405fbe0ec156954a4766d9d6005"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s3_t5.npz",
+      "sha256": "230e53f574bc11a830c5536e1c544abdf1a6b4dd0b3d83ccaac13de314d2ef11"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s4_t1.npz",
+      "sha256": "6d4b10a5d3fe7068dbc8aa1c9f5abd0cd2c69572dc97fd35435519a66cad5f15"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s4_t2.npz",
+      "sha256": "d39e5008ac7d8b0d2c20dcb1429f5419fd7f0d7b09311f3ca22097b645de5717"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s4_t3.npz",
+      "sha256": "b46a19a50cf3ac84126fe30eb47ae6d12ad6f9b5c955ddf02fafb199406aa928"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s4_t5.npz",
+      "sha256": "1c2cc44eb4d2aa7cff355319a1ca2b52c4acfc0d95a1b270ceef9b7ee76d34a2"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s5_t1.npz",
+      "sha256": "57147a5d737f328c6b76672c05f5c2a307a87a6078570ac2ca6a67b89c46090b"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s5_t2.npz",
+      "sha256": "7500ad4e4a98ee82063a934fa81a087de8b2f27e783735b15f543fe9d0e94565"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s5_t3.npz",
+      "sha256": "2d3c3a05ff07c6bfc8548300a201bd05d1a24333ff93e886dd42e89054f841bb"
+    },
+    {
+      "path": "runs/F4_contribution_grain_v1_20260906/maps_s5_t4.npz",
+      "sha256": "db21a0e5b34117b8921ae3f149423e1226d5347d2bf15ba630165b7b429be4aa"
+    }
+  ],
+  "audit_opened": false,
+  "recovery": "v1 failed at the first diagnostic forward because installed GPTNeoX uses the public output-embedding API; zero source cases or edited outcomes read. Keep identical corpus/maps/queries/rules/endpoints; repair API and metadata only. One model-body diagnostic was attempted before failure although v1 completed-forward counter was zero."
+}

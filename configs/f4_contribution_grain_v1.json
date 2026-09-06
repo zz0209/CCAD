@@ -1,0 +1,19 @@
+{
+  "run_id": "F4_contribution_grain_v1_20260906",
+  "parent_run": "F4_contribution_completion_v1_20260906",
+  "purpose": "Find the intervention reproducibility frontier of source-only coherent groups and size-matched random groups",
+  "audit_opened": false,
+  "group_sizes": [
+    1,
+    4,
+    16,
+    64
+  ],
+  "target_support": 64,
+  "ridge_fraction": 0.001,
+  "selection_salt": "ccad-source-grain-20260906",
+  "group_rule": "For each of the160 frozen source anchors, rank other source-eligible atoms by positive normalized source contribution covariance. Nested top sizes1/4/16/64; controls keep anchor and fixed-hash random remaining eligible atoms. No target choice of source group.",
+  "budget_seconds": 1800,
+  "budget": "<=30minutes16GBGPU/CPU,<2GB local output; cached same five weights/codes,0newLM/training/data",
+  "scope": "Existing development calibration, all160anchors and all20cross-seed directions; native signed contribution masks, not source-decoder writeback. Coarsening compared to size-matched random source groups; no semantic claim from stability alone"
+}

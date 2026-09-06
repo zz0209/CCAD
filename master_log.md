@@ -4238,3 +4238,31 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 
 ## 2026-09-06T18:08:34Z — energy路径元数据名勘误
 写入时间（written_at_utc）：2026-09-06T18:08:34Z。已完成run的energy_support_selection selected/path.debiased_standardized_error实际记录energy目标，top-level standardized_training_error仍正确；run保留原文，报告新增说明。现行helper仅把可选energy路径该字段重命名debiased_objective_error，数值/默认路径/主要calibration结果均不变。报告最终SHA256 02aa42e738ea476f7fe657d882f545e41231bdd2933a95bc1749a998a32bd706。
+
+## 2026-09-06T18:18:37Z — 用户要求核心攻克，撤回局部续试默认队列
+写入时间（written_at_utc）：2026-09-06T18:18:37Z。用户明确指出一夜局部结果未改变核心贡献、反复push和“未闭合”不满足目标。保留全部小结果；撤下跨source census作为自动下一步。当前从source-aligned读出与target自身贡献实现的结构差异攻克核心，既有五seed、160source-only分层query/20有向seedpair、full/16/64贡献补全与同信息readout/atom，先开发矩阵再决定完整主图/解释/新自然验证，不把native unweighted成功设唯一出口。首阶段预算30min16GB2GB0LM/训练/下载。改前六文件逐字归档archive\research_workflow_20260906\core_contribution_20260906T181837Z。
+
+## 2026-09-06T18:31:06Z — 全五seed贡献实现差距与粒度检验启动
+写入时间（written_at_utc）：2026-09-06T18:31:06Z。F4_contribution_completion_v1 PASS115.975秒0LM，160source-only×4target另160self，self精确与正常方程成立。640跨seed上native全字典learned误差中位.932635、calibration全字典经验oracle下界.926635、same64支持readout.520337；readout<.1的65方向中32个oracle>.5（描述性阈值，不是预定总体统计检验）。native64优于bestatom623/640但幅度常小，不叫普遍功能恢复。直接推进source-only分层group1/4/16/64和等大小随机source组合以检验中间粒度，复用既有cache，配置f4_contribution_grain_v1，30min16GB0LM/训练/新数据。
+
+## Core contribution grain and frozen natural prediction
+
+Written at UTC: 2026-09-06T18:47:31Z
+Event completion: 2026-09-06T18:45:24Z (grain status artifact). All4480 group-direction comparisons complete in84.41s. Source-coherent full-native median relative errors size1/4/16/64=.93263/.72147/.64364/.66218; size16 random=.77950. Native64 coherent16=.65281 versus random16=.80150, matching-refit=.72722; marginal64=.65567 remains essentially competitive. Coarsening helps selectively, not monotonically; none of these aggregate errors means complete concept recovery. All source anchors/directions and random controls retained. Exact nonnegative TopK synthetic plus held-out nonlinear softmax witness complete, rho=.5 fine hook/KL=.19209/.15645, correct block~0, wrong merge remains. Source-only40anchor subset (first2/quartile/seed), two same-token cross-document pairs/query, coherent1/16 and random16 are frozen before fresh corpus; scripts/config/maps SHA in configs/f4_contribution_natural_v1.json. Primary contrasts fixed and separate hook from actual KL. No new fit/training, bounded7000 sequence-forwards/30minutes/16GB.
+
+### Natural consumer API repair
+Written at UTC: 2026-09-06T18:50:44Z
+Event: v1 failed2026-09-06T18:49:29Z at nonexistent embed_out on installed GPTNeoX. One model-body diagnostic attempted; counter0 means no completed diagnostic, not no attempted forward. No source cases selected and no edited target outcomes read. Use public get_output_embeddings API, verify against full model logits, add missing audit_opened=false/config and summary raw hash. v2 retains same frozen scientific choices and fresh corpus. v1 failure and contract errors remain unchanged.
+
+## Core contribution unit completed: theory, wide panel, frozen natural behavior, rewritten full manuscript
+
+Written at UTC: 2026-09-06T19:07:48Z
+Event completions: completion run2026-09-06T18:24:46Z; grain2026-09-06T18:45:24Z; corpus2026-09-06T18:48:17Z; naturalv2 2026-09-06T18:51:31Z (each from current artifacts). See existing exact run status records for fractional seconds. No old event time used as write time.
+
+Frozen natural confirmation completed40source queries/80same-token cross-document donor pairs/57used documents, all20directed five-seed pairs,0missing requests,5760method-condition rows. Same64-input readout/native64 relativeKL medians.248339518/.890180881,152/160query-targetcells favor readout on KL andhook,146/160NLL. Coherent16/random16 native64 relativeKL.565335578/.932555927,140/160KL and141/160hook improvements; allfive source-seed medians share both main directions. This is a conditional distribution and sharedseed/query/document panel, not160independent replicates. SourceKL differs.009977983/.006802592; coherent/random absolute candidateKL.004943133/.004049326, so no absoluteKL improvement claim. Marginal64 paired KL difference+.000134152 with79better/81worse, so no distinct solver superiority.
+
+Prior full640comparison dictionary realization gap and4480group structure, exact nonnegative TopK mask algebra and nonlinear witness combine with this new independent behavioral test into the rewritten PAPER_SNAPSHOT_20260906.md. Three source-backed main figures rendered PNG/PDF/SVG and visually inspected. Old full manuscript andallsmallpositive/negative results retained via preunit bytearchive, current supplement references and reports. Main manuscript includes complete abstract/introduction/related work/method/proofs/experiments/natural behavior/interpretation/material/discussion/conclusion, not another next-step-only note. Core claim now operation-conditioned recoverability versus realizability plus conditional partial-granularity improvement; not semantic uniqueness, complete native recovery, standard-solver originality, universalRaw win or conference acceptance.
+
+Actual compute:115.98s completion,84.41s grain,42.09s naturalv2/6755sequence-forwards/823196672peakallocatedVRAMbytes; queue/load scope explicit inrunstats. New corpus21,146,930bytes officialrange/115docs/65536tokens.0newtraining/weights/packages. v1 API failure preserved, scientific rules unchanged beforeeditedoutcomes. One focused review coveredmath/operation/data/fairness; no new large test or follow-on consumer. Source/ref/environment registry updated. Plan andtracker replacecompleted/pendinglocalqueues withthis completedunit and paper-level continuation boundary;AGENTS unchanged,existingautomation kept in place.
+
+Local artifact path/hash ledger: artifacts/core_contribution_20260906/artifact_manifest.json SHA256 170a7dfa40ae824ce443a6e779a0a7f1a75c2cccd9da62f3fdb393a215b37d59. Manuscript SHA256 490b574a4f3928a4603f489559c4daf83985c9762ac2504fcbf974edb01b2373; priorarchive manifest 0a68a0cbfd6b39be205e4cff94deb576af64540f8b0f446adfab5a0d27c9aa6a. Ignoredresearchdocs retained locally; git allowlist unchanged. Stage synchronization follows onlyafter the scientific unit is complete.
