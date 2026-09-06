@@ -4295,3 +4295,24 @@ Artifacts:artifacts/contribution_structure_20260906/artifact_manifest.json SHA25
 Written at UTC: 2026-09-06T20:04:34Z
 
 Original coherent/random16 refit reproduces previous relative metrics with max absolute difference6.66e-16. All160 matched source controls have16 unique members,share only the anchor with the coherent group,and all target native64 fits have64 members. Future generator metadata now says rank_and_shares_matching_attempted; prior run flag was an intent label and is explicitly corrected in the report,not a per-row balance certificate. Original immutable run data unchanged. Figure label spacing refined; new final artifact manifest SHA256 e816763734215bf6beddb10b6d6b0b8cc0d1e603f8c83bd55d6d89c1a47177e7, includes focused_review.json and current paper/figure hashes.
+
+
+## Calendar variable-change material unit started
+
+Written at UTC: 2026-09-06T20:26:25Z
+
+Live base-model config confirms12layers; current SAE hookgpt_neox.layers.5 is layer6/mid-depth,not the final layer. Previous final-layer inference was unsupported; original records retained and current tracker/plan corrected. Reuse existing five sameflowSAEs and model. New fixed development configf4_calendar_material_v1.json:114day/month prompts with next/previous/identity and cyclic boundaries,rawhooks2/5/8 andfiveSAEdeltas atactualhook5,<=10minGPU,<1GB,0newtraining/download. Allattempts retained; this diagnoses variable function/material before constructing FCC,not a new acceptance gate or concept finding. Pre-update tracker/plan archivearchive/research_workflow_20260906/calendar_material_20260906T202625Z/manifest.json. No GPU work started yet.
+
+
+## Calendar material result: useful month-change signal, narrow wording scope
+
+Written at UTC: 2026-09-06T20:43:31Z
+Run event: v2 completed 2026-09-06T20:34:53.739311+00:00; v1 retained FAIL after numerical equivalence tolerances failed.
+
+All114 authored prompts and228 fixed donor pairs retained. Total conditional candidate accuracy30/114, fullvocabulary7/114. Month-next plain8/12 and7/12 versusafter2/12 and0/12. This is a restricted immediate-token endpoint,not proof of absent general calendar understanding. Existinghook5 is sixth of12layers,notlastlayer. The month signal warrants reusing existingfiveSAEs; no new training.
+
+Month-next24pairs: rawlayer5slot donor-labelcorrect16/24,SAEs9–12/24. All5SAEs full decoded-difference aggregateKL/noop ratios.112420/.140750/.127562/.130471/.135063,all24perseedbetterthannoop. This is materialpreservation,not a fittedFCCrelation or newalgorithmwin. PooledtaskFVE~.9986 versuswithin-templatevalueFVE.506910–.519821; retainbothdistributions,andoutputfunctionratherthanequatingqualitywithconcepts. Mainpaper§7.4,alltemplatefigureandactualfirstmonthpairadded; publicationcontributionremainsUNRESOLVED.
+
+v1run19.8679s failed predefined numericalchecks:maxfullsuffixlogprobdifference.0012494. v2onlyLMfloat64,SAEfloat32; identicalprompts/pairs/checkpoints,baselinepredictionsallunchanged. v2run40.0750s,3781sequenceforwards,1,371,891,712bytespeakallocatedVRAM;fullsuffix<8.4e-13,padding<3e-12,publicpath0; originals preserved,nothresholdrelaxation. BothusedGPUmanagerleaseandoneCPUauxthread,0newmodel/train/download/install. Onefocusedsource/data/operationinterpretationreview,fullrawreferenceKLreplayerror0.0;notindependentrevieworpublicationevidence.
+
+Nextsameworkcard: source-onlymonthvaluecontrasts/signedcomposition,newwordingandsame-tokennoncalendarcontrols,atom/raw-lowrank/statisticalmatchingcomparison; no moreweakcoherent16consumers. All114inputsexposeddevelopment. No subagents,other task,newloop,or globalpause. Archives:archive/research_workflow_20260906/calendar_material_result_20260906T204331Z/manifest.json. Artifacts:artifacts/calendar_material_20260906/artifact_manifest.json SHA256 d4e43db89a0853db475197c1f0dfa64493c8cd6c69fced40c908583ff975dba0; runoutputsbytes{"F4_calendar_material_v1_20260906": 178502085, "F4_calendar_material_v2_20260906": 306723683}. Ignoredresearchdocumentsretainedlocally,noallowlistexpansion.

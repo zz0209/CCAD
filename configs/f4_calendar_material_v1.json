@@ -1,0 +1,43 @@
+{
+  "run_id": "F4_calendar_material_v1_20260906",
+  "purpose": "Find a behaviorally meaningful variable-change object and assess existing SAE material before FCC grouping",
+  "audit_opened": false,
+  "model_asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "sae_checkpoints_config": "configs/f4_contribution_completion_v1.json",
+  "layers": [2,5,8],
+  "sae_layer": 5,
+  "batch_size": 16,
+  "budget_seconds": 600,
+  "budget": "<=10min existingGPU,<1GBoutputs,0newmodel/training/download; short authored prompts,raw hook patching and five existing SAE donor-delta comparisons",
+  "families": [
+    {
+      "name":"weekday",
+      "values":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "donor_offsets":[1,3],
+      "templates":[
+        {"id":"day_next_plain","relation":1,"prefix":"Today is ","suffix":". Tomorrow is"},
+        {"id":"day_next_after","relation":1,"prefix":"The day after ","suffix":" is"},
+        {"id":"day_previous_plain","relation":-1,"prefix":"Today is ","suffix":". Yesterday was"},
+        {"id":"day_previous_before","relation":-1,"prefix":"The day before ","suffix":" is"},
+        {"id":"day_identity","relation":0,"prefix":"The meeting is on ","suffix":". The day of the meeting is"},
+        {"id":"day_identity_calendar","relation":0,"prefix":"The calendar says ","suffix":". Today is"}
+      ]
+    },
+    {
+      "name":"month",
+      "values":["January","February","March","April","May","June","July","August","September","October","November","December"],
+      "donor_offsets":[1,6],
+      "templates":[
+        {"id":"month_next_plain","relation":1,"prefix":"This month is ","suffix":". Next month is"},
+        {"id":"month_next_after","relation":1,"prefix":"The month after ","suffix":" is"},
+        {"id":"month_previous_plain","relation":-1,"prefix":"This month is ","suffix":". Last month was"},
+        {"id":"month_previous_before","relation":-1,"prefix":"The month before ","suffix":" is"},
+        {"id":"month_identity","relation":0,"prefix":"The event takes place in ","suffix":". The month of the event is"},
+        {"id":"month_identity_calendar","relation":0,"prefix":"The calendar says ","suffix":". This month is"}
+      ]
+    }
+  ],
+  "design": "All114 authored template-value combinations,including cyclic boundaries. No target-based source selection or hidden prompt edits. Relation offsets define expected categorical next/predecessor/identity outputs. Candidate token probabilities and complete baselines retained even if semantic task fails. This is development material assessment,not independent natural confirmation.",
+  "operations": "For each prompt,donors change only the marked variable by each fixed offset within the same template. Compare raw single-slot donor activation differences at layers2/5/8,raw full suffix patch as a counterfactual identity check,and five same-configuration SAE decoded donor differences at layer5. Reconstructed deltas preserve recipient residual,not SAE replacement. Require slot/token alignment and actual no-op/full-forward checks; do not equate source recognition or raw patch success with FCC recovery.",
+  "decision": "Use baseline relation competence,actual variable-specific intervention effect and SAE preservation jointly to choose the subsequent source-variable object; do not select individual target wins or immediately train a new suite. Any further template modifications are a new explicitly exposed development attempt,not new confirmation."
+}
