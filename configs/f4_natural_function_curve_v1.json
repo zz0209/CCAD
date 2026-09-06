@@ -1,0 +1,103 @@
+{
+  "written_at_utc": "2026-09-06T15:45:38Z",
+  "cells": [
+    {
+      "seed": 1,
+      "step": 256,
+      "parent": "F4_function_curve_s1_step256_v1_20260906",
+      "run": "F4_natural_curve_s1_step256_v1_20260906",
+      "config": "configs/f4_natural_curve_s1_step256_v1.json",
+      "reuse": false
+    },
+    {
+      "seed": 2,
+      "step": 256,
+      "parent": "F4_function_curve_s2_step256_v1_20260906",
+      "run": "F4_natural_curve_s2_step256_v1_20260906",
+      "config": "configs/f4_natural_curve_s2_step256_v1.json",
+      "reuse": false
+    },
+    {
+      "seed": 1,
+      "step": 1024,
+      "parent": "F4_function_curve_s1_step1024_v1_20260906",
+      "run": "F4_natural_curve_s1_step1024_v1_20260906",
+      "config": "configs/f4_natural_curve_s1_step1024_v1.json",
+      "reuse": false
+    },
+    {
+      "seed": 2,
+      "step": 1024,
+      "parent": "F4_function_curve_s2_step1024_v1_20260906",
+      "run": "F4_natural_curve_s2_step1024_v1_20260906",
+      "config": "configs/f4_natural_curve_s2_step1024_v1.json",
+      "reuse": false
+    },
+    {
+      "seed": 1,
+      "step": 2048,
+      "parent": "F4_function_curve_s1_step2048_v1_20260906",
+      "run": "F4_natural_curve_s1_step2048_v1_20260906",
+      "config": "configs/f4_natural_curve_s1_step2048_v1.json",
+      "reuse": false
+    },
+    {
+      "seed": 2,
+      "step": 2048,
+      "parent": "F4_function_curve_s2_step2048_v1_20260906",
+      "run": "F4_natural_curve_s2_step2048_v1_20260906",
+      "config": "configs/f4_natural_curve_s2_step2048_v1.json",
+      "reuse": false
+    },
+    {
+      "seed": 1,
+      "step": 4096,
+      "parent": "F4_function_curve_s1_step4096_v1_20260906",
+      "run": "F4_natural_curve_s1_step4096_v1_20260906",
+      "config": "configs/f4_natural_curve_s1_step4096_v1.json",
+      "reuse": false
+    },
+    {
+      "seed": 2,
+      "step": 4096,
+      "parent": "F4_function_curve_s2_step4096_v1_20260906",
+      "run": "F4_natural_curve_s2_step4096_v1_20260906",
+      "config": "configs/f4_natural_curve_s2_step4096_v1.json",
+      "reuse": false
+    },
+    {
+      "seed": 1,
+      "step": 8192,
+      "parent": "F4_function_curve_s1_step8192_v1_20260906",
+      "run": "F4_fisher_refit_apply_s1_v1_20260906",
+      "reuse": true
+    },
+    {
+      "seed": 2,
+      "step": 8192,
+      "parent": "F4_function_curve_s2_step8192_v1_20260906",
+      "run": "F4_natural_curve_s2_step8192_v1_20260906",
+      "config": "configs/f4_natural_curve_s2_step8192_v1.json",
+      "reuse": false
+    }
+  ],
+  "witness_config": "configs/f4_frozen_early_checkpoint_witness_v1.json",
+  "witness_run": "F4_frozen_early_checkpoint_witness_v1_20260906",
+  "witness_parent": "F4_function_curve_s1_step256_v1_20260906",
+  "original_methods": [
+    "raw",
+    "full",
+    "best_atom",
+    "geometric_atom",
+    "shared16",
+    "same_support_ridge",
+    "dynamic_pair_ridge",
+    "geometric_pair_ridge"
+  ],
+  "inputs_sha256": "8f8526d11d1549b53cef81d8ec0fcf92f9a03175e0c870158e1c422d2ffea7d1",
+  "hypothesis": "The improvement in function recovery along the same-stream trajectory on authored inputs also appears on common natural inputs; report every operator/method/target rather than selecting favorable checkpoints.",
+  "primary": "Per target/method maximum across four operators of median original normalized KL across all24inputs; report full per-operator curves and initial-to-final changes.",
+  "secondary": "Absolute KL and observed-next-token NLL response errors; same fixed labels as the exposed panel.",
+  "budget": "8076newforwards=75witness+9*889; reuseexistingfinals1original8methods. OneGPUleasewrapper<=15min16GB. No downloads/train/refit.",
+  "scope": "Development reuse of an exposed natural panel; quality is old fixed validation, behavior separate, onefixedsource/two dependent target trajectories."
+}

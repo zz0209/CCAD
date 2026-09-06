@@ -4174,3 +4174,19 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 
 ## 2026-09-06T15:25:27Z — 图脚本格式补记
 写入时间（written_at_utc）：2026-09-06T15:25:27Z。首次staged diff检查提示plot_fisher_refit.py末尾多余空行，原命令仍完成提交推送；现移除该空行再核对。仅格式变化，不改变图、计算或科学结论，不重复模型运行。
+
+## 2026-09-06T15:45:38Z — 自然输入固定训练轨迹启动
+写入时间（written_at_utc）：2026-09-06T15:45:38Z。核对十原始checkpoint/系数与原固定64序列质量验证，源3不变、target1/2同流5阶段；当前自然24prefix已暴露，明确开发扩展，不称新确认。冻结原八图与四操作、主要worstopmedian原KL比及absolute/NLL，完整阶段不挑结果；s1/8192已有执行直接复用。旧frozen入口只允许终点checkpoint且assert保护，新增显式use_frozen_target_checkpoint按父配置/权重SHA加载早期SAE；不是旧自然结果失效。先2旧输入75forward逐项复现，再9*889补齐，15分钟16GB，无新训练/下载/refit。改前四入口/论文/registry逐字归档archive/research_workflow_20260906/natural_curve_20260906T154538Z。
+
+## 2026-09-06T15:55:58Z — 自然训练轨迹开发结果与数学分离
+写入时间（written_at_utc）：2026-09-06T15:55:58Z；最后自然cell完成事件：2026-09-06T15:49:34.943389+00:00。十固定stage/target完整比较，9新cell8001forward/199.554秒、旧输入见证75forward/7.818秒，wrapper219.869秒；s1终点原八图复用。source/raw精确replay，所有run contract PASS，无新训练/refit/语料。sharedabsolute早晚降74.3%/58.5%，整pair-bootstrap差区间均低于0（限定两轨迹/12pair）；原主要relative曲线非单调区间跨0，Full target2恶化，Raw更强，不能事后换主指标。新的正机会为在新文档预冻结absolute主终点作早晚确认，未运行的不计成果。图与全operator已生成/主图目视可读，论文同步。附自含TopK1完全重建但仿射query残差11/135的精确分数反例和推导§19，bias/频率差/完整字典及非线性边界明列，无数学首创宣称。automation保持ACTIVE，GPU租约释放。
+- artifacts/natural_function_curve_20260906/summary.json SHA256 91df2101174d6839afbf258a2ee0b4a6bc3f7c0fcdcc763bc063dafb7f6a7bb3
+- artifacts/natural_function_curve_20260906/early_checkpoint_replay.json SHA256 5bff2b80c0222964866e4b52f7428110567410dd50ce8fa2730ee7471aa22c1c
+- artifacts/natural_function_curve_20260906/reconstruction_counterexample.json SHA256 6f699bb3e8ce18a9653e2b17583464ce85a50e9ae315d9a8644af360aa8db5e9
+- artifacts/natural_function_curve_20260906/FINDINGS.md SHA256 12a01e07f5e4fc992224bba6e96a5feb7bdeccee9e98968cf67d1084b33f2f62
+- artifacts/natural_function_curve_20260906/natural_training_curve.png SHA256 a3ac55c16bae87c0f3159b644c6a26e0ac79a86a4aa0008d4f6bb11591838bac
+- EXPERIMENT_TRACKER.md SHA256 e4354a9fdc3ab4c1a937fcdd07676d30768122777a55d3ae0622d199670f5f4d
+- EXPERIMENT_PLAN.md SHA256 8ea7162645e29dbcbd84f736c76790c67e9432525b02d08eaadf75b5d9457400
+- PAPER_SNAPSHOT_20260906.md SHA256 7191d2cd1ac7f64458836df467575db483929625b27419d00bbc3382e133c606
+- DERIVATION_PACKAGE.md SHA256 5abaeee312f87c894d0c370da3ce394c654e3c2a9726542d855f2fe4ca53cf32
+- REFERENCE_REGISTRY.md SHA256 d86f8955753a9d1355a676ba868864e759ed56dadbe236ff96b4d0de3ed874c4

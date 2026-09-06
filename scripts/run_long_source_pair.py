@@ -73,7 +73,13 @@ def main():
             atoms=cfg['source_atoms'];dg=direction@direction.T;checkpoint_sae=None
             item=next(r for r in asset['saes'] if r['seed']==target_seed)
             if pc.get('target_checkpoint'):
-                assert item['sha256']==pc['target_checkpoint']['sha256']
+                if cfg.get('use_frozen_target_checkpoint',False):
+                    assert cfg['target_checkpoint']==pc['target_checkpoint']
+                    cp=pc['target_checkpoint'];weight=checked(Path(cp['path'])/'sae.safetensors',cp['sha256'])
+                    checkpoint_sae=SparseCoder.load_from_disk(weight.parent,device='cuda:0').eval()
+                    checks['frozen_target_checkpoint_loaded']=True
+                else:
+                    assert item['sha256']==pc['target_checkpoint']['sha256']
             else:
                 weight=Path(item['path'])/'sae.safetensors';weight=weight if weight.is_absolute() else ROOT/weight
                 bound=next(r for r in load(parent/'inputs.json')['inputs'] if Path(r['path']).resolve()==weight.resolve())

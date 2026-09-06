@@ -1,0 +1,93 @@
+{
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "audit_opened": false,
+  "budget": "889forwards24prefixes8methods4ops; all9missingstages<=15min16GB, existing s1/8192 reused; no refit/training/newcorpus.",
+  "budget_seconds": 900,
+  "checkpoint_registry": "runs/R012_same_stream_curve_v1_20260906/checkpoints.json",
+  "evaluation_inputs": "artifacts/fisher_refit_20260906/prepared_inputs_with_next.json",
+  "fit_rows": 512,
+  "joint_fit": {
+    "alpha_count": 40,
+    "debias_ridge_fraction": 0.001,
+    "max_iter": 5000,
+    "minimum_alpha_fraction": 0.01,
+    "path_stop_support": 32,
+    "per_fit_budget_seconds": 120,
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "support_budget": 16,
+    "tol": 1e-07
+  },
+  "max_hook_fraction": 0.1,
+  "operators": {
+    "clause_component": [
+      0,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ],
+    "field_component": [
+      1,
+      0
+    ],
+    "sum": [
+      1,
+      1
+    ]
+  },
+  "parents": [
+    {
+      "path": "runs/F4_breadth_colon_s3a1850_v1_20260906",
+      "sha256": "18e003ce46930754bed756471c266c2f70b3123c845e9862205ba4797fc283ed"
+    },
+    {
+      "path": "runs/F4_breadth_colon_s3a2897_v1_20260906",
+      "sha256": "52afbb8f14f29e903009a88b17019f66a9bd829bc84484c19901a76933813a81"
+    }
+  ],
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "purpose": "Frozen training-checkpoint maps on common exposed natural inputs",
+  "query_token": ":",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "ridge": 0.001,
+  "run_id": "F4_natural_curve_s2_step2048_v1_20260906",
+  "scope": "All five fixed checkpoints/two targets on the same already-exposed24natural prefixes/12reciprocal document pairs, source3fixed. Development transport of authored-training hypothesis, not another fresh confirmation or independent seed/checkpoint replicates.",
+  "source_atoms": [
+    1850,
+    2897
+  ],
+  "source_seed": 3,
+  "support_budget": 16,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "target_checkpoint": {
+    "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+    "learning_rate_used": 0.0007508553274682307,
+    "packed_train_tokens": 1048576,
+    "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_2048\\seed_2",
+    "sae_name": "layers.5/seed2",
+    "seconds_since_start": 62.306258999997226,
+    "seed": 2,
+    "sha256": "4431cbcfd8a05dfb6c2ec24bd2b934cbf86cd4d4ac73a5ece9fc29b91f2e6e46",
+    "state_hash": "99e346037249e3d1e8ca29be0c52c02d35f21bc88a6ad5a8e11992a857f9fe62",
+    "step": 2048,
+    "train_sequences": 8192
+  },
+  "target_seed": 2,
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "frozen_map": {
+    "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\F4_function_curve_s2_step2048_v1_20260906",
+    "config_sha256": "433e20a5860d7f665a450e49e3adeb2430439f17caa8977d6408b59f56f79216",
+    "coefficients_sha256": "da670b397695fbd5c5f423f5f26bceb3aefbf3886f2d310c9874b4d7371712e8"
+  },
+  "use_frozen_target_checkpoint": true,
+  "evaluation_inputs_sha256": "8f8526d11d1549b53cef81d8ec0fcf92f9a03175e0c870158e1c422d2ffea7d1",
+  "confirmation_inputs": [
+    {
+      "path": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\fisher_refit_20260906\\prepared_inputs_with_next.json",
+      "sha256": "8f8526d11d1549b53cef81d8ec0fcf92f9a03175e0c870158e1c422d2ffea7d1"
+    }
+  ],
+  "evidence_level": "natural_input_development_training_trajectory"
+}
