@@ -1,4 +1,4 @@
-"""Two-seed fixed-stream training checkpoints using the unchanged Sparsify trainer."""
+"""Fixed-stream training checkpoints using the unchanged Sparsify trainer."""
 import argparse,json,os,sys,time,traceback,platform
 from pathlib import Path
 from datetime import datetime,timezone
@@ -12,7 +12,7 @@ def main():
  for rel in ['scripts/run_training_checkpoint_curve.py','scripts/run_r006b_topk_capacity.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/checkpointing.py','src/ccad/artifacts.py','src/ccad/activation_contract.py','src/ccad/sae_quality.py']:
   p=ROOT/rel;q=run/'source_snapshot'/rel;q.parent.mkdir(parents=True,exist_ok=True);q.write_bytes(p.read_bytes());code.append(dict(path=rel,sha256=sha256(p),bytes=p.stat().st_size,snapshot_path='source_snapshot/'+rel))
  write(run/'code_hashes.json',dict(files=code,aggregate_sha256=aggregate(code),snapshot_root='source_snapshot'))
- write(run/'manifest.json',dict(schema_version='training.curve.v1',run_id=cfg['run_id'],run_parent='R011-NR1',purpose=cfg['purpose'],milestone='C3',evidence_level='two_seed_same_stream_learning_curve_development',started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),code_snapshot_hash=aggregate(code),source_snapshot_required=True,audit_opened=False,candidate_family_frozen=True,mean_constants_source_split='fixed validation mean for quality only',threshold_source_split='checkpoint steps fixed before training',statistics_unit='two init seeds and fixed validation sequences, checkpoints dependent',device=cfg['device'],seeds=cfg['init_seeds'],resource_lease='gpu-0 resource_manager.run',resource_lease_reason='GPU training/inference; four host threads; bounded checkpoint IO'))
+ write(run/'manifest.json',dict(schema_version='training.curve.v1',run_id=cfg['run_id'],run_parent='R011-NR1',purpose=cfg['purpose'],milestone='C3',evidence_level=cfg.get('evidence_level','same_stream_learning_curve_development'),started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),code_snapshot_hash=aggregate(code),source_snapshot_required=True,audit_opened=False,candidate_family_frozen=True,mean_constants_source_split='fixed validation mean for quality only',threshold_source_split='checkpoint steps fixed before training',statistics_unit='init seeds and fixed validation sequences, checkpoints dependent',device=cfg['device'],seeds=cfg['init_seeds'],resource_lease='gpu-0 resource_manager.run',resource_lease_reason='GPU training/inference; four host threads; bounded checkpoint IO'))
  for name in ['stdout.log','stderr.log','metrics.raw.jsonl']:(run/name).touch()
  write(run/'status.json',dict(status='RUNNING'))
  def checked(path,digest=None):
