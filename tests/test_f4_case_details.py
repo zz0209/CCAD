@@ -58,6 +58,40 @@ class CaseDetailsTests(unittest.TestCase):
         self.assertEqual((r['total'],r['positive_sum'],r['negative_sum'],r['nonzero_atoms']),(-.5,1.5,-2.,2))
         self.assertEqual([v['atom'] for v in r['terms']],[5,2])
 
+    def test_rejected_scope_retains_unchanged_pairs_and_labels(self):
+        class ClassTokenizer:
+            def decode(self, ids):return 'word'
+        positive=dict(condition='positive',sequence=0,document_ids=['a'],intervention_positions=[0],
+                      donor_sequence=1,donor_positions=[0],donor_document_ids=['b'],donor_status='SELECTED_SOURCE_ONLY')
+        negative=dict(condition='negative',sequence=1,document_ids=['b'],intervention_positions=[0],
+                      donor_sequence=0,donor_positions=[0],donor_document_ids=['a'],donor_status='SELECTED_SOURCE_ONLY')
+        choices=[dict(source_seed=1,source_atom=2,condition=e['condition'],original_entry=e.copy(),entry=e.copy(),
+                      source_scope={'supported':True,'selected':False},matching_status='UNCHANGED_REUSABLE')
+                 for e in (positive,negative)]
+        payload=dict(donor_override=True,evaluate_changed_only=True,choices=choices)
+        units=[dict(source_seed=1,source_atom=2,sequences=[positive,negative])]
+        kwargs=dict(tokenizer=ClassTokenizer(),tokens=np.array([[1],[1]]))
+        self.assertEqual(select_cases(units,payload,**kwargs)[0]['sequences'],[])
+        self.assertEqual(select_cases(units,payload,source_selection_scope='rejected',**kwargs)[0]['sequences'],[positive,negative])
+        self.assertTrue(all(c['source_scope']['selected'] is False for c in choices))
+        choices[1]['source_scope']['selected']=True
+        self.assertEqual(select_cases(units,payload,source_selection_scope='rejected',**kwargs)[0]['sequences'],[positive])
+        with self.assertRaises(ValueError):
+            select_cases(units,payload,selected_only=True,source_selection_scope='rejected',**kwargs)
+        choices[0]['entry']['donor_document_ids']=['changed']
+        with self.assertRaises(ValueError):select_cases(units,payload,source_selection_scope='rejected',**kwargs)
+
+    def test_rejected_scope_keeps_missing_and_nonoverride_checks(self):
+        entry=dict(condition='positive',sequence=3)
+        unit=dict(source_seed=1,source_atom=2,sequences=[entry])
+        choices=[dict(source_seed=1,source_atom=2,condition=c,entry=entry if c=='positive' else None,
+                      source_scope={'supported':True,'selected':False}) for c in ('positive','negative')]
+        payload={'choices':choices}
+        self.assertEqual(select_cases([unit],payload,source_selection_scope='rejected')[0]['sequences'],[entry])
+        with self.assertRaises(ValueError):select_cases([unit],payload,source_selection_scope='unknown')
+        choices[0]['source_scope']['supported']=False
+        with self.assertRaises(ValueError):select_cases([unit],payload,source_selection_scope='rejected')
+
     def test_selection_keeps_missing_and_rejects_changed_entry(self):
         entry=dict(condition='positive',sequence=3)
         unit=dict(source_seed=1,source_atom=2,sequences=[entry])

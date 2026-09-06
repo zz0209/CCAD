@@ -759,13 +759,19 @@ def main():
             from transformers import AutoTokenizer
             class_tokenizer=AutoTokenizer.from_pretrained(cfg['model_local_dir'],local_files_only=True)
             write(run/'all_source_candidates.json',json.loads((run/'selection.json').read_text()))
-            selections=select_cases(selections,case_payload,tokenizer=class_tokenizer,tokens=tokens,selected_only=cfg['case_replay'].get('selected_only',False))
+            selections=select_cases(selections,case_payload,tokenizer=class_tokenizer,tokens=tokens,
+                                    selected_only=cfg['case_replay'].get('selected_only',False),
+                                    source_selection_scope=cfg['case_replay'].get('source_selection_scope'))
             if cfg.get('target_seed_subset'):
                 subset=cfg['target_seed_subset']
                 if len(set(subset))!=len(subset) or not set(subset).issubset(cfg['source_seeds']):raise ValueError('Invalid target subset')
                 selections=[dict(u,targets=[t for t in u['targets'] if t in subset]) for u in selections]
                 if any(not u['targets'] for u in selections):raise ValueError('Empty target subset')
-            write(run/'selection.json',{'rule':case_payload['rule'],'queries':selections,'scope':'Frozen source-selected matched cases, including previously unchanged pairs' if cfg['case_replay'].get('selected_only') else 'Only changed class-matched cases; unchanged pairs reused externally, unavailable pairs retained in case_selection.json'})
+            selection_scope=('Frozen supported but source-rejected cases, including unchanged pairs; original selected=false labels preserved'
+                             if cfg['case_replay'].get('source_selection_scope')=='rejected' else
+                             'Frozen source-selected matched cases, including previously unchanged pairs' if cfg['case_replay'].get('selected_only') else
+                             'Only changed class-matched cases; unchanged pairs reused externally, unavailable pairs retained in case_selection.json')
+            write(run/'selection.json',{'rule':case_payload['rule'],'queries':selections,'scope':selection_scope})
         if cfg.get('source_scope'):
             from inspect_f4_atom_participation import participation
             from summarize_f4_source_scope import selected
@@ -826,9 +832,19 @@ def main():
             if cfg['ranks']!=[1] or not cfg.get('donor_difference'):
                 raise ValueError('Case export requires rank1 donor differences')
             if not case_payload.get('donor_override'):
-                selections=select_cases(selections,case_payload)
+                selections=select_cases(selections,case_payload,
+                                        source_selection_scope=cfg['case_replay'].get('source_selection_scope'))
             write(run/'case_selection.json',case_payload)
             write(run/'replay_selection.json',{'queries':selections})
+        if cfg.get('expected_evaluated_cases') is not None:
+            if sum(len(u['sequences']) for u in selections)!=cfg['expected_evaluated_cases']:
+                raise ValueError('Frozen case count mismatch before model loading')
+        if cfg.get('frozen_rejected_requests') is not None:
+            actual=[dict(source_seed=u['source_seed'],source_atom=u['source_atom'],
+                         **{k:e[k] for k in ('condition','sequence','donor_sequence')})
+                    for u in selections for e in u['sequences']]
+            if actual!=cfg['frozen_rejected_requests']:
+                raise ValueError('Frozen rejected request identities changed before model loading')
         os.environ.update(HF_HUB_OFFLINE="1",TRANSFORMERS_OFFLINE="1",CUBLAS_WORKSPACE_CONFIG=cfg["cublas_workspace_config"])
         import torch
         import transformers

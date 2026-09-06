@@ -1,0 +1,98 @@
+{
+  "additional_exclude_selections": [
+    {
+      "path": "runs/F4_source_reference_causal_dev_v7_alltargets_20260904/selection.json",
+      "sha256": "be3e99750071e0407b0e4c16c9ae579613c69a28254424833b25ee91d9a0c944"
+    },
+    {
+      "path": "runs/F4_source_reference_causal_dev_v8_newdocs_20260904/selection.json",
+      "sha256": "ed8a800e50544b1bf5be103205309ca2c527bb336d99f775f5b50d03674f2f1f"
+    }
+  ],
+  "asset_config": "configs/r011f1_euclidean_causal_gate_v1.json",
+  "asset_manifest_sha256": "87e383d3c2ab1f23a96db94ef3d57f49fb4082dce6efb887322e137859198d54",
+  "budget": "2 cases x (3 source/base/noop + 4 targets x 3 methods) = 30 real forwards. Combined13cases195forwards, numerical<=120s/load<=90s/preparation<=60s estimate; no new fit/data/training/audit.",
+  "bulk_asset_dir": "D:/CCAD_Storage/paired_assets/F4_probability_confirmation_codes_v1_20260905",
+  "case_replay": {
+    "export_details": false,
+    "path": "runs/F4_probability_confirmation_source_expanded_v1_20260905/matching.json",
+    "selected_only": false,
+    "sha256": "ae4c76dd2714bb22a9bb8c7be4f2854974cc2bfa2b2af6c6f99fed4e7ada2776",
+    "source_selection_scope": "rejected"
+  },
+  "centered_logit_endpoint": true,
+  "documents_per_condition": 4,
+  "donor_difference": true,
+  "evidence_level": "exposed_document_source_rule_boundary_development",
+  "exclude_selection_path": "runs/F4_source_reference_causal_dev_v2_local_20260904/selection.json",
+  "exclude_selection_sha256": "ed577431a9da30892a67610288664a99ff2b34188f7ecb502eea9d248783bcc8",
+  "expected_evaluated_cases": 2,
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "frozen_corpus_config_sha256": "bfc1809d352f33c778a5a3163a7e57b9eb08975a1f8a651ac906d4b1717051af",
+  "frozen_rejected_requests": [
+    {
+      "condition": "positive",
+      "donor_sequence": 487,
+      "sequence": 351,
+      "source_atom": 2298,
+      "source_seed": 1
+    },
+    {
+      "condition": "positive",
+      "donor_sequence": 56,
+      "sequence": 486,
+      "source_atom": 1441,
+      "source_seed": 1
+    }
+  ],
+  "include_source_mean_only": false,
+  "intervention": "Unchanged rank1 signed donor difference, source basis and common source cap0.1 for FCC/dynamic atom/raw. No norm matching to source beyond original shared scale.",
+  "local_content_positions": 4,
+  "maximum_source_hook_fraction": 0.1,
+  "methods": [
+    "target",
+    "single_atom_dynamic",
+    "raw"
+  ],
+  "paired_corpus_run": "F4_probability_confirmation_corpus_v1_20260905",
+  "probability_endpoints": {
+    "kl": "sum KL(P_source||P_candidate) / sum KL(P_source||P_baseline); float64 log-softmax; denominator <=1e-12*positions yields null",
+    "nll": "observed next-token NLL intervention-minus-baseline vector; report signed means, RMS and normalized squared vector error; source squared energy <=1e-12*positions yields null",
+    "primary": "intervention_positions with valid within-document observed next token",
+    "scope": "joint multi-position interventions, not independent position attribution; secondary suffix may condition on preceding packed documents but no later document positions scored",
+    "secondary": "union of same-document positions downstream from an intervention, excludes EOS predictions and final unavailable token",
+    "version": "v1"
+  },
+  "query_hash_offset": 1,
+  "ranks": [
+    1
+  ],
+  "raw_hook_asset_dir": "D:/CCAD_Storage/paired_assets/F4_probability_confirmation_codes_v1_20260905",
+  "raw_hook_manifest_sha256": "32bb317267a9c35cd907e8f034b8abba59a88f76032ae1cff1f643f5dc309ac4",
+  "resource_lease": "cpu-heavy -> gpu-0 resource_manager.run",
+  "resource_lease_reason": "Bounded inference over existing assets, no whole-disk lease",
+  "run_id": "F4_rejected_probability_expanded_v1_20260906",
+  "saved_atom_families": [
+    {
+      "config_path": "runs/F4_query_expansion_fits_v1_20260905/config.resolved.json",
+      "config_sha256": "0307d03d5eb0bbc54eed3733ac94b0935ec94708847266d939a43e7c0d46b39b",
+      "fit_path": "runs/F4_query_expansion_fits_v1_20260905/single_atom_dynamic.json",
+      "fit_sha256": "6a37adbdc004673185ca14e59515e5ad4b88a580cc5d9f615b00cd83e51c7a76",
+      "method": "single_atom_dynamic"
+    }
+  ],
+  "scope_limit": "Existing120documents exposed development; source-rejected scope adds previously missing outcomes. Concentration and weak source effects separated. Absolute probability errors retained; frozen denominator rules yield null when weak. Not global one-to-one or new independent confirmation.",
+  "selection": "All supported matched source-rejected requests from the fixed matching file, including unchanged donors; preserve selected=false. No new query, donor, fit or target-outcome selection.",
+  "sequence_records_path": "runs/F4_probability_confirmation_corpus_v1_20260905/artifacts/sequence_records.json",
+  "sequence_records_sha256": "993468ab88a7ae33390701401a14c0470c07bbc397b2151281403bb1c512b455",
+  "source_scope": {
+    "path": "configs/f4_source_applicability_dev_v1.json",
+    "sha256": "fb4c9237cb78cf2dbfbe2409645dd97d8c380e516a89e1a63444163ac1118b74"
+  },
+  "surface_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/hook_transport_surface.jsonl",
+  "surface_sha256": "334f4d8523035571b6ea636f0d621a4ca13382edb37d6873a3f9884f7ee5c04f",
+  "targets_per_query": 4,
+  "token_manifest_path": "runs/F4_probability_confirmation_corpus_v1_20260905/artifacts/token_manifest.json",
+  "token_manifest_sha256": "5c47cf6f56240c1259d922ecd9fdaedb2b28c90e95ceac125e42758be5ff7682"
+}

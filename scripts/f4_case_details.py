@@ -24,7 +24,12 @@ def ordered_class_donor(recipient, positions, donors, coordinates, classes):
     return (max(candidates,key=lambda x:x[:2]) if candidates else None),tested
 
 
-def select_cases(selections, payload, *, tokenizer=None, tokens=None, selected_only=False):
+def select_cases(selections, payload, *, tokenizer=None, tokens=None, selected_only=False,
+                 source_selection_scope=None):
+    if source_selection_scope not in (None, 'rejected'):
+        raise ValueError('Unknown source selection scope')
+    if selected_only and source_selection_scope is not None:
+        raise ValueError('Conflicting source selection scopes')
     choices={(r['source_seed'],r['source_atom'],r['condition']):r for r in payload['choices']}
     if len(choices)!=len(payload['choices']): raise ValueError('Duplicate case choice')
     result=[];seen=set()
@@ -56,9 +61,11 @@ def select_cases(selections, payload, *, tokenizer=None, tokens=None, selected_o
                 if not selected_only and payload.get('evaluate_changed_only') and choice['matching_status']=='UNCHANGED_REUSABLE':
                     if any(entry[k]!=original[k] for k in ('donor_sequence','donor_positions','donor_document_ids')):
                         raise ValueError('Unchanged case has changed donor')
-                    continue
+                    if source_selection_scope is None:continue
             elif sum(e==entry for e in unit['sequences'])!=1:
                 raise ValueError('Frozen case entry no longer matches source-only selection')
+            if source_selection_scope=='rejected' and choice['source_scope']['selected']:
+                continue
             chosen.append(entry)
         result.append(dict(unit,sequences=chosen))
     if seen!=set(choices): raise ValueError('Case query panel mismatch')
