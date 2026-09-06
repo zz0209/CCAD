@@ -1,0 +1,78 @@
+{
+  "run_id": "F4_colon_cohort_fit_s5_v1_20260906",
+  "purpose": "Fixed-total-budget shared versus per-output support selection",
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "fit_rows": 512,
+  "ridge": 0.001,
+  "support_budget": 16,
+  "max_hook_fraction": 0.1,
+  "audit_opened": false,
+  "budget_seconds": 600,
+  "budget": "541LM/480rows pertarget;twofits plus4freshconsumers<=20min16GB no training/weights download/audit/fullcache",
+  "scope": "Fit missing four-target cohort maps/strong controls on identical original mean/discovery. Old authored inputs only; no new natural claims.",
+  "evaluation_inputs": "artifacts/long_source_breadth_20260906/colon_inputs.json",
+  "target_seed": 5,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "source_seed": 3,
+  "query_token": ":",
+  "source_atoms": [
+    1850,
+    2897
+  ],
+  "operators": {
+    "field_component": [
+      1,
+      0
+    ],
+    "clause_component": [
+      0,
+      1
+    ],
+    "sum": [
+      1,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ]
+  },
+  "parents": [
+    {
+      "path": "runs/F4_breadth_colon_s3a1850_v1_20260906",
+      "sha256": "18e003ce46930754bed756471c266c2f70b3123c845e9862205ba4797fc283ed"
+    },
+    {
+      "path": "runs/F4_breadth_colon_s3a2897_v1_20260906",
+      "sha256": "52afbb8f14f29e903009a88b17019f66a9bd829bc84484c19901a76933813a81"
+    }
+  ],
+  "joint_fit": {
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "minimum_alpha_fraction": 0.01,
+    "alpha_count": 40,
+    "tol": 1e-07,
+    "max_iter": 5000,
+    "support_budget": 16,
+    "path_stop_support": 32,
+    "debias_ridge_fraction": 0.001,
+    "per_fit_budget_seconds": 120
+  },
+  "separate_support_fit": {
+    "minimum_alpha_fraction": 0.01,
+    "alpha_count": 40,
+    "tol": 1e-07,
+    "max_iter": 5000,
+    "path_stop_support": 32,
+    "debias_ridge_fraction": 0.001,
+    "per_fit_budget_seconds": 120,
+    "per_output_budget": 8
+  },
+  "evidence_level": "exposed_panels_support_selection_development",
+  "evaluation_inputs_sha256": "8ba977f6bd6ac11c1a89d64b43cbe0baecbeb8aa72fa30836f6df26fe5c42e13",
+  "recompute_target_baselines": true
+}

@@ -4060,3 +4060,23 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 - artifacts\colon_support_tradeoff_20260906\inputs.json SHA256 3f80f88a9d404fd086f95b98eca58d27f35dd91462356625d16f39de19c182d9
 - artifacts\colon_support_tradeoff_20260906\support_tradeoff.png SHA256 57d9515f3779df75045545013d88c1e3e127307248cafb9c9637c8acbe619133
 - artifacts\colon_support_tradeoff_20260906\support_tradeoff.pdf SHA256 72f8035b619ba4418125ca33bc5d5e38a7f7f24f40df00c38b518d3c06351b27
+
+## 2026-09-06T12:40:22Z — 四target自然组成确认启动
+写入时间（written_at_utc）：2026-09-06T12:40:22Z。核对target4旧source/query/fitrows/ridge/joint/ops/dose相同，为所有target匹配最近逐组成强对照，补target4/5各10方法映射；同原mean/discovery与已知source3双组成，旧12构造仅拟合见证。随后冻结1/2/4/5全部10方法，另采1024seq新自然文档；C2为已开发主要正信号，其他三操作/弱源全保留。预算20分钟16GB，无训练/新增权重/audit。target4_config_check SHA256 5613fb39dee4ba0c136eee0d5e5b68753600d1cba83c27ec377f9820e778096b；改前完整入口归档archive/research_workflow_20260906/colon_cohort_20260906T124022Z。
+
+## 2026-09-06T12:51:23Z — 四target新自然确认完成
+写入时间（written_at_utc）：2026-09-06T12:51:23Z。四应用4324LM/3840行/125.666562秒；旧数据准备1082LM/36.847467秒，新语料221文档/1024seq取12对24不同文档、24,937,606B。C2四target对dynamic中位/绝对中位均低，Full三方向和Raw全部更强。预定文档对bootstrap先平均target与互逆方向，shared-minus-dynamic -.00211068区间[-.00366064,-.00099101]；独立稀疏/union负，Full跨零、Raw正；不当seed总体显著。source说明10/12、7/12，clause操作名不当语义机制。无新拟合调参于新数据；全部coeff/source/raw逐值及Gram/noop契约PASS。停止冒号局部续试，下一另一source自然输入/输出预测。图已目检，论文/tracker/registry更新。事件时间与当前本地身份：
+- F4_colon_cohort_apply_s1_v1_20260906 event 2026-09-06T12:45:21.792293+00:00; raw SHA256 89451c274fc374e63f8951b2b46d450349cb87c9f32c447691f9306d12326faa
+- F4_colon_cohort_apply_s2_v1_20260906 event 2026-09-06T12:45:52.331201+00:00; raw SHA256 20855552e67f2a1be4ae0fd519e60523394f8a63933414a739125170eb79241b
+- F4_colon_cohort_apply_s4_v1_20260906 event 2026-09-06T12:46:30.301210+00:00; raw SHA256 a84c685b41b7af60740f42630114e855653ec835b3528845ae6ed4004ccff187
+- F4_colon_cohort_apply_s5_v1_20260906 event 2026-09-06T12:47:01.133575+00:00; raw SHA256 74cfddacd5a10d740df0dbfc49b49a681fff6cb372dcfae65511f995bdc2977c
+- EXPERIMENT_TRACKER.md SHA256 34cfb03dea49b489a23e50de84055cd4706729bf80f0b82ff927dfc3d518f4d9
+- PAPER_SNAPSHOT_20260906.md SHA256 2bd518424f5d305e0f939a4588d3f0329d11f9651f33ee07c94124f81d075c4d
+- REFERENCE_REGISTRY.md SHA256 14e94bcdd2282b3c93a84d273e27ee570c54e94c03977ae18fa22f795745edd9
+- artifacts\colon_cohort_20260906\freeze.json SHA256 0238a012c1aa8890d9ce315454466538b43ae9989640324d4b5280d4a4c6fc68
+- artifacts\colon_cohort_20260906\selection.json SHA256 48d8c23d1804902bb5fca589f5d0a7fc9a3aa5e94ceae4be6ed9482524a5e91d
+- artifacts\colon_cohort_20260906\prepared_inputs.json SHA256 9a3065ef1cdccd1033e4b95f040f5a5369f26073a459a458f5e2c79578054876
+- artifacts\colon_cohort_20260906\FINDINGS.md SHA256 83f0abe2e87ad59fcae1d2b3c288b6f7510f771277f30f7bc0cd6008357a5873
+- artifacts\colon_cohort_20260906\summary.json SHA256 ecfea550fd0f8cfba032f19956ebf6de24fec7fc7f373ae4cce111bc5efb7a9e
+- artifacts\colon_cohort_20260906\cohort_confirmation.png SHA256 df899c2937076f39c4f2d6a2ba18f5ed7afcf912463479b1b37823c2d664062f
+- artifacts\colon_cohort_20260906\cohort_confirmation.pdf SHA256 35fbdd13c25d7f9d3bc146c6a581dd91be9b0d36327c7870fb6ac9470d604883

@@ -1,0 +1,90 @@
+{
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "audit_opened": false,
+  "budget": "1081LM960rows pertarget;4targets<=20min16GB;zero fits/train/newweights",
+  "budget_seconds": 600,
+  "evaluation_inputs": "artifacts/colon_cohort_20260906/prepared_inputs.json",
+  "evaluation_inputs_sha256": "9a3065ef1cdccd1033e4b95f040f5a5369f26073a459a458f5e2c79578054876",
+  "evidence_level": "fresh_document_frozen_map_application",
+  "fit_rows": 512,
+  "joint_fit": {
+    "alpha_count": 40,
+    "debias_ridge_fraction": 0.001,
+    "max_iter": 5000,
+    "minimum_alpha_fraction": 0.01,
+    "path_stop_support": 32,
+    "per_fit_budget_seconds": 120,
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "support_budget": 16,
+    "tol": 1e-07
+  },
+  "max_hook_fraction": 0.1,
+  "operators": {
+    "clause_component": [
+      0,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ],
+    "field_component": [
+      1,
+      0
+    ],
+    "sum": [
+      1,
+      1
+    ]
+  },
+  "parents": [
+    {
+      "path": "runs/F4_breadth_colon_s3a1850_v1_20260906",
+      "sha256": "18e003ce46930754bed756471c266c2f70b3123c845e9862205ba4797fc283ed"
+    },
+    {
+      "path": "runs/F4_breadth_colon_s3a2897_v1_20260906",
+      "sha256": "52afbb8f14f29e903009a88b17019f66a9bd829bc84484c19901a76933813a81"
+    }
+  ],
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "purpose": "Frozen four-target cohort natural component confirmation",
+  "query_token": ":",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "ridge": 0.001,
+  "run_id": "F4_colon_cohort_apply_s4_v1_20260906",
+  "scope": "All24freshprefixes/12documentpairs, four dependent targets10frozen methods4operations; component2primary, all other ops and weakcases retained; no fit/tune/audit.",
+  "source_atoms": [
+    1850,
+    2897
+  ],
+  "source_seed": 3,
+  "support_budget": 16,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "target_seed": 4,
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "frozen_map": {
+    "path": "runs/F4_colon_cohort_fit_s4_v1_20260906",
+    "config_sha256": "7fb6fefed14a81e27b6e8d59154ec49ded2fd23491622915082ba30bb33780b6",
+    "coefficients_sha256": "61d0906f0f9d6e8fa4ad5bc3f0e430f82581b393212eb1ebadffc9e0ef4989a1"
+  },
+  "confirmation_inputs": [
+    {
+      "path": "artifacts\\colon_cohort_20260906\\freeze.json",
+      "sha256": "0238a012c1aa8890d9ce315454466538b43ae9989640324d4b5280d4a4c6fc68"
+    },
+    {
+      "path": "artifacts\\colon_cohort_20260906\\selection.json",
+      "sha256": "48d8c23d1804902bb5fca589f5d0a7fc9a3aa5e94ceae4be6ed9482524a5e91d"
+    },
+    {
+      "path": "configs/f4_colon_cohort_corpus_v1.json",
+      "sha256": "34acc2e90c185c0c375ff996abfaf0dc7617943e069f27b37f99a0a9e9d765cc"
+    },
+    {
+      "path": "runs/F4_colon_cohort_corpus_v1_20260906/status.json",
+      "sha256": "9343bc1591630933faa32cbdaa6f985f597f0d40af464a88dd2bd6b41fd5c16a"
+    }
+  ]
+}

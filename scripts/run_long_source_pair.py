@@ -72,7 +72,12 @@ def main():
                 direction=np.array(ar['source_decoder']);beta={k:np.array(ar[k]) for k in ar.files if k!='source_decoder'}
             atoms=cfg['source_atoms'];dg=direction@direction.T;checkpoint_sae=None
             item=next(r for r in asset['saes'] if r['seed']==target_seed)
-            assert item['sha256']==pc['target_checkpoint']['sha256']
+            if pc.get('target_checkpoint'):
+                assert item['sha256']==pc['target_checkpoint']['sha256']
+            else:
+                weight=Path(item['path'])/'sae.safetensors';weight=weight if weight.is_absolute() else ROOT/weight
+                bound=next(r for r in load(parent/'inputs.json')['inputs'] if Path(r['path']).resolve()==weight.resolve())
+                assert item['sha256']==bound['sha256']
             write(run/'fit_metadata.json',dict(mode='frozen_application',parent=freeze,fit_calls=0,means_cancel_in_differences=True))
             np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=direction)
             checks['frozen_no_refit']=True;checks['maps_saved_before_consumer']=True
@@ -125,11 +130,11 @@ def main():
             beta={};parents=[];baseline_diagnostics={}
             for j,parent in enumerate(cfg['parents']):
                 path=ROOT/parent['path'];pc=load(path/'config.resolved.json');assert pc['source_atom']==atoms[j] and pc['source_seed']==source_seed
-                if checkpoint_sae is None:assert pc['target_seed']==target_seed
+                if checkpoint_sae is None and not cfg.get('recompute_target_baselines'):assert pc['target_seed']==target_seed
                 with np.load(checked(path/'coefficients.npz',parent['sha256']),allow_pickle=False) as arr:
                     assert np.array_equal(arr['source_decoder'],direction[j])
                     parents.append({k:np.array(arr[k]) for k in ('full','raw','best_atom','geometric_atom','sparse16')})
-            if checkpoint_sae is None:
+            if checkpoint_sae is None and not cfg.get('recompute_target_baselines'):
                 for name in parents[0]:beta[name]=np.column_stack([r[name] for r in parents])
             else:
                 beta['raw']=np.column_stack([r['raw'] for r in parents]);beta['full']=np.zeros((3072,2));beta['best_atom']=np.zeros((3072,2));beta['geometric_atom']=np.zeros((3072,2))
