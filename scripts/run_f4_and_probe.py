@@ -7,6 +7,7 @@ import numpy as np
 from run_r011s1_raw_hook_asset import ROOT,entry,aggregate,write_json as write
 from ccad.artifacts import sha256,validate_run_directory
 from ccad.activation_contract import HookPointContract,extract_primary_hook_tensor,replace_primary_hook_tensor
+from f4_interpretation_endpoint import contrast,masses
 
 
 def main():
@@ -15,13 +16,13 @@ def main():
     write(run/'config.resolved.json',cfg)
     for n in ['stdout.log','stderr.log','metrics.raw.jsonl']:(run/n).touch()
     code=[]
-    for rel in ['scripts/run_f4_and_probe.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py','src/ccad/activation_contract.py']:
+    for rel in ['scripts/run_f4_and_probe.py','scripts/f4_interpretation_endpoint.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py','src/ccad/activation_contract.py']:
         p=ROOT/rel;dst=run/'source_snapshot'/rel;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_bytes(p.read_bytes());code.append(dict(path=rel,sha256=sha256(p),bytes=p.stat().st_size,snapshot_path='source_snapshot/'+rel))
     write(run/'code_hashes.json',dict(files=code,aggregate_sha256=aggregate(code),snapshot_root='source_snapshot'))
     write(run/'manifest.json',dict(schema_version='fcc.and.source.probe.v1',run_id=cfg['run_id'],run_parent='F4',purpose='Source group explanation through fixed one-position and/or swaps',milestone='C2-C3-interpretability',
-        evidence_level='authored_source_feasibility_development',started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),
+        evidence_level=cfg.get('evidence_level','authored_source_feasibility_development'),started_utc=datetime.now(timezone.utc).isoformat(),project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),
         code_snapshot_hash=aggregate(code),source_snapshot_required=True,audit_opened=False,candidate_family_frozen=True,mean_constants_source_split='independent mean; cancels in matched donor difference',
-        threshold_source_split='fixed config before new forwards',statistics_unit='eight authored pairs, two families, four shared topics; dependent cases',device=cfg['device'],seeds=[cfg['source_seed']],
+        threshold_source_split='fixed config before new forwards',statistics_unit=cfg.get('statistics_unit','eight authored pairs, two families, four shared topics; dependent cases'),device=cfg['device'],seeds=[cfg['source_seed']],
         resource_lease='gpu-0 resource_manager.run',resource_lease_reason='64 bounded forwards; no fitting, heavy CPU or disk work'))
     write(run/'status.json',dict(status='RUNNING'));inputs=[];rows=[];arrays={};forwards=0
     def checked(path,expected=None):
@@ -51,11 +52,19 @@ def main():
             ts=[tokenizer.encode(x,add_special_tokens=False) for x in words]
             if any(len(t)!=1 for t in ts):raise ValueError(f'Contrast is not single-token: {words}')
             return [t[0] for t in ts]
-        clause=single(cfg['clause_start_tokens']);items=[single(p['items']) for p in cfg['pairs']];prepared=[]
-        for pair_index,p in enumerate(cfg['pairs']):
-            for conj in cfg['conjunctions']:
-                text=cfg['common_prefix']+p['prefix']+conj;ts=tokenizer.encode(text,add_special_tokens=False)
-                prepared.append(dict(pair_index=pair_index,family=p['family'],topic=p['topic'],conjunction=conj,text=text,token_ids=ts))
+        clause=single(cfg['clause_start_tokens']);prepared=[]
+        if 'prepared_inputs_path' in cfg:
+            payload=json.loads(checked(cfg['prepared_inputs_path'],cfg['prepared_inputs_sha256']).read_text())
+            prepared=payload['cases'];items=payload['item_token_ids']
+            if payload['clause_token_ids']!=clause or cfg['endpoint']!='pronoun_logodds':raise ValueError('Frozen endpoint differs')
+            if not all(x is None for x in items):raise ValueError('Natural endpoint must use fixed-set complement')
+            if not prepared or len(prepared)%2 or len(prepared)>16:raise ValueError('Invalid natural case budget')
+        else:
+            items=[single(p['items']) for p in cfg['pairs']]
+            for pair_index,p in enumerate(cfg['pairs']):
+                for conj in cfg['conjunctions']:
+                    text=cfg['common_prefix']+p['prefix']+conj;ts=tokenizer.encode(text,add_special_tokens=False)
+                    prepared.append(dict(pair_index=pair_index,family=p['family'],topic=p['topic'],conjunction=conj,text=text,token_ids=ts))
         for i in range(0,len(prepared),2):
             if prepared[i]['token_ids'][:-1]!=prepared[i+1]['token_ids'][:-1]:raise ValueError('Matched pair changes more than final token')
         write(run/'authored_inputs.json',dict(cases=prepared,clause_token_ids=clause,item_token_ids=items));write(run/'inputs.json',dict(inputs=inputs));numeric=time.perf_counter()
@@ -86,10 +95,11 @@ def main():
             for op,d in edits.items():logits[op]=forward(c['token_ids'],d)[0]
             maxnoop=max(maxnoop,float(np.max(abs(logits['noop']-bases[i]))));ps={}
             for op,lg in logits.items():v=np.exp(lg-lg.max());ps[op]=v/v.sum();arrays[f'prob_{i}_{op}']=ps[op].astype(np.float32)
-            base=ps['baseline'];itm=items[c['pair_index']];basecontrast=float(np.log(base[clause].sum()/base[itm].sum()));effects={}
+            base=ps['baseline'];itm=items[c['pair_index']];basecontrast=contrast(base,clause,itm);effects={}
             for op,p in ps.items():
                 order=np.lexsort((np.arange(len(p)),-abs(p-base)))[:8]
-                effects[op]=dict(contrast_delta=float(np.log(p[clause].sum()/p[itm].sum())-basecontrast),clause_mass=float(p[clause].sum()),item_mass=float(p[itm].sum()),
+                cm,im=masses(p,clause,itm)
+                effects[op]=dict(contrast_delta=contrast(p,clause,itm)-basecontrast,clause_mass=cm,item_mass=im,
                     kl_to_baseline=float(np.sum(p*(np.log(np.maximum(p,1e-300))-np.log(np.maximum(base,1e-300))))),
                     top_changed=[dict(token_id=int(j),token=tokenizer.decode([int(j)]),delta=float(p[j]-base[j])) for j in order])
             components=(zs[i][ids]-mean)*w

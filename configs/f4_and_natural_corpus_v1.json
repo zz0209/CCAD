@@ -1,0 +1,132 @@
+{
+  "schema_version": "0.1.0",
+  "run_id": "F4_and_natural_corpus_v1_20260906",
+  "run_parent": "F4",
+  "purpose": "Fresh natural-context prospective check of a frozen source group pronoun-mass prediction",
+  "milestone": "C2-C3-interpretability",
+  "evidence_level": "fresh_document_confirmation_asset_only",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "dataset_id": "HuggingFaceFW/fineweb",
+  "dataset_config": "sample-10BT",
+  "dataset_revision_name": "v1.4.0",
+  "dataset_commit": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "dataset_license": "ODC-By-1.0",
+  "expected_shard_count": 15,
+  "shards_to_sample": 3,
+  "source_catalog_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/source_catalog.json",
+  "excluded_document_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/sampled_documents.jsonl",
+  "additional_exclusions": [
+    {
+      "path": "runs/F4_adaptive_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "b5107db3a5a964759876f9edb58f764e6245ee136886154ba1c4cab49a47c1a2"
+    },
+    {
+      "path": "runs/F4_common_confirmation_corpus_v1_20260906/artifacts/documents.jsonl",
+      "sha256": "249b7e93d8bb5e5f15253253b6c39e966b3492650226b7bc328543ae660cc53b"
+    },
+    {
+      "path": "runs/F4_compact_component_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "f1ce874edaa7b43f72e626ae15a6a52c9ee48dca1f58fd52223c112a448dfd76"
+    },
+    {
+      "path": "runs/F4_development_corpus_v1_20260904/artifacts/documents.jsonl",
+      "sha256": "7958b0057368b4936acdee77fbd43f6f5e126770164b3d5506ff95c2b63fa706"
+    },
+    {
+      "path": "runs/F4_fit_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "21fedcfa6ef0411e99b04b241b895ddf43b505816730d32b020a6e6b0569d8d0"
+    },
+    {
+      "path": "runs/F4_long_recipient_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "15e15d96d617187335e30bd33fe064609669d6bec8fbb04eb039e74a921c94a0"
+    },
+    {
+      "path": "runs/F4_probability_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "46b7f0bcb49825bf0dfebd41a16094df27081c94a00682ff166ab280b82754bb"
+    },
+    {
+      "path": "runs/F4_query_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "2269629a04e6033e70236a67f6840df82e56596e6874bc4e5c9deacfe85ec8d5"
+    },
+    {
+      "path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "fbb1da0a9a0fa86ba20cec2eb7a2c0afa7fa93695c7909352c0a7b1e1a873a85"
+    },
+    {
+      "path": "runs/R006a_fineweb_capacity_manifest_v1_20260902T131000Z/artifacts/document_token_records.json",
+      "sha256": "8d186c6e94965eeaacaafb535953750009e6313cba38f5fe38ae950b6ef2314b"
+    },
+    {
+      "path": "runs/R006a_fineweb_capacity_manifest_v1_20260902T131000Z/artifacts/sampled_documents.jsonl",
+      "sha256": "b3f9c3b753da2fa33ecd1a500df3652dcec7dde370cfea1e8d0ac4ed1620d183"
+    },
+    {
+      "path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/document_token_records.json",
+      "sha256": "8d186c6e94965eeaacaafb535953750009e6313cba38f5fe38ae950b6ef2314b"
+    },
+    {
+      "path": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+      "sha256": "33421f067172f0322551346c1985e3799cf8bb90d9950a55f4cf1b0de38fe201"
+    },
+    {
+      "path": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+      "sha256": "1429667aed740b5acb3f8927ca0dd144943dd18393db3c5755afb7ee89c5f78e"
+    },
+    {
+      "path": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/sampled_documents.jsonl",
+      "sha256": "5eb700319a66b6577f82e02619df58002366bff361fc5241e5e72b4fd31f1178"
+    }
+  ],
+  "selection_salt": "ccad-and-natural-pronoun-20260906-v1",
+  "split_salt": "ccad-r008-paired-split-v1",
+  "range_block_bytes": 1048576,
+  "context_length": 128,
+  "max_tokens_per_document": 2048,
+  "token_dtype": "uint16-little-endian",
+  "target_sequences": {
+    "calibration": 256
+  },
+  "minimum_documents": {
+    "calibration": 16
+  },
+  "tokenizer_id": "EleutherAI/pythia-160m-deduped",
+  "tokenizer_revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "tokenizer_local_dir": "D:/CCAD_Storage/models/pythia-160m-deduped/582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "data_overlay_dir": "D:/CCAD_Storage/environments/r008_data_overlay",
+  "dependency_overlay_dir": "D:/CCAD_Storage/environments/r005a_sparsify_overlay",
+  "mean_constants_source_split": "unchanged original independent mean; no estimation in this run",
+  "threshold_source_split": "Source applicability chosen on prior development and frozen before this corpus; no new-data tuning",
+  "statistics_unit": "document",
+  "resource_lease": "cpu-heavy resource_manager.run; bounded ~40-100MB range reads and small local tokens, no disk monopoly",
+  "scope_limit": "Fresh natural and-prefix sample and constructed matched or counterfactual; source-only deterministic selection, fixed pronoun logodds; no claim or input is itself naturally observed",
+  "budget": "300 seconds bounded official range sampling; 256x128 tokens <=~100MB transfers; source <=64LM120s numeric then all-case targets<=224LM180s numeric; no fit/train/audit/paid resources",
+  "frozen_scope": {
+    "source_seed": 5,
+    "source_atom": 2194,
+    "context_length": 128,
+    "minimum_prefix_tokens": 10,
+    "conjunctions": [
+      " and",
+      " or"
+    ],
+    "clause_start_tokens": [
+      " I",
+      " we",
+      " you",
+      " he",
+      " she",
+      " they",
+      " it"
+    ],
+    "selection_salt": "ccad-and-natural-cases-20260906-v1",
+    "maximum_pairs_per_family": 4,
+    "maximum_pairs": 8,
+    "family_rule": "constrained if case-insensitive whole word between in last32 preceding tokens OR >=2 literal commas in last16 preceding tokens; ordinary otherwise; lexical proxy, not validated syntax",
+    "eligibility": "one document in sequence; no EOS in prefix; and token at index>=9; use sequence-start to and; one case per document across families",
+    "ordering": "family ordinary then constrained; SHA256(salt NUL document_id NUL sequence_index NUL token_index); take first four unused documents per family; no fill from another family, no extension for missing",
+    "primary": "ordinary and: source swap decreases log(P(fixed seven pronouns)/(1-P(fixed seven pronouns)))",
+    "secondary": "or increases, all constrained signed effects and missing counts; no threshold/outcome exclusions",
+    "source_operation": "unchanged complete32 group, last-position matched and/or swap with source norm cap.1; target FCC/atom/raw unchanged maps and same source dose, all selected cases even source prediction failures"
+  }
+}

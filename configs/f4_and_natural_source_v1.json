@@ -1,0 +1,72 @@
+{
+  "run_id": "F4_and_natural_source_v1_20260906",
+  "audit_opened": false,
+  "source_seed": 5,
+  "source_atom": 2194,
+  "asset_config": "runs/R008b_paired_codes_v1_20260904T000500Z/config.resolved.json",
+  "groups_path": "runs/F4_source_contexts_v1_20260906/groups.json",
+  "groups_sha256": "d68c9cf267510fd82a1fc004fa67cf7cd12d5630d461e0993c560f3cfc899d8f",
+  "factors_path": "runs/R011_F4_hook_transport_real_v2_20260904T183000Z/anchor_maxrank_hook_factors.npz",
+  "factors_sha256": "e085f35df378ddc3e869d57c4c79a8a36372db51b2b7c208c5df71358d230526",
+  "conjunctions": [
+    " and",
+    " or"
+  ],
+  "clause_start_tokens": [
+    " I",
+    " we",
+    " you",
+    " he",
+    " she",
+    " they",
+    " it"
+  ],
+  "source_operation": "At the last token only, subtract b times sum_j beta_j*(z_recipient_j-z_sameprefix_otherconjunction_j). Original complete 32-member source group and rank1 basis; independent mean cancels. No target fit or output-conditioned selection.",
+  "operations": [
+    "baseline",
+    "noop",
+    "source_swap",
+    "orthogonal_random_same_norm"
+  ],
+  "random_seed": 21940519,
+  "maximum_hook_fraction": 0.1,
+  "maximum_forwards": 64,
+  "numeric_budget_seconds": 120,
+  "device": "cuda:0",
+  "scope": "All frozen source-only selected natural and-prefixes and matched or counterfactuals. Ordinary and pronoun logodds decreases primary; or direction and lexical constrained scope secondary. Fixed7set complement replaces topic items. No new query/map/target-effect selection; 8 documents, no independent five-source/general syntax claim.",
+  "prepared_inputs_path": "artifacts/and_natural_confirmation_20260906/prepared_inputs.json",
+  "prepared_inputs_sha256": "823498627b7325e15fc2ab56377fbd49f861f07e2ccdb87160f97ddfa9dab8cf",
+  "endpoint": "pronoun_logodds",
+  "evidence_level": "prospective_natural_prefix_frozen_source_prediction",
+  "statistics_unit": "eight distinct source documents; four per frozen lexical proxy; two dependent conjunction inputs per document",
+  "selection_config": "configs/f4_and_natural_corpus_v1.json",
+  "selection_config_sha256": "652ec3a969424da4615cd1d4813898aeb33d132e75b7efe20384720995ae77d4",
+  "hypotheses": {
+    "source_seed": 5,
+    "source_atom": 2194,
+    "context_length": 128,
+    "minimum_prefix_tokens": 10,
+    "conjunctions": [
+      " and",
+      " or"
+    ],
+    "clause_start_tokens": [
+      " I",
+      " we",
+      " you",
+      " he",
+      " she",
+      " they",
+      " it"
+    ],
+    "selection_salt": "ccad-and-natural-cases-20260906-v1",
+    "maximum_pairs_per_family": 4,
+    "maximum_pairs": 8,
+    "family_rule": "constrained if case-insensitive whole word between in last32 preceding tokens OR >=2 literal commas in last16 preceding tokens; ordinary otherwise; lexical proxy, not validated syntax",
+    "eligibility": "one document in sequence; no EOS in prefix; and token at index>=9; use sequence-start to and; one case per document across families",
+    "ordering": "family ordinary then constrained; SHA256(salt NUL document_id NUL sequence_index NUL token_index); take first four unused documents per family; no fill from another family, no extension for missing",
+    "primary": "ordinary and: source swap decreases log(P(fixed seven pronouns)/(1-P(fixed seven pronouns)))",
+    "secondary": "or increases, all constrained signed effects and missing counts; no threshold/outcome exclusions",
+    "source_operation": "unchanged complete32 group, last-position matched and/or swap with source norm cap.1; target FCC/atom/raw unchanged maps and same source dose, all selected cases even source prediction failures"
+  }
+}
