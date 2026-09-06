@@ -35,4 +35,3 @@ def main():
     fig.subplots_adjust(top=.89,bottom=.19,hspace=.65,wspace=.25)
     for ext in ['png','pdf','svg']:fig.savefig(out/f'natural_confirmation.{ext}',dpi=190,bbox_inches='tight')
 if __name__=='__main__':main()
-
