@@ -4080,3 +4080,26 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 - artifacts\colon_cohort_20260906\summary.json SHA256 ecfea550fd0f8cfba032f19956ebf6de24fec7fc7f373ae4cce111bc5efb7a9e
 - artifacts\colon_cohort_20260906\cohort_confirmation.png SHA256 df899c2937076f39c4f2d6a2ba18f5ed7afcf912463479b1b37823c2d664062f
 - artifacts\colon_cohort_20260906\cohort_confirmation.pdf SHA256 35fbdd13c25d7f9d3bc146c6a581dd91be9b0d36327c7870fb6ac9470d604883
+
+## 2026-09-06T13:13:32Z — that自然输出预测启动
+写入时间（written_at_utc）：2026-09-06T13:13:32Z。旧12构造source概率事后personal-pronoun/there对比add12正/remove12负；不是新自然结果。三词汇类、source1:2379、最多24文档/96LM、0.1native对称剂量冻结后采新1024seq，保留全部短缺/反例。预算20分钟16GB/<100MB，无target筛选/训练/audit。配置和执行脚本hash见artifacts/that_prediction_20260906/freeze.json；改前入口逐字归档archive/research_workflow_20260906/that_prediction_20260906T131332Z。
+
+## 2026-09-06T13:17:12Z — that source自然结果及冻结target应用
+写入时间（written_at_utc）：2026-09-06T13:17:12Z。新208文档/1024seq，三类各8文档，source-native96LM/14.219秒：每类联合add正/remove负均7/8，态度激活较报告高；noun挑战同有作用，不能声称态度独占。三反例保留，不改预测词表。既有四target五方法映射逐一绑定，保留全部24输入，按原hash序构造8report-attitude互逆对和4noun互逆对，冻结输出对比绝对误差主终点后执行676LM，预算仍本单元20分钟16GB；source结果已暴露、target尚未读，无refit。source-native确认与source-aligned donor跨seed操作分栏。
+
+## 2026-09-06T13:22:30Z — that自然预测与四target恢复完成
+写入时间（written_at_utc）：2026-09-06T13:22:30Z。source-native96LM/14.219224秒加四target676LM/37.253246秒，共772LM/51.472470秒；新208文档/1024seq21,361,822B，全部24文档保留。三词汇类native联合方向各7/8，词表POS歧义与3反例原样保留，不称态度/句法独占。source donor14/16符合词汇符号预测；四target态度/报告Sparse输出MAE均低于bestatom，名词target4反向，target3仅3/8逐例胜；Full/raw全体更强。所有系数逐值等于旧冻结，source/raw跨target逐值相同，noop/契约PASS。图目检通过，论文/registry/tracker同步；下一等能量方向控制，仅已暴露数据开发，无新语料无限续加。source-native原runner未存完成UTC，事件完成时刻未知（本轮已见exit0）；四target事件按status记录如下。
+- F4_that_prediction_apply_s2_v1_20260906: event 2026-09-06T13:17:22.478006+00:00; metrics SHA256 a0468d6a20c4f41aa90a261c532afebde70e47763508bcc62543e3c6a3d31ab6
+- F4_that_prediction_apply_s3_v1_20260906: event 2026-09-06T13:17:32.688706+00:00; metrics SHA256 e8734c47f0405e8fd28735490bae16a416f30fd9a162e5686be77804907d9038
+- F4_that_prediction_apply_s4_v1_20260906: event 2026-09-06T13:17:42.912547+00:00; metrics SHA256 ac05e1584262b9a5419fdd65e4fdb18dfb53bfec8b33add7793533b3ed41f319
+- F4_that_prediction_apply_s5_v1_20260906: event 2026-09-06T13:17:53.332723+00:00; metrics SHA256 766d91fcd0e4e66f8e7550bc6ef18ad47cf5b4e800be1dcd8e39508c598dab16
+- EXPERIMENT_TRACKER.md SHA256 c008c3125e49e0a0cfc04d6d473dbdb6db72a616b1ed93e6ac3bdbc873798a9c
+- PAPER_SNAPSHOT_20260906.md SHA256 249d4c6a6029e637915426cf67f70c41b086db82729c83153f9e8efca6784fe9
+- REFERENCE_REGISTRY.md SHA256 04a298e526b7cf52b0119e8b6093018b58ac2b600b746e600d7b4aa7f7fd910c
+- artifacts\that_prediction_20260906\freeze.json SHA256 bad8b80ad6004904a6c92a22a9213d7219bc33a8499f1530e61c9c2ff072f9cb
+- artifacts\that_prediction_20260906\transfer_freeze.json SHA256 5ba390691d8b55c190ecc35ee20617b8fccc0eb58d9827fdedfe0d1acbf3bd0a
+- artifacts\that_prediction_20260906\natural_inputs.json SHA256 2cf498817e500e9472cda72e401ec12cc870b167a71563765112d71846f711bc
+- artifacts\that_prediction_20260906\summary.json SHA256 6b22a2b801cb697f56e610c71c3fa50fa77c5da1ab8112d2f3818441653c8f3d
+- artifacts\that_prediction_20260906\FINDINGS.md SHA256 35cf48b4868df37e42644af80f63df36d182f8b867325f35125612093259ba77
+- artifacts\that_prediction_20260906\that_prediction.png SHA256 36c4b47b4b370d70b64fbaff22270cf6ef886c89722a8c25fbfeaaa6df04b9f7
+- artifacts\that_prediction_20260906\that_prediction.pdf SHA256 8808d6758bb6853987eb89cd7a8286a7959e1fb04eb479ede5206f0ee7d6c5c6

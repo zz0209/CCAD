@@ -1,0 +1,24 @@
+{
+  "run_id": "F4_that_prediction_apply_s5_v1_20260906",
+  "purpose": "Frozen single-source relation transfers lexical output response on all24fresh natural documents",
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "source_atom": 2379,
+  "fit_rows": 512,
+  "ridge": 0.001,
+  "support_budget": 16,
+  "max_hook_fraction": 0.1,
+  "audit_opened": false,
+  "budget_seconds": 900,
+  "budget": "169LMper target,4targets676LM <=20min16GB unit, no fitting or newdata",
+  "scope": "Prospective target evaluation after source-native prediction. All24 natural inputs retained, mappings predate corpus; no refitting. Source-aligned donor operation, not target-native. Four dependent targets of source1.",
+  "evaluation_inputs": "artifacts/that_prediction_20260906/transfer_inputs.json",
+  "target_seed": 5,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "frozen_fit": {
+    "path": "runs/F4_long_source2379_target5_v1_20260906",
+    "coefficients_sha256": "858cf033fc4afa716339eed32e070e60c72695a80f37abfa64a9cc37e268fd80"
+  }
+}

@@ -1,0 +1,219 @@
+{
+  "schema_version": "0.1.0",
+  "run_id": "F4_that_prediction_corpus_v1_20260906",
+  "run_parent": "F4",
+  "purpose": "Fresh natural source2379 input and directional output prediction",
+  "milestone": "C2-C3-interpretability",
+  "evidence_level": "fresh_document_confirmation_asset_only",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "dataset_id": "HuggingFaceFW/fineweb",
+  "dataset_config": "sample-10BT",
+  "dataset_revision_name": "v1.4.0",
+  "dataset_commit": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "dataset_license": "ODC-By-1.0",
+  "expected_shard_count": 15,
+  "shards_to_sample": 3,
+  "source_catalog_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/source_catalog.json",
+  "excluded_document_path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/sampled_documents.jsonl",
+  "additional_exclusions": [
+    {
+      "path": "runs/F4_adaptive_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "b5107db3a5a964759876f9edb58f764e6245ee136886154ba1c4cab49a47c1a2"
+    },
+    {
+      "path": "runs/F4_and_natural_corpus_v1_20260906/artifacts/documents.jsonl",
+      "sha256": "89eff74dcc2ee7fc3ed78423253be7b7da8fc9be519f44d77ed61b272135455c"
+    },
+    {
+      "path": "runs/F4_common_confirmation_corpus_v1_20260906/artifacts/documents.jsonl",
+      "sha256": "249b7e93d8bb5e5f15253253b6c39e966b3492650226b7bc328543ae660cc53b"
+    },
+    {
+      "path": "runs/F4_compact_component_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "f1ce874edaa7b43f72e626ae15a6a52c9ee48dca1f58fd52223c112a448dfd76"
+    },
+    {
+      "path": "runs/F4_development_corpus_v1_20260904/artifacts/documents.jsonl",
+      "sha256": "7958b0057368b4936acdee77fbd43f6f5e126770164b3d5506ff95c2b63fa706"
+    },
+    {
+      "path": "runs/F4_fit_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "21fedcfa6ef0411e99b04b241b895ddf43b505816730d32b020a6e6b0569d8d0"
+    },
+    {
+      "path": "runs/F4_long_recipient_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "15e15d96d617187335e30bd33fe064609669d6bec8fbb04eb039e74a921c94a0"
+    },
+    {
+      "path": "runs/F4_probability_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "46b7f0bcb49825bf0dfebd41a16094df27081c94a00682ff166ab280b82754bb"
+    },
+    {
+      "path": "runs/F4_query_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "2269629a04e6033e70236a67f6840df82e56596e6874bc4e5c9deacfe85ec8d5"
+    },
+    {
+      "path": "runs/F4_scope_confirmation_corpus_v1_20260905/artifacts/documents.jsonl",
+      "sha256": "fbb1da0a9a0fa86ba20cec2eb7a2c0afa7fa93695c7909352c0a7b1e1a873a85"
+    },
+    {
+      "path": "runs/R006a_fineweb_capacity_manifest_v1_20260902T131000Z/artifacts/document_token_records.json",
+      "sha256": "8d186c6e94965eeaacaafb535953750009e6313cba38f5fe38ae950b6ef2314b"
+    },
+    {
+      "path": "runs/R006a_fineweb_capacity_manifest_v1_20260902T131000Z/artifacts/sampled_documents.jsonl",
+      "sha256": "b3f9c3b753da2fa33ecd1a500df3652dcec7dde370cfea1e8d0ac4ed1620d183"
+    },
+    {
+      "path": "runs/R006a_fineweb_capacity_manifest_v2_20260902T131500Z/artifacts/document_token_records.json",
+      "sha256": "8d186c6e94965eeaacaafb535953750009e6313cba38f5fe38ae950b6ef2314b"
+    },
+    {
+      "path": "runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl",
+      "sha256": "33421f067172f0322551346c1985e3799cf8bb90d9950a55f4cf1b0de38fe201"
+    },
+    {
+      "path": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+      "sha256": "1429667aed740b5acb3f8927ca0dd144943dd18393db3c5755afb7ee89c5f78e"
+    },
+    {
+      "path": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/sampled_documents.jsonl",
+      "sha256": "5eb700319a66b6577f82e02619df58002366bff361fc5241e5e72b4fd31f1178"
+    },
+    {
+      "path": "runs/NATIVE_we_natural_corpus_v1_20260906/artifacts/documents.jsonl",
+      "sha256": "1c6aef2482365bb3ca39649c282816f8935200938d6594cbc2fcdedd9b9bd7e9"
+    },
+    {
+      "path": "runs/F4_colon_natural_corpus_v1_20260906/artifacts/documents.jsonl",
+      "sha256": "cb77d9c3c113670a03becdae2d531b1905c422f338f2270a6acbcddab1cc436c"
+    },
+    {
+      "path": "runs/F4_colon_cohort_corpus_v1_20260906/artifacts/documents.jsonl",
+      "sha256": "69baade8b87b554b5f3340cd11038816f946fe57275738ce2f4f4bd524faa650"
+    }
+  ],
+  "selection_salt": "ccad-that-prediction-20260906-v1",
+  "split_salt": "ccad-r008-paired-split-v1",
+  "range_block_bytes": 1048576,
+  "context_length": 128,
+  "max_tokens_per_document": 2048,
+  "token_dtype": "uint16-little-endian",
+  "target_sequences": {
+    "calibration": 1024
+  },
+  "minimum_documents": {
+    "calibration": 48
+  },
+  "tokenizer_id": "EleutherAI/pythia-160m-deduped",
+  "tokenizer_revision": "582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "tokenizer_local_dir": "D:/CCAD_Storage/models/pythia-160m-deduped/582159a2dfe3e712a8d47ae83dec95ae3bde8e7e",
+  "data_overlay_dir": "D:/CCAD_Storage/environments/r008_data_overlay",
+  "dependency_overlay_dir": "D:/CCAD_Storage/environments/r005a_sparsify_overlay",
+  "mean_constants_source_split": "unchanged original independent mean; no estimation in this run",
+  "threshold_source_split": "Frozen lexical source applicability and maps before new corpus",
+  "statistics_unit": "document",
+  "resource_lease": "cpu-heavy resource_manager.run; bounded ~40-100MB range reads and small local tokens, no disk monopoly",
+  "scope_limit": "Lexical source-only groups, no activation or target filtering, no matched causal semantic claim",
+  "budget": "1024x128tokens/<100MBrange, <=20min16GB unit with96nativeforwards; no target fitting/training/audit",
+  "frozen_scope": {
+    "source_seed": 1,
+    "source_atom": 2379,
+    "word_lists": {
+      "attitude": [
+        "believe",
+        "believes",
+        "believed",
+        "hope",
+        "hopes",
+        "hoped",
+        "fear",
+        "fears",
+        "feared",
+        "suspect",
+        "suspects",
+        "suspected",
+        "expect",
+        "expects",
+        "expected",
+        "think",
+        "thinks",
+        "thought",
+        "wish",
+        "wishes",
+        "wished",
+        "feel",
+        "feels",
+        "felt"
+      ],
+      "report": [
+        "say",
+        "says",
+        "said",
+        "report",
+        "reports",
+        "reported",
+        "show",
+        "shows",
+        "showed",
+        "found",
+        "find",
+        "finds",
+        "confirm",
+        "confirmed",
+        "confirms",
+        "observe",
+        "observed",
+        "observes",
+        "note",
+        "noted",
+        "notes",
+        "demonstrate",
+        "demonstrated",
+        "demonstrates"
+      ],
+      "noun_control": [
+        "fact",
+        "idea",
+        "claim",
+        "evidence",
+        "belief",
+        "hope",
+        "news",
+        "report",
+        "reason",
+        "possibility",
+        "statement",
+        "assumption",
+        "view",
+        "notion"
+      ]
+    },
+    "maximum_per_family": 8,
+    "selection_salt": "ccad-that-prediction-positions-20260906-v1",
+    "output": "artifacts/that_prediction_20260906",
+    "ordering": "Hash within each family, attitude then report then noun_control; at most8each distinct documents. All eligible/shortfalls/zeros/reversals retained, no fill by source/target activity.",
+    "hypotheses": {
+      "input": "Attitude median activation exceeds report and noun_control medians; also report/noun percentiles and all observations retained.",
+      "output": "Native add increases log(sum P(I,we,you,he,she,it,they)/P(there)); remove decreases it in attitude/report. Noun_control is challenge set; constant-sign generalization separately tested, not required by attitude/report claim."
+    },
+    "contrast": {
+      "positive": [
+        " I",
+        " we",
+        " you",
+        " he",
+        " she",
+        " it",
+        " they"
+      ],
+      "negative": [
+        " there"
+      ]
+    },
+    "dose": "Actual native contribution, symmetrical remove/add, capped at0.1hook norm. This is source native operation.",
+    "scope": "One fixed source, fresh documents. Word lists are lexical proxies, noun_control not syntactic gold; there token not guaranteed existential. Hypotheses posthoc from12old authored cases frozen before fresh corpus.",
+    "primary": "Joint expected add/remove signs in each natural document; activation by predeclared family; zero counted separately and remains denominator."
+  }
+}

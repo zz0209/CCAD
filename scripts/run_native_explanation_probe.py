@@ -62,7 +62,13 @@ def main():
         third=[tokenizer.encode(t,add_special_tokens=False) for t in cfg['third_person_plural_tokens']]
         if any(len(t)!=1 for t in first+third):raise ValueError('Fixed contrast must consist of single tokens')
         first=[t[0] for t in first];third=[t[0] for t in third];write(run/'contrast_tokens.json',dict(first=first,third=third))
-        if 'prepared_inputs_path' in cfg:
+        if 'natural_inputs_path' in cfg:
+            payload=json.loads(checked(cfg['natural_inputs_path'],cfg['natural_inputs_sha256']).read_text());prepared=payload['cases']
+            if not prepared or len(prepared)>32:raise ValueError('Natural scope exceeds bounded32cases')
+            for c in prepared:
+                if c['subject'] not in cfg['subjects'] or not 1<=len(c['token_ids'])<=128:raise ValueError('Invalid natural input')
+                if tokenizer.decode(c['token_ids'])!=c['text']:raise ValueError('Natural text/token mismatch')
+        elif 'prepared_inputs_path' in cfg:
             payload=json.loads(checked(cfg['prepared_inputs_path'],cfg['prepared_inputs_sha256']).read_text());prepared=payload['cases']
             if payload['subjects']!=cfg['subjects'] or not prepared or len(prepared)>32:raise ValueError('Prepared scope differs')
             for i in range(0,len(prepared),4):
