@@ -3951,3 +3951,19 @@ source条件差与旧native激活逐值完全一致；noop0；保存float32概�
 - runs/F4_long_source2379_target3_v2_20260906/metrics.raw.jsonl SHA256 664233d402dbfb1a68e5e0e38d5c466d38d248f8013f5b636b81fff87df729c7
 - runs/F4_long_source2379_target4_v1_20260906/metrics.raw.jsonl SHA256 55cc77859b8e3da9dd5a114ca275ade8434bf25717b7a704df25565e61a7d21e
 - runs/F4_long_source2379_target5_v1_20260906/metrics.raw.jsonl SHA256 3ffd0b09e5083dfcf200fd12cb8e61493a273b184df187f2f671c302335fb65f
+
+## 2026-09-06T09:36:45Z — 新source及条件类型小面板启动
+写入时间（written_at_utc）：2026-09-06T09:36:45Z。仅source2/3原discovery均匀8192位置缓存分析2.2624秒，无LM；全候选/频率/输入hash保留artifacts/long_source_breadth_20260906。自然片段提出newline153/551、to1200/1450、colon1850/2897六候选，每类6对新输入、各候选85LM，source2→1/source3→4预定。原ridge/Lasso预算不变，source预测与输入先冻结再target评价，全弱源/反向保留。newline对照主要句末标点；to词法和语义混杂，colon含长度/格式，均非已证语义机制。六run总<=30分钟/16GB，无训练/download/audit。
+
+## 2026-09-06T09:42:08Z — source广度与解释粒度结果
+写入时间（written_at_utc）：2026-09-06T09:42:08Z。六run各85LM/60method行，总510LM/56.862325秒wall，全部PASS，结束事件时间见各status.json及FINDINGS.md。预测153/551/1200/1450/1850/2897为0/6、6/6、6/6、5/6、6/6、6/6；153三零三反向，6/12比率未定义保持null，零源sparse候选KL中位2.2546853e-5，不写成成功。551/1200/1850稀疏比动态atom中位改善，1450动态atom与2897几何atom优于sparse。三类含标点、词身份、长度格式混杂，不推语义机制；源对齐非native，构造开发非自然确认。
+source decoder/保存激活donor差逐值一致；输出概率重算max scaled比率误差1.84e-6、candidateKL绝对3.05e-9，针对性实现检查而非独立科学复核。原方法仅泛化source seed/token；无训练/download/audit。下一真实二组成共同操作族，随后落实已保留最小训练曲线，不无限续试当前模板。
+归档archive/research_workflow_20260906/source_breadth_20260906T094208Z，源与归档bytehash匹配。当前本地身份：
+- EXPERIMENT_TRACKER.md SHA256 3a3f9f7f3fd62edd1eb7fd391c58c7dd93e6ffc5f87f66cba80755c47acb990d
+- PAPER_SNAPSHOT_20260906.md SHA256 0fbcc9a86631fdec4b43d34db5308f2de9eab9b2295363b2cf1923b025bc56ec
+- artifacts/long_source_breadth_20260906/FINDINGS.md SHA256 04d41efa18be43bb0d18d3486ff9a4fe269e595f3901353659683fa49ac43e58
+- artifacts/long_source_breadth_20260906/summary.json SHA256 21e969693b436443e5cec6b1d6e2c1a4c37011c317264bd6d2ca77230de85f6f
+- artifacts/long_source_breadth_20260906/checks.json SHA256 a9e06d51d04db61e8cc39dfbf1c91415c20bb21bba40f42583b153c9017a7ef9
+- artifacts/long_source_breadth_20260906/selection.json SHA256 5af876809ecf7ce0858abe6d8d8a759f3cbe21db0e01dafcfd8b32ae14c01183
+- artifacts/long_source_breadth_20260906/source2.json SHA256 8f028d225bc119f277bdb6e484fae5dbd0fafc6120a78b9860186a06d7f149b2
+- artifacts/long_source_breadth_20260906/source3.json SHA256 161a9d382679818f18c866db8e94e8b65098a6535f88c43bedbd34666f84f9e4
