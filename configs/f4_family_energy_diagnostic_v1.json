@@ -1,0 +1,27 @@
+{
+  "run_id": "F4_family_energy_diagnostic_v1_20260906",
+  "audit_opened": false,
+  "purpose": "Develop coordinate-invariant source-energy family risk and test held-pair selection on existing training-trajectory artifacts",
+  "parents": [
+    "F4_function_curve_s1_step256_v1_20260906",
+    "F4_function_curve_s2_step256_v1_20260906",
+    "F4_function_curve_s1_step1024_v1_20260906",
+    "F4_function_curve_s2_step1024_v1_20260906",
+    "F4_function_curve_s1_step2048_v1_20260906",
+    "F4_function_curve_s2_step2048_v1_20260906",
+    "F4_function_curve_s1_step4096_v1_20260906",
+    "F4_function_curve_s2_step4096_v1_20260906",
+    "F4_function_curve_s1_step8192_v1_20260906",
+    "F4_function_curve_s2_step8192_v1_20260906"
+  ],
+  "support_budget": 16,
+  "selectors": [
+    "full_only",
+    "average_parts",
+    "worst_relative"
+  ],
+  "primary": "Held-pair worst of four operator median normalized-KL errors, and absolute candidate-KL analogue; three selectors receive identical <=16member candidates and calibration pairs.",
+  "scope": "Development reuse of ten already exposed training-trajectory cells, six authored reciprocal pairs each. Leave one pair out from risk estimation; fits fixed from independent original discovery. Not prospective natural confirmation or independent60replicates. Raw/full all-method results retained as anchors; raw not <=16target-member interface.",
+  "budget": "Artifact-only small2x2algebra/<100MBreads/60s target; noGPU, training, downloads or freshLM. Onepilot, no threshold sweeps.",
+  "rtol": 1e-12
+}

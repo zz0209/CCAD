@@ -4119,3 +4119,17 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 - artifacts\that_controls_20260906\FINDINGS.md SHA256 e67292bbe3f032077bbd022dcf8ae01f2a0372f6ad48480abf1c06c2b8ec5330
 - artifacts\that_controls_20260906\direction_controls.png SHA256 a3afa7f04c54171edd1db056e419937ac71d364c449715bbf3dcf90b46883f78
 - artifacts\that_controls_20260906\direction_controls.pdf SHA256 3a248cdb3df3481318be4ed659f0ed6a328babba40f7af79910c6730d553eb7b
+
+## 2026-09-06T14:12:01Z — 论文收拢与source-energy family诊断启动
+写入时间（written_at_utc）：2026-09-06T14:12:01Z。当前差距为组成可靠性对实际选择的增量。采用标准广义Rayleigh商sup(theta^T Gamma theta)/(theta^T S theta)，S是源作用能量Gram；明确共同重参数化不变与source零空间残差导致无界的条件，不声称一般线代首创。已检查消抵/缩放重参数化/零空间fixture；r004未装pytest，直接运行相同assert函数通过，无安装。冻结十已有训练轨迹cell、<=16成员候选、full/trace/worst三选择准则，leave-one-authored-pair-out开发对比已存LM结果；0新LM，无独立确认宣称，全部弱例和raw/full锚点保留。改前入口/推导/论文/registry逐字归档archive/research_workflow_20260906/family_risk_20260906T141201Z。
+
+## 2026-09-06T14:16:26Z — 论文重组及family诊断开发结果
+写入时间（written_at_utc）：2026-09-06T14:16:26Z；分析完成事件：2026-09-06T14:12:02.047013+00:00。80方法cell/60相关fold，0新LM/语料训练，.233926秒run wall。最坏family相对full8/60选择变化，主要相对KL4胜4负，平均.183389vs.163604；绝对平均.00104826vs.00108042。混合结果不称选择收益，不换主要口径。源能量归一化和null-space条件数学成立，仍不是LM相对行为保证。论文引言三主张/主图与方法接口直接修订，旧rank1、素材和近邻边界保留；下一逐输入敏感度方法先辨别旧F1/F4失败scope，不重走平均Jacobian错误。全部raw/folds/强锚点和fixture保留，无用户审批或暂停。
+- F4_family_energy_diagnostic_v1_20260906/metrics.raw.jsonl SHA256 ce6b39943281619520af828d5af70e32dc1e8f68b997c1fd54f4d96192a6d360
+- F4_family_energy_diagnostic_v1_20260906/folds.json SHA256 1aa11859a60b87dd94f0dba5dd72ea1f875fc418e9c395db66b3c999bf87e6f6
+- EXPERIMENT_TRACKER.md SHA256 29a3c0effe8d048467f47c510e6a89c27edb2377a6a7ae98b28dde3314fd02d4
+- EXPERIMENT_PLAN.md SHA256 7eaa42a405588caf6558e39ef8f53698492ac57008186c289e02261a82909c23
+- PAPER_SNAPSHOT_20260906.md SHA256 0ac196de81428db23cc8a1f79be8725d93ccf394aa92a4d1ffd0db6128683411
+- DERIVATION_PACKAGE.md SHA256 152d8b9dc89dfe98e7ccb03ad802e8c1335cce522c8d2f302b65d64e6b5b660f
+- REFERENCE_REGISTRY.md SHA256 c1fa111f3edbb1362e52efdc9e5b7415f0eca30320dff14cdb40e13942316fa2
+- artifacts\family_energy_diagnostic_20260906\FINDINGS.md SHA256 23d5eb5f2ac3d70611112b6a35bb84556b60c6cc3b995b20bd46b4db77d2736e
