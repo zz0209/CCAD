@@ -149,6 +149,16 @@ def main():
                 beta[name]=np.zeros((3072,2));refits[name]=dict(support=ids.tolist(),outputs=[])
                 for j in range(2):
                     b,d=fixed_support_ridge(x[:,ids],y[:,j],w,cfg['ridge']);beta[name][ids,j]=b;refits[name]['outputs'].append(d)
+            if cfg.get('separate_support_fit'):
+                from fit_f4_joint_sparse import select_separate_supports
+                own,sepdiag=select_separate_supports(x,y,w,cfg['separate_support_fit'])
+                union=np.unique(np.concatenate(own))
+                checks['separate_union_budget']=len(union)<=cfg['support_budget']
+                for name,ids_by_output in [('separate8_ridge',own),('union16_ridge',[union,union])]:
+                    beta[name]=np.zeros((3072,2));refits[name]=dict(supports=[ids.tolist() for ids in ids_by_output],outputs=[])
+                    for j,ids in enumerate(ids_by_output):
+                        b,d=fixed_support_ridge(x[:,ids],y[:,j],w,cfg['ridge']);beta[name][ids,j]=b;refits[name]['outputs'].append(d)
+                write(run/'separate_support_selection.json',sepdiag)
             yc=y-y.mean(0);cov=yc.T@yc/count
             write(run/'fit_metadata.json',dict(baseline_diagnostics=baseline_diagnostics,source_atoms=atoms,source_seed=source_seed,target_seed=target_seed,source_decoder_gram=dg.tolist(),source_decoder_eigenvalues=np.linalg.eigvalsh(dg).tolist(),source_covariance=cov.tolist(),source_covariance_eigenvalues=np.linalg.eigvalsh(cov).tolist(),joint_fit=diag,shared_intercept=intercept.tolist(),refits=refits,source_mean=means[source_seed][atoms].tolist(),target_mean=means[target_seed].tolist(),selected_rows=selected.tolist(),eligible_query_rows=len(eligible),operation='source-decoder aligned two-component donor family, common dose across operators'))
             np.savez_compressed(run/'coefficients.npz',**beta,source_decoder=direction)

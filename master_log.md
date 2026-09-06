@@ -4042,3 +4042,21 @@ source差/common dose/sourceKL/raw全逐值重放原pair；未新训练/download
 
 ## 2026-09-06T11:35:33Z — 自然确认结束时间与资源核对
 写入时间（written_at_utc）：2026-09-06T11:35:33Z。两target精确事件结束时间据status.json分别2026-09-06T11:28:33.881136+00:00、2026-09-06T11:29:16.321159+00:00。共享管理器核对cpu-heavy/gpu-0/disk-d-io/disk-e-io当前free，本轮无残留计算。
+
+## 2026-09-06T11:56:20Z — 固定成员预算对照启动
+写入时间（written_at_utc）：2026-09-06T11:56:20Z。同原mean/discovery与两个终点，共享group-L1<=16对两个scalar-L1各<=8、并集<=16；各自成员与union共同ridge均保存，对照same_support_ridge使用同核。每输出同40点相对alpha路径，合计最多80点比joint40多，非等求解次数，报告实测成本。两个配置、旧构造12+已暴露自然24输入先固定。每target1621LM/1440行、总20分钟/16GB，无训练/下载/audit，CPU暂忙准备先行。全部原8方法必须逐值重放旧父run；改前归档archive/research_workflow_20260906/colon_support_20260906T115620Z。输入SHA256 3f80f88a9d404fd086f95b98eca58d27f35dd91462356625d16f39de19c182d9。
+
+## 2026-09-06T12:20:35Z — 共享与逐组成成员取舍完成
+写入时间（written_at_utc）：2026-09-06T12:20:35Z。两run共3242LM/2880行/85.912318秒，CPU曾等待其他项目随后获租约，非重复运行。两source output的scalar路径用既有标准化和标准sklearnLasso，去收缩同fixed_support_ridge；sanity独立真值supports[1,4]/[3,8]恢复只作实现见证。真实shared成员15/14，逐组成6+7/8+8并集12/14；非实际数/求解预算完全相同。自然第一组成separate比值/绝对/多数逐例均改善，但第二组成恶化，旧构造/混合保留反例；没有全面更优方法，停止本对budget扫描。
+原8方法系数及两旧面板浮点统计逐值一致（拼接case/donor索引平移核对），所有输入保留，Gram/noop/契约PASS。论文/图/registry/tracker已更新；下一现有五资产剩余target4/5的固定方法及新自然验证C2，不新增训练。Dirty Model仅原文方法/条件启发，未实现其solver或套用support-recovery定理。事件结束时间：
+- F4_colon_support_tradeoff_s1_v1_20260906: 2026-09-06T11:58:02.859354+00:00；metrics SHA256 620225c4d30f1656fdedf730520d5577b65957ebfc0c5a5f96459c6a2ca44555
+- F4_colon_support_tradeoff_s2_v1_20260906: 2026-09-06T12:01:10.378475+00:00；metrics SHA256 d18e68b2ae726256242d69ac5636215535e44f72568061b3bdc3195441c7c9cd
+当前本地文件身份：
+- EXPERIMENT_TRACKER.md SHA256 131130d7e8cf5ae697122f38c944a027a53129f1f2d30416ed15cba73afcf040
+- PAPER_SNAPSHOT_20260906.md SHA256 f28c566db0f8ff03b43d9f8dc1a72c6683d65019f736c2ef2f422bedce8fafc4
+- REFERENCE_REGISTRY.md SHA256 e2482650a4fcb94f4879aec15ae7bafcb313fc7495fdb892dbc917836e535f5a
+- artifacts\colon_support_tradeoff_20260906\FINDINGS.md SHA256 ab4061180b34e55a1ac795ed81955da4afdd8c406da3e6fd7f5046151ab5c569
+- artifacts\colon_support_tradeoff_20260906\summary.json SHA256 66050fc806fa8d05ddff2acb412620cc045ae3bf46a931b469f3ac1200d87af0
+- artifacts\colon_support_tradeoff_20260906\inputs.json SHA256 3f80f88a9d404fd086f95b98eca58d27f35dd91462356625d16f39de19c182d9
+- artifacts\colon_support_tradeoff_20260906\support_tradeoff.png SHA256 57d9515f3779df75045545013d88c1e3e127307248cafb9c9637c8acbe619133
+- artifacts\colon_support_tradeoff_20260906\support_tradeoff.pdf SHA256 72f8035b619ba4418125ca33bc5d5e38a7f7f24f40df00c38b518d3c06351b27

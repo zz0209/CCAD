@@ -17,7 +17,7 @@ from pathlib import Path
 from run_f4_source_reference_causal import ROOT, np, write, sha256
 from run_r011s1_raw_hook_asset import entry, aggregate
 from ccad.artifacts import validate_run_directory
-from sklearn.linear_model import MultiTaskLasso
+from sklearn.linear_model import MultiTaskLasso, Lasso
 from sklearn.exceptions import ConvergenceWarning
 from threadpoolctl import threadpool_limits
 
@@ -78,6 +78,45 @@ def fit_joint(z, y, weights, cfg):
         standardized_training_error=float(np.sum(w[:,None]*(residual/sy)**2)),
         unstandardized_training_error=float(np.sum(w[:,None]*residual**2)),
         fit_seconds=time.perf_counter()-started,stop_reason=stop_reason)
+
+
+def select_separate_supports(z, y, weights, cfg):
+    """Scalar L1 paths on the same standardized design, <=8 per output.
+
+    Each output uses its own alpha maximum. Path candidate scoring uses the
+    same standardized ridge objective as fit_joint, but never behavioral data.
+    The caller refits both the shared and union supports with one common kernel.
+    """
+    started=time.perf_counter()
+    x,yy,w,mx,my,sx,sy,active=standardized_inputs(z,y,weights)
+    n=len(x); active_ids=np.flatnonzero(active); chosen=[]; diagnostics=[]
+    for j in range(2):
+        target=yy[:,j]; alpha_max=float(np.max(np.abs(x.T@target/n)))
+        model=Lasso(fit_intercept=False,warm_start=True,selection='cyclic',tol=cfg['tol'],max_iter=cfg['max_iter'])
+        path=[];best=None
+        for step,factor in enumerate(np.geomspace(1.,cfg['minimum_alpha_fraction'],cfg['alpha_count'])):
+            model.set_params(alpha=max(alpha_max*float(factor),np.finfo(float).tiny))
+            with warnings.catch_warnings(record=True) as captured:
+                warnings.simplefilter('always',ConvergenceWarning);model.fit(x,target)
+            support=np.flatnonzero(model.coef_!=0)
+            ws=[str(r.message) for r in captured if issubclass(r.category,ConvergenceWarning)]
+            gap_limit=cfg['tol']*float(np.mean(target**2))
+            converged=not ws and float(model.dual_gap_)<=gap_limit*1.01+1e-12
+            row=dict(step=step,alpha_fraction=float(factor),alpha=model.alpha,support=len(support),converged=converged,dual_gap=float(model.dual_gap_),gap_limit=gap_limit,iterations=int(model.n_iter_),warnings=ws)
+            if converged and 0<len(support)<=cfg['per_output_budget']:
+                xx=x[:,support];gram=xx.T@xx/n
+                lam=cfg['debias_ridge_fraction']*float(np.trace(gram))/len(support)
+                b=np.linalg.solve(gram+lam*np.eye(len(support)),xx.T@target/n)
+                loss=float(np.mean((target-xx@b)**2))
+                row.update(debiased_standardized_error=loss,atom_ids=active_ids[support].tolist())
+                if best is None or loss<best[0]:best=(loss,active_ids[support].copy(),row.copy())
+            path.append(row)
+            if time.perf_counter()-started>cfg['per_fit_budget_seconds']:raise TimeoutError('Separate support fit budget exceeded')
+            if len(support)>cfg['path_stop_support']:break
+        if best is None:raise RuntimeError('No converged scalar support within budget')
+        chosen.append(best[1]);diagnostics.append(dict(output=j,alpha_max=alpha_max,selected=best[2],path=path))
+    union=np.unique(np.concatenate(chosen));assert len(union)<=2*cfg['per_output_budget']
+    return chosen,dict(outputs=diagnostics,union=union.tolist(),per_output_supports=[x.tolist() for x in chosen],fit_seconds=time.perf_counter()-started,selection='Two scalar L1 paths, per-output standardized ridge training error; no endpoints')
 
 
 def main():
