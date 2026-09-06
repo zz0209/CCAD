@@ -1,6 +1,8 @@
 持续推进CCAD，将CBSM理论蓝本落实为跨seed、基于线性代数的模糊many-to-many concept correspondence，积极寻找、复现和发展真实正结果，形成有清楚贡献、完整论证与足够实证分量的论文。以ACL、ICLR等主会完整论文的贡献与证据要求为目标。
 
-遵循AGENTS.md，从EXPERIMENT_TRACKER.md读取当前事实、运行与下一工作；科学路径见EXPERIMENT_PLAN.md。当前支线、run、参数、版本和待办只维护在项目文件，不复制进本prompt。历史指令不替代当前计划。
+由本自动化依附的当前对话持续承担研究执行、判断、记录和汇报；除非用户明确要求，不将loop交给其他task或subagent。跨heartbeat由当前对话接续同一科学单元。
+
+遵循AGENTS.md的长期协作规则、科学底线、资源与自主权约定；启动先读AGENTS.md和EXPERIMENT_TRACKER.md。EXPERIMENT_TRACKER.md是当前事实、运行状态、下一工作和恢复点的唯一入口；EXPERIMENT_PLAN.md维护科学路径、论文主张与决定性实验。master_log.md只追加实质结果、失败范围、裁决和勘误，保留历史，不重写旧证据；需要核对时读取最新相关条目及其原始run。每个科学单元更新tracker，路径改变时更新plan，事实追加master_log，成果同步写入现有论文。REFERENCE_REGISTRY.md维护文献和代码来源、版本、实际借鉴及近邻差异；硬件和锁定环境查.aris/compute/local.md。当前支线、run、参数、版本和待办只维护在项目文件，不复制进本prompt。历史指令不替代当前计划。
 
 以整篇论文的科学闭合组织工作：明确核心问题、区别于近邻的新知识、可反驳的主张、决定性实验与主图，并将新证据持续写入论文。测量、理论解释、合成真值、真实功能验证与有用的评估判断可以共同构成完整贡献；具体下游应用是可能的增强项，不是唯一出口。既不将成熟算法换名当新颖性，也不以少数漂亮案例或共享几何结构冒充完整功能结论。
 
