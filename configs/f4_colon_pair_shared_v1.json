@@ -1,0 +1,65 @@
+{
+  "run_id": "F4_colon_pair_shared_v1_20260906",
+  "purpose": "Two actual non-collinear source atoms with distinct input-condition predictions: jointly recover four operations",
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "fit_rows": 512,
+  "ridge": 0.001,
+  "support_budget": 16,
+  "max_hook_fraction": 0.1,
+  "audit_opened": false,
+  "budget_seconds": 900,
+  "budget": "493LMforwards/432method rows, <=900seconds wall within30min/16GB. Existing assets and standard MultiTaskLasso, no train/download/audit.",
+  "scope": "Two actual source contributions, source-aligned not native target. Shared16 vs prior scalar union has different membership budget. Dynamic and geometric two-atom joint ridge distinguish joint fitting from distributed capacity. Four operations same dose per input. Old12inputs development, no independent confirmation.",
+  "evaluation_inputs": "artifacts/long_source_breadth_20260906/colon_inputs.json",
+  "target_seed": 4,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "source_seed": 3,
+  "query_token": ":",
+  "source_atoms": [
+    1850,
+    2897
+  ],
+  "operators": {
+    "field_component": [
+      1,
+      0
+    ],
+    "clause_component": [
+      0,
+      1
+    ],
+    "sum": [
+      1,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ]
+  },
+  "parents": [
+    {
+      "path": "runs/F4_breadth_colon_s3a1850_v1_20260906",
+      "sha256": "18e003ce46930754bed756471c266c2f70b3123c845e9862205ba4797fc283ed"
+    },
+    {
+      "path": "runs/F4_breadth_colon_s3a2897_v1_20260906",
+      "sha256": "52afbb8f14f29e903009a88b17019f66a9bd829bc84484c19901a76933813a81"
+    }
+  ],
+  "joint_fit": {
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "minimum_alpha_fraction": 0.01,
+    "alpha_count": 40,
+    "tol": 1e-07,
+    "max_iter": 5000,
+    "support_budget": 16,
+    "path_stop_support": 32,
+    "debias_ridge_fraction": 0.001,
+    "per_fit_budget_seconds": 120
+  }
+}

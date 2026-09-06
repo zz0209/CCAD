@@ -3967,3 +3967,18 @@ source decoder/保存激活donor差逐值一致；输出概率重算max scaled�
 - artifacts/long_source_breadth_20260906/selection.json SHA256 5af876809ecf7ce0858abe6d8d8a759f3cbe21db0e01dafcfd8b32ae14c01183
 - artifacts/long_source_breadth_20260906/source2.json SHA256 8f028d225bc119f277bdb6e484fae5dbd0fafc6120a78b9860186a06d7f149b2
 - artifacts/long_source_breadth_20260906/source3.json SHA256 161a9d382679818f18c866db8e94e8b65098a6535f88c43bedbd34666f84f9e4
+
+## 2026-09-06T10:02:55Z — 真实双组成操作族启动
+写入时间（written_at_utc）：2026-09-06T10:02:55Z。source3:1850/2897 decoder cosine.104583，Gram eigenvalues.895417/1.104583，非rank1人为切分。复用fit_f4_joint_sparse.fit_joint标准输出标准化MultiTaskLasso+去收缩，新增共享16与同成员原单位ridge；保留原full/raw/逐atom/独立sparse并加入动态/几何两atom联合ridge。原colon12输入、4操作(A/B/sum/difference)、每输入统一dose；493LM预算900秒。原mean/discovery拟合后冻结，旧评价属开发。逐输入误差Gram恒等式复用DERIVATION_PACKAGE13.7，不声称最优稀疏/两语义机制/native或新solver。
+
+## 2026-09-06T10:06:55Z — 真实双组成共同恢复结果
+写入时间（written_at_utc）：2026-09-06T10:06:55Z。事件结束2026-09-06T10:03:30.877236+00:00，493LM/432行/17.433653秒PASS；所有点wise Gram恒等式通过，概率重算max scaled误差3.48e-7。源decoder/covariance均rank2，共享15行两输出非零、映射rank2。
+几何两atom联合→shared第一/第二/和/差KL中位 .162478→.046051/.036047→.016705/.077948→.026572/.075715→.024827；逐操作胜数10/12、6/12、9/12、10/12。独立sparse并集28第一组成中位更好，其余共享15改善；同15原单位ridge近等价，不夸求解器新意。经验Gram最大特征值shared.023582/full.034603/raw.008294，full合并KL仍更好；经验向量结论不当行为/未见保证。旧构造输入、共dose操作、source-aligned/non-native边界保留，无训练/download/audit。
+实际复用fit_joint与DERIVATION13.7见registry。下一同流最小两seed checkpoint曲线，停止此模板扩张。改前逐字归档archive/research_workflow_20260906/colon_pair_20260906T100655Z含匹配hash。当前身份：
+- EXPERIMENT_TRACKER.md SHA256 7c149b318ccddef98e4aea37c517ceadee088912893408633f10b0c921284509
+- PAPER_SNAPSHOT_20260906.md SHA256 34e761edf9baa220fa0864dd23517e46eaa51b31770cc5b16eb9592f2e8263ca
+- REFERENCE_REGISTRY.md SHA256 1abcb2cafd8a1d1f15a360f3c57fc3e459bdab30ea6b18c11bd6f19d8a83fed1
+- runs/F4_colon_pair_shared_v1_20260906/FINDINGS.md SHA256 8d56a19de6874856a29b7a4fcbade34a8cbbf23eacc1f9218ad899fbe7576390
+- runs/F4_colon_pair_shared_v1_20260906/comparison.json SHA256 669d91163bad207113f4da73de097639e2da9deb98e91e1219e7d34677b6f65e
+- runs/F4_colon_pair_shared_v1_20260906/gram_summary.json SHA256 1a321282d8ee6ffb4a78ddab3e57e1a66de1345329b700b806fe3bb61cc40772
+- runs/F4_colon_pair_shared_v1_20260906/metrics.raw.jsonl SHA256 46e42300639ab10a2d7687cd814fd3c77809648517951ad90235a50e4c298037
