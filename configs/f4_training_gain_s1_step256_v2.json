@@ -1,0 +1,102 @@
+{
+  "asset_config": "configs/r011_nr1_k128_paired_codes_v1.json",
+  "audit_opened": false,
+  "budget": "At most3556LMforwards,10min16GB; three bounded corpus rowgroups~25-100MB; no new training or fitting.",
+  "budget_seconds": 600,
+  "checkpoint_registry": "runs/R012_same_stream_curve_v1_20260906/checkpoints.json",
+  "evaluation_inputs": "artifacts/training_gain_confirmation_20260906/prepared_inputs_with_next.json",
+  "fit_rows": 512,
+  "joint_fit": {
+    "alpha_count": 40,
+    "debias_ridge_fraction": 0.001,
+    "max_iter": 5000,
+    "minimum_alpha_fraction": 0.01,
+    "path_stop_support": 32,
+    "per_fit_budget_seconds": 120,
+    "pilot": false,
+    "pilot_alpha_fraction": 0.1,
+    "support_budget": 16,
+    "tol": 1e-07
+  },
+  "max_hook_fraction": 0.1,
+  "operators": {
+    "clause_component": [
+      0,
+      1
+    ],
+    "difference": [
+      1,
+      -1
+    ],
+    "field_component": [
+      1,
+      0
+    ],
+    "sum": [
+      1,
+      1
+    ]
+  },
+  "parents": [
+    {
+      "path": "runs/F4_breadth_colon_s3a1850_v1_20260906",
+      "sha256": "18e003ce46930754bed756471c266c2f70b3123c845e9862205ba4797fc283ed"
+    },
+    {
+      "path": "runs/F4_breadth_colon_s3a2897_v1_20260906",
+      "sha256": "52afbb8f14f29e903009a88b17019f66a9bd829bc84484c19901a76933813a81"
+    }
+  ],
+  "probe_config": "configs/native_that_roles_s1a2379_v1.json",
+  "purpose": "Frozen early-late function prediction on new natural documents",
+  "query_token": ":",
+  "raw_manifest": "D:/CCAD_Storage/paired_assets/R011_S1_raw_hook_asset_v1_20260904T070000Z/raw_hook_manifest.json",
+  "ridge": 0.001,
+  "run_id": "F4_training_gain_s1_step256_v2_20260906",
+  "scope": "New natural documents, previously frozen maps and lexical applicability. Source atoms1850/2897, four operators and dose0.1 unchanged. No target-based selection; retain weak/reverse/zero cases and all exclusions. Confirms limited early-late absolute functional error prediction, not monotonicity or semantics.",
+  "source_atoms": [
+    1850,
+    2897
+  ],
+  "source_seed": 3,
+  "support_budget": 16,
+  "target_asset_config": "configs/f4_long_k128_newseeds_paired_codes_v1.json",
+  "target_checkpoint": {
+    "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+    "learning_rate_used": 0.0009698191593352884,
+    "packed_train_tokens": 131072,
+    "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_256\\seed_1",
+    "sae_name": "layers.5/seed1",
+    "seconds_since_start": 13.880498600003193,
+    "seed": 1,
+    "sha256": "f80f97d38c6eafa6e7bb9fbb21c4e7a4aabe0f7897eba74536e0c2499062a1ff",
+    "state_hash": "535a793357b29766ec83f9b88346fd54b798dae79201bbd86164ac8e94adeb87",
+    "step": 256,
+    "train_sequences": 1024
+  },
+  "target_seed": 1,
+  "training_documents": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "frozen_map": {
+    "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\F4_function_curve_s1_step256_v1_20260906",
+    "config_sha256": "ea80d474e19ac2ef0425c5cf5d1d8e62751fcebd7f40eef2b9ad7e748de8a7de",
+    "coefficients_sha256": "44f7b9d34142be9a650cdee9264ccb8ada4894569043532a64743d7eaf36f7af"
+  },
+  "use_frozen_target_checkpoint": true,
+  "evaluation_inputs_sha256": "ca38f6972d2ea4f3693bd8879cb26b6675d4b2d134700a6e561c69201b5de6a1",
+  "confirmation_inputs": [
+    {
+      "path": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\training_gain_confirmation_20260906\\freeze.json",
+      "sha256": "f42fabf502027c98a74086d3b5891578418eb86dc41c4b0346dcab4af1cbad56"
+    },
+    {
+      "path": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\training_gain_confirmation_20260906\\selection.json",
+      "sha256": "2a8ad3d58ab7798d4c3452f020165ea790b64942895e0e85ae0b29a9a943b49a"
+    },
+    {
+      "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\F4_training_gain_corpus_v1_20260906\\artifacts\\documents.jsonl",
+      "sha256": "f50b234f186df1b86aa9091f568f61a2bf0f7d2afd035f422d22498f4420b8f1"
+    }
+  ],
+  "evidence_level": "fresh_document_frozen_early_late_confirmation",
+  "execution_retry_of": "F4_training_gain_s1_step256_v1_20260906"
+}

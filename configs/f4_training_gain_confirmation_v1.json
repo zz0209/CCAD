@@ -1,0 +1,126 @@
+{
+  "written_at_utc": "2026-09-06T16:17:10Z",
+  "cells": [
+    {
+      "seed": 1,
+      "step": 256,
+      "parent": "F4_function_curve_s1_step256_v1_20260906",
+      "run": "F4_training_gain_s1_step256_v2_20260906",
+      "config": "configs/f4_training_gain_s1_step256_v2.json",
+      "reuse": false,
+      "frozen_map": {
+        "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\F4_function_curve_s1_step256_v1_20260906",
+        "config_sha256": "ea80d474e19ac2ef0425c5cf5d1d8e62751fcebd7f40eef2b9ad7e748de8a7de",
+        "coefficients_sha256": "44f7b9d34142be9a650cdee9264ccb8ada4894569043532a64743d7eaf36f7af"
+      },
+      "target_checkpoint": {
+        "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+        "learning_rate_used": 0.0009698191593352884,
+        "packed_train_tokens": 131072,
+        "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_256\\seed_1",
+        "sae_name": "layers.5/seed1",
+        "seconds_since_start": 13.880498600003193,
+        "seed": 1,
+        "sha256": "f80f97d38c6eafa6e7bb9fbb21c4e7a4aabe0f7897eba74536e0c2499062a1ff",
+        "state_hash": "535a793357b29766ec83f9b88346fd54b798dae79201bbd86164ac8e94adeb87",
+        "step": 256,
+        "train_sequences": 1024
+      }
+    },
+    {
+      "seed": 1,
+      "step": 8192,
+      "parent": "F4_function_curve_s1_step8192_v1_20260906",
+      "run": "F4_training_gain_s1_step8192_v1_20260906",
+      "config": "configs/f4_training_gain_s1_step8192_v1.json",
+      "reuse": false,
+      "frozen_map": {
+        "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\F4_function_curve_s1_step8192_v1_20260906",
+        "config_sha256": "70d22f2854d5e99e54833c2be9f63d14a4b7f28189601f6dc68fd2034e63b9b5",
+        "coefficients_sha256": "770b3f209407b5d1eeb6445350608c7c14f5371a2d36c96b16652e994910f5bd"
+      },
+      "target_checkpoint": {
+        "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+        "learning_rate_used": 1.2218963831867057e-07,
+        "packed_train_tokens": 4194304,
+        "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_8192\\seed_1",
+        "sae_name": "layers.5/seed1",
+        "seconds_since_start": 217.7661267000003,
+        "seed": 1,
+        "sha256": "818aa8bac0aa47aa2ba487df0366aa1049a7a2a65487cbc6f0a4e333aa5938b6",
+        "state_hash": "b44e55f78dc228f4d2e5fcb17d090ddc289fc755ffb4a30d803c425c7826fea0",
+        "step": 8192,
+        "train_sequences": 32768
+      }
+    },
+    {
+      "seed": 2,
+      "step": 256,
+      "parent": "F4_function_curve_s2_step256_v1_20260906",
+      "run": "F4_training_gain_s2_step256_v1_20260906",
+      "config": "configs/f4_training_gain_s2_step256_v1.json",
+      "reuse": false,
+      "frozen_map": {
+        "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\F4_function_curve_s2_step256_v1_20260906",
+        "config_sha256": "314762fe9e094ab5dd551e4233569e1d1d3e0aea85b994bc0b0c2601d9923a45",
+        "coefficients_sha256": "ec7ff0e13a0ef0443a6b1acf787dad3a8b973078ac7b8cb0383ed8cf158f90e4"
+      },
+      "target_checkpoint": {
+        "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+        "learning_rate_used": 0.0009698191593352884,
+        "packed_train_tokens": 131072,
+        "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_256\\seed_2",
+        "sae_name": "layers.5/seed2",
+        "seconds_since_start": 14.113295399998606,
+        "seed": 2,
+        "sha256": "16ad2549007a583a5121cd4744bffad7298155302db416b7b38b63d20150dbbf",
+        "state_hash": "c07ca6db8e5798ef5c1bd982def59e74681f28e1c768929f93a639b014e98d8f",
+        "step": 256,
+        "train_sequences": 1024
+      }
+    },
+    {
+      "seed": 2,
+      "step": 8192,
+      "parent": "F4_function_curve_s2_step8192_v1_20260906",
+      "run": "F4_training_gain_s2_step8192_v1_20260906",
+      "config": "configs/f4_training_gain_s2_step8192_v1.json",
+      "reuse": false,
+      "frozen_map": {
+        "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\F4_function_curve_s2_step8192_v1_20260906",
+        "config_sha256": "ecb4d8bb2cec8fa8a5a78b662d480868ed944382b1ecb3742eb61b0fa6cc4843",
+        "coefficients_sha256": "94a8b466d35c462cf07896a521911bf4c6fe3aca48db5bc648ecb6d7a1652396"
+      },
+      "target_checkpoint": {
+        "captured_after": "optimizer update, before scheduler/dead-counter update; inference weights only",
+        "learning_rate_used": 1.2218963831867057e-07,
+        "packed_train_tokens": 4194304,
+        "path": "D:\\CCAD_Storage\\training_curves\\R012_same_stream_curve_v1_20260906\\step_8192\\seed_2",
+        "sae_name": "layers.5/seed2",
+        "seconds_since_start": 218.00177419999818,
+        "seed": 2,
+        "sha256": "5c22efe536e50a843ca526e54b0de413170944451255348e0b331e73cc967d1f",
+        "state_hash": "dc279cc7ee169491d4a7559d37a5728f4153eeb45eaa296af232e4fd6735a4f3",
+        "step": 8192,
+        "train_sequences": 32768
+      }
+    }
+  ],
+  "original_methods": [
+    "raw",
+    "full",
+    "best_atom",
+    "geometric_atom",
+    "shared16",
+    "same_support_ridge",
+    "dynamic_pair_ridge",
+    "geometric_pair_ridge"
+  ],
+  "primary": "Per target shared16: late8192 minus early256 of maximum across four operators of median absolute KL(source||candidate) over all selected recipients. Hypothesis: negative in both targets.",
+  "secondary": "Original normalized KL with denominator>1e-12 missing rule; absolute observed-next-token NLL response error; all eight maps and all four operators.",
+  "uncertainty": "2000 bootstrap resamples of entire reciprocal document pairs, RNG20260906, max-operator median recomputed per resample. Conditional on fixed source3 and two dependent target trajectories; no seed-population inference.",
+  "scope": "New natural documents, previously frozen maps and lexical applicability. Source atoms1850/2897, four operators and dose0.1 unchanged. No target-based selection; retain weak/reverse/zero cases and all exclusions. Confirms limited early-late absolute functional error prediction, not monotonicity or semantics.",
+  "budget": "At most3556LMforwards,10min16GB; three bounded corpus rowgroups~25-100MB; no new training or fitting.",
+  "archive": "E:\\Projects\\SAE_Lab\\CCAD\\archive\\research_workflow_20260906\\training_gain_20260906T161710Z",
+  "corpus_config_sha256": "da41204016aa8959580929612839feee42b680b9fd338a066950465be2698321"
+}
