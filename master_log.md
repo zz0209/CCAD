@@ -3815,3 +3815,26 @@ User-requested pause executed through existing automation_update idccad after al
 - `artifacts/interpretability_closeout_20260906/automation_after.json` SHA256 `4035b358eb4ac10919d86ee7f63568c6e456f68b2aafc7809afc9f3c569c81a9` (3523 bytes).
 - `artifacts/interpretability_closeout_20260906/PAUSE_VERIFICATION.json` SHA256 `19119e83e23bbc14966bd326e80758c8b3db393b0c190a3c899f2f9ad28ca6fc` (360 bytes).
 - `artifacts/interpretability_closeout_20260906/CLOSING_VERIFICATION.json` SHA256 `69860a3f0e612243cbfad9ab1540cbf8d9a11d2d366521e44a6264c8cf02b0a7` (614 bytes).
+
+## 2026-09-06T06:51:27Z — 前几轮记录核对、写入时间规范与SAE质量讨论补记
+
+写入时间（written_at_utc）：2026-09-06T06:51:27Z。本条为当前补记时间，不是下列历史实验或旧日志的原写入时间。
+
+用户询问前几轮进展是否进入master log，并要求必须包含具体写入时间。逐项核对当前日志及各提交实际新增的标题：前六个工作单元已有科学结果、失败范围、artifact身份及后续判断；最近natural and与native收尾标题只有日期，其他部分标题至分钟且可能是启动/heartbeat时间，不能据此确认每次追加的秒级写入时间。旧原文全部保留；这些旧条目的原始精确写入时刻当前未证实，标为未知，不以当前时间倒填。下面给出可核实的Git提交时间，按本地Git历史说明结果何时已被纳入提交；提交时间不是实际写入时间，也不是独立可信时钟证明。
+
+| 已有记录及起始行（补记前） | 核实到的主要内容 | 纳入该条目的提交 | Git提交时间（UTC） | 原精确写入时间 |
+|---|---|---|---|---|
+| Common fresh-document functional confirmation，3672 | 32请求/21匹配/6入选，入选相对atom/两matching的KL与NLL各6/6更低，对raw各4/6；拒选与覆盖限制保留 | 2ff99bd | 2026-09-06T04:23:29Z | 未证实 |
+| User-requested full-history retrospective and interpretation-first consumer，3692 | 全历史回看、源概率/anchor范围、理论与解释消费者边界及论文判断 | 661dd57 | 2026-09-06T04:50:18Z | 未证实 |
+| 全面推进与当前入口整理；source解释工作启动，3707 | source discovery与构造native we对应、旧负结果和资料归档 | 852ad6d | 2026-09-06T05:12:13Z | 未证实 |
+| and源解释可行性，3732 | 初始方向失败、新词汇源复现与四target比较；raw优势及信息容量差异保留 | 577226d | 2026-09-06T05:45:47Z | 未证实，标题05:19UTC不可替代各段写入时间 |
+| Natural and interpretation confirmation，3759 | 新8自然文档/16输入×4target作用方向FCC64/64、atom32/64、raw64/64；上下文反向诊断与受限范围raw更强 | 0484a82 | 2026-09-06T06:17:30Z | 未证实 |
+| User-requested positive-result closeout before pausing existing loop，3792 | 新自然native we两seed各24/24输入偏好，删除/加回方向各8/8对应；恒定方向假说仅4/8与3/8，随后按用户要求原位暂停 | b941f08 | 2026-09-06T06:40:46Z | 未证实 |
+
+补记紧接收尾后的用户问题“我们的素材SAE是确认已经很好了吗，不需要再去基础提升了？”：上一问进行了只读配置、原始质量账本和实现核查，未执行新实验，该讨论在本次核查前尚未进入master log。结论是素材可用于已有局部结果，但训练充分性、容量/稀疏度选择和语义/功能质量没有完成基础验证，不能宣称不必再提升。
+
+当前多项FCC/and消费者使用short k128五seed，每seed131072训练tokens/256步、宽3072、Pythia-160m-deduped layer5；各自验证FVE96.8796–96.8869%、CE recovered90.6626–91.2162%。现成long k128五seed每seed4194304tokens/8192步，FVE98.5007–98.5110%、CE recovered97.4711–97.5647%。最近native we用long k32两个seed，同长预算，FVE97.5778–97.5858%、CE recovered93.7588–93.7982%，验证样本未激活756–815/3072个特征，不等于永久dead。CE recovered=1−(CE_reconstruction−CE_clean)/(CE_zero−CE_clean)，不是准确率。short与long的train/validation token路径及hash均不同，不能从这些各自验证数字直接作训练时长因果归因；首尾不同训练批次也不是固定验证集的收敛证据。质量证据：runs/R006c_k128_seed{1,2}_v1_20260903T220000Z、runs/R007_k128_seed{3,4,5}_v1_20260903T223000Z的config/metrics.raw.jsonl；runs/R011_NR1_k128_seed5_v1_20260905/FIVE_SEED_QUALITY.md及JSON；runs/R011_NR1_k32_seed{1,2}_v1_20260904T054000Z的config/metrics.raw.jsonl；消费者素材身份见runs/R008b_paired_codes_v1_20260904T000500Z/config.resolved.json。
+
+讨论中的建议而非已执行计划：恢复时提高基础质量受控检验优先级，用现成long五seed与short在相同功能/解释消费者下比较，各自重新拟合对应关系；用固定语料/验证集的多个训练检查点判断训练收益，再决定是否增加宽度或调整k。保留强atom/raw/容量对照，避免将欠训练造成的碎片化误认成母问题固有困难。此前复用素材是投入选择，不是素材已充分优化的实证结论。本次不恢复loop、不创建运行、不改当前暂停状态；未把讨论建议当作已执行实验或新正结果。
+
+长期规则已按用户要求补充至AGENTS.md：每一次追加块必须现场记录秒级UTC ISO 8601写入时间；事件时间另列；补记标明补记，不猜测历史时间，不覆盖原记录。AGENTS改前逐字归档与SHA校验完成，原规则全文保留；归档E:\Projects\SAE_Lab\CCAD\archive\research_workflow_20260906\log_timestamp_20260906T065127Z，旧AGENTS SHA256 6f0c1dd725c271fe7b085ce520aa299c36e5f0120b9d1a41412febaa88a6e35d，新AGENTS SHA256 a9b16939390718704a0e727c44b39e08491b17c230bde5577713dcbe6957c044。本次追加前master_log SHA256 ba443639a04324d6d87c5b3ed2b47b07dc27f40c05057da6e9424022c206cbd4，长度770748字节；验证旧字节是追加后原样前缀。AGENTS及归档仍按现有白名单本地保存，不扩大上传范围；只有master_log本次补记纳入成组同步。
