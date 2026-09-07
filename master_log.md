@@ -4627,3 +4627,28 @@ AGENTSdurablerules,EXPERIMENT_PLANscientificroute,EXPERIMENT_TRACKERunique13roun
 ## Follow-on schedule applied to the existing automation
 
 写入时间（written_at_utc）：2026-09-07T07:28:44Z。事件时间：same live readback. automation_update(mode=update,id=ccad) succeeded;actualTOMLstatusACTIVE,15minsameoriginaltarget01a06e15-b222-7b21-a8cd-eb058a3159e5,canonicalprompttextmatchesexactlyafterstrip. No duplicateautomation,notpausednow; latesttracker schedulesoriginal6–8unchangedthenindependent9–13withfinalpause. Completed5/next6/extension0 verified. Originalstage-only no-retraining/solebackup phrasing clarified so it cannot bar newstageauthorizedmaterial/methodimprovement. Updated5document/promptpathhashesandpriorbytearchive inartifacts/seven_round_rebuild_20260906/POST_VISUAL_EXTENSION_PLAN.json. Thisisauthorizedplanning/automationwork,notanextra scientificround.
+
+
+## BONUS_AUDIT_20260907 — START
+
+written_at_utc: 2026-09-07T07:34:47Z
+round_id: BONUS_AUDIT_20260907
+event_started_at_utc: 2026-09-07T07:34:47Z
+phase: START
+
+用户明确授予一轮额外快速全面审计与整理，并要求所有后续轮次master_log留痕、最终交付可投稿的优秀完整项目包。该奖励轮独立于已计划13轮；原completed5/next6与后续6–8、9–13不变。实际检查范围：当前入口/原automation、所有本campaignrun元数据与代码快照、R1–R5日志与成果覆盖、稿件结构/引用/图表资产、复现与最终打包缺项。修确定问题，不重训、不新跑GPU实验、不以短审计冒充第6轮。前8文件和原automation字节归档：archive/research_workflow_20260907/bonus_audit_20260907T073447Z/manifest.json。
+
+
+## BONUS_AUDIT_20260907 — COMPLETE
+
+written_at_utc: 2026-09-07T07:45:12Z
+round_id: BONUS_AUDIT_20260907
+phase: COMPLETE
+event_started_at_utc: 2026-09-07T07:34:47Z
+event_completed_at_utc: 2026-09-07T07:45:12Z
+
+快速全面审计与实质整理完成；不占原13轮，原completed5/next6保持。全部32个当前campaign run为26PASS/6FAIL；记录契约30通过/1不通过/1未形成，原异常保留。234个代码快照hash匹配；404个输入path/hash记录存在且大小一致，其中325小文件82,294,619bytes实际重hash一致。未重hash全部大权重/cache，未重算科学指标。R1–R5共39条阶段日志均有实际写入UTC，并有启动与结果记录；R2英文Actual log write UTC有效。
+
+修复旧契约的无Git/尚未首跑叙述、历史MANIFEST误充全量索引、后7张图的编号、两处模糊图号和released local tables措辞。Section8引用实际正确，初判疑虑已撤回；主文数值/公式/原始图数据不变。三篇具名peer本地PDF/hash匹配，但当前主稿尚未引用，正式全文PDF/TeX/Bib/附录与统一复现入口仍待第6–7轮；用户指出的现有视觉质量仍未达标，编号修复不冒充美学改善。
+
+已将后续每轮START/COMPLETE及实质阶段留痕、日志完成后才计数、最终可投稿项目包内容写入AGENTS/plan及原automation。原ccad实际TOML与规范prompt一致，ACTIVE、15分钟、同原任务；6–8后9–13/最终13暂停不变，奖励轮独立。审计报告与所有核对清单位于artifacts/bonus_audit_20260907/；前8文件及automation逐字archive见该目录START.json。没有新GPU实验、下载/安装/付费或其他项目资源修改。工作/检查是本轮产出，不冒充新科学发现。成组同步后将奖励完成计数置1，下一主轮仍6。
