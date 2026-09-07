@@ -214,6 +214,50 @@ def main():
     axs[1].set(xticks=range(3),xticklabels=['256','1,024','4,096'],yticks=range(3),yticklabels=['Number','Time','Joint'],xlabel='Training updates')
     axs[1].tick_params(length=0);axs[1].set_title('(b) Source-operation label accuracy (%)',loc='left',pad=10)
     save(fig,'training_learning')
+    if data.get('pair_completion_rows'):
+        # The two consumers share an edit object but require different fitted
+        # information. Show the executable decomposition and both measured costs.
+        fig=plt.figure(figsize=(7,4.8))
+        diagram=fig.add_axes([.025,.725,.95,.23]);diagram.set(xlim=(0,7),ylim=(0,2));diagram.axis('off')
+        diagram.text(0,2,'(a) Complete a recipient contribution using its reciprocal donor',va='top',fontsize=9)
+        diagram.text(.12,1.02,'Recipient + donor\nabsolute target codes',va='center',fontsize=8.2)
+        for y,symbol,weight,label in [(1.30,r'$X_-=(X-\Pi X)/2$',r'$W_0$','Frozen contrast map'),(.57,r'$X_+=(X+\Pi X)/2$',r'$V$','Learn common part')]:
+            diagram.annotate('',xy=(2.02,y),xytext=(1.55,1.02),arrowprops=dict(arrowstyle='->',lw=.6,color=GREY))
+            diagram.text(2.92,y,symbol,ha='center',va='center',fontsize=10)
+            diagram.annotate('',xy=(4.18,y),xytext=(3.80,y),arrowprops=dict(arrowstyle='->',lw=.6,color=GREY))
+            diagram.text(4.50,y,weight,ha='center',va='center',fontsize=10)
+            diagram.text(4.50,y-.30,label,ha='center',va='center',fontsize=7.3)
+            diagram.annotate('',xy=(5.13,1.02),xytext=(4.91,y),arrowprops=dict(arrowstyle='->',lw=.6,color=GREY))
+        diagram.text(5.27,1.02,'+',ha='center',va='center',fontsize=13)
+        diagram.annotate('',xy=(5.62,1.02),xytext=(5.42,1.02),arrowprops=dict(arrowstyle='->',lw=.6,color=GREY))
+        diagram.text(5.82,1.02,r'$U^{\mathsf{T}}$',ha='center',va='center',fontsize=10)
+        diagram.annotate('',xy=(6.20,1.02),xytext=(6.02,1.02),arrowprops=dict(arrowstyle='->',lw=.6,color=GREY))
+        diagram.text(6.67,1.02,'Subtract\nfrom recipient',ha='center',va='center',fontsize=8.2)
+        diagram.text(.10,.04,'Contrast cancels the common path; complete removal uses both paths.',fontsize=8)
+        lookup={(r['factor'],r['consumer'],r['role'],r['method']):r for r in data['pair_completion_rows']}
+        groups=[('number','temporal'),('number','quoted'),('time','temporal'),('time','quoted')]
+        styles=[('legacy_contrast','Original map','o','#949494',False),
+                ('paired_complete','Complete-state fit','s','#323232',False),
+                ('anchor_compact','Paired completion','D','#323232',True)]
+        axs=[fig.add_axes([.22,.125,.31,.45]),fig.add_axes([.64,.125,.31,.45])]
+        for col,consumer in enumerate(['contrast','complete_removal']):
+            ax=axs[col];maxv=0
+            for i,(factor,role) in enumerate(groups):
+                for j,(method,label,marker,color,open_marker) in enumerate(styles):
+                    row=lookup[factor,consumer,role,method];y=i+(j-1)*.19
+                    ax.plot([row['min_seed_kl'],row['max_seed_kl']],[y,y],color=color,lw=.9)
+                    ax.plot(row['kl'],y,marker=marker,color=color,markerfacecolor='white' if open_marker else color,ms=4)
+                    maxv=max(maxv,row['max_seed_kl'])
+            ax.set(ylim=(3.47,-.47),xlim=(0,maxv*1.08),yticks=range(4),
+                   yticklabels=['Number · temporal','Number · quoted','Time · temporal','Time · quoted'] if col==0 else [],
+                   xlabel='Source-to-candidate KL (nat)')
+            ax.tick_params(axis='y',length=0);ax.tick_params(axis='x',labelsize=8)
+            ax.set_title(['(b) Reciprocal contrast','(c) Complete-group removal'][col],loc='left',pad=9)
+            for sep in [.5,1.5,2.5]:ax.axhline(sep,color='#eeeeeb',lw=.5,zorder=0)
+        from matplotlib.lines import Line2D
+        handles=[Line2D([],[],linestyle='none',marker=m,color=c,markerfacecolor='white' if op else c,label=l,markersize=4) for _,l,m,c,op in styles]
+        fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.55,.667),ncol=3,frameon=False,fontsize=8,columnspacing=1.7)
+        save(fig,'pair_completion')
     (out/'FIGURE_MANIFEST.json').write_text(json.dumps(dict(input_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),font_family=family,
         font_source=str(font) if font.exists() else 'Matplotlib STIXGeneral',outputs=outputs,
         scope='Descriptive plots of retained data; intervals are source-seed ranges or dependent-direction distributions, not confidence intervals.'),indent=2)+'\n',encoding='utf-8')

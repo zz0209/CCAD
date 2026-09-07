@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import time
@@ -24,16 +25,22 @@ def main():
     parser.add_argument('--skip-data',action='store_true')
     parser.add_argument('--skip-figures',action='store_true')
     parser.add_argument('--allow-download',action='store_true')
+    parser.add_argument('--pdf-name',default='main.pdf',help='Output PDF basename; a distinct name allows a new version while a viewer holds main.pdf open')
     args=parser.parse_args();paper=args.paper.resolve();compiler=args.tectonic.resolve()
     if not compiler.is_file():raise FileNotFoundError(f'Tectonic not found: {compiler}; pass --tectonic to the installed 0.17.0 executable')
     start=dt.datetime.now(dt.timezone.utc);timer=time.monotonic();steps=[]
     buildroot=paper/'build';buildroot.mkdir(exist_ok=True,parents=True)
     logdir=buildroot/start.strftime('%Y%m%dT%H%M%S%fZ');logdir.mkdir()
+    if Path(args.pdf_name).name!=args.pdf_name or Path(args.pdf_name).suffix.lower()!='.pdf':
+        raise ValueError('--pdf-name must be a PDF basename')
+    compiler_output=paper
+    if args.pdf_name!='main.pdf':
+        compiler_output=logdir/'compiled';compiler_output.mkdir()
     env=os.environ.copy();env.setdefault('TECTONIC_CACHE_DIR',str(ROOT/'.aris/tex_runtime_v1/cache'))
     for name,cmd,cwd in [
         ('data',[sys.executable,str(ROOT/'scripts/build_paper_data.py'),'--output',str(paper)],ROOT),
         ('figures',[sys.executable,str(ROOT/'scripts/build_paper_figures.py'),'--paper',str(paper)],ROOT),
-        ('latex',[str(compiler),'--untrusted','--keep-logs','--keep-intermediates']+([] if args.allow_download else ['--only-cached'])+['main.tex'],paper)]:
+        ('latex',[str(compiler),'--untrusted','--keep-logs','--keep-intermediates']+([] if args.allow_download else ['--only-cached'])+([] if compiler_output==paper else ['--outdir',str(compiler_output)])+['main.tex'],paper)]:
         if (name=='data' and args.skip_data) or (name=='figures' and args.skip_figures):continue
         t=time.monotonic()
         with (logdir/f'{name}.log').open('w',encoding='utf-8') as log:
@@ -43,7 +50,9 @@ def main():
         if result.returncode:
             (logdir/'BUILD_FAILED.json').write_text(json.dumps(dict(started_at_utc=start.isoformat(),steps=steps),indent=2)+'\n')
             raise SystemExit(result.returncode)
-    pdf=paper/'main.pdf'
+    pdf=paper/args.pdf_name
+    if compiler_output!=paper:
+        shutil.copyfile(compiler_output/'main.pdf',pdf)
     if not pdf.is_file():raise FileNotFoundError(pdf)
     files=[p for p in paper.rglob('*') if p.is_file() and p.suffix in ['.tex','.bib','.pdf','.csv','.json','.py','.md','.svg'] and 'build' not in p.relative_to(paper).parts]
     receipt=dict(started_at_utc=start.isoformat(),completed_at_utc=dt.datetime.now(dt.timezone.utc).isoformat(),wall_seconds=time.monotonic()-timer,steps=steps,

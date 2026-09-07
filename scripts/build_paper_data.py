@@ -209,6 +209,28 @@ def main():
               memberships=[x for x in mechanism['memberships'] if x['source_seed']==1 and x['target_seed']==2],
               fixed_examples=fixed,display_members=[x for x in example['displayed_values'] if 'member' in x],
               functional_learning=learning['rows'],training_quality=quality)
+    pair_base=Path('artifacts/extension_five_20260907/r9_blueprint')
+    pair_complete=None
+    if (root/pair_base/'R9_PAIR_COMPLETE_SUMMARY.json').is_file():
+        pair_complete=read(pair_base/'R9_PAIR_COMPLETE_SUMMARY.json')
+        pair_anchor=read(pair_base/'R9_PAIR_ANCHOR_SUMMARY.json')
+        extra=[x for x in pair_anchor['rows'] if x['method'].startswith('anchor_')]
+        pair_rows=pair_complete['rows']+extra
+        plot['pair_completion_rows']=pair_rows
+        pair_names={'legacy_contrast':'Original contrast map','legacy_plus_mean':'+ global mean',
+            'paired_complete':'Complete-state ridge','paired_balanced':'Energy-balanced ridge',
+            'full_code_complete':'Full-code complete ridge','raw_complete':'Raw complete ridge',
+            'same_members_native':'Same-member native','anchor_compact':'Paired compact completion',
+            'anchor_full_code':'Paired full-code completion','anchor_raw':'Paired raw completion'}
+        pair_lookup={(r['factor'],r['consumer'],r['role'],r['method']):r for r in pair_rows}
+        for consumer in ['contrast','complete_removal']:
+            lines=[]
+            for method,label in pair_names.items():
+                vals=[pair_lookup[f,consumer,r,method]['kl'] for f in ['number','time'] for r in ['temporal','quoted']]
+                if method=='anchor_compact':lines.append(r'\midrule')
+                lines.append(label+' & '+' & '.join(f'{v:.5f}' for v in vals)+r' \\')
+            (table_dir/f'pair_{consumer}.tex').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+        (data_dir/'pair_completion.json').write_text(json.dumps(dict(complete=pair_complete,anchor=pair_anchor),indent=2)+'\n',encoding='utf-8')
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -249,6 +271,13 @@ def main():
             dict(id='executable_predictive_operation',paper='Appendix D.2',
                  result='Forty portable signed maps reproduce frozen physical operations; output is a source-aligned residual update, not native feature deletion.',
                  evidence=['src/ccad/predictive_operation.py','scripts/apply_predictive_operation.py','runs/SEVEN_R7_donor_specificity_v1_20260907/operations/INDEX.json','tests/test_predictive_operation.py'])])
+    if pair_complete:
+        claims.append(dict(id='contrast_and_pair_common_completion',paper='Section 4.4; Appendix A.9 and C.9; Figure 7',
+            result='Contrasts omit pair-common contribution. Complete ridge improves source-group removal but can worsen contrasts. Pair-conditioned completion preserves frozen contrasts and improves removal on exposed development data; needs a donor and does not solve unpaired/native/semantic correspondence.',
+            evidence=[(pair_base/'R9_PAIR_COMPLETE_SUMMARY.json').as_posix(),(pair_base/'R9_PAIR_ANCHOR_SUMMARY.json').as_posix(),
+                      'src/ccad/pair_complete_correspondence.py','scripts/run_pair_complete_correspondence.py','scripts/summarize_pair_complete.py',
+                      'configs/ext_r9_pair_complete_v2.json','configs/ext_r9_pair_anchor_v1.json','paper/sections/appendix_theory.tex',
+                      'scripts/apply_paired_completion.py','scripts/export_paired_completion.py',(pair_base/'operations/INDEX.json').as_posix()]))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

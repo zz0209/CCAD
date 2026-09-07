@@ -1,0 +1,200 @@
+{
+  "run_id": "EXT_R9_pair_complete_v2_20260907",
+  "purpose": "Connect reciprocal-contrast correspondence to complete source-group removal using the previously omitted pair-common component",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": true,
+  "layers": [
+    15
+  ],
+  "noun_pairs": [
+    [
+      "engineer",
+      "engineers"
+    ],
+    [
+      "chef",
+      "chefs"
+    ],
+    [
+      "scientist",
+      "scientists"
+    ],
+    [
+      "musician",
+      "musicians"
+    ],
+    [
+      "visitor",
+      "visitors"
+    ],
+    [
+      "manager",
+      "managers"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "At this moment",
+      "In those days"
+    ],
+    [
+      "At the moment",
+      "Years ago"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "object_relative"
+  ],
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 64,
+  "budget_seconds": 1200,
+  "budget": "R9 bounded diagnostic: <=1200s GPU-managed wall, two CPUthreads, five fixed cyclic directions, no new model/SAE training; inside R9 3600s/3GB project/0paid budget.",
+  "scope": "Retrospective development on exposed512role panel. Train only384oldtemporal rows, alphafit256/cal128 thenrefit384; originalS/Tsupports unchanged, no target-output fitting. Compare originalcontrast map, mean correction, complete and source-energy-balanced pairedridge, fullcode/raw complete and same-support native. Bothcontrast and fulluncentered sourceDzremoval measured; no semanticexpectedlabelassigned to removal. Five cyclicpairs share5SAEs, not independentreplicates. No new independentconfirmation.",
+  "sae_layer": 15,
+  "lexical_partition_size": 6,
+  "discovery_blocks": [],
+  "discovery_cues": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "raw_operations": [],
+  "sae_checkpoints": [
+    {
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_1"
+    },
+    {
+      "seed": 2,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_2"
+    },
+    {
+      "seed": 3,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_3"
+    },
+    {
+      "seed": 4,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_4"
+    },
+    {
+      "seed": 5,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_5"
+    }
+  ],
+  "material_run": "runs/SEVEN_R4_l15_confirmation_material_v1_20260907",
+  "member_budgets": [
+    16,
+    32
+  ],
+  "gradient_path_points": [
+    0,
+    0.5,
+    1
+  ],
+  "gradient_path_weights": [
+    0.16666666666666666,
+    0.6666666666666666,
+    0.16666666666666666
+  ],
+  "gradient_batch_size": 8,
+  "source_run": "runs/SEVEN_R4_l15_source_v1_20260907",
+  "source_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "target_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "fit_blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "alphas": [
+    0.0001,
+    0.01,
+    1.0
+  ],
+  "single_factor_methods": [
+    "fcc_group",
+    "same_members_native",
+    "direct_target_native",
+    "full_code_ridge",
+    "rrr_rank1",
+    "rrr_rank4",
+    "dsca_rank1",
+    "raw_native_units",
+    "wrong_factor"
+  ],
+  "correspondence_run": "runs/SEVEN_R4_l15_correspondence_v1_20260907",
+  "das_steps": 100,
+  "das_checkpoint_every": 20,
+  "das_batch_size": 4,
+  "das_learning_rate": 0.005,
+  "native_gain_candidates": [
+    0.25,
+    0.5,
+    1,
+    2,
+    4
+  ],
+  "run_parent": "SEVEN_R9",
+  "position_names": [
+    "time",
+    "number",
+    "distractor"
+  ],
+  "position_aliases": {
+    "time": "final",
+    "number": "final"
+  },
+  "encode_only": true,
+  "threshold_source_split": "Oldsource-only group/support choices. New objective consumes old384temporal input/source coordinates; no fit on512exposed role panel.",
+  "evidence_level": "retrospective_controlled_development",
+  "simple_source_controls": true,
+  "final_layer_cached_tail": true,
+  "behavior_run": "runs\\SEVEN_R4_l15_behavior_v1_20260907",
+  "frozen_dir": "artifacts\\seven_round_rebuild_20260906\\r4_l15\\frozen",
+  "development_material_run": "runs/SEVEN_R4_l15_material_v1_20260907",
+  "evaluation_code_run": "runs/SEVEN_R4_l15_confirmation_v1_20260907",
+  "seed_pairs": [
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      1
+    ]
+  ],
+  "previous_failed_run": "EXT_R9_pair_complete_v1_20260907"
+}

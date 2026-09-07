@@ -4827,3 +4827,56 @@ CausalGym original method/control/license sections, README and interventions.py 
 实际资源与工时：R8为0GPU/训练/模型下载/付费；两次打包均由原disk-e-io租约协调并自然释放，其他项目lease未更改。复用现有环境，仅补上述小TeX依赖。R8_BUDGET保守本地总量1,163,992,370bytes，含最终包、保留初包、全部渲染/草稿/提取/归档及整份当前paper，低于变更后的1.6GB；单包仍低850MB。原阶段GPU管理任务累计保守3.337507789小时不变。有效研究/设计/阅读/写作/审图与等待未连续计量，明确未知；不把空等或打包凑成有效研究。AST/源hash和git diff检查通过，无代码科学变化不重跑科学测试网格。
 
 计数与下一步：本COMPLETE和交付关闭条目到位后completed_rounds7→8、active为空、next9 READY，original_stage COMPLETE、extension READY/0。先交付原科学加视觉阶段，不在本轮启动9。下一heartbeat原位继续已授权第9–13轮全面补强，启动9时核实实际资源/额度并重新分配合理预算，优先找蓝本—估计—素材—输出—消费者的可修复失配，读三篇具体理论/实验/附录/源码并落实有判别力改进，不继续原面板无界网格。原ccad ACTIVE/15分钟/current target已核对，结束原因未失效，不暂停、不删或新建loop，不委派其他task/subagent；13最终交付后才原位暂停，禁止14。白名单3个构建器和master_log成组同步随后完成，研究稿/数据/ZIP不扩大公开范围。关闭前入口逐字归档：archive/research_workflow_20260907/r8_close_20260907T165748Z/manifest.json。
+
+
+## SEVEN_R9 — START: blueprint-to-consumer improvement; five-minute heartbeat
+
+实际写入UTC：2026-09-07T17:10:55Z。round_id SEVEN_R9，新增阶段1/5，START。事件启动登记于本次写入；用户本轮明确要求原automation改为5min后立即进入下一轮。现有idccad经automation_update原位更新并实查ACTIVE/5分钟/原target，prompt逐字相同，不重建loop、不委派执行；修改周期不是新增科学轮。AGENTS只改周期句、tracker同步当前工作卡，旧文逐字归档archive/research_workflow_20260907/r9_start_20260907T171055Z/manifest.json，R8最终稿/包保留。
+
+理由和计划：R8完整阶段交付已完成，真实成果仍受紧凑预测误差、source/native区别、语义与跨模型/电路用途限制。沿原CBSM目标、动态贡献对象、估计求解、素材、对应输出和消费者逐环定位具体失配；重读三篇具名原文与有用官方实现，并把成熟办法转成可运行的小改进与真实判别，数学/实现/结果/解释和稿图共同推进。先用旧开发数据定位机制，正式新确认须冻结后新数据；不把已经看过的面板重新命名为独立，不重开无界回归/控制网格。具体改法在原文与代码核对后登记实质PROGRESS。
+
+实际资源与投入：gpu-0当前free，RTX5070Ti16303MiB总/1809MiB已用；20逻辑CPU，实际RAM33,727,041,536bytes/可用14,806,110,208，D剩3,735,493,279,744bytes、E146,205,528,064bytes。WMI拒绝后用成功的标准GlobalMemoryStatusEx核实RAM，非据旧内存猜测。共享cpu-heavy/disk-d-io仍有其他项目stale记录，未更改/抢占。已读唯一环境账本，复用r004/固定source/plot/TeX，不复制模型或重装环境。轻量metadata查询sparsify无dist-info，因为原环境用固定源码checkout；这不等于import或训练失败，将按真实路径核实。
+
+现有账号只读核查：Codex周已用77%/余23%、现有credit875/可用reset2，无兑换或新增购买；HF已认证、非Pro、带jobs scope但可用远程额度未知，未启动远程job。不据权限scope虚构免费算力。新阶段初始上限10小时GPU管理任务、40GBbulk、12GB项目新增、0付费；R9先限1小时GPU、12GBbulk、3GB项目新增。原阶段3.3375管理任务小时保留，不把旧6小时尾款当新阶段永久限制。实际工作/计算/等待按执行记录，当前尚无新增科学结果，不用启动/核查计时充作一轮。
+
+状态：completed仍8，active9，extension_completed0；先完成本轮实际结果与稿图整理、留下COMPLETE再推进。跨5分钟触发继续同一单元，最终13完成总结/项目包后暂停原automation，不加14。START与账号/硬件预算摘要保存在artifacts/extension_five_20260907/r9_blueprint，下一步执行蓝本/代码/原文定向对照与具体改进判别。
+
+
+## SEVEN_R9 — PROGRESS: pair-common component and concrete consumer test
+
+实际写入UTC：2026-09-07T17:23:31Z。round_id SEVEN_R9。事件：已完成蓝本47页PDF的索引提取（不是全读），实际重读p1/13/16及研究程序目标/对象/替换/共识章节；重读三篇具名原文指定方法页，核对ACL官方repo commit32da471c92ee628d28feac2a3e30973ada8b994f并下载约33KB四文件作参考，源码尚在定向检查中。
+
+具体失配：对reciprocal donor置换P，Eminus=(I-P)E/2、Eplus=(I+P)E/2正交，差分损失只见4||Eminus||²；完整源组删除还需要pair-common贡献。全局mean修正不能恢复随pair变化的常量。它是数学连接/使用范围，不把基础投影/岭回归称首创，也不倒称当前差分consumer实现错误。已写pair_complete_correspondence.py：固定原支持，按两个分量目标拟合，eta1等于完整state ridge，另按source-only能量平衡两项。未改变原map/数据。非负codes反例、投影能量/完整ridge等价、非法非reciprocal拒绝三个针对性测试0.298s通过。
+
+下一实际run EXT_R9_pair_complete_v1_20260907，configs/ext_r9_pair_complete_v1.json，最多1200秒管理任务/2CPUthreads，在R9已核定1小时GPU内。5循环方向覆盖原五同配置SAE；旧384temporal输入fit256/cal128选择alpha后refit384，不用targetLM输出。对既已暴露512role panel同时测差分操作和完整uncentered sourceDz删除，原map/均值修正/同支持完整及平衡拟合/fullcode/raw完整/同支持native7方法，源teacher分列。完整删除只报相应source保真/改变，未定义语义expectedlabel，不给虚假语义准确率；这是新操作的开发判别，不是新数据独立确认。当前无新结果，开始计算前登记，原资源管理器取得gpu-0后执行，数据/拟合/使用分开留账。
+
+
+## RESEARCHSEVEN_R9 CORRECTION — write UTC 2026-09-07T17:28:03Z
+
+round_id: RESEARCHSEVEN_R9. Actual write UTC: 2026-09-07T17:28:03Z. Failure event end is recorded in the v1 run manifest/status; active-work duration is unknown. EXT_R9_pair_complete_v1_20260907 passed model/cache checks but failed on duplicate alpha diagnostic keywords before any intervention rows (73.78840449999552 seconds script wall). Its full run tree, config and source snapshot remain intact. Fixed the diagnostic dictionary merge. Also corrected role metadata to read panel cue_role (256 temporal, 256 quoted), since templates are syntactic pp/object_relative rather than role labels; no mislabeled scientific outcomes had been produced. Clarified per-run manifest to state uncentered Dz and retrospective development. The actual choose_fit function now passes a nonnegative pair-data smoke check; v2 will retain the original fitting/evaluation design and new run identity. Zero results from v1 enter scientific summaries. Recovery record: artifacts/extension_five_20260907/r9_blueprint/REPAIR.json.
+
+
+## SEVEN_R9 — PROGRESS: complete-group fidelity and a bounded paired follow-up
+
+Actual write UTC: 2026-09-07T17:33:16Z. round_id SEVEN_R9; computation event completed 2026-09-07T17:30:45.005995+00:00 according to v2 status.json. v2 produced all81,920 outcomes and passed every computational check (131.275904s script wall,704 full-model sequences/83,136 validated cached-tail queries). The process exited1 because the generic artifact gate rejects audit_opened=true with candidate_family_frozen=false. This is a retained metadata-scope conflict: the already exposed confirmation data are explicitly development here, not a fresh audit. All other contract checks passed; original config/source/manifest/contract failure remain unchanged. Analysis explicitly reports this flag and does not promote the result to confirmation. The analyzer initially used a nonexistent summary.json filename; corrected to existing metrics.summary.json before any output summary.
+
+Scientific result: fixed compact members with complete-state ridge reduce full-source-group removal KL by69.59–78.85% versus applying the old contrast map to absolute codes, across both factors/roles, with5/5 cyclic source directions improving in each stratum. A development-only global mean correction helps43.50–61.65%, but is weaker. The complete fit worsens number contrast KL34.28–35.34%; source-energy balance reduces but does not remove that tradeoff. Dense/fullcode and raw remain stronger. Exact numbers/all seed means are in artifacts/extension_five_20260907/r9_blueprint/R9_PAIR_COMPLETE_SUMMARY.json and R9_COMPARISONS.json.
+
+One specific further prediction is now warranted: freeze the old odd prediction and fit a separate pair-common map. With reciprocal P, Yhat=Xminus W_old+Xplus V, so (I-P)Yhat=(I-P)XW_old for every pair, including evaluation. It requires both recipient and donor; it cannot be sold as general unpaired Dz recovery. Launch EXT_R9_pair_anchor_v1_20260907 with compact/full/raw common controls, old384temporal fit/cal only, same512 exposed rows/five cyclic directions, budget900s within original R9 allocation. No parameter grid or new independent confirmation; preserve the single-map negative tradeoff. Current scientific direction: identify which operation classes the output supports, then test a frozen improved method on genuinely new data in the next stage. Work duration not inferred from trigger intervals; zero paid resources.
+
+
+## SEVEN_R9 — COMPLETE: paired contribution completion and manuscript delivery
+
+实际写入UTC：2026-09-07T18:10:47Z。round_id SEVEN_R9，新增阶段1/5，COMPLETE。登记开始2026-09-07T17:10:55Z；v2数值运行结束2026-09-07T17:30:45.005995+00:00、paired运行结束2026-09-07T17:35:04.266908+00:00均来自status.json；最终PDF构建2026-09-07T17:59:35.573533+00:00启动，确切结束见BUILD_RECEIPT；本条写入前结果、全文、目检、可执行输出与资源核对均完成。有效阅读/推导/编码/写作和等待未连续计时，明确未知，不以起止跨度充作有效工时。17:28:03Z CORRECTION中round_id误写RESEARCHSEVEN_R9，只是本轮SEVEN_R9的别名勘误，不是额外研究轮；保留旧原文。
+
+选择理由与数学推进：差分回归看不见成对公共贡献，直接用于完整source组Dz删除会失准。沿蓝本—估计—固定SAE支持—对应输出—消费者明确正交分解，给非负code反例（contrast误差0但完整MSE62.5，最佳全局mean后仍6.25）。先实现完整state ridge和平衡拟合，再由其真实contrast代价触发一次有界paired补全：冻结旧odd map，仅拟合common map；对任意reciprocal pair对比不变。它需要两输入，并给出donor变化的精确依赖式；标准投影/岭回归不称首创，不声称实现通用Y(x)或native/semantic correspondence。原五同配置layer15 SAE、源组/目标支持不变，本轮无新增训练，素材充分性仍需按真实学习曲线推进。
+
+实际结果：512既已暴露的输入、五循环seed方向，每factor/role256输入；拟合/校准只用旧384temporal输入。完整state拟合删除KL改善69.59–78.85%，但number contrast KL变差34.28–35.34%；均值修正帮助43.50–61.65%，full-code/raw仍更强。paired紧凑补全删除KL依次0.0188761/0.0220865/0.0267193/0.0515831，对旧map降低78.90%/76.63%/71.13%/59.21%，四分层均5/5循环方向改善；共享seed不当独立重复。所有实际float32 contrasts、四label log概率与full-vocabulary KL保持原值。time/quoted完整state拟合优于paired的反例保留。两完整run分别81920/51200raw rows，不筛掉弱源或错误源；这是回顾开发，不是新数据确认。
+
+失败与检查范围：EXT_R9_pair_complete_v1_20260907因重复alpha诊断键在0结果时失败，73.7884045s；role读取问题也在0结果时修复。v2全部数值检查通过但保留generic contract的audit_opened/nonfrozen冲突和exit1，其余artifact检查通过，原config/manifest/flag不重写；paired run数值与contract通过。raw/hash/环境/源snapshot/日志完整。选读官方MCC源码后执行I2与-I2小反例，发现固定commit的synthetic helper使用signed cosine（0），论文abs定义与本项目metric为1；仅指该函数，不外推论文全结果错误。初始报告构建路径错误、Windows锁住旧main.pdf、保留草稿及收尾核对首次误用归档路径均未改变科学结果；已按真实路径修复。单次聚焦数学/操作/数据/比较检查完成，3个数学测试与实际choose_fit smoke通过；随后AST、真实CLI正向全行重放和错误角色拒绝通过，不重跑科学网格。
+
+学习、稿件和使用成果：原蓝本47页定向选读；Subspaces pp3/5/6及p5图、ACL consistency p3和p20容量片段/固定官方TopK与coherence/MCC源码、SemanticOT pp3–5/8及p8图。SOURCE_REVIEW记录范围和三份原文hash、官方commit32da471c92ee628d28feac2a3e30973ada8b994f与Apache2许可。没有复现完整SemanticOT、96seed/多模型、语义盲评或电路压缩，不靠定位差异宣称整体不弱。更新正文2.4/4.4、A.9证明、C.9图7/表16–17、D输出/重跑说明；27页paper/main_r9.pdf SHA256 64b2f737f669593161cfd76be7a0ac81a608f5f3fc67b0dd7f4db69c02242f51，469876bytes，所有27页实际查看，15字体均嵌入，7图/21导出/17编号表/24表片段/17引用/四附录。22旧表片段逐字及旧figure_data所有key/value未变，新表80数值、图/数据/主张身份一致；旧paper/main.pdf仍为R8 hash c12b7e4c7d34c843a0864be8a146ff964eed18b76873319db292d0fb9682100f。图版核对不等于科学或venue验收。
+
+可执行输出与资源：导出十组paired completion共20map，固定20输入示例实际CLI调用；全5120factor-input数值重放最大删除norm误差2.84217e-14，实际float32 contrast误差0，操作角色/成员顺序/配套ID检查，错误odd/common参数被拒且不落输出。复用原PredictiveOperation接口，无模型权重即可用；不是独立科学复验。三次GPU管理任务wall合计294.7258904s（0.0818683h，含失败），各704full-model sequences，cached-tail1216/83136/52416；不是纯GPU kernel小时。原gpu-0包装器自然释放，其他lease未改，0训练/新bulk/环境安装/远程job/付费/额度兑换。保守项目本地占用213,375,182bytes（整份既有paper树及收尾预留也计入），低于本轮3GB；原1小时GPU预算未用满无需空跑。资源与全run原始身份见R9_BUDGET.json。
+
+交付与下步：artifacts/extension_five_20260907/README.md、R9_REPORT.md、R9_DELIVERY_MANIFEST.json是本地增量入口；r9_blueprint含数学连接、原文审阅、全结果、图设计、最终PDF核对、预算、操作包、失败；paper/README给可复现命令。原R8整包/草稿/历史均保留，当前没有再次打包532MB旧材料。先写本COMPLETE，再把completed8→9、extension0→1、active清空、next10 READY。第10轮让成员选择本身看到完整贡献，结合已有材料学习曲线与源组选择性，改善compact相对强对照差距、限定donor信息预算，再走冻结后真正新输入确认；不能在本面板无限调ridge。验收仍NOT_MET，第13轮统一最终稿/全部结果/同行对标/可用项目包后原位暂停，不加14。ccad实查ACTIVE/每5分钟/原对话，归属不变、不委派；白名单源码/配置/master_log随后成组commit/push并另存R9_SYNC.json，研究稿/数据不扩大公开范围。关闭前入口归档：archive/research_workflow_20260907/r9_close_20260907T181047Z/manifest.json。
