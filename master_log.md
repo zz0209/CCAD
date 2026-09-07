@@ -4587,3 +4587,29 @@ First two pilots fix width8192, seed1,1,048,576 natural tokens, batch8x128,1024 
 ## R4 final figures and delivery checks
 
 写入时间（written_at_utc）：2026-09-07T06:02:48Z。事件时间：same final document/figure checks; no new model inference. Added standalone natural-reconstruction versus compact-function figure from the three retained checkpoints, PNG/PDF/SVG with five source trajectories and means; actually viewed, labels visible. Corrected the context-figure caption to match its signed role-scatter panels; source learning has its own figure. Full current local document/figure path/hash manifest: artifacts/seven_round_rebuild_20260906/R4_DELIVERY_MANIFEST.json. All40 changed allowlisted files pass size/AST/JSON/credential-pattern checks and Git whitespace check; 11 referenced manuscript images exist. Actual gpu-0 lease free; other project records unchanged. Targeted final-hook, panel replay and in-run actual full-model/tail checks already passed; no repeated full suite. Stage/commit/push uses existing main whitelist; local research documents remain ignored and retained.
+
+
+## R5 member and context mechanism study started
+
+写入时间（written_at_utc）：2026-09-07T06:26:47Z。事件时间：same design/start, before new member-level statistics or interventions. Round5 active, completed4 unchanged. Reuse frozenR4 maps and exposed512rolepanel; decompose all20directions and test five prechosen cycle directions. Candidate operations: single member, leave-one-out, whole-map norm matched to deleted edit, role-exchanged edit and its local-norm-matched version; source/fullFCC/native references explicit. Allmembers/allrows retained. Fixed source1target2block0zero-valued examples, including failure. Budget1200s/1GB/no training or refit. Mechanism outcomes cannot be called new independent confirmation. Exact prior tracker atarchive/research_workflow_20260907/r5_start_20260907T062647Z/manifest.json.
+
+
+## R5 natural activation exemplars
+
+写入时间（written_at_utc）：2026-09-07T06:41:10Z。事件时间：preparation after mainmechanism PASS412.4431358s/300544rows. Add <=180s existing32768naturalvalidationtokens for allalreadyfrozen source1/target2members. Top3 shortactivationcontexts withdocumentURL/hash and actualsequenceboundaries; inactive membersretained. No newtraining/refit orindependentcausal claim; totalR5cap1200s unchanged. Mainrole-swapnormmatched Temporal timeaccuracy12.97%vsFCC83.44%, targetmemberdeletion beyondnormcontrols; rawfacts retained inR5_MECHANISM_SUMMARY.json.
+
+
+## R5 member mechanism and manuscript integration
+
+写入时间（written_at_utc）：2026-09-07T07:03:14Z。实验完成事件：mechanism2026-09-07T06:37:09.782Z；natural2026-09-07T06:41:51.299Z，来自run状态；本段为当前补充整合时间，不倒填。
+
+Scientificresult: all20mapenergydecompositionsshowtimeindividualattenuation(medianquoted/temporal.10245,total.08255),crosspositive20/20temporal19/20quoted; no dominantaggregatecancellationclaim. Fivecycle/all512actualnormmatchedroleswaps lowerTemporal timeaccuracy83.4375→12.96875%,Quoted98.90625→93.59375%. All169memberincidences retained:Temporal removalvsnormcontrolKLnumber.037997/.016949,time.013569/.002765,referenceintactFCC notsource. Allfive directions afterownmembermeanssamequalitative ordering; notindependentmember/edgeCI. Source1target2 complete10×16N/32×32T signedliftswith8sharedmembers; all16fixedcases/48factorrowsincludesourceandtransferfailures.73uniquenaturalmembers/all32768existingvalidationtokens, descriptive topcontexts only.
+
+Mathphysicaldecomposition/nativeequivalence/rankambiguity/energycounterexample/normscope integratedDERIVATION§27 andmain§4.1/§10; abstract/introduction/conclusionupdated. Threeactualfigurefamilieswithdata/hashandallcases; nearestMarks/Ameisenmethodreadingandprovenanceupdated. R5_REPORT.md/R5_BUDGET.json andr5_mechanism/R5_MECHANISM_SUMMARY.json containfullvalues. Rawmain8df902598ffebaaadeb20cb323a98f39001ea5d0b6c954902d4796b8d7c055ae,300544rows; natural26022df8389d84b58c6dc5b402164dc2248d73e9f2046e13000ac1a24ea8afb4,73rows. BothPASScontractPASS; actualwall425.864371600s,runbytes178852933,zeroadditionalbulk/paid/training. Existingruntime/cacheandleasewrapperreused; allGPUworkdone. Beforeintegrationbytearchivearchive/research_workflow_20260907/r5_integration_20260907T070314Z/manifest.json. Countremains4pendingtargetedartifact/figurecheckandsync, thenR5completedonce/R6ready. Nootheragent/taskornewloop.
+
+
+## R5 delivery checks and absolute-selectivity clarification
+
+写入时间（written_at_utc）：2026-09-07T07:06:33Z。事件时间：same current artifact/math/figure andpre-synccheck. Allthreefinalfiguresactuallyviewed; allPNG/PDF/SVGsource/targetmanifesthashesmatch;16fixedcases/48factorrowsandjointsourcefailures/transferfailuresverified. All5directions havepositivemembermeanremoval-minus-normcontrolKL forbothfactor/bothrole. ASTof5newmember scripts andJSONof2configs pass;gitdiffcheckpass; mainfigurelinksresolve. GPU0actuallyfree, otherprojectleasesuntouched;ccadACTIVE15minsoriginaltargetconfirmed.
+
+Absoluteeffects preventoverselling signedcross-factorcancellation:Temporalnumberdeletionmeanabsolute(number,time)=(.713367,.110848),timedeletion=(.161074,.210790);Quoted=(.759110,.117861)/(.045301,.044369). Main§10.3/R5_REPORT explicitlystatesclearnumberaverageselectivitybutsubstantialtimecross-effects. Wholegroup role-sensitiveoperationdoesnotimplypuretimeindividualfeatures. This supplementsold signedstatistics withoutchanginganyrawresultormethod. R5_DELIVERY_MANIFEST.json recordsallmain/report/figure/table/code/config/runidentitypathsandhashes; R5_SYNC.jsonwillrecordactualcommit/pushidentity. Scientificworkreadyforonegroupedwhitelistsync;trackerwilladvance4to5onlyoncethatcompletes,nextR6fullpaperPDF. Noadditionalexperiment.

@@ -1,0 +1,206 @@
+{
+  "run_id": "SEVEN_R5_member_natural_contexts_v1_20260907",
+  "purpose": "Natural validation activation exemplars for all frozen source1 and target2 members",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": true,
+  "layers": [
+    15
+  ],
+  "noun_pairs": [
+    [
+      "engineer",
+      "engineers"
+    ],
+    [
+      "chef",
+      "chefs"
+    ],
+    [
+      "scientist",
+      "scientists"
+    ],
+    [
+      "musician",
+      "musicians"
+    ],
+    [
+      "visitor",
+      "visitors"
+    ],
+    [
+      "manager",
+      "managers"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "At this moment",
+      "In those days"
+    ],
+    [
+      "At the moment",
+      "Years ago"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "object_relative"
+  ],
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 64,
+  "budget_seconds": 180,
+  "budget": "At most180s; mainR5actual412.443s leaves sufficient room inside1200s total. No training/refit; reuse32768existing natural validationtokens; no newbulk.",
+  "scope": "All frozen source1N16T32 andtarget2FCCN/time members, full32768 FineWeb validationtokens. Positive top3clips/member, inactive membersretained; within actual128token/document contexts. Previously used SAEvalidation, not new causal/natural-task evidence.",
+  "sae_layer": 15,
+  "lexical_partition_size": 6,
+  "discovery_blocks": [],
+  "discovery_cues": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "raw_operations": [],
+  "sae_checkpoints": [
+    {
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_1"
+    },
+    {
+      "seed": 2,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_2"
+    },
+    {
+      "seed": 3,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_3"
+    },
+    {
+      "seed": 4,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_4"
+    },
+    {
+      "seed": 5,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_5"
+    }
+  ],
+  "material_run": "runs/SEVEN_R4_l15_confirmation_material_v1_20260907",
+  "member_budgets": [
+    16,
+    32
+  ],
+  "gradient_path_points": [
+    0,
+    0.5,
+    1
+  ],
+  "gradient_path_weights": [
+    0.16666666666666666,
+    0.6666666666666666,
+    0.16666666666666666
+  ],
+  "gradient_batch_size": 8,
+  "source_run": "runs/SEVEN_R4_l15_source_v1_20260907",
+  "source_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "target_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "fit_blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "evaluation_blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "alphas": [
+    0.0001,
+    0.01,
+    1
+  ],
+  "single_factor_methods": [
+    "fcc_group",
+    "same_members_native",
+    "direct_target_native",
+    "full_code_ridge",
+    "rrr_rank1",
+    "rrr_rank4",
+    "dsca_rank1",
+    "raw_native_units",
+    "wrong_factor"
+  ],
+  "correspondence_run": "runs/SEVEN_R4_l15_correspondence_v1_20260907",
+  "das_steps": 100,
+  "das_checkpoint_every": 20,
+  "das_batch_size": 4,
+  "das_learning_rate": 0.005,
+  "native_gain_candidates": [
+    0.25,
+    0.5,
+    1,
+    2,
+    4
+  ],
+  "run_parent": "SEVEN_R4_l15_confirmation_v1_20260907",
+  "position_names": [
+    "time",
+    "number",
+    "distractor"
+  ],
+  "position_aliases": {
+    "time": "final",
+    "number": "final"
+  },
+  "encode_only": true,
+  "threshold_source_split": "Frozen R4 temporal-only supports/maps; all512 role outcomes already exposed, no new independent-confirmation claim",
+  "evidence_level": "natural_activation_examples",
+  "simple_source_controls": false,
+  "final_layer_cached_tail": true,
+  "behavior_run": "runs\\SEVEN_R4_l15_behavior_v1_20260907",
+  "frozen_dir": "artifacts\\seven_round_rebuild_20260906\\r4_l15\\frozen",
+  "frozen_run": "runs/SEVEN_R4_l15_confirmation_v1_20260907",
+  "cycle_directions": [
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      1
+    ]
+  ],
+  "training_config": "configs/seven_r4_l15_train_k64_five_resume_v4.json",
+  "natural_batch_size": 4
+}
