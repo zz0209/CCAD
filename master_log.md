@@ -4880,3 +4880,79 @@ One specific further prediction is now warranted: freeze the old odd prediction 
 可执行输出与资源：导出十组paired completion共20map，固定20输入示例实际CLI调用；全5120factor-input数值重放最大删除norm误差2.84217e-14，实际float32 contrast误差0，操作角色/成员顺序/配套ID检查，错误odd/common参数被拒且不落输出。复用原PredictiveOperation接口，无模型权重即可用；不是独立科学复验。三次GPU管理任务wall合计294.7258904s（0.0818683h，含失败），各704full-model sequences，cached-tail1216/83136/52416；不是纯GPU kernel小时。原gpu-0包装器自然释放，其他lease未改，0训练/新bulk/环境安装/远程job/付费/额度兑换。保守项目本地占用213,375,182bytes（整份既有paper树及收尾预留也计入），低于本轮3GB；原1小时GPU预算未用满无需空跑。资源与全run原始身份见R9_BUDGET.json。
 
 交付与下步：artifacts/extension_five_20260907/README.md、R9_REPORT.md、R9_DELIVERY_MANIFEST.json是本地增量入口；r9_blueprint含数学连接、原文审阅、全结果、图设计、最终PDF核对、预算、操作包、失败；paper/README给可复现命令。原R8整包/草稿/历史均保留，当前没有再次打包532MB旧材料。先写本COMPLETE，再把completed8→9、extension0→1、active清空、next10 READY。第10轮让成员选择本身看到完整贡献，结合已有材料学习曲线与源组选择性，改善compact相对强对照差距、限定donor信息预算，再走冻结后真正新输入确认；不能在本面板无限调ridge。验收仍NOT_MET，第13轮统一最终稿/全部结果/同行对标/可用项目包后原位暂停，不加14。ccad实查ACTIVE/每5分钟/原对话，归属不变、不委派；白名单源码/配置/master_log随后成组commit/push并另存R9_SYNC.json，研究稿/数据不扩大公开范围。关闭前入口归档：archive/research_workflow_20260907/r9_close_20260907T181047Z/manifest.json。
+
+
+## SEVEN_R10 — START: improve the representation and selection objective
+
+实际写入UTC：2026-09-07T18:17:23Z。round_id SEVEN_R10，新增阶段2/5，START；本次为可证实登记开始，工作/计算/等待累计未知。用户已解除旧PDF占用，要求只保留一个稿件、立即下一轮，并明确允许大变革，以一线主会实际贡献为目标。当前paper目录已将最新版统一为paper/main.pdf（SHA256 64b2f737f669593161cfd76be7a0ac81a608f5f3fc67b0dd7f4db69c02242f51），main_r9.pdf不再并列；两旧稿及源/图/数据在archive/research_workflow_20260907/r10_start_20260907T181723Z/逐字归档，hash验证。保留历史，当前读稿入口只一个。旧R9manifest身份不倒改，MANUSCRIPT_LOCATION.json给恢复路径。同步更新当前README/plan/tracker与持久规则。
+
+理由和计划：原contrast选择可能遗漏完整贡献所需成员，现有group-L1又会少用预算；但扩大成员/换fit不自动等于概念改进。先核对原支持、函数目标与素材质量，在旧开发数据做有判别力的同预算选择/损失改进，力争一个单输入输出同时支持完整贡献和contrast、缩小raw/full-code差距；需要时改变素材或表示，不能只改叙事。原文/成熟源码学习、数学机制、实际消费者、解释和整稿共同推进。旧面板仍开发，确认须方法冻结后真正新输入。
+
+实际资源：NVIDIA GeForce RTX 5070 Ti, 16303, 1337, 0；gpu-0实查free，RAM总33727041536bytes/可用15614894080bytes。继续复用已核对r004和plot/TeX环境，不复制模型、改共享管理器或其他lease。R10先限7200s GPU管理任务、16GB新增bulk、4GB项目新增、0付费；新阶段既有资源可按需求分配，不被旧轮剩余预算限制。尚无本轮新科学结果，没有新训练/下载/付费/账号额度兑换。ccad仍ACTIVE/5分钟/当前对话，不委派。先实际结果和稿图完成、写COMPLETE后才9→10；最终13收尾后暂停，不加轮。
+
+
+## SEVEN_R10 — PROGRESS: shared support for two consumers
+
+实际写入UTC：2026-09-07T18:23:02Z。round_id SEVEN_R10；此时完成针对性实现和3个数学测试，尚未获得新真实消费者结果。标准OLS前向选择按残差化列的多输出SSE实际减少量选一个共享支持，已与每步全候选直接最小二乘逐项核对，另检查source基旋转/列缩放和非负contrast-invisible反例。阅读sklearn官方OMP接口确认多target是分开求解，不直接冒充共享支持；选读Billings/Wei2005原文§2正交误差减少法，算法本身不称新颖。
+
+下一真实run EXT_R10_complete_support_v1_20260907，固定原5SAE/源组、旧384temporal选择/fit与256/128校准。以source-only奇偶能量平衡的共享单输入map为候选，比较原支持refit、OLS相同实际成员数/完整预算、共同目标group-L1、dense选组、random、contrast-only OLS、full-code/raw完整和平衡fit、同新成员native。两消费者均保留全512暴露输入/弱源/失败，14种含source，各5循环共享seed方向；约143360原始行，最多1200s本轮预算内。区分用满预算、选择规则和目标改变；不将开发正差称独立确认。得到结果后依误差来源决定方法/素材的下一实质改进，不预定连续网格。
+
+
+## SEVEN_R10 — PROGRESS: fresh natural material for a bounded training comparison
+
+实际写入UTC：2026-09-07T18:27:32Z。round_id SEVEN_R10。已有固定验证/源功能曲线仍在后段提升，素材不足是可检验假说，不因FVE75%/CE85%既判好也不判坏。准备EXT_R10_fresh_corpus_v1_20260907，复用固定FineWeb commit与tokenizer的range采样/文档排除和打包器，新的固定salt，目标4.194304M新训练tokens及独立小验证（后续主要质量仍用原固定验证）。排除旧R011全部训练/验证文档ID及text hash、R006旧素材与R008配对数据；任务输入不参与训练。自然数据选择只依hash，不依本轮结果。许可沿原ODC-By1.0并记录原来源。此准备不占GPU，不因网络下载加整盘独占；线程限定2，素材原文/token临时文件约数十MB，在本轮16GBbulk/4GB项目预算内。是否及如何继续训练由当前已验证运行/学习曲线与可承受时间决定，不虚报新结果。
+
+
+## SEVEN_R10 — PROGRESS: single-input improvement and controlled material continuation
+
+实际写入UTC：2026-09-07T18:31:15Z。round_id SEVEN_R10。EXT_R10_complete_support_v1_20260907完成143360行，数值与contract通过，257.4901893s管理任务wall、704full+144576tail。用16/32成员的complete OLS相对old map完整删除KL降低74.40–86.76%，contrast均值改善1.72–22.62%；相对同预算dense选择，两消费者八分层均值改善4.99–19.31%，每项3–5/5方向改善。并非全方向全过：同原实际成员数的number contrast仍变差，说明部分收益来自用满预算；full-code/raw仍更准。新输出只需recipient codes，不再要求paired补全的donor；contrast是实测改善而非精确恒等承诺。标准OLS和ridge不称算法首创，完整数据在R10_SUPPORT_SUMMARY.json。
+
+素材路径：新自然文本run已PASS，实际7096新训练文档/4194304tokens与51独立新验证文档，58.332s资产运行wall，排除原R011、R006、R008的ID及text hash。已复用打包器并逐字拼接old-prefix/fresh-suffix，主要质量仍用原固定256验证。下一run EXT_R10_l15_continue8m_five_v1_20260907，从原五同配置SAE step4096的exact_final恢复权重/Adam矩/counters/RNG，仅在新4.194Mtokens追加4096更新；原tokens前缀只支持cursor，不重训。旧LR已降0，故明确新阶段64步warmup至1e-4并线性降至0，不能称原优化轨迹无变更的延长。新增6144/8192权重checkpoint，预算3600s管理任务、最多16GB本轮bulk内，原4M模型/结果保持。训练后比较固定质量与源选择/对应消费者是否都改善；若仅FVE提高，不据此宣布解释质量提升。
+
+
+## SEVEN_R10 — PROGRESS: controlled material comparison and manuscript method
+
+实际写入UTC：2026-09-07T18:44:28Z。round_id SEVEN_R10，PROGRESS；当前写入时刻已知，阅读/编辑逐项事件起止和有效工作累计未知。训练仍RUNNING，最近progress记录更新6464（稍早实读），具体现在进度以run为准，不据此计完成。并行主线工作已完成：新增optional target-code input使run_complete_support冻结4M源端及原legacy/raw对照，只换8M目标；准备缓存编码与4096/6144/8192源功能消费者及三配置，待训练PASS才运行。语料/新LR阶段不能混写成旧不间断schedule。经典共享OLS精确一步收益/不变性及单输入消费者定义写入paper方法与附录；4M开发结果、实际旧数量对照和full/raw差距写入正文；当前PDF尚待完整训练结果后重建，不声称已更新最终PDF。
+
+来源/图版学习：Sheffield2005Report908§2的多输出选择启发、sklearn1.9实际OMP选择源码、ACL2026原PDFpp6/19–21容量/训练/Zipf区分及p6图版已读/实看，SOURCE_REVIEW.json与REFERENCE_REGISTRY记实际范围。未复制外部实现或安装包。首次本地PDFfitz导入失败，后用既有plot overlay内pypdf/pdfium；初稿替换未找到准确section标题，发生在写入前，核实后重做成功。已保留工具/草稿记录，没有失败科学run。当前one-PDF README中的过时占用说明已纠正，历史原文在逐字归档。
+
+下一步：训练完成后五新目标编码、固定教师双消费者实测与新源功能，汇总三种素材/功能结果、完整控制表与清晰新图，整稿编译实看；完成记录后才计第10轮。无新的独立确认声明，没有加轮或委派。
+
+
+## SEVEN_R10 — PROGRESS: five continued SAEs completed
+
+实际写入UTC：2026-09-07T18:53:57Z。round_id SEVEN_R10，PROGRESS；训练事件结束2026-09-07T18:52:23.866945+00:00来自status.json。EXT_R10_l15_continue8m_five_v1_20260907 PASS且contract通过，25条固定验证记录、8192累计更新/新增4096，原权重exact恢复、文档分离、实际输入/trace/checkpoint数核对均通过。管理run实际wall1212.4161839秒；训练/保存分项见training_trace，不能将它当纯GPU核时或有效研究工时。原模型/自然validation保持；追加优化用新语料和声明的新LR阶段。质量数值原样保留，稍后与源操作功能、固定4M教师的target8M对应结果分栏综合。
+
+GPU自然释放后实查1339/16303MiB、util0与gpu-0free。已按240秒预算启动EXT_R10_continued_codes_v1_20260907，复用两旧raw缓存，只编码五新目标SAE；不申请D盘整盘锁，不触碰其他项目旧lease。下一步固定教师双消费者与独立列示的新源功能，随后整稿图表和本轮收口。尚不把训练质量或运行通过计作新的跨seed科学胜出。
+
+
+## SEVEN_R10 — PROGRESS: reconstruction improvement does not guarantee transfer improvement
+
+实际写入UTC：2026-09-07T19:15:49Z。round_id SEVEN_R10，PROGRESS。三项后续运行全部结束：目标编码39.4450691s、固定教师8M对应232.9737024s/143360行、source功能41.453479s/17280行，数值与contract均通过。对应结束事件2026-09-07T18:58:22.478837+00:00、source功能结束2026-09-07T18:59:05.517242+00:00来自status；不存在仍需轮询的科学任务。共享gpu-0已实查free，未触碰其他项目lease。
+
+固定自然质量FVE均值75.0767→76.1175%、CE恢复85.6406→86.6046%，每seed均改善。另列source-only重选组功能：joint均值78.1771→80.625%，五seed均提高；不等同保持同一源组的效果。严格固定4M教师、源输出和原输入后，只换8M target并按相同规则重拟合：数目contrast下降2.11/3.59%、删除下降8.04/12.63%，时间contrast反而增加2.42/8.22%、删除增加13.80/17.38%（时间/引用语境）。时间删除分别0/5、1/5方向改善。8M也不再八cell全优于同预算dense，不能普遍升级为新最佳材料。所有源label log概率及legacy/raw KL逐行/分层重放与旧4M一致，排除了教师改变这一混淆；结果不能单独识别新数据、LR重启或支持变化的因果来源。R10_MATERIAL_SUMMARY与SUPPORT_CHANGE保留原始验证、源功能、固定教师比较及ID交叠，交叠不证明语义恒定。
+
+论文已整合§2.4/4.5、附录A.10/C.10/C.11/D.4、图8和表18–22，单一paper/main.pdf为34页；全稿已逐页实际查看，新图使用同consumer统一对数轴、明确五共享seed范围不是置信区间。4M/8M各10份可用单输入map及固定案例均导出，完整三消费者重放误差至多3.73e-14。接下来仅做新CLI/纸稿副本重建、最终证据和预算核对、COMPLETE及计数，不以工程检查追加科学胜出或新一轮。有效工作与等待未连续计时，未知。
+
+
+## SEVEN_R10 — COMPLETE: one-input complete support and controlled training outcome
+
+实际写入UTC：2026-09-07T19:22:05Z。round_id SEVEN_R10，新增阶段2/5，COMPLETE。登记事件开始2026-09-07T18:17:23Z；最后科学运行结束2026-09-07T18:59:05.517242+00:00来自source功能status；最终PDF构建启动2026-09-07T19:06:56.073050+00:00，完成事件见paper/build/BUILD_RECEIPT.json。本条写入前完成结果/稿件/逐页查看/输出重放/预算和交付说明；有效阅读、推导、实现、写作和等待未连续计时，明确未知，不按墙钟跨度伪报有效工时。六科学/资产run全部数值PASS与contract通过，未把保留的8M负差解释成运行失败。
+
+选择理由、数学与方法：此前contrast成员可能漏掉完整贡献，paired补全又使删除需要donor。把source能量平衡的共有/变化贡献共同接入成员选择，经典共享多输出OLS按加入列并最小二乘重拟合后的精确SSE减少量选支持；随后使用相同系数函数返回完整贡献、删除和contrast，删除只需一个recipient。给一步收益、正交换基/非零列缩放的精确算术边界和非负contrast-invisible反例；后续ridge是另一目标，不声称全局稀疏最优、native意义或算法首创。3个针对性数学测试已通过，本轮收尾核对实际源码与目标/消费者吻合，未追加无用新网格。
+
+原4M真实结果：固定原5SAE/源组、384开发输入、256/128系数校准、512暴露role输入和五共享seed循环方向。成员预算number16/time32，保留原实际数量、同目标group-L1/dense/random、contrast-only、full-code/raw、同成员native共13候选加source。共享OLS比同预算dense两consumer×两factor×两role的8个均值均改善4.99–19.31%，各3–5/5方向；相对旧contrast map，删除KL下降74.40–86.76%、contrast下降1.72–22.62%。旧数量的number contrast不改善，说明部分收益来自使用全部预算。full-code/raw仍强，不将改正目标/消费者失配称普遍领先；新方案用过的所有结果属于开发。
+
+素材推进和反例：复用精确原4M状态，五SAE各新增4,194,304与旧训练/验证/paired文档ID及text hash分离的自然tokens；旧数据前缀只支持恢复cursor，不重训。明确新LR阶段64warmup至1e-4后线性到0，保留全部旧checkpoint/数据。固定自然FVE均值75.0767→76.1175%、CE恢复85.6406→86.6046%，五seed均提高；L0全部64。另列按相同source-only规则重选源组后的joint78.1771→80.625%，五seed提高，time一seed下降。固定4M教师且全部源log概率与旧legacy/raw KL重放差0后，8M target的OLS number contrast下降2.11/3.59%、删除下降8.04/12.63%；time contrast增加2.42/8.22%、删除增加13.80/17.38%。time删除仅0/5、1/5方向改善；8M不再全面优于dense。保留材料/训练质量和跨seed对应不一致的实证，不全盘替换4M，不凭ID交叠断言语义漂移因果。
+
+运行证据：EXT_R10_complete_support_v1_20260907与EXT_R10_target8m_support_v1_20260907各143360raw rows；fresh_corpus准备7096新训练文档；l15_continue8m_five记录25quality rows与8192累计更新的输入/状态轨迹；continued_codes保留10份新缓存；continued_source_function记录17280raw rows。完整run名均在artifacts/extension_five_20260907/r10_selection/R10_BUDGET.json；三个SUMMARY、SUPPORT_CHANGE和原run提供全部数值/配置/输入/代码/环境/失败记录身份。target8M raw SHA256 0bcb26e3a95ace702763514a11d4a85b2448dc0b94c58765508c3132ac835fa5，source功能raw778dc32c6f3e80d6d04ae3f65b23cea76fb4642723d2ae026712a46f6733e45f，质量raw3de8541f168626efabadecd5c82f3d2a91e053c130d24ee4104b65a3334f31d2。旧稿和历史失败不重写；原文PDF访问/fitz失败及初稿标题未匹配的零写入错误已留记录，后续用既有环境/正确标题解决。
+
+学习、解释与全文：实际选读Billings/Wei2005Report908§2 pp4–7、安装sklearn1.9的OMP pp对应源码90–137，ACL2026原文pp6/19–21及p6图3/4；具体hash/许可/差异在SOURCE_REVIEW与REFERENCE_REGISTRY，不声称完成MSOLS/完整SemanticOT复现或全部同行尺度。正文2.4/4.5、附录A.10/C.10/C.11/D.4、图8和表18–22同步写入同一完整稿。实际两个原定time文本给contrast与完整删除的不同概率和依赖，成员项可输出，但未给删除虚构语义正确label。
+
+交付与验证：唯一当前paper/main.pdf 34页/535543bytes，SHA256 0a60e255ee8587ecdb80e13c8f7ac83151cdd3aa858713f18d918eef98fc5aa3，可编辑源/四附录/8图/22表/Bib/数据及重建说明齐备于paper。34页全部实际查看，15字体均嵌入，24旧表片段与全部旧图数据保持，208新KL及16案例概率核对，8图24导出身份一致。图轴按consumer统一对数尺度，标注五共享seed范围非置信区间。一个无原run/权重的paper-only目录实际重建8PNG与34页提取文字一致，5.906s；仍依赖已说明的本机字体/库/缓存，不冒充干净机器全实验重复或字节PDF一致。4M/8M各10可用map和固定输入，分别15360线性向量重放至多2.84e-14/3.73e-14；两个阶段实际CLI删除及成员求和通过，删除只需recipient，contrast需要donor，不是native概念消除。详细PDF_REVIEW、PORTABLE_BUILD_CHECK、operations两个INDEX与CLI_CHECK。
+
+实际资源：五GPU管理run合计1783.7786237s（0.495494h，含训练/质量/I/O，不是纯GPU核时），fresh corpus资产58.332s另列。新D盘bulk27文件/3,356,828,520bytes；项目保守467,745,652bytes，计入整份既有paper树、归档、公开改动和收尾预留，均在7200s/16GB bulk/4GB项目本轮预算内。0付费/新包/远程job/额度重置，资源wrapper自然释放、gpu-0已实查free，其他项目lease未动。没有空等补足预算或加无科学价值实验。
+
+判断与下一步：本轮建立可用单输入方法及真实同预算开发收益，并实测训练质量提升不保证对应改善；一线主会验收仍NOT_MET，经典算法非首创、raw/full-code差距、新法独立验证与广泛概念用途/完整具名对标仍需实质补强。第11轮优先围绕新上下文的可检验用途/组成作用推进，并冻结有效规则后开展真正独立确认，不在当前暴露面板无限换权重，也不盲目扩训。当前先写本COMPLETE，再计completed9→10、extension1→2、active清空、next11 READY；第13轮统一最终项目包与诚实评判后原位PAUSED，不加14。
+
+交付入口artifacts/extension_five_20260907/README.md、R10_REPORT.md、R10_DELIVERY_MANIFEST.json，旧稿迁移在MANUSCRIPT_LOCATION，收口前归档archive/research_workflow_20260907/r10_close_20260907T192205Z/manifest.json。原idccad实查ACTIVE、5分钟、原target对话，不委派；白名单源码/配置/master_log随后成组commit/push并核对HEAD=origin/main，以R10_SYNC.json记录具体同步身份；研究稿/原数据仍本地保存，不扩大公开范围。

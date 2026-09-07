@@ -49,6 +49,29 @@ def main():
   trainer=Trainer(tc,td,model);canonicalize_sparsify_multiseed_state(trainer);assert len(trainer.optimizers)==1 and trainer.cfg.grad_acc_steps==1
   bulk=Path(cfg['bulk_output_dir']);bulk.mkdir(parents=True,exist_ok=False)
   prior_trace=dict(traces={},input_hashes=[])
+  if cfg.get('resume_final_run'):
+   if cfg.get('resume_run'):raise ValueError('Choose either interruption recovery or a new training phase')
+   parent=ROOT/cfg['resume_final_run'];resume=json.loads(checked(parent/'exact_final.json').read_text());directory=Path(resume['path'])
+   previous=json.loads(checked(parent/'training_trace.json').read_text())
+   prior_trace=dict(traces=previous['traces'],input_hashes=previous['input_hashes'],updates=previous['updates'])
+   for p in directory.rglob('*'):
+    if p.is_file():checked(p)
+   load_sparsify_exact_state(trainer,directory,expected_data_cursor_examples=prior_trace['updates']*cfg['batch_size_sequences'])
+   assert trainer.global_step==prior_trace['updates']<expected
+   snaps=json.loads(checked(parent/'checkpoints.json').read_text())['checkpoints']
+   checks['continuation_initial_weights_equal']=all(state_hash(sae.state_dict())==next(s['state_hash'] for s in snaps if s['step']==trainer.global_step and s['seed']==seed_for(name)) for name,sae in trainer.saes.items())
+   assert checks['continuation_initial_weights_equal']
+   # The previous phase finished at zero LR. This is a declared continuation
+   # with a new schedule, not exact replay of the old optimization trajectory.
+   phase_lr=float(cfg['continuation_learning_rate']);phase_warmup=int(cfg['continuation_warmup_steps'])
+   assert phase_lr>0 and 0<=phase_warmup<expected-trainer.global_step
+   for opt in trainer.optimizers:
+    for group in opt.param_groups:group['lr']=phase_lr;group['initial_lr']=phase_lr
+   from transformers import get_linear_schedule_with_warmup
+   trainer.lr_schedulers=[get_linear_schedule_with_warmup(trainer.optimizers[0],phase_warmup,expected-trainer.global_step)]
+   write(run/'continuation_phase.json',dict(parent=cfg['resume_final_run'],start_step=trainer.global_step,total_steps=expected,additional_steps=expected-trainer.global_step,
+        learning_rate=phase_lr,warmup_steps=phase_warmup,optimizer_moments_retained=True,sae_weights_counters_rng_restored=True,
+        scope='Declared fresh-data training continuation with restarted LR schedule; not uninterrupted original training.'))
   if cfg.get('resume_run'):
    parent=ROOT/cfg['resume_run'];resume=json.loads(checked(parent/'resumable_state.json').read_text());directory=Path(resume['path'])
    prior_trace=json.loads(checked(parent/'partial_training_trace.json').read_text())

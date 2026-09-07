@@ -231,6 +231,10 @@ def main():
                 lines.append(label+' & '+' & '.join(f'{v:.5f}' for v in vals)+r' \\')
             (table_dir/f'pair_{consumer}.tex').write_text('\n'.join(lines)+'\n',encoding='utf-8')
         (data_dir/'pair_completion.json').write_text(json.dumps(dict(complete=pair_complete,anchor=pair_anchor),indent=2)+'\n',encoding='utf-8')
+    from complete_support_paper import export as export_complete_support
+    complete_support=export_complete_support(root,out,read)
+    if complete_support:
+        plot['complete_support']=complete_support
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -278,6 +282,11 @@ def main():
                       'src/ccad/pair_complete_correspondence.py','scripts/run_pair_complete_correspondence.py','scripts/summarize_pair_complete.py',
                       'configs/ext_r9_pair_complete_v2.json','configs/ext_r9_pair_anchor_v1.json','paper/sections/appendix_theory.tex',
                       'scripts/apply_paired_completion.py','scripts/export_paired_completion.py',(pair_base/'operations/INDEX.json').as_posix()]))
+    if complete_support:
+        claims.append(dict(id='complete_support_and_controlled_target_training',paper='Sections 2.4, 4.5; Appendix A.10 and C.10',
+            result='At the original4M target checkpoint, classical shared OLS improves both consumers over same-budget dense selection on exposed development. Continued targets improve number but worsen time correspondence under fixed4M teachers; reconstruction and source function also improve, so they do not establish monotone transfer quality.',
+            evidence=complete_support['input_summary_paths']+['src/ccad/complete_support.py','scripts/run_complete_support.py','scripts/run_continued_code_cache.py','scripts/summarize_continued_material.py',
+                'configs/ext_r10_complete_support_v1.json','configs/ext_r10_target8m_support_v1.json','configs/ext_r10_l15_continue8m_five_v1.json','paper/sections/appendix_theory.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

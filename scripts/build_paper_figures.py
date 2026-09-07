@@ -258,6 +258,8 @@ def main():
         handles=[Line2D([],[],linestyle='none',marker=m,color=c,markerfacecolor='white' if op else c,label=l,markersize=4) for _,l,m,c,op in styles]
         fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.55,.667),ncol=3,frameon=False,fontsize=8,columnspacing=1.7)
         save(fig,'pair_completion')
+    from complete_support_paper import plot as plot_complete_support
+    plot_complete_support(data.get('complete_support'),save)
     (out/'FIGURE_MANIFEST.json').write_text(json.dumps(dict(input_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),font_family=family,
         font_source=str(font) if font.exists() else 'Matplotlib STIXGeneral',outputs=outputs,
         scope='Descriptive plots of retained data; intervals are source-seed ranges or dependent-direction distributions, not confidence intervals.'),indent=2)+'\n',encoding='utf-8')

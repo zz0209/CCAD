@@ -20,7 +20,9 @@ def main():
         original=ROOT/cfg['source_run'];gradients=np.load(work.checked(original/'discovery_gradients.npz'))
         ids=gradients['row_ids'];assert np.array_equal(ids,np.flatnonzero(work.discovery))
         checkpoints=json.loads(work.checked(ROOT/cfg['training_run']/'checkpoints.json').read_text())['checkpoints']
-        assert {(r['step'],r['seed']) for r in checkpoints}=={(step,seed) for step in [256,1024,4096] for seed in range(1,6)}
+        selected_steps=cfg.get('checkpoint_steps',[256,1024,4096])
+        checkpoints=[r for r in checkpoints if r['step'] in selected_steps]
+        assert {(r['step'],r['seed']) for r in checkpoints}=={(step,seed) for step in selected_steps for seed in range(1,6)}
         from sparsify import SparseCoder
         components=[];final_replay=[]
         for spec in checkpoints:
@@ -47,8 +49,8 @@ def main():
                 work.measure('source_checkpoint',factor,delta,seed=spec['seed'],step=spec['step'])
             work.progress('CHECKPOINT_FUNCTION_COMPLETE',step=spec['step'],seed=spec['seed'])
         write(work.run/'source_components.json',dict(rows=components,ranking='Same frozen raw-path gradient ranking rule, re-evaluated on each independent checkpoint; final checkpoint exactly replays original source support and operation',discovery_row_ids=ids.tolist()))
-        work.checks['final_source_replay']=len(final_replay)==10 and all(final_replay)
-        work.checks['all_rows']=len(work.metrics)==15*3*work.n
+        work.checks['final_source_replay']=len(final_replay)==(10 if 4096 in selected_steps else 0) and all(final_replay)
+        work.checks['all_rows']=len(work.metrics)==len(checkpoints)*3*work.n
         work.checks['unique']=len(work.metrics)==len({(r['step'],r['seed'],r['factor'],r['row_id']) for r in work.metrics})
     except Exception as exc:
         error=f'{type(exc).__name__}: {exc}';(work.run/'stderr.log').write_text(traceback.format_exc())
