@@ -1,4 +1,4 @@
-"""Bundle the original seven-round study with raw results and explicit cache omissions.
+"""Bundle the retained original-stage study with raw results and explicit cache omissions.
 
 This streams files into a new local ZIP. It does not download assets, rerun an
 experiment, change source files, or publish anything. Use the project's disk-I/O
@@ -25,6 +25,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--max-bytes',type=int,default=900_000_000)
+    parser.add_argument('--receipt',type=Path,default=ROOT/BASE/'r7_science_package/PACKAGE_BUILD.json',
+                        help='Round-specific build receipt; use a new path for each later package.')
     args=parser.parse_args();timer=time.monotonic();started=dt.datetime.now(dt.timezone.utc).isoformat()
     output=args.output.resolve();output.parent.mkdir(parents=True,exist_ok=True)
     paths=set();omitted=[];external=[]
@@ -87,7 +89,8 @@ def main():
         files=len(entries)+1,campaign_runs=len(runs),source_bytes=manifest['source_bytes'],
         omitted_caches=len(omitted),omitted_cache_bytes=manifest['omitted_cache_bytes'],
         all_zip_crc_pass=True,max_package_bytes=args.max_bytes,scope=manifest['scope'])
-    receipt_path=ROOT/BASE/'r7_science_package/PACKAGE_BUILD.json'
+    receipt_path=args.receipt.resolve()
+    receipt_path.parent.mkdir(parents=True,exist_ok=True)
     receipt_path.write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(receipt),flush=True)
 

@@ -102,6 +102,15 @@ def main():
         order=list(NAMES)
         (table_dir/f'{factor}_all_kl.tex').write_text(table(order,factor,'kl',lambda v:f'{v:.5f}'),encoding='utf-8')
         (table_dir/f'{factor}_all_accuracy.tex').write_text(table(order,factor,'accuracy',lambda v:f'{v*100:.2f}'),encoding='utf-8')
+        combined=[]
+        for method in order:
+            if not all((part,factor,method) in lookup for part in PARTS):continue
+            label=NAMES[method]
+            if method=='fcc_group':label=r'\textbf{'+label+'}'
+            values=[f"{lookup[part,factor,method]['kl']:.5f}" for part in PARTS]
+            values += [f"{100*lookup[part,factor,method]['accuracy']:.2f}" for part in PARTS]
+            combined.append(label+' & '+' & '.join(values)+r' \\')
+        (table_dir/f'{factor}_complete.tex').write_text('\n'.join(combined)+'\n',encoding='utf-8')
     mech={(x['partition'],x['factor'],x['method']):x for x in mechanism['rows']}
     member_table=[]
     for role in ['temporal','quoted']:
@@ -139,11 +148,32 @@ def main():
     assert len(cases)==48 and len(seen)==16
     (table_dir/'fixed_case_outputs.tex').write_text('\n'.join(case_lines)+'\n',encoding='utf-8')
     (table_dir/'fixed_case_contexts.tex').write_text('\n'.join(context_lines)+'\n',encoding='utf-8')
+    for role in ['temporal','quoted']:
+        lines=[];role_cases=[r for r in cases if r['role']==role]
+        identifiers=list(dict.fromkeys(r['row_id'] for r in role_cases))
+        assert len(identifiers)==8 and len(role_cases)==24
+        for row_id in identifiers:
+            rows=[r for r in role_cases if r['row_id']==row_id]
+            title='Row '+row_id+' ('+{'pp':'PP','object_relative':'OR'}[rows[0]['syntax']]+'): '+rows[0]['recipient']
+            lines.append(r'\multicolumn{5}{p{0.965\textwidth}}{'+esc(title)+r'} \\[2pt]')
+            for row in rows:
+                cells=[]
+                for key in ['factor','expected','source','fcc','equal_norm_swap']:
+                    value=esc(row[key])
+                    if key in ['source','fcc','equal_norm_swap'] and row[key]!=row['expected']:value=r'\textbf{'+value+'}'
+                    cells.append(value)
+                lines.append(' & '.join(cells)+r' \\')
+            if row_id!=identifiers[-1]:lines.append(r'\addlinespace[5pt]')
+        (table_dir/f'fixed_cases_{role}.tex').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     members=[x for x in example['displayed_values'] if 'member' in x]
     lines=[]
     for x in members:
         lines.append(f"{x['member']} & {100*x['natural_active_fraction']:.2f} & {x['temporal_code_change']:.2f} & {x['quoted_code_change']:.2f} & {x['temporal_removal_time_shift_loss']:.3f} & {x['quoted_removal_time_shift_loss']:.3f}"+r' \\')
     (table_dir/'display_members.tex').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+    natural_lines=[]
+    for x in members:
+        natural_lines.append(f"{x['member']} & "+esc(x['natural_excerpt'])+f" & {100*x['natural_active_fraction']:.2f} & {x['native_predictive_cosine']:.3f}"+r' \\')
+    (table_dir/'natural_members.tex').write_text('\n'.join(natural_lines)+'\n',encoding='utf-8')
     # Preserve complete earlier summary tables as exportable evidence, with a
     # short directly comparable subset for the typeset development narrative.
     early2=read(BASE/'R2_RESULT_SUMMARY.json')
@@ -180,6 +210,10 @@ def main():
               fixed_examples=fixed,display_members=[x for x in example['displayed_values'] if 'member' in x],
               functional_learning=learning['rows'],training_quality=quality)
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
+    for relation in plot['memberships']:
+        matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
+                     for member,row in zip(relation['members'],relation['source_lift'])]
+        write_csv(data_dir/f"signed_relation_s1_t2_{relation['factor']}.csv",matrix_rows)
     for rel in [BASE/'r5_mechanism/fixed_cases.csv',BASE/'r5_mechanism/member_effects.csv',BASE/'r5_mechanism/mechanism_directions.csv']:
         p=root/rel;b=p.read_bytes();(data_dir/p.name).write_bytes(b)
         sources.append(dict(path=rel.as_posix(),bytes=len(b),sha256=hashlib.sha256(b).hexdigest()))
@@ -194,17 +228,17 @@ def main():
              evidence=['paper/sections/appendix_theory.tex','artifacts/seven_round_rebuild_20260906/R5_METHODS_AND_PROOFS.md','src/ccad/factor_correspondence.py']),
         dict(id='rrr_and_composition',paper='Sections 2.3, A.4-A.6',result='Exact penalized rank fit and position-aware composition; standard algebra',
              evidence=['artifacts/seven_round_rebuild_20260906/R3_METHODS_AND_ALGEBRA.md','artifacts/seven_round_rebuild_20260906/R4_METHODS_AND_ALGEBRA.md','src/ccad/factor_correspondence.py']),
-        dict(id='controlled_material',paper='Section 3.1; Figure 4; Tables 2-3',result='Five controlled late-hook SAEs and fixed-checkpoint quality/function; no convergence certificate',
+        dict(id='controlled_material',paper='Section 3.1; Appendix C.1; fig:learning and tab:quality',result='Five controlled late-hook SAEs and fixed-checkpoint quality/function; no convergence certificate',
              evidence=['artifacts/seven_round_rebuild_20260906/r4_l15/TRAINING_SUMMARY.json','artifacts/seven_round_rebuild_20260906/r4_l15/FUNCTIONAL_LEARNING_SUMMARY.json','configs/seven_r4_l15_train_k64_five_v1.json','configs/seven_r4_l15_checkpoint_function_v1.json']),
-        dict(id='role_confirmation',paper='Section 4; Figures 1-2; Tables 1,4-7',result='New-role source operation reuse; raw/full more accurate; source mistakes retained',
+        dict(id='role_confirmation',paper='Section 4; Figures 1-2; Appendix C.2-C.3',result='New-role source operation reuse; raw/full more accurate; source mistakes retained',
              evidence=['artifacts/seven_round_rebuild_20260906/r4_l15/PANEL_PREDECLARATION.json','artifacts/seven_round_rebuild_20260906/r4_l15/frozen/FREEZE.json','artifacts/seven_round_rebuild_20260906/r4_l15/R4_L15_CONTEXT_SUMMARY.json','configs/seven_r4_l15_confirmation_v1.json','scripts/run_frozen_composition.py']),
-        dict(id='early_positive_and_counterexample',paper='Section 4.3; Appendix C.4; Table 8',result='Early development positive, weaker frozen confirmation, and prefix-rank limitation all preserved',
+        dict(id='early_positive_and_counterexample',paper='Section 4.3; Appendix C.4; tab:early',result='Early development positive, weaker frozen confirmation, and prefix-rank limitation all preserved',
              evidence=['artifacts/seven_round_rebuild_20260906/R2_RESULT_SUMMARY.json','artifacts/seven_round_rebuild_20260906/r3_composition/R3_RESULT_SUMMARY.json','artifacts/seven_round_rebuild_20260906/r4_frozen/R4_FROZEN_SUMMARY.json','artifacts/seven_round_rebuild_20260906/r4_frozen/R4_PREFIX_DIAGNOSTIC.json']),
-        dict(id='member_mechanism',paper='Section 5; Figure 3; Tables 9-10',result='Individual attenuation, norm-matched swaps and complete member removal; follow-up on exposed panel',
+        dict(id='member_mechanism',paper='Section 5; Figures 3-4; Appendix C.5',result='Individual attenuation, norm-matched swaps and complete member removal; follow-up on exposed panel',
              evidence=['artifacts/seven_round_rebuild_20260906/r5_mechanism/R5_MECHANISM_SUMMARY.json','configs/seven_r5_member_mechanism_v1.json','scripts/run_member_mechanism.py','scripts/summarize_member_mechanism.py']),
-        dict(id='fixed_examples_and_signed_relations',paper='Figures 1,5; Tables 10-12',result='All 16 fixed contexts/48 operations, complete signed matrices and heterogeneous natural examples',
+        dict(id='fixed_examples_and_signed_relations',paper='Figures 1,4,6; Appendix C.5-C.7',result='All 16 fixed contexts/48 operations, complete signed matrices and heterogeneous natural examples',
              evidence=['artifacts/seven_round_rebuild_20260906/r5_mechanism/fixed_cases.csv','artifacts/seven_round_rebuild_20260906/r5_mechanism/figure_member_example_manifest.json','configs/seven_r5_member_natural_contexts_v1.json','scripts/run_member_natural_contexts.py']),
-        dict(id='swapped_native_control_correction',paper='Appendix B.4; Tables 4-6',result='Historical wrong_factor swaps native group operations; at the same position its joint edit equals direct native. It is not an independent joint-specificity test.',
+        dict(id='swapped_native_control_correction',paper='Appendix B.4; complete comparisons in C.2',result='Historical wrong_factor swaps native group operations; at the same position its joint edit equals direct native. It is not an independent joint-specificity test.',
              evidence=['scripts/run_frozen_composition.py','scripts/run_composition_correspondence.py','paper/sections/appendix_methods.tex']),
     ]
     if donor:

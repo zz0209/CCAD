@@ -4772,3 +4772,58 @@ CausalGym original method/control/license sections, README and interventions.py 
 预算与失败保留：R7_BUDGET.json保守计量本轮新增/整稿/包/提取/归档共657,669,917bytes，低于1GB；原campaign GPU管理任务保守累计3.337507789小时，不是纯kernel小时。三个针对性测试通过但2156.630s unittest/2148.866s工具间隔未解释；有效阅读/写作/推导/审图时间与等待未连续测量，均明确未知，不以起止跨度或空等充作投入。已完成AST/JSON与差异检查；没有无修改重复全套测试。所有此前失败与负差保持原件。
 
 下一步与交付定位：本完成记录到位后计数6→7，原科学七轮按工作分配收口；第8轮专门提升全文视觉/读者路径与阶段完整快照，不继续科学网格。随后原位接续已授权第9–13轮全面补强，仍由本对话执行；第13轮最终交付后暂停原automation，不提前暂停、不启动14。原ccad当前ACTIVE/15分钟、target01a06e15-b222-7b21-a8cd-eb058a3159e5已实查。白名单源代码/配置/master_log成组同步随后执行，receipt另存，不扩大论文/原始数据公开范围。关闭前当前入口归档：archive/research_workflow_20260907/r7_close_20260907T141328Z/manifest.json。
+
+
+## SEVEN_R8 — START: dedicated visual revision and original-stage snapshot
+
+实际写入UTC：2026-09-07T16:15:07Z。round_id：SEVEN_R8，START。事件：本轮登记启动于本次写入，结束尚未发生；触发后规则/状态/skill定向阅读已完成，未把触发时刻倒填为本块写入时间。
+
+理由：原7轮科学结果、24页完整稿、数学/consumer接口、33run原始结果与可用包已交付，当前科学/视觉最终验收仍NOT_MET。本轮专门履行用户追加的专业版式要求，把方法、真实案例和主要图的阅读顺序连接起来，改善首页信息密度、图内操作解释和附录大留白；不因后面还有独立五轮而延期原阶段交付。
+
+规划：先查看三篇具名论文的实际PDF图版/全文尺寸，沿现有scientific-visualization与PDF有用步骤选择准确图形和排版；保留全部原数据、分层、失败和强基线。不回到蓝橙/默认DejaVu，不堆标语或卡片，不以导出数量或自评分冒充视觉达标。数据图和真实操作示意均从已有结果/数学定义生成；不做新科学实验、训练或推理。修改后重建全稿并逐页查看，再交付原科学+视觉阶段完整快照、代码/源数据/更新本地包及真实成熟度总结。
+
+输入与保留：当前HEAD=613aa1df13b1bcedfbe1dedc3384bb009aad0aed；基线paper/main.pdf SHA256 af757f7534cef54be446c75c776ad0ead72a6af7e0c88134e9df93b0f8c4108d，24页。R7完整包保持原件；当前paper全部文件、入口/绘图构建源码/交付说明逐字归档在archive/research_workflow_20260907/r8_start_20260907T161507Z/manifest.json，共95文件。原段科学证据仍由paper/EVIDENCE_INDEX与R7_REPORT定位；本轮不能将现有边界改写成新结果。
+
+资源与时间：复用已验证bundledPython3.12.14/plotting/TeX环境，0GPU、0付费，新增稿图/渲染/归档/提取/新包预算1GB（ZIP上限850MB）。多GB归档读写按需使用原disk-e-io管理器，普通绘图/阅读不申请重资源锁；不复制权重或修改其他项目lease。构建/压缩命令实际计时；有效设计/阅读/写作/审图与等待未连续计时，未知时明确写未知，不空等凑轮。
+
+计数：completed_rounds仍7，active_round=8；完成实质交付并留下COMPLETE后才推进到8。随后按已有授权原位接续9–13，当前不暂停automation、不把任务转交其他agent。
+
+
+## SEVEN_R8 — PROGRESS / CORRECTION: manuscript visual revision and retained-data check
+
+实际写入UTC：2026-09-07T16:45:05Z。round_id：SEVEN_R8。事件：16:23:49Z起有可证实的本轮稿件构建，最终完整构建16:37:16.839848Z起、约3.8秒；24页最终逐页审图和数据核对完成于本次写入前，未连续计量有效工作与等待，不用约半小时跨度冒充有效工时。
+
+实际产出：Figure1加入源/目标代码差、decoder/预测列、物理编辑与模型消费者的准确关系，连接两条固定真实句子；Figure4并排展示六个预选成员的signed code变化与移除效应；全部两张关系矩阵以真实source/target ID绘制并增至8pt刻度，1184系数导出CSV。完整比较表将KL与expected-label accuracy并排，16固定上下文紧接48操作结果；六个自然片段与既有native/predictive cosine完整排出。双栏正文与参考书目衔接、末页平衡，附录表格不再漂至所属小节之前。
+
+核对：figure_data.json与R7逐字归档SHA256完全相同（689e027d1f0464b3c614ac52cb5508254d1bb7ac344ac6e1deb748275a5cb912）；独立对照归档核实464数值、16上下文、48结果、1184系数。PDF SHA256 c12b7e4c7d34c843a0864be8a146ff964eed18b76873319db292d0fb9682100f，24页，6图、15表、4附录、17引用；18字体全部嵌入，全部24页已经实际查看。数据/结构与视觉记录分别为r8_visual/DATA_AND_PDF_CHECK.json及PDF_REVIEW.json。没有新训练、拟合、推理、科学筛选或GPU实验。
+
+保留故障与纠正：第一草稿图注误写失败案例row288，原CSV核实后改为264，draft1 PDF保留；训练横轴改成真实updates的显式log轴，数值未变。缺少float.sty的构建失败保留，采用现有caption加minipage固定附录排版。balance.sty首次联网因sandbox socket10013失败，授权范围内升级工具执行获自动批准，官方Tectonic bundle仅下载3366bytes的balance4.3到隔离缓存，后续默认only-cached成功；没有破坏实验环境。balance在页7/8给2.07/2.18pt纵向输出盒提示，图像无文字/页脚碰撞，警告保留并明确列出，不声称日志零警告。所有中间PDF/构建日志保留。
+
+下一步：整理设计参照/来源与环境、R8阶段报告和更新后的可用ZIP，真正提取后重放40map身份及两factor16例、重建6图/24页；完成包和本轮COMPLETE后再推进7→8，随后9READY。当前仍active8/completed7，不暂停loop，不启动新科学轮。
+
+
+## SEVEN_R8 — CORRECTION: delivery design wording before final package
+
+实际写入UTC：2026-09-07T16:53:08Z。round_id SEVEN_R8；发生/发现时刻为本次源代码差异回查，精确发现秒未知。已完成初始包CRC后发现FIGURE_DESIGN将训练图的质量曲线/功能热图名称互换；实际PDF、代码、数据与图注均正确。修正这一个设计说明，原说明和初始PACKAGE_BUILD在r8_visual/packaging_draft保留；初始ZIP原样移至delivery/ccad_original_stage_r8_20260907_packaging_draft.zip，不作为最终包。复用同一构建器重建最终交付，保留中间产物使本轮新增本地预算从1GB调整为1.6GB，单个最终包仍限850MB；新增只为约532MB中间包留存，无科学实验、GPU、模型下载或付费。实际总量关闭时核算，不用打包等待充作有效研究。
+
+
+
+## SEVEN_R8 — COMPLETE: original scientific and visual stage delivery
+
+实际写入UTC：2026-09-07T16:57:48Z。round_id：SEVEN_R8，COMPLETE。可证实事件：登记启动2026-09-07T16:15:07Z；最终稿构建2026-09-07T16:37:16.839848Z至16:37:20.578319Z；全部24页审图/数据核对记录16:45:05Z；最终包构建2026-09-07T16:53:30.151113+00:00至2026-09-07T16:53:50.050537+00:00；提取后重放结束2026-09-07T16:54:02.295905+00:00。本次写入前已完成结果、稿件、来源、使用说明和包检查；起止跨度不等于有效工时。
+
+理由与实际推进：落实用户专门追加的原阶段视觉轮，将source定义、target代码、物理操作、真实句子和成员结果连接成可读的正式稿。实际重看Subspaces p5、ACL consistency p6、SemanticOT p2的原始PDF图版，采用准确输入/输出、紧凑图注和正文邻近原则，不复制外部图。Figure1重做计算接口与两条固定案例，Figure4加入全部六预选成员的signed代码差和移除后果；完整两矩阵用实际feature IDs，保留1184系数。训练图以真实updates/log4横轴画质量曲线，功能数据用灰度热图；作用/机制图保留真实分层、依赖及对照。没有新科学fit、训练、推理、成功案例选择或改变原结果。
+
+整稿和核对：paper/main.pdf共24页，SHA256 c12b7e4c7d34c843a0864be8a146ff964eed18b76873319db292d0fb9682100f（410328bytes）；正文至p7、参考p7–8、四附录p9–24，6图/18导出、15编号表/22表片段、17引用。首图/成员图放回正文，附录KL和accuracy同表，完整16句及48操作按role同页展示，自然片段和native/predictive cosine接在成员表之后。全部24最终页实际查看；18字体全部嵌入。464旧表数值、全部16上下文/48结果含失败、1184signed系数逐项等于旧源，figure_data.json字节仍为689e027d1f0464b3c614ac52cb5508254d1bb7ac344ac6e1deb748275a5cb912。中性10ptarticle并非已指定venue模板，不声称投稿格式或视觉用户验收通过。设计/来源/PDF检查在r8_visual/FIGURE_DESIGN.md、DATA_AND_PDF_CHECK.json、PDF_REVIEW.json。
+
+可用交付：delivery/ccad_original_stage_r8_20260907.zip初始验证体积532,063,356bytes、2721条目，33个原阶段run完整raw/失败/续接、实现与配置、稿图源数据、40map、全部轮次和奖励审计、环境/来源/获取/恢复说明。33可再生cache共845,258,665bytes仅在ZIP省略，manifest逐项path/hash/恢复范围，原件未删；原R7包仍SHA2563b0128f72bdf28f7a90e746f83c2cd659964ba7ece490ab4dbb04b66908eeb15。R8报告逐环汇总已达/未达，delivery/README、REPRODUCTION、ROUND_INDEX提供阅读与执行入口。原打包时tracker/log是时间快照，本完成块、验证receipt与关闭记录随后以独立条目追加，不覆写旧manifest；最终ZIP身份在外部R8_DELIVERY_MANIFEST和sha256.json，避免hash自指。
+
+实际提取重放：192个提取文件全部符合package manifest；40map身份逐一通过；number/time各16×2048预测最大误差1.776e-15/3.553e-15，成员之和误差4.441e-16/1.776e-15。没有原task cache/模型/SAE权重的提取目录实际重建论文，24页文字与6张PNG像素全部相同；使用同机已安装NumPy/Matplotlib/TeX/font/cache，非干净机器完整训练或逐字节PDF复现。实测6.157秒，具体命令与输出在PACKAGE_SMOKE.json。最终初始ZIP全CRC检查通过，打包+CRC实测19.891秒；关闭追加项独立hash复核，不以这些工程通过替代科学复核。
+
+故障/勘误保留：draft1图注误写row288，按原CSV修为264，错误PDF原样保留。float.sty缺包尝试退出后采用现有caption/minipage准确排版；balance4.3缺缓存/首次sandbox网络失败原日志保留，经已获授权工具调用从官方bundle补3366bytes宏，LPPL1+来源/version/hash记录在环境和registry，不将生成宏单独打包。参考p7/8仍有2.07/2.18pt output-vbox提示，实际未见文字/页脚碰撞，不声称日志零warning。初始打包后发现设计说明把质量曲线/功能热图名称互换；已修正，PDF/数据从未受此影响。原532,057,656bytes ZIP移名packaging_draft原样保留，重建最终包，原因与预算变更已于16:53:08Z追加CORRECTION。
+
+科学判断与全阶段总结：原七轮形成指定source操作、跨seed signed预测组成、五seed质量和冻结角色确认、实际成员/输入控制、完整理论与可执行输出的证据链。raw/full等强对照更准，早层开发高一致性未同水平确认，prefix反例、source错误、time成员不纯等失败都保留。当前结果不是唯一人类语义、native删除/因果电路或跨模型泛化证据。对三篇具名论文的功能/解释/语义OT与电路消费者差距仍未全面补足，conditional-correlation OT不是SemanticOT复现。完整稿与专门视觉工作已经交付为原阶段快照；优秀/可投稿验收仍NOT_MET，不用轮数或文件数量证明达标。
+
+实际资源与工时：R8为0GPU/训练/模型下载/付费；两次打包均由原disk-e-io租约协调并自然释放，其他项目lease未更改。复用现有环境，仅补上述小TeX依赖。R8_BUDGET保守本地总量1,163,992,370bytes，含最终包、保留初包、全部渲染/草稿/提取/归档及整份当前paper，低于变更后的1.6GB；单包仍低850MB。原阶段GPU管理任务累计保守3.337507789小时不变。有效研究/设计/阅读/写作/审图与等待未连续计量，明确未知；不把空等或打包凑成有效研究。AST/源hash和git diff检查通过，无代码科学变化不重跑科学测试网格。
+
+计数与下一步：本COMPLETE和交付关闭条目到位后completed_rounds7→8、active为空、next9 READY，original_stage COMPLETE、extension READY/0。先交付原科学加视觉阶段，不在本轮启动9。下一heartbeat原位继续已授权第9–13轮全面补强，启动9时核实实际资源/额度并重新分配合理预算，优先找蓝本—估计—素材—输出—消费者的可修复失配，读三篇具体理论/实验/附录/源码并落实有判别力改进，不继续原面板无界网格。原ccad ACTIVE/15分钟/current target已核对，结束原因未失效，不暂停、不删或新建loop，不委派其他task/subagent；13最终交付后才原位暂停，禁止14。白名单3个构建器和master_log成组同步随后完成，研究稿/数据/ZIP不扩大公开范围。关闭前入口逐字归档：archive/research_workflow_20260907/r8_close_20260907T165748Z/manifest.json。

@@ -52,19 +52,36 @@ def main():
 
     # A complete, fixed counterfactual pair in each role; probabilities are conditional
     # on the four stated labels, never presented as full-vocabulary probabilities.
-    fig = plt.figure(figsize=(7, 3.08))
-    gs = fig.add_gridspec(2, 2, height_ratios=[1.0, 1.65], left=.07, right=.98, top=.97, bottom=.18, wspace=.3, hspace=.32)
+    fig = plt.figure(figsize=(7, 4.15))
+    # The recipe is an operator diagram, not a discovered causal graph. Each
+    # horizontal path is evaluated separately at the same recipient hook.
+    recipe = fig.add_axes([.015,.655,.975,.32]); recipe.set(xlim=(0,7),ylim=(0,1.6));recipe.axis('off')
+    recipe.text(0,1.56,'(a) A correspondence specifies a physical edit',va='top',fontsize=9)
+    for y,kind,code,operator,edit in [
+        (1.04,'Source',r'$\Delta z_{s,S}$',r'$D_{s,S}$',r'$q_s$'),
+        (.43,'Target',r'$\Delta z_{t,T}$',r'$P=UW_T^{\mathsf{T}}$',r'$\hat q=\sum_j\Delta z_{t,j}p_j$')]:
+        recipe.text(.10,y,kind+' change',ha='left',va='center',fontsize=8.5)
+        recipe.text(1.28,y,code,ha='center',va='center',fontsize=11)
+        recipe.annotate('',xy=(2.03,y),xytext=(1.62,y),arrowprops=dict(arrowstyle='->',lw=.65,color=GREY))
+        recipe.text(2.68,y,operator,ha='center',va='center',fontsize=11)
+        recipe.annotate('',xy=(3.59,y),xytext=(3.28,y),arrowprops=dict(arrowstyle='->',lw=.65,color=GREY))
+        recipe.text(4.39,y,edit,ha='center',va='center',fontsize=11)
+        recipe.annotate('',xy=(5.43,y),xytext=(5.12,y),arrowprops=dict(arrowstyle='->',lw=.65,color=GREY))
+        recipe.text(6.12,y,'Add to recipient\nthen run model',ha='center',va='center',fontsize=8.5,linespacing=1.2)
+    recipe.text(2.68,.71,'fit to source edits on development pairs',ha='center',va='center',fontsize=7.8,color=GREY)
+    recipe.text(.1,-.005,r'Native editing substitutes $D_{t,T}$ for $P$; it is evaluated as a separate operation.',fontsize=8)
+    gs = fig.add_gridspec(2, 2, height_ratios=[.8, 1.5], left=.085, right=.985, top=.61, bottom=.12, wspace=.28, hspace=.18)
     methods = ['source_teacher', 'fcc_group', 'role_swap_norm_matched']
     labels = ['Unedited', 'Source', 'FCC', 'Role swap']
     for col, ex in enumerate(data['fixed_examples']):
         color = [GREEN, PURPLE][col]
         ax = fig.add_subplot(gs[0, col]); ax.axis('off')
-        ax.text(0, 1, ['(a) Temporal cue', '(b) Quoted title'][col], va='top', fontweight='bold', color=color)
+        ax.text(0, 1, ['(b) Temporal cue', '(c) Quoted title'][col], va='top', color=color)
         if col == 0:
-            text = 'Right now, the barber near the porter\nBack then, the barber near the porter'
+            text = 'Recipient: Right now, the barber near the porter\nDonor: Back then, the barber near the porter'
         else:
             text = 'The title is “Right now”. Right now,\nthe barber near the porter\nDonor: change only the title to “Back then”.'
-        ax.text(0, .68, text, va='top', fontsize=8.5, linespacing=1.45)
+        ax.text(0, .67, text, va='top', fontsize=8, linespacing=1.15)
         rows = {x['method']: x for x in ex['outputs']}
         vals = [1 / (1 + np.exp(-rows[methods[0]]['baseline']['past_logodds']))]
         vals += [1 / (1 + np.exp(-rows[m]['past_logodds'])) for m in methods]
@@ -73,7 +90,7 @@ def main():
                edgecolor=[GREY, INK, color, color], linewidth=.9, hatch=[None, None, None, '///'])
         for i, v in enumerate(vals):
             ax.text(i, v + .035, f'{v:.3f}', ha='center', fontsize=8)
-        ax.set(ylim=(0, 1.14), xticks=np.arange(4), xticklabels=labels, yticks=[0,.5,1])
+        ax.set(ylim=(0, 1.12), xticks=np.arange(4), xticklabels=labels, yticks=[0,.5,1])
         if col == 0: ax.set_ylabel('Conditional past probability')
         ax.tick_params(axis='x', length=0)
     save(fig, 'role_example')
@@ -85,8 +102,8 @@ def main():
     names = ['Source operation','Compact FCC','Raw ridge','Full-code ridge','DAS-style rank-1','Global factor mean']
     if diagnostic:
         ms.insert(2,'fcc_wrong_donor_norm_matched'); names.insert(2,'Wrong donor, same norm')
-    fig, axs = plt.subplots(1, 2, figsize=(7, 3.35), sharey=True)
-    fig.subplots_adjust(left=.245, right=.985, bottom=.18, top=.85, wspace=.13)
+    fig, axs = plt.subplots(1, 2, figsize=(7, 2.96), sharey=True)
+    fig.subplots_adjust(left=.245, right=.985, bottom=.19, top=.85, wspace=.13)
     for col, cue in enumerate(['familiar_cue','new_cue']):
         ax=axs[col]
         for i, m in enumerate(ms):
@@ -138,19 +155,47 @@ def main():
     fig.text(.63,.04,'● Member removal    ○ Equal-norm control',ha='center',fontsize=8)
     save(fig,'member_mechanism')
 
-    fig, axs=plt.subplots(2,1,figsize=(7,7.9),gridspec_kw={'height_ratios':[1,2]})
-    fig.subplots_adjust(left=.095,right=.88,bottom=.07,top=.955,hspace=.48)
-    cmap=LinearSegmentedColormap.from_list('signed',['#785481','#fffefa','#286956'])
+    # Preserve all coefficients and actual source/target IDs. A separate ink
+    # palette reserves green/purple elsewhere for the contextual roles.
+    fig = plt.figure(figsize=(7,7.1))
+    axs=[fig.add_axes([.11,.725,.76,.225]),fig.add_axes([.11,.12,.76,.46])]
+    cmap=LinearSegmentedColormap.from_list('signed',['#454550','#fffefa','#a14f62'])
     for ax, x, letter in zip(axs,data['memberships'],['a','b']):
         h=np.asarray(x['source_lift']); vmax=float(np.max(np.abs(h)))
         im=ax.imshow(h,cmap=cmap,norm=TwoSlopeNorm(vmin=-vmax,vcenter=0,vmax=vmax),aspect='auto',interpolation='nearest')
         ax.set(yticks=range(len(x['members'])),yticklabels=x['members'],
-               xticks=range(h.shape[1]),xticklabels=range(1,h.shape[1]+1),xlabel='Source member (stored support order)',ylabel='Target member ID')
-        ax.tick_params(axis='both',length=0,labelsize=7)
+               xticks=range(h.shape[1]),xticklabels=x['source_members'],xlabel='Source member ID',ylabel='Target member ID')
+        ax.tick_params(axis='both',length=0,labelsize=8)
+        ax.tick_params(axis='x',labelrotation=90)
         ax.set_title(f'({letter}) {x["factor"].title()}: {h.shape[0]} target × {h.shape[1]} source members',loc='left',pad=9)
         cax=fig.add_axes([.90,ax.get_position().y0,.016,ax.get_position().height])
-        cb=fig.colorbar(im,cax=cax);cb.set_label('Signed source lift $H$',fontsize=8);cb.ax.tick_params(labelsize=7)
+        cb=fig.colorbar(im,cax=cax);cb.set_label('Signed source lift $H$',fontsize=8);cb.ax.tick_params(labelsize=8)
     save(fig,'signed_memberships')
+
+    # All six members were selected before these fixed-case outcomes. Plot the
+    # signed quantities, including zeros and countervailing removal effects.
+    fig,axs=plt.subplots(1,2,figsize=(7,2.62),sharey=True)
+    fig.subplots_adjust(left=.085,right=.955,bottom=.21,top=.82,wspace=.36)
+    members=data['display_members']
+    for col,(suffix,title,xlabel) in enumerate([
+        ('code_change','(a) Target code change',r'$\Delta z_{t,j}$'),
+        ('removal_time_shift_loss','(b) Effect lost when the member is removed','Signed time-shift loss (nat)')]):
+        ax=axs[col];ax.axvline(0,color=GREY,lw=.65)
+        values=[]
+        for i,m in enumerate(members):
+            for j,role in enumerate(['temporal','quoted']):
+                value=m[f'{role}_{suffix}'];values.append(value);y=i+[-.14,.14][j];color=[GREEN,PURPLE][j]
+                ax.plot([0,value],[y,y],color=color,lw=1)
+                ax.plot(value,y,marker=['o','s'][j],color=color,ms=3.7)
+                ax.annotate(f'{value:+.2f}' if value else '0',xy=(value,y),xytext=(4 if value>=0 else -4,0),
+                            textcoords='offset points',ha='left' if value>=0 else 'right',va='center',fontsize=7.4,color=color)
+        lo=min(0,min(values));hi=max(values);span=hi-lo
+        ax.set(xlim=(lo-.18*span,hi+.23*span),yticks=range(len(members)),yticklabels=[str(m['member']) for m in members],xlabel=xlabel)
+        ax.set_title(title,loc='left',fontsize=8.5,pad=9);ax.tick_params(axis='y',length=0)
+    axs[0].set_ylabel('Time-group member ID');axs[0].invert_yaxis()
+    fig.text(.72,.975,'● Temporal',color=GREEN,fontsize=8,va='top')
+    fig.text(.87,.975,'■ Quoted',color=PURPLE,fontsize=8,va='top')
+    save(fig,'member_cases')
 
     fig, axs=plt.subplots(1,2,figsize=(7,2.65),gridspec_kw={'width_ratios':[1,1.15]})
     fig.subplots_adjust(left=.09,right=.98,bottom=.20,top=.85,wspace=.42)
@@ -159,11 +204,12 @@ def main():
         means=[]
         for step in [256,1024,4096]:
             v=[100*x[metric] for x in q if x['step']==step];means.append(np.mean(v))
-        axs[0].plot(range(3),means,marker=marker,color=color,label=name,ms=4)
-    axs[0].set(xticks=range(3),xticklabels=['256','1,024','4,096'],xlabel='Training updates',ylabel='Natural validation (%)',ylim=(50,100))
+        axs[0].plot([256,1024,4096],means,marker=marker,color=color,label=name,ms=4)
+    axs[0].set_xscale('log',base=4)
+    axs[0].set(xticks=[256,1024,4096],xticklabels=['256','1,024','4,096'],xlabel='Training updates (log scale)',ylabel='Natural validation (%)',ylim=(50,100))
     axs[0].legend(frameon=False,fontsize=8,loc='upper left');axs[0].set_title('(a) Reconstruction over training',loc='left',pad=10)
     arr=np.array([[100*next(x['accuracy'] for x in data['functional_learning'] if x['partition']=='all' and x['factor']==f and x['step']==s) for s in [256,1024,4096]] for f in ['number','time','joint']])
-    axs[1].imshow(arr,cmap=LinearSegmentedColormap.from_list('function',['#f6f3f6',PURPLE]),vmin=20,vmax=100,aspect='auto')
+    axs[1].imshow(arr,cmap=LinearSegmentedColormap.from_list('function',['#f5f5f3','#4c4c4c']),vmin=20,vmax=100,aspect='auto')
     for (i,j),v in np.ndenumerate(arr):axs[1].text(j,i,f'{v:.1f}',ha='center',va='center',color='white' if v>70 else INK,fontsize=9)
     axs[1].set(xticks=range(3),xticklabels=['256','1,024','4,096'],yticks=range(3),yticklabels=['Number','Time','Joint'],xlabel='Training updates')
     axs[1].tick_params(length=0);axs[1].set_title('(b) Source-operation label accuracy (%)',loc='left',pad=10)
@@ -171,7 +217,7 @@ def main():
     (out/'FIGURE_MANIFEST.json').write_text(json.dumps(dict(input_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),font_family=family,
         font_source=str(font) if font.exists() else 'Matplotlib STIXGeneral',outputs=outputs,
         scope='Descriptive plots of retained data; intervals are source-seed ranges or dependent-direction distributions, not confidence intervals.'),indent=2)+'\n',encoding='utf-8')
-    print(json.dumps(dict(figures=5,exports=len(outputs),out=str(out),font=family)))
+    print(json.dumps(dict(figures=len(outputs)//3,exports=len(outputs),out=str(out),font=family)))
 
 
 if __name__=='__main__':
