@@ -4652,3 +4652,49 @@ event_completed_at_utc: 2026-09-07T07:45:12Z
 修复旧契约的无Git/尚未首跑叙述、历史MANIFEST误充全量索引、后7张图的编号、两处模糊图号和released local tables措辞。Section8引用实际正确，初判疑虑已撤回；主文数值/公式/原始图数据不变。三篇具名peer本地PDF/hash匹配，但当前主稿尚未引用，正式全文PDF/TeX/Bib/附录与统一复现入口仍待第6–7轮；用户指出的现有视觉质量仍未达标，编号修复不冒充美学改善。
 
 已将后续每轮START/COMPLETE及实质阶段留痕、日志完成后才计数、最终可投稿项目包内容写入AGENTS/plan及原automation。原ccad实际TOML与规范prompt一致，ACTIVE、15分钟、同原任务；6–8后9–13/最终13暂停不变，奖励轮独立。审计报告与所有核对清单位于artifacts/bonus_audit_20260907/；前8文件及automation逐字archive见该目录START.json。没有新GPU实验、下载/安装/付费或其他项目资源修改。工作/检查是本轮产出，不冒充新科学发现。成组同步后将奖励完成计数置1，下一主轮仍6。
+
+
+## SEVEN_R6 — START
+
+round_id: SEVEN_R6
+phase: START
+written_at_utc: 2026-09-07T08:06:32Z
+event_started_at_utc: 2026-09-07T08:06:32Z
+
+第6轮启动。选择理由：最后层角色依赖的跨seed操作已有冻结确认、成员干预及固定正反实例，现有约12k词快照仍按实验发展顺序累积，尚无统一正式PDF、完整引用和自含附录。当前工作是把结果组织成可读、可核查的完整论文，不重复相同科学实验或把改写当新发现。
+
+计划依次核对核心结果与证明、读取三篇具名近邻的原文方法和实际PDF图版、统一正文与术语、把必要完整结果和证明纳入附录、重做适合信息的主图、生成可编辑排版源/参考文献/PDF并逐页检查，写清阅读与复现入口。原阶段第6–8轮范围保持；新增9–13轮不承担本轮欠项。无新GPU拟合或训练；复用文档运行时与现有资产，仅在缺少编译器时使用官方来源的隔离工具，新增工具/稿图预算上限2GB，0付费。工作/编译/等待分别如实记录，尚无结束时间；有效工作时长未单独计量，不伪造。
+
+8个当前文件逐字归档与hash：archive\research_workflow_20260907\r6_start_20260907T080632Z\manifest.json。启动配置、预算、原HEAD在artifacts/seven_round_rebuild_20260906/r6_paper/START.json。保留全部历史失败及raw/full更强、源失败、time成员非纯选择性的结果。当前completed=5、active=6，奖励轮已完成且不占原13轮。
+
+
+## SEVEN_R6 — PROGRESS / CORRECTION：第一版完整 PDF 与实际目检
+
+实际写入 UTC：2026-09-07T12:11:29Z。可证实事件：第一版完整 PDF 构建于 2026-09-07T12:07:08Z 启动、文件于 12:07:11Z 写成；此前 START 为 2026-09-07T08:06:32Z。该跨度不能当有效工作时长；期间有效工作、工具授权交互、上下文接续与非工具等待没有独立连续计时，分项时长未知，不倒算充数。
+
+已实际完成统一英文正文、四个附录、参考文献、五幅同源矢量图、14 个生成表片段与全部 16 个固定案例/48 操作。轻量导出包含 870 个当前汇总行和 4350 个 source-seed 行，早期完整结果单独导出；不新增拟合或推理。第一版 PDF 24 页、SHA256 a13eaec4d9e3323d09df84b6654fdc30c21ecb512258e059a7cb99c23b3e1d0a。已检查实际 PDF 前 16 页；发现正文 lambda 缺反斜线、Quoted number 成员 KL 超出图轴上限、长 hash 出栏、末页仅四行及若干标题/段间距需改。修订前所有稿图逐字归档在 archive/research_workflow_20260907/r6_first_pdf_20260907T121129Z/manifest.json。初次缺样式/字体缓存和 table input 的 TeX 失败已解决，未改实验环境；后续构建按时间保留日志。
+
+科学勘误来自直接复核 scripts/run_frozen_composition.py:79 与 run_composition_correspondence.py:65：历史 wrong_factor 控制实际上交换两个 direct-target-native 源组操作，而非把错误 donor 的目标代码送入原 FCC map。同为 final token 时其 joint 是 q_T+q_N，与 direct_target_native 的 q_N+q_T 完全相同；不能算独立的联合特异性证据。此前泛称“wrong-factor input”的表述须改为“swapped native factors”，原 raw/method id 保留。主正结果未依赖它；本文直接说明退化，R7 聚焦核对时评估是否值得补一个真正在同一 FCC map 上置换 donor 的有区分力控制。
+
+当前仅完成阶段稿，尚未计本轮完成。下一步修复上述具体问题、看完其余页面并复核修订全稿，补 README/证据索引/来源与环境记录，再留 COMPLETE 后更新 tracker。当前 CPU 为短时文稿/绘图/排版，无 GPU/大文件 IO/付费或其他项目租约操作。
+
+
+## SEVEN_R6 — COMPLETE
+
+round_id: SEVEN_R6
+phase: COMPLETE
+written_at_utc: 2026-09-07T12:29:53Z
+event_started_at_utc: 2026-09-07T08:06:32Z
+event_completed_at_utc: 2026-09-07T12:29:53Z
+
+第6轮统一论文与实际PDF交付完成。选择角色依赖操作为单一主线，把原发展稿重排成6页英文正文、1页参考文献及16页完整附录；paper/main.pdf共23页，SHA256 a13170c173f6df2b91239ef04a87901390768596ce6aa7fb5b38a4f7906baa30，368486bytes。正文/四附录源、17项BibTeX引用、5组正式PDF/SVG/PNG图、14个表片段构成的12张表、全部16固定案例/48操作、870汇总行与4350source-seed行、早期负差、完整signed关系和8项主张证据索引均已实际落盘。paper/README.md给阅读/构建/实验driver与config/官方资产pin及获取/许可和重跑范围说明；旧快照退出当前主文入口但保留原文。
+
+数学整合明确均值抵消、预测成员的物理分解与坐标不变、一般GL不保稀疏非负类、有限contrast native等价条件、精确penalized RRR、组成Gram界及混合Hessian、prefix秩反例、individual/cross energy与norm控制。真正由本轮代码核对发现的科学勘误：旧wrong_factor是swapped native factors，同位置joint与direct native相同，不能当独立联合特异性证据；当前主稿/附录/表/README已更正，原raw和ID不变。本轮无新拟合/推理/训练，既有raw/full更准、源失败、time成员非纯选择性的结果保留。
+
+三篇具名近邻实际方法/实验/附录指定页及PDF图版已读，SOURCE_REVIEW.json留位置/hash。subspaces已有功能mask/CE，ACL一致性与SemanticOT语义分布/电路消费者均在主文准确对比；不声称复现完整系统或总体胜出。REFERENCE_REGISTRY追加Bhalla作者列表历史错误勘误，当前12作者BibTeX匹配官方元数据。外部源码/图未复制。
+
+首版24页及修订版23页均实际逐页渲染查看。具体修复lambda转义、成员KL轴截断、长hash出栏、碎末页、标题/间距与案例引号；最终18个字体均嵌入，无未解析引用/出栏问题。PDF_REVIEW.json记录实际范围，目检不冒充投稿验收。无run/权重的新paper-only目录实际重建5图与23页PDF，所有页提取文字和5PNG像素相同；仍使用同机环境，不声称干净机器全实验或PDF二进制复现。
+
+资源：官方Tectonic0.17.0/MIT隔离安装，既有Python3.12.14/Matplotlib3.10.8复用，实验环境未改；最终完整build3.843秒，零GPU/训练/付费。本轮稿图/工具/渲染/便携副本/归档实测170960292bytes，R6_BUDGET.json分项留存。有效研究工作与等待没有连续独立计时，时长未知；开始到结束的跨度不当有效工时，不以空等凑轮次。初期缺样式/字体缓存和TeX输入失败日志保留。三脚本AST、git diff check及实际重建检查完成，未重复实验测试或占用他人租约。
+
+交付：artifacts/seven_round_rebuild_20260906/R6_REPORT.md、R6_DELIVERY_MANIFEST.json、R6_BUDGET.json及r6_paper/检查记录。归档前版本archive/research_workflow_20260907/r6_close_20260907T122953Z/manifest.json逐字/hash保留；首稿修订归档r6_first_pdf_20260907T121129Z。完成记录写入后才更新completed5→6、next7READY，总13/奖励轮独立保持。原ccadACTIVE15分钟同原任务，未委派或改执行归属。随后3构建脚本与master_log成组白名单同步，实际commit/push/HEAD核对由R6_SYNC.json记录；文稿仍按既有白名单保留本地。下一轮聚焦具体对照语义问题与原科学/证据包收口，第8轮原视觉交付不延后，9–13独立追加阶段不变；最终投稿质量仍NOT_MET。
