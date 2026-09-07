@@ -235,6 +235,9 @@ def main():
     complete_support=export_complete_support(root,out,read)
     if complete_support:
         plot['complete_support']=complete_support
+    from component_paper import export as export_components
+    components=export_components(root,out,read)
+    if components:plot['component_reuse']=components
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -287,6 +290,10 @@ def main():
             result='At the original4M target checkpoint, classical shared OLS improves both consumers over same-budget dense selection on exposed development. Continued targets improve number but worsen time correspondence under fixed4M teachers; reconstruction and source function also improve, so they do not establish monotone transfer quality.',
             evidence=complete_support['input_summary_paths']+['src/ccad/complete_support.py','scripts/run_complete_support.py','scripts/run_continued_code_cache.py','scripts/summarize_continued_material.py',
                 'configs/ext_r10_complete_support_v1.json','configs/ext_r10_target8m_support_v1.json','configs/ext_r10_l15_continue8m_five_v1.json','paper/sections/appendix_theory.tex']))
+    if components:
+        claims.append(dict(id='frozen_source_component_reuse',paper='Section on reusing specified source members; component theory and results appendices',
+            result='A frozen allocation map exposes source-member removal and contrast. A fresh authored panel evaluates six partial masks and two additional doses; failed component-metric development and stronger full/raw controls remain. Operational source identity is not target-native or human semantic identity.',
+            evidence=components['input_summary_paths']+['src/ccad/component_correspondence.py','src/ccad/component_operation.py','scripts/run_component_correspondence.py','scripts/apply_component_operation.py','scripts/summarize_component_correspondence.py','configs/ext_r11_component_confirmation_v1.json','paper/sections/appendix_theory.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

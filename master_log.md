@@ -4956,3 +4956,66 @@ GPU自然释放后实查1339/16303MiB、util0与gpu-0free。已按240秒预算�
 判断与下一步：本轮建立可用单输入方法及真实同预算开发收益，并实测训练质量提升不保证对应改善；一线主会验收仍NOT_MET，经典算法非首创、raw/full-code差距、新法独立验证与广泛概念用途/完整具名对标仍需实质补强。第11轮优先围绕新上下文的可检验用途/组成作用推进，并冻结有效规则后开展真正独立确认，不在当前暴露面板无限换权重，也不盲目扩训。当前先写本COMPLETE，再计completed9→10、extension1→2、active清空、next11 READY；第13轮统一最终项目包与诚实评判后原位PAUSED，不加14。
 
 交付入口artifacts/extension_five_20260907/README.md、R10_REPORT.md、R10_DELIVERY_MANIFEST.json，旧稿迁移在MANUSCRIPT_LOCATION，收口前归档archive/research_workflow_20260907/r10_close_20260907T192205Z/manifest.json。原idccad实查ACTIVE、5分钟、原target对话，不委派；白名单源码/配置/master_log随后成组commit/push并核对HEAD=origin/main，以R10_SYNC.json记录具体同步身份；研究稿/原数据仍本地保存，不扩大公开范围。
+
+
+## SEVEN_R11 — START: reusable component interventions from a single map
+
+实际写入UTC：2026-09-07T19:38:54Z。round_id SEVEN_R11，新增阶段3/5，START；登记事件开始同UTC，此前定向读tracker/plan/源码和小矩阵检查的精确开始未知，不把heartbeat时刻当事件开始。已完成轮数仍10，当前仅启动11，不另计准备轮。原第10轮34页完整稿/结果/源码同步均已交付，HEAD5db8bd00ec9470c50303b8a6926cfba3a922744f；当前稿仍唯一paper/main.pdf，先逐字归档至archive/research_workflow_20260907/r11_start_20260907T193854Z。
+
+为什么优先这一问题：单输入整组贡献已可用，但真实many-to-many组成对应应支持读者选定源组一部分后复用其作用，不能只重建一条完整Dz。读取原源组coefficients发现全部16/32列满秩，number条件数1.62–2.25，time2.26–8.99；seed3/time最高decoder余弦0.9675。整体误差小可能含成员间补偿，整体拟合的minimum-norm lift不自动证明所有子组作用可复用。该诊断只用既有源端矩阵，没有新target或任务结果选择。
+
+本轮计划：从E[diag(a) D_s^T D_s diag(a)]推导明确子组操作分布的线性loss；独立Bernoulli掩码给p²G+p(1−p)diag(G)，是经典二阶矩恒等式而非新算法首创。将它适配现有共享OLS/岭回归和source-code输出，比较完整组目标、子组目标、同成员/同预算dense及raw/full-code，测单成员/半组/完整组与适度强度变化的真实模型保真。初步开发只用已暴露素材，真正新上下文在规则/主要终点/操作/强对照冻结后才推理；保留源失败和全分母。若新loss无实质收益，按反例定位范围或改最有依据的一步，不无界网格。sourcefeature identity、source-aligned操作与target-native/人类语义分开。
+
+学习与全文同期推进：复读SemanticOT原文的实际替换/组压缩操作、相关子组/随机掩码估计来源与可用官方源码，转成明确输入输出和可检验用途，不能把当前OT替代品称其全复现。决定性主图拟展示同一冻结map对选定源组成/新上下文操作的重用、所需target成员和强基线差距；具体实例应解释操作而不是贴标签。本轮补数学连接/实现、材料证据、实际功能和完整稿图，不仅加表或协议。
+
+资源和边界：启动实查RTX5070Ti16303MiB/1339MiB占用/util0，gpu-0 free；内存与C/D/E可用空间见START.json。WMI内存读取拒绝，kernel32只读成功，未改权限。复用五原4M SAE、固定底模/缓存/已验证环境；本轮预算5400s GPU管理任务、5GB项目新增、0bulk新权重/0付费/远程job/额度重置。资源暂忙仅延后受影响计算；不触碰其他项目lease，不委派。有效工作/计算/等待分别记录，未连续计时部分未知。每个实质run留原始身份与失败，完成结果和唯一当前稿件后先COMPLETE再推进11；累计13最终收尾后原位暂停，不加14。
+
+
+## SEVEN_R11 — PROGRESS: component metric implementation and bounded pilot
+
+实际写入UTC：2026-09-07T19:46:55Z。round_id SEVEN_R11，PROGRESS。完成独立Bernoulli半组与均匀singleton的精确source-mask二阶矩、3个针对性数学测试（全枚举mask期望、相同整体不同组件反例、固定支持/alpha下输出metric变换的岭回归等变）。后者明确了真实改进通道是成员选择和校准，不能宣称光改response表示就改进固定回归解。源码component_correspondence.py和run_component_correspondence.py已形成可运行适配，保留原aggregate map通过满秩源decoder唯一lift后的逐向量一致检查。
+
+下一run EXT_R11_component_pilot_v1_20260907。只用原384开发行拟合/选支持，256/128校准，旧512已暴露panel中事先固定block0全部128行（两个role、全cue/template/value/源错误）作快速开发判别。两种sourcefamily选择、原整体OLS、同预算dense、逐源一对一atom、full/raw及原whole-fit full/raw共9候选，七个按源排名/固定RNG指定mask，contrast/完整删除、剂量1，共179200行含source参考，预算900s管理GPU。无新数据结果已读；新输入的规则/操作/对照在开发后冻结再计算，不能升级这个pilot为确认。所有方法共用source组、η、数据与ridge候选，one-to-one的matching和scalar拟合预算明确，完整code/raw信息量更大并如实报告。
+
+
+## SEVEN_R11 — PROGRESS: component-family pilot rejects the new metric as an improvement
+
+实际写入UTC：2026-09-07T19:55:06Z。round_id SEVEN_R11，PROGRESS；pilot结束2026-09-07T19:51:25.353545+00:00来自status。EXT_R11_component_pilot_v1_20260907全部179200行、数值/contract通过，263.2405334s管理任务wall，704full-model/180416cached-tail，原aggregate lift重放全部通过；无失败运行。三项数学测试通过并不意味着新family选择更好。两个新指标总体无收益：半组loss八个非全组均值仅一项改善2.36%，其余退步至11.11%；singleton有一项改善0.47%，其余退步至11.24%。全部对照/源无效和旧输入保留在R11_PILOT_SUMMARY.json，不推广该度量。
+
+实际保留的正机会：原aggregate OLS在这六个预定子组平均上八cell都优于一对一matched atoms与同预算dense_half（numbercontrast0.010765/0.011765对atom0.037508/0.045440，timecontrast0.018923/0.007666对0.043280/0.009269；完整数据见summary）。raw/full-code仍通常更强，少数time删除原OLS优于raw只属本小开发块。全信息half/原aggregate结果相同符合固定支持与alpha的等变性，不当两次独立验证。下一步冻结原OLS作为主方法及全部对照，检验真正新词汇/语境下的源子组重用、两半组下游交互和适度剂量；不再在本面板追加度量网格。新候选词accountant/chemist/pianist/translator在现有config定向搜索无命中，尚未生成或推理新输入；具体新panel与冻结身份在后续物化前记录。
+
+
+## SEVEN_R11 — PROGRESS: freeze component reuse before fresh model inputs
+
+实际写入UTC：2026-09-07T19:59:40Z。round_id SEVEN_R11，PROGRESS；冻结事件同UTC，模型尚未对这512输入推理。原pilot新half/singleton metric未稳定改善，保留负结果；主要确认对象为原R10 aggregate_ols的唯一source-code lift。九候选及系数、支持、源身份、512新文本和全部操作已hash冻结在artifacts/extension_five_20260907/r11_components/FREEZE.json；新accountant/chemist/pianist/translator词对未出现在此前JSON配置精确词条，文本与8个既有panel交集0，但不声称底模预训练未见或新的模板/角色。主要终点为六非完整mask dose1的完整词表KL，按factor/consumer/role分开；whole/firsthalf的0.5/1.5倍、互补半组非线性交互及固定source3/time row0/256是次要分析。保留全512分母、源错误和五共享seed方向，不因结果更改。物化预算300s、确认3000s GPU管理wall，1126400原始干预行；仍在本轮5400s/5GB范围，0新权重或付费。工作与等待未连续计时，未知。先新数据实测，再据实写入唯一主稿/图表；本轮尚未完成，不推进计数。
+
+
+## SEVEN_R11 — PROGRESS: source-mask interface and mathematical scope
+
+实际写入UTC：2026-09-07T20:17:38Z。round_id SEVEN_R11，PROGRESS；本阶段事件结束同UTC，精确开始未知。完成SourceComponentOperation和recipient-only removal/paired contrast CLI、按原始map输出的导出与全mask重放脚本；新接口2项显式成员求和/持久化及错误输入测试PASS0.107s。新增主稿定义、自含source-kernel判据/条件数界/掩码二阶矩与固定ridge等变性证明、确认方法细节；图代码等待完整新结果。互补组的输出非加性交互明确限于末层LN/读出，不称内部电路发现。SOURCE_REVIEW更新真实SemanticOT方法/图版阅读范围，未复制外部代码或复现其全语义OT。pilot二次摘要保留旧derived副本，流式原始hash与run身份一致；全部负结果保留。冻结确认正在运行，未据部分结果改规则，不推进轮数。有效工作/计算/等待未连续计时部分未知；完整阶段文件身份见IMPLEMENTATION_STAGE.json。
+
+
+## SEVEN_R11 — PROGRESS: frozen fresh source-component result
+
+实际写入UTC：2026-09-07T20:27:13Z。round_id SEVEN_R11，PROGRESS。EXT_R11_component_confirmation_v1_20260907实际结束UTC见其status.json；本块为后续汇总/稿件写入事件。新物化PASS22.322299s，确认PASS1374.448394s、1126400行、全冻结身份/文本/尾层/noop/全分母检查均过；原始SHA256620166932f6d98c2a35fc068c6c839b9fb570aabd0a00da3f7cb284868cce3f3。所有9候选/源错误/5共享seed方向保留，不据新结果改法。
+
+科学结果：原整体OLS的source-code lift对子组操作相对equal-count一对一8cell均降低KL18.56–81.20%；相对same-budget dense-half7cell降低7.56–15.18%，temporal time contrast差1.78%。full-code和raw所有8cell均更准。逐mask优于一对一48/48、dense38/48、full1/48、raw0/48；均是依赖条件计数。移除关联seed后，quoted time contrast的一对一优势有一组反转；不伪称普遍稳定。新half/singleton目标仍无稳定提升。
+
+源first/second/whole部分作用在预固定source3→4新accountant/chemist语句上实际不同；例如temporal time contrast第一半source/map过去概率87.01/89.47%，整组91.46/89.95%，后半18.49/12.89%；quoted整组5.97/4.92%，某些quoted案例一对一更近。均为四label条件概率。次要finite交互在7/8cell优于一对一，但raw/full仍全优；其来源可能只是末层LN/读出。全部结果进主稿/附录/图表源，未称native语义或内部电路发现。
+
+可用交付：10个独立map已导出，112640个冻结线性操作向量重放最大误差4.973799e−14，两个实际CLI调用已完成；尚须核对输出文件/正式PDF与全部页面、整组同步后写COMPLETE，计数仍10。摘要/KEY_RESULTS/operations留结果与原始身份；GPU任务自然释放，未修改其他项目lease；0训练/新权重/安装/付费，有效工作与等待未连续计时部分未知。
+
+
+## SEVEN_R11 — COMPLETE: fresh source-component reuse and forty-page manuscript
+
+实际写入UTC：2026-09-07T20:48:01Z。round_id SEVEN_R11，新增阶段3/5，COMPLETE。登记开始2026-09-07T19:38:54Z；真实确认计算结束2026-09-07T20:23:29.305137+00:00，本轮报告/稿件/证据整理完成事件2026-09-07T20:48:01Z。有效工作与未测等待未知，不把起止跨度当有效工时；已记录显式等待90.0502s。选择理由是检验同一整体对应能否用于源组成，避免只有整组Dz和signed矩阵；本轮已实际完成推导、两种metric适配与失败判别、冻结新512句、具体子组/剂量/交互用途和完整稿图。
+
+主要冻结方法为旧R10 aggregate_ols的source-code lift，新half/singleton度量未稳定提升，全部九候选保留。原map在六非完整mask均值的八factor/consumer/role层相对一对一降低KL18.56–81.20%，相对dense-half七层降低7.56–15.18%，temporal time contrast差1.78%；full/raw八层均更好。48个mask条件相对一对一/dense/full/raw为48/38/1/0较好，均非独立重复。引用time contrast的一项leave-incident-seed-out反转，源错误保留。固定source3→4案例呈现两半作用差异，交互保真七层优于atom但raw/full全部更好；作用可能仅在最后LN/读出，不称native语义或内部电路。
+
+三run全部PASS/contractPASS，管理脚本wall合计1660.0112269000s（0.461114h），pilot179200行、新确认1126400行；full-model/tail查询分别记录。确认raw SHA256620166932f6d98c2a35fc068c6c839b9fb570aabd0a00da3f7cb284868cce3f3；实际结束时间来自其status。0训练/新bulk/权重/包/付费/远程任务。保守项目约1.62GB，最终清单后更新R11_BUDGET，低于本轮5GB；资源wrapper自然释放、其他lease未修改。10map输出112640向量重放最大4.973799150320701e-14，两个实际CLI输出核对通过。
+
+完整稿paper/main.pdf为40页/10图/27编号表，SHA25688ff08db16a612cd32652501d2ccbd4e609bfcda9555a4e2a844c72ea84d6f1f；可编辑源/四附录/全数据/Bib同目录。保留29旧表片段与旧图数据，新增144KL/36案例概率核对、34冻结身份/10map一致；PDF_REVIEW记录实际全初版页面和最终受影响页查看、15字体嵌入及轻微参考vbox提示。paper-only副本无原run/权重重建10PNG像素及40页文字一致6.5s，仅同机已安装包/字体/缓存验证。SOURCE_REVIEW与registry记录SemanticOT实际原文/图版学习及未全复现范围；R11_METHODS/DERIVATION补source-kernel、条件数、mask矩和固定ridge等变性，不冒称经典算法首创。
+
+本块同时补记CORRECTION范围：初稿新H转置记法已对齐既有Equation4和始终正确的代码，未改实验；一次中间TeX命令丢失数学delimiter及首个副本默认TeX缓存为空失败均保留原日志，最终修复通过，不算科学失败。旧负结果与原始身份未重写。报告artifacts/extension_five_20260907/R11_REPORT.md（SHA256f13c7253cc5da1269c8855ecc4437ef71417f9192fcb52947a635758b2d57189）；稿件重放见r11_components/PORTABLE_BUILD_CHECK.json，收口前六文件字节归档archive/research_workflow_20260907/r11_close_20260907T204801Z/manifest.json。
+
+本COMPLETE落盘后才推进completed10→11、extension2→3，退出旧工作卡。第12轮优先检查上下文相关下游目标/有限LM loss与紧凑支持的匹配，先读旧Fisher失败再最小实测，匹配同LM监督对照；仅在已暴露数据开发，有信号则新数据冻结确认。当前NOT_MET：raw/full精度、自然/target-native语义和完整同行用途比较未解决。第13轮统一最终包后原ccad置PAUSED并保留，不加14；本轮不暂停。随后白名单代码/配置/master_log成组commit/push，R11_SYNC记录核对，研究稿/数据仍本地，不扩大公开范围。
