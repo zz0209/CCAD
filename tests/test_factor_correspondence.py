@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from ccad.factor_correspondence import compact_source,assigned_readout,conditional_ot,group_support,ridge
+from ccad.factor_correspondence import compact_source,assigned_readout,conditional_ot,group_support,ridge,reduced_rank_ridge,conditional_target
 
 
 class FactorCorrespondenceTests(unittest.TestCase):
@@ -30,6 +30,25 @@ class FactorCorrespondenceTests(unittest.TestCase):
         physical=ridge(x,y,.01,'native_units');standard=ridge(x,y,.01,'feature_rms')
         self.assertLess(np.mean((novel@physical-b[:,None])**2),1e-3)
         self.assertGreater(np.mean((novel@standard-b[:,None])**2),1e6)
+
+    def test_penalized_rank_fit_matches_independent_augmented_ols(self):
+        rng=np.random.default_rng(29);x=rng.normal(size=(37,13))*np.geomspace(.1,8,13);y=rng.normal(size=(37,6));alpha=.7
+        for scaling in ['native_units','feature_rms']:
+            scale=np.sqrt(np.mean(x*x,axis=0)) if scaling=='feature_rms' else np.full(x.shape[1],np.sqrt(np.mean(x*x)))
+            augmented=np.vstack([x/scale,np.sqrt(len(x)*alpha)*np.eye(x.shape[1])]);target=np.vstack([y,np.zeros((x.shape[1],y.shape[1]))])
+            ols=np.linalg.lstsq(augmented,target,rcond=None)[0];_,_,vt=np.linalg.svd(augmented@ols,full_matrices=False);v=vt[:2].T
+            reference=(ols@v@v.T)/scale[:,None];actual=reduced_rank_ridge(x,y,alpha,2,scaling)
+            np.testing.assert_allclose(actual,reference,rtol=1e-10,atol=1e-12)
+            self.assertEqual(np.linalg.matrix_rank(actual,tol=1e-9),2)
+            full=ridge(x,y,alpha,scaling);_,_,old_vt=np.linalg.svd(x@full,full_matrices=False);old=full@old_vt[:2].T@old_vt[:2]
+            objective=lambda w:np.sum((x@w-y)**2)+len(x)*alpha*np.sum((w*scale[:,None])**2)
+            self.assertLess(objective(actual),objective(old)-1e-5)
+
+    def test_conditional_marginal_retains_direction_not_context_variation(self):
+        levels=np.array([-1,-1,1,1]);y=np.array([[-3.,1.],[-1.,-1.],[1.,2.],[3.,-2.]])
+        target=conditional_target(y,levels)
+        np.testing.assert_array_equal(target,np.array([[-2.,0.],[-2.,0.],[2.,0.],[2.,0.]]))
+        self.assertEqual(np.linalg.matrix_rank(target),1)
 
 
 if __name__=='__main__':unittest.main()

@@ -1,0 +1,199 @@
+{
+  "run_id": "SEVEN_R3_composition_behavior_v1_20260907",
+  "purpose": "Rule out simple native-strength confound and execute a source-fixed DAS-style behavior baseline",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": false,
+  "layers": [
+    3
+  ],
+  "noun_pairs": [
+    [
+      "engineer",
+      "engineers"
+    ],
+    [
+      "chef",
+      "chefs"
+    ],
+    [
+      "scientist",
+      "scientists"
+    ],
+    [
+      "musician",
+      "musicians"
+    ],
+    [
+      "visitor",
+      "visitors"
+    ],
+    [
+      "manager",
+      "managers"
+    ],
+    [
+      "artist",
+      "artists"
+    ],
+    [
+      "sailor",
+      "sailors"
+    ],
+    [
+      "soldier",
+      "soldiers"
+    ],
+    [
+      "professor",
+      "professors"
+    ],
+    [
+      "gardener",
+      "gardeners"
+    ],
+    [
+      "reporter",
+      "reporters"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "Currently",
+      "Previously"
+    ],
+    [
+      "Nowadays",
+      "Long ago"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "subject_relative"
+  ],
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 64,
+  "budget_seconds": 450,
+  "budget": "At most450s GPU-managedtask, twoCPUthreads, <100MB new outputs; R3pre-run1100.208764s withinrevised2100s andoriginal6h. Reuse384heldrows/192discovery andfiveSAEs. Ten source-fixed raw rank1 DAS-style fits100stepsbatch4; only64calibrationselectschkpt/nativegain. Actualevaluationall384newlex; nojointfit.",
+  "scope": "Development supplementary strong controls after main nineteen-method suite. Native gains now selected by actual teacherKL, not geometric gain. DAS-style unit raw-direction interchange uses original100step Adam .005/warmup schedule but source-distribution objective and PCA initialization; explicitly not full published label-CE reproduction or MAS. Behavioral controls get extra64calibrationteacheroutputs; this favors controls and is declared. Noheld data used for tuning, all384newlex known/newcue outcomes retained.",
+  "sae_layer": 3,
+  "lexical_partition_size": 6,
+  "discovery_blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "discovery_cues": [
+    0,
+    1
+  ],
+  "raw_operations": [
+    "number_subject",
+    "time_cue",
+    "joint_separate_add",
+    "joint_separate_full"
+  ],
+  "sae_checkpoints": [
+    {
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_1"
+    },
+    {
+      "seed": 2,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_2"
+    },
+    {
+      "seed": 3,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_3"
+    },
+    {
+      "seed": 4,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_4"
+    },
+    {
+      "seed": 5,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_5"
+    }
+  ],
+  "material_run": "runs/SEVEN_R3_composition_sources_v1_20260907",
+  "member_budgets": [
+    16,
+    32
+  ],
+  "gradient_path_points": [
+    0,
+    0.5,
+    1
+  ],
+  "gradient_path_weights": [
+    0.16666666666666666,
+    0.6666666666666666,
+    0.16666666666666666
+  ],
+  "gradient_batch_size": 8,
+  "source_run": "runs/SEVEN_R3_composition_gain_sources_v1_20260907",
+  "source_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "target_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "fit_blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "evaluation_blocks": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "alphas": [
+    0.0001,
+    0.01,
+    1
+  ],
+  "single_factor_methods": [
+    "fcc_group",
+    "same_members_native",
+    "direct_target_native",
+    "full_code_ridge",
+    "rrr_rank1",
+    "rrr_rank4",
+    "dsca_rank1",
+    "raw_native_units"
+  ],
+  "correspondence_run": "runs/SEVEN_R3_composition_correspondence_v1_20260907",
+  "das_steps": 100,
+  "das_checkpoint_every": 20,
+  "das_batch_size": 4,
+  "das_learning_rate": 0.005,
+  "native_gain_candidates": [
+    0.25,
+    0.5,
+    1,
+    2,
+    4
+  ]
+}

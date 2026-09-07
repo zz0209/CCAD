@@ -1,0 +1,149 @@
+{
+  "run_id": "SEVEN_R3_composition_gain_sources_v1_20260907",
+  "purpose": "Improve weak temporal native teacher through discovery-only functional contribution ranking",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": false,
+  "layers": [
+    3
+  ],
+  "noun_pairs": [
+    [
+      "engineer",
+      "engineers"
+    ],
+    [
+      "chef",
+      "chefs"
+    ],
+    [
+      "scientist",
+      "scientists"
+    ],
+    [
+      "musician",
+      "musicians"
+    ],
+    [
+      "visitor",
+      "visitors"
+    ],
+    [
+      "manager",
+      "managers"
+    ],
+    [
+      "artist",
+      "artists"
+    ],
+    [
+      "sailor",
+      "sailors"
+    ],
+    [
+      "soldier",
+      "soldiers"
+    ],
+    [
+      "professor",
+      "professors"
+    ],
+    [
+      "gardener",
+      "gardeners"
+    ],
+    [
+      "reporter",
+      "reporters"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "Currently",
+      "Previously"
+    ],
+    [
+      "Nowadays",
+      "Long ago"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "subject_relative"
+  ],
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 48,
+  "budget_seconds": 360,
+  "budget": "At most360s GPU-managedtask, two CPU threads, below150MB outputs within existingR3total1800s. Reuse existing768raw/cache/fiveSAEs; score only192discoveryrows using three-point raw-path gradients, then actual native16/32 separate and joint interventions on all768. No training.",
+  "scope": "Exploratory functional source improvement after mean-direction16/32 time failure. Source-only but output-label-supervised selection; both held lexical and held cue cells remain development, not formal confirmation. Gradient score is an approximation, actual native interventions are the functional evidence.",
+  "sae_layer": 3,
+  "lexical_partition_size": 6,
+  "discovery_blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "discovery_cues": [
+    0,
+    1
+  ],
+  "raw_operations": [
+    "number_subject",
+    "time_cue",
+    "joint_separate_add",
+    "joint_separate_full"
+  ],
+  "sae_checkpoints": [
+    {
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_1"
+    },
+    {
+      "seed": 2,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_2"
+    },
+    {
+      "seed": 3,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_3"
+    },
+    {
+      "seed": 4,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_4"
+    },
+    {
+      "seed": 5,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_5"
+    }
+  ],
+  "material_run": "runs/SEVEN_R3_composition_sources_v1_20260907",
+  "member_budgets": [
+    16,
+    32
+  ],
+  "gradient_path_points": [
+    0,
+    0.5,
+    1
+  ],
+  "gradient_path_weights": [
+    0.16666666666666666,
+    0.6666666666666666,
+    0.16666666666666666
+  ],
+  "gradient_batch_size": 8
+}

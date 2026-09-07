@@ -4452,3 +4452,43 @@ First two pilots fix width8192, seed1,1,048,576 natural tokens, batch8x128,1024 
 - TotalR2GPU-managedscriptwall2632.362234s=.731211732h,includingpilots/failure/fitting/validation; R1+R2=.747998079h oforiginal6h. R2bulk6,176,498,189bytes,runstrees543,226,651bytes; provenanceR2_BUDGET.json. GPUfreeat00:08:22Z; otherprojectcpu/diskleasesuntouched. Noinstall/paidcompute/subagent/duplicateautomation.
 - Focusedsource/math/data/consumercheck once,4targetedtests hadpassed aftercodefix; completeactualmainrun validates deployment. Figuresonlysubsequentlyedited; no repeatedfullsuite. Oldlivecardsbytearchived atarchive/research_workflow_20260906/seven_r2_close_20260907T001108Z/manifest.json; pre-integration6filearchive inr2_integration_archive.json. Currenttracker completed_rounds2,active_roundnone,READY_FOR_NEXT_ROUND,acceptanceNOT_MET. User7science+8formatthenpauseoriginalccad preserved; no roundcount fromprogress/toolcalls.
 - Ignoredlocaldeliverymanifest artifacts/seven_round_rebuild_20260906/R2_DELIVERY_MANIFEST.json SHA256062551c378e54a8912051d9f941a89ccfe5d9d646b87b77a8d67ba7a1bb8d844; all listed filesverified atclosure. Mainpaperhash0b6a766794e3401918005a77ed29c8b0367dbfd46ed2e392849e0a4739a1f2c6; trackerhash1f9c93591ec402945bb6abe84a7157cb79533b000de10dd3c1ca94d0ceff5663. Earlierartifactmanifestsremainhistoricalas-ofrecords. Allowlistedcode/config/tests/master_log groupedforsynchronization; noforcedaddorwhitelistexpansion.
+
+
+## Seven-round campaign R3 starts: membership reuse and compositional predictions
+
+写入时间（written_at_utc）：2026-09-07T00:31:08Z。Start recorded at append time; no separate compute-start event yet. Tracker completed2/7,active3,IN_PROGRESS. Opportunity: compact cross-seed functional membership with stronger native operations; compare direct-target local group/dense selection and appropriately scaled shared components before interpreting extra alignment value. Reuse five fixedSAEs/caches; initial ceiling1800sGPU-managedtask/<1GBnewresults within remaining5.252h/70GB,0paid. Newcontexts and individual/jointcomponentoperations to distinguish number/localposition from portable explanation. Parentdata remainDEV. OriginalautomationACTIVE15min/samethread; noagents. Pre-edittracker bytearchive archive/research_workflow_20260906/seven_r3_start_20260907T003108Z/manifest.json SHA2561f9c93591ec402945bb6abe84a7157cb79533b000de10dd3c1ca94d0ceff5663.
+
+
+## R3 raw number-time composition material launch
+
+写入时间（written_at_utc）：2026-09-07T00:36:59Z。Prepared SEVEN_R3_composition_material_v1_20260907 before model outputs:288 authored inputs/6 newlexicalblocks/3timecuepairs/2syntax/2number/2time/2distractor,7raw operations at layers3and7. Temporal preference is not strict grammatical exclusion. Budget180s/twoCPUthreads/<150MB within R3initial1800s; same pinned1Bweights, no SAE training. Source-reader checked CausalGym1D-DII/region-end alignment and DAS100stepAdam.005schedule; dSCA PDF and BhallaB.3/Cfactorgeometry reading underway. Existing-group overlaps acrosssource0.58–0.94 meanJaccard pertarget/factor vsdifferentlocal16supports, only structural hypothesis not function proof. Noaudit/agents/extraresources.
+
+
+## R3 two-factor raw signal and five-source material check
+
+写入时间（written_at_utc）：2026-09-07T00:46:48Z。Raw run completed event2026-09-07T00:39:06.181604Z,124.290227s,4320rawrows,contractPASS,exactnoop/tokenalignment/completecases. Four-labelbaseline266/288,number288/288; cueRightnow/Backthen96/96. Layer3number90/96,timecue78/96,jointseparate75/96; timesubject0/96. Newsourcepanel768 with12nouns/fourcuepairs/twosyntax and disjointnounpartitionsbothroles, all5existingk64SAEs; source16/32/full/PCA1separate/joint<=300s/<400MB. No targetfitbefore source feedback, originalR3total1800s. Fullweakcueandotherlayerresults preserved; expectedtensepreferences notungrammaticalalternativeclaim. Pre-edittrackerarchivearchive/research_workflow_20260906/seven_r3_sources_20260907T004648Z/manifest.json.
+
+
+## R3 source quality failure and functional member experiment
+
+写入时间（written_at_utc）：2026-09-07T00:58:14Z。Source run SEVEN_R3_composition_sources_v1_20260907 completed211.819851s,49920rows,contractPASS. Time mean16 loses substantial raw/fullSAE function, numbers remain strong;32 andPCA1 retained. Before expanding target comparison, launch source-only gradient-gain16/32 on discovery192, all768 actual native separate/joint edits, five seeds,360s/<150MB withinR3total1800s. Output-supervised selection declared; no gradient-only functional claim. Pre-edittracker archivearchive/research_workflow_20260906/seven_r3_functional_20260907T005814Z/manifest.json.
+
+
+## R3 functional source result and matched compositional correspondence
+
+写入时间（written_at_utc）：2026-09-07T01:05:51Z。Source gain run PASS23040rows149.545835s; five time32groups have102–124/192newnoun/knowncuecorrect but25–56/192bothnew. Number16 strong658–678/768. Main teacher N16/T32, source-only labelled discovery. Full384newlexpanel retained,19jointcomparators/eightseparate,20dependentdirections; directtarget identical selection and scalar gain included. Exact penalizedRRR usesY.T X Wridge; test against independentaugmentedOLS PASS,legacyR2 fittedpredictionSVD results retained. Six narrow testsPASS. R3budget adjusted1800to2100s based288forwards/s, main1500s/<650MB; pre-main485.655913s withinoriginal6h/70GB. Trackerarchivearchive/research_workflow_20260906/seven_r3_main_20260907T010551Z/manifest.json.
+
+
+## R3 main composition results and one targeted behavior-control followup
+
+写入时间（written_at_utc）：2026-09-07T01:21:56Z。Main run PASS274560rows614.552851s,20directions19jointmethods. Knowncue/newnounjoint KL FCC.000818/raw.002789/full.000500/RRR4.000501/directtarget.011947/native.173419; newcueFCC.023594/directtarget.011770 withweaksource. Noexclusivecompact-algorithm win. Specificunresolvedintensityexplanation:geometricgain doesnotexclude optimalbehaviorgain. Addonlynativegain.25/.5/1/2/4 via64cal andsource-fixed DAS-styleunitrawdirection100stepsbatch4,Adam.005,sourceKL objective,extraoutputsupervisiondeclared. 450s/<100MBwithinR3total2100s; pre-run1100.208764s. All384heldconditions, nojointrefit. Trackerarchivearchive/research_workflow_20260906/seven_r3_behavior_20260907T012156Z/manifest.json.
+
+
+## R3 scientific integration: compact composition, strong controls and cue boundary
+
+写入时间（written_at_utc）：2026-09-07T01:36:53Z。Behaviorruncompletionevent2026-09-07T01:27:26.239921Z,310.285780s57600rowscontractPASS; main614.552851s274560rowsPASS. FiveR3runsallPASS,total1410.494544s,409440rawrows,452947722bytes,0newbulk/paid/packages; cumulative1.139802119of6managedtaskhours. Knowncue/newnounjointFCC.000818vsraw.002789,DAS-style.002715,nativebehaviorgain.086223,directtarget.011947; full/rank4.000500better. TargetsupportsN5–11/T2–3,knowncue99.06%teacheragreement;newcueFCC.023594worseDAS/direct/full,sourcejoint207/960. Interactionsactual.359/.424andFCCerror.0224,newcue.1289. BodyMethods/Results/Discussion/refs,DERIVATION§25,plan,story,report,22controlmatrixandfixedexampleintegrated. CorrectedpenalizedRRR,6narrowtestsPASS; oldR2posthoctruncationpreservedandidentified. Figurefirst19versionspreserved,finaltwofamilyrendersactuallyviewed. Pre-editmanifestarchive/research_workflow_20260906/seven_r3_results_20260907T013653Z/manifest.json. R3countnotyetincremented; closeafterfocusedverification/sync.
+
+
+## R3 closed; next controlled confirmation and material improvement
+
+写入时间（written_at_utc）：2026-09-07T01:42:32Z。Science,methods,22controlfigures,fixedcase,mainpaper andR3report integrated; run completion events remain in status.json (last2026-09-07T01:27:26.239921Z). completed_rounds2→3exactlyonce,active_roundnone,READY_FOR_NEXT_ROUND; acceptanceNOT_MET. Originalccad15minautomationcontinues, no newloop/agents. Nextworkcard freezes usefulknowncue/compactcomposition range for untouchedlexical/structuralconfirmation, plusoneboundedsource-position/rolematerial improvement andexternalanchor; no sameweak-source regressiongrid. R3total1410.494544s/452947722bytes, remainingoriginal6h4.860197881h. AllCCADGPUworkended. Trackerpreclosearchivearchive/research_workflow_20260906/seven_r3_close_20260907T014232Z/manifest.json. Stage/push onlyexistingallowlist; localignoredpaper/evidence preserved by deliverymanifest.

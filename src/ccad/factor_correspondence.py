@@ -46,6 +46,68 @@ def choose_ridge(x,y,fit,calibration,alphas,scaling='feature_rms'):
     index=int(np.argmin(errors));return alphas[index],errors
 
 
+def reduced_rank_ridge(x,y,alpha,rank,scaling='native_units'):
+    """Exact minimizer of the ridge objective under a rank constraint.
+
+    With the same active-feature scaling as ridge, A=X.T X+n*alpha*I.
+    Completing the square reduces the problem to a best rank-r approximation
+    of A**(1/2) W_ridge. Its right Gram is Y.T X W_ridge. In contrast, SVD of
+    X W_ridge alone minimizes a different problem when alpha is nonzero.
+    """
+    x=np.asarray(x,dtype=np.float64);y=np.asarray(y,dtype=np.float64)
+    if rank<1:raise ValueError('Rank must be positive')
+    full=ridge(x,y,alpha,scaling);gram=y.T@(x@full);gram=(gram+gram.T)/2
+    eigenvalues,vectors=np.linalg.eigh(gram);keep=np.argsort(-eigenvalues,kind='stable')[:min(rank,y.shape[1])];v=vectors[:,keep]
+    return full@v@v.T
+
+
+def conditional_target(y,levels):
+    """dSCA-style target marginalization; the regression input stays intact."""
+    y=np.asarray(y,dtype=np.float64);levels=np.asarray(levels);result=np.empty_like(y)
+    for level in np.unique(levels):
+        group=levels==level;result[group]=np.mean(y[group],axis=0)
+    return result
+
+
+def fit_composition_controls(xt,xraw,xs,source,fit,calibration,discovery,levels,budget,alphas,random_seed=0):
+    """Matched R3 predictors; each returns coordinates in one source basis.
+
+    Uses the exact penalized RRR and target-only conditional marginalization.
+    Legacy fit_controls and all its stored results remain unchanged.
+    """
+    y=source['coordinates'];out={};diagnostics={}
+    alpha,errors=choose_ridge(xt,y,fit,calibration,alphas,'native_units')
+    full=ridge(xt[discovery],y[discovery],alpha,'native_units')
+    def add(name,w,diag):out[name]=(xt@w,w);diagnostics[name]=diag
+    add('full_code_ridge',full,dict(alpha=alpha,calibration_mse=errors))
+    for rank in [1,4]:
+        errors=[float(np.mean((xt[calibration]@reduced_rank_ridge(xt[fit],y[fit],a,rank)-y[calibration])**2)) for a in alphas]
+        a=alphas[int(np.argmin(errors))];w=reduced_rank_ridge(xt[discovery],y[discovery],a,rank)
+        add(f'rrr_rank{rank}',w,dict(alpha=a,rank=rank,calibration_mse=errors,objective='exact rank-constrained native-unit ridge'))
+    marginal_fit=conditional_target(y[fit],levels[fit]);errors=[float(np.mean((xt[calibration]@reduced_rank_ridge(xt[fit],marginal_fit,a,1)-y[calibration])**2)) for a in alphas]
+    a=alphas[int(np.argmin(errors))];w=reduced_rank_ridge(xt[discovery],conditional_target(y[discovery],levels[discovery]),a,1)
+    add('dsca_rank1',w,dict(alpha=a,calibration_mse=errors,input_marginalized=False,target_levels='reciprocal factor change direction',objective='target-only conditional marginal then exact penalized rank1 regression; dSCA-style adaptation'))
+    for scaling in ['native_units','feature_rms']:
+        a,e=choose_ridge(xraw,y,fit,calibration,alphas,scaling);w=ridge(xraw[discovery],y[discovery],a,scaling)
+        out['raw_'+scaling]=(xraw@w,None);diagnostics['raw_'+scaling]=dict(alpha=a,calibration_mse=e)
+    selected,sd=group_support(xt[discovery],y[discovery],budget,scaling='native_units')
+    def refit(name,members,extra):
+        a,e=choose_ridge(xt[:,members],y,fit,calibration,alphas,'native_units');w=np.zeros_like(full);w[members]=ridge(xt[discovery][:,members],y[discovery],a,'native_units')
+        add(name,w,dict(members=members.tolist(),alpha=a,calibration_mse=e,**extra))
+    refit('fcc_group',selected,sd)
+    rms=np.sqrt(np.mean(xt[discovery]**2,axis=0));keep=np.argsort(-rms*np.linalg.norm(full,axis=1),kind='stable')[:budget]
+    refit('dense_select',keep,dict(selection='dense predictor RMS-weighted coefficient strength'))
+    active=np.flatnonzero(rms>max(float(rms.max())*1e-8,1e-12));rng=np.random.default_rng(random_seed)
+    refit('random_refit',rng.choice(active,min(budget,len(active)),replace=False),dict(selection='uniform active target members'))
+    variance=np.mean(xt[discovery]**2,axis=0);cross=xt[discovery].T@y[discovery]/np.sum(discovery)
+    single_w=np.divide(cross,variance[:,None]*(1+alpha),out=np.zeros_like(cross),where=variance[:,None]>1e-16)
+    error=np.mean(np.sum(y[discovery]**2,axis=1))-2*np.sum(single_w*cross,axis=1)+variance*np.sum(single_w**2,axis=1);atom=int(np.argmin(error));w=np.zeros_like(full);w[atom]=single_w[atom]
+    add('single_atom',w,dict(members=[atom],alpha=alpha,candidate_count=xt.shape[1]))
+    w,d=assigned_readout(xs[discovery][:,source['support']],xt[discovery],source['coefficients']);add('one_to_one',w,d)
+    w,d=conditional_ot(xs[discovery][:,source['support']],xt[discovery],source['coefficients'],budget);add('conditional_ot',w,d)
+    return out,diagnostics
+
+
 def group_support(x,y,budget,iterations=10000,scaling='feature_rms'):
     """Established MultiTaskLasso path followed by an explicit support budget.
 

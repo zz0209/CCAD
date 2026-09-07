@@ -1,0 +1,15 @@
+{
+  "run_id": "SEVEN_R3_composition_material_v1_20260907",
+  "purpose": "Find operationally active separate and joint number/time components with four continuation labels before cross-seed composition fitting",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": false,
+  "layers": [3, 7],
+  "noun_pairs": [["engineer", "engineers"], ["chef", "chefs"], ["scientist", "scientists"], ["musician", "musicians"], ["visitor", "visitors"], ["manager", "managers"]],
+  "time_cues": [["Today", "Yesterday"], ["Right now", "Back then"], ["At present", "In the past"]],
+  "templates": ["pp", "subject_relative"],
+  "labels": [" is", " are", " was", " were"],
+  "batch_size": 24,
+  "budget_seconds": 180,
+  "budget": "At most180s GPU-managedtask, two CPUthreads, <150MBoutput; reuse1Bweights; sixlexicalblocks x3cuepairs x2syntax x2number x2time x2distractor =288inputs; baselineand7operationsat2layers. NoSAEtraining/FCCfit or model-basedcasefiltering.",
+  "scope": "Authored development material. Temporal cues define expected preference, not a claim that all other tense continuations are ungrammatical. Same-number/time lexical factorial control; separate and additive/full joint raw donor edits at timecue/subject positions. OldR2data not reused here; all288will become development once screened. Formalconfirmation requires later untouched material."
+}

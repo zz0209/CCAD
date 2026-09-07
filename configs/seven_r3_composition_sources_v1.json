@@ -1,0 +1,133 @@
+{
+  "run_id": "SEVEN_R3_composition_sources_v1_20260907",
+  "purpose": "Five controlled SAE source operations on number/time factorial material before target fitting",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": false,
+  "layers": [
+    3
+  ],
+  "noun_pairs": [
+    [
+      "engineer",
+      "engineers"
+    ],
+    [
+      "chef",
+      "chefs"
+    ],
+    [
+      "scientist",
+      "scientists"
+    ],
+    [
+      "musician",
+      "musicians"
+    ],
+    [
+      "visitor",
+      "visitors"
+    ],
+    [
+      "manager",
+      "managers"
+    ],
+    [
+      "artist",
+      "artists"
+    ],
+    [
+      "sailor",
+      "sailors"
+    ],
+    [
+      "soldier",
+      "soldiers"
+    ],
+    [
+      "professor",
+      "professors"
+    ],
+    [
+      "gardener",
+      "gardeners"
+    ],
+    [
+      "reporter",
+      "reporters"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "Currently",
+      "Previously"
+    ],
+    [
+      "Nowadays",
+      "Long ago"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "subject_relative"
+  ],
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 24,
+  "budget_seconds": 300,
+  "budget": "At most300sGPU-managedtask/twoCPUthreads/<400MBoutput within R3total1800s; twelvelexicalblocks x4cuepairs x2syntax x8conditions=768inputs. Five existing k64SAEs, no training. Source16/32/full/PCA1 each evaluated separately and jointly; complete denominators.",
+  "scope": "Authored development extension selected after raw288screen. Discovery blocks0-5/cues0-1; blocks6-11 have disjoint noun identities in both noun roles. Newcuepairs2-3 have no fitting role. Allcrossedcells retained, no source function rejection. Temporal labels are expected preference, not grammatical exclusion. New formalconfirmation still requires later untouched material.",
+  "sae_layer": 3,
+  "lexical_partition_size": 6,
+  "discovery_blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "discovery_cues": [
+    0,
+    1
+  ],
+  "raw_operations": [
+    "number_subject",
+    "time_cue",
+    "joint_separate_add",
+    "joint_separate_full"
+  ],
+  "sae_checkpoints": [
+    {
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_1"
+    },
+    {
+      "seed": 2,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_2"
+    },
+    {
+      "seed": 3,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_3"
+    },
+    {
+      "seed": 4,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_4"
+    },
+    {
+      "seed": 5,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_5"
+    }
+  ]
+}
