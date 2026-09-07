@@ -80,15 +80,18 @@ def main():
 
     # Effects and task accuracy use tables/intervals at their true dependency unit.
     lookup = {(x['partition'], x['factor'], x['method']): x for x in data['context_rows']}
+    diagnostic = {(x['partition'], x['factor'], x['method']): x for x in data.get('diagnostic_rows', [])}
     ms = ['source_teacher','fcc_group','raw_native_units','full_code_ridge','das_style_raw_rank1','global_factor_mean']
     names = ['Source operation','Compact FCC','Raw ridge','Full-code ridge','DAS-style rank-1','Global factor mean']
-    fig, axs = plt.subplots(1, 2, figsize=(7, 3.05), sharey=True)
-    fig.subplots_adjust(left=.21, right=.985, bottom=.19, top=.83, wspace=.13)
+    if diagnostic:
+        ms.insert(2,'fcc_wrong_donor_norm_matched'); names.insert(2,'Wrong donor, same norm')
+    fig, axs = plt.subplots(1, 2, figsize=(7, 3.35), sharey=True)
+    fig.subplots_adjust(left=.245, right=.985, bottom=.18, top=.85, wspace=.13)
     for col, cue in enumerate(['familiar_cue','new_cue']):
         ax=axs[col]
         for i, m in enumerate(ms):
             for j, role in enumerate(['temporal','quoted']):
-                row=lookup[(role+'/'+cue,'time',m)]
+                row=(diagnostic if m=='fcc_wrong_donor_norm_matched' else lookup)[(role+'/'+cue,'time',m)]
                 y=i+[-.13,.13][j]
                 seeds=[s['abs_time_shift'] for s in row['source_seed_means']]
                 ax.plot([min(seeds),max(seeds)],[y,y],color=[GREEN,PURPLE][j],lw=1.3)

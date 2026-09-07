@@ -4698,3 +4698,77 @@ event_completed_at_utc: 2026-09-07T12:29:53Z
 资源：官方Tectonic0.17.0/MIT隔离安装，既有Python3.12.14/Matplotlib3.10.8复用，实验环境未改；最终完整build3.843秒，零GPU/训练/付费。本轮稿图/工具/渲染/便携副本/归档实测170960292bytes，R6_BUDGET.json分项留存。有效研究工作与等待没有连续独立计时，时长未知；开始到结束的跨度不当有效工时，不以空等凑轮次。初期缺样式/字体缓存和TeX输入失败日志保留。三脚本AST、git diff check及实际重建检查完成，未重复实验测试或占用他人租约。
 
 交付：artifacts/seven_round_rebuild_20260906/R6_REPORT.md、R6_DELIVERY_MANIFEST.json、R6_BUDGET.json及r6_paper/检查记录。归档前版本archive/research_workflow_20260907/r6_close_20260907T122953Z/manifest.json逐字/hash保留；首稿修订归档r6_first_pdf_20260907T121129Z。完成记录写入后才更新completed5→6、next7READY，总13/奖励轮独立保持。原ccadACTIVE15分钟同原任务，未委派或改执行归属。随后3构建脚本与master_log成组白名单同步，实际commit/push/HEAD核对由R6_SYNC.json记录；文稿仍按既有白名单保留本地。下一轮聚焦具体对照语义问题与原科学/证据包收口，第8轮原视觉交付不延后，9–13独立追加阶段不变；最终投稿质量仍NOT_MET。
+
+
+## SEVEN_R7 — START
+
+round_id: SEVEN_R7
+phase: START
+written_at_utc: 2026-09-07T12:50:29Z
+event_started_at_utc: 2026-09-07T12:50:29Z
+event_completed_at_utc: unknown; work ongoing
+
+第7轮登记启动；已核对当前AGENTS/tracker/plan和原代码，完成计数仍6，总13。选择理由：第6轮正式稿暴露旧wrong_factor为native交换、共同位置joint退化的具体问题；需要判断同一冻结FCC映射上的错误donor能否提供有区分力的功能证据，并把原阶段科学结果整理成可实际使用的代码/来源/稿件证据包。计划在数学上写清映射与donor的交换关系，按既有512行和全部20方向进行一次必要的冻结对照，保留已有norm与role-swap控制和所有失败；旧数据仅作针对性诊断，不包装为新独立确认。同步必要原文方法核对、可运行操作入口、结果与全文图表，随后原阶段科学收口。
+
+预算最多600秒GPU管理任务、1GB新增小型结果/交付包、0付费或新权重/训练，按既有cached-tail吞吐执行。GPU实际free，RTX5070Ti显存606MiB/16303MiB、利用率0%；其他项目cpu/disk租约仍保留，未改写。复用r004及锁定overlay；GPU任务经共享manager申请。活动研究工作与等待无连续独立计时，不用起止跨度冒充有效时长；计算实测另记，不空等凑轮。原稿与5个当前入口文件逐字归档archive/research_workflow_20260907/r7_start_20260907T125029Z/manifest.json；启动身份与预算artifacts/seven_round_rebuild_20260906/r7_science_package/START.json。当前原ccad继续同一对话，未委派或建立新loop；第8轮原视觉交付及独立9–13阶段不推迟。
+
+
+## SEVEN_R7 — PROGRESS：正确的donor对照和可用操作接口
+
+round_id: SEVEN_R7
+phase: PROGRESS
+written_at_utc: 2026-09-07T13:32:27Z
+event_started_at_utc: 2026-09-07T12:50:29Z
+event_completed_at_utc: unknown; round ongoing
+
+已实现NumPy-only PredictiveOperation接口和冻结donor诊断consumer，无拟合或新source/member选择。正确联合为x_N P_N+x_T P_T，交换donor输入后为x_T P_N+x_N P_T，差为(x_T-x_N)(P_N-P_T)；它一般不退化为原联合。对照还按实际共同位置的总向量范数匹配，每个单因素及joint分别处理，零候选异常保留。现有5source/20方向/512已暴露行全部纳入；实际GPU诊断尚未启动，不预报正结果。
+
+三个针对性接口/符号/交换代数测试全部PASS；报告的unittest wall为2156.630秒，工具exec wall2148.8660956秒，期间没有独立CPU/等待计时，异常跨度原因未证实，不能称为36分钟测试计算或有效研究。测试记录r7_science_package/TARGETED_TESTS.json，未因等待加轮。后续实际run按600秒预算与原租约wrapper执行；若资源忙则仅阻塞该计算，继续论文/来源与交付。CausalGym原文§3.1–4.1/§5.2已重读：保持无关变量的最小donor差与任意输出标签表达能力控制是不同问题；本donor诊断不冒充其expressivity benchmark。
+
+
+## SEVEN_R7 — PROGRESS：实际donor诊断完成
+
+round_id: SEVEN_R7
+phase: PROGRESS
+written_at_utc: 2026-09-07T13:46:30Z
+run_event_started_at_utc: 2026-09-07T13:33:13.620177+00:00
+run_event_completed_at_utc: 2026-09-07T13:35:40.955310+00:00
+round_event_completed_at_utc: unknown; manuscript and package ongoing
+
+SEVEN_R7_donor_specificity_v1_20260907完成PASS/contractPASS，99840原始行、全部512既有语境与20相关seed方向；147.2949187秒管理任务，704完整模型＋101056cached-tail序列计算，峰值VRAM4216474624bytes；GPU租约已释放。无新拟合/训练/下载/付费。raw SHA256 b38713bad76677811788e02930bc02f9184172631bb8cd9e6b2a1efd3391520e，配置configs/seven_r7_donor_specificity_v1.json，代码run source_snapshot完整保留。与原冻结FCC物理向量最大差1.42108547e-14，四标签logprob逐行差0；总操作范数匹配最大差1.42108547e-14，零候选/正参考例外0。40个source-target-factor NumPy-only操作bundle已导出，包含signed预测向量和实际模型/hook/SAE身份。
+
+正确FCC/错误donor/等范数错误donor联合KL：Temporal .089088/.552390/.634722，Quoted .059455/.291516/.246172。正确/等范数错误donor的joint accuracy：Temporal .717969/.225000，Quoted .926172/.776367。number/time/joint两角色的全部20方向，错误donor及等范数错误donor平均KL均更差；共同seed不当20独立重复。去掉每个seed的所有入/出方向后，等范数joint excess KL范围Temporal .485716–.613139、Quoted .135775–.206614；是12剩余方向的稳健性范围，不是置信区间。支持因素输入和映射的实际配对有作用，不能升级成纯语义成员、无混杂或新独立确认。R7_DONOR_SUMMARY.json及完整direction/block CSV保留所有分母。
+
+代码/元数据核对还发现R6_REPORT中的“Temporal熟悉/新句法”是标签笔误：.0729/.1053对应熟悉/新cue对，两个syntax同时保留；当时正式论文表与原始数据标签正确。历史报告原文不改，本条追加勘误，当前稿和本轮报告按实际cue分层。下一步整合新的数学对照、主图/附录表及可用接口说明，完成原阶段科学证据包。计数仍6、active7，不因计算完成提前计轮。
+
+
+## SEVEN_R7 — PROGRESS: manuscript and reproduction inputs prepared
+
+Actual log write time UTC: 2026-09-07T14:07:36Z. Round_id: SEVEN_R7. Event: current manuscript/reproduction preparation completed at this write; full round/package closure remains pending.
+
+The donor diagnostic is now in main Section5.2, Figure2 and AppendixA.8/C.8, with signed input-swap algebra, total-vector norm definition, all role/factor/cue values and dependent-seed leave-out summaries. Current paper24pages,6main+1reference+17appendix,5figurefamilies/14tables; all24 final120dpi page images actually viewed. Two spill pages introduced by added content were corrected by removing duplicate prose; earlier page renders/build logs retained. PDF SHA256 af757f7534cef54be446c75c776ad0ead72a6af7e0c88134e9df93b0f8c4108d. Actual readout/fidelity and source vs intact-FCC reference distinctions remain explicit.
+
+New NumPy CLI executed all16 time examples. Package smoke after extraction remains pending. Added usable package reading/reproduction/round guides and corpus exclusion ledger:838 records retaining only original document_id/text_sha256 fields, same exclusion sets and hashes recorded in delivery/CORPUS_EXCLUSION_PROVENANCE.json. This repairs an undeclared dependency of corpus reconstruction without redistributing original full documents. All original ledgers retained. Formal paper, R7_REPORT and R7_METHODS_AND_PROOFS give original-stage settled questions and explicit NOT_MET acceptance; raw/full baseline gap and missing full SemanticOT/circuit/semantic evidence remain.
+
+CausalGym original method/control/license sections, README and interventions.py actually read; repo main commit unverified, no external code copied. Registry and compute ledger updated. Paper builds use existing isolated runtime; helper attempted missing fitz and immediately used existing pypdfium2, no install or scientific run affected. Multi-GB E-drive package construction is next, with a managed disk-e-io lease and900MB ZIP cap inside original1GB incremental target. No new GPU calculation needed. Active writing/reading vs waiting remains unmeasured, not inferred from timestamps. Counter remains6 until verified package and COMPLETE.
+
+
+## SEVEN_R7 — COMPLETE: original scientific stage and usable evidence package
+
+实际写入UTC：2026-09-07T14:13:28Z。round_id：SEVEN_R7，阶段COMPLETE。可证实事件：登记开始2026-09-07T12:50:29Z；本轮结果、稿件、包与代表性重放整理完成于本次写入；包构建开始2026-09-07T14:08:01.075301+00:00、结束2026-09-07T14:08:24.445246+00:00，提取后重放完成2026-09-07T14:08:55.372013+00:00。这些是记录/工具事件时间，不冒充有效工时。
+
+选择理由与实际推进：纠正旧wrong_factor在同位置joint退化的问题，并只补一个有区分力的真实控制；同时把数学、接口、来源、整稿和原始结果组织成可使用交付。新控制把另一因子的target code差输入同一冻结FCC map，不换支持/系数/源组、不选择结果；512已暴露句、全部20共享seed方向、单因子及joint均保留。新joint KL（正确/错误/等总norm错误）Temporal0.089088/0.552390/0.634722，Quoted0.059455/0.291516/0.246172。全部role/factor的每个方向平均KL均因错误输入变差；排除任一seed全部入出方向后，joint额外KL仍为正。它支持指定操作内输入配对/方向的功能价值，不是新独立确认、唯一语义或原生机制证据；Quoted time的norm校准确实缩小一部分差距，原数据完整保留。
+
+数学和可用输出：正式附录给q_wrong−q=(L_N−L_T)(Δz_T−Δz_N)、核空间退化条件、共同位置实际总向量norm与零分母规则。40个NumPy映射包保存signed成员向量和实际输入规范，CLI可直接从完整/选中target codes产生source-aligned residual更新及每个成员分量。真实run原矩阵向量最大差1.421e-14、旧FCC四label日志概率差0、norm误差1.421e-14，60方向×factor单元无零分母异常。它不冒充target-native删除或自动概念发现。论文/方法总结在artifacts/seven_round_rebuild_20260906/R7_REPORT.md和R7_METHODS_AND_PROOFS.md，DERIVATION_PACKAGE.md新增§28并保留旧版hash归档。
+
+真实运行：runs/SEVEN_R7_donor_specificity_v1_20260907，PASS及contract PASS，99,840 raw rows，raw SHA256 b38713bad76677811788e02930bc02f9184172631bb8cd9e6b2a1efd3391520e。事件开始2026-09-07T13:33:13.620177Z、结束13:35:40.955310Z；147.294918700秒GPU管理任务wall，704完整模型sequence加101,056缓存tail，峰值分配4,216,474,624bytes。复用已有r004/Torch/Transformers/NumPy，无新训练、下载、安装或付费。实际资源gpu-0与打包disk-e-io均经原manager自然释放并已核对free，其他项目lease未动。
+
+稿件与包：paper/main.pdf共24页（6正文、1参考、17附录），SHA256 af757f7534cef54be446c75c776ad0ead72a6af7e0c88134e9df93b0f8c4108d；可编辑全文/证明/5图/14表/17引用/16固定案例全部保留。加入donor对照图/表和来源，并逐页查看全部24张120dpi最终页图；删除重复文字修复新增的两处尾页溢出，中间渲染和构建日志保留。初始包delivery/ccad_original_science_r7_20260907.zip为497,624,566bytes，2421条目，33原阶段run、完整raw与失败/continuation、代码/配置/环境/报告/证据索引。33个可再生cache共845,258,665bytes只在ZIP省略，逐项path/hash/恢复说明在PACKAGE_MANIFEST；原件未删。838条ID/text-hash语料排除记录和来源digest补入，可复用原构建器恢复相同token身份，不携带原全文。全部ZIP CRC通过；压缩和CRC实测23.375秒。
+
+真正提取包重放：158文件全部匹配包manifest，40map身份一致；number/time各16案例，向量最大差分别1.776e-15/3.553e-15，成员和误差4.441e-16/1.776e-15。提取目录无原task caches或模型/SAE权重，实际重建24页PDF，全部页文字和五PNG像素一致，使用同机已安装NumPy/plotting/TeX字体缓存；不是干净机器全训练重放或逐字节PDF一致。实际6.453秒，PACKAGESMOKE/BUILD/PDF_REVIEW保存具体命令与范围。本COMPLETE与校验receipt随后作为不同命名条目追加到ZIP，原snapshot不覆写；最终ZIP身份见PACKAGE_CLOSEOUT.json/R7_DELIVERY_MANIFEST.json。
+
+科学判断与同行：R7_REPORT逐项回答蓝本/实现、五seed素材、对应使用、成员解释、强基线、正式稿/可复现包的实际已达和未达。CausalGym原文指定方法/控制/许可章节及官方README/interventions.py已读；未核实repo main的精确commit，不假称读完eval，未复制代码或外推数据许可。具名三篇仍按真实方法/功能/上下文分布/电路消费者比较，conditional-correlation OT不冒充SemanticOT完整复现。当前raw/full更准、语义/多层电路用途及跨任务覆盖不足，最终优秀/可投稿验收仍NOT_MET；文件齐全和七轮结束不是科学达标证据。
+
+预算与失败保留：R7_BUDGET.json保守计量本轮新增/整稿/包/提取/归档共657,669,917bytes，低于1GB；原campaign GPU管理任务保守累计3.337507789小时，不是纯kernel小时。三个针对性测试通过但2156.630s unittest/2148.866s工具间隔未解释；有效阅读/写作/推导/审图时间与等待未连续测量，均明确未知，不以起止跨度或空等充作投入。已完成AST/JSON与差异检查；没有无修改重复全套测试。所有此前失败与负差保持原件。
+
+下一步与交付定位：本完成记录到位后计数6→7，原科学七轮按工作分配收口；第8轮专门提升全文视觉/读者路径与阶段完整快照，不继续科学网格。随后原位接续已授权第9–13轮全面补强，仍由本对话执行；第13轮最终交付后暂停原automation，不提前暂停、不启动14。原ccad当前ACTIVE/15分钟、target01a06e15-b222-7b21-a8cd-eb058a3159e5已实查。白名单源代码/配置/master_log成组同步随后执行，receipt另存，不扩大论文/原始数据公开范围。关闭前当前入口归档：archive/research_workflow_20260907/r7_close_20260907T141328Z/manifest.json。

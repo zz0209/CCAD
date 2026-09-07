@@ -58,6 +58,27 @@ def main():
     training=read(BASE/'r4_l15/TRAINING_SUMMARY.json')
     example=read(BASE/'r5_mechanism/figure_member_example_manifest.json')
     panel=read(BASE/'r4_l15/PANEL_PREDECLARATION.json')
+    donor_path=BASE/'r7_science_package/R7_DONOR_SUMMARY.json'
+    donor=read(donor_path) if (root/donor_path).exists() else None
+    if donor:
+        donor_keys=['partition','factor','method','n','kl','accuracy','teacher_agreement',
+                    'abs_number_shift','abs_time_shift','signed_number_shift','signed_time_shift','delta_norm']
+        write_csv(data_dir/'donor_results.csv',[{k:r[k] for k in donor_keys} for r in donor['rows']])
+        donor_lookup={(r['partition'],r['factor'],r['method']):r for r in donor['rows']}
+        comparisons={(r['partition'],r['factor'],r['comparator']):r for r in donor['comparisons']}
+        lines=[]
+        for role in ['temporal','quoted']:
+            for factor in ['number','time','joint']:
+                values=[donor_lookup[role,factor,m]['kl'] for m in ['fcc_group','fcc_wrong_donor','fcc_wrong_donor_norm_matched']]
+                gaps=[r['excess_kl'] for r in comparisons[role,factor,'fcc_wrong_donor_norm_matched']['leave_one_seed_out']]
+                lines.append(f"{role.title()} & {factor.title()} & "+' & '.join(f'{v:.4f}' for v in values)+f' & {min(gaps):.4f}--{max(gaps):.4f}'+r' \\')
+        (table_dir/'donor_specificity.tex').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+        lines=[]
+        for factor in ['number','time','joint']:
+            for name,label in [('fcc_group','FCC'),('fcc_wrong_donor','Wrong donor'),('fcc_wrong_donor_norm_matched','Wrong donor, same norm')]:
+                values=[donor_lookup[part,factor,name]['kl'] for part in PARTS]
+                lines.append(factor.title()+' & '+label+' & '+' & '.join(f'{v:.5f}' for v in values)+r' \\')
+        (table_dir/'donor_by_cue.tex').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     lookup={(x['partition'],x['factor'],x['method']):x for x in context['rows']}
     keys=['partition','factor','method','n','kl','noop_kl','accuracy','teacher_agreement',
           'abs_time_shift','abs_number_shift','signed_time_shift','signed_number_shift','delta_norm']
@@ -154,7 +175,7 @@ def main():
         row=panel['rows'][row_id]
         fixed.append(dict(row_id=row_id,role=row['cue_role'],text=row['text'].replace('<|endoftext|>',''),
                           donor=panel['rows'][panel['pairs'][row_id]['time']]['text'].replace('<|endoftext|>',''),outputs=matches))
-    plot=dict(context_rows=context['rows'],geometry=mechanism['geometry_ratios'],mechanism_rows=mechanism['rows'],
+    plot=dict(context_rows=context['rows'],diagnostic_rows=donor['rows'] if donor else [],geometry=mechanism['geometry_ratios'],mechanism_rows=mechanism['rows'],
               memberships=[x for x in mechanism['memberships'] if x['source_seed']==1 and x['target_seed']==2],
               fixed_examples=fixed,display_members=[x for x in example['displayed_values'] if 'member' in x],
               functional_learning=learning['rows'],training_quality=quality)
@@ -165,7 +186,8 @@ def main():
     outputs=[p for folder in [data_dir,table_dir] for p in folder.iterdir() if p.is_file() and p.name!='DATA_MANIFEST.json']
     manifest=dict(sources=sources,output_files=[dict(path=p.relative_to(out).as_posix(),bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(outputs)],
        scope='Deterministic extraction of retained summaries; all observed strata and methods retained. No fitting, outcome-based selection, inference, or independent confirmation. Member KL reference is intact FCC; context KL reference is source operation.',
-       original_raw_sha256=dict(context=context['source_raw_sha256'],mechanism=mechanism['raw_sha256'],training=training['raw_sha256'],learning=learning['raw_sha256']))
+       original_raw_sha256=dict(context=context['source_raw_sha256'],mechanism=mechanism['raw_sha256'],training=training['raw_sha256'],learning=learning['raw_sha256'],
+                                donor=donor['run_summary']['metrics_raw_sha256'] if donor else None))
     (data_dir/'DATA_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
     claims=[
         dict(id='operation_and_native_equivalence',paper='Sections 2, A.1-A.3',result='Explicit signed predictor and finite-panel equivalence condition; no semantic uniqueness claim',
@@ -185,6 +207,14 @@ def main():
         dict(id='swapped_native_control_correction',paper='Appendix B.4; Tables 4-6',result='Historical wrong_factor swaps native group operations; at the same position its joint edit equals direct native. It is not an independent joint-specificity test.',
              evidence=['scripts/run_frozen_composition.py','scripts/run_composition_correspondence.py','paper/sections/appendix_methods.tex']),
     ]
+    if donor:
+        claims.extend([
+            dict(id='frozen_map_donor_specificity',paper='Section 5.2; Figure 2; Appendix A.8 and C.8',
+                 result='Wrong-factor code inputs increase source KL, including after matching total physical edit norm. Follow-up on the exposed panel, not new confirmation or unique semantic identification.',
+                 evidence=[donor_path.as_posix(),'configs/seven_r7_donor_specificity_v1.json','scripts/run_donor_specificity.py','scripts/summarize_donor_specificity.py','paper/sections/appendix_theory.tex']),
+            dict(id='executable_predictive_operation',paper='Appendix D.2',
+                 result='Forty portable signed maps reproduce frozen physical operations; output is a source-aligned residual update, not native feature deletion.',
+                 evidence=['src/ccad/predictive_operation.py','scripts/apply_predictive_operation.py','runs/SEVEN_R7_donor_specificity_v1_20260907/operations/INDEX.json','tests/test_predictive_operation.py'])])
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:
