@@ -29,6 +29,23 @@ def main():
                 q=s[factor]['source']['coordinates']@s[factor]['source']['basis'].T;teacher_delta[:,slot]=q
                 delta=np.zeros_like(teacher_delta);delta[:,slot]=q;teachers[factor]=work.measure('source_teacher',factor,delta,source_seed=source_seed)
             teachers['joint']=work.measure('source_teacher','joint',teacher_delta,source_seed=source_seed)
+            if cfg.get('simple_source_controls'):
+                constant=np.zeros_like(teacher_delta);by_cue=np.zeros_like(teacher_delta);null_arrays={}
+                for factor,slot in [('number',1),('time',0)]:
+                    direction=np.array([1 if work.rows[i]['number' if factor=='number' else 'past'] else -1 for i in work.donors[factor]])
+                    aligned=teacher_delta[:,slot]*direction[:,None];mean=aligned[work.discovery].mean(0)
+                    constant[:,slot]=direction[:,None]*mean;null_arrays[factor+'_global']=mean
+                    for cue_id in range(len(cfg['time_cues'])):
+                        mask=np.array([r['cue_id']==cue_id for r in work.rows]);selected=mask&work.discovery
+                        cue_mean=aligned[selected].mean(0) if selected.any() else mean
+                        by_cue[mask,slot]=direction[mask,None]*cue_mean;null_arrays[factor+f'_cue{cue_id}']=cue_mean
+                np.savez_compressed(work.run/f'simple_source{source_seed}.npz',**null_arrays)
+                write(work.run/f'simple_source{source_seed}.json',dict(cue_pairs=cfg['time_cues'],rule='Mean source edit aligned to reciprocal donor direction; cue-specific mean when cue spelling was in discovery, otherwise global mean. Source-only, generator direction/cue metadata are explicit extra information.'))
+                for name,all_delta in [('global_factor_mean',constant),('cue_factor_mean',by_cue)]:
+                    for factor,slot in [('number',1),('time',0),('joint',None)]:
+                        delta=all_delta.copy()
+                        if slot is not None:delta[:,1-slot]=0
+                        work.measure(name,factor,delta,teachers[factor],source_seed=source_seed)
             for target_seed,t in assets.items():
                 if source_seed==target_seed:continue
                 changes={}; map_arrays={}; pair_diag=[]
@@ -71,7 +88,7 @@ def main():
                         small=teacher[offset,work.labels];endpoint.append(dict(source_seed=source_seed,target_seed=target_seed,factor=factor,row_id=int(i),teacher_label=int(np.argmax(small)),teacher_label_logprobs=small.tolist(),teacher_noop_kl=max(0.,float(np.sum(np.exp(teacher[offset])*(teacher[offset]-work.base[i]))))))
                 write(work.run/f'pair_s{source_seed}_t{target_seed}.json',dict(diagnostics=pair_diag,endpoint=endpoint));diagnostics.extend(pair_diag);method_count=len(changes)
                 work.progress('PAIR_COMPLETE',source_seed=source_seed,target_seed=target_seed,methods=method_count)
-        work.checks['all_rows']=len(work.metrics)==len(work.evaluation_ids)*(3*len(assets)+len(assets)*(len(assets)-1)*(method_count+2*len(cfg['single_factor_methods'])))
+        work.checks['all_rows']=len(work.metrics)==len(work.evaluation_ids)*((9 if cfg.get('simple_source_controls') else 3)*len(assets)+len(assets)*(len(assets)-1)*(method_count+2*len(cfg['single_factor_methods'])))
         work.checks['unique']=len(work.metrics)==len({(r['source_seed'],r.get('target_seed'),r['factor'],r['method'],r['row_id']) for r in work.metrics})
         write(work.run/'fit_diagnostics.json',dict(rows=diagnostics,fit_row_ids=np.flatnonzero(fit).tolist(),calibration_row_ids=np.flatnonzero(cal).tolist(),discovery_row_ids=np.flatnonzero(work.discovery).tolist(),joint_refit=False))
     except Exception as exc:

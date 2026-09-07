@@ -1,0 +1,151 @@
+{
+  "run_id": "SEVEN_R4_l15_confirmation_material_v1_20260907",
+  "purpose": "Predeclared new lexical/temporal role confirmation material for one external hook",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": true,
+  "layers": [
+    15
+  ],
+  "noun_pairs": [
+    [
+      "barber",
+      "barbers"
+    ],
+    [
+      "porter",
+      "porters"
+    ],
+    [
+      "miner",
+      "miners"
+    ],
+    [
+      "inventor",
+      "inventors"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "At this instant",
+      "A decade ago"
+    ],
+    [
+      "At the present time",
+      "Last year"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "object_relative"
+  ],
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 64,
+  "budget_seconds": 600,
+  "budget": "<=600s cold startup plus512baselines/tworawjointoperations at solelayer15; no selection. New panel authored before external training or source outcomes. R4total8500s actualwall, original6h/70GB/0paid.",
+  "scope": "512 predeclared rows:4newauthoredlemmas x4cuepairs(2familiar/2new) x2syntax x8factorvalues x2roles. Temporal cues define expected tense preference; quoted cue title followed by Rightnow fixes expectedpresent. Both source positions final, generator supplies region positions. Raw full joint is architecture identity; separately additive joint is nontrivial. Allrows kept, including weak/failed source; primary sourceKL plus desiredlabel and role-sensitive tense shift. No SAEtraining or map fitting on this panel.",
+  "sae_layer": 15,
+  "lexical_partition_size": 4,
+  "discovery_blocks": [],
+  "discovery_cues": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "raw_operations": [
+    "joint_separate_add",
+    "joint_final_full"
+  ],
+  "member_budgets": [
+    16,
+    32
+  ],
+  "gradient_path_points": [
+    0,
+    0.5,
+    1
+  ],
+  "gradient_path_weights": [
+    0.16666666666666666,
+    0.6666666666666666,
+    0.16666666666666666
+  ],
+  "gradient_batch_size": 8,
+  "source_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "target_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "fit_blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "evaluation_blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "alphas": [
+    0.0001,
+    0.01,
+    1
+  ],
+  "single_factor_methods": [
+    "fcc_group",
+    "same_members_native",
+    "direct_target_native",
+    "full_code_ridge",
+    "rrr_rank1",
+    "rrr_rank4",
+    "dsca_rank1",
+    "raw_native_units"
+  ],
+  "das_steps": 100,
+  "das_checkpoint_every": 20,
+  "das_batch_size": 4,
+  "das_learning_rate": 0.005,
+  "native_gain_candidates": [
+    0.25,
+    0.5,
+    1,
+    2,
+    4
+  ],
+  "run_parent": "SEVEN_R4",
+  "position_names": [
+    "time",
+    "number",
+    "distractor",
+    "final"
+  ],
+  "position_aliases": {
+    "time": "final",
+    "number": "final"
+  },
+  "encode_only": true,
+  "threshold_source_split": "Authored temporal discovery only; source-only label-gradient member ranking; R4 external development",
+  "evidence_level": "frozen_controlled_confirmation",
+  "cue_roles": [
+    "temporal",
+    "quoted"
+  ]
+}

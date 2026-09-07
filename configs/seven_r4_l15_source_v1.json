@@ -1,0 +1,178 @@
+{
+  "run_id": "SEVEN_R4_l15_source_v1_20260907",
+  "purpose": "External layer15 contextual composition: source",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": false,
+  "layers": [
+    15
+  ],
+  "noun_pairs": [
+    [
+      "engineer",
+      "engineers"
+    ],
+    [
+      "chef",
+      "chefs"
+    ],
+    [
+      "scientist",
+      "scientists"
+    ],
+    [
+      "musician",
+      "musicians"
+    ],
+    [
+      "visitor",
+      "visitors"
+    ],
+    [
+      "manager",
+      "managers"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "At this moment",
+      "In those days"
+    ],
+    [
+      "At the moment",
+      "Years ago"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "object_relative"
+  ],
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 64,
+  "budget_seconds": 480,
+  "budget": "At most480s GPU-managed task/two CPUthreads including variable cold startup. R4actual total10500s/8GBnewbulk/original6h/0paid; onehook/fiveSAE, no material or method grid.",
+  "scope": "One externalhook layer15; both factor donor differences applied at final token after full prefix integration. Source-onlyN16/T32 fixed rule chosen before training, target budgets matched. All384 temporal development rows(6oldlemmas,4cuepairs,2syntax,8conditions); discovery384/fit256/calibration128; correspondence evaluation128calibration rows explicitly developmental. Training uses disjoint natural corpus. No claim of independent confirmation until separately frozen newlex/role panel. Allrows kept, no source-strength filtering. Shared fiveSAEseeds give20dependent directions, not20independent repetitions. Final-layer inference reuses cached pre-final-LN residual only after full-model logprob checks for zero and signed joint probes; source gradients and DAS optimization still use complete model. Full-model and tail query counts separated.",
+  "sae_layer": 15,
+  "lexical_partition_size": 6,
+  "discovery_blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "discovery_cues": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "raw_operations": [],
+  "sae_checkpoints": [
+    {
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_1"
+    },
+    {
+      "seed": 2,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_2"
+    },
+    {
+      "seed": 3,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_3"
+    },
+    {
+      "seed": 4,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_4"
+    },
+    {
+      "seed": 5,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_5"
+    }
+  ],
+  "material_run": "runs/SEVEN_R4_l15_material_v1_20260907",
+  "member_budgets": [
+    16,
+    32
+  ],
+  "gradient_path_points": [
+    0,
+    0.5,
+    1
+  ],
+  "gradient_path_weights": [
+    0.16666666666666666,
+    0.6666666666666666,
+    0.16666666666666666
+  ],
+  "gradient_batch_size": 8,
+  "source_run": "runs/SEVEN_R4_l15_source_v1_20260907",
+  "source_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "target_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "fit_blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "alphas": [
+    0.0001,
+    0.01,
+    1
+  ],
+  "single_factor_methods": [
+    "fcc_group",
+    "same_members_native",
+    "direct_target_native",
+    "full_code_ridge",
+    "rrr_rank1",
+    "rrr_rank4",
+    "dsca_rank1",
+    "raw_native_units"
+  ],
+  "correspondence_run": "runs/SEVEN_R4_l15_correspondence_v1_20260907",
+  "das_steps": 100,
+  "das_checkpoint_every": 20,
+  "das_batch_size": 4,
+  "das_learning_rate": 0.005,
+  "native_gain_candidates": [
+    0.25,
+    0.5,
+    1,
+    2,
+    4
+  ],
+  "run_parent": "SEVEN_R4",
+  "position_names": [
+    "time",
+    "number",
+    "distractor"
+  ],
+  "position_aliases": {
+    "time": "final",
+    "number": "final"
+  },
+  "encode_only": true,
+  "threshold_source_split": "Authored temporal discovery only; source-only label-gradient member ranking; R4 external development",
+  "evidence_level": "controlled_development",
+  "final_layer_cached_tail": true
+}

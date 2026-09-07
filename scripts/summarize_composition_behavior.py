@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--run',required=True,type=Path);ap.add_argument('--out',required=True,type=Path);args=ap.parse_args();cfg=json.loads((args.run/'config.resolved.json').read_text());parent=Path(cfg['correspondence_run'])
+    ap=argparse.ArgumentParser();ap.add_argument('--run',required=True,type=Path);ap.add_argument('--out',required=True,type=Path);ap.add_argument('--prefix',default='R3');args=ap.parse_args();cfg=json.loads((args.run/'config.resolved.json').read_text());parent=Path(cfg['correspondence_run'])
     endpoints={}
     for path in parent.glob('pair_s*_t*.json'):
         for r in json.loads(path.read_text())['endpoint']:endpoints[(r['source_seed'],r['target_seed'],r['factor'],r['row_id'])]=r
@@ -27,7 +27,7 @@ def main():
     gains=[]
     for path in args.run.glob('pair_s*_t*.json'):gains.extend(json.loads(path.read_text())['gain_fit'])
     result=dict(run=str(args.run),rows=table,raw_rows=all_rows,completed_gain_pairs=len(list(args.run.glob('pair_s*_t*.json'))),repeated_source_rows_checked=len(checks),repeated_source_checks_pass=True,gain_choices=gains,information=cfg['scope'],das_dependence='DAS has one fitted raw direction per source/factor, no target SAE. Its five source fits are not20independentseededges. Nativegain controls retain20dependentdirections.')
-    args.out.mkdir(parents=True,exist_ok=True);(args.out/'R3_BEHAVIOR_SUMMARY.json').write_text(json.dumps(result,indent=2)+'\n')
+    args.out.mkdir(parents=True,exist_ok=True);(args.out/(args.prefix+'_BEHAVIOR_SUMMARY.json')).write_text(json.dumps(result,indent=2)+'\n')
     for r in table:
         if r['factor']=='joint' and r['detail'][0]=='partition':print(json.dumps(r))
 

@@ -1,0 +1,198 @@
+{
+  "run_id": "SEVEN_R4_frozen_correspondence_v1_20260907",
+  "purpose": "Confirm saved five-seed source supports and correspondence maps with no refitting on new lexicon or syntax",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": true,
+  "layers": [
+    3
+  ],
+  "noun_pairs": [
+    [
+      "engineer",
+      "engineers"
+    ],
+    [
+      "chef",
+      "chefs"
+    ],
+    [
+      "scientist",
+      "scientists"
+    ],
+    [
+      "musician",
+      "musicians"
+    ],
+    [
+      "visitor",
+      "visitors"
+    ],
+    [
+      "manager",
+      "managers"
+    ],
+    [
+      "artist",
+      "artists"
+    ],
+    [
+      "sailor",
+      "sailors"
+    ],
+    [
+      "soldier",
+      "soldiers"
+    ],
+    [
+      "professor",
+      "professors"
+    ],
+    [
+      "gardener",
+      "gardeners"
+    ],
+    [
+      "reporter",
+      "reporters"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "Currently",
+      "Previously"
+    ],
+    [
+      "Nowadays",
+      "Long ago"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "subject_relative"
+  ],
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 64,
+  "budget_seconds": 1500,
+  "budget": "<=1500sGPU-managedtask,twoCPUthreads,<650MBoutputs; frozen20maps,source5teachers,22controls,512newrows. ExistingR3measured450kforwards1410s acrossall5tasks. TotalR4initial4200s includesexternalhooktraining/anchor, zero paid.",
+  "scope": "512 fully authored inputs: eight lemmas unused in R1-R3 authored panels, two frozen familiar cue pairs, four syntaxes. Two old syntax strata confirm useful scope; object relatives and subject-late are declared structural challenges. Positions supplied by generator, not inferred abstract roles. All outcomes retained. No new fitting. Savedfloat32 deployed maps are fixed; raw matrices reconstructed once only from R3discovery with frozen original alpha, numerical old-discovery errors replayed before any new model outputs. Primary joint full-vocab teacherKL and desired-label success; no outcome-based row removal or post-confirmation changes.",
+  "sae_layer": 3,
+  "lexical_partition_size": 6,
+  "discovery_blocks": [],
+  "discovery_cues": [
+    0,
+    1
+  ],
+  "raw_operations": [
+    "number_subject",
+    "time_cue",
+    "joint_separate_add",
+    "joint_separate_full"
+  ],
+  "sae_checkpoints": [
+    {
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_1"
+    },
+    {
+      "seed": 2,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_2"
+    },
+    {
+      "seed": 3,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_3"
+    },
+    {
+      "seed": 4,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_4"
+    },
+    {
+      "seed": 5,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_5"
+    }
+  ],
+  "material_run": "runs/SEVEN_R4_frozen_material_v1_20260907",
+  "member_budgets": [
+    16,
+    32
+  ],
+  "gradient_path_points": [
+    0,
+    0.5,
+    1
+  ],
+  "gradient_path_weights": [
+    0.16666666666666666,
+    0.6666666666666666,
+    0.16666666666666666
+  ],
+  "gradient_batch_size": 8,
+  "source_run": "runs/SEVEN_R3_composition_gain_sources_v1_20260907",
+  "source_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "target_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "fit_blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "evaluation_blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "alphas": [
+    0.0001,
+    0.01,
+    1
+  ],
+  "single_factor_methods": [
+    "fcc_group",
+    "same_members_native",
+    "direct_target_native",
+    "full_code_ridge",
+    "rrr_rank1",
+    "rrr_rank4",
+    "dsca_rank1",
+    "raw_native_units"
+  ],
+  "correspondence_run": "runs/SEVEN_R3_composition_correspondence_v1_20260907",
+  "das_steps": 100,
+  "das_checkpoint_every": 20,
+  "das_batch_size": 4,
+  "das_learning_rate": 0.005,
+  "native_gain_candidates": [
+    0.25,
+    0.5,
+    1,
+    2,
+    4
+  ],
+  "frozen_dir": "artifacts\\seven_round_rebuild_20260906\\r4_frozen",
+  "behavior_run": "runs\\SEVEN_R3_composition_behavior_v1_20260907",
+  "evidence_level": "frozen_controlled_confirmation",
+  "run_parent": "SEVEN_R4"
+}

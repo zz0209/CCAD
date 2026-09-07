@@ -69,7 +69,7 @@ def main():
                         for gain in cfg['native_gain_candidates']:
                             delta=np.zeros_like(work.h,dtype=np.float64);delta[:,slot]=gain*q;lp=work.evaluate(delta,cal_ids);losses.append(float(np.mean(np.sum(np.exp(cal[factor])*(cal[factor]-lp),axis=1))))
                         gain=cfg['native_gain_candidates'][int(np.argmin(losses))];variants[name][:,slot]=gain*q
-                        details.append(dict(source_seed=source_seed,target_seed=target_seed,factor=factor,method=name,gain=gain,candidates=cfg['native_gain_candidates'],calibration_kl=losses,calibration_row_ids=cal_ids.tolist(),information='source full-distribution outputs on64calibrationrows; stronger supervision than geometric ridge'))
+                        details.append(dict(source_seed=source_seed,target_seed=target_seed,factor=factor,method=name,gain=gain,candidates=cfg['native_gain_candidates'],calibration_kl=losses,calibration_row_ids=cal_ids.tolist(),information=f'source full-distribution outputs on{len(cal_ids)}calibrationrows; stronger supervision than geometric ridge'))
                 for name,delta in variants.items():
                     for factor,slot in [('number',1),('time',0),('joint',None)]:
                         single=delta.copy()

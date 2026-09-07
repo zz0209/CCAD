@@ -4492,3 +4492,98 @@ First two pilots fix width8192, seed1,1,048,576 natural tokens, batch8x128,1024 
 ## R3 closed; next controlled confirmation and material improvement
 
 写入时间（written_at_utc）：2026-09-07T01:42:32Z。Science,methods,22controlfigures,fixedcase,mainpaper andR3report integrated; run completion events remain in status.json (last2026-09-07T01:27:26.239921Z). completed_rounds2→3exactlyonce,active_roundnone,READY_FOR_NEXT_ROUND; acceptanceNOT_MET. Originalccad15minautomationcontinues, no newloop/agents. Nextworkcard freezes usefulknowncue/compactcomposition range for untouchedlexical/structuralconfirmation, plusoneboundedsource-position/rolematerial improvement andexternalanchor; no sameweak-source regressiongrid. R3total1410.494544s/452947722bytes, remainingoriginal6h4.860197881h. AllCCADGPUworkended. Trackerpreclosearchivearchive/research_workflow_20260906/seven_r3_close_20260907T014232Z/manifest.json. Stage/push onlyexistingallowlist; localignoredpaper/evidence preserved by deliverymanifest.
+
+
+## R4 frozen confirmation starts
+
+写入时间（written_at_utc）：2026-09-07T02:09:10Z。事件时间：same preparation, no new model outputs yet. completed3/7science,active4. Frozen R3supports/20maps/behaviorgains/DAS; rawmaps recovered from olddiscovery only and matched storedoldMSE before authoringoutputs. New512rows,8newlemmas,2familiarcues,4syntaxes; primary jointKL anddesiredaccuracy/allrows. Inputs/config/hashatartifacts/seven_round_rebuild_20260906/r4_frozen/FREEZE.json. Initial4200s/<8GB withinoriginal6hours/70GB/zero paid. ActualGPUleasefree,7.45GBfreebut58%utilizationfromdesktop/otherapps observed; useGPUlease andbatchmemorybudget,neveralterotherprocesses. EndoSAEcpu/diskDleasesactive; noCPUheavyorDexclusiveleaseforordinaryassetreads. Trackerbytearchive archive/research_workflow_20260906/seven_r4_start_20260907T020910Z/manifest.json. No scientific result yet.
+
+
+## R4 bounded role and position screen prepared
+
+写入时间（written_at_utc）：2026-09-07T02:13:50Z。事件时间：same preparation; role results not yet computed. Configs ['configs\\seven_r4_role_temporal_v1.json', 'configs\\seven_r4_role_quoted_v1.json']. Temporalversusquotedtitlecue role; no newconfirmationnouns consumedforselection. Declaredall4cues/4oldnouns/2syntax/8conditionsperrole,256rows. Quotedcue alwaysfollowedbyRightnow so expectedtense unchangedbytimeflip. Rolepositions areprovided, not learned. Atmost300GPU-managedseconds withinR4total4200; reducesreserveforlaterconsumer ifneeded. Primary frozenR3confirmation untouched.
+
+
+## R4 position-screen adjustment before role outcomes
+
+写入时间（written_at_utc）：2026-09-07T02:18:35Z。事件时间：rawconfirmationmaterialcompleted2026-09-07T02:14:39.400564Z;rolepanelsunrun. Rawall512baseline496/512;layer3time-cue340/512, latepositions3/7weak andlayer11mixed. Oneboundedrole/positionpanelthereforeuseslayers3/11/15, replacing7 ratherthanaddinggrids. v1configsremainuntouched/unexecuted; v2 ['configs\\seven_r4_role_temporal_v2.json', 'configs\\seven_r4_role_quoted_v2.json']. Atlayer15rawfinal donorpatchisidentitybyconstruction;useonlytoverifycompactSAE/sourcecompositionopportunity,notnovelmechanisticfinding. Budgeteach240s dueobserved147scoldstartup;totalR44200s unchanged, adjustconsumerreservefromactualuse. Frozenmainconfirmationmapsunchanged andrunning.
+
+
+## R4 prefix diagnostic changes the time interpretation
+
+写入时间（written_at_utc）：2026-09-07T02:31:43Z。事件时间：diagnosticcomputedcurrentR4whilefrozenmainrunning. Five source timefields on512newinputs have cue-conditional residualenergy1.31e-9to5.35e-9;rank2retains>=.999999995energy. Causalprefix induction explains idealconstantcuefields; finiteprecisionresidual retained. R3fidelity isnotabstracttimecodingevidence; frozenoutcomes/mapchoicesunmodified. Theorysection26andR4_METHODS_AND_ALGEBRA.mdconnectthis to latercontext/role screen andsamepositionmixedfinite differences. Two primarysources read, ICLRPDFactualpages4–7viewed, sourcehashregistry. Oldregistry/derivationbytearchive archive/research_workflow_20260906/seven_r4_methods_20260907T023143Z/manifest.json. No modelresult claimed fromthisCPUdiagnostic.
+
+
+## R4 confirmation outcome and external material decision
+
+写入时间（written_at_utc）：2026-09-07T02:48:49Z。事件时间：actual completed artifacts preceding this write, quoted_v2 finished2026-09-07T02:47:29Z. Frozen512allrow confirmation failed previoushighfidelitystrength: familiarFCCKL.041622/raw.080991/DAS.006975,teacheragreement86.9727%; nofit changed. Prefixrank2diagnostic and savedmap replay separate from scientific confirmation. Temporalrawlayer15finaladd218/256 actualcorrect supports single externalhook fiveSAE. quoted_v2 FAIL coldstartup281.124526s before0forwards; samepanelv3 allows600s, not methodological retry. R4actualwallceiling8500s before expansion, total6h/70GB/0paid unchanged. Allfirst4runwalls1911.666462s counted. Archivearchive/research_workflow_20260906/seven_r4_external_20260907T024849Z/manifest.json. Trainingqualitylastlayeroracle bug identified beforelaunch: comparelastblockoutput tofinalLNinput, existinghidden_states[-1] normalized; codecorrected specificbranch. No new scientific result claimed from fix.
+
+
+## R4 late-hook confirmation material predeclared
+
+写入时间（written_at_utc）：2026-09-07T02:54:43Z。事件时间：same design write, before newhook training/source outputs. Raw quoted_v3 completed165.319047s/5696forwards; jointfinaladd256/256correct,KL.025281 combined, rawfullsinglefinal identity kept separate. New512row panel predeclared:barber/porter/miner/inventor, twofamiliarandtwocompletelynewauthoredcuepairs, temporal/quoted roles,pp/objectrelative; source/target positionsfinal. No new material outcomes seen; maps/supports willfreezeafter olddevonly andbefore thispanel runs. At sameposition jointwrongfactor swap equals identicalsum, so notnegative evidence; add actualsinglefactor wrong controls. Evidenceatartifacts/seven_round_rebuild_20260906/r4_l15/PANEL_PREDECLARATION.json. Existinglastlayerrawsignal justifiesonehook fiveSAE, not acorrespondence claim.
+
+
+## R4 training resource interruption and grouped recovery
+
+写入时间（written_at_utc）：2026-09-07T03:02:38Z。事件时间：process termination immediately before thiswrite, exact timestampnotseparatelycaptured. Originalfiveconcurrent l15training hadlastobserved189/4096 atsevereslowdown5–6s/iter vsinitial.35s,globalVRAM15503MiB/free493. Pagingisplausiblenotprofiled. ConfirmedownPID81172/child81112 withCIM+sharedowner; stoppedonlythistree, wrapperexit1. Beforecheckpoint256, noSAEcheckpointorqualityresult; previousintenttosavefirstcheckpoint notachieved. Conservativelycharged454.390174s upperboundfrommanifeststarttothiswrite; runs/.../recovery.json exactrecord. Missingcontractfilesnotfabricated. Recovery sameconfigurationfive seeds grouped1,2 then3,4 then5; all4096updates/4.194Mtokens/batch8unchanged, codeunchanged. R4actualcap10500s revisedBEFOREgroups, original6h/70GB/0paidunchanged. No otherprocess/lease changed. Newconfigs ['configs\\seven_r4_l15_train_k64_s12_v2.json', 'configs\\seven_r4_l15_train_k64_s34_v2.json', 'configs\\seven_r4_l15_train_k64_s5_v2.json'].
+
+
+## R4 measured resource recovery before further compute
+
+写入时间（written_at_utc）：2026-09-07T04:22:01Z。事件时间：s12v2finished2026-09-07T03:33:31.742922Z, currentread at~04:16–04:21Z. s12v2timeout1801.5366716s, last898updates, only256inferencecheckpointsseed1/2, noquality/exactstate. ContractPASS appliesfailedrun structureonly. R4totalconservative4332.9123547s includingallfails; originaltotal~2.3434h so~3.6566hremain. Currentnon-WMIreadRAMtotal33.727GB/available19.175GB, GPUfree14.94GB; EndoSAECPU/diskDleasebusyleftuntouched. WMIpermissionreviewtimedout once(notunsafejudgment); saferGlobalMemoryStatusEx/GetProcessread worked, no outstandinguserapprovalneeded. No exactcauseofpastslowdown proven. Existingtrainer timeout atoptimizerposthook lostcontinuation; nowresourceguard observescompletedupdates (upstreamglobalstep increment/pbarupdate), records64steptiming/VRAM, savesexistingexactstate onboundedslowdown/timeexit andat1024. Preservesoriginalfiveconfiguration; noalgorithm/package/sourcecorpuschange. Fullfiveguardedv3 chosenbeforeanyqualityoutcome withcurrentVRAMmargin, group34/5configsremainunexecuted. R4cap10500/original6h unchanged; pending actualsource/FCCaftervalidtraining.
+
+
+## R4 external prefix-null comparison
+
+写入时间（written_at_utc）：2026-09-07T04:25:07Z。事件时间：beforeanyexternalSAEquality/source/correspondence or newconfirmation outcome. Addtwo source-onlymean controls toexternal developmentandfreeze: signedglobalfactormean; cue-pair-conditionedmean, fallingbacktoglobalforunseenspellings. These directlytestwhethercontext-varyingFCC isneededbeyondconstantcuevectors suggestedbyprefixdiagnostic. Theyreceiveexplicitgeneratorfactor-direction/cueidentity, aninformationadvantage; nooutputfitting/jointrefit. Serializedvectors/cuesfreeze fromolddevbefore newpanel. NewcueIDs arematchedbyexactcuepairstrings, neverbynewpanelordinal. Pairedquotedcontextsusetheunchangedtemporalmeantochallengecontextselection. Allmethods/sourcequality remain, noextratuninggrid.
+
+
+## R4 allocator evidence and exact continuation
+
+写入时间（written_at_utc）：2026-09-07T04:41:09Z。事件时间：v3guardstop2026-09-07T04:35:35.744942Z; thiswritepreparesresume. At384stepsallocated6097037824/reserved21323841536/physical17094475776bytes,free0; last64updates4.498sperstepvs.181at128. Guard saved full exactstate AFTERcompleted384updates beforeFAIL; sourcewall790.497703400s. R4cumulativeconservative5123.410058100s. Resumev4fromthatstate(no reinit/repeatedtokens) changesnativeallocatorGC.6/roundup4 andconditionalunusedcache releaseabove10GB. PyTorch2.8official memorynotesandempty_cache docs actuallyread; changes memory reservation, notmodeltensor/objective. No packagesupdated. Bothseed1,2step256 statehashesfroms12v2andfivev3match exactly, directlycheckinggroupingdidnotchange those trajectories. Newrepeatstop savesexactagain. Not a scientificFCCresult; allnewconfirmation stillunopened.
+
+
+## R4 exact-state storage accounting
+
+写入时间（written_at_utc）：2026-09-07T04:43:26Z。事件时间：before resumed1024/final checkpointwrites. IncreaseR4newbulk allowance8GBto12GB because preservedpartial256/exact384 andnewexact1024/finalplusinferencefilesproject~8.4GB; original70GB/0paidunchanged. Existingweights/checkpointsnotduplicatedforconvenienceordeleted; fulloptimizercontinuationstate necessarytorecoverresourcefailures. Runtimepackages/modelweightsunchanged.
+
+
+## R4 bounded final-layer inference reuse
+
+写入时间（written_at_utc）：2026-09-07T04:54:17Z。事件时间：same preparatory edit, before external source/map outputs. At final resid_post, only positionwise LayerNorm and unembedding remain. New three consumer configs permit cached-tail inference after complete-model zero and signed joint probe checks (full vocabulary max logprob error <=1e-4); gradient ranking and DAS optimization retain full model. Same float32 sequential slot edits and same outputs/controls. Original predeclared512panel config is untouched. Full-model and cached-tail sequence counts separate; no executed speedup claim yet. Config byte archives/hash: archive/research_workflow_20260907/r4_cached_tail_20260907T045417Z/manifest.json.
+
+
+## R4 frozen findings integrated into main argument
+
+写入时间（written_at_utc）：2026-09-07T04:56:27Z。实验事件时间：prior frozen run/status and prefix diagnostic, no new LM inference in this write. Main abstract/introduction/discussion/conclusion now distinguish99.06%development from86.97%frozen familiar-syntax agreement and report ranking reversals. Added full-denominator frozen table, prefix rank argument and role-position rationale; coincident norm and wrong-factor identity incorporated into derivation/methods. Layer15training still active; no extra FCC result or round completion claimed. Prior exact bytes/hash: archive/research_workflow_20260907/r4_primary_integration_20260907T045627Z/manifest.json. Interim identities: artifacts/seven_round_rebuild_20260906/R4_PRIMARY_INTEGRATION.json.
+
+
+## R4 five-seed late-layer training completed
+
+写入时间（written_at_utc）：2026-09-07T05:00:23Z。完成事件时间：2026-09-07T05:00:12.982658+00:00。Five seeds completed4096updates/4194304natural tokens; full combined input/loss trace4096, all15fixed-validation rows andhookoracle checks PASS; contract True. Resume wall1125.988752600s; R4cumulative including failures upperbound6249.398810700s. FinalFVE0.74990961–0.75147982,CErecovered0.85552944–0.85746015. These are limited reconstruction/coverage measures, not convergence or functional proof. Allocator cache stayed bounded; detailedtrace/quality/rawhash atartifacts/seven_round_rebuild_20260906/r4_l15/TRAINING_SUMMARY.json. Nextactualcompact source andcrossseedfunction underunchangedpredeclarednew512panel.
+
+
+## R4 external-layer maps frozen before new material
+
+写入时间（written_at_utc）：2026-09-07T05:10:05Z。事件时间：samefreeze,nooutputfrompredeclared512newrows. Allfive source supports,20maps/behaviorgains/DAS,sourceglobal/cueconstantcontrols frozen. Rawlinear maps recoveredonlyolddevwithfixedoldalpha andexactoldresidualreplay. 88 identities atartifacts/seven_round_rebuild_20260906/r4_l15/frozen/FREEZE.json. Newtemporal/quoted x familiar/newcue x newlex/pp/objectrelative allrowsretain; no newqueryselection/fit.
+
+
+## R4 current card reconciled before confirmation result
+
+写入时间（written_at_utc）：2026-09-07T05:13:13Z。事件时间：source/main/behavior/materialcompleted at theirstatus timestamps; current frozen consumer running. Consolidated old resource-recovery chronology into a single live card, preserving exact prior tracker/hash atarchive/research_workflow_20260907/r4_confirmation_live_20260907T051313Z/manifest.json. Countsremain3completed/active4; no false newround orpause. Development FCC.048293/raw.014047/full.021285/DAS.158161 allretained; frozenroledata still not summarized or used forselection.
+
+
+## R4 existing-checkpoint functional learning measurement
+
+写入时间（written_at_utc）：2026-09-07T05:20:01Z。事件时间：preparation while frozenconfirmationrun continues. Fixed-validation FVErose57.31→65.81→75.08%andCE68.23→76.95→85.64%; toanswerwhether sourcecomponentfunction improved ratherthan infer fromreconstruction, reserve<=300s forsame384devinputs/unchangedN16T32ranking atalreadyretained256/1024/4096five-seedcheckpoints. Reuseexistingrawgradient/cache, no newtraining/data, no map orselectionchange inongoingconfirmation. Finalcheckpoint mustreplay originalmembers/nativeq. This is a bounded material-learning result, not anothermethodgrid or gate beforeindependentconfirmation. R4cap10500/original6h remainunchanged.
+
+
+## R4 frozen role transfer and complete scientific integration
+
+写入时间（written_at_utc）：2026-09-07T05:58:51Z。实验完成时间：each run status timestamp retained; final frozen consumer wall620.4743541s/PASS and checkpoint-function wall42.190s/PASS, both before this write. New512 all-row confirmation: FCC jointKL .072920/.105256/.054249/.064662 forTemporal familiar/new andQuoted familiar/new; raw/full stronger, native/OT/one-to-one/DAS pooled weaker. FCC time abs effect4.142/3.651/.266/.373nats, constant global4.868/4.954/4.596/4.591. No-op time-only quoted already strong, joint no-op0/.78% vsFCC93.05/92.19%; action/attenuation considered together. Direct learning256/1024/4096 joint36.15/61.93/78.18%, same rule notsamefeatureID. Five sharedseeds/20directions are dependent. Rawsha d85467e5dade9232af6652c2d78a9210f783375ef635e2e3cc0b965f1e8cdf5d. Mainmanuscript now integratesbothfrozenpanels, prefixcounterexample, controlledmateriallearning androle-dependenttransfer; full/raw advantage andsourcefailuresretained. Methods/report/plan updated, exactpriorbytes/hash atarchive/research_workflow_20260907/r4_completed_integration_20260907T055851Z/manifest.json, currentfiles atR4_INTEGRATION.json. Allcomputecomplete; R4wallupperbound7338.5811231s, newbulk8325115509bytes, campaign3.178296876of6h. White-list sync andcount4closing verification next; no newscientificroundcountyet.
+
+
+## R4 final figures and delivery checks
+
+写入时间（written_at_utc）：2026-09-07T06:02:48Z。事件时间：same final document/figure checks; no new model inference. Added standalone natural-reconstruction versus compact-function figure from the three retained checkpoints, PNG/PDF/SVG with five source trajectories and means; actually viewed, labels visible. Corrected the context-figure caption to match its signed role-scatter panels; source learning has its own figure. Full current local document/figure path/hash manifest: artifacts/seven_round_rebuild_20260906/R4_DELIVERY_MANIFEST.json. All40 changed allowlisted files pass size/AST/JSON/credential-pattern checks and Git whitespace check; 11 referenced manuscript images exist. Actual gpu-0 lease free; other project records unchanged. Targeted final-hook, panel replay and in-run actual full-model/tail checks already passed; no repeated full suite. Stage/commit/push uses existing main whitelist; local research documents remain ignored and retained.

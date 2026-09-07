@@ -1,0 +1,91 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 64,
+  "run_id": "SEVEN_R4_frozen_material_v1_20260907",
+  "purpose": "Untouched authored lexical and syntactic confirmation of frozen R3 functions",
+  "layers": [
+    3,
+    7,
+    11
+  ],
+  "noun_pairs": [
+    [
+      "plumber",
+      "plumbers"
+    ],
+    [
+      "dentist",
+      "dentists"
+    ],
+    [
+      "librarian",
+      "librarians"
+    ],
+    [
+      "sculptor",
+      "sculptors"
+    ],
+    [
+      "carpenter",
+      "carpenters"
+    ],
+    [
+      "mechanic",
+      "mechanics"
+    ],
+    [
+      "tailor",
+      "tailors"
+    ],
+    [
+      "cashier",
+      "cashiers"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "subject_relative",
+    "object_relative",
+    "subject_late"
+  ],
+  "lexical_partition_size": 8,
+  "position_names": [
+    "time",
+    "number",
+    "distractor",
+    "final"
+  ],
+  "raw_operations": [
+    "number_subject",
+    "time_cue",
+    "time_subject",
+    "time_final",
+    "number_final",
+    "joint_separate_add",
+    "joint_subject_add",
+    "joint_final_add",
+    "joint_final_full"
+  ],
+  "budget_seconds": 180,
+  "budget": "<=180s GPU-managed inference, two CPU threads, no fitting/selection, <200MB outputs; actual free VRAM >7GB at preparation, prior inference peak4.22GB. R4 total4200s and8GB new bulk within remaining4.86hours.",
+  "scope": "512 fully authored inputs: eight lemmas unused in R1-R3 authored panels, two frozen familiar cue pairs, four syntaxes. Two old syntax strata confirm useful scope; object relatives and subject-late are declared structural challenges. Positions supplied by generator, not inferred abstract roles. All outcomes retained. No new fitting.",
+  "audit_opened": true,
+  "evidence_level": "frozen_controlled_confirmation",
+  "run_parent": "SEVEN_R4"
+}

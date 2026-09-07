@@ -1,0 +1,80 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 64,
+  "run_id": "SEVEN_R4_role_quoted_v3_20260907",
+  "purpose": "Measure functional information at cue, subject and final sites with lexical cues in temporal versus quoted roles",
+  "layers": [
+    3,
+    11,
+    15
+  ],
+  "noun_pairs": [
+    [
+      "engineer",
+      "engineers"
+    ],
+    [
+      "chef",
+      "chefs"
+    ],
+    [
+      "scientist",
+      "scientists"
+    ],
+    [
+      "musician",
+      "musicians"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "At this moment",
+      "In those days"
+    ],
+    [
+      "At the moment",
+      "Years ago"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "object_relative"
+  ],
+  "lexical_partition_size": 4,
+  "position_names": [
+    "time",
+    "number",
+    "distractor",
+    "final"
+  ],
+  "raw_operations": [
+    "number_subject",
+    "time_cue",
+    "time_subject",
+    "time_final",
+    "joint_separate_add",
+    "joint_subject_add",
+    "joint_final_add"
+  ],
+  "budget_seconds": 600,
+  "budget": "<=600s includes observed281s cold import/hash/model load plus same256row screen; R4total8500s/original6h unchanged. Exact material/operations fromv2, which failed before any forward or result.",
+  "scope": "Development paired role comparison: same4cuepairs including2new expressions,4oldnouns,2syntax,allnumber/time/distractorvalues. Temporalrole usescueasactualtime; quotedrole putscueinbooktitlefollowedbyRightnow so timeflip should notchangeexpectedmainverb tense. Allrows retained; roleconditioning mayrequirelatercontext. Does not certify genuine abstractroles. Screen data is not confirmation or task-training material. Last-layer15 replaceslayer7 before either rolepanel hasmodeloutputs; promptedbyR4rawfindinglatepositions3/7/11oftenlackstrongtimeeffect. Layer15rawfinalfullchange trivially reproducesfull-donorlaststate, so this isability/placement support only, never itselfaFCCresult. Additivelycomposedseparatechanges andcompactSAEoperations remainnontrivial.",
+  "audit_opened": false,
+  "evidence_level": "controlled_development",
+  "run_parent": "SEVEN_R4",
+  "cue_role": "quoted"
+}

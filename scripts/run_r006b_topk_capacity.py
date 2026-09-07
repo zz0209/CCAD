@@ -102,6 +102,10 @@ def evaluate(model, sae, module, contract, oracle_index: int, dataset, batch_siz
     firing_counts = torch.zeros(sae.num_latents, dtype=torch.int64, device=device)
     hook_oracle_error = 0.0
     capture_logit_error = 0.0
+    # GPT-NeoX hidden_states[-1] is after final layer norm, whereas the
+    # last block's resid_post is before it. Use the norm's actual input
+    # as the independent capture oracle for that block.
+    final_block = hasattr(model, "gpt_neox") and module is model.gpt_neox.layers[-1]
 
     def run_hook(batch, mode: str):
         observed = {}
@@ -122,10 +126,17 @@ def evaluate(model, sae, module, contract, oracle_index: int, dataset, batch_siz
                 return replace_primary_hook_tensor(output, torch.zeros_like(hidden), contract)
             raise ValueError(mode)
         handle = module.register_forward_hook(hook)
+        oracle_handle = None
+        if mode == "capture" and final_block:
+            def capture_final_input(_module, inputs):
+                observed["oracle"] = inputs[0].detach()
+            oracle_handle = model.gpt_neox.final_layer_norm.register_forward_pre_hook(capture_final_input)
         try:
             result = model(batch, labels=batch, output_hidden_states=(mode == "capture"), use_cache=False)
         finally:
             handle.remove()
+            if oracle_handle is not None:
+                oracle_handle.remove()
         return result, observed
 
     model.eval()
@@ -157,7 +168,8 @@ def evaluate(model, sae, module, contract, oracle_index: int, dataset, batch_siz
             if nonzero.any():
                 alive[indices[nonzero]] = True
                 firing_counts += torch.bincount(indices[nonzero].reshape(-1), minlength=sae.num_latents)
-            hook_oracle_error = max(hook_oracle_error, float((hidden - capture.hidden_states[oracle_index]).abs().max()))
+            oracle = captured["oracle"] if final_block else capture.hidden_states[oracle_index]
+            hook_oracle_error = max(hook_oracle_error, float((hidden - oracle).abs().max()))
             capture_logit_error = max(capture_logit_error, float((clean.logits - capture.logits).abs().max()))
     ce = {key: value / denominator for key, value in totals.items()}
     damage = ce["zero"] - ce["clean"]
@@ -187,6 +199,7 @@ def evaluate(model, sae, module, contract, oracle_index: int, dataset, batch_siz
         "feature_firing_count_distribution": firing_distribution,
         "activation_rows": activation_rows, "hook_oracle_max_error": hook_oracle_error,
         "capture_logit_max_error": capture_logit_error,
+        "hook_oracle_source": "final_layer_norm_input" if final_block else "model_hidden_states",
     }
 
 

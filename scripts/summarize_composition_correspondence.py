@@ -5,7 +5,7 @@ import numpy as np
 
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--run',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);args=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--run',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--prefix',default='R3');args=ap.parse_args()
     cfg=json.loads((args.run/'config.resolved.json').read_text());base_rows=[json.loads(line) for line in (Path(cfg['material_run'])/'metrics.raw.jsonl').read_text().splitlines() if line]
     baseline={r['row_id']:r for r in base_rows if r['kind']=='baseline'};del base_rows
     endpoints={};diags=[]
@@ -18,8 +18,10 @@ def main():
         if r['method']=='source_teacher':
             for detail in [('all',),('partition',part),('seed_partition',r['source_seed'],part)]:source_buckets[(r['factor'],)+detail].append(r)
         else:
-            key=(r['source_seed'],r['target_seed'],r['factor'],r['row_id'])
+            endpoint_target=r.get('target_seed',next(s['seed'] for s in cfg['sae_checkpoints'] if s['seed']!=r['source_seed']))
+            key=(r['source_seed'],endpoint_target,r['factor'],r['row_id'])
             if key not in endpoints:continue # In-progress partial pair is not a completed result.
+            r.setdefault('target_seed',0) # Source-only constant controls have no target SAE.
             e=endpoints[key];r['teacher_noop_kl']=e['teacher_noop_kl'];r['teacher_agreement']=r['label']==e['teacher_label']
             for detail in [('all',),('partition',part),('edge_partition',r['source_seed'],r['target_seed'],part),('block',r['block'],part)]:buckets[(r['factor'],r['method'])+detail].append(r)
         if r['method'] in cfg['single_factor_methods']+['source_teacher']:
@@ -54,7 +56,7 @@ def main():
         base=baseline[joint['row_id']];delta=[joint[k]-number[k]-temporal[k]+base[k] for k in ['number_logodds','past_logodds']]
         interactions.append(dict(source_seed=joint['source_seed'],target_seed=joint.get('target_seed'),method=joint['method'],row_id=joint['row_id'],partition=joint['partition'],number_interaction=delta[0],time_interaction=delta[1],separate_both_correct=bool(number['correct'] and temporal['correct']),joint_correct=joint['correct']))
     result=dict(run=str(args.run),raw_rows=count,completed_pairs=len(list(args.run.glob('pair_s*_t*.json'))),scope=cfg['scope'],rows=table,source_rows=sources,wins=wins,memberships=memberships,interaction_rows=interactions,statistics_note='All direction totals are descriptive;20edges share five seeds. No independent-edge CI or pvalue. Ratios sum KL before division. Expected time preference does not imply all other tenses ungrammatical.')
-    args.out.mkdir(parents=True,exist_ok=True);(args.out/'R3_COMPOSITION_SUMMARY.json').write_text(json.dumps(result,indent=2)+'\n');(args.out/'R3_VECTOR_DIAGNOSTICS.json').write_text(json.dumps(dict(rows=diags),indent=2)+'\n')
+    args.out.mkdir(parents=True,exist_ok=True);(args.out/(args.prefix+'_COMPOSITION_SUMMARY.json')).write_text(json.dumps(result,indent=2)+'\n');(args.out/(args.prefix+'_VECTOR_DIAGNOSTICS.json')).write_text(json.dumps(dict(rows=diags),indent=2)+'\n')
     for r in table:
         if r['factor']=='joint' and r['detail'][0]=='partition':print(json.dumps(r))
 
