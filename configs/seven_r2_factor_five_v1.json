@@ -1,0 +1,202 @@
+{
+  "run_id": "SEVEN_R2_factor_five_v1_20260906",
+  "purpose": "Five-seed learning-curve functionality and end-to-end compact contribution correspondence against same-teacher controls",
+  "material_run": "runs/SEVEN_R1_functional_material_v2_20260906",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "hook_module_path": "gpt_neox.layers.3",
+  "layer_index": 3,
+  "batch_size": 32,
+  "discovery_blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "member_budgets": [
+    1,
+    16
+  ],
+  "budget_seconds": 1800,
+  "budget": "<=1800s GPU task including four-thread correspondence fitting, <1.2GBnewoutputs; reuse18checkpoints and 1B model",
+  "scope": "Development only: all original192crossed items previously exposed. Sources fitblocks0-7; target ridge calibrationblocks6-7 inside discovery, coefficients refit0-7; heldlexical8-15 are development generalization, not new audit. All5same-configurationseeds and20directions included; directions share seeds. Source teacher exactnative16span with no LM/target selection. Raw/full-code,group-sparse16/32,one-to-one,single-atom,dense-select-refit,conditional-correlationOT,RRR,same-supportnative/projection/gain andwrong-factor controls. OT operational adaptation, RRR shared-contrast comparator not full faithful dSCA reproduction.",
+  "checkpoints": [
+    {
+      "checkpoint": "k64_seed1_step256",
+      "k": 64,
+      "seed": 1,
+      "step": 256,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_256/seed_1"
+    },
+    {
+      "checkpoint": "k64_seed2_step256",
+      "k": 64,
+      "seed": 2,
+      "step": 256,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_256/seed_2"
+    },
+    {
+      "checkpoint": "k64_seed3_step256",
+      "k": 64,
+      "seed": 3,
+      "step": 256,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_256/seed_3"
+    },
+    {
+      "checkpoint": "k64_seed4_step256",
+      "k": 64,
+      "seed": 4,
+      "step": 256,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_256/seed_4"
+    },
+    {
+      "checkpoint": "k64_seed5_step256",
+      "k": 64,
+      "seed": 5,
+      "step": 256,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_256/seed_5"
+    },
+    {
+      "checkpoint": "k64_seed1_step1024",
+      "k": 64,
+      "seed": 1,
+      "step": 1024,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_1024/seed_1"
+    },
+    {
+      "checkpoint": "k64_seed2_step1024",
+      "k": 64,
+      "seed": 2,
+      "step": 1024,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_1024/seed_2"
+    },
+    {
+      "checkpoint": "k64_seed3_step1024",
+      "k": 64,
+      "seed": 3,
+      "step": 1024,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_1024/seed_3"
+    },
+    {
+      "checkpoint": "k64_seed4_step1024",
+      "k": 64,
+      "seed": 4,
+      "step": 1024,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_1024/seed_4"
+    },
+    {
+      "checkpoint": "k64_seed5_step1024",
+      "k": 64,
+      "seed": 5,
+      "step": 1024,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_1024/seed_5"
+    },
+    {
+      "checkpoint": "k64_seed1_step4096",
+      "k": 64,
+      "seed": 1,
+      "step": 4096,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_1",
+      "transfer_seed": 1
+    },
+    {
+      "checkpoint": "k64_seed2_step4096",
+      "k": 64,
+      "seed": 2,
+      "step": 4096,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_2",
+      "transfer_seed": 2
+    },
+    {
+      "checkpoint": "k64_seed3_step4096",
+      "k": 64,
+      "seed": 3,
+      "step": 4096,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_3",
+      "transfer_seed": 3
+    },
+    {
+      "checkpoint": "k64_seed4_step4096",
+      "k": 64,
+      "seed": 4,
+      "step": 4096,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_4",
+      "transfer_seed": 4
+    },
+    {
+      "checkpoint": "k64_seed5_step4096",
+      "k": 64,
+      "seed": 5,
+      "step": 4096,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096/seed_5",
+      "transfer_seed": 5
+    },
+    {
+      "checkpoint": "k128_seed1_step256",
+      "k": 128,
+      "seed": 1,
+      "step": 256,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k128_control_v1_20260906/step_256/seed_1"
+    },
+    {
+      "checkpoint": "k128_seed1_step1024",
+      "k": 128,
+      "seed": 1,
+      "step": 1024,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k128_control_v1_20260906/step_1024/seed_1"
+    },
+    {
+      "checkpoint": "k128_seed1_step4096",
+      "k": 128,
+      "seed": 1,
+      "step": 4096,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k128_control_v1_20260906/step_4096/seed_1"
+    }
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "transfer": {
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "source_budget": 16,
+    "target_budgets": [
+      16,
+      32
+    ],
+    "fit_blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "calibration_blocks": [
+      6,
+      7
+    ],
+    "ridge_fractions": [
+      0.001,
+      0.03,
+      0.3
+    ],
+    "source_compression_controls": [
+      1,
+      4
+    ],
+    "code_scaling_variants": [
+      "per_feature_RMS",
+      "common_RMS_preserving_native_decoder_units"
+    ],
+    "group_lasso": "existing sklearn1.9 MultiTaskLasso;lambda fractions .2,.05,.01;maxiter10000;tol1e-5;two scaling variants;nonzero support up to budget, no arbitrary zero-fill;ridge refit",
+    "conditional_ot": "uniform conditioned code-difference marginals;cost1-abs(correlation);epsilon.05; signed unit lift;one discovery scalar gain;full andbudgeted16/32"
+  }
+}

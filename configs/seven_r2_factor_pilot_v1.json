@@ -1,0 +1,57 @@
+{
+  "run_id": "SEVEN_R2_factor_pilot_v1_20260906",
+  "purpose": "Compare fixed SAE learning checkpoints on actual number-change interventions and source-only compact components",
+  "material_run": "runs/SEVEN_R1_functional_material_v2_20260906",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "hook_module_path": "gpt_neox.layers.3",
+  "layer_index": 3,
+  "batch_size": 32,
+  "discovery_blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "member_budgets": [
+    1,
+    16,
+    32
+  ],
+  "budget_seconds": 900,
+  "budget": "<=900s GPU, four CPU threads, <200MB new outputs; existing pilot checkpoints",
+  "scope": "All192crossed prompts remain development. Fit directions/membership on lexical blocks0-7 only; block8-15 held within this development experiment, not formal audit. No endpoint used for source selection; paired changes cancel fixed means. Subject site before distractor does not prove abstract role separation.",
+  "checkpoints": [
+    {
+      "checkpoint": "k64_step256",
+      "k": 64,
+      "step": 256,
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_pilot_v1_20260906/step_256/seed_1"
+    },
+    {
+      "checkpoint": "k64_step1024",
+      "k": 64,
+      "step": 1024,
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_pilot_v1_20260906/step_1024/seed_1"
+    },
+    {
+      "checkpoint": "k128_step256",
+      "k": 128,
+      "step": 256,
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k128_pilot_v1_20260906/step_256/seed_1"
+    },
+    {
+      "checkpoint": "k128_step1024",
+      "k": 128,
+      "step": 1024,
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k128_pilot_v1_20260906/step_1024/seed_1"
+    }
+  ]
+}
