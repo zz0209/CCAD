@@ -238,6 +238,9 @@ def main():
     from component_paper import export as export_components
     components=export_components(root,out,read)
     if components:plot['component_reuse']=components
+    from state_projection_paper import export as export_states
+    states=export_states(root,out,read)
+    if states:plot['source_state_projection']=states
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -294,6 +297,10 @@ def main():
         claims.append(dict(id='frozen_source_component_reuse',paper='Section on reusing specified source members; component theory and results appendices',
             result='A frozen allocation map exposes source-member removal and contrast. A fresh authored panel evaluates six partial masks and two additional doses; failed component-metric development and stronger full/raw controls remain. Operational source identity is not target-native or human semantic identity.',
             evidence=components['input_summary_paths']+['src/ccad/component_correspondence.py','src/ccad/component_operation.py','scripts/run_component_correspondence.py','scripts/apply_component_operation.py','scripts/summarize_component_correspondence.py','configs/ext_r11_component_confirmation_v1.json','paper/sections/appendix_theory.tex']))
+    if states:
+        claims.append(dict(id='admissible_source_states_and_finite_loss',paper='Source-state subsection and theory/method/results appendices',
+            result='Classical nonnegative projection constrains absolute source allocations before signed operations; its state-metric guarantee does not imply contrast or finite-KL improvement. Frozen fresh-input comparison retains identical constraints for all strong controls, and finite-output development failures remain.',
+            evidence=states['input_summary_paths']+['src/ccad/source_state_projection.py','src/ccad/finite_output_fit.py','scripts/run_source_state_correspondence.py','scripts/run_finite_output_correspondence.py','configs/ext_r12_state_confirmation_v1.json','paper/sections/appendix_theory.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

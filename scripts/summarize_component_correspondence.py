@@ -5,8 +5,9 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--run',required=True,type=Path);ap.add_argument('--output',required=True,type=Path);args=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--run',required=True,type=Path);ap.add_argument('--output',required=True,type=Path);ap.add_argument('--primary',default='aggregate_ols');args=ap.parse_args()
     run=args.run if args.run.is_absolute() else ROOT/args.run
+    cfg=json.loads((run/'config.resolved.json').read_text());seed_pairs=cfg['seed_pairs'];source_seeds=sorted({s for s,t in seed_pairs});involved_seeds=sorted({v for pair in seed_pairs for v in pair})
     groups=collections.defaultdict(list);seedgroups=collections.defaultdict(list);cases=[];raw=run/'metrics.raw.jsonl';count=0;digest=hashlib.sha256()
     strata=collections.defaultdict(lambda:[0,0.]);interactions={}
     for line in raw.open('rb'):
@@ -26,7 +27,7 @@ def main():
     avg=lambda rows,k:sum(r[k] for r in rows)/len(rows)
     rows=[]
     for key,values in groups.items():
-        means=[dict(source_seed=seed,**{k:avg(seedgroups[key+(seed,)],k) for k in values[0]}) for seed in range(1,6)]
+        means=[dict(source_seed=seed,**{k:avg(seedgroups[key+(seed,)],k) for k in values[0]}) for seed in source_seeds]
         rows.append(dict(zip(['factor','consumer','dose','role','mask','method'],key),n=len(values),**{k:avg(values,k) for k in values[0]},source_seed_means=means))
     pooled=collections.defaultdict(list)
     for row in rows:
@@ -34,19 +35,18 @@ def main():
         pooled[key].append(row)
     pooled_rows=[]
     for key,values in pooled.items():
-        means=[dict(source_seed=seed,kl=sum(next(s['kl'] for s in r['source_seed_means'] if s['source_seed']==seed) for r in values)/len(values)) for seed in range(1,6)]
+        means=[dict(source_seed=seed,kl=sum(next(s['kl'] for s in r['source_seed_means'] if s['source_seed']==seed) for r in values)/len(values)) for seed in source_seeds]
         pooled_rows.append(dict(zip(['factor','consumer','dose','role','method','mask_family'],key),masks=len(values),n=sum(r['n'] for r in values),kl=avg(values,'kl'),number_error=avg(values,'number_error'),time_error=avg(values,'time_error'),source_number_effect=avg(values,'source_number_effect'),source_time_effect=avg(values,'source_time_effect'),label_agreement=avg(values,'label_agreement'),source_seed_means=means))
     lookup={tuple(r[k] for k in ['factor','consumer','dose','role','mask_family','method']):r for r in pooled_rows};comparisons=[]
-    cfg=json.loads((run/'config.resolved.json').read_text());seed_pairs=cfg['seed_pairs']
     for key,row in lookup.items():
-        if key[-1] in ['source','aggregate_ols']:continue
-        ref=lookup[key[:-1]+('aggregate_ols',)]
+        if key[-1] in ['source',args.primary]:continue
+        ref=lookup[key[:-1]+(args.primary,)]
         byseed={r['source_seed']:r['kl'] for r in row['source_seed_means']};refseed={r['source_seed']:r['kl'] for r in ref['source_seed_means']}
         loo=[]
-        for seed in range(1,6):
+        for seed in involved_seeds:
             keep=[source for source,target in seed_pairs if seed not in [source,target]]
-            loo.append(dict(removed_seed=seed,retained_directions=len(keep),primary_minus_comparator=sum(refseed[s]-byseed[s] for s in keep)/len(keep)))
-        comparisons.append(dict(factor=row['factor'],consumer=row['consumer'],dose=row['dose'],role=row['role'],mask_family=row['mask_family'],method=row['method'],reference='aggregate_ols',kl=row['kl'],reference_kl=ref['kl'],relative_reduction=1-row['kl']/ref['kl'],primary_relative_reduction=1-ref['kl']/row['kl'],directions_better=sum(a['kl']<b['kl'] for a,b in zip(row['source_seed_means'],ref['source_seed_means'])),primary_directions_better=sum(b['kl']<a['kl'] for a,b in zip(row['source_seed_means'],ref['source_seed_means'])),leave_incident_seed_out=loo))
+            loo.append(dict(removed_seed=seed,retained_directions=len(keep),primary_minus_comparator=sum(refseed[s]-byseed[s] for s in keep)/len(keep) if keep else None))
+        comparisons.append(dict(factor=row['factor'],consumer=row['consumer'],dose=row['dose'],role=row['role'],mask_family=row['mask_family'],method=row['method'],reference=args.primary,kl=row['kl'],reference_kl=ref['kl'],relative_reduction=1-row['kl']/ref['kl'],primary_relative_reduction=1-ref['kl']/row['kl'],directions_better=sum(a['kl']<b['kl'] for a,b in zip(row['source_seed_means'],ref['source_seed_means'])),primary_directions_better=sum(b['kl']<a['kl'] for a,b in zip(row['source_seed_means'],ref['source_seed_means'])),leave_incident_seed_out=loo))
     interaction_groups=collections.defaultdict(list)
     for key,values in interactions.items():
         assert len(values)==3
@@ -54,7 +54,7 @@ def main():
         interaction_groups[key[:-1]].append(dict(number_interaction=v[0],time_interaction=v[1],source_number_interaction=v[2],source_time_interaction=v[3],absolute_source_number_interaction=abs(v[2]),absolute_source_time_interaction=abs(v[3]),number_error=abs(v[0]-v[2]),time_error=abs(v[1]-v[3])))
     interaction_rows=[dict(zip(['factor','consumer','role','method','source_seed'],key),n=len(values),**{k:avg(values,k) for k in values[0]}) for key,values in interaction_groups.items()]
     strata_rows=[dict(zip(['factor','consumer','role','method','source_seed','stratum','level'],key),n=v[0],kl=v[1]/v[0]) for key,v in strata.items()]
-    payload=dict(written_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),run=str(run.relative_to(ROOT)),raw_rows=count,raw_sha256=digest.hexdigest(),run_summary=json.loads((run/'metrics.summary.json').read_text()),rows=rows,pooled=pooled_rows,comparisons=comparisons,fixed_cases=cases,strata=strata_rows,interactions=interaction_rows,scope='Equal authored rows within each mask, then equal mask/seed means. Five cyclic directions share SAEs; no independent-seed confidence claim. All source errors/inactive cases retained. Component family is the six declared non-whole masks, not an exhaustive source-subset universe. Higher-dose component means contain only firsthalf and must not be treated as the full six-mask family.')
+    payload=dict(written_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),run=str(run.relative_to(ROOT)),raw_rows=count,raw_sha256=digest.hexdigest(),run_summary=json.loads((run/'metrics.summary.json').read_text()),primary=args.primary,seed_pairs=seed_pairs,rows=rows,pooled=pooled_rows,comparisons=comparisons,fixed_cases=cases,strata=strata_rows,interactions=interaction_rows,scope='Equal authored rows within each mask, then equal mask/seed means. Evaluated directions and source seeds are explicit; shared SAEs are not independent repeats. Empty leave-incident-seed-out sets report null. All source errors/inactive cases retained. Component family is the six declared non-whole masks, not an exhaustive source-subset universe. Higher-dose component means contain only firsthalf and must not be treated as the full six-mask family.')
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(payload,indent=2)+'\n')
     brief=[c for c in comparisons if c['method'] in ['component_half','component_singleton'] and c['mask_family']=='components' and c['dose']==1]
     print(json.dumps(dict(rows=count,summary=str(args.output),comparisons=brief)))

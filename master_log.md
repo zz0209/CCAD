@@ -5019,3 +5019,129 @@ GPU自然释放后实查1339/16303MiB、util0与gpu-0free。已按240秒预算�
 本块同时补记CORRECTION范围：初稿新H转置记法已对齐既有Equation4和始终正确的代码，未改实验；一次中间TeX命令丢失数学delimiter及首个副本默认TeX缓存为空失败均保留原日志，最终修复通过，不算科学失败。旧负结果与原始身份未重写。报告artifacts/extension_five_20260907/R11_REPORT.md（SHA256f13c7253cc5da1269c8855ecc4437ef71417f9192fcb52947a635758b2d57189）；稿件重放见r11_components/PORTABLE_BUILD_CHECK.json，收口前六文件字节归档archive/research_workflow_20260907/r11_close_20260907T204801Z/manifest.json。
 
 本COMPLETE落盘后才推进completed10→11、extension2→3，退出旧工作卡。第12轮优先检查上下文相关下游目标/有限LM loss与紧凑支持的匹配，先读旧Fisher失败再最小实测，匹配同LM监督对照；仅在已暴露数据开发，有信号则新数据冻结确认。当前NOT_MET：raw/full精度、自然/target-native语义和完整同行用途比较未解决。第13轮统一最终包后原ccad置PAUSED并保留，不加14；本轮不暂停。随后白名单代码/配置/master_log成组commit/push，R11_SYNC记录核对，研究稿/数据仍本地，不扩大公开范围。
+
+
+## SEVEN_R12 — START: fit reusable maps to finite downstream effects
+
+实际写入UTC：2026-09-07T21:01:29Z。round_id SEVEN_R12，新增阶段4/5，START。登记事件开始同UTC；此前定向读旧Fisher记录、R11方法/消费者和官方资料的精确开始未知。已完成仍11，未计第12轮完成。R11完整40页稿/结果/317项清单已交付并同步HEAD7ad361310722a8085bf0556be915fd6c69575db2；旧稿及入口先逐字归档archive/research_workflow_20260907/r12_start_20260907T210129Z。
+
+选择理由：紧凑组成操作已在新512输入优于atom且多层优于dense，但raw/full始终更强；仅改source-mask固定度量没有稳定提升。实际核对旧F4_fisher_refit：pointwise局部Fisher主要worstoperator KL比值.176313仍不如Euclidean.151365，absoluteKL也不更好，次NLL不能代替主要失败。因此优先直接优化有限干预后的完整词表KL，而非重跑局部Fisher或固定可逆度量。拟合保持signed H的source-code输出和可复用mask接口，真实损失依赖上下文/操作；同源组、同支持起点、同输出监督预算的dense/one-to-one/scalar/full-code/raw控制必须实际训练。
+
+本轮先用原384temporal开发素材和旧128固定评价块作小型判别，source3→4两factor为预选pilot；全部已暴露，不能称确认。复用最后层LN+unembedding，推导低维精确计算并用实际原模型输出/梯度核对，避免每次从全Transformer反传。全词表输出用于拟合后，相同输出的KL只是保真确认，不能成为唯一语义/因果证据；保留成员/操作、剂量、上下文及独立源错误判断。发现可信改善再扩大五共享seed，方法/主要端点/控制冻结后生成真正新输入，保留失败和全部对照。以新结果、具体组成用途和完整稿图交付，不把优化下降/新代码当科学收益。
+
+主动学习：实际读MAS v7§3.3–3.5的多方向/within-model行为约束与已知stitching边界，核对PyTorch2.8 LayerNorm/LBFGS官方接口。当前source-aligned单向map不是完整MAS或可逆causal abstraction；成熟优化不是算法首创。后续原文/源码/图版、许可证和具体借鉴按实查写registry。
+
+资源启动实测NVIDIA GeForce RTX 5070 Ti, 16303 MiB, 1615 MiB, 6 %；gpu-0状态free。复用现有Pythia1B和五4M SAE/lockedr004环境，不改其他项目cpu/disk租约。暂分配7200s管理GPUwall、6GB项目、0新bulk/训练/包/付费/远程任务预算，按实测速率收敛范围，不能虚构kernel工时。有效工作/未测等待未知。本轮最终先COMPLETE后计12；第13轮完成统一项目包后原ccad置PAUSED，保留配置历史，不加14。
+
+
+## SEVEN_R12 — PROGRESS: finite-output implementation and bounded paired pilot
+
+实际写入UTC：2026-09-07T21:10:10Z。round_id SEVEN_R12，PROGRESS。本阶段推导并实现固定decoder子空间的精确LayerNorm+全词表readout：缓存底项/decoder投影以及残差方差和cross/Gram，保留实际上下文相关归一化，输出与梯度在带affine参数的双精度fixture核对，恒定shift方向严格无作用；2项针对性测试PASS0.903s。代码finite_output_fit.py，真实模型投影/梯度另在每factor拟合前对原float32 head核对，最终指标仍走原实际模型tail。
+
+接下来EXT_R12_output_pilot_v1_20260907，预选source3→4两factor，固定旧128评价行。原384temporal用于256 fit/128 checkpoint-calibration；初始几何map已用384codes，不能把calibration称独立。每factor训练aggregate OLS/dense的完整矩阵、一对一diag、raw/full和单一OLS gain，共六个相同source输出监督控制；保留原五个几何比较。whole加两个不同于评价mask的固定半组、两consumer作为fit操作，真全词表KL，标准LBFGS strong-Wolfe每轮至多5步×6checkpoint，按cal KL选含0的iterate；固定1%初始KL的预测变化anchor。评价保留全部七source masks/源错误/两role，不据结果筛选。预算1800s管理wall；接口仍一张signed map任意mask调用，不是新DAS/MAS全实现。PILOT_STAGE保留代码/config身份；尚无新科学结果，不推进计数。
+
+
+## SEVEN_R12 — CORRECTION: preserve production head arithmetic for fitting
+
+实际写入UTC：2026-09-07T21:18:01Z。round_id SEVEN_R12，CORRECTION。v1结束事件见runs/EXT_R12_output_pilot_v1_20260907/status.json；实际wall51.1124652s、704完整模型/1216cached-tail、0干预结果行、0完成拟合。虽然双精度小矩阵代数/梯度检查过，实际模型float32 head对重排投影的最大logprob差0.00400781、梯度相对差0.000311945超过预定1e-4，所以在拟合前FAIL，原run/source/config/日志保留。精确误差来源未完全隔离，不能仅猜TF32；不放宽阈值掩盖它。
+
+修复为原LayerNorm和完整unembedding直接autograd，按实际消费者先在double算source物理更新再round到原float32残差并相加；仍复用最后层cache，不需反传全部Transformer。新验证将对原实际tail输出和完整模型hook梯度核对。新增直接路径的显式成员求和/梯度测试后3项PASS0.328s；原解析投影保留为有限精度差异证据，未作为拟合backend。EXT_R12_output_pilot_v2_20260907使用相同数据、支持、损失、控制和1800s预算，只修计算路径；不因v1失败另算研究轮。先前沙箱共享租约目录拒写发生在run创建前，原wrapper日志保留；按已有授权取得父目录资源租约后正常运行，未修改他人lease。
+
+
+## SEVEN_R12 — CORRECTION: compare the same distribution-loss gradient
+
+实际写入UTC：2026-09-07T21:21:32Z。round_id SEVEN_R12，CORRECTION。v2的实际生产head前向最大logprob差8.88e-16，但旧gradient helper先算两输出权重差再与hidden点积，新端先算完整head再相减；这两个数学等价但浮点kernel不同的路径相对差1.148195e-4，超过原1e-4，于是11.607012s后、0拟合/0指标行退出。原v2全部保留，非科学负结果。这个具体核对失配由源码检查发现，差异未被解释为映射或LM行为失败。
+
+v3只修验证消费者：拟合与完整Transformer hook都执行相同全词表分布loss，直接求source-code梯度，并同时核对完整模型前向；不放宽1e-4阈值或改试验数据/优化规则。仍先验证再拟合，原解析重排未启用。两次有run的预拟合失败管理wall累计62.7194772s计入本轮7200s，租约正常释放。没有新科学结果，继续已授权的本轮实测。
+
+
+## SEVEN_R12 — CORRECTION: align the validation batch with the production cache
+
+实际写入UTC：2026-09-07T21:25:20Z。round_id SEVEN_R12，CORRECTION。v3统一全分布loss后，cached生产head仍与原tail前向8.88e-16一致，但四行完整Transformer的logprob差0.02555965、梯度相对差0.00130738；11.2417777s、0拟合/0结果行后停止，source/config/原输出保留。三次预拟合失败共73.9612549s，证据HEAD_NUMERIC_DIAGNOSTICS.json；这没有改变原科学比较。
+
+进一步检查发现，旧cache和既有full-tail核对均按batch64生成，本次临时完整模型梯度witness用了batch4。下一v4将witness与实际拟合/评价统一为同一batch64；先实测该具体batch假说，不提高阈值，也不将成功范围外推到其他batch形状。源码签名/方法/源组/数据/预算保持，生产head直接反传继续使用；如果形状匹配仍不同，再隔离差异，不把工程检查当新科学进展。
+
+
+## SEVEN_R12 — PROGRESS-CORRECTION: production equivalence established, fix noncontiguous optimizer input
+
+实际写入UTC：2026-09-07T21:28:51Z。round_id SEVEN_R12，PROGRESS/CORRECTION。v4使用与缓存/生产相同batch64后，完整Transformer与cache的full-vocabulary logprob最大差0、同loss source-code梯度相对差0；原tail前向差3.55e-15。相对v3的batch4失败，支持本机此计算路径的batch依赖解释，不外推其他batch。此后quantity OLS有限拟合完成4.0215s，所有checkpoint已记录；训练下降不是科学结果。
+
+dense初始化来自非连续保存矩阵，torch LBFGS内部view平展梯度报错，15.955463s后退出；原v4保留0评价行及已完成OLS优化历史，权重当时尚未到factor统一保存处，无法复用，v5重新算该4秒步骤并计入成本。只将标准化参数设为contiguous，不改变数值/支持/目标，新增转置矩阵实际LBFGS回归测试后4项PASS1.304s。同时每个方法完成即保存其weights，防止后续局部错误导致重跑。
+
+EXT_R12_output_pilot_v5_20260907数据、源组、所有控制与1800s预算保持，代码快照保留修正身份。现累计有run的失败wall89.9167179s；未扩大工程范围或把修复计为科学收益。GPU租约正常释放，原始结果/失败/旧论文均保留。
+
+
+## SEVEN_R12 — PROGRESS: complete first pilot rejects partial-data refitting
+
+实际写入UTC：2026-09-07T21:35:56Z。round_id SEVEN_R12，PROGRESS。EXT_R12_output_pilot_v5_20260907完成PASS/contractPASS，118.2364282s、43008真实评价行，raw SHA256446314e5d344d699b857a3901f85d4d89f2eb957262b177c412c0c353156ed5f；实际结束事件见status。source3→4两factor在batch64的原完整模型前向/完整loss梯度均与缓存为0差；生产tail前向差3.55e-15。全部六有限输出拟合/五原比较/源错误已评价七mask、两role/consumer。虽然训练loss下降，OLS/dense/full/raw两个factor均按calibration选回checkpoint0；只有atom及number scalar改了系数，作用无统一收益。R12_PILOT_SUMMARY保留全结果，不把优化下降称科学提升。
+
+有依据的单次改法：原几何map已用全部384行，而这一pilot只更新256行，留出的128几何已用行选择停止点。下一EXT_R12_output_full_development_v1_20260907覆盖原全部384temporal行拟合有限loss，以旧R4 role面板固定block0全部128行独立于原384文本选择iterate；这些均为已暴露开发数据。全部512已暴露R11输入用于本次开发评价；不升级为确认，不按评价改checkpoint。原支持/源组/六控制/损失/30步上限/正则规则保持，仅数据覆盖与校准位置改变，额外source输出监督预算清楚报告。若仍无改善，不继续同型权重/停止点网格；转向最有依据的表示约束或收口已测范围。
+
+共享summary仅修单方向pilot的缺失seed/空leave-out处理，新增显式primary参数，默认原方法保持；旧脚本逐字保存在r12_output_loss/summarize_components_before_r12.py，旧R11结果未改。新run预算1800s，实际原head拟合每method约1–7s，已有7200s本轮预算足够，其他项目租约未动。当前还没有可推广正结果，completed仍11。
+
+
+## SEVEN_R12 — PROGRESS: finite-loss update does not transfer broadly; inspect admissible source states
+
+实际写入UTC：2026-09-07T21:45:28Z。round_id SEVEN_R12，PROGRESS。EXT_R12_output_full_development_v1_20260907完成PASS/contractPASS，288.9142887s、172032评价行，raw SHA25694ad881b0461d0d48bdd71f2ab65d1403ce904d84284b777178c9ab5c525e841；事件结束见status。完整384行拟合、另128旧role行校准后，finite OLS选择非零iterate，但对512已暴露R11输入六mask八分层只2/8比原OLS更准，且增益有限，其余退步；time四层均未改善。强raw/full仍更准，停止同型loss/anchor/checkpoint续调，不推广这一方法。完整11方法+source、source错误、两role/consumer在R12_FULL_DEV_SUMMARY.json；尚无新独立确认。
+
+并行轻量检查发现另一具体目标失配：真实绝对source codes非负，但原OLS的16%–27%坐标为负；现有五source冻结512预测的正部clip降低code误差3.3%–12.5%、整体物理误差0.9%–11.4%。读取/物化/几何指标的原始输入hash在NONNEGATIVE_READOUT_PROBE.json，没有新增LM推理。R12_METHODS写出以mask度量做非负锥投影的经典最近点不等式和正确部署次序，作为下一有依据的候选；尚未实现或评价，不把几何改进当功能成功。保证仅针对绝对状态的度量误差，contrast和有限KL必须实测。
+
+SOURCE_REVIEW及registry已记录MAS v7真实方法/图版和PyTorch2.8源码/许可，15.38MB公开PDF本地保存。下一步优先一次可承受的投影实际判别，给所有强基线相同约束；有可信收益再冻结新输入。当前仍第12轮，completed11；本轮原7200s/6GB预算未耗尽，GPU已由成功run自然释放，未修改其他项目lease。
+
+
+## SEVEN_R12 — PROGRESS: admissible absolute-state pilot launch
+
+实际写入UTC：2026-09-07T21:52:17Z。round_id SEVEN_R12，PROGRESS；事件时间为代码/测试/配置形成阶段，试验启动与结束以新run status为准。已实现src/ccad/source_state_projection.py与实际LM消费者脚本；标准非负锥投影M=(G+diagG)/4使用既有SciPy NNLS，逐坐标clip为同预算对照，全部五个原方法都应用两种投影。signed H保留，分别投影绝对donor/recipient再作差。针对相关metric的独立KKT/投影不等式和差分反例两项测试PASS（1.029s），不据此宣称LM改善。源码/许可阅读和hash见NNLS_SOURCE_REVIEW.json。
+
+EXT_R12_state_pilot_v1_20260907配置SHA256 0314a9c37662fe6b5a835bd3058b24a474ffebd5810f074e9b3b1b97ff438c07，source3→4、旧R11第一个lexical block128行、7mask×2consumer×2factor×16方法含source、dose1；不新拟合/新训练。新实验900s上限在原7200s/6GB预算内。刚检查GPU无lease、桌面1723MiB/16303MiB约4%利用；其他项目cpu-heavy/disk-d-io活跃，保持其任务，NNLS与数据读出限定2线程、GPU托管。已有四失败与两次finite输出负结果保持；此时本轮completed仍11。
+
+
+## SEVEN_R12 — PROGRESS: state pilot and freeze before new model inputs
+
+实际写入UTC：2026-09-07T21:56:51Z。round_id SEVEN_R12，PROGRESS；pilot实际结束2026-09-07T21:54:03.409664+00:00，冻结事件同本块UTC，模型尚未对新512行推理。EXT_R12_state_pilot_v1_20260907 PASS/contractPASS，87.0418766s，57344行，raw SHA2560fb94b4c5494658eab7d4d590064c06498ce3241f065669c8178451f38f28d90。原OLS加cone在八主要层6/8改善，其余两个数量删除条件退步；raw仍全层更准。全部15方法+source在R12_STATE_PILOT_SUMMARY.json。仅据开发选择cone为新确认primary，不宣称突破或普适收益，不做更多metric/loss网格。
+
+STATE_FREEZE.json在新输入推理前冻结30文件及512新文本，surveyor/biologist/violinist/astronomer四词块、四cue对、两句法/role，和9已有panel精确文本交集0，先前项目JSON无这四noun词条；模板/role及两cue对复用、底模预训练未知。确认five controlled cyclic seeds、原16/32 source/target支持、全部五基线各identity/clip/cone、7mask和两consumer、dose1，原始1146880行。主要six partial masks八分层，固定source3/time row0/256实例与所有源错误保留。物化上限300s，确认2400s，在既定7200s/6GB内；不新增拟合、训练、付费、权重或bulk cache。本轮仍进行中，先实际确认和稿件交付后再COMPLETE/计数。
+
+
+## SEVEN_R12 — PROGRESS: fresh material ready, confirmation running, executable state consumer and proof
+
+实际写入UTC：2026-09-07T22:01:17Z。round_id SEVEN_R12，PROGRESS；material实际结束2026-09-07T21:57:23.191404+00:00，26.5246425s、512行，PASS/contractPASS，raw SHA256341fdee98715e950f39ffdf8466a1ecdcd2eafd3e7a54267ba80f645dcd4ce31。冻结前最初librarian候选在旧f4/sevenR4配置出现，因此首次freeze准备在写文件/模型推理前退出；原准备源保留freeze_source_before_lexical_check.py，换astronomer后21:56:51Z完成最终freeze。无输出选择与数据重跑。EXT_R12_state_confirmation_v1_20260907现按冻结规则运行，完成前没有新科学结论。
+
+可调用ComponentOperation新增metadata声明的absolute-state projection，默认identity历史运算路径保持；export可选择明确方法。新路径针对先投影端点/再作有符号consumer的测试与相关metric/KKT/差分反例共3项PASS1.037s，原两项API回归PASS0.105s，不重跑无关测试。纸面已加入app:state_theory/app:state_methods和标准Lawson–Hanson来源，DERIVATION_PACKAGE同步推导，尚未编译当前main.pdf。证明严格限于绝对状态metric，明确六固定mask分布与Bernoulli不同，contrast/finiteKL不保证改善，依赖源坐标、不建立native/semantic identity。API与稿件工作不修改冻结实验实现或计算结果；结果稿图等确认完成后一次整合。
+
+
+## SEVEN_R12 — PROGRESS: contextual allocation explanation and finite-loss failure boundary
+
+实际写入UTC：2026-09-07T22:19:44Z。round_id SEVEN_R12，PROGRESS；本块写入事件为推导、固定实例几何和排版结果，不冒充尚在运行确认的结束时间。新src/ccad/source_state_explanation.py从已算投影的free集合导出B_F：free行对自身为I，对active列为M_FF^-1 M_FA；x_j B_F H_j^T逐target成员求和等于当前u。不同上下文B_F可变，边界不声明唯一Jacobian，换输入必须重新投影。固定正单位rescaling/成员置换的物理不变性已推导；不扩为任意GL或源选择过程的不变性。两项针对值分解/不同active集合/固定单位rescaling的测试PASS0.345s，无实验实现改动。
+
+预先固定的source3/time新row0/256现已读取NPZ并物化几何：源各8个正激活，线性预测分别7/6负值，cone后仍25/26正值；现有正值也因相关decoder改变。局部target项和与实际projectedstate误差分别2.13e-14/1.07e-14。它说明非负性仅是必要约束，未恢复源稀疏模式或证明encoder可实现；不是新的独立确认或source语义名称。精确状态/输入将在最终KEY_RESULTS一并导出。finite全384开发的训练KL下降，但partial仅2/8改善，whole也仅3/8改善，不能只归因于mask分布失配；未按新数据继续调参。
+
+排版两次失败原因是既有TeX缓存缺ntxsy5.vf，原有效646423byte主稿一直保留；仅化简一个嵌套约束下标未解决，不将其当科学修复。标准compiler允许官方bundle下载后仅补1816byte字体映射，22:16:13UTC文件时间；成功build见MATH_AND_INTERFACE_STAGE。43页中间PDF SHA256d40921882e38ec5d6f1a4f2a8f281585b7c63716b43d9a83f86404530f6d0e46已归档archive/research_workflow_20260907/r12_math_preview_20260907T221944Z，当前唯一main.pdf将由最终结果版覆盖；两失败build日志保留。已实际查看17/18/22页推导/公式/方法无截断；最终全稿仍待结果整合后检查。本轮计数仍11，确认现已9/10factor完成，等待实际完成时继续汇总。有效工作/等待未连续计时，未知；没有新Python/训练/付费。
+
+
+## SEVEN_R12 — PROGRESS: frozen fresh nonnegative-state confirmation
+
+实际写入UTC：2026-09-07T22:26:54Z。round_id SEVEN_R12，PROGRESS；实际确认结束2026-09-07T22:20:51.689867+00:00。EXT_R12_state_confirmation_v1_20260907 PASS/contractPASS，1384.6880761s、1146880行，raw SHA256301158a8ccbd19e5cbcbca0a5752ec734ccdc431e42e2e4a3a095c56756b5f70；全部冻结文件/文本、真实尾层/完整模型、一致分母与finite检查过，GPU自然释放。标准summary与KEY_RESULTS保留所有方法/源错误/八主要层及依赖性；首次KEY_RESULTS脚本一个多余括号在解析阶段退出，已改正，没有触碰数据或重跑模型。
+
+科学结果：cone OLS相对同输入原线性OLS八层均改善4.708–17.330%，七层五方向全改善、quoted number contrast4/5；每层五个incident-seed删除均保持。相对同预算同cone的一对一八层改善25.885–82.590%、dense八层1.256–18.794%，但两个time contrast只有3/5方向及2/5incident删除有利。相对full-code和raw仍全部更差，KL高9.504–31.497%/28.573–63.091%。普通clip解释主要增益；cone只在7/8比clip再改善0.410–2.791%，quoted time contrast差0.979%且4/5方向更差，未宣称metric本身重大突破。
+
+固定source3新实例真实code各8正项、cone仍25/26；不同上下文的局部target项和精确加回projected值。实际whole temporal removal source/linear/cone过去概率24.2/30.3/27.9%，quoted对应27.7/24.0/22.2%，后者变差；whole temporal contrast也变差。新main/appendix直接保留这些负案例和全部15方法表，不把合法非负性当encoder可实现、稀疏恢复或语义身份。正文/证明/Methods/Results/源码接口均已更新；现在重做正式图与全稿查看，再交付，不提前COMPLETE/计数。
+
+操作包十套、71680物理向量重放最大误差0，两个实际CLI输出2×2048已完成；含metadata的当前active集合解释不被缓存当全局线性映射。完整交付定位r12_output_loss/operations、R12_STATE_CONFIRMATION_SUMMARY、R12_STATE_KEY_RESULTS及唯一paper/main.pdf。实际模型任务之外的工作/等待未连续计时，未知，最终预算会按全部九run统计；0新训练/权重/付费，TeX字体1816bytes单列。
+
+
+## SEVEN_R12 — COMPLETE: finite-loss boundary, fresh source-state correction and unified manuscript
+
+实际写入UTC：2026-09-07T22:52:39Z。round_id SEVEN_R12，新增阶段4/5，COMPLETE。登记事件开始2026-09-07T21:01:29Z，真实确认计算结束2026-09-07T22:20:51.689867+00:00，本轮结果/完整稿/报告/复用核对整理完成事件2026-09-07T22:52:39Z。有效工作与未连续计时等待未知，不用起止跨度当有效工时。选择理由是缩小紧凑source组成操作与raw/full的差距；实际先做完整词表有限loss训练，再从负source-code失配转向必要状态约束，数学、成熟实现/原文、真实结果、实例与稿件均有交付。
+
+有限loss两种覆盖设置无广泛收益，全部监督控制和四实现失败保留，未推广确认。经典NNLS cone投影在冻结后新512输入、原五SAEcyclic方向和16/32支持、六partial masks八层相对原OLS降低KL4.708–17.330%，八层incident-seed删除都保持；同cone一对一降低25.885–82.590%，同cone dense均值降低1.256–18.794%，但两个time contrast仅3/5方向、2/5incident删除有利。clip解释大部分增益，cone仅七层略好、quoted time contrast差0.979%；full/raw八层仍更准，KL差9.504–31.497%/28.573–63.091%。共享seed方向不独立，不虚构显著性或主会达标。
+
+证明与消费者区分绝对state投影、signed contrast、mask和native；凸投影不保证有限KL，active-set组成说明在当前上下文精确，不是全局固定Jacobian或任意GL等变。固定source3/time两新例真实8正项、cone25/26正项，稀疏性未恢复；temporal整组删除更近但quoted删除和temporalcontrast更差，48案例概率完整保留。官方MAS v7/SciPy/PyTorch方法源码图版、许可与未复现范围见SOURCE_REVIEW/NNLS_SOURCE_REVIEW/REFERENCE_REGISTRY。普通one-to-one并非全非负：草稿已纠正为8/10无负值、两个time map0.037%/0.842%负值，原实际表和数据未改。
+
+九run全部结束，五PASS/contractPASS、四FAIL父run保留。GPU管理脚本wall合计1995.3220300000s（0.554256h），不是纯kernel。确认1146880raw rows，SHA256301158a8ccbd19e5cbcbca0a5752ec734ccdc431e42e2e4a3a095c56756b5f70；704完整模型/1148096cached-tail查询单列。0新SAE训练、bulk、模型权重、Python包、付费和远程job。原预算7200s/6GB，当前保守约1.79GB、最终清单后精确值见R12_BUDGET。仅官方Tectonic缺失字体1816bytes增量；两个失败编译日志保留、最终已修复。收尾实查gpu-0和disk-e-io free，其他项目CPU/D盘任务保留，未修改其他lease。
+
+唯一当前paper/main.pdf47页/11图/31编号表/38表片段，SHA256243f3aecdaa71785cc476233d6cf95c7cc71f61d5345ac12aeef7afd050012b6，728091bytes；正文及四附录/源图/全数据/Bib/README已更新。208新KL、32鲁棒性单元、48概率对数值原件核对；34旧表片段原字节、全部旧figure_data键值、30freeze文件、86证据身份保持。PDF_REVIEW记录实际全页contact与新增/最终变更页单独查看范围，轻微参考vbox提示保留，无观察到内容碰撞；不是venue或用户验收证书。六脚本paper-only副本真实重建7.547s，47页文字/11PNG一致，无原run/权重/GPU，依赖同机已有包/字体/TeX缓存。10map的71680向量重放及两个实际2×2048CLI输出误差0；相关数学/生产算术/API测试已通过，未重复无关全套。
+
+报告artifacts/extension_five_20260907/R12_REPORT.md，SHA25661fa7654c50733543ffe23a4487117ef8c980be3991c20eb17c5b6369e497aca；推导/全结果/freeze/operations/来源/稿件检查位于r12_output_loss，六入口旧字节及hash归档archive/research_workflow_20260907/r12_close_20260907T224022Z/manifest.json。此COMPLETE落盘后才完成计数11→12、extension3→4，退出已完成卡；验收保持NOT_MET。本地增量R12_DELIVERY_MANIFEST随后登记，白名单代码/配置/tests/master_log成组commit/push由R12_SYNC核对，稿件/数据/参考PDF本地保留，未扩大公开范围。收尾脚本首个工具调用在JavaScript解析时退出、未执行写入，改正工具字符串后执行；不算实验或科学失败。
+
+第13轮按已授权最终科学整合与完整项目包收口：集中处理整篇贡献/可懂性/用途的决定性缺口，实际对比最邻近原文和已有强控制，不再无限续调loss/metric；统一稿图、所有阶段证据/失败、源码环境数据获取和全部轮次日志并实际提取重放。完成最终诚实对标后原ccad置PAUSED且保留配置历史，不启动14；本轮不暂停，不用轮数或文件齐全宣布主会达标。

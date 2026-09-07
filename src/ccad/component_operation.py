@@ -28,12 +28,26 @@ class ComponentOperation:
             raise ValueError('Source decoder shape differs from member identity')
         if not np.isfinite(self.allocation).all() or not np.isfinite(self.source_decoder).all():
             raise ValueError('Finite operation arrays required')
+        if self.metadata.get('state_projection','identity') not in ['identity','clip','cone_half']:
+            raise ValueError('Unknown absolute-state projection')
 
     def apply(self,selected_codes,scales=None,consumer='removal',donor_codes=None,dose=1.):
         z=np.asarray(selected_codes,dtype=np.float64)
         if z.ndim<1 or z.shape[-1]!=len(self.target_members) or not np.isfinite(z).all():
             raise ValueError('Finite target codes in the recorded member order required')
         if not np.isfinite(dose):raise ValueError('Finite dose required')
+        projection=self.metadata.get('state_projection','identity')
+        if projection!='identity':
+            from .source_state_projection import project_source_state
+            allocation=project_source_state(z@self.allocation,self.source_decoder,projection)[0]
+            if consumer=='contrast':
+                donor=np.asarray(donor_codes,dtype=np.float64)
+                if donor.shape!=z.shape or not np.isfinite(donor).all():raise ValueError('Matching donor codes required for contrast')
+                allocation=project_source_state(donor@self.allocation,self.source_decoder,projection)[0]-allocation
+            elif consumer=='removal':allocation=-allocation
+            elif consumer!='contribution':raise ValueError('Unknown consumer')
+            scales=np.ones(len(self.source_members)) if scales is None else scales
+            return dose*component_update(allocation,self.source_decoder,scales)
         if consumer=='contrast':
             donor=np.asarray(donor_codes,dtype=np.float64)
             if donor.shape!=z.shape or not np.isfinite(donor).all():raise ValueError('Matching donor codes required for contrast')

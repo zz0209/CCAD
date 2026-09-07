@@ -1,0 +1,196 @@
+{
+  "run_id": "EXT_R12_state_pilot_v1_20260907",
+  "purpose": "Test admissible absolute source states with identical projection for FCC and all strong controls",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "audit_opened": false,
+  "layers": [
+    15
+  ],
+  "noun_pairs": [
+    [
+      "accountant",
+      "accountants"
+    ],
+    [
+      "chemist",
+      "chemists"
+    ],
+    [
+      "pianist",
+      "pianists"
+    ],
+    [
+      "translator",
+      "translators"
+    ]
+  ],
+  "time_cues": [
+    [
+      "Right now",
+      "Back then"
+    ],
+    [
+      "At present",
+      "In the past"
+    ],
+    [
+      "At this very moment",
+      "Many years ago"
+    ],
+    [
+      "At the present instant",
+      "In earlier times"
+    ]
+  ],
+  "templates": [
+    "pp",
+    "object_relative"
+  ],
+  "labels": [
+    " is",
+    " are",
+    " was",
+    " were"
+  ],
+  "batch_size": 64,
+  "budget_seconds": 900,
+  "budget": "At most900s GPU-managed wall inside R12 total7200s/6GB. Existing assets, 2 CPU threads, no bulk write or paid resources.",
+  "scope": "Previously exposed R11 panel, first lexical block only; no fit or new confirmation",
+  "sae_layer": 15,
+  "lexical_partition_size": 4,
+  "discovery_blocks": [],
+  "discovery_cues": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "raw_operations": [],
+  "sae_checkpoints": [
+    {
+      "seed": 1,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_1"
+    },
+    {
+      "seed": 2,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_2"
+    },
+    {
+      "seed": 3,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_3"
+    },
+    {
+      "seed": 4,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_4"
+    },
+    {
+      "seed": 5,
+      "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_5"
+    }
+  ],
+  "material_run": "runs/EXT_R11_component_material_v1_20260907",
+  "member_budgets": [
+    16,
+    32
+  ],
+  "gradient_path_points": [
+    0,
+    0.5,
+    1
+  ],
+  "gradient_path_weights": [
+    0.16666666666666666,
+    0.6666666666666666,
+    0.16666666666666666
+  ],
+  "gradient_batch_size": 8,
+  "source_run": "runs/SEVEN_R4_l15_source_v1_20260907",
+  "source_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "target_budgets": {
+    "number": 16,
+    "time": 32
+  },
+  "fit_blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "alphas": [
+    0.0001,
+    0.01,
+    1.0
+  ],
+  "single_factor_methods": [
+    "fcc_group",
+    "same_members_native",
+    "direct_target_native",
+    "full_code_ridge",
+    "rrr_rank1",
+    "rrr_rank4",
+    "dsca_rank1",
+    "raw_native_units",
+    "wrong_factor"
+  ],
+  "correspondence_run": "runs/SEVEN_R4_l15_correspondence_v1_20260907",
+  "das_steps": 100,
+  "das_checkpoint_every": 20,
+  "das_batch_size": 4,
+  "das_learning_rate": 0.005,
+  "native_gain_candidates": [
+    0.25,
+    0.5,
+    1,
+    2,
+    4
+  ],
+  "run_parent": "EXT_R11_component_confirmation_v1_20260907",
+  "position_names": [
+    "time",
+    "number",
+    "distractor"
+  ],
+  "position_aliases": {
+    "time": "final",
+    "number": "final"
+  },
+  "encode_only": true,
+  "threshold_source_split": "All linear maps already frozen in R11; projections use only each absolute prediction and fixed source decoder. This pilot selects methods, not confirmatory data.",
+  "evidence_level": "controlled_state_projection_development",
+  "simple_source_controls": true,
+  "final_layer_cached_tail": true,
+  "behavior_run": "runs\\SEVEN_R4_l15_behavior_v1_20260907",
+  "frozen_dir": "artifacts\\seven_round_rebuild_20260906\\r4_l15\\frozen",
+  "development_material_run": "runs/SEVEN_R4_l15_material_v1_20260907",
+  "evaluation_code_run": "runs/EXT_R11_component_material_v1_20260907",
+  "seed_pairs": [
+    [
+      3,
+      4
+    ]
+  ],
+  "evaluation_panel_previously_exposed": true,
+  "aggregate_run": "runs/EXT_R10_complete_support_v1_20260907",
+  "consumers": [
+    "contrast",
+    "complete_removal"
+  ],
+  "doses": [
+    1.0
+  ],
+  "cue_roles": [
+    "temporal",
+    "quoted"
+  ],
+  "initial_map_run": "runs/EXT_R11_component_pilot_v1_20260907",
+  "state_projections": [
+    "clip",
+    "cone_half"
+  ],
+  "evaluation_blocks": [
+    0
+  ]
+}
