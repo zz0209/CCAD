@@ -48,8 +48,9 @@ def main():
                 if slot is not None:delta[:,1-slot]=0
                 work.measure('source_checkpoint',factor,delta,seed=spec['seed'],step=spec['step'])
             work.progress('CHECKPOINT_FUNCTION_COMPLETE',step=spec['step'],seed=spec['seed'])
-        write(work.run/'source_components.json',dict(rows=components,ranking='Same frozen raw-path gradient ranking rule, re-evaluated on each independent checkpoint; final checkpoint exactly replays original source support and operation',discovery_row_ids=ids.tolist()))
-        work.checks['final_source_replay']=len(final_replay)==(10 if 4096 in selected_steps else 0) and all(final_replay)
+        write(work.run/'source_components.json',dict(rows=components,ranking='Same frozen raw-path gradient ranking rule, re-evaluated at each dependent checkpoint; feature identities may change. Original4096 support and operation replay is checked only if that checkpoint is included.',original4096_replay_required=4096 in selected_steps,discovery_row_ids=ids.tolist()))
+        if 4096 in selected_steps:
+            work.checks['original4096_source_replay']=len(final_replay)==10 and all(final_replay)
         work.checks['all_rows']=len(work.metrics)==len(checkpoints)*3*work.n
         work.checks['unique']=len(work.metrics)==len({(r['step'],r['seed'],r['factor'],r['row_id']) for r in work.metrics})
     except Exception as exc:

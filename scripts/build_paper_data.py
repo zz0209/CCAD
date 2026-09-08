@@ -50,6 +50,7 @@ def main():
     data_dir.mkdir(parents=True,exist_ok=True);table_dir.mkdir(parents=True,exist_ok=True)
     sources=[]
     def read(rel):
+        rel=Path(rel)
         p=root/rel;b=p.read_bytes();sources.append(dict(path=rel.as_posix(),bytes=len(b),sha256=hashlib.sha256(b).hexdigest()))
         return json.loads(b)
     context=read(BASE/'r4_l15/R4_L15_CONTEXT_SUMMARY.json')
@@ -244,6 +245,12 @@ def main():
     from toy_paper import export as export_toys
     toys=export_toys(root,out,read)
     if toys:plot['learned_superposition']=toys
+    from native_transfer_paper import export as export_native
+    native=export_native(root,out,read)
+    if native:plot['external_native_transfer']=native
+    from training_curve_paper import export as export_training32
+    training32=export_training32(root,out,read)
+    if training32:plot['training32_curve']=training32
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -308,6 +315,21 @@ def main():
         claims.append(dict(id='learned_superposition_fidelity_and_truth',paper='Learned-toy main section; toy theory, methods, result and reproduction appendices',
             result='Two new trained toy seeds and five controlled SAEs per material confirm fixed-support finite ReLU fitting while preserving stronger full-code controls. A controlled L1 change improves the specified source grouping against latent-factor truth while lowering FVE; this does not identify optimal semantic information or replace the real LM evidence.',
             evidence=toys['input_summary_paths']+['src/ccad/toy_superposition.py','src/ccad/rectified_operation.py','scripts/run_r13_learned_superposition.py','scripts/apply_rectified_operation.py','scripts/export_r13_operations.py','configs/insert_r13_frozen_low_l1_v1.json','configs/insert_r13_frozen_high_l1_v1.json','paper/sections/toy_theory.tex']))
+    if native:
+        claims.append(dict(id='target_native_external_operations',paper='Native writing method and external-task results; native-writing appendices',
+            result='Separate reading and native writing supports, nonnegative target-state increments, and equally supervised finite writers on four CausalGym train tasks at nonfinal layer-3 sites. One dictionary direction and seven evaluation prompt components per task are exploratory; source weakness, full/raw controls and untrained operation outcomes remain.',
+            evidence=native['input_summary_paths']+['src/ccad/native_operation.py','scripts/run_causalgym_native_transfer.py',
+                'scripts/native_transfer_paper.py','configs/final5_r14_causalgym_native_cpu_v2.json','configs/final5_r14_causalgym_source_ig16_v3.json',
+                'configs/final5_r14_causalgym_finite_writer_v4.json','paper/sections/native_theory.tex','paper/sections/native_methods.tex']))
+        if native.get('semantic'):
+            claims[-1]['evidence'] += ['src/ccad/semantic_context_matching.py','scripts/prepare_semantic_context_matches.py',
+                'configs/final5_r14_semantic_contexts_v2.json','configs/final5_r14_causalgym_semantic_controls_v5.json']
+    if training32:
+        claims.append(dict(id='controlled_training_to32m',paper='Training trajectory and fixed-teacher transfer; Appendix training continuation',
+            result='Five controlled dictionaries continued from8M to32M with fresh natural tokens and a declared new LR phase. Quality, all-atom geometry, reselected source function and fixed-teacher target transfer are distinct endpoints; direction and checkpoint dependence remain explicit.',
+            evidence=training32['input_summary_paths']+['scripts/training_curve_paper.py','scripts/run_training_checkpoint_curve.py',
+                'scripts/run_checkpoint_atom_matching.py','scripts/run_composition_checkpoint_function.py',
+                'configs/final5_r14_l15_continue32m_five_v1.json','configs/final5_r14_continued_source_function_v1.json']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

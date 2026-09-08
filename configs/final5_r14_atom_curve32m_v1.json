@@ -1,0 +1,23 @@
+{
+  "run_id": "FINAL5_R14_atom_curve32m_v1_20260908",
+  "purpose": "Complete all-dictionary atom matching at the fixed32M controlled training budget",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "stages": [
+    {
+      "step": 32768,
+      "checkpoint_root": "D:/CCAD_Storage/training_curves/FINAL5_R14_l15_continue32m_five_v1_20260908/step_32768"
+    }
+  ],
+  "first_pair_budget_seconds": 90,
+  "budget_seconds": 600,
+  "budget": "At most600s CPU-heavy, four threads, below8GB estimated peakRAM, no training or task outcomes; fixed finished32M checkpoints",
+  "scope": "Complete 8192-atom absolute normalized decoder cosine with Hungarian assignment for all ten unordered pairs at each checkpoint. Signed matched unit conversion retained for actual downstream consumers. The five controlled seeds and checkpoints are dependent; this is geometry, not a functional or convergence certificate. Same training configuration and stream/order within each budget; later budgets include declared fresh data and LR phase. No activity or outcome filtering.",
+  "audit_opened": false,
+  "candidate_family_frozen": true
+}

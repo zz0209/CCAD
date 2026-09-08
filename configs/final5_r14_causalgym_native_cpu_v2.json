@@ -1,0 +1,51 @@
+{
+  "run_id": "FINAL5_R14_causalgym_native_cpu_v2_20260908",
+  "purpose": "Test actual compact cross-SAE operations beyond number/time on four released task families and two nonfinal sites, with complete-model behavior and prompt-disjoint development components",
+  "device": "cpu",
+  "cpu_threads": 4,
+  "batch_size": 8,
+  "budget_seconds": 2700,
+  "budget": "At most 2700 seconds CPU-heavy managed wall, four compute threads, estimated less than 10GB RAM and 1GB E-drive artifacts; no GPU use, new network access or paid resource. Initial measured throughput determines continuation. Existing GPU training proceeds independently.",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "layer": 3,
+  "sae_root": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096",
+  "seed_pairs": [
+    [
+      1,
+      2
+    ]
+  ],
+  "tasks": [
+    "agr_gender",
+    "filler_gap_obj",
+    "npi_any_obj-relc",
+    "garden_npz_v-trans"
+  ],
+  "sites": [
+    "changed_region_end",
+    "penultimate_region_end"
+  ],
+  "components_per_task": 24,
+  "pairs_per_component": 1,
+  "split_salt": "final5-r14-causalgym-development-20260908",
+  "source_budget": 16,
+  "read_budget": 32,
+  "write_budget": 32,
+  "ridge_alphas": [
+    0.001,
+    0.03,
+    0.3
+  ],
+  "lasso_steps": 2000,
+  "projection_steps": 800,
+  "adaptive_writes": true,
+  "scope": "All rows come from released train and remain exploratory. Prompt-connected components prevent exact-input and reciprocal leakage. Tasks/sites are selected for structural diversity before outputs; no source- or target-effect filtering. One SAE seed direction is a pilot, not the required five-seed main suite. Native interventions preserve the reconstruction residual and require nonnegative final code, but do not assert TopK encoder realizability. Group-L1, ridge, assignment and bounded sparse coding are standard components, not solver-novelty claims. CausalGym test is not read. This does not reproduce the full CausalGym method benchmark or SemanticOT.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "recovery_parent": "runs/FINAL5_R14_causalgym_native_cpu_v1_20260908",
+  "recovery_reason": "Original CPU run failed before any data or model outputs because upstream SparseCoder import queried a CUDA device with CUDA hidden. Invoke the unchanged upstream fused_encoder module directly with the exact encode preprocessing. No locked package or checkpoint changed; include explicit audit_opened metadata."
+}

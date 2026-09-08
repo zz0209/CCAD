@@ -1,0 +1,16 @@
+{
+  "run_id": "FINAL5_R14_atom_curve8_24m_v1_20260908",
+  "purpose": "Measure full-dictionary one-to-one stability over the controlled 8M,16M,24M learning trajectory",
+  "seeds": [1,2,3,4,5],
+  "stages": [
+    {"step":8192,"checkpoint_root":"D:/CCAD_Storage/training_curves/EXT_R10_l15_continue8m_five_v1_20260907/step_8192"},
+    {"step":16384,"checkpoint_root":"D:/CCAD_Storage/training_curves/FINAL5_R14_l15_continue32m_five_v1_20260908/step_16384"},
+    {"step":24576,"checkpoint_root":"D:/CCAD_Storage/training_curves/FINAL5_R14_l15_continue32m_five_v1_20260908/step_24576"}
+  ],
+  "first_pair_budget_seconds": 90,
+  "budget_seconds": 1800,
+  "budget": "At most 1800 seconds under CPU-heavy, four threads, estimated peak below 8GB RAM and 50MB new output; read stable finished checkpoints only. Run after the existing CPU writer completes and 24M checkpoint files exist. Do not interrupt GPU training or other leases.",
+  "scope": "Complete 8192-atom absolute normalized decoder cosine with Hungarian assignment for all ten unordered pairs at each checkpoint. Signed matched unit conversion retained for actual downstream consumers. The five controlled seeds and checkpoints are dependent; this is geometry, not a functional or convergence certificate. Same training configuration and stream/order within each budget; later budgets include declared fresh data and LR phase. No activity or outcome filtering.",
+  "audit_opened": false,
+  "candidate_family_frozen": true
+}

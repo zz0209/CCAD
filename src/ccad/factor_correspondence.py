@@ -14,6 +14,15 @@ def compact_source(dz, decoder, discovery, sign, budget):
     oriented=np.mean(dz[discovery]*sign[discovery,None],axis=0)
     direction=oriented@decoder;direction/=max(np.linalg.norm(direction),1e-12)
     score=oriented*(decoder@direction);support=np.argsort(-np.abs(score),kind='stable')[:budget]
+    source=source_from_support(dz,decoder,support,discovery)
+    source['score']=score[support]
+    return source
+
+
+def source_from_support(dz,decoder,support,discovery):
+    """Express an already selected native source operation in its exact span."""
+    dz=np.asarray(dz,dtype=np.float64);decoder=np.asarray(decoder,dtype=np.float64)
+    support=np.asarray(support,dtype=int)
     # SVD retains the numerical decoder span; no task-variance truncation.
     _,singular,vt=np.linalg.svd(decoder[support],full_matrices=False)
     rank=int(np.sum(singular>singular[0]*1e-10));basis=vt[:rank].T
@@ -22,7 +31,7 @@ def compact_source(dz, decoder, discovery, sign, budget):
     error=float(np.linalg.norm(native-reconstructed)/max(np.linalg.norm(native),1e-12))
     if error>1e-9:raise ValueError('Source coordinate operation differs from compact native teacher')
     singular_process=np.linalg.svd(coordinates[discovery],compute_uv=False)
-    return dict(support=support,basis=basis,coefficients=coefficients,coordinates=coordinates,score=score[support],rank=rank,span_error=error,discovery_singular_values=singular_process)
+    return dict(support=support,basis=basis,coefficients=coefficients,coordinates=coordinates,rank=rank,span_error=error,discovery_singular_values=singular_process)
 
 
 def ridge(x,y,alpha,scaling='feature_rms'):

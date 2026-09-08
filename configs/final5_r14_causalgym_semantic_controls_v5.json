@@ -1,0 +1,81 @@
+{
+  "run_id": "FINAL5_R14_causalgym_semantic_controls_v5_20260908",
+  "purpose": "Evaluate natural-context SemanticOT, centroid-only, decoder-nearest and full Hungarian retrieval through native and source-aligned consumers",
+  "device": "cpu",
+  "cpu_threads": 4,
+  "batch_size": 8,
+  "budget_seconds": 600,
+  "budget": "At most600s CPU-heavy under four threads; existing model/checkpoints and completed natural-reference matcher, estimated below9GB RAM and0.5GB results. GPU training proceeds. No new fitting of finite writers, task selection, external purchases or labels.",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "layer": 3,
+  "sae_root": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096",
+  "seed_pairs": [
+    [
+      1,
+      2
+    ]
+  ],
+  "tasks": [
+    "agr_gender",
+    "filler_gap_obj",
+    "npi_any_obj-relc",
+    "garden_npz_v-trans"
+  ],
+  "sites": [
+    "changed_region_end",
+    "penultimate_region_end"
+  ],
+  "components_per_task": 24,
+  "pairs_per_component": 1,
+  "split_salt": "final5-r14-causalgym-development-20260908",
+  "source_budget": 16,
+  "read_budget": 32,
+  "write_budget": 32,
+  "ridge_alphas": [
+    0.001,
+    0.03,
+    0.3
+  ],
+  "lasso_steps": 2000,
+  "projection_steps": 800,
+  "adaptive_writes": false,
+  "scope": "Same exposed four-task/two-site development panel and frozen source-IG16 rule as v4. Natural-context SemanticOT Algorithm1 retrieval uses a separate existing FineWeb validation reference; not the128M-token cross-layer paper benchmark. Compare centroid-only retrieval, target decoder nearest and full-dictionary absolute-cosine Hungarian. All retrieved unions get identical ridge calibration and the same32-member bounded writer as FCC/full/raw; copying their actual donor target codes is a separate native operation. Actual read counts and unmatched source distributions retained. No new independent confirmation, human semantic labels or general algorithm superiority is inferred.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "recovery_parent": null,
+  "recovery_reason": null,
+  "source_selector": "integrated_gradient",
+  "ig_points": [
+    0.125,
+    0.375,
+    0.625,
+    0.875
+  ],
+  "writer_training_steps": 0,
+  "writer_training_sites": [
+    "changed_region_end"
+  ],
+  "writer_training_inputs": [
+    "fcc",
+    "full",
+    "raw",
+    "source_oracle"
+  ],
+  "writer_learning_rate": 0.01,
+  "writer_random_seed": 9014,
+  "writer_anchor_penalty": 0.0001,
+  "writer_validation_steps": [
+    0,
+    20,
+    40,
+    60,
+    80
+  ],
+  "writer_component_tests": false,
+  "semantic_match_run": "runs/FINAL5_R14_semantic_contexts_v2_20260908",
+  "retrieval_consumer": "The matcher v2 has114matched/1unmatched reference features. UnmatchedsourceIDs add no targetretrievalcandidate. Nativecopy acts on the union of matches. Joint ridge fits ALL sourcecoordinates from this union, so an unmatchedsource feature need not contributezero; only emptyunion giveszero. This explicitly supersedes the provisional per-member-zero consumer wording in matcher matches.json without changing its retrieval results."
+}

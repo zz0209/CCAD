@@ -5229,3 +5229,74 @@ FREEZE.json现在冻结两新toy seeds202/303、每个五同配置SAE、L1.05/.1
 自然素材v2实际从10片各6组读185,691,626bytes/185range请求，数据足够但sample_text_hashes_unique失败；使用的42954文档中一对217token训练原文相同，无跨split重复。旧v2保持FAIL。v3脚本repack_unique_training_corpus从已保存文本按固定排序去除重复拷贝，保留duplicate_dispositions及原文，取得25,165,824train/32,768validationtokens，95.5342113s，PASS/contractPASS，无重下载。旧collector的O(序列×文档)归属扫描改为线性游标，随机边界/跨序列/EOS与旧逻辑完全等价断言通过；改前collector SHA0e082b33f2e5b09881f92d61fc8f91944229456710e062ce784dfd2248b52059已逐字存入启动archive/collector_v2。素材清理不按outcome选择、不改旧run状态，修复和文件计数不是科学进展。
 
 实际原文阅读、已有源码接口、版本与采用见SOURCE_REVIEW.json/REFERENCE_REGISTRY；没有新的全文图版审阅或完整SemanticOT复现声明。当前3入口记录真实在跑任务和后续非final/外部/atom-group比较，旧总结14已被替代。paper/main.pdf原件保留，完成更长材料与本轮实质结果后统一整合，不能提前计14完成。有效研究/等待未连续计时，未知；未购买外部资源。白名单本阶段成组同步，原始数据/附件/论文不扩大公开范围。
+
+
+## FINAL_FIVE_R14 — PROGRESS / CORRECTION: external nonfinal CPU execution
+
+实际写入UTC：2026-09-08T07:31:14Z。round_id FINAL_FIVE_R14，本轮START仍2026-09-08T06:27:40Z，当前未完成。外部v1 wrapper启动2026-09-08T07:26:33Z，manifest/结束以run为准；v2 wrapper可证实启动2026-09-08T07:28:56Z。触发为本对话heartbeat接续，不是新一轮。理由：离开自编number/time及final-token消费者，用释放的四类任务及两个真实非末位置检查同一目标可执行接口；source-only选择与目标拟合/实际LM结果分离，不以弱源制造保真优势。
+
+实际实现scripts/run_causalgym_native_transfer.py复用existing factor_correspondence/native_operation/activation_contract及artifact工具。完整prompt共享的连通组件整体划分，先去互逆重复；保留dataset原索引/全部选取分母，四任务各24组件/48方向句，固定14/3/7组件fit/cal/held-development。组件防泄漏测试通过；所有task来自train，旧dev仍暴露，官方test未读。所有干预通过完整Pythia1B层3到输出传播，输出效力、KL和target非负状态分栏；仅1→2方向为开发，不能充当五seed主结果。
+
+v1在from sparsify导入时，官方SparseCoder.forward的CUDA autocast装饰器调用is_bf16_supported，与CPU-run隐藏CUDA冲突，9.8444678s后FAIL，0结果行、无数据读取。contract另报inputs空及config缺audit_opened，未伪造缺失输入。原错误、代码和config保留。v2实际调用同commit未经修改的fused_encoder.py，其前向为ReLU(linear(x-b_dec))后原TopK，按sparse_coder.encode规则处理；不修改锁定包或权重，不使用GPU。v2添加显式audit_opened/candidate字段。通过原cpu-heavy wrapper原位取得已释放租约，最多2700s、4线程、估计<10GBRAM/<1GBartifact；真实process CPU和序列/tokens计数由run记录，零散主动工作与等待未连续计时、未知。原GPU训练独立继续，未抢占别的任务。
+
+原文实读CausalGym2402.12560v1 §§3.4/4.1/5.1–5.2/6：对齐region-end、真实log-odds改变与表达力控制；不是全方法benchmark重现。来源/边界登记REFERENCE_REGISTRY，数据卡MIT及Sparsify MIT已核对。尚无新的外部科学结果；当前paper/main.pdf仍原SHA c4f014af0d55a9214f042e3a0154b4084e90c5d3eddc0a8d739b7bb0011625e6。后续用外部实际结果与更长素材轨迹修改主图/统一数学，完成再计轮，旧tracker逐字归档archive/research_workflow_20260908/final5_external_start_20260908T073114Z/manifest.json。
+
+
+## FINAL_FIVE_R14 — PROGRESS / CORRECTION: external results and finite-response target writing
+
+实际写入UTC：2026-09-08T07:57:23Z。round_id FINAL_FIVE_R14，未COMPLETE。v2结束2026-09-08T07:30:47.262136+00:00，v3结束2026-09-08T07:43:47.343828+00:00；它们的结果在结束后才由本对话读取。前07:31启动补记中的“尚无新的外部科学结果”意指当时未读结果，事件结束时刻以这里及run为准。v4 wrapper实际启动2026-09-08T07:54:20Z，仍进行中。当前有限轮计数不变。
+
+实际产出：完整非末位置外部v2/v3均PASS及contractPASS，分别110.0404126/215.3289588s脚本wall、2104/3800完整模型序列、15908/28712tokens、2208/2544保留行；v3进度最后processCPU699.84375s，精确总值见summary，不冒充主动工作wall。表与原始输入/矩阵/逐member写入artifact见external_native/EXTERNAL_PROGRESS.md，四任务/两位置/源seed1target2是开发，不是五seed套件；192输入按24prompt连通组件每任务划分，7评估组件的双向14行相关。gender紧凑及same-member-native有信号而dense也强；NPI改变词处rank1且1target成员足以读出；penultimate弱/反向源保留。及物性改变词raw3.294nat/完整source-SAE2.416nat而两种16成员选择约.52nat，IG未解决其核心源缺口；penultimate .313→.465只是局部改进。下一步改真实consumer拟合，同时保留源有效性边界，不用低KL转移弱源冒充整体成功。
+
+v4实现将目标writer矩阵A直接拟合完整source输出分布KL，保持target非负增量约束u>=-z，并保留相同读出/支持/原物理投影基线。FCC/full/raw同四任务、80Adam步、lr.01、anchor.0001与5cal检查点，oracle额外源信息单列。未训练的半剂量/互补source成员mask真实响应另测；这是检查可复用组分，不是为整组拟合换统计口径。只在changed-region端拟合，已测弱penultimate仍保留。预算相同2700sCPU-heavy/4线程，无新GPU/付费；原32M训练持续。核心projection/有限KL及监督差别进入本轮数学与主稿，仍无新闭合声明。
+
+编码补记：外部CPU为绕过原SparseCoder类静态CUDA能力查询，实际调用同commit未改fused_encoder并按原减b_dec规则；原包未改。8旧上下文×2site与GPU缓存1e-4比较FAIL，max.002455711、support一致；直接float64核对CPU max2.2863376e-6/relativeL2 1.4075481e-7，GPU旧缓存relative1.4191729e-4。旧CUDA high-matmul可能解释该差但未隔离证明；不升级CPU/GPU逐位一致声明。新外部全部模型及SAE在CPU内重新计算，无旧GPU缓存混用。初次比较失败与后续参考检查分别留CPU_ENCODER_EQUIVALENCE/FP64_REFERENCE.json，不覆盖失败。source_from_support轻量提取与旧compact_source实际数值完全一致断言通过，原source快照保留。
+
+文献与图版：重新读CausalGym原方法并实际看ACL2024 PDF第5/7页，A4尺寸595.276×841.89pt；本地reference_views/CausalGym_ACL2024.pdf SHA 306cbb1ed2fa34b729b604aee5bf8a4f13a43293b3f149f46dc6775bffb15a99。arXiv截图cache miss、默认沙盒下载套接字拒绝后经授权读取官方ACL公开PDF成功；未外发本地内容。scientific-visualization与PDF工具用于真实尺寸图文，不用工具检查充科学结果。主稿仍原文件，待本轮有效结果整合；当前输入/代码与资源证据已落地，实际主动工作/零散等待未连续计时为未知。旧tracker归档archive/research_workflow_20260908/final5_external_progress_20260908T075723Z/manifest.json。
+
+
+## FINAL_FIVE_R14 PROGRESS/CORRECTION — finite native results, atom trajectory and SemanticOT implementation
+
+- round_id: FINAL_FIVE_R14
+- written_at_utc: 2026-09-08T08:33:58Z
+- event times: finite writer wrapper start2026-09-08T07:54:20Z, completed2026-09-08T08:12:38.694336Z; atom wrapperstart2026-09-08T08:13:14Z, completed2026-09-08T08:16:11.317692Z; paper build2026-09-08T08:17:19.672421Z–08:17:29.906451Z; semantic v1 start2026-09-08T08:24:36Z, FAIL2026-09-08T08:25:47.231548Z; v2 wrapperstart2026-09-08T08:31:29Z. This is the actual current append time, not those event times.
+
+选择理由与实际结果：旧物理读出投影存在实际目标interface缺口，故固定32write成员以全词表KL训练512参数A并检验未训练的半剂量/互补source成员。完成1097.650808秒CPUwall、3695.234375进程CPU、17064完整模型序列；FCC在gender/filler-gap变差，NPI/NPZ小改善不一致且四个全操作的组件描述区间跨零；source NPZ16仅.519nat而完整SAE2.416/raw3.294。这是未解决缺口的实际实验，不记核心闭合。All4tasks/allrows和source/native/readout/强full/raw/oracle/失败保持，报告artifacts/final_five_research_20260908/external_native/FINITE_WRITER_PROGRESS.md；raw SHA 8f1572092f17b165f15ed3d5f3105239807dcd1e703aad4ba343f4e25207d973。
+
+受控素材：30个全8192字典Hungarian匹配已完成，176.648092秒CPUwall/251.390625进程CPU。8/16/24M均值分别0.320082/0.346459/0.360528，十配对共享5seed，不当独立重复/收敛结论。原32M GPU训练继续；后续7配置只是准备，不算科研结果。
+
+数学/论文：native_theory/methods/results及两张Times/STIX矢量图和原始表进入同一个paper/main.pdf，SHA 27a47d32ddef730ec92b05c515a45656b3d1f2ff85857487e7e6ae8c4382d89f。新增读取/可写集合误差界是经典projection性质，finiteKL没有该保证；native代码状态非负不等于TopK可编码。原129文件归档r14_paper_20260908T080416Z/manifest.json。单图实看完成，全稿新增页复核尚在进行；编译成功和图数不是视觉验收。
+
+最近邻改法：SemanticOT按原文真正自然context分布而非相关性OT实现；参考capture32768tokens首batch完整模型逐值一致、峰值记录约5.12GBRSS。v1在首源92候选2694的Sinkhorn3000步marginal5.27535e-5超1e-7而FAIL，保留其完整缓存与失败。v2仅复用缓存并解同entropic目标的标准对偶L-BFGS，原cost/epsilon/候选/活动数/tolerance不变，库与objective两个针对性数值例通过。当前cpu-heavy1800s上限，原GPU不受中断；没有付费/包安装/另开task或agent。新的最近邻消费者v5已准备，未运行未计结果。
+
+本阶段持续进行研究/推导/代码/原文阅读/图文整合；没有人为等待，实际纯思考与写作时间无自动计时故未知，不能把相邻事件间差当有效工时。原GPU训练wall与CPU任务wall有重叠，不相加称总有效时间。tracker逐字归档 archive/research_workflow_20260908/r14_native_finite_20260908T083358Z/manifest.json；completed13/active14/最后五轮0保持。下一步完成closest-method真实消费者，接收32M三栏训练科学结果并更新稿图/整稿复核，再决定后续实质改法。
+
+
+## FINAL_FIVE_R14 PROGRESS — SemanticOT consumer and controlled training completed
+
+- round_id: FINAL_FIVE_R14
+- written_at_utc: 2026-09-08T08:57:18Z
+- event times: semantic retrieval v2 completed2026-09-08T08:34:33.084545Z; actual consumer v5 completed2026-09-08T08:39:44.045690Z; final atom run completed2026-09-08T08:44:45.916968Z; five-seed training completed2026-09-08T08:47:50.387626Z; source-function batch child finished2026-09-08T08:50:06.660783Z; target16M child finished2026-09-08T08:54:06.406168Z. These event timestamps differ from this current append timestamp.
+
+选择与判断：以实际自然context分布检索替代将相关性OT当最近邻的不足；新控制在gender/filler读出优于FCC而NPZ更差，且nativecopy/readout结论不同。旧操作逐条重放共1904，KL最大差0.0；这只核验共同计算，不提供独立科学复核。保留114matched/1活动不足源成员和v1数值FAIL。五同配置续训、全atom与固定规则sourcefunction均完成：平均质量和几何提高，joint源准确率80.625→85.0%，只有3/5seed提高。不能宣布训练充分、FCC独占价值或核心闭合。
+
+实际产出/证据：artifacts/final_five_research_20260908/external_native/SEMANTIC_TRAINING_PROGRESS.md，SHA256 9a48bd0f218de90fc7fa86fe6d4654a29fff9667d3e03527674e835f057569c9；training_material/MATERIAL_SOURCE_PROGRESS.json和TARGET_16M_SUMMARY.json/MATERIAL_16M.json；原run资源/代码/输入/环境/统计分别保留。训练raw 9badd11fbbbcc14b9383e5c776685199097c1b092774f798da8d6659145f1b25，source-functionraw 5338c52fcc68f317fb367fda274602db9e179b04d28dcc5b300e63fc87fb655e，semantic-consumerraw 34e8ccb4f42429a597d75ee26f3dbf3af85c19a79e456027e007df97fdaad73f。数学/文献进入native与training32可编辑章节，数据表已导出但完整PDF尚待最后target预算结果与实际视觉检查。
+
+资源与投入：训练GPUwall6268.639829s；source消费者GPUwall97.813938s；语义消费者CPUwall257.527514s，32M原子匹配CPUwall58.493046s。有任务并行，不能相加当纯工作时长；思考/阅读/写作未单独连续计时，准确有效工时与零散等待为未知。无人为等时或轮询计轮。gpu-0现按7个预先配置串行消费者接续，24M运行/32M待启动，无新训练/付费/委派。
+
+下一步完成24M和32M固定teacher比较、统一成稿/图版核对与白名单同步，先COMPLETE再推进计数。当前completed13/active14/最后五轮0保持。旧tracker逐字归档archive/research_workflow_20260908/r14_training_progress_20260908T085718Z/manifest.json。
+
+
+## FINAL_FIVE_R14 COMPLETE — executable native operations, real context matching and five-seed training
+
+round_id: FINAL_FIVE_R14。实际写入UTC：2026-09-08T09:26:36Z。可证实本轮START2026-09-08T06:27:40Z；最后实验结束2026-09-08T09:02:05.729079Z；最终PDF构建2026-09-08T09:14:55.791514Z–09:14:57.515333Z；视觉记录2026-09-08T09:17:17.184312Z；结果/稿件收尾完成事件为本块实际写入时刻。此处完成最后五轮的第1轮，没有第15轮START。先本COMPLETE落盘，再将tracker的completed13改14、final_five_completed0改1。
+
+选择理由与方法实改：源贡献读出与目标成员直接删除不等价，短训练也不能代表稳定对应。已实际实现分离读取/写入组、目标decoder非负增量、状态自适应选写入组、encoder重编码以及固定32写入成员的有限输出KL拟合；CausalGym四个外部训练任务、两个非final位置实际全模型消费者和自然context SemanticOT检索完成。旧128句native明显改善但原读出/部分raw仍更强；四任务有限writer无一致改善，NPZ16源效应约.519nat低于完整源2.416/raw3.294nat。真实SemanticOT/centroid/全Hungarian读出在gender/filler等强于FCC，其他任务有反转；所有预算差异、未匹配成员、弱源和旧负结果保留。
+
+素材与科学结果：五同配置seed从8M精确状态继续新24×2^20tokens至33,554,432tokens，保留新LR阶段身份和固定validation。FVE76.1175→78.4706%、CE恢复86.6046→88.7911%、全字典cosine匹配.320082→.364671、重选源joint80.625→85.0%（仅3/5seed提高）。四类指标不能互相替代，cosine不是PW-MCC。固定4M源teacher、相同已暴露角色集上的32M目标，数量删除KL下降13.41/17.06%，时间删除上升12.46/6.88%；16/24M非单调结果及八类更强raw/full都进入论文。源分布逐行相同、raw/legacy重放小于1e-10，共同外部旧操作1904条KL差0；只核验实现一致性，不增加独立科学证据。
+
+数学、文献和稿件：经典可行集投影界及有限writer/组成边界、CausalGym原方法/图版与真正SemanticOT定义及本地适配已纳入唯一paper/main.pdf与同套可编辑源。新增四图族和完整表/固定hash实例；67页整稿布局和新/受影响详细页面实际核对。PDF SHA256 0694a4156b77b30006871a443a04640688b70c2b39426eaf63e716a9eac523d9；R14_REPORT.md SHA256 69abef42658fda44ebe0472efb67a8c094e2f9c7ccb75d1bcbc0f95d30180883；R14_DELIVERY_MANIFEST.json SHA256 5ed9f30b4092e9a93f1a182f1ee4408820f3492d7690462dcd778bb5f0362c98。新全部run/raw/配置/代码/环境/证据定位见artifacts/final_five_research_20260908/R14_RUN_INVENTORY.json，raw总表和多seed依赖均保留。11项针对性实现测试通过；pytest缺失与先前CPU/GPU一致性失败未抹去。此轮没有新独立confirmation、第二模型/第二SAE机制或核心主会闭合声明；acceptance仍NOT_MET。
+
+实际资源/失败：23run全部结束，19PASS/4FAIL，4失败为语料容量不足、重复文本、CPU导入设备错误和Sinkhorn原容差未达，修复另run且保留原件。GPU训练脚本wall6268.639829s，32M目标消费者228.668439s，其他消费者、CPU原始计时和磁盘字节逐run记账；并行wall不相加当有效工时。主动研究/写作与零散等待未连续计时，精确时间未知；没有人为拖时、付费采购或委派。收尾实查CPU/GPU/磁盘lease均free。本轮E盘run2,121,493,822bytes、D盘新训练6,042,361,044bytes，未超本轮预算。
+
+下一步依据失败改源操作的位置覆盖和目标表示，优先外部多位置raw/完整SAE有效性、source-only联合功能组及跨位置native对应的真实下游用途；不再在同弱源上扫writer参数。第15轮重新登记实际预算/START，继续原目标和原5分钟automation，不增第19轮。旧tracker/plan逐字归档archive/research_workflow_20260908/r14_close_20260908T092636Z/manifest.json；长期规则未改。此工作单元白名单代码/日志成组同步，论文与原始数据本地保留且path/hash留账，同步完成身份随后在R14_SYNC.json记录。
