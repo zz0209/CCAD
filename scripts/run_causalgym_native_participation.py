@@ -216,8 +216,8 @@ def native_baselines(w, context):
     for name,g in matrices.items():
         np.savez_compressed(w.run/f"{context['task']}_{name}.npz",matrix=g)
     write(w.run/f"{context['task']}_native_baselines.json",dict(
-        global_assignment='Full8192 decoder geometry assignment, not PW-MCC',
-        activation_assignment='Task-conditional Pearson across aligned training positions, not natural-corpus PW-MCC or SemanticOT',
+        global_assignment='Full-dictionary absolute decoder-cosine optimal assignment, the published PW-MCC objective; native gate copy does not apply signed scalar readout correction',
+        activation_assignment='Task-conditional Pearson across aligned training positions, distinct from decoder-cosine PW-MCC and context-distribution SemanticOT',
         actual={k:feasibility(v) for k,v in matrices.items()},source_parts='Even and odd source-only score ranks, fixed before target fitting'))
     return matrices
 

@@ -1,0 +1,82 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "layer": 7,
+  "sae_root": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096",
+  "tasks": [
+    "Country",
+    "Continent",
+    "Language"
+  ],
+  "components_per_task": 24,
+  "pairs_per_component": 1,
+  "split_salt": "final5-r14-causalgym-development-20260908",
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "run_id": "FINAL5_R16_l7_natural_reference_v1_20260908",
+  "purpose": "Capture source-independent natural-context layer7 reference for real SemanticOT/PW-MCC controls",
+  "device": "cpu",
+  "cpu_threads": 4,
+  "batch_size": 8,
+  "budget_seconds": 1200,
+  "seeds": [
+    0
+  ],
+  "budget": "At most20minutes CPU-heavy wall, fourthreads and expectedunder6GBRAM,0.3GBnewprojectcache. Runs alongside the separately leased GPU training; no GPU allocation, new download or paid resource.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Fixed natural validation reference separate from SAE training and RAVEL task panel,32768tokens before exclusion. Used as fitting reference for natural-context correspondence, not new confirmation. No SAE or task outcomes select rows. Raw layer7 states; prefix capture checked against full model on first batch. Reference fitting reuses quality-validation corpus and does not create an independent quality sample.",
+  "generator_script": "scripts/prepare_natural_reference_states.py",
+  "source_seed": 1,
+  "target_seed": 2,
+  "mode": "suffix_nonfinal",
+  "source_budget": 32,
+  "target_budget": 32,
+  "source_curve_budgets": [
+    16,
+    32,
+    64
+  ],
+  "ig_points": [
+    0.125,
+    0.375,
+    0.625,
+    0.875
+  ],
+  "response_steps": 160,
+  "response_lr": 0.03,
+  "calibration_steps": [
+    20,
+    40,
+    80,
+    160
+  ],
+  "optimizer_seed": 9150915,
+  "ridge_alphas": [
+    0.001,
+    0.03,
+    0.3
+  ],
+  "lasso_steps": 2000,
+  "global_assignment": "runs/FINAL5_R14_causalgym_semantic_controls_v5_20260908/global_assignment_s1_t2.npz",
+  "run_parent": "FINAL_FIVE_R16",
+  "milestone": "independent-semantic-source-coverage",
+  "statistics_unit": "Disjoint city pair, reciprocal directions, original templates and shared SAE seed",
+  "prepared_panel": "E:/Projects/SAE_Lab/CCAD/artifacts/final_five_research_20260908/r16_semantic_operations/semantic_panel_v1.json",
+  "dataset_name": "RAVEL",
+  "modes": [
+    "region_1",
+    "suffix_nonfinal",
+    "suffix_all"
+  ],
+  "reference_tokens": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/validation.uint16.bin",
+  "reference_tokens_sha256": "b6ec15f1f640e691718d9446e97b94a2653f0ef2d9fed0c817d68a6c9d65cc0a",
+  "reference_document_records": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "reference_sequences": 256,
+  "context_length": 128,
+  "exclude_token_ids": [
+    0
+  ],
+  "minimum_available_ram_bytes": 6500000000
+}

@@ -1,0 +1,30 @@
+{
+  "run_id": "FINAL5_R16_l7_atom_4m16m_five_v1_20260908",
+  "purpose": "Full-dictionary PW-MCC change over controlled middle-layer training and exact reusable assignments for later semantic consumers",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "stages": [
+    {
+      "checkpoint_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_4096",
+      "step": 4096
+    },
+    {
+      "checkpoint_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_16384",
+      "step": 16384
+    }
+  ],
+  "first_pair_budget_seconds": 180,
+  "budget_seconds": 3600,
+  "budget": "At most60minutes CPU-heavy, 4threads, forecastunder7GBRAM with256-column blocked cosine andone full2.15GB assignment matrix. Earlier8192-atom pair tookabout6seconds;16k forecasttensofseconds not an observedtiming. Two declaredcheckpoints and10unorderedpairs each; completed results retained if180second first-pairbudgetfails. No inference, task outputs, newdata or paidresources.",
+  "scope": "Song ACL2026 Eq1 full16384-atom absolute decoder cosine with exact globalHungarian. All10unordered pairs at4M and16M ofsamefive-seed training group. No activation/activity/outcome selection, not Pearson. Signed matched scales retained butnotapplied to nonnegative native masks automatically. Geometry is distinctfrom function/convergence. Old runs anderrors retained.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "run_parent": "FINAL_FIVE_R16",
+  "width": 16384,
+  "hidden_size": 2048
+}

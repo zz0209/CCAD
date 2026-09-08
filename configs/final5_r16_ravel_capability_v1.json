@@ -1,0 +1,21 @@
+{
+  "run_id": "FINAL5_R16_ravel_capability_v1_20260908",
+  "purpose": "Unedited Pythia1B capability on external semantic city attributes before source intervention selection",
+  "generator_script": "scripts/run_ravel_capability.py",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "E:/Projects/SAE_Lab/CCAD/artifacts/final_five_research_20260908/reference_views/RAVEL/data",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "device": "cuda:0",
+  "cpu_threads": 4,
+  "batch_size": 64,
+  "budget_seconds": 1200,
+  "budget": "At most20minutes managed GPU wall, existing Pythia1B; about16000 short prompt forwards without storing full hidden-state/full-vocabulary caches; no new weights or paid cost.",
+  "seeds": [0],
+  "templates": {"Country": [7, 27, 39], "Continent": [5, 14, 22], "Language": [3, 23, 24]},
+  "maximum_entities": null,
+  "screening_rule": "Before observing results, candidate source intervention work will prefer original-train entities with at least2of3 first-token answers correct for every one of Country/Continent/Language. Structural demonstration/boundary exclusions retained. This is model-knowledge conditioning, not a source/target intervention selection.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Original RAVEL city dictionaries and split metadata read; only official train entities and nine official train templates undergo model inference. First-answer-token correctness is measured on all selected rows, not full-answer generation accuracy or full RAVEL benchmark replication. All unedited failures retained. No SAE training or intervention/target outcome influences this capability screen."
+}

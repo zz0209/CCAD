@@ -40,7 +40,7 @@ def main():
         code.append(dict(path=rel, bytes=p.stat().st_size, sha256=sha256(p), snapshot_path='source_snapshot/'+rel))
     write(run/'code_hashes.json', dict(files=code, aggregate_sha256=aggregate(code), snapshot_root='source_snapshot'))
     write(run/'manifest.json', dict(schema_version='checkpoint.atom.match.v1', run_id=cfg['run_id'],
-          run_parent='FINAL_FIVE_R14', purpose=cfg['purpose'], milestone='controlled_atom_training_curve',
+          run_parent=cfg.get('run_parent','FINAL_FIVE_R14'), purpose=cfg['purpose'], milestone='controlled_atom_training_curve',
           evidence_level='controlled_development', started_utc=datetime.now(timezone.utc).isoformat(),
           project_root=str(ROOT), config_hash=sha256(run/'config.resolved.json'), code_snapshot_hash=aggregate(code),
           source_snapshot_required=True, audit_opened=False, candidate_family_frozen=True,
@@ -62,7 +62,7 @@ def main():
                 path = Path(stage['checkpoint_root'])/f'seed_{seed}'/'sae.safetensors'
                 inputs.append(entry(path, 'controlled training checkpoint', 'complete decoder'))
                 weights[seed] = load_file(str(path))['W_dec'].astype(np.float64)
-                if weights[seed].shape != (8192, 2048):
+                if weights[seed].shape != (cfg.get('width',8192), cfg.get('hidden_size',2048)):
                     raise ValueError('Unexpected decoder shape')
             write(run/'inputs.json', dict(inputs=inputs))
             for source, target in itertools.combinations(cfg['seeds'], 2):
@@ -76,7 +76,7 @@ def main():
                 np.savez_compressed(run/filename, target_indices=mapping, geometric_scale=scale)
                 row = dict(run_id=cfg['run_id'], metric_version='all_atom_hungarian_cosine_v1',
                            step=stage['step'], tokens=stage['step']*1024, source_seed=source, target_seed=target,
-                           width=8192, assignment=filename, wall_seconds=time.perf_counter()-start_pair, **stats)
+                           width=cfg.get('width',8192), assignment=filename, wall_seconds=time.perf_counter()-start_pair, **stats)
                 rows.append(row)
                 with (run/'metrics.raw.jsonl').open('a') as f:
                     f.write(json.dumps(row)+'\n')

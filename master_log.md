@@ -5364,3 +5364,173 @@ round_id FINAL_FIVE_R15。实际写入UTC：2026-09-08T11:10:01Z；可证实STAR
 ## FINAL_FIVE_R15 CORRECTION — exact manuscript completion timestamp
 
 round_id FINAL_FIVE_R15。实际写入UTC：2026-09-08T11:10:53Z。补充上一COMPLETE块中10:58:51Z附近的近似事件描述：原始paper/build/BUILD_RECEIPT.json可直接核实本次主稿构建started_at_utc=2026-09-08T10:58:49.205630+00:00，completed_at_utc=2026-09-08T10:58:51.049161+00:00。本条只补精确来源时间，不改写旧块、不改变科学结果或轮次计数；有效研究时长仍未连续记录。
+
+
+## FINAL_FIVE_R16 START — independently specified semantic operations and shared target implementation
+
+round_id FINAL_FIVE_R16。实际写入UTC：2026-09-08T11:21:37Z；heartbeat事件2026-09-08T11:19:50.845Z，实际研究起点以本START为可证实记录，不倒算阅读思考时长。已完成15/18、最后五轮2/5，本轮第三轮开始，未完成。
+
+理由：R15三任务shared-native整组正信号建立了可执行目标接口，但交错source parts可只是人为拆同一变量，55–64vs32权重也混入class容量差。当前需要独立语义控制、保留属性和新上下文可检验预测，并把实际最近邻对齐放进同一消费者。首先读外部RAVEL/MIB属性干预定义和官方实现，实际测已有底模能力/源操作；本轮不把旧交错parts继续调参当主要突破。底模/source不足时依据小规模实测改任务/素材/消费者，保留失败，不等完美也不盲目堆test。
+
+规划：沿已读MIB接入独立属性变化的source-only操作，源效用和保留性分开；以实际targetdecoder对应族比较shared/exclusive、原子/PW-MCC、真实SemanticOT/subspace、DBM/DAS与ridge，分开成员/权重/rank/位置/监督和拟合预算。方法和材料开发后冻结新数据，已暴露面板不刷新。数学/实现/材料/原文/真实结果与同稿图表共同推进。所有新run依既有artifact契约，原R15已全结束不重启。
+
+资源：当前manager四类leasefree，RTX5070Ti16GB桌面1690MiB/5percent。先复用r004及缓存模型；本轮初始可承受上限GPU管理wall6小时、cpu-heavy3小时、新E20GB/newbulk100GB、付费0，按实测收益自主重分配而非一定用满。没有购买或未定金额算力授权。详细R16_BUDGET.json；实验前按实际负载申请lease，不申请无关整盘锁，不干预其他项目。原ccad本对话5分钟继续、无委派；本轮COMPLETE及实际稿件到位才计数，18后原位暂停。整合前入口归档archive\research_workflow_20260908\r16_start_20260908T112137Z/manifest.json。
+
+
+## FINAL_FIVE_R16 PROGRESS — external attribute capability and bounded overlapping controls
+
+round_id FINAL_FIVE_R16。实际写入UTC：2026-09-08T11:37:30Z。RAVEL capability run FINAL5_R16_ravel_capability_v1_20260908已结束PASS/contractPASS，16081训练prompt结果，1787原train城市，两个demonstration/boundary结构排除保留，driverwall56.9942189秒。276城市满足预先规则：Country/Continent/Language各至少2of3原train模板首token全词表top1正确。没有读取官方test模型输出，原定义/分割JSON已读取并保留；首token正确不等于完整生成正确。没有source/target干预结果参与筛选。该知识条件下再研究可解释操作，完整失败面板保留。
+
+实际阅读RAVEL ACL2024论文2/3/B.4、全文PDF图版1/4/5与官方MIT repo e421fc9e132b3613b1d0020f856d539217fb30ca的DBM、DAS、metric/training实现。论文Cause与Iso分开，MDBM/MDAS已联合优化两者，不能把多属性训练当创新。源码/429309byte数据tgz及ACL CC-BY4PDF共约3.2MB保留reference_views/RAVEL/SOURCE_MANIFEST.json；仅city JSON解包，没有外部代码运行/安装。
+
+待实测方法修改：独立语义控制可能需要同一成员完整参与多个属性，R15行和≤1会强制它们竞争。采用有界代数union alpha_j(c)=1−product_a(1−c_a G_ja)，0≤G,c≤1，代码仍为base/donor凸组合；它等于固定donor逐个gate混合，联合包含显式交互项而非声称物理简单相加。这是标准fuzzy union/乘积恒等式，不是优先权或语义保证。共享与互斥对照拟使用相同非零权重上限，同时报告不同成员数。已写最小实现semantic_participation.py并通过2个有意义的代数/投影测试；既有2个位置对齐测试也通过。锁定环境无pytest，使用runpy直接调用测试，没有装新包。下一步构造互不重叠城市对，先实测source属性改变/保留及位置，再执行跨seed与同问题对照。当前还没有新的source/native科学结果，R16未完成。
+
+## FINAL_FIVE_R16 PROGRESS — semantic panel and measured source-material gap
+
+round_id FINAL_FIVE_R16。实际写入UTC：2026-09-08T11:49:21Z。独立语义城市面板由prepare_ravel_semantic_panel.py实际生成：276知识合格城市，25036结构兼容候选对，固定hash贪心选择40个互不重叠城市对，24fit/8calibration/8held-development，480rows。所有三属性及两个模板的可接受首token集合在每对中均不交叠；选择没有使用SAE或干预结果。仍是原train/已做知识筛选的数据，不称正式确认。未使用城市与全部选择分母在semantic_panel_v1.json。
+
+源覆盖run FINAL5_R16_ravel_coverage_l3_v1_20260908 PASS/contractPASS，2026-09-08T11:43:41Z附近完成（精确时间见status.json），28.320658秒driverwall、3872完整序列、3360结果。fit集合城市末token raw替换国家/大洲/语言成功约.94/.85/.71，而完整early4M seed1 SAE只有.28/.43/.26。suffix扩展没有解决该差距。该实测支持优先区分素材损失与选择性控制限制，不归因为已证实训练不足或据此否定全部SAE。
+
+实际启动FINAL5_R16_ravel_semantic_source_v1_20260908，shared/exclusive各128正权重，source-only Cause一半加meanIso一半监督，三个single controls拟合，joint不参与拟合。4方法各480updates，同calibration schedule；另两方法为已读RAVEL官方MIT DBM/低rankDAS的最小本地适配，DBM按原文temperature .01至1e-7、binaryeval、无MDBM L1；DAS使用原torch orthogonal线性层与delta W-transpose W。原论文选择32/128/512/2048，本pilot仅rank32，尚不是调优后的完整强基线。source原labels与原任务信息预算列明；方法不称首创。适配文件保留完整MIT原作者声明，2个空mask/union及DAS真实投影测试PASS，锁定环境未改变。当前run仍在运行，不能称semantic正结果。资源只有gpu-0，实查前四leasefree、GPU1690MiB/4percent，实际耗时持续由run记录。
+
+下一步以源属性改变和保留结果决定跨seed族匹配及材料改进，避免在明显弱源上堆消费者。R16仍IN_PROGRESS，当前稿件尚未更新，本阶段不计轮次。
+
+## FINAL_FIVE_R16 PROGRESS — independent semantic source failure and a material change supported by layer evidence
+
+round_id FINAL_FIVE_R16。实际写入UTC：2026-09-08T11:58:33Z。source1 layer3选择性run FINAL5_R16_ravel_semantic_source_v1_20260908 PASS/contractPASS，328.8764861秒driverwall、72128完整序列、2688held结果。三个single controls汇总：shared128weights/92members/28overlap成员Cause12.5percent、Iso66.6667percent；exclusive128weights Cause8.3333percent/Iso75percent；rawMDBM31.25/36.4583percent，rawMDAS rank32仅2.0833/81.25percent。各原子属性与joint结果保留raw/semantic_summary。这组没有可支持大规模跨seed扩展的有效source，不把shared某一项改善包装为成功。
+
+同token预算/seed1既有k128素材覆盖run FINAL5_R16_ravel_coverage_k128_v1_20260908 PASS/contractPASS，20.4960345秒。fit原三属性full SAE Cause约.34/.50/.29，对照k64约.28/.43/.26；降低稀疏度改善有限，不解决raw约.94/.85/.71差距。自然固定validation旧原始记录k64FVE约.99596、k128.99654，这些高总重建分不能替代此任务差分作用。当前对source弱的解释仍是材料和操作表示的具体局限，不是已证明所有SAE无效。
+
+新的raw layer7实际MDBM已在同held城市得到Cause52.0833percent/Iso57.2917percent，超过layer3当前适配；rank128MDAS仍在正常完成中，结束与完整结果以run FINAL5_R16_ravel_raw_semantic_l7_v1_20260908为准。层与rank组合改变属于开发诊断，不宣称单因素效果。这个正信号决定优先把SAE材料放到较适合语义控制的中层并增加容量/降低稀疏度。已准备五同配置seed的layer7 width16384/k128自然16M训练，复用32Mstream前半、固定256seq验证，256/1024/4096/8192/16384steps检查点，预算<=3h GPU管理wall，预计新bulk<15GB、VRAM约11–13GB须实测。只有seed变化；新家族改变多个材料因素，不能单独归因为任何一个。0付费/新底模下载。将先看64updates实测吞吐/显存，现有resource_guard可完整保存续训state；不为准备计完成轮。
+
+方法比较中另查原文Braun2024 e2e2.2–2.5/3.3与Karvonen2025短KL+MSE微调3/4/附录，及官方MIT源码入口。后者TopK RAVEL并非一贯改善，不能把KL训练当保证。若新材料仍丢失作用，再依据实际反例适配自然语料上的功能/差分训练；当前没有执行该新训练目标。当前selector按calibration标签CE，原RAVEL主score为Cause/Iso平均；后续公平调优应以实际主score选checkpoint，同时保留CE与旧run，不改历史统计。R16未完成，稿件仍待实质结果后统一更新。
+
+## FINAL_FIVE_R16 PROGRESS — new five-seed material, independent reference and fitting correction
+
+round_id FINAL_FIVE_R16。实际写入UTC：2026-09-08T12:24:13Z。新训练FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908 manifest开始UTC为09/08/2026 07:59:07；step4096五个inference checkpoint已保存并核对checkpoints.json与文件，16M训练仍在gpu-0正常推进，不重启/不结束本轮。实测大多数64update窗口约.296–.30s/update，allocated8,224,410,112bytes；缓存回收后reserved约9,164,554,240bytes。4M保存窗口.509s包含checkpoint，不能当kernel吞吐。预计全阶段主体约82min，未连续计时的思考/阅读/等待为未知。早先newbulk<15GB的粗估漏计两个中途和最终exact optimizer state，现按weights+moments预估约19GB，仍在100GB本轮上限；实际bytes待完成清点。
+
+自然reference run FINAL5_R16_l7_natural_reference_v1_20260908于2026-09-08T12:04:58.087015Z开始、12:06:18.242182Z完成PASS/contractPASS，80.147172sCPU管理driverwall；256prefix序列/32768tokens，另8完整模型witness序列，排除后32702states。prefix/full同机首批完全一致，约5.02GB采样RSS；与GPU训练共同运行，CPU lease自然释放。资产保留reference_states.npz/reference_identity.json。它是自然对应拟合参考，复用固定quality-validation语料而非新增独立质量证据。
+
+新面板semantic_panel_v2_fit_crosspairs.json已实建4404rows：原48fit城市内351无向城市对（原24fit pairs都保留，每城市按固定hash先取8兼容donor再合并互反），不增加城市或使用新目标结果。原cal/held192rows的text/labels/entities/templates/components逐项相同，城市分割互斥及reciprocal IDs实际验证通过。用于检验跨donor规则，拟合对共享城市不算独立重复。当前操作优化器已改为声明可选Cause/Iso平均优先、CE tie-break并保存各cal状态；旧run CE选择与结果不改写。compact单token代码编码/散射减少扩展面板的空位置数组，真实值/梯度测试通过；旧多位置接口默认保持。后续新run才使用该新选择法/面板，尚无相应科学结果。
+
+当前CPU实际新run FINAL5_R16_l7_4m_source_coverage_five_v1_20260908开始2026-09-08T12:21:20.238801Z，cpu-heavy、session73985，读取五个完成4M checkpoint；测完整native属性Cause与城市差分重建误差，GPU16M训练session33073继续。尚未完成，不报告新材料提高。控制变量是五seed内配置相同；对旧材料改变层/容量/稀疏度，不能宣称某一单因素效应。
+
+原文/代码阅读已记REFERENCE_REGISTRY新增块：RAVEL实际DBM/DAS最小适配含完整MIT notice；Braun e2e原文2.2–2.5/3.3/D；Karvonen2025v2方法/SAEBench结果与官方MIT commit eb06dbd2d464686ba13177411f6170e307086a48，实际utils.py的teacher KL、detach平衡和5e-5LR。未执行e2e或改底模。第一公开下载sandbox失败生成的null manifest保留FAILED_SANDBOX_MANIFEST.json，授权公开下载已成功；未带既有overlay的psutil读取失败后用同overlay7.2.2读取RAM9.16GB，无安装。tracker整合时PowerShell-replace表达式失败未写入原文件，已以明确patch完成；旧tracker/plan逐字archive/research_workflow_20260908/r16_material_path_20260908T121826Z/manifest.json。上述是准备/修正，不当科学突破或已完成轮。
+
+下一步等待实际CPU材料结果并持续新SAE训练；据此实现源语义族和同问题下真实跨seed/最近邻比较，写唯一paper/main.pdf及可编辑源。R16仍IN_PROGRESS、已完成15/18，不动计数，不另开task/agent/loop，不暂停原automation。
+
+## FINAL_FIVE_R16 PROGRESS — five-seed semantic material measurement and the joint-operation gap
+
+round_id FINAL_FIVE_R16。实际写入UTC：2026-09-08T12:35:41Z。完整新中层4M测量FINAL5_R16_l7_4m_source_coverage_five_v1_20260908已完成PASS/contractPASS，开始2026-09-08T12:21:20.238801Z，结束精确时间见status；379.2774818秒CPU管理driverwall、1198.421875秒process CPU采样、3872完整序列。fit五seed平均完整native Cause：Country56.875percent、Continent72.916667percent、Language45.833333percent；各seed差分FVE定义1−SUMerror/SUMraw分别.43930760/.45484208/.44694644/.44436376/.45516826。旧early4M seed1约28/43/26percent，新材料改善但raw仍更强；改变层/容量/稀疏度，不能单因素归因，仍是已暴露开发面板。自然质量与任务差分作用继续分开。
+
+CPU空闲及10.837GBavailable实查后启动FINAL5_R16_l7_4m_semantic512_v2_20260908，session71684、cpu-heavy4threads；同512正权重预算的shared/exclusive，384updates、同384fit-row梯度初始化、cal48/96/192/384以Cause/Iso均值优先CE tie-break，4404行多donor面板/原calheld不变。预算90min只是上限，实际初始化/forward按run计数。GPU新五seed16M训练继续，不中断、不提前计本轮完成。
+
+数学补强落实src/ccad/union_family.py、paper/sections/semantic_theory.tex：同一固定donor的union操作是控制变量的多线性函数，source−target hook误差的任意范数在整个单位立方体的最大值恰等于其二元顶点最大值。3属性7个非零顶点足够刻画连续操作族；singletons不够，已给两字典都精确重建base/donor且单属性相等但联合1vs2的实际代数反例。这是标准多线性插值的应用，不称首创定理/语义/下游KL保证。后续可按此设计singleton-only与全顶点拟合比较，实际完整LM测试fractional与新上下文。4个代数/投影/反例测试实际PASS，不是新增科学数据。
+
+为避免运行中源码变化，新插值工具独立文件；semantic_participation.py与当前CPUrun快照SHA256均22d2cc274b633fb5233b2fb5f1a67fc9b3a3da48604d3835e6d8cd11cd305118，已恢复核对一致。RAVEL PDF第6/13页真实图版已查看，Cause/Iso平面与自然文本案例表用于后续图设计；前1/4/5页已看。当前稿件修改前166个PDF/可编辑源/数据/图文件逐字归档archive/research_workflow_20260908/r16_paper_20260908T123414Z/manifest.json，main.pdf尚为R15，R16待结果后统一重建。
+
+勘误：上一PROGRESS中训练manifest时间被PowerShell展示成本地09/08/2026 07:59:07，不能称UTC。管理器原始acquired_at为2026-09-08T11:59:07.027Z，训练run自身started_utc以原始JSON字符串为准；原文保留。本轮实际思考/阅读连续有效时长未单独计时，为未知；没有把计算并行时段重复加成研究工时。R16仍IN_PROGRESS，完成15/18。下一步完成选择性源实测、依真实有效性拟合联合操作对应，并把全部正负结果写同稿。
+
+## FINAL_FIVE_R16 CORRECTION — PW-MCC names and the actual prior comparator
+
+round_id FINAL_FIVE_R16。实际写入UTC：2026-09-08T12:48:05Z。原始论文核查时间为本次实际读取，未新做科学run。重读固定Song ACL2026 PDF第3页§3 Eq1：PW-MCC为绝对decoder cosine的完整字典最优一对一指派，然后对配对atom取均值；不要求自然激活Pearson。当前prepare_f4_global_matching.full_assignment及已有R14/R15 full geometry匹配就是该论文目标。前数轮与本轮准备说明中“几何不是PW-MCC”“真正PW-MCC必须naturalPearson”的文字均有误，应按这条勘误解读，原始结果和日志保留。已检查官方缓存synthetic/utils.py commit32da471c代码使用signed cosine不取abs，与当前论文定义不同；不能把旧代码一处当论文定义。
+
+R15五循环已保留原始global_assignment_fit.json的匹配均值分别.2894207337/.2892938051/.2896293675/.2846257009/.2839028024，所选四舍入前均值.2873744819；这五方向依赖同五seed，不是全十pair平均。其full native consumer不使用符号/比例校正；PW-MCC几何允许signflip不意味着非负mask操作等价。五方向负cosine配对数1957/1988/1982/2031/2008（各8192），所以作用层仍需原实际比较。纠正名字不形成新正结果、不掩盖该consumer边界。
+
+当前native_methods.tex已纠正，REFERENCE_REGISTRY追加原文/源码差异。为16k字典使用相同目标而减少内存，full_assignment采用256列分块与原位abs，保留全局Hungarian；独立dense目标/尺度fixture与signed-rescaled permutation两测试PASS。run_checkpoint_atom_matching只增加配置宽度/父轮参数，无运行中的训练或源脚本依赖这些修改。后续code snapshot将记录新版本。SemanticOT通用语义组adapter也已写并做语法检查，复用原核、核对模型/hook/原始reference及source-only G，从新checkpoint重编码；尚未执行，不算比较结果。
+
+当前CPU共享512控制校准48step综合.424479、初始化.434896，Cause/Iso取舍尚未改善；未结束、不宣称成功。GPU五seed16M正常继续。main.pdf仍等待完整本轮结果后重建；已新增union理论源和归档旧稿。误用fitz导致一次只读导入失败，按已有pypdf runtime读取原文成功，无新安装。完成15/18、R16 IN_PROGRESS，未计数。
+
+## FINAL_FIVE_R16 PROGRESS — source fitting diagnosis, mature mask adaptation and manuscript data
+
+round_id FINAL_FIVE_R16。实际写入UTC：2026-09-08T13:05:46Z。两个主run仍在进行，不追加COMPLETE。GPU训练已实测超过12Mtokens，近期.297至.321s/update，allocated8.224GB，保存/续训guard正常。CPU多donor shared512在48/96/192steps校准Disentangle为.424479/.403646/.419271，均未超过初始化.434896，虽CE下降；该source尚无有效正信号，没有扩张semantic cross-seed套件。独立读取初始gates/code统计：三个属性正权重172/203/137，fit每行实际变化的已选坐标均值48.48/54.09/44.51，门权重和5.82/5.66/3.99；弱效用不能武断归因为每行没有选中坐标。
+
+补齐SAE-RAVEL arxiv2409.04478v1正文3/4、附录A/B与PDF真实第2页图版。原文40单token城市、5shot、所有1600对、70/10/20 iid，区别于本项目新城市分割；其原结果不能充当本项目结果。实际读取官方repo cf651fdc43b837a90112718024155da32e8b8cbc src/models.py零mask初始化/重建型写入、src/main.py831附近linear10to.1温度，以及相关source文件。根license未发现，来源仅内部reference缓存、不复制其源码进实现；PDFCC-BY4，SOURCE_MANIFEST保留。当前SemanticBinaryMask复用已有MIT RAVEL门控数学并在真实decoder解码delta，保留base残差，已通过空mask/真实decode/saturation测试。原RAVEL0.01to1e-7版本不改。
+
+已准备但尚未启动16M coverage五seed同480面板，用来单独看训练进展；下一source配置final5_r16_l7_16m_semantic512_v3为1536updates、512权重shared/exclusive、unconstrained SAE DBM、rawDBM和rank512DAS，使用原文暖温度10to.1，按cal Cause/Iso选择CE tie-break。完整实际成本会分开，不能把无硬count的densemask称同成本赢家。尚未运行的config和source修改不计成果；当前CPU进程已加载旧源版本，仍以其启动快照为准。
+
+PW-MCC下个中层4M/16M各10pair配置已准备，16k内存分块 exact目标，最多60minCPU，参考旧8k单pair约6sec仅作forecast。SemanticOT语义组通用adapter重编码精确新checkpoint、source G先冻结，尚未调用。没有新增Pearson冒名实验。
+
+稿图：ravel_semantics_paper.py已实际从5个已完成run导出117coverage cells/18操作族汇总、原始hash核对与8城市对条件区间；data/ravel_semantics.json、CSV、两张TeX表已产生。2个开发图已实际查看，发现early Cause/Iso标签重叠并已修改偏移，修正版待下一渲染核验，不能说视觉已达标。当前仅paper/main.pdf为旧72页，R16 source中已加入semantic_theory/semantic_methods及真实引用，尚无semantic_results/maintext整合或最终build。此前166文件archive保留。准备文件及该阶段分析不是完成本轮，也不是主会突破。
+
+新原文公式支持暖mask和更强rawDAS的具体改变；下一步在训练结束后先真实同面板16M覆盖，再源控制，依据有效source决定联合操作对应。当前已完成15/18、R16 IN_PROGRESS，原automation不变、不委派、不付费。连续有效工作时长未知；两并行run各按自身wall/CPU计数，不相加冒充人工时长。
+
+## FINAL_FIVE_R16 PROGRESS — source optimization and manuscript connection
+
+round_id: FINAL_FIVE_R16. Actual write UTC: 2026-09-08T13:15:30Z. The shared512 fit completed its held evaluation at2026-09-08T13:09:23.002048Z; the exclusive initialization event is2026-09-08T13:12:03.021320Z. These are run-reported event times, separate from this append time. R16 remains IN_PROGRESS and completed_rounds remains15.
+
+The middle4M shared source has512positive weights on354members,121overlaps. Calibration at0/48/96/192/384 selects0: Cause/Iso mean.4348958333 and CE3.420439615; later CE reaches2.507690267 but the primary score never exceeds initialization. This is a concrete source-optimization deficit; the lower label loss is not reported as semantic success. Its held outputs are retained, but the parent run is still executing the independently fitted exclusive control. New16M source work will compare the already prepared warm SAE-DBM/rawDBM against projected controls and rank512DAS, with all capacity/fitting changes explicit.
+
+The five-seed training continues under its gpu-0 wrapper; last read14272updates/14,614,528tokens/4441.687318seconds driver elapsed, no error and8.224410112GB live allocation. CPU source driver last read2494.270524seconds elapsed/9038.46875processCPU. These are partial measured counters, not final budgets or effective research duration. Active interactive work and waiting were not independently instrumented; their durations remain unknown. No new package, purchase, external compute or other-project lease change occurred.
+
+Manuscript now has semantic_results.tex with source-backed material and selectivity tables/figures and the separate union-family proof/methods. It records observed early/middle source deficits without upgrading them to cross-seed success. ravel_semantics_paper.py now draws aligned Cause/Iso/mean city-pair intervals to avoid point-label crowding. Final rerender and whole-PDF review remain pending all results. Updated current native-participation code descriptions to published decoder-cosine PW-MCC; no old run snapshot or numerical result was rewritten. Future source scripts compile successfully. Before entry/plot changes, byte copies/hashes were retained atarchive/research_workflow_20260908/r16_midprogress_20260908T131135Z/manifest.json. An attempted read of a nonexistent appendix_reproduce.tex was a harmless path error; the actual filename isappendix_reproduction.tex. No scientific operation was affected.
+
+Next: finish the active two runs, compare identical4M/16M full native coverage, execute the strengthened source masks on completed16M material, and use actual source performance to choose correspondence work. Finish the single current paper and append R16 COMPLETE before any counter increment or grouped sync. No round was added or counted by this progress entry.
+
+## FINAL_FIVE_R16 PROGRESS — measured source intersections and dependent GPU work
+
+round_id: FINAL_FIVE_R16. Actual write UTC: 2026-09-08T13:28:38Z. The latest observed CPU fit event is2026-09-08T13:27:14.448656Z; exact training-body completion timestamp is not exposed by the progress file and remains unknown here. Final inference weights/exact state are present and the training driver is now evaluating its retained checkpoints, with at least16of25quality rows observed. No final PASS or finished-training wall time is claimed yet.
+
+Useful new algebraic observation: scripts/analyze_semantic_union.py evaluates frozen completed source-method gates on the same held city contexts using the matching4Mcoverage checkpoint/codes; it makes zero LM calls and uses one CPU thread. The shared source's actual joint-versus-summed-singleton relative RMS hook differences are.6221915/.5597320/.6386529 for the three pair controls and1.0598908 for the triple. Ratios aggregate squared energies before division. This shows that source overlaps materially change the physical operation even though the source's semantic Cause remains weak. It motivates fitting the full vertex family, not a semantic-success or cross-seed claim. Partial-parent statusRUNNING, completed method state, exact context/checkpoint checks, inputs/hashes, per-row energies and arrays are retained atartifacts/final_five_research_20260908/r16_semantic_operations/UNION_INTERACTION_4M_PARTIAL.json/npz. Analysis wall.6583185s; no additional heavy lease was warranted for this small read/1thread algebra. Rerun on final method artifacts for final inclusion.
+
+The authorized GPU continuation is waiting under execsession6102 for training statusPASS. It then leases gpu-0 separately for16M coverage and the declared16M1536-step source comparison, and aborts that dependency chain on failure. It waits without claiming a compute lease and does not interrupt the current training/CPU source or create another automation/task. Actual available RAM at the earlier live check was1.436954624GB, with source CPU RSS8.953892864GB and training RSS5.896957952GB; dependent GPU work starts only after training exits. No extra simultaneous model was launched. Wait cap is40minutes and resource acquisition wait is10minutes, neither counted as research work.
+
+Manuscript source now includes the named-attribute main subsection, exact union-family connection, three-hook/five-direction correction in limitations, RAVEL/SAE-RAVEL actual-method comparison and reproduction instructions. Paper data/figure helper adds unedited reference lines, explicit city-pair intervals, controlled quality/activity/norm table and optional all-pair PW-MCC. An initial development-only figure invocation chose Tk and failed because the bundled runtime lacks init.tcl; setting the already standard noninteractive Agg backend succeeded, and the resulting interval plot was actually viewed. No Tcl/package installation or science environment mutation occurred. The full currentPDF rebuild remains pending final results; no round count advances.
+
+## FINAL_FIVE_R16 CORRECTION / PROGRESS — completed16M material and descriptive metadata
+
+round_id: FINAL_FIVE_R16. Actual write UTC: 2026-09-08T13:33:52Z. Training finished at2026-09-08T13:29:07.215229Z (status artifact);16M coverage started2026-09-08T13:29:16.724210Z and ended2026-09-08T13:31:10.883456Z. The source-mask run began2026-09-08T13:31:15.716943Z and is still running. Training session33073 closedexit0; GPU continuation session6102 remains active.
+
+Five-seed16M training isPASS/contractPASS,25quality rows,5400.059402seconds driver wall,11,833,474,048bytes peakVRAM. At4M→16M, mean natural FVE.9944076347→.9957277217 and CE recovered.9660509393→.9804591190. Validation alive range9852–10032→10023–10216of16384; actualL0 remainsapproximately127.9–128.0. These are fixed-budget learning-curve observations, not convergence proof.
+
+The CUDA16M coverage isPASS/contractPASS,114.126525seconds wall/36.5625processCPU/3872full sequences/3360metric rows/4,473,496,576bytes peakCUDA. Meanfit Country/Continent/Language rates are.7020833333/.7875/.5833333333; held-development means are.7375/.7875/.66875. Fit task-difference energy explained ranges.5478189266–.5551261352. This improves the actual source action relative to the earlier CPU4M observations, not merely naturalFVE. A matching4M CUDA replay config final5_r16_l7_4m_source_coverage_gpu_five_v2.json is prepared to separate any device arithmetic effect; originalCPU4M evidence stays retained. It is a control of the material comparison, not new independent cities or another research round.
+
+Metadata correction: the16M coverage's copied purpose/scope incorrectly describe4M/CPU. Its executable sae_root wasstep_16384 anddevicecuda:0, confirmed byactual inputs/environment and completed outputs. Preserve config.resolved/summary/manifest verbatim; METADATA_CORRECTION.json records actual corrected description and originalconfig hash. The current reusable config now has the correct descriptive fields. No scientific code, checkpoint, row or result was changed. Future paper export will retain both original and correction provenance.
+
+CPU source4M continues its exclusive fit. Deferred atom matching session44047 waits for that CPU predecessor to end, then leasescpu-heavy and matches all10unorderedpairs at4M/16M under the recorded60min/firstpair180sec budget. The predecessor's semantic outcome does not determine this independent geometry comparison. GPU warm-mask source fitting usesits already frozen configuration. No purchase, newexternal resource, package install or automation/task reassignment occurred. Next: complete both source fits, matched-device material control and all-pair PW-MCC; decide any native family transfer from actual source utility, then finish manuscript/evidence/roundCOMPLETE and sync.
+
+## FINAL_FIVE_R16 PROGRESS — all-pair dictionary improvement and frozen source diagnosis
+
+round_id: FINAL_FIVE_R16. Actual write UTC: 2026-09-08T13:57:39Z. The4M source ended2026-09-08T13:41:59.108857Z; all-pair atom matching ended2026-09-08T13:51:27.460250Z. Source16M currentlyremainsRUNNING, finalDASmethod after768/1536updates; no newroundcount.
+
+CPU4M512 source isPASS/contractPASS,4290.3455847swall/15691.90625CPU/35492fullsequences/1344metrics, bothmethods fullyheld-evaluated. Shared/exclusive heldCause-Iso means are.0520833-.796875 and.0833333-.7916667; mean scores.4244792/.4375. The previouspartial-parent algebra record is retained, and completeUNION_INTERACTION_4M.json/npz now adds the exclusive operator. Shared pair/triple additive-versus-union hook discrepancies remain.56–.64/1.06 relativeRMS; exclusive discrepancies are~1e-16. This finite-algebra observation does not turn weak sources into useful semantic operations.
+
+CPUatom comparison isPASS/contractPASS:20assignments,549.9260349swall/663.421875CPU. All10unorderedpair meanPW-MCC improves.263394434411→.391098082851 at4M→16M. Respective pairranges[.2620184,.2649680]and[.3886852,.3934742]; actualpairwall21.08–31.16s. Shares five dictionaries across directions; noindependentpairCI orsemanticidentityclaim. Trainingbulkactual71files18,797,706,303bytes, belowrecorded100GBnewbulkceiling. Noadditionalweightsorpaidresources. Session44047closedexit0; its620.2686266secondpredecessorwait is not scientificwork.
+
+At the16M source run, the completedSAE-DBM has3654binaryweights butheldCause/Iso.5104167/.3229167;512shared.0520833/.78125;512exclusive.125/.6875;rawDBM.53125/.5. ParentstillRUNNING, fullfinalcomparisonnotclaimed. Densemaskfailure means512capacityalonecannotexplain the currentselectivity gap. FinalrawDAScalbestsofar.6041667at384, with1536pointpending. The frozenfit diagnostic testswhether these operators already failonoriginalfitpairs orloseeffectonunseenfittingentities; it cannotaloneproveinformationabsent. The24originalfitpairsarepartoftheexpanded351;alloldcal/heldrowsmaintainidentities. FuturemethodclassorSAEtraining/datachange remainsan empiricaldecision,notpermissiongate.
+
+New scripts/evaluate_ravel_source_fit.py andconfigs/final5_r16_l7_16m_frozen_source_splits_v1.json compile. Queuedexec31047waitsforv3PASS then separatelyleasesGPUfor4Mmatching-devicecoverage andthisfrozen480row/3control/5methoddiagnostic. Itloadsfinalstateswithoutfitting/reselectionandchecksfullheldlogprobsagainsttheproducerwith.001numericaltolerance. Itisnotanindependentconfirmation. Wait/compute budgetsremainrecorded; nooutsideagent/taskornewautomation.
+
+Currentpaper/main.pdf wasactuallyrebuilt at2026-09-08T13:34:43Zto80pages,sha9bb865c339d5cd888ce850dbfa853e99a285248a55b5098a05af9d650ec2e0dd. Newtheoryandmaterial/quality/selectivitypages30/74/75/76andmainp11wereactuallyviewed. Layout/fonts/formulasreadcorrectly; nooverfullerrorwasobserved. Subsequentdataexportsnowincludecompleted4Msource/20atompairs, andsourceaddsfixedidentitycitycasesandfit/cal/helddiagnostictables; these latereditsawaitfinalrebuild. Fullpaperdata/figure/TeXbuildpreviouslypassed; no repeatedmodeltestsforprosechanges. Nextfinishv3andqueueddiagnostics,readtheactualresults,writeconcreteR17methodchoice,finalizeonecurrentpaper/report/inventoryandR16COMPLETEbeforecounter/sync.
+
+
+## FINAL_FIVE_R16 CORRECTION / PROGRESS — 冻结回放修正与源操作差距
+
+round_id: FINAL_FIVE_R16。实际写入UTC：2026-09-08T14:13:01Z。源拟合完成事件为2026-09-08T13:58:58.291316Z；同设备4M素材回放结束于14:00:50.803571Z；第一次冻结诊断结束于14:01:31.261818Z，修正版本结束于14:06:21.711259Z，均来自各自status，不用本条写入时间代替。
+
+16M源拟合五方法全部完成。SAE DBM、shared512、exclusive512在留出城市的Cause/Iso平均分分别41.67%、41.67%、40.62%；raw DBM和rank512 DAS为51.56%、62.50%。固定源状态在原24拟合对上回放：三种native方法只有44.70%、40.71%、42.62%，raw DAS则96.70%。因此，native取出方式在拟合域内已弱，raw子空间另外有96.70%到62.50%的城市泛化差距。不能仅凭该诊断宣布SAE信息不存在，也不以继续增加512门控试验替代方法改变。旧文句“unseen fitting entities”应理解为与拟合城市不重用的留出城市，非新的拟合数据。
+
+第一次冻结回放FAIL：全方法最大log-prob误差0.0034497425（先前聊天提及0.002478是DAS的值，不是全方法最大值），超过原0.001阈值。源producer先计算96行held编辑，诊断却用480行矩阵乘法。修正为各split单独物化相同形状后，v2的五方法最大误差均小于1.91e-6，PASS/contractPASS；源参数、检查点、阈值和原始结果未改。v1/v2以及代码snapshot均保留，只有v2用于拟合域诊断。两次诊断driver分别39.2013/38.3735秒，等待不计研究工作。
+
+同GPU的4M与16M完整SAE作用比较成立；4M CPU/GPU全部3360条记录的预测token与正确率均一致。五seed拟合Country/Continent/Language由56.88/72.92/45.83升至70.21/78.75/58.33%，留出由62.50/75.00/58.13升至73.75/78.75/66.88%。MATCHED_DEVICE_MATERIAL.json保存原始身份与统计；没有声称概率逐位相同。16M并集与相加的实际hook差异也已计算，和4M一起进入同稿表格；非语义成功。
+
+所有R16科学run已结束，实际数量、状态、raw hashes和资源在R16_RUN_INVENTORY.json。正文正在统一更新训练、拟合和泛化发现，唯一main.pdf将重建并实看。有效人工工作与未单独测量的等待时长未知，不能以并行run耗时相加替代。没有付费、新模型、工具安装、他项目lease变更或任务委派。R16未COMPLETE，计数仍15/18。下一步完成本轮论文与报告，然后R17优先比较SAE解码差分上的灵活子空间源操作与raw DAS，决定是否缺在门控类别；仍保留跨seed模糊many-to-many母问题与一线主会目标。
+
+
+## FINAL_FIVE_R16 COMPLETE — 语义源类别与受控素材的实际比较
+
+round_id: FINAL_FIVE_R16。实际写入UTC：2026-09-08T14:24:30Z。本轮可证实START为2026-09-08T11:21:37Z，最后科学run于2026-09-08T14:06:21.711259Z结束。本条写入前已完成结果、稿件、可用性重建与报告；现在才将完成计数由15/18推进至16/18，最后五轮由2/5推进至3/5。无第17轮START、无额外研究轮计数。
+
+选择理由与实际改变：把交错rank部分改成外部Country/Continent/Language控制，同时改变中层素材、训练时长和源操作拟合。五个同配置layer7/width16384/k128 SAE至16,777,216自然tokens；4M到16M，CE恢复96.6051%到98.0459%，全十对PW-MCC0.263394到0.391098；同GPU完整源Country/Continent/Language的fit作用56.88/72.92/45.83%到70.21/78.75/58.33%，held亦改善。这是实测素材收益，非收敛或语义对应声明。
+
+最终SAE DBM/shared512/exclusive512在held的Cause/Iso均分为41.67/41.67/40.62%，raw DBM/DAS为51.56/62.50%；冻结选中状态在原fit城市的native均分只有40.71–44.70%，raw DAS为96.70%。因此本轮并未解决有效语义源与跨seed语义用途，不扩张无效source的目标消费者。更多数据/训练与改操作类别需由该差距驱动，不能靠缩窄意义或增加限定语冒充解决。原始各预算、CE与选择规则、八城市对条件区间、没有source五seed语义复现的边界全部保留。
+
+数学与原文：完成重叠并集操作的非相加反例、七binary顶点与连续控制的精确hook误差关系，并在真实gates上测得约56–64%pair/约100%triple的相加误差。标准多线性插值不是新定理，不能证明LM语义或新城市保证。实际阅读RAVEL/SAE-RAVEL及端到端SAE方法、官方代码和PDF图版；MIT RAVEL最小适配与暖mask已实跑，未执行端到端SAE训练。PW-MCC名称错误已追加勘误，原始指标不重写。
+
+失败与修复保留：冻结诊断v1 FAIL的最大logprob差0.0034497425；v2匹配producer的96行held矩阵形状后最大1.9071e-6，通过同一0.001阈值，不改源参数或选择。16M coverage的复制描述错误另存METADATA_CORRECTION；执行层/步数/GPU正确。全部15run（14PASS、1FAIL）及contract、raw hash在R16_RUN_INVENTORY.json，包含reference准备与两诊断，不按数量计研究成果。
+
+资源：gpu-0管理driver wall7979.9903628秒、cpu-heavy5299.6962734秒，非训练已报告processCPU20029.171875秒；训练CPU未报告。峰值CUDA11,833,474,048bytes，run5,981,148,695bytes，新bulk71文件18,797,706,303bytes，付费0。并行wall不可加作有效人工工时；有效工作和未单独计量等待未知。自然续租释放，当前四资源free，无他项目任务中断、环境安装或外部计算。
+
+交付：唯一paper/main.pdf81页，SHA256 2ea45bf7cf702e73c54961c0cdaf1b00f456636c7fedf1f43ec59159f0634fc5；同套源、Proposition12、三新增图族、Tables54–59、自然语言固定案例、来源与证据索引已同步。旧稿/入口保留归档。全稿布局与新/受影响页实际查看，修复引用孤页，保持9pt引用。12helpers的独立归档paper-only重建81页文本及24PNG完全相同，R16_PAPER_REPLAY.json记录；不是独立科学复现。报告R16_REPORT.md SHA256 120248a1e91e47df1ad3bb0678681bccad526147e8915d01e7e08ce37eb56321。R16_DELIVERY_MANIFEST.json随后按最终本地文件生成，白名单提交/推送结果另存R16_SYNC.json；被忽略研究文稿保留本地，不扩大公开范围。
+
+下一步：第17轮先以相同监督和选择预算比较raw DAS与SAE解码差分上的DAS型投影，直接检验原生逐坐标门控是否限制取出可用语义。该适配只是定位和发展有效源的工具；母问题仍是跨seed模糊many-to-many对应，必须接上组成操作、真实迁移收益与新数据证据。按实际源结果分配后续训练/数据多样性资源，不继续盲扫旧门控。R17/R18保留实质研究，第18轮交付后暂停原automation，不新增19。acceptance_status仍NOT_MET。

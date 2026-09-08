@@ -1,0 +1,87 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "layer": 7,
+  "sae_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_4096",
+  "tasks": [
+    "Country",
+    "Continent",
+    "Language"
+  ],
+  "components_per_task": 24,
+  "pairs_per_component": 1,
+  "split_salt": "final5-r14-causalgym-development-20260908",
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "run_id": "FINAL5_R16_l7_4m_semantic512_v2_20260908",
+  "purpose": "Test whether expanded donor diversity and512weight controls use the measurable new middle-SAE source coverage; equally weight-budgeted shared versus exclusive before cross-seed expansion.",
+  "device": "cpu",
+  "cpu_threads": 4,
+  "batch_size": 32,
+  "budget_seconds": 5400,
+  "seeds": [
+    1
+  ],
+  "budget": "CPU-heavy90minute wall maximum, 4 threads; two native384update fits with same384fit-row initialization and512positive-weight budgets. Concurrent GPU16M training is not interrupted. Available RAM10.8GB before launch; projected incremental8GB including model and4404-row material. Zero paid resources, current material only.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Source-only development on same fixed48fit cities with351reciprocal compatible donor pairs. Original8calibration and8held-development pairs unchanged and exposed. Three single controls fit; joint controls evaluate only. Both native classes have512positive weights maximum, same initialization rows/updates/selection schedule. Checkpoint selected by Cause/Iso average with CE tie-break. Layer7width16k/k128 at4M natural tokens changes multiple material factors relative to earlier layer3 experiments; no single-factor attribution, no independent confirmation, no target-based selection.",
+  "generator_script": "scripts/run_ravel_semantic_source.py",
+  "source_seed": 1,
+  "target_seed": 2,
+  "mode": "region_1",
+  "source_budget": 32,
+  "target_budget": 32,
+  "source_curve_budgets": [
+    16,
+    32,
+    64
+  ],
+  "ig_points": [
+    0.125,
+    0.375,
+    0.625,
+    0.875
+  ],
+  "response_steps": 384,
+  "response_lr": 0.03,
+  "calibration_steps": [
+    48,
+    96,
+    192,
+    384
+  ],
+  "optimizer_seed": 9150915,
+  "ridge_alphas": [
+    0.001,
+    0.03,
+    0.3
+  ],
+  "lasso_steps": 2000,
+  "global_assignment": "runs/FINAL5_R14_causalgym_semantic_controls_v5_20260908/global_assignment_s1_t2.npz",
+  "run_parent": "FINAL_FIVE_R16",
+  "milestone": "independent-semantic-source-coverage",
+  "statistics_unit": "Disjoint city pair, reciprocal directions, original templates and shared SAE seed",
+  "prepared_panel": "E:/Projects/SAE_Lab/CCAD/artifacts/final_five_research_20260908/r16_semantic_operations/semantic_panel_v2_fit_crosspairs.json",
+  "dataset_name": "RAVEL",
+  "modes": [
+    "region_1",
+    "suffix_nonfinal",
+    "suffix_all"
+  ],
+  "weight_budget": 512,
+  "das_rank": 32,
+  "methods": [
+    "native_shared",
+    "native_exclusive"
+  ],
+  "learning_rates": {
+    "native": 0.03,
+    "mdbm": 0.001,
+    "mdas": 0.002
+  },
+  "selection_metric": "disentangle",
+  "initialization_rows": 384,
+  "compact_single_site": true
+}

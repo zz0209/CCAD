@@ -254,6 +254,9 @@ def main():
     from native_participation_paper import export as export_participation
     participation=export_participation(root,out,read)
     if participation:plot['native_participation']=participation
+    from ravel_semantics_paper import export as export_ravel
+    ravel=export_ravel(root,out,read)
+    if ravel:plot['ravel_semantics']=ravel
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -340,6 +343,12 @@ def main():
                 'scripts/run_causalgym_native_participation.py','scripts/native_participation_paper.py',
                 'configs/final5_r15_multisite_source_v2.json','paper/sections/native_theory.tex']+
                 [f'configs/final5_r15_participation_five_s{s}_v2.json' for s in range(1,6)]))
+    if ravel:
+        claims.append(dict(id='independent_semantic_controls_and_material',paper='RAVEL semantic controls and union-family appendix',
+            result='Source-only named attribute controls distinguish complete-SAE material capture from selective Cause/Iso performance. Exposed city-pair development, declared fitting budgets and local RAVEL adapters remain separate from cross-seed fidelity and independent confirmation. The finite union-cube characterization is a hook-space statement.',
+            evidence=ravel['input_summary_paths']+['scripts/ravel_semantics_paper.py','scripts/run_ravel_semantic_source.py',
+                'scripts/run_ravel_source_coverage.py','src/ccad/semantic_participation.py','src/ccad/union_family.py',
+                'src/ccad/ravel_controls.py','paper/sections/semantic_theory.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

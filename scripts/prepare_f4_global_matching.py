@@ -21,16 +21,24 @@ from ccad.artifacts import validate_run_directory
 METHODS=['global_matching_geometric','global_matching_pair_calibrated']
 
 
-def full_assignment(source,target):
+def full_assignment(source,target,block_columns=256):
     source=np.asarray(source,dtype=float);target=np.asarray(target,dtype=float)
     if source.shape!=target.shape or source.ndim!=2 or not np.isfinite(source).all() or not np.isfinite(target).all():
         raise ValueError('Expected equal finite full dictionaries')
     ns=np.linalg.norm(source,axis=1);nt=np.linalg.norm(target,axis=1)
-    denom=ns[:,None]*nt[None,:]
-    cosine=np.divide(source@target.T,denom,out=np.zeros_like(denom),where=denom>0)
-    rows,cols=linear_sum_assignment(np.abs(cosine),maximize=True)
+    if block_columns<1:raise ValueError('Positive column-block size required')
+    # Equation1 PW-MCC: all dictionary atoms, absolute decoder cosine and
+    # globally optimal injective assignment. Blocking avoids simultaneous
+    # full-width product/denominator/absolute matrices for 16k dictionaries.
+    sn=np.divide(source,ns[:,None],out=np.zeros_like(source),where=ns[:,None]>0)
+    tn=np.divide(target,nt[:,None],out=np.zeros_like(target),where=nt[:,None]>0)
+    cosine=np.empty((len(source),len(target)),dtype=np.float64)
+    for offset in range(0,len(target),block_columns):
+        cosine[:,offset:offset+block_columns]=sn@tn[offset:offset+block_columns].T
+    np.abs(cosine,out=cosine)
+    rows,cols=linear_sum_assignment(cosine,maximize=True)
     assert np.array_equal(rows,np.arange(len(source))) and len(set(cols))==len(target)
-    signed=cosine[rows,cols]
+    signed=np.einsum('ij,ij->i',sn[rows],tn[cols])
     scale=np.divide(np.sign(signed)*nt[cols],ns,out=np.zeros_like(ns),where=ns>0)
     return cols,scale,dict(mean_absolute_cosine=float(np.abs(signed).mean()),
                            minimum_absolute_cosine=float(np.abs(signed).min()),

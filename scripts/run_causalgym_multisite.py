@@ -85,14 +85,14 @@ class MultisiteWork:
         self.driver = cfg.get('generator_script', 'scripts/run_causalgym_multisite.py')
         write(self.run/'code_hashes.json', dict(files=code, aggregate_sha256=aggregate(code), snapshot_root='source_snapshot'))
         write(self.run/'manifest.json', dict(schema_version='causalgym.multisite.v1', run_id=cfg['run_id'],
-              run_parent='FINAL_FIVE_R15', purpose=cfg['purpose'], milestone='external-multisite-source-and-native-groups',
+              run_parent=cfg.get('run_parent','FINAL_FIVE_R15'), purpose=cfg['purpose'], milestone=cfg.get('milestone','external-multisite-source-and-native-groups'),
               evidence_level='controlled_development', started_utc=self.started.isoformat(), project_root=str(ROOT),
               config_hash=sha256(self.run/'config.resolved.json'), code_snapshot_hash=aggregate(code), source_snapshot_required=True,
               git_head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
               audit_opened=cfg['audit_opened'], candidate_family_frozen=cfg['candidate_family_frozen'],
               mean_constants_source_split='Same dictionary donor differences cancel a fixed mean and decoder bias',
               threshold_source_split='Configuration before this experiment; original exposed train components remain development',
-              statistics_unit='prompt-connected components, reciprocal directions and shared SAE seeds',
+              statistics_unit=cfg.get('statistics_unit','prompt-connected components, reciprocal directions and shared SAE seeds'),
               device=cfg['device'], seeds=cfg['seeds'], resource_lease='gpu-0' if cfg['device'].startswith('cuda') else 'cpu-heavy',
               resource_lease_reason=cfg['budget'], model_revision=cfg['model_revision'], dataset_revision=cfg['dataset_revision']))
         for name in ['stdout.log','stderr.log','metrics.raw.jsonl']:
@@ -139,10 +139,17 @@ class MultisiteWork:
         kernel = self.checked(Path(cfg['sparsify_source'])/'sparsify/fused_encoder.py', 'Sparsify42c0645 encoding kernel', 'MIT')
         self.checked(Path(cfg['sparsify_source'])/'sparsify/sparse_coder.py', 'Sparsify42c0645 preprocessing reference', 'MIT')
         self.encode_kernel = runpy.run_path(str(kernel))['fused_encoder']
-        dataset = self.checked(Path(cfg['dataset_dir'])/'train.json','aryaman/causalgym '+cfg['dataset_revision'],'MIT task data')
-        self.checked(Path(cfg['dataset_dir'])/'README.md','Pinned dataset card','MIT')
         self.checked(ROOT/'.aris/compute/local-r006b1-env-spec.json')
-        panel, inventory = prepare_panel(json.loads(dataset.read_text()), cfg)
+        if cfg.get('prepared_panel'):
+            dataset=self.checked(Path(cfg['prepared_panel']),cfg['dataset_name']+' prepared panel','Pinned public task data')
+            prepared=json.loads(dataset.read_text())
+            panel,inventory=prepared['rows'],prepared['selection_inventory']
+            for reference in prepared.get('source_files',[]):
+                self.checked(Path(reference),cfg['dataset_name']+' original input','Pinned public task data')
+        else:
+            dataset = self.checked(Path(cfg['dataset_dir'])/'train.json','aryaman/causalgym '+cfg['dataset_revision'],'MIT task data')
+            self.checked(Path(cfg['dataset_dir'])/'README.md','Pinned dataset card','MIT')
+            panel, inventory = prepare_panel(json.loads(dataset.read_text()), cfg)
         write(self.run/'selection_inventory.json', inventory)
         modeldir = Path(cfg['model_local_dir'])
         for name in ['config.json','tokenizer.json','model.safetensors']:
@@ -241,7 +248,7 @@ class MultisiteWork:
         self.token_forwards += int(enc.attention_mask.sum())
         return (live if differentiable else lp), derivative if gradient else captured[0] if captured else None
 
-    def load_sae(self, seed):
+    def load_sae(self, seed, positions=None):
         from safetensors import safe_open
         torch = self.torch
         p = Path(self.cfg['sae_root'])/f'seed_{seed}'
@@ -250,16 +257,22 @@ class MultisiteWork:
             raise ValueError('Requires ordinary residual SAE')
         with safe_open(self.checked(p/'sae.safetensors'),framework='pt',device=str(self.device)) as f:
             ew,eb,db,dw = [f.get_tensor(k) for k in ['encoder.weight','encoder.bias','b_dec','W_dec']]
-        codes = np.zeros((len(self.panel),self.max_length,ew.shape[0]),np.float32)
+        if positions is not None:
+            positions=np.asarray(positions,dtype=int)
+            if positions.shape!=(len(self.panel),) or any(p<0 or p>=len(r['tokens']) for p,r in zip(positions,self.panel)):
+                raise ValueError('Requested SAE positions must be real prompt tokens')
+        codes = np.zeros((len(self.panel),self.max_length,ew.shape[0]) if positions is None else (len(self.panel),ew.shape[0]),np.float32)
         for ids in self.batches(np.arange(len(self.panel))):
-            flat = torch.as_tensor(self.hidden[ids].reshape(-1,self.dim),device=self.device)
+            selected=self.hidden[ids] if positions is None else self.hidden[ids,positions[ids]]
+            flat = torch.as_tensor(selected.reshape(-1,self.dim),device=self.device)
             with torch.no_grad():
                 act,index,_ = self.encode_kernel(flat-db,ew,eb,scfg['k'],scfg['activation'])
                 dense = torch.zeros((len(flat),ew.shape[0]),device=self.device).scatter_(1,index,act)
-                codes[ids] = dense.cpu().numpy().reshape(len(ids),self.max_length,-1)
-        for i,row in enumerate(self.panel):
-            codes[i,len(row['tokens']):] = 0
-        np.savez_compressed(self.run/f'seed{seed}_codes.npz',codes=codes)
+                codes[ids] = dense.cpu().numpy().reshape(codes[ids].shape)
+        if positions is None:
+            for i,row in enumerate(self.panel):
+                codes[i,len(row['tokens']):] = 0
+        np.savez_compressed(self.run/f'seed{seed}_codes.npz',codes=codes,**({} if positions is None else dict(positions=positions)))
         return dict(seed=seed,codes=codes,decoder=dw.detach().cpu().numpy(),cfg=scfg)
 
     def alignment(self, ids, mode):
