@@ -126,3 +126,36 @@ def adaptive_writable_support(vectors, target_codes, decoder, budget, eligible, 
         used[batch, index] = True
         selected.append(index.cpu().numpy())
     return candidates[np.stack(selected, axis=1)]
+
+
+def batched_project_native(vectors, target_codes, decoder, *, max_steps=2000, tolerance=1e-5):
+    """GPU/CPU batched FISTA for different decoder supports in each context.
+
+Inputs are tensors [batch,hook], [batch,members], [batch,members,hook].
+The feasible code increment is u>=-z. No language-model endpoint participates
+in this convex decoder-space solve; the caller must evaluate actual effects.
+"""
+    import torch
+    v,z,d=vectors,target_codes,decoder
+    if d.ndim!=3 or z.shape!=d.shape[:2] or v.shape!=(len(z),d.shape[2]):raise ValueError('Batched native shapes differ')
+    if bool(torch.any(z<0)):raise ValueError('Target codes must be nonnegative')
+    gram=d@d.transpose(1,2);rhs=(d@v.unsqueeze(-1)).squeeze(-1)
+    largest=torch.linalg.eigvalsh(gram)[:,-1].clamp_min(1e-12)
+    step=largest.reciprocal()[:,None];lower=-z
+    u=torch.zeros_like(z);y=u.clone();acceleration=1.
+    reference=torch.linalg.vector_norm(rhs,dim=1).clamp_min(1e-12)
+    def gradient(value):return (gram@value.unsqueeze(-1)).squeeze(-1)-rhs
+    for iteration in range(max_steps):
+        new=torch.maximum(y-step*gradient(y),lower)
+        next_acceleration=(1+(1+4*acceleration**2)**.5)/2
+        y=new+(acceleration-1)/next_acceleration*(new-u);u=new;acceleration=next_acceleration
+        if iteration%25==24:
+            pg=(u-torch.maximum(u-step*gradient(u),lower))/step
+            relative=torch.linalg.vector_norm(pg,dim=1)/reference
+            if bool(torch.all(relative<tolerance)):break
+    pg=(u-torch.maximum(u-step*gradient(u),lower))/step
+    relative=torch.linalg.vector_norm(pg,dim=1)/reference
+    realized=(u.unsqueeze(1)@d).squeeze(1)
+    return u,realized,dict(steps=iteration+1,relative_projected_gradient=relative.detach().cpu().tolist(),
+        converged_rows=int((relative<tolerance).sum()),rows=len(z),tolerance=tolerance,
+        minimum_final_state=float((z+u).min()),squared_error=((realized-v)**2).sum(1).detach().cpu().tolist())

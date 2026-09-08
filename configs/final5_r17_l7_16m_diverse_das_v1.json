@@ -1,0 +1,64 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "layer": 7,
+  "sae_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_16384",
+  "tasks": [
+    "Country",
+    "Continent",
+    "Language"
+  ],
+  "components_per_task": 24,
+  "pairs_per_component": 1,
+  "split_salt": "final5-r14-causalgym-development-20260908",
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "run_id": "FINAL5_R17_l7_16m_diverse_das_v1_20260908",
+  "purpose": "Test fitting-city diversity at fixed task-pair/update budget for decoded and raw DAS",
+  "device": "cuda:0",
+  "cpu_threads": 4,
+  "batch_size": 32,
+  "budget_seconds": 3600,
+  "seeds": [
+    1
+  ],
+  "budget": "Two1536-update rank512 fits on176cities/351fit pairs,same4404total rows. One cached1B/16MSAE, at most3600s GPU-managed; original single-kind ~900s measured through progress. No paid resources.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "176fitting cities at the same351fit pairs and4212fit rows as the previous48city expanded panel. Raw and decoded DAS have the same initial seed/rank/updates/LR/sampling/cal selection. Old calibration and held city identities unchanged; permanently development.68unused capability-screened cities reserved, no intervention outcomes loaded or generated for them. Both operator classes are signed projections, not native SAE masks or algorithm novelty.",
+  "generator_script": "scripts/run_ravel_semantic_source.py",
+  "source_seed": 1,
+  "mode": "region_1",
+  "response_steps": 1536,
+  "response_lr": 0.03,
+  "calibration_steps": [
+    96,
+    192,
+    384,
+    768,
+    1536
+  ],
+  "optimizer_seed": 9150915,
+  "run_parent": "FINAL_FIVE_R17",
+  "milestone": "semantic-city-diversity",
+  "statistics_unit": "Disjoint city pair, reciprocal directions, original templates and shared SAE seed",
+  "prepared_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_five_research_20260908\\r17_projected_semantics\\semantic_panel_v3_176cities.json",
+  "dataset_name": "RAVEL",
+  "weight_budget": 512,
+  "das_rank": 512,
+  "methods": [
+    "sae_mdas",
+    "mdas"
+  ],
+  "learning_rates": {
+    "native": 0.03,
+    "mdbm": 0.001,
+    "mdas": 0.002,
+    "sae": 0.001,
+    "sae_mdas": 0.002
+  },
+  "selection_metric": "disentangle",
+  "initialization_rows": 384,
+  "compact_single_site": true
+}

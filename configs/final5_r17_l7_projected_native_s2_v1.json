@@ -1,0 +1,110 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "layer": 7,
+  "sae_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_16384",
+  "tasks": [
+    "Country",
+    "Continent",
+    "Language"
+  ],
+  "components_per_task": 24,
+  "pairs_per_component": 1,
+  "split_salt": "final5-r14-causalgym-development-20260908",
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "run_id": "FINAL5_R17_l7_projected_native_s2_v1_20260908",
+  "purpose": "Test executable nonnegative target-native writes from the effective projected readout",
+  "device": "cuda:0",
+  "cpu_threads": 4,
+  "batch_size": 32,
+  "budget_seconds": 1800,
+  "seeds": [
+    1,
+    2
+  ],
+  "budget": "One target-seed2 native writer development probe; at most1800s GPU-managed, existing1B and16Mweights.96held rows x10controls, sharedmax512member greedy paths with64/256/512bounded refits, encoder and base-active-plus-random256 controls. Expectedbelow10GBVRAM. Measure actual solver/selection time before expansion; no target endpoint fitting or paid resources.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Frozen176city decoded-sourceDAS. Desired vector is the same source projection applied to target2decoded donor difference; no true source edit or semantic label enters target member selection or bounded least squares. Actual targetdecoder increments preserve nonnegative final codes and original reconstruction residual; no TopK encoder-closure claim after the realized write. Dynamic writer budgets64/256/512 countcandidate members, actualchanged countreported. Reencoding changesatmost256members forbase/destinationTopK128; random256retainsbaseactive thenhashseed-randominactive members. All10controls useexisting8heldcitypairs and remain development. Categorical accuracy onfractionalcontrols is descriptive; sourceKL isprimary. Thisisclassical sparse/convex synthesis, not claimed algorithmic novelty or overall projectclosure.",
+  "generator_script": "scripts/evaluate_projected_native_writer.py",
+  "source_seed": 1,
+  "mode": "region_1",
+  "run_parent": "FINAL_FIVE_R17",
+  "milestone": "projected-readout-native-use",
+  "statistics_unit": "Disjoint city pair, reciprocal directions, original templates and shared SAE seed",
+  "prepared_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_five_research_20260908\\r17_projected_semantics\\semantic_panel_v3_176cities.json",
+  "dataset_name": "RAVEL",
+  "das_rank": 512,
+  "compact_single_site": true,
+  "source_run": "runs/FINAL5_R17_l7_16m_diverse_das_v1_20260908",
+  "source_kind": "sae_mdas",
+  "target_seeds": [
+    2
+  ],
+  "binary_controls": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1
+    ]
+  ],
+  "fractional_controls": [
+    [
+      0.5,
+      0,
+      0
+    ],
+    [
+      1,
+      0.5,
+      0
+    ],
+    [
+      0.25,
+      0.75,
+      0.5
+    ]
+  ],
+  "replay_logprob_tolerance": 0.001,
+  "writer_budgets": [
+    64,
+    256,
+    512
+  ],
+  "random_budget": 256,
+  "random_support_seed": 9172301,
+  "writer_steps": 2000,
+  "writer_tolerance": 1e-05
+}

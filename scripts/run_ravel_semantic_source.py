@@ -71,7 +71,7 @@ def fit_operator(w,operator,x,decoder,kind):
         w.progress('SEMANTIC_SOURCE_INITIALIZED',method=kind,initialization_rows=len(init_fit),fit_rows=len(fit))
     best_loss=calibration(0);best_step=0
     best={k:v.detach().cpu().clone() for k,v in operator.state_dict().items()}
-    lr=cfg['learning_rates'][kind.split('_')[0]]
+    lr=cfg['learning_rates'].get(kind,cfg['learning_rates'][kind.split('_')[0]])
     opt=torch.optim.AdamW(operator.parameters(),lr=lr,weight_decay=0)
     rng=np.random.default_rng(cfg['optimizer_seed']);order=list(w.batches(rng.permutation(fit)))
     for step in range(1,cfg['response_steps']+1):
@@ -111,6 +111,8 @@ def fit_operator(w,operator,x,decoder,kind):
     else:
         errors=[float((r.weight@r.weight.T-torch.eye(cfg['das_rank'],device=w.device)).detach().abs().max()) for r in operator.rotations]
         meta.update(rank_per_control=cfg['das_rank'],orthogonality_errors=errors)
+        meta['input_representation']='frozen decoded SAE donor difference' if kind=='sae_mdas' else 'raw residual donor difference'
+        meta['operation_class']='signed contribution projection; not a native SAE feature mask'
         w.checks[kind+'_orthogonal']=max(errors)<1e-4
     write(w.run/(kind+'_fit.json'),meta)
     return operator
@@ -135,29 +137,49 @@ def main():
             donor_positions=np.asarray([a[0][1] for a in alignments])
             if not np.array_equal(w.semantic_positions[w.donors],donor_positions):raise ValueError('Donor compact positions differ from alignment')
             raw=raw[ids,w.semantic_positions]
-        xr=torch.as_tensor(raw,device=w.device);sae=None;xs=None;decoder=None
+        xr=torch.as_tensor(raw,device=w.device);sae=None;xs=None;decoder=None;decoded=None
         controls=[[1,0,0],[0,1,0],[0,0,1],[1,1,0],[1,0,1],[0,1,1],[1,1,1]]
         for kind in cfg['methods']:
             torch.manual_seed(cfg['optimizer_seed'])
-            if kind.startswith('native') or kind=='sae_mdbm':
+            if kind.startswith('native') or kind in ['sae_mdbm','sae_mdas']:
                 if sae is None:
                     sae=w.load_sae(cfg['source_seed'],w.semantic_positions if compact else None)
                     if compact:dz=sae['codes'][w.donors]-sae['codes']
                     else:dz,positions=code_difference(w,ids,sae['codes'],mode)
                     xs=torch.as_tensor(dz,device=w.device);decoder=torch.as_tensor(sae['decoder'],device=w.device)
                     del dz
-                operator=(SemanticBinaryMask(sae['codes'].shape[-1],3) if kind=='sae_mdbm' else
-                          SemanticNative(sae['codes'].shape[-1],3,cfg['weight_budget'],kind=='native_exclusive'))
-                x,dec=xs,decoder
+                if kind=='sae_mdas':
+                    if decoded is None:
+                        with torch.no_grad():decoded=xs@decoder
+                        w.checks['decoded_source_shape_finite']=bool(decoded.shape==xr.shape and torch.isfinite(decoded).all())
+                        fit_ids=ids[[r['split']=='fit' for r in w.panel]]
+                        write(w.run/'decoded_source_input.json',dict(source_seed=cfg['source_seed'],
+                            shape=list(decoded.shape),fit_difference_explained=float((1-((decoded[fit_ids]-xr[fit_ids]).double().square().sum()/xr[fit_ids].double().square().sum())).cpu()),
+                            operation='Apply the same ordered DAS projections to D_s(delta z_s), then add at the original base hook. Frozen codes/decoder; base reconstruction residual preserved. Not native code masking.'))
+                    operator=MultiDAS(w.dim,3,cfg['das_rank']);x,dec=decoded,None
+                else:
+                    operator=(SemanticBinaryMask(sae['codes'].shape[-1],3) if kind=='sae_mdbm' else
+                              SemanticNative(sae['codes'].shape[-1],3,cfg['weight_budget'],kind=='native_exclusive'))
+                    x,dec=xs,decoder
             elif kind=='mdbm':operator=MultiDBM(w.dim,3);x,dec=xr,None
             elif kind=='mdas':operator=MultiDAS(w.dim,3,cfg['das_rank']);x,dec=xr,None
             else:raise ValueError(kind)
+            if kind=='sae_mdas' and cfg.get('comparison_source_run'):
+                parent=ROOT/'runs'/cfg['comparison_source_run']
+                status=json.loads(w.checked(parent/'status.json').read_text())
+                previous=json.loads(w.checked(parent/'config.resolved.json').read_text())
+                fields=['model_revision','layer','sae_root','prepared_panel','source_seed','mode','response_steps','das_rank','optimizer_seed','calibration_steps','selection_metric','batch_size']
+                w.checks['raw_das_comparison_config']=status['status']=='PASS' and all(cfg[k]==previous[k] for k in fields) and cfg['learning_rates']['sae_mdas']==previous['learning_rates']['mdas']
+                initial=torch.load(w.checked(parent/'mdas_checkpoint_0.pt'),map_location='cpu',weights_only=True)
+                w.checks['raw_das_exact_initial_state']=set(initial)==set(operator.state_dict()) and all(torch.equal(v.cpu(),initial[k]) for k,v in operator.state_dict().items())
+                if not w.checks['raw_das_comparison_config'] or not w.checks['raw_das_exact_initial_state']:
+                    raise ValueError('Decoded/raw DAS comparison requires the same fit configuration and exact initial parameters')
             operator=fit_operator(w,operator.to(w.device),x,dec,kind)
             references={}
             for control in controls:
                 with torch.no_grad():delta=expand_delta(w,evaluation,operator(x[evaluation],dec,torch.as_tensor(control,device=w.device))).cpu().numpy()
                 name=''.join(map(str,control))
-                references[name]=semantic_measure(w,evaluation,delta,kind,mode,control,seed=cfg['source_seed'] if kind.startswith('native') or kind=='sae_mdbm' else 0,
+                references[name]=semantic_measure(w,evaluation,delta,kind,mode,control,seed=cfg['source_seed'] if kind.startswith('native') or kind.startswith('sae_') else 0,
                     control_seen_in_fit=sum(control)==1)
             np.savez_compressed(w.run/(kind+'_held_outputs.npz'),row_ids=evaluation,**{k:v.astype(np.float32) for k,v in references.items()})
             w.progress('SEMANTIC_SOURCE_EVALUATED',method=kind)

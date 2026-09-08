@@ -257,6 +257,9 @@ def main():
     from ravel_semantics_paper import export as export_ravel
     ravel=export_ravel(root,out,read)
     if ravel:plot['ravel_semantics']=ravel
+    from projected_semantics_paper import export as export_projected
+    projected=export_projected(root,out,read)
+    if projected:plot['projected_semantics']=projected
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -349,6 +352,11 @@ def main():
             evidence=ravel['input_summary_paths']+['scripts/ravel_semantics_paper.py','scripts/run_ravel_semantic_source.py',
                 'scripts/run_ravel_source_coverage.py','src/ccad/semantic_participation.py','src/ccad/union_family.py',
                 'src/ccad/ravel_controls.py','paper/sections/semantic_theory.tex']))
+    if projected:
+        claims.append(dict(id='projected_semantic_source_and_native_use',paper='Projected semantic source, ordered-family theory and native-use comparison',
+            result='Decoded difference DAS separates source operation restrictions from retained information. Four target seeds reuse one fixed source; dynamic nonnegative native writes compare to readout, PW-MCC, reencoding and random members. Natural learned corrections do not establish an advantage. All city results are development and sparse synthesis is a classical component.',
+            evidence=projected['input_summary_paths']+['scripts/projected_semantics_paper.py','scripts/evaluate_projected_native_writer.py','scripts/evaluate_projected_family_transfer.py',
+                'scripts/fit_projected_family_correspondence.py','src/ccad/projected_correspondence.py','src/ccad/native_operation.py','paper/sections/semantic_theory.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

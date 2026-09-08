@@ -1,0 +1,71 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "layer": 7,
+  "sae_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_16384",
+  "tasks": [
+    "Country",
+    "Continent",
+    "Language"
+  ],
+  "components_per_task": 24,
+  "pairs_per_component": 1,
+  "split_salt": "final5-r14-causalgym-development-20260908",
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "run_id": "FINAL5_R17_l7_projected_correspondence_v1_20260908",
+  "purpose": "Test identity-anchored operation-family correspondence on separate natural paired documents",
+  "device": "cpu",
+  "cpu_threads": 4,
+  "batch_size": 32,
+  "budget_seconds": 1800,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "budget": "At most1800s cpu-heavy,fourthreads, expectedunder4GBRAM. FourtargetSAEs plus raw-hook reference,2048-dimensional natural covariance/RRR fits and completePW-MCC scalar calibrations. No LM/GPU, semantic-label fitting, new training/model or paid resources.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Source1 decoded DAS fixed before correspondence. Five controlled16MSAEs; target2\u20135 mappings learn solely from paired natural discovery, center on independent mean and selectalpha on naturalcalibration summed seven-control hook error. Identity-prior rank is correction rank, not total map rank. All source/semantic-held data remain development. Target semantic labels and natural audit rows are not used for fitting/selection. Completed source method may be consumed while the same producer finishes its separate raw-DAS phase; exact source state/metadata/output hashes and producer status recorded. Target0 denotes raw shared-hook states as a strong reference, not a sixth SAE. Complete16k PW-MCC assignments are frozenR16 assets; per-atom signed scalar ridge is fit/selected on the same natural partitions and alpha grid.",
+  "generator_script": "scripts/fit_projected_family_correspondence.py",
+  "source_seed": 1,
+  "mode": "region_1",
+  "optimizer_seed": 9150915,
+  "run_parent": "FINAL_FIVE_R17",
+  "milestone": "projected-many-to-many-correction",
+  "statistics_unit": "Original natural document; mixed-document context windows excluded",
+  "dataset_name": "RAVEL",
+  "reference_run": "runs/FINAL5_R16_l7_natural_reference_v1_20260908",
+  "reference_tokens_sha256": "b6ec15f1f640e691718d9446e97b94a2653f0ef2d9fed0c817d68a6c9d65cc0a",
+  "reference_document_records": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/document_token_records.json",
+  "reference_sequence_records": "runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/sequence_records.json",
+  "reference_split_salt": "r17-natural-paired-document-v1",
+  "context_length": 128,
+  "maximum_tokens_per_document": 256,
+  "encode_batch_tokens": 128,
+  "source_run": "runs/FINAL5_R17_l7_16m_diverse_das_v1_20260908",
+  "natural_run": "runs/FINAL5_R17_l7_natural_five_codes_v1_20260908",
+  "source_kind": "sae_mdas",
+  "target_seeds": [
+    0,
+    2,
+    3,
+    4,
+    5
+  ],
+  "ranks": [
+    32,
+    128
+  ],
+  "ridge_alphas": [
+    0.001,
+    0.03,
+    0.3
+  ],
+  "allow_completed_source_phase": true,
+  "atom_assignment_template": "runs/FINAL5_R16_l7_atom_4m16m_five_v1_20260908/step16384_s{source}_t{target}_assignment.npz"
+}

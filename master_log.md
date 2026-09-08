@@ -5534,3 +5534,79 @@ round_id: FINAL_FIVE_R16。实际写入UTC：2026-09-08T14:24:30Z。本轮可证
 交付：唯一paper/main.pdf81页，SHA256 2ea45bf7cf702e73c54961c0cdaf1b00f456636c7fedf1f43ec59159f0634fc5；同套源、Proposition12、三新增图族、Tables54–59、自然语言固定案例、来源与证据索引已同步。旧稿/入口保留归档。全稿布局与新/受影响页实际查看，修复引用孤页，保持9pt引用。12helpers的独立归档paper-only重建81页文本及24PNG完全相同，R16_PAPER_REPLAY.json记录；不是独立科学复现。报告R16_REPORT.md SHA256 120248a1e91e47df1ad3bb0678681bccad526147e8915d01e7e08ce37eb56321。R16_DELIVERY_MANIFEST.json随后按最终本地文件生成，白名单提交/推送结果另存R16_SYNC.json；被忽略研究文稿保留本地，不扩大公开范围。
 
 下一步：第17轮先以相同监督和选择预算比较raw DAS与SAE解码差分上的DAS型投影，直接检验原生逐坐标门控是否限制取出可用语义。该适配只是定位和发展有效源的工具；母问题仍是跨seed模糊many-to-many对应，必须接上组成操作、真实迁移收益与新数据证据。按实际源结果分配后续训练/数据多样性资源，不继续盲扫旧门控。R17/R18保留实质研究，第18轮交付后暂停原automation，不新增19。acceptance_status仍NOT_MET。
+
+
+## FINAL_FIVE_R17 START — 改变SAE语义源的操作类别
+
+round_id: FINAL_FIVE_R17。实际写入UTC：2026-09-08T14:36:08Z；heartbeat事件2026-09-08T14:33:53.803Z。本条为可证实研究起点，不倒算先前阅读/思考时长。R16已经结果、稿件、COMPLETE与87a1198同步完成；当前累计16/18、最后五轮3/5，本轮未完成。
+
+选择理由：同配置更长训练改善了完整源作用与atom，但最终native门控fit也只有40.71–44.70%，raw DAS fit96.70%、held62.50%。应直接改变源操作类别，检验同样DAS投影作用于SAE解码差分能否提取更有效的属性操作；不继续用弱512门控扩大目标suite。复用RAVEL的真实Cause/Iso目标与原rank512/1536updates/seed/城市面板/cal选择，尽量只改变输入差分。标准投影适配不是创新；若找到有效源，要继续落实跨seed模糊many-to-many的组成、用途与强对照，而不是以源准确率替代母问题。
+
+实际先读当前规则/tracker/plan、R16run与源拟合代码、官方MIT RAVEL DAS实现，确认其原式在旋转空间替换base/source差。方法接口将是signed源贡献P(c)D_s Δz_s，不是原生feature mask；固定均值/bias仍在差分中抵消。需要补清joint ordered projections的操作定义和对应矩阵，不套用可交换native union结论。拟合/开发数据身份保持，正式后续确认必须用冻结后新数据。
+
+预算与资源：R17_BUDGET.json记录GPU管理wall上限6h、CPUheavy3h、E新增25GB/bulk100GB、付费0；首个源对照cap3600s。实测RTX5070Ti16GB当前1634MiB/4%，RAM33.727GB总/17.320GB可用，D3.703TB/E162.352GB可用，四资源free。沿锁定r004环境与既有32Mstream/16Mcheckpoint，无新权重下载或付费。查询中bundledPython无psutil，改用Windows原生GlobalMemoryStatusEx和stdlib读取成功，没有安装。测得数值是此刻快照，不作持续可用承诺；有效工作/未计量等待仍未知。
+
+本轮须同时产出实际源/对应结果、数学接口、邻近原文比较与同一paper/main.pdf；旧稿和入口逐字归档于archive/research_workflow_20260908/r17_start_20260908T143608Z。正式结果写稿并COMPLETE后才计17。第18轮完成授权最终交付后原位暂停已有automation，不新增19、不委派、不降低意义/主会目标。
+
+
+## FINAL_FIVE_R17 PROGRESS — matched decoded-source fit started
+
+round_id: FINAL_FIVE_R17。实际写入UTC：2026-09-08T14:38:54Z；run启动事件2026-09-08T14:37:58.298733+00:00来自status。FINAL5_R17_l7_16m_decoded_das_v1_20260908已经在gpu-0 wrapper session87312运行，首个预算3600s，尚无科学结果。
+
+实际实现复用MultiDAS，以冻结D_s Δz_s作为输入，LR0.002、rank512、1536更新、采样/optimizer seed/calibration规则与R16 raw DAS相同。run内记录并检查原始PASS父run配置与原DAS初始state完全相同，原raw结果保留。新operation是signed贡献投影，不是native门控；metadata显式记录输入类别。资料检查已读官方RAVEL distributed_alignment_search.py低rank原式，采用其既有MIT方法，不声称算法新颖性。
+
+源fit运行时继续推导固定donor的有序projection操作族与many-to-many对应接口，并核查最近邻如何评估组成与新实体泛化。暂无第二计算或额外资源排队，不能提前称有效源或跨seed成功。本轮仍IN_PROGRESS、completed16/18。
+
+
+## FINAL_FIVE_R17 PROGRESS — 源操作差距被缩小，开始检验城市泛化与对应修正
+
+round_id: FINAL_FIVE_R17。实际写入UTC：2026-09-08T15:08:09Z。源run实际结束2026-09-08T14:52:57.959700+00:00；冻结诊断结束2026-09-08T14:57:40.398944+00:00。
+
+实质结果：FINAL5_R17_l7_16m_decoded_das_v1_20260908 PASS/contractPASS，899.6410681秒GPU管理wall，1536步被原校准规则选中，留出Cause0.64583333、Iso0.578125、均分0.61197917；同初始化/预算rawDAS均分0.625，原native门控约0.416667。不能把此单seed开发结果当跨seed或主会闭合。冻结FINAL5_R17_l7_16m_decoded_source_splits_v1_20260908 PASS，全部351fit对均分0.983202754、校准0.541666667、留出0.611979167；held全词表重放最大误差1.8986243e-6。SAE解码差分并非无法支持高拟合分，城市泛化成为直接可检验的缺口。
+
+据此准备并启动176fit城市/同351对/4212fit行的raw与decoded对照FINAL5_R17_l7_16m_diverse_das_v1_20260908，实际启动2026-09-08T14:57:42.202662+00:00，gpu-0 session36341。原24fit对保留，cal/held行原样复制，另68城市只有旧未编辑能力筛查，不生成/使用干预。数据SHA256c39d1f4b4ebf0d2a6e533b524a1b4b9457a8d4671e8f849e0f240453a7c691b8；城市选择不读取SAE/干预结果。768步cal0.606770833是进度，不作最终held结果。
+
+对应素材：FINAL5_R17_l7_natural_five_codes_v1_20260908 PASS/contractPASS，22.1057964秒cpu-heavy wall，五个16M SAEs依次编码8576自然token；mean768/discovery4224/calibration3584。原文档hash10/40/20/30分区，排除7872跨文档窗口token；原raw参考文件已读取/物化，audit行没有编码/拟合/计算指标，不冒充独立质量验证。首次无overlay导入psutil失败，按锁定f4overlay恢复，未安装或改变环境。
+
+数学/实现：同一semantic_theory.tex补齐有序投影B(c)、非交换反例、七顶点连续hook误差结论及family Gram，旧PDF/源逐字归档。新src/ccad/projected_correspondence.py和fit_projected_family_correspondence.py以独立自然均值与文档均衡权重，比较直接共享空间、完整ridge、恒等先验的低rank修正及操作族加权RRR；标准算法不称首创，correction rank不冒充整张map的rank。非交换反例/连续插值、带惩罚weightedRRR相对独立Cholesky-whitenedSVD两测试PASS。尚无拟合map或真实迁移结果。
+
+最近邻：实际读Grant等arXiv2511.04638v4的方法/附录和PDFpage10；CL需要合法自然反事实状态，不能把不兼容的国家/大洲组合直接套入；参考/许可/图版hash入registry。下载sandbox访问失败及web截图cache miss保留记录，公开PDF授权重试成功；无外部源码执行。计算外有效工作/等待分解未独立计量，不伪造工时。本轮继续IN_PROGRESS16/18，先完成有证据的source/correspondence比较和同一稿件再计17。
+
+
+## FINAL_FIVE_R17 PROGRESS — 城市对照完成，冻结对应进入真实消费者
+
+round_id: FINAL_FIVE_R17。实际写入UTC：2026-09-08T15:31:15Z；源组合run结束2026-09-08T15:25:34.542656+00:00，自然对应结束2026-09-08T15:15:48.841834+00:00，consumer启动2026-09-08T15:27:58.866912+00:00。
+
+城市对照FINAL5_R17_l7_16m_diverse_das_v1_20260908 PASS/contractPASS，1672.3051672秒GPU管理wall、1502.390625秒processCPU。176城市decodedDAS选1536步，heldCause0.65625/Iso0.630208333/均分0.643229167；rawDAS选384步，held0.739583333/0.572916667/0.65625。两者均比原48城市提升0.03125，旧8对held仍development；不能据此宣称显著改进、跨seed或优于raw。
+
+新对应FINAL5_R17_l7_projected_correspondence_v1_20260908 PASS/contractPASS，139.6684206秒cpu-heavy wall、197.1875秒processCPU以最终summary为准，49map。源投影阶段完整后读取不可变state/fit/held输出，当时raw对照仍运行；status/progress读取快照在该run，现整体父run已PASS。五16M控制SAE中source1固定，target2–5加raw参考target0；自然data以独立均值/文档均衡权重，发现拟合与校准选择分开，无target语义标签。直接共享空间自然误差约0.001，PW-MCC标量校准约0.058，低rank恒等修正仅微变；此时未作LM结论。完整3alpha×2rank及失败/输入/代码身份保留。
+
+ORDERED_COMPOSITION.json为同一冻结源的实际float64代数分析，11.7427354秒cpu-heavy wall：反序joint相对hook差异0.370991–0.410022，三属性简单相加误差0.922630；singletons无顺序差。三fractional实际向量插值误差最大4.24e-15。它不证明LM功能差异，真实source反序与所有map现在由FINAL5_R17_l7_projected_transfer_v1_20260908执行，gpu-0 session32151，1800秒预算，无额外GPU排队。
+
+稿件仍唯一paper/main.pdf；现为R16已交付81页，R17修改仅在同套semantic_theory.tex，未把未编译源冒充新PDF。数学补充说明全维无rank约束时输出metric不改变可观察ridge预测，以及rank修正不等于整图rank。下一步看真实source保持/属性CauseIso/未训练组成强度，再把实际结论和图表整合进该稿。本轮仍IN_PROGRESS16/18，未新增轮/未委派/无付费；计算外有效工作与等待没有独立计量。当前入口更新前逐字归档archive\research_workflow_20260908\r17_progress_20260908T153115Z/manifest.json。
+
+
+## FINAL_FIVE_R17 PROGRESS / CORRECTION — actual native use
+
+Written at UTC: 2026-09-08T15:48:44Z. round_id:17. Event source: run status/progress, native pilot began2026-09-08T15:42:31.710996Z and ended2026-09-08T15:44:52.223468Z at last control; final driver duration140.62817290000385s (exact finish timestamp in status). PASS/contractPASS,132.1875s processCPU,5,048,750,080bytespeakCUDA.
+
+Seed2 fixed176city source uses real target decoder and final code nonnegativity. Three single controls: sourceCause65.625/Iso63.020833; directreadout60.416667/62.5; encoder38.541667/53.125; adaptive64 36.458333/64.0625; adaptive256 53.125/61.979167; adaptive512 57.291667/64.583333; random256 6.25/81.770833 percent. Corresponding sourceKL direct.103735,encoder.456969,adaptive64 .407624,256 .179397,512 .124906,random1.240295. All10controls writer squared error/desiredenergy:encoder.4076765,adaptive64 .3378005,256 .1562442,512 .0714048,random.5247322. Alladaptive/random96x10boundedsolves reached declared projected-gradient tolerance; minfinalstate0. Meanchanged512 511.996875,encoder196.575. Supports/coefficients/feasibility/sourceidentity retained in run. Support search is dynamic, not a stable labeled feature group; higherbudget512 is not matched to encoderactual196.6. This is a real native feasibility/function signal, not overall novelty or projectclosure.
+
+Decision: replicate unchanged methods and existing8developmentcitypairs to target3/4/5 under measured<=900sGPUmanagementbudget; common source1 means dependencies retained. No newdata confirmation yet. Source/control/selection unchanged, no semanticendpoint enters writer. Next aggregate all directions, derive dependence-aware summaries and natural-language cases, integrate samepaper/main.pdf. R17notCOMPLETE, counter16.
+
+Correction of earlier15:31:15Z PROGRESS: natural49mapfit processCPU is197.171875seconds (metrics.summary.json), not197.1875. Historical prose retained; actual wall139.6684206unchanged. Preliminary artifact inspection tried absentmetrics.raw.json/summary.json then corrected to actualmetrics.raw.jsonl/metrics.summary.json; a summary attempt used nonexistent source_kl field and raised before saving. No scientificrun/method changed or result overwritten.
+
+
+## FINAL_FIVE_R17 COMPLETE — projected sources and executable native use
+
+Written at UTC: 2026-09-08T16:06:47Z. round_id:17; campaign final_five_research_20260908; finalfiveposition4/5. Verified event start2026-09-08T14:36:08Z fromSTART, endthiscompletionwrite2026-09-08T16:06:47Z; exactrunstart/endstatus retained. All requiredR17result/manuscript organization completed beforecounteradvance.
+
+Actual changes: decoded-sourceDAS and equal351pair/176cityfit; independentmean/documentbalanced operation-family/ordinary/identitypriorcorrespondence; real targetnative nonnegativewrites withgreedymemberbudgets64/256/512 andencoder/random references. Frozen source64.3229percent, fourtargetdirect63.3464,256writer58.9844,512writer62.0443,encoder45.3776.256vsencoder13.6068pp conditionalcitypairCI[9.7656,17.4479]; fourtargetsone source,8exposeddevelopmentpairs. Correctionmapsdonotestablishmeaningfulgain;PW51.0417. Source48fitreplay98.3203 separatesnativegatefailurefrominformationabsence. No generalizedmanytomanysemanticsor mainconferenceclosure; acceptanceNOT_MET.
+
+Math/reading: fixed-orderB(c),noncommutation,familyGram/penalizedRRR withidentityprior,correctrowtranspose; sevenvertexhookidentity excludesdynamicnativewriter. Reversejoint37.1–41.0percentphysicalRMS butactualsourceKL.0251–.0563nat. Grantetal2511.04638v4originalmethod/appendices/fig10read,source/licenseversionretained; noexternalCLfitclaimed. Nativealgorithmclassical,actualconstraints/searchbudgetstated. FixedIDColima→Nahacaseincludeserrorsandtargetmembers/coefficients,notstablehumanlabels.
+
+Eightphysicalruns8PASS/contract8PASS inR17_RUN_INVENTORY.json,3567.8548275sdriverwall,3287.3125sprocessCPU,peakCUDA5,435,425,280bytes,9,769,496,472localrunbytes. SeparateCPUcompositionanalysis11.7427s. CPU/GPUoverlap; driverwallisnotpureGPUhourorhumanwork. Rootactivework/idlewaitnotindependentlymeasured; no wait/engineeringcountedasextra round. No newSAEtraining/install/paidresources;ownrunleasesreleased. Failedlookups/import/patchandfirsttablelabelcorrectionareinR17_SOURCE_REVIEW,actualrawrununchanged. EarlierCPUprosealreadyappend-corrected.
+
+Delivery: samepaper/main.pdf87pages SHA2564538834cf515952e219af6b451c5396b714f505e2f1211dd9f4acfeab6b449fd;editablemath/method/source/readout/nativecase,Tables60–63,twonewfigurefamilies,total26.13helperpaper-onlyrebuildexact87pagetext/26PNG;actualnewfiguresandchangedkeypagesviewed. Looseboundaryflagsareonlystandardfooterdigits,noobservedbodyclipping. No visual/buildcounttreatedasscience. ReportsR17_REPORT.md,R17_PAPER_REPLAY.json,R17_SOURCE_REVIEW.json,R17_DELIVERY_MANIFEST.jsonundercampaignartifactroot;data paper/data/projected_semantics.json/csv,EVIDENCE_INDEX. Oldpaper/entrancesarchivedwithhash.
+
+Next: count17/18(finalfive4/5) andsyncauthorizedwhitelist. Finalround18mustresearchcomposition-compatible sourceoperators/actualfamilyconsumerandfreezenewcityconfirmation,thenfinishfullusableprojectpackageandpauseexistingccadautomation. No19,nohandoff,no unpriced purchase. Meaning/usefulness/mainconferencetargetunchanged.

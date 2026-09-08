@@ -54,7 +54,9 @@ def main():
             else:
                 operator=(MultiDBM(w.dim,3) if kind=='mdbm' else MultiDAS(w.dim,3,cfg['das_rank'])).to(w.device)
                 operator.load_state_dict(torch.load(w.checked(parent/f'{kind}_state.pt'),map_location=w.device,weights_only=True))
-                x,d=xr,None
+                # Preserve the decoded-input producer's full-panel GEMM, then
+                # materialize each split's projected update at its own shape.
+                x,d=(xs@decoder if kind=='sae_mdas' else xr),None
             operator.eval();saved=np.load(w.checked(parent/f'{kind}_held_outputs.npz'))
             saved_index={int(i):j for j,i in enumerate(saved['row_ids'])}
             reference_order=np.array([saved_index[old[key(w.panel[i])]['row_id']] for i in held])
