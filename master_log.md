@@ -5610,3 +5610,182 @@ Eightphysicalruns8PASS/contract8PASS inR17_RUN_INVENTORY.json,3567.8548275sdrive
 Delivery: samepaper/main.pdf87pages SHA2564538834cf515952e219af6b451c5396b714f505e2f1211dd9f4acfeab6b449fd;editablemath/method/source/readout/nativecase,Tables60–63,twonewfigurefamilies,total26.13helperpaper-onlyrebuildexact87pagetext/26PNG;actualnewfiguresandchangedkeypagesviewed. Looseboundaryflagsareonlystandardfooterdigits,noobservedbodyclipping. No visual/buildcounttreatedasscience. ReportsR17_REPORT.md,R17_PAPER_REPLAY.json,R17_SOURCE_REVIEW.json,R17_DELIVERY_MANIFEST.jsonundercampaignartifactroot;data paper/data/projected_semantics.json/csv,EVIDENCE_INDEX. Oldpaper/entrancesarchivedwithhash.
 
 Next: count17/18(finalfive4/5) andsyncauthorizedwhitelist. Finalround18mustresearchcomposition-compatible sourceoperators/actualfamilyconsumerandfreezenewcityconfirmation,thenfinishfullusableprojectpackageandpauseexistingccadautomation. No19,nohandoff,no unpriced purchase. Meaning/usefulness/mainconferencetargetunchanged.
+
+
+## FINAL_FIVE_R18 START — composable source family and new-city confirmation
+
+Written at UTC: 2026-09-08T16:10:49Z. round_id:18, finalfiveposition5/5, eventstart2026-09-08T16:10:49Z; no endtimeyet. R17COMPLETEprecededcounter17/18 andwhitelistsyncHEAD=origin/main 6dad3d84ff620140ff4389ae2fb958354fed22ee. ExistingccadACTIVE5min target01a06e15-b222-7b21-a8cd-eb058a3159e5 verifiedfromactualautomation.toml. Rootexecutes directly; no task/subagentdelegation or19.
+
+Why: decoded-sourceprojectionandactualnativewritingimprovedtheconsumer,butindependentprojectorshave37–41percentorderdependenceandjointcontrolsreceivednosupervision. LastchangeisolatesoperatorfamilystructurefromavailableSAEinformation: commonorthogonalattribute blocks versusindependentprojections, both1792updateson same176fitcities/351pairs withsevenbinarycontrols andbalancedCause/Iso loss; raw anddecodedinputs bothincluded. ClassicDASconstraints/fitnotclaimednovel. Cal selectionandfullmethodrulesfrozenbeforefreshcityintervention. Outcomesunknown; equaltrainablearraycountisnot equalStiefeldegreesoffreedom.
+
+Scientificworkwillincludeactualsourcefamilytraining, strongmatchedcomparators, algebra/implementationchecks, originalclosestmethods/code/figreading, andnewcityfrozenreadout/nativeconsumer. Remaining68knowledge-screenedcitieshave no editedoutcomes; pairselectionbyoriginalmetadata/hashandaliascompatibilityonly. Avoidtargetoutcomeselection. Finalprotocolwillstateprimary256writer vsreencode/singleeffect pluscomposition/fraction/sourceKL/strongdirectcomparisons. Weaksourceandnewcityfailuresremain; no repeatedtuningonaudit.
+
+ActualresourcesprecheckRTX5070Ti~2027MiBused/13969MiBfree, noCCADrunactive; existinglockedr004+sparsify/f4overlays. R18_BUDGET.jsondeclares<=6hGPUmanaged/1.5hCPUheavy,+30GBE/0newbulk/0paid. FromR17~836–900sper1536singletonupdates, provisionrough1–2hsourcefitswithuncertaincompositioncost;112stepprogresswillmeasure. Usefulmath/code/source/packageworkwhilecompute, notidlewaitcounted. No effectivework/computeelapsedavailableatSTART.
+
+Deliverablesgo intoexistingpaper/main.pdf/editedsources and finalreproducibleprojectpackage withdata/code/environment/acquisition/claims/citations/allroundlogs. FinishedR17paper87pagesretainedandarchivedbeforechanges. AcceptanceNOT_METuntilrealcontributionevidencewarrants; limitedroundcompletiondoesnotprovequality. At18COMPLETE, pauseexistingautomationpreservingstateandhistory, noexternalpublication.
+
+
+## FINAL_FIVE_R18 PROGRESS — family implementation and first training
+
+Written at UTC: 2026-09-08T16:16:30Z. round_id18. NewSharedDASusesoneorthogonalrowmatrixsplitinto3rank512blocks, makesfixed-donorcontrolsadditive/order-independent, whileindependentDASretainsorderedoverlap. BalancedfamilylossassignshalftotalweighttoCauseandhalfIso whenbothpresent;tripleallCauseweight1. Fourmatched1792update sourcefitvariants trainsevenbinaryrequests,calfamilymeanprimary/singlemeantiebreak/CE. Equal3,145,728trainableentries, StiefelDOFcommon1,965,312versusindependent2,751,744; constraintsdifferexplicitly. Forwardcachesparametrizedweightaccesseswithinonecalltoremoveredundantreconstruction, nochangedmathematicaloperator.
+
+TwofocusedtestsPASSincludingcommoncommutation/additivity/exportedNumPyreplay/nonzerogradientandexactnoncommutingcounterexample. Firstfloat64testinitializedafloat32orthogonalbasebeforecastingandfailedoverstrictdoubleprecision; fixedinitializationdtype,notloweredtoleranceorchangedscientificsettings. Noexperimentrunfailed. ActualGPUsourcefitnowrunningFINAL5_R18_l7_family_source_s1_v1_20260908/session47121 underlease; first112stepmeasuredreportpending. Sourcefiles/config/testsretained, oldR17code/runssnapshotsunchanged.
+
+
+## FINAL_FIVE_R18 PROGRESS — new-city material and measured throughput
+
+Written at UTC: 2026-09-08T16:31:23Z. round_id18. Preparedsemantic_confirmation_panel_v1.json SHA256bd0dd2e96eea8ac0792aa6073e55b63936ee5a46f8c6d50e3dc9f7af1fb453d7: all68reservedcities in34disjointcompatiblepairs/408newrows, original4404rowspreserved as prefix4812total. Maximum-cardinalitygeneralgraphmatchingandhashweights useoriginalknown-city/accepted-aliasmetadataonly; no neweditedoutcomeorSAEqueryselection. ThisisanewcityconfirmationwithinoriginalRAVELtrainpopulation, notofficialtest/OODtemplate/newmodel.
+
+Actualsourceprogress0→112steps52.5516483s includingsevencontrolcalibration,112→22454.5530581s; sourceinitialization/capturefirst119.5143s. At896steps total553.9687s, calfamily.5896577/single.5885417, notfinal/newcityresult. Within6hGPUbudget, prepare samechosenfamily forotherfourseeds aftersource1selection toobtainfivecyclicsourcetargetdirections(1→2→3→4→5→1); exactselectedfamily/rulefrozenbeforethosefits and beforefreshinference. ExistingfullPWassignmentsreceiveseparatenatural-doc signedgaincalibration; sameoldreferenceauditclosed. NootherGPUjobqueuedyet.
+
+AvailableEfree150,541,717,504bytes,Dfree3,703,508,566,016bytes atread; no bulkcopyplanned. ConfirmrunnerandCPUatomcalibrationcodeprepared but notexecuted. Currentconstructorallowsconfig-specificconfirmationprovenancetext witholddefaultsunchanged; currenttrainingsource_snapshotpredatesthisdescriptivetoggle andactualrunremainsdevelopment. Addedcommonblockalgebra/contraction/erroradditivity andmultiple-attributecontributionsperdecodercolumn tosamepaperTeX, PDFnotyetrebuiltfor18. OriginalRAVELmethod/code rereadandsource-licensecomparisoninregistry. Newstagevisualsandresultclaimsawaitrealresults.
+
+
+## FINAL_FIVE_R18 PROGRESS — 2026-09-08T16:47:16Z
+
+round_id: 18。实际写入UTC：2026-09-08T16:47:16Z。可证实事件：source训练2026-09-08T16:15:39.719713Z开始，目前仍在跑；decoded independent末checkpoint于16:32:11.858373Z、decoded common的896步于16:43:33.186101Z写出。两种表示与两种操作族的完整比较尚未完成，未作最终方法选择。independent已选1792步，七请求cal61.532738%、单请求cal64.0625%，旧held单请求68.75%；共享块部分结果cal58.891369%。来源runs/FINAL5_R18_l7_family_source_s1_v1_20260908/中fit和progress，所有旧held属于开发，不能将训练监督和更新量共同变化的收益归因于单一机制。
+
+实际补强：消费者scripts/evaluate_semantic_confirmation.py在尚无新城市干预/冻结前，加入逐输入成员预算与reencode实际改动数匹配的greedy prefix。原定native256与reencode的主比较保留；新增对照针对256对约197成员的已知成本混杂，全字典搜索计算仍不匹配编码器。变长支持用零decoder/零base状态padding，保存active_support_mask与实际成员数。scripts/summarize_semantic_confirmation.py按每请求Cause/Iso平衡后七请求均权，triple仅Cause；城市对联合bootstrap保留五边，seed敏感性删除双incident边。src/ccad/semantic_readout.py和scripts/apply_semantic_family.py提供NumPy读出及固定支持非负写入；仅语法检查通过，真实案例重放待运行。既有Torch模块暂保留同一函数以避免改动运行中的source文件，结束后统一接口。
+
+已完成与准备分列：新panel准备为68城市34对408行，旧4404行逐字等价；尚无新城市干预结果，source第二fit未结束，不声称科学确认或突破。当前实际GPU查询71%利用率、7340MiB使用、8656MiB空闲，是瞬时值而非该run峰值；没有并行GPU或付费/新安装/新bulk。有效工作总时长未知，训练elapsed由progress提供，不能与人工有效工作相加。正文/最终包整理仍未完成。tracker归档archive/research_workflow_20260908/r18_progress_20260908T164716Z/manifest.json；下一步完成四候选校准选择，再同法扩展另四source、完整PW标量对照与冻结新城市实际执行。
+
+
+## FINAL_FIVE_R18 PROGRESS — 2026-09-08T17:24:57Z
+
+round_id: 18。实际写入UTC：2026-09-08T17:24:57Z。source1四候选同预算run仍运行，decoded independent/common及raw independent已结束；raw common最新可证实896步为2026-09-08T17:19:52.935730Z，driver elapsed3853.2315s、process CPU3144s。前两decoded已选1792步，七请求cal61.532738/61.011905%、旧held七请求65.625/64.955357%、旧heldsingleton68.75/63.28125%；raw independent七请求cal65.252976%，尚待raw common及两旧reference完成后才用cal确定source procedure。所有这些数据仍属开发，没有新城市干预。
+
+科学连接与消费者检查：重读RAVEL固定MIT DAS代码、原PDF第6页Cause/Iso图版，图实际查看并保留于r18_family_confirmation/RAVEL_page6.png。新主文将source validity、signed readout、whole/component/state辨识及实际target写入组织为统一论证；旧主文与toy全部细节和图转入扩展附录，原文件逐字归档archive/research_workflow_20260908/r18_main_reorganization_20260908T165611Z。唯一paper/main.pdf暂为91页，references从第5页开始；本次仅编译已有结果与新论证，并实看新前两页，不是R18最终交付。将来结果仍需实测写回，不用排版替代科学。
+
+聚焦实现检查在新数据暴露前修复：五个source重放全部先于首个新城市干预；旧source解码沿用4404行矩阵形状，held投影96行和模型32行批次，保持原1e-3阈值。理由为已留存R16实际数值失败，非放宽阈值。统计中wrong-attribute只有三个singleton，禁止把它与七请求完整族不等权比较；新增summarize_semantic_sources/confirmation和semantic_confirmation_paper待实际完成结果再运行。source/consumer源代码尚未最终freeze。
+
+交付准备：新增NumPy读出与固定支持写入接口、两stage精确ID/hash排除ledger及stream拼接helper；实际32M拼接于2026-09-08T17:15:04.666478Z返回原hash6bb8ab884bead8b335bd4cb9a551e6cf4999df71aac048c2522d23893b24d271，64MiB输出保留。原文语料、packed tokens、第三方参考cache与激活cache将按类型留hash/恢复说明而不复制进最终ZIP；全部raw metric、选中state/operation和代码/配置保留，原local文件不删除。打包器新增多阶段run/artifact根和完整缺失input清单，尚未执行最终打包。中间几次猜错配置/拼接脚本名、PowerShell rg通配符和metrics.json读取失败均只影响路径查找；现按实际目录与code_hashes找到repack_unique_training_corpus.py，未改实验/丢数据或据此宣称检查完成。
+
+资源与状态：同一个GPU任务持续，无额外GPU、新SAE训练、付费或安装；拼接和文档检查是短CPU操作，未申请多余重锁。包大小预估和本次实际准备receipt在r18_family_confirmation/PACKAGE_SIZE_PREVIEW.json及PACKAGE_PREPARATION.json。总有效人工时长未知；不将训练/等待/整理相加冒充科研时长。下一步完成source1全部六候选cal，冻结选中的procedure并拟合另四source；之后自然PW标量拟合、全输入身份freeze、新城市全部消费者与稿图/可使用包，18完成后原位暂停原ccad，不19。
+
+
+## FINAL_FIVE_R18 PROGRESS — source procedure selected
+
+Written at UTC: 2026-09-08T17:35:59Z. round_id: FINAL_FIVE_R18; source1 actual run start2026-09-08T16:15:39.719713Z and end2026-09-08T17:31:08.188567Z. PASS/contractPASS,2688 new held metric rows,4528.4459659s GPU-managed driver wall. Its four1792update source fits plus two frozen earlier references are now all complete.
+
+Seven-request calibration chooses decoded independent61.532738percent over common61.011905 and prior singleton55.245536; raw common67.03869 over independent65.252976/prior61.532738. The corresponding oldheld family scores are decoded65.625/64.955357/56.88244 and raw66.25744/67.894345/63.727679percent. These oldheld outcomes do not select the procedure. Equal-rank/update comparisons and the unequal-update older references remain distinct; common versus independent constrains different Stiefel degrees of freedom. SOURCE_COMPARISON.json and SOURCE_PROCEDURE.json underartifacts/final_five_research_20260908/r18_family_confirmation retain complete decisions; procedureSHA56102f9a8e630111461a9261580935f86260a9aeb1c01c8c530f3d82e0dbb58d.
+
+Created four source2-5 configs by preserving1792updates/rank512/LR.002/optimizerseed9150915/fit panel/order/seven-controlschedule/selected-state rule. Sequential GPU-managed session67055 launched with ordinary authorized access; exact start perrunstatus, completion unknown. ActualprelaunchGPU5percent/2019MiBused/13977MiBfree. Estimate about70min forfour replicas fromsource1 observed independent fit; totalR18budgetunchanged. Natural atom calibration config is prepared but not running. No newcity interventions, no source2-5 outcome selection.
+
+After source1 finished, identical NumPy apply was moved to ccad.semantic_readout and re-exported fromsemantic_family; snapshots include new module. Two focusedexisting tests passed; Torchsource training mathematics unchanged. Rewrote deliveryREADME to include allcampaign stages, exact acquisition/recovery and readout/native distinctions; finalresult paragraph explicitlypending. Earlier paperreorganization/mainPDF and preparation records retained. This phase's initiallookupprogress.jsonl was absent(actualfileprogress.json); pendingcontractread occurredbeforefinish; two patch attempts rejected beforechangingthe target because duplicateoperation/partialline context didnotmatch. Corrected README byliteralfilewrite; appendix wording update remains to perform. These are inspection/edit errors, not experimental failures or data loss.
+
+Next: finishselected source procedure inallfive controlled dictionaries, calibrate natural-only signedPW maps, freezeinputidentities, then runfreshcity suite and completepaper/portableexample/fullpackage withinround18. No roundcompletion/counteradvance or scientificacceptanceclaim.
+
+
+## FINAL_FIVE_R18 PROGRESS — 强raw参照与确认数值路径
+
+实际写入 UTC：2026-09-08T17:55:50Z。round_id：FINAL_FIVE_R18。source2于2026-09-08T17:34:31.999621Z开始、17:51:16.439001Z结束，PASS及contract PASS，driver wall1004.4325302秒；七请求cal60.7143percent，原held七请求63.0208percent、singleton63.28125percent，均仍是开发。source3于17:51:18.092996Z开始，后续4、5顺序接续同一session67055，未重开或增轮。
+
+分开Cause/Iso后发现源方案选择的实际取舍：source1新decoded singleton Cause由65.625降到58.3333percent，Iso由63.0208升到79.1667percent，joint平均由51.3021升到63.28125percent。故不能把平均分上涨写成修改能力和保留能力同时改善。这个事实已写入正文与完整附录。原始六候选数据没有重算或删除。
+
+确认的native主比较是singleton，而原raw只按七请求选优；为保留与该端点相符的强参照，在新城市任何干预前补充按旧cal singleton选出的raw_singleton_reference（cal66.9271percent），原raw_common继续保留。修订仅增加一个参照及对应汇总，不改变decoded选法、正在训练的四seed、native预算或主要终点。SOURCE_PROCEDURE此前全文与hash保存在archive/research_workflow_20260908/r18_raw_reference_amendment_20260908T175014Z；新SHA3d7d126a0bb716ac359d1986adcc410bea5ce5791234465d8482851de6f3e649。最终冻结尚未执行。
+
+源重放前的实现检查补齐了一处具体数值风险：原4404行的末批20行不能因为追加新城市而变成32行；确认类现在保留原模型capture、encoder分批和整块decoder GEMM，再以原96行/三批32重放。零、一、三成员的padding约束在解析可解的CPU例上实际误差0、可行/KKT均通过，见PRECONFIRM_IMPLEMENTATION_CHECKS.json。检查只验证这两个实现性质，不是新科学复现。没有运行新城市干预。
+
+六方案图已按论文Times字体和统一灰度量纲绘制并实际查看；包含完整旧held强raw结果。当前PDF在17:43:49.859145Z编译为93页，SHA7cde1c205c259f0e52afe907b7f896c88a4d725f04847b9500bebf4b7fe1b5dd，源比较页73已整页查看；之后Cause/Iso文字和新增raw方法说明尚待下一次编译。源码中的实际未来结果表按readout/writer分页，避免把50行塞进单页；尚未有确认结果表被伪造。README里的项目路径检查只有明示尚未生成的semantic_confirmation.json待完成，其余检查项存在。几次把label或近似脚本名当路径的读取、以及一次错误文件的patch查找失败均未写入或改变研究数据；以实际rg定位和完整上下文修正。
+
+当前完成计数仍17/18。下一步保持source3–5完整训练，再完成自然PW拟合、最终冻结、68城市确认、可执行案例、唯一稿件和全部项目包；最后写COMPLETE后计数并暂停原ccad。没有将上述准备或排错计为新研究轮，工作/等待未单独计时的部分明确未知。
+
+
+## FINAL_FIVE_R18 PROGRESS — 第三个受控源完成
+
+实际写入 UTC：2026-09-08T18:12:07Z。round_id：FINAL_FIVE_R18。source3的status记录开始2026-09-08T17:51:18.092996+00:00，结束2026-09-08T18:07:39.255393+00:00，PASS/contract PASS，driver wall981.1555867秒；七请求cal63.43006percent、旧held65.77381percent，singleton旧held66.66667percent。前三个源均按同一选态规则完成，第4个于18:07:40.749266Z开始，第5个顺序等待；运行归属仍是当前对话/session67055。
+
+补核了面板实际分布：fit4212行/176城市/351对，cal96行/16城市/8对，oldheld96行/16城市/8对；预留68城市组成34不重复对。已在查看干预输出之前读取固定例子的输入：row4740，赣州到沃洛格达，Country期望China到Russia、保留Asia和Chinese。三属性使用各自原始prompt，不是同一hidden state的三个答案。已准备基于真实future summary的流程/答案图代码，当前没有生成或假造预测。完整请求/失败继续进入附录。
+
+两种raw参照、逐输入匹配成员预算、旧20行批次保留均已在当前确认代码中实现；相关四个修改模块语法解析通过，最终五源模型输出重放尚未执行。当前主要计算是剩余源训练，未将计算等待或图表准备计为新科学结论。计数仍17/18，SOURCE_REPLICAS_PROGRESS.json和tracker同步当前状态；完成后继续同一轮的自然PW校准、冻结、新城市实验及最终交付。
+
+
+## FINAL_FIVE_R18 PROGRESS — 五源复制已完成四个
+
+round_id: 18；实际写入UTC：2026-09-08T18:24:51Z。本轮继续IN_PROGRESS，完成计数仍17/18。可证实事件：source4从2026-09-08T18:07:40.749266Z至18:23:23.096633Z，PASS及contract PASS，driver wall 942.3252667秒、process CPU 787.015625秒；source5于18:23:27.866979Z开始，仍在同一GPU租约队列正常执行。人工有效工作与等待没有独立计时，不把相减时间作为研究投入。
+
+实际科学阶段结果：source4的七请求cal为60.9747%，单请求cal60.1563%；旧held七请求66.8527%、单请求66.40625%，选择1792步。五source规则、拟合城市/顺序/1792步/rank512不变，所有旧held只报告。SOURCE_REPLICAS_PROGRESS.json记录四个完整源及正在运行的第五个。新城市干预仍未发生。
+
+实际准备与聚焦检查：汇总导出增加五source各自的checkpoint、cal与旧held轨迹，保留实际成员允许数/改变数与共享greedy路径计时，不能把成员匹配当计算匹配。为此在最终冻结代码列表补入summarize_semantic_sources.py，原SOURCE_PROCEDURE逐字归档后只补代码依赖，未改方法/参数/终点。清理尚未执行atom配置的无效继承字段，并把文字预算与既有3600秒配置一致。五个准备模块AST解析通过；不是实际模型或新城市验证。原始source4结果、配置、快照与stderr均保留。
+
+资源决定：三个完整source实测约3.184/1.813/1.813GB，五源含缓存预计10.44GB，加确认与全阶段本地ZIP会超过先前30GB新增E边界。R18_BUDGET修订至45GB现有E盘额度，实测空余约143GB，GPU总6小时/CPUheavy1.5小时/零付费不变。确认预计271320条度量；按R17的18240条/272.3472秒粗略缩放约4051秒，因算子不同保留不确定，给7200秒上限但仍在本轮总GPU预算内。旧预算及理由/原hash已归档，不虚构耗时或GPU-hour。
+
+下一步及交付：等第五源实际完成，执行自然文档的五方向完整PW-MCC标量校准，冻结输入/代码，先重放全部旧source再首次评估34新城市对。数据决定最终正文主图、固定实例、可执行NumPy示例和全部项目包；完成前不计18，不新增19。
+
+
+## FINAL_FIVE_R18 PROGRESS — 五源完成后的冻结与新城市启动
+
+round_id: 18；实际写入UTC：2026-09-08T18:41:19Z。执行链已核实五source均PASS及contract PASS，自然文档五方向完整PW-MCC标量校准成功，冻结文件artifacts/final_five_research_20260908/r18_family_confirmation/CONFIRMATION_FREEZE.json，SHA256 2a0885440119fc621327b1d6aea4933696aa7b2d517fe4c591a422a539a902a3。当前按既定规则建立configs/final5_r18_l7_semantic_confirmation_v1.json并将申请gpu-0运行首次新城市干预；配置创建时间不是实际模型开始时间，后者以run status为准。没有根据新城市结果改变任何方法、参数或终点。先重放全部旧source，失败保留并停在受影响步骤。计数仍17/18，R18未COMPLETE；实际计算时间和结果随后由原run汇总。
+
+
+## FINAL_FIVE_R18 PROGRESS — 最后源结果与确认的实际开始
+
+round_id: 18；实际写入UTC：2026-09-08T18:42:57Z。source5事件开始2026-09-08T18:23:27.866979Z、结束18:40:07.759609Z，PASS/contract PASS，wall999.8512299秒、process CPU783.359375秒，cal七请求60.3423%、单请求58.0729%，旧held七请求62.0908%、单请求60.6771%。它按同规则选择1792步，未因表现较弱排除。五个源全部完成、原训练queue67055退出0。
+
+自然PW-MCC校准事件从2026-09-08T18:40:12.117896+00:00到2026-09-08T18:41:17.748298+00:00，wall65.6277539秒、CPU93.5秒，五完整16384成员assignment均成功，校准family相对平方误差为0.061694/0.088062/0.057971/0.101537/0.060146；这是自然数据的拟合诊断，不是城市语义结果。三ridge选项与负scale实际计数全部在atom_selection.json。
+
+冻结及启动见前一个18:41:19Z追加块；新城市run实际开始为2026-09-08T18:41:19.871336Z，使用session38465与gpu-0。当前还在冻结验证/未编辑状态采集阶段，没有可报告的新城市结果。55个文件、五SAE身份与全部执行设置已冻结；科学代码/方法/参数不会以新结果反馈修改。最终结果、稿图、实际CLI与ZIP检查仍待完成，不提前增加轮数。
+
+
+## FINAL_FIVE_R18 CORRECTION — 原投影基布局的数值重放恢复
+
+round_id: 18；实际写入UTC：2026-09-08T18:55:04Z。受影响操作仅为确认执行的旧源重放；原五源训练和自然原子校准不受影响。v1事件从2026-09-08T18:41:19.871336Z到18:43:52.704053Z，FAIL、artifact contract PASS；152.8080794秒wall、103.3125秒process CPU、峰值CUDA5605050368bytes。第一个source1/100旧输出检查触发原0.001上限，原logger未保存具体max差值，不能补造。raw metric文件0bytes/SHA256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855，4940总sequence等于4844未编辑setup加96旧held，无新城市干预。原run、stderr、所有cache和CONFIRMATION_FREEZE.json原文保留。
+
+诊断实际事件2026-09-08T18:49:25.433882Z到18:49:46.449442Z；run FINAL5_R18_l7_source_layout_diagnosis_v1_20260908 PASS/contract PASS，21.0057597秒wall、17.265625秒CPU，70条旧源数值比较，无LM前向。五源cache旧前缀、位置、decoder差分、basis值全部逐位一致。导出后单个W从stride(1,512)变成(2048,1)，旧源向量差最大2.384185791015625e-6；恢复原列主序后五源七请求共35个向量逐位一致。此刻只证明物理编辑重放，语言模型输出仍由v2实际witness核验。
+
+实际修复：evaluate_semantic_confirmation.source_bases恢复已选decoded_independent原布局，且每次检查前保存witness、错误信息包含source/control/差值。其他运行源文件未修改；源basis/状态/选择/原阈值/34城市对/所有消费者和预算不变。freezer增加可选recovery证据挂接，CONFIRMATION_RECOVERY_V2.json链接原失败与诊断；新CONFIRMATION_FREEZE_V2.json SHA256 dd19f1bbd0817241817c033ce000c768cbcc87d1ae2d88f3d42f518c0ff10f34，64文件。旧冻结不重写，configs/final5_r18_l7_semantic_confirmation_v2.json有独立run ID，实际启动2026-09-08T18:53:24.743436+00:00，session75186/gpu-0。当前稿件方法段保留这次数值失败及恢复依据；尚无确认科学结果。
+
+没有暂停整体automation，也没有改变母问题/目标或新增轮次。等待当前v2通过全部旧源输出重放后继续新城市执行；之后按实际结果整理主图、正文、固定实例和最终包。读文件的rg通配路径错误已改为-g目录过滤，是工具路径错误，不计科学失败。
+
+
+## FINAL_FIVE_R18 PROGRESS — 模型重放恢复与首个完整新城市方向
+
+round_id: 18；实际写入UTC：2026-09-08T19:08:55Z。可证实事件：v2在2026-09-08T18:56:04.541305Z完成全部35个旧源输出重放，max logprob error=0.0，未放宽0.001阈值，随后才首次进行新城市干预。第一个新控制100于18:56:47.267555Z完整执行；当前source1→2全十请求已完成，source2→3继续运行。CONFIG/FREEZE_V2/源码不因任何新城市结果更改。
+
+首个方向的实际单请求Cause/Iso均分：source67.0343%、raw family64.8897%、raw singleton70.2206%、decoded direct65.9926%、完整PW50.3064%、reencode47.1814%、匹配reencode改动数的native56.25%、native25658.6397%、native51263.6642%、random25644.9142%。raw singleton的Cause77.6961%明显强于source61.2745%；source的Iso72.7941%又强于该raw62.7451%。这是一条完整方向的进展，说明写入收益仍可见而raw强对照差距仍在；不构成五源确认/区间，不据此选择方法或扩大主张。读取范围与全部完成方向的记录在r18_family_confirmation/CONFIRMATION_PROGRESS.json（实际19:07:26.839355Z），未完成source只记录行数。
+
+可使用性与真实实例：已实际运行NumPy CLI于预先指定row4740的source1-target2/100实例，256个真实成员，CPU双精度数值重放相对CUDA的readout/native最大坐标差1.5082321e-6/1.1402500e-6，signed成员和误差2.6645353e-15，最终状态min0，KKT9.1226617e-9。不是新的LM确认或自适应搜索。实际命令、输入/输出hash、GPU/CPU算法差异与该时刻run仍RUNNING已写portable/PORTABLE_REPLAY.json和delivery/REPRODUCTION.md。
+
+按事前ID固定的Ganzhou→Vologda图已由真实已完成Country请求的42行输出绘制并实看（paper/figures/semantic_city_fixed_case.png）。加入实际unedited行后可见Country为China、Continent为Asia、Language首token为Mand；Language在本行原能力元数据也是0，而不是所有提示都通过筛查。源和各native/readout的语言输出为a，raw singleton为Russian，均未满足本行预设Chinese首token集合。不得把Mand猜写成完整单词或说原语言已答对，更不得把本案例当三个属性都成功迁移。国家改变/洲别保留和语言判据失败同时显示，数据与错误保留在FIXED_EXAMPLE_PREVIEW.json；最终完整汇总仍要包含所有请求和方向。
+
+资源：确认实测约40秒/完整控制，当前预计整套约35分钟，替代原基于不同工作负载的一小时粗估；只有run最终wall才算实测总量。图与单例CLI是所需交付准备，不计额外研究轮。下一步完成同一个确认run后汇总依赖统计、全部稿图/附录、最终包和18轮关闭记录，计数仍17/18，不新增19。
+
+
+## FINAL_FIVE_R18 PROGRESS — 五源确认结束，唯一稿件与最终包验证
+
+round_id: FINAL_FIVE_R18。实际写入UTC：2026-09-08T19:34:41Z。可证实确认事件：2026-09-08T18:53:24.743436Z至2026-09-08T19:28:10.006823Z；wall2085.0326672s；原GPU session75186正常exit0。
+
+实际产出：新城市完整271320条raw，SHA59503b69ec8cabde46a690e80030dd359e33b8fad6bf335640d031b3d9ef2fb5，summary按原冻结规则生成。68城市/34对/五循环，native25657.4510%对encoder46.4583%，差10.9926pp、条件CI[8.8603,13.0760]；逐输入匹配成员数55.4657%，差9.0074pp、CI[6.9363,11.0662]。强raw singleton70.2206%、raw同源投影68.6642%、direct65.5270%、PW53.1863%、source66.3113%。五种writer全部102000行达到记录数值阈值，最终code非负。局部写入优势获得条件新城市支持，经典组件、动态support和上述强raw差距不允许称主会核心闭合。
+
+数学/实例/稿件：source选择独立投影而非预期共同块，七顶点界不外推动态writer。固定Ganzhou→Vologda区分country-only语言失败与source triple三token正确；256/512 triple大陆答Russia的实际失败保留。第一轮完整99页最终布局（先101页、两处排版后99）已实际查看；paper/main.pdf SHA fdf38282054de15f2ae5e07fe3f656607b89b3aa36729626df8215b1d98ec92d，正文+参考6页，附录/证明完整保留。原PDF/源逐字归档，所有TeX构建日志保留；当前无overfull/undefined警告。
+
+可使用性与资源：实际NumPy256成员示例误差及scope在portable/PORTABLE_REPLAY.json；9run共8PASS/1FAIL、contract全PASS，GPU管理driverwall10715.0571s、CPUheavy65.6278s、processCPU8885.8281s、run17.309GB，新增D0/paid0，均非人工有效研究时长。原v1空raw失败、stride诊断与两次freeze保留，35旧source模型重放max0。目录通配rg、一次不存在文件读取和一次textpatch未匹配已纠正，未改科学结果；CLI正文--controls与实际member贡献字段已核实。
+
+理由与下一步：科学输出已齐，继续完成14helper纸稿副本重建、完整1–18及bonus包CRC/抽取执行和交付hash。它们不计新科研轮。COMPLETE后才将tracker17改18并暂停原ccad，禁止19；当前仍IN_PROGRESS。入口整合前归档archive/research_workflow_20260908/r18_science_complete_20260908T193441Z/manifest.json；图审路径r18_family_confirmation/paper_review及paper_review_20260908T193232Z。报告R18_REPORT.md、R18_RUN_INVENTORY.json；完整科学文件已有，最终包装未完成。
+
+
+## FINAL_FIVE_R18 COMPLETE — 最后五轮实质研究与全阶段项目包完成
+
+round_id: FINAL_FIVE_R18。实际写入UTC：2026-09-08T19:54:49Z。本轮START实际写入2026-09-08T16:10:49Z；首个source训练开始16:15:39.719713Z，最终确认2026-09-08T18:53:24.743436Z至19:28:10.006823Z。封装实际19:40:58.476283Z至19:50:22.619034Z，抽取执行验证结束19:50:53.863957Z。人工有效研究及未计时等待未知，不用这些时间差冒充有效工作。
+
+选题与真实改变：针对组合source、弱native消费者和单源开发限制，实际比较四个matched-family拟合及旧候选；source-cal选择独立decodedprojector，共同正交块未胜出。五SAE各按同规则训练1792步；确认前冻结源方法、两种强raw选择、自然完整PW-MCC、目标读写和预算。新68城市/34对/五循环方向共271320条raw，未用确认结果调参。SOURCE_PROCEDURE、原FAILv1/stride诊断/两次freeze全部保留；35旧source模型重放max0，原1e-3阈值不变。
+
+科学结果：singleton source66.3113%、direct65.5270%、PW53.1863%、raw同源68.6642%、rawsingleton70.2206%；native25657.4510%对encoder46.4583%，差10.9926pp、条件city-pair95%CI[8.8603,13.0760]；逐输入匹配成员数native55.4657%，差9.0074pp、CI[6.9363,11.0662]；512为61.9730%。写入提升获得五源新城市的条件支持，但真实raw差距、监督源、动态support、单底模和近邻完整系统比较不足仍在。主会目标不降级，acceptance NOT_MET，不称核心闭合、一般算法优越或稳定语义同一。六项用户缺口逐项回应于R18_REPORT。
+
+数学/实例/稿件：有序B(c)与common-block反事实/预算、readout到decoder可行域、七顶点界适用范围已连入完整论文。固定Ganzhou→Vologda country-only保留语言失败，source triple三项正确而256/512 writer大陆答Russia，完整请求和负结果同列。唯一paper/main.pdf及同套源99页（正文和引用6页、其后全部附录），SHA fdf38282054de15f2ae5e07fe3f656607b89b3aa36729626df8215b1d98ec92d。14helper独立纸稿副本重建99页文字与30PNG相同；实际查看整稿布局、正文、主图、新表、固定case和复现页，修复引用孤页及方向表分页，无新overfull/undefined。旧稿保留hash归档。
+
+交付与验证：完整包delivery/ccad_complete_r18_20260908.zip初始15,403,810,787bytes，126run目录、9153entries、全CRC通过；原初始SHA58e101161d6ce266eeea3883a40ad171e57aca9cdd5f5ab58e6a52dbd06451fc由PACKAGE_BUILD记录。抽取923文件逐一校验hash，原预测/真实native参与/新family三个NumPy CLI实际exit0，数值误差及shape见PACKAGE_EXTRACT_VERIFICATION；抽取源码+图再次编译99页文字一致。这些是数值接口和稿件可用性验证，不是完整干净机器训练或额外科学重复。所有阶段原始度量/失败/代码配置环境/证据与恢复说明保留，bulk/cache/第三方参考文献原件按清单保留不复制；没有删除原始资产。
+
+资源与失败：本轮9run为8PASS/1FAIL，9contractPASS。GPU管理driver wall10715.0571s，cpu-heavy65.6278s，processCPU8885.8281s，峰值CUDA8,342,501,888bytes，run17,308,633,751bytes；新增D0、paid0。封装另564.157s，当前run+ZIP逻辑字节32.712GB，附属小文件另留清单，未越45GB新增E预算。旧v1科学FAIL、诊断和构建/工具读取错误均保留；一次未匹配textpatch无写入后重新定位正确行。数据/代码身份见R18_RUN_INVENTORY、R18_SOURCE_REVIEW、R18_DELIVERY_MANIFEST，报告完成版SHAf75d1724521a492194a1a5a2e83e614b1f734d59344c1ba7938422581e132a25。
+
+交付定位：R18_REPORT.md、R18_RUN_INVENTORY.json、R18_PAPER_REPLAY.json、R18_SOURCE_REVIEW.json、R18_DELIVERY_MANIFEST.json、PACKAGE_BUILD.json、PACKAGE_EXTRACT_VERIFICATION.json；当前入口归档archive/research_workflow_20260908/r18_complete_20260908T195449Z/manifest.json。本COMPLETE写入后才将tracker计数17推进18，最后五轮4推进5。依用户限额随后原位暂停保留ccad五分钟automation，不新增19、不转交执行；白名单代码/master同单元commit/push，实际状态和最终ZIP hash以随后具名closure/sync receipts为准，不倒填尚未发生的暂停或推送。
+
+
+## FINAL_FIVE_R18 CLOSEOUT — 原位暂停核实
+
+round_id: FINAL_FIVE_R18。实际写入UTC：2026-09-08T19:55:43Z。在19:54:49Z COMPLETE及18/18计数后，automation_update原位暂停id=ccad，实际toml核实PAUSED、原FREQ=MINUTELY;INTERVAL=5与target_thread_id不变。配置/历史保留，不新增19或自动恢复。纸稿/ZIP/抽取验证均已完成；仅白名单commit/push和具名closure追加继续，实际结果由R18_SYNC.json与PACKAGE_FINAL.json记录。本块不增加科研轮，未宣称尚未完成的推送。
+
+
+## FINAL_FIVE_R18 CLOSEOUT CORRECTION — Git空白提示
+
+round_id: FINAL_FIVE_R18。实际写入UTC：2026-09-08T19:57:16Z。首次同步已stage既有28文件，git diff --cached --check报告src/ccad/semantic_family.py第44行已有文件末尾空行，故前一脚本在commit前exit。没有commit/push发生，没有权限拒绝或科学错误。为保留已冻结且已打包代码的逐字身份，不改该非功能性空行；确认唯一提示后继续同一批提交，将该已知空白提示留账，不新增研究轮或重跑实验。

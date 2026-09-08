@@ -260,6 +260,9 @@ def main():
     from projected_semantics_paper import export as export_projected
     projected=export_projected(root,out,read)
     if projected:plot['projected_semantics']=projected
+    from semantic_confirmation_paper import export as export_confirmation
+    confirmation=export_confirmation(root,out,read)
+    if confirmation:plot['semantic_confirmation']=confirmation
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -357,6 +360,12 @@ def main():
             result='Decoded difference DAS separates source operation restrictions from retained information. Four target seeds reuse one fixed source; dynamic nonnegative native writes compare to readout, PW-MCC, reencoding and random members. Natural learned corrections do not establish an advantage. All city results are development and sparse synthesis is a classical component.',
             evidence=projected['input_summary_paths']+['scripts/projected_semantics_paper.py','scripts/evaluate_projected_native_writer.py','scripts/evaluate_projected_family_transfer.py',
                 'scripts/fit_projected_family_correspondence.py','src/ccad/projected_correspondence.py','src/ccad/native_operation.py','paper/sections/semantic_theory.tex']))
+    if confirmation:
+        claims.append(dict(id='frozen_named_operation_family_and_native_writes',paper='Named operation families, frozen city confirmation and semantic appendices',
+            result='Source calibration selects among matched independent/common projection families and prior singleton fits; the selected procedure is replicated across five controlled source dictionaries. A separate new-city panel tests complete source behavior, raw/decoded/PW-MCC readers, actual feasible native writes and exact reencoding-count budgets. Source validity, fidelity, computation and dependence remain separate; the full original RAVEL benchmark and stable semantic groups are not claimed.',
+            evidence=confirmation['input_summary_paths']+['scripts/semantic_confirmation_paper.py','scripts/summarize_semantic_sources.py','scripts/summarize_semantic_confirmation.py',
+                'scripts/run_semantic_family_source.py','scripts/fit_semantic_cycle_atoms.py','scripts/freeze_semantic_confirmation.py','scripts/evaluate_semantic_confirmation.py',
+                'src/ccad/semantic_family.py','src/ccad/semantic_readout.py','scripts/apply_semantic_family.py','paper/sections/semantic_theory.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

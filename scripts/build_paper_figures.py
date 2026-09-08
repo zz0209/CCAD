@@ -276,9 +276,11 @@ def main():
     plot_ravel(data.get('ravel_semantics'),save)
     from projected_semantics_paper import plot as plot_projected
     plot_projected(data.get('projected_semantics'),save)
+    from semantic_confirmation_paper import plot as plot_confirmation
+    plot_confirmation(data.get('semantic_confirmation'),save)
     (out/'FIGURE_MANIFEST.json').write_text(json.dumps(dict(input_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),font_family=family,
         font_source=str(font) if font.exists() else 'Matplotlib STIXGeneral',outputs=outputs,
-        scope='Descriptive plots of retained data; intervals are source-seed ranges or dependent-direction distributions, not confidence intervals.'),indent=2)+'\n',encoding='utf-8')
+        scope='Source-backed plots. Individual captions distinguish seed ranges, dependent directions, sensitivity analyses and conditional bootstrap intervals; none treats shared-seed directions as independent repetitions.'),indent=2)+'\n',encoding='utf-8')
     print(json.dumps(dict(figures=len(outputs)//3,exports=len(outputs),out=str(out),font=family)))
 
 

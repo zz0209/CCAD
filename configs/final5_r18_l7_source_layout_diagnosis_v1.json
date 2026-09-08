@@ -1,0 +1,108 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "layer": 7,
+  "sae_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_16384",
+  "device": "cuda:0",
+  "cpu_threads": 4,
+  "batch_size": 32,
+  "mode": "region_1",
+  "tasks": [
+    "Country",
+    "Continent",
+    "Language"
+  ],
+  "das_rank": 512,
+  "compact_single_site": true,
+  "binary_controls": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1
+    ]
+  ],
+  "fractional_controls": [
+    [
+      0.5,
+      0,
+      0
+    ],
+    [
+      1,
+      0.5,
+      0
+    ],
+    [
+      0.25,
+      0.75,
+      0.5
+    ]
+  ],
+  "replay_logprob_tolerance": 0.001,
+  "writer_budgets": [
+    64,
+    256,
+    512
+  ],
+  "random_budget": 256,
+  "random_support_seed": 9172301,
+  "writer_steps": 2000,
+  "writer_tolerance": 1e-05,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "prepared_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_five_research_20260908\\r18_family_confirmation\\semantic_confirmation_panel_v1.json",
+  "run_id": "FINAL5_R18_l7_source_layout_diagnosis_v1_20260908",
+  "purpose": "Diagnose failed old-source replay by checking exact code, decoder, saved-basis and tensor-layout identities",
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "budget_seconds": 240,
+  "budget": "At most 240 s managed GPU with four CPU threads. Decode the retained compressed SAE-code caches and compute original 4404-row matrix products; no LM inference or new-city intervention.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Implementation diagnosis on old held source rows only. Cached original prefix and stored source state are compared with the failed run; contiguous versus original column-major projection weights are evaluated without model outcomes or threshold changes.",
+  "generator_script": "scripts/diagnose_semantic_family_layout.py",
+  "run_parent": "FINAL_FIVE_R18",
+  "milestone": "frozen-source-numerical-recovery",
+  "statistics_unit": "Disjoint city pair, reciprocal directions and original templates; jointly resampled over all dependent cycle edges. Seed sensitivity deletes both incident edges.",
+  "threshold_source_split": "Old source calibration and separate natural calibration only; exact files and execution settings frozen before new-city interventions.",
+  "dataset_name": "RAVEL",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "freeze_path": "artifacts/final_five_research_20260908/r18_family_confirmation/CONFIRMATION_FREEZE.json",
+  "freeze_sha256": "2a0885440119fc621327b1d6aea4933696aa7b2d517fe4c591a422a539a902a3",
+  "evidence_level": "implementation_diagnosis",
+  "failed_run": "runs/FINAL5_R18_l7_semantic_confirmation_v1_20260908"
+}

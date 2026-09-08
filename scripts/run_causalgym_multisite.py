@@ -86,12 +86,12 @@ class MultisiteWork:
         write(self.run/'code_hashes.json', dict(files=code, aggregate_sha256=aggregate(code), snapshot_root='source_snapshot'))
         write(self.run/'manifest.json', dict(schema_version='causalgym.multisite.v1', run_id=cfg['run_id'],
               run_parent=cfg.get('run_parent','FINAL_FIVE_R15'), purpose=cfg['purpose'], milestone=cfg.get('milestone','external-multisite-source-and-native-groups'),
-              evidence_level='controlled_development', started_utc=self.started.isoformat(), project_root=str(ROOT),
+              evidence_level=cfg.get('evidence_level','controlled_development'), started_utc=self.started.isoformat(), project_root=str(ROOT),
               config_hash=sha256(self.run/'config.resolved.json'), code_snapshot_hash=aggregate(code), source_snapshot_required=True,
               git_head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
               audit_opened=cfg['audit_opened'], candidate_family_frozen=cfg['candidate_family_frozen'],
               mean_constants_source_split='Same dictionary donor differences cancel a fixed mean and decoder bias',
-              threshold_source_split='Configuration before this experiment; original exposed train components remain development',
+              threshold_source_split=cfg.get('threshold_source_split','Configuration before this experiment; original exposed train components remain development'),
               statistics_unit=cfg.get('statistics_unit','prompt-connected components, reciprocal directions and shared SAE seeds'),
               device=cfg['device'], seeds=cfg['seeds'], resource_lease='gpu-0' if cfg['device'].startswith('cuda') else 'cpu-heavy',
               resource_lease_reason=cfg['budget'], model_revision=cfg['model_revision'], dataset_revision=cfg['dataset_revision']))

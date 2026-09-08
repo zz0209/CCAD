@@ -1,0 +1,102 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "layer": 7,
+  "sae_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_16384",
+  "tasks": [
+    "Country",
+    "Continent",
+    "Language"
+  ],
+  "components_per_task": 24,
+  "pairs_per_component": 1,
+  "split_salt": "final5-r14-causalgym-development-20260908",
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "run_id": "FINAL5_R18_l7_family_source_s5_v1_20260908",
+  "purpose": "Replicate the selected source-only operation family in the next controlled SAE seed",
+  "device": "cuda:0",
+  "cpu_threads": 4,
+  "batch_size": 32,
+  "budget_seconds": 1800,
+  "seeds": [
+    5
+  ],
+  "budget": "One1792update source family,32examples/batch,4CPUthreads,atmost1800sGPUmanaged. Source1measuredabout1030s includingcapture/heldreplay; fourreplicas expected70min total. Reuseexisting16Mcheckpoints and176citypanel; no newcity interventions orpaidresources.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Procedure selected solely by source1 old calibration among all six completed candidates. Identical rank512/1792updates/sevenbinarycontrolschedule/dataorder/optimizerseed/LR/checkpoint rule across all five controlled source SAEs. Only source SAE seed changes. Calibration and old held are development; old held does not select method or checkpoint. Independent ordered projectors were selected; common-block theory is not asserted for these noncommuting operators.",
+  "generator_script": "scripts/run_semantic_family_source.py",
+  "source_seed": 5,
+  "mode": "region_1",
+  "response_steps": 1792,
+  "response_lr": 0.002,
+  "calibration_steps": [
+    112,
+    224,
+    448,
+    896,
+    1792
+  ],
+  "optimizer_seed": 9150915,
+  "run_parent": "FINAL_FIVE_R18",
+  "milestone": "semantic-city-diversity",
+  "statistics_unit": "Disjoint city pair, reciprocal directions, original templates and shared SAE seed",
+  "prepared_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_five_research_20260908\\r17_projected_semantics\\semantic_panel_v3_176cities.json",
+  "dataset_name": "RAVEL",
+  "weight_budget": 512,
+  "das_rank": 512,
+  "methods": [
+    "decoded_independent"
+  ],
+  "learning_rates": {
+    "native": 0.03,
+    "mdbm": 0.001,
+    "mdas": 0.002,
+    "sae": 0.001,
+    "sae_mdas": 0.002
+  },
+  "selection_metric": "disentangle",
+  "initialization_rows": 384,
+  "compact_single_site": true,
+  "binary_controls": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1
+    ]
+  ],
+  "selection_rule": "family",
+  "reference_sources": []
+}

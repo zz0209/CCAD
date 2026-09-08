@@ -1,0 +1,121 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "layer": 7,
+  "sae_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_16384",
+  "tasks": [
+    "Country",
+    "Continent",
+    "Language"
+  ],
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "run_id": "FINAL5_R18_l7_cycle_atoms_v1_20260908",
+  "purpose": "Complete signed PW-MCC calibration for five frozen source families",
+  "device": "cpu",
+  "cpu_threads": 4,
+  "batch_size": 32,
+  "budget_seconds": 3600,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "budget": "At most 3600 s under cpu-heavy with four CPU threads; reuse the completed five-dictionary natural codes and complete Hungarian assignments. Fit five sets of signed scalar gains with three ridge choices. Expected below 4 GB RAM. No language-model inference, semantic-label fitting, new-city intervention outcomes, GPU work or paid resources.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Five complete frozen Hungarian PW-MCC assignments; fit signed per-atom scales from natural document discovery centered on independent mean; choose ridge on natural calibration seven-request family error. No semantic label fitting, newcity outcomes, or audit encoding.",
+  "generator_script": "scripts/fit_semantic_cycle_atoms.py",
+  "run_parent": "FINAL_FIVE_R18",
+  "statistics_unit": "Original natural document; mixed-document context windows excluded",
+  "dataset_name": "RAVEL",
+  "natural_run": "runs/FINAL5_R17_l7_natural_five_codes_v1_20260908",
+  "ridge_alphas": [
+    0.001,
+    0.03,
+    0.3
+  ],
+  "source_families": [
+    {
+      "source_seed": 1,
+      "target_seed": 2,
+      "run": "runs/FINAL5_R18_l7_family_source_s1_v1_20260908",
+      "family": "decoded_independent",
+      "basis_path": "runs/FINAL5_R18_l7_family_source_s1_v1_20260908/decoded_independent_basis.npz",
+      "replay_outputs": "runs/FINAL5_R18_l7_family_source_s1_v1_20260908/decoded_independent_held_outputs.npz"
+    },
+    {
+      "source_seed": 2,
+      "target_seed": 3,
+      "run": "runs/FINAL5_R18_l7_family_source_s2_v1_20260908",
+      "family": "decoded_independent",
+      "basis_path": "runs/FINAL5_R18_l7_family_source_s2_v1_20260908/decoded_independent_basis.npz",
+      "replay_outputs": "runs/FINAL5_R18_l7_family_source_s2_v1_20260908/decoded_independent_held_outputs.npz"
+    },
+    {
+      "source_seed": 3,
+      "target_seed": 4,
+      "run": "runs/FINAL5_R18_l7_family_source_s3_v1_20260908",
+      "family": "decoded_independent",
+      "basis_path": "runs/FINAL5_R18_l7_family_source_s3_v1_20260908/decoded_independent_basis.npz",
+      "replay_outputs": "runs/FINAL5_R18_l7_family_source_s3_v1_20260908/decoded_independent_held_outputs.npz"
+    },
+    {
+      "source_seed": 4,
+      "target_seed": 5,
+      "run": "runs/FINAL5_R18_l7_family_source_s4_v1_20260908",
+      "family": "decoded_independent",
+      "basis_path": "runs/FINAL5_R18_l7_family_source_s4_v1_20260908/decoded_independent_basis.npz",
+      "replay_outputs": "runs/FINAL5_R18_l7_family_source_s4_v1_20260908/decoded_independent_held_outputs.npz"
+    },
+    {
+      "source_seed": 5,
+      "target_seed": 1,
+      "run": "runs/FINAL5_R18_l7_family_source_s5_v1_20260908",
+      "family": "decoded_independent",
+      "basis_path": "runs/FINAL5_R18_l7_family_source_s5_v1_20260908/decoded_independent_basis.npz",
+      "replay_outputs": "runs/FINAL5_R18_l7_family_source_s5_v1_20260908/decoded_independent_held_outputs.npz"
+    }
+  ],
+  "binary_controls": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1
+    ]
+  ],
+  "assignment_template": "runs/FINAL5_R16_l7_atom_4m16m_five_v1_20260908/step16384_s{source}_t{target}_assignment.npz",
+  "milestone": "five-source-complete-atom-calibration"
+}

@@ -1,0 +1,108 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "layer": 7,
+  "sae_root": "D:/CCAD_Storage/training_curves/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908/step_16384",
+  "device": "cuda:0",
+  "cpu_threads": 4,
+  "batch_size": 32,
+  "mode": "region_1",
+  "tasks": [
+    "Country",
+    "Continent",
+    "Language"
+  ],
+  "das_rank": 512,
+  "compact_single_site": true,
+  "binary_controls": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1
+    ]
+  ],
+  "fractional_controls": [
+    [
+      0.5,
+      0,
+      0
+    ],
+    [
+      1,
+      0.5,
+      0
+    ],
+    [
+      0.25,
+      0.75,
+      0.5
+    ]
+  ],
+  "replay_logprob_tolerance": 0.001,
+  "writer_budgets": [
+    64,
+    256,
+    512
+  ],
+  "random_budget": 256,
+  "random_support_seed": 9172301,
+  "writer_steps": 2000,
+  "writer_tolerance": 1e-05,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "prepared_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_five_research_20260908\\r18_family_confirmation\\semantic_confirmation_panel_v1.json",
+  "run_id": "FINAL5_R18_l7_semantic_confirmation_v2_20260908",
+  "purpose": "Evaluate the frozen five-source operation family and actual target-native writers on previously unedited cities",
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "budget_seconds": 7200,
+  "budget": "At most 7200 s managed GPU and four CPU threads within the unchanged six-hour R18 GPU total. The 271320 planned metric rows scale from R17 throughput to about 4051 s, with uncertainty from differing methods and row counts. Existing model, five final 16M SAEs and frozen task panel only; no paid resources or new bulk weights.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Five independently fitted decoded source families use the same source-only procedure. Fixed cycle 1 to 2 to 3 to 4 to 5 to 1 on 34 disjoint reserved city pairs and 408 rows. Earlier unedited capability screening and original RAVEL training templates define this population; not official benchmark test or independent model replication. All old source witnesses replay before any new-city intervention. Readout and actual target-native execution remain separate; full raw references and complete signed PW-MCC are retained. Primary fixed256 versus reencoding singleton score; secondary matched per-input code-change count, all seven binary controls and three fractional same-source KL endpoints. Dynamic supports and nonnegative final codes do not establish stable semantic groups or TopK encoder closure. No target edited outcome or label fits/selects the deployed readout/writer. No post-confirmation tuning.",
+  "generator_script": "scripts/evaluate_semantic_confirmation.py",
+  "run_parent": "FINAL_FIVE_R18",
+  "milestone": "frozen-five-source-new-city-operation-family",
+  "statistics_unit": "Disjoint city pair, reciprocal directions and original templates; jointly resampled over all dependent cycle edges. Seed sensitivity deletes both incident edges.",
+  "threshold_source_split": "Old source calibration and separate natural calibration only; exact files and execution settings frozen before new-city interventions.",
+  "dataset_name": "RAVEL",
+  "dataset_revision": "e421fc9e132b3613b1d0020f856d539217fb30ca",
+  "freeze_path": "artifacts/final_five_research_20260908/r18_family_confirmation/CONFIRMATION_FREEZE_V2.json",
+  "freeze_sha256": "dd19f1bbd0817241817c033ce000c768cbcc87d1ae2d88f3d42f518c0ff10f34",
+  "evidence_level": "controlled_confirmation",
+  "implementation_recovery": "Retain v1 failure before any new-city intervention. Restore original independent-source matrix layout; all source values, selections, population, endpoints and 0.001 replay tolerance unchanged. V2 requires complete old-source output replay before new-city inference."
+}
