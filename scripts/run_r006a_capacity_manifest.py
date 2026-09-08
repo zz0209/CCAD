@@ -23,6 +23,7 @@ from ccad.data_manifest import (  # noqa: E402
     validate_document_records,
 )
 from ccad.http_range import RequestsRangeReader  # noqa: E402
+from ccad.token_packing import sequence_document_ids  # noqa: E402
 
 
 def write_json(path: Path, value: object) -> None:
@@ -88,9 +89,8 @@ def pack_split(rows: list[dict[str, object]], tokenizer, cfg: dict[str, object],
     tokens = tokens[:target]
     sequence_records = []
     width = int(cfg["context_length"])
-    for sequence_index in range(target // width):
+    for sequence_index, document_ids in enumerate(sequence_document_ids(spans, target // width, width)):
         start, end = sequence_index * width, (sequence_index + 1) * width
-        document_ids = [span["document_id"] for span in spans if span["start"] < end and span["end"] > start]
         sequence = tokens[start:end]
         sequence_records.append({
             "split": split, "sequence_index": sequence_index, "document_ids": document_ids,
@@ -117,7 +117,7 @@ def main() -> int:
     details: dict[str, object] = {}
 
     write_json(run_dir / "config.resolved.json", cfg)
-    code_paths = [Path(__file__).resolve(), ROOT / "src" / "ccad" / "data_manifest.py", ROOT / "src" / "ccad" / "http_range.py"]
+    code_paths = [Path(__file__).resolve(), ROOT / "src" / "ccad" / "data_manifest.py", ROOT / "src" / "ccad" / "http_range.py", ROOT / "src" / "ccad" / "token_packing.py"]
     code_entries = [{"path": path.relative_to(ROOT).as_posix(), "sha256": sha256(path), "bytes": path.stat().st_size} for path in code_paths]
     code_hash = aggregate(code_entries)
     write_json(run_dir / "code_hashes.json", {"files": code_entries, "aggregate_sha256": code_hash})
@@ -129,7 +129,7 @@ def main() -> int:
         "mean_constants_source_split": cfg["mean_constants_source_split"], "threshold_source_split": cfg["threshold_source_split"],
         "statistics_unit": cfg["statistics_unit"], "device": "cpu_network_range_and_tokenizer",
         "seeds": [], "resource_lease": None,
-        "resource_lease_reason": "Bounded metadata plus five row-group range reads and sub-MB token outputs",
+        "resource_lease_reason": cfg.get("resource_lease_reason", "Bounded HTTP range reads and token packing; actual shard/row-group/byte counts in source_catalog and metrics"),
     })
     write_json(run_dir / "environment.json", {"python": sys.version, "executable": sys.executable, "platform": platform.platform()})
     catalog_path = artifacts / "source_catalog.json"
@@ -183,23 +183,31 @@ def main() -> int:
                 parquet = pq.ParquetFile(reader)
                 metadata = parquet.metadata
                 row_group_index = int(score(str(cfg["selection_salt"]) + "-row-group", source_path), 16) % metadata.num_row_groups
-                row_offset = sum(metadata.row_group(index).num_rows for index in range(row_group_index))
-                table = parquet.read_row_group(row_group_index, columns=list(FINEWEB_FIELDS))
-                rows = table.to_pylist()
-                for local_index, row in enumerate(rows):
-                    record = fineweb_document_record(
-                        row, row_index=row_offset + local_index, dataset_id=str(cfg["dataset_id"]),
-                        dataset_config=str(cfg["dataset_config"]), dataset_commit=str(cfg["dataset_commit"]),
-                        source_path=source_path, split_salt=str(cfg["split_salt"]),
-                        validation_basis_points=int(cfg["validation_basis_points"]),
-                    )
-                    sampled_rows.append({**record, "text": row["text"]})
+                group_count = int(cfg.get("row_groups_per_shard", 1))
+                if not 1 <= group_count <= metadata.num_row_groups:
+                    raise ValueError("row_groups_per_shard exceeds the available unique row groups")
+                group_records = []
+                for group_step in range(group_count):
+                    group_index = (row_group_index + group_step) % metadata.num_row_groups
+                    row_offset = sum(metadata.row_group(index).num_rows for index in range(group_index))
+                    table = parquet.read_row_group(group_index, columns=list(FINEWEB_FIELDS))
+                    rows = table.to_pylist()
+                    for local_index, row in enumerate(rows):
+                        record = fineweb_document_record(
+                            row, row_index=row_offset + local_index, dataset_id=str(cfg["dataset_id"]),
+                            dataset_config=str(cfg["dataset_config"]), dataset_commit=str(cfg["dataset_commit"]),
+                            source_path=source_path, split_salt=str(cfg["split_salt"]),
+                            validation_basis_points=int(cfg["validation_basis_points"]),
+                        )
+                        sampled_rows.append({**record, "text": row["text"]})
+                    group_records.append({"row_group": group_index, "row_offset": row_offset, "row_count": len(rows)})
                 source_records.append({
                     "path": source_path, "size": entry["size"], "lfs_sha256": entry["lfs"]["oid"],
                     "xet_hash": entry.get("xetHash"), "header_checks": source_checks,
                     "num_rows": metadata.num_rows, "num_row_groups": metadata.num_row_groups,
-                    "selected_row_group": row_group_index, "selected_row_offset": row_offset,
-                    "selected_row_count": len(rows), "range_requests": reader.range_requests,
+                    "selected_row_group": row_group_index, "selected_row_offset": group_records[0]["row_offset"],
+                    "selected_row_count": sum(item["row_count"] for item in group_records),
+                    "selected_row_groups": group_records, "range_requests": reader.range_requests,
                     "range_bytes_received": reader.bytes_received,
                 })
                 total_range_requests += reader.range_requests

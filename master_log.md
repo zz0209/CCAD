@@ -5196,3 +5196,36 @@ FREEZE.json现在冻结两新toy seeds202/303、每个五同配置SAE、L1.05/.1
 实际动作：只读初始整稿诊断、原阶段总结、后期9–13轮结果/已核对数值、当前稿与既有最近邻阅读比较，形成artifacts/post_r13_process_review_20260908/REVIEW.md。流程的问题驱动、素材干预、源码适配与冻结确认确有可观察改善；9/10修复操作失配、11组成用途、12非负状态、13学习真值有实测进展，但不同基准降幅不能跨轮累计。有限loss/度量失败、full/raw优势、源错及toy边界保留。没有流程随机对照和连续有效工时记录，不能给流程改革的因果效率百分比。
 
 判断：有形成主会级选题的基础，当前仍不足以判断具备相应竞争力或保证后续录用。经典算法小改进、57页与大量记录不自动闭合贡献；最关键差距是核心主张聚焦、紧凑对应的可测使用价值、真实条件广度和同问题预算下的具名强对照。建议恢复后围绕最能改变判断的一项工作，不增加新审批/无限测试链。无新科学run、GPU/训练/外部付费；实际有效工作与零散等待未连续计时，未知。当前主稿和原始结果不变，completed13、extension4/5保留，本次不占第14轮。报告sha256 076a907a90a97526e030aae07484ba02264816f434cd209ddd9c56aa90d26245；同步白名单仅追加master_log，回执另存SYNC.json。
+
+
+## FINAL_FIVE_R14 — START: user-directed change of scientific approach
+
+实际写入UTC：2026-09-08T06:27:40Z。round_id FINAL_FIVE_R14，登记开始事件同UTC；此前用户附件阅读和现有实现检查已发生，未连续计量的有效时长未知，不倒填开始时刻。用户明确撤销原最后总结轮，给予最后5轮并禁止意义降级。新累计上限18，14–18为这5轮；completed仍13，原未开始的总结14退出，不能算已完成，当前14是新科学轮。最新继续指令解除前次临时暂停，将通过原automation工具原位恢复并核对，不创建重复任务。
+
+选择理由与实际方向变化：当前FCC主要学习source decoder下的物理响应，同成员target固定删除不是signed对应本身；直接研究目标decoder的可写操作及非负状态约束，并把SAE学习曲线、外部/自然任务和非final传播纳入主线。首个实际实验分解读取误差、可写span和状态约束，保留oracle/可部署信息差异，随后选择有信号机制扩大；不是新检查器或旧面板百分比包装。实现/数学、最近邻实证比较及唯一稿件同轮推进，完整五轮路径见EXPERIMENT_PLAN/EXPERIMENT_TRACKER及artifacts/final_five_research_20260908/CHANGE_OF_DIRECTION.md。
+
+已完成动作：完整读用户669行意见，核对当前13轮证据与入口、旧训练/操作源码、实际资源及官方近邻条目；未将批评中已过时的缺少确认说法照抄为当前事实，OpenReview原文访问受限仍未核实。旧AGENTS/tracker/plan/prompt/registry/automation及附件逐字归档archive/research_workflow_20260908/final_five_start_20260908T062740Z/manifest.json。长期规则增加意义不得降级；旧计划重组为目标可执行操作/素材/真实用途，保留科学边界与原历史。当前paper/main.pdf未改，无新结果或完成计数。
+
+资源实际快照RTX5070Ti16GB、占用1746MiB、利用率8%，共享四lease空闲；D约3.73TB/E约180.8GB可用。本轮初始预算最多4小时GPU管理wall、150GB新D盘bulk/15GB新E盘结果、0新付费，先量测吞吐再缩放；lockedr004与已有权重复用，其他项目lease未改。写入时间及工作/计算/等待分开记录，准备不占一次完成轮。下一步启动native可实现性与更长素材训练的实际工作，产生阶段结果后追加PROGRESS。
+
+
+## FINAL_FIVE_R14 — PROGRESS / CORRECTION: executable target-code operations
+
+实际写入UTC：2026-09-08T06:48:21Z。round_id FINAL_FIVE_R14，阶段记录；登记START仍2026-09-08T06:27:40Z，本轮未结束。原ccad已通过automation_update原位ACTIVE并于2026-09-08T06:28:20.409632+00:00重读核对，原5分钟周期/对话归属保留，规范prompt与实际一致；仅增加长期意义不得降级要求，具体轮次只在tracker。completed13不变，14进行中。
+
+实际完成两run：FINAL5_R14_native_bridge_pilot_v1_20260908及FINAL5_R14_native_bridge_adaptive_v2_20260908，管理脚本wall分别150.3561141s/87.0468166s，22528/34816实际指标行，非独立重复数；原数据旧128句/两个共享seed方向/2factor/2consumer/两角色，是开发。实现从读取源贡献改为目标decoder上满足非负状态的signed代码增量，再检验上下文相关可写组。四条件动态32成员KL为.039561/.033939/.036334/.052577，相比固定64的.041083/.039119/.040281/.061541更低，但扫描全部候选状态增加信息/检索成本。source-readout和raw/full强参照仍保留且部分更强，oracle不混部署方法；单纯改用受限投影已贡献相当一部分旧native删除改善。尚未证明算法独特优势或泛化，下一步将此接口推到外部/非final及更长训练材料，并加真实目标重编码控制，避免只续调旧panel。
+
+数学/实现与全表artifacts/final_five_research_20260908/native_pilot/PROGRESS.md，run身份、原始统计hash和逐seed/角色格在RUNS及CELLS。src/ccad/native_operation.py和scripts/run_native_operation_bridge.py含实际算法与每例选中目标代码/增量。source oracle只优化物理误差，不是KL全局上界；最终非负干预code不冒充TopK encoder输出。两项针对性断言通过；pytest缺包启动失败后直接调用同断言，无环境改动。
+
+训练素材v1网络/CPU范围获取完成但因5,291,413<25,165,824 tokens而FAIL，原件保留；v2沿同固定版本与旧文档排除、扩到每片6个不同row group正在执行，普通range网络与单核心/约2GBRAM未饱和整盘/GPU，不附加整盘独占。沿用旧骨架manifest resource_lease_reason仍写five/sub-MB，是未适配元数据；真实row groups/bytes以source目录记录为准，不据此宣称下载量。运行结束后作元数据勘误，失败不改PASS。已使用GPU租约自动释放，其他项目未改；有效研究与零散等待未连续计时为未知。paper/main.pdf在本轮结果形成后统一整合，目前原稿保留，不能用这份阶段记录计完成。
+
+
+## FINAL_FIVE_R14 — PROGRESS / CORRECTION: retained corpus repairs and actual32M training start
+
+实际写入UTC：2026-09-08T07:05:12Z。round_id FINAL_FIVE_R14，仍未COMPLETE。训练manifest可证实启动UTC：2026-09-08T07:03:21.794763+00:00，wrapper启动2026-09-08T07:03:21Z；原gpu-0租约已核对为本run健康，子PID113976，wrapper115636，未停止其他项目。单次训练上限10800s，10200s安全保存精确状态，原本轮4小时GPU预算内；五个8M精确状态继续24M新自然tokens，16/24/32Mcheckpoint与原固定validation。actual32M训练尚未结束，无训练改善结论。配置和材料身份在configs/final5_r14_l15_continue32m_five_v1.json与artifacts/final_five_research_20260908/training_material；combined token SHA6bb8ab884bead8b335bd4cb9a551e6cf4999df71aac048c2522d23893b24d271，已核对原prefix字节及新旧document/text hash分离。
+
+新增真实控制FINAL5_R14_native_reencode_control_v3_20260908 PASS/contractPASS，55.8853607s管理脚本wall；原目标TopKencoder编码与缓存一致，真实重编码在单方向1→2四条件均差于adaptive32，但写入成员/检索预算不同，仍是旧数据开发，不用此控制宣布独特贡献。三次native脚本wall合293.2882914s；全表/每例native增量/负状态与oracle仍保留。源读出/raw/full差距没有抹去；本轮意义与主会验收仍NOT_MET。
+
+自然素材v2实际从10片各6组读185,691,626bytes/185range请求，数据足够但sample_text_hashes_unique失败；使用的42954文档中一对217token训练原文相同，无跨split重复。旧v2保持FAIL。v3脚本repack_unique_training_corpus从已保存文本按固定排序去除重复拷贝，保留duplicate_dispositions及原文，取得25,165,824train/32,768validationtokens，95.5342113s，PASS/contractPASS，无重下载。旧collector的O(序列×文档)归属扫描改为线性游标，随机边界/跨序列/EOS与旧逻辑完全等价断言通过；改前collector SHA0e082b33f2e5b09881f92d61fc8f91944229456710e062ce784dfd2248b52059已逐字存入启动archive/collector_v2。素材清理不按outcome选择、不改旧run状态，修复和文件计数不是科学进展。
+
+实际原文阅读、已有源码接口、版本与采用见SOURCE_REVIEW.json/REFERENCE_REGISTRY；没有新的全文图版审阅或完整SemanticOT复现声明。当前3入口记录真实在跑任务和后续非final/外部/atom-group比较，旧总结14已被替代。paper/main.pdf原件保留，完成更长材料与本轮实质结果后统一整合，不能提前计14完成。有效研究/等待未连续计时，未知；未购买外部资源。白名单本阶段成组同步，原始数据/附件/论文不扩大公开范围。
