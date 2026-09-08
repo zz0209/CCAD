@@ -5145,3 +5145,40 @@ STATE_FREEZE.json在新输入推理前冻结30文件及512新文本，surveyor/b
 报告artifacts/extension_five_20260907/R12_REPORT.md，SHA25661fa7654c50733543ffe23a4487117ef8c980be3991c20eb17c5b6369e497aca；推导/全结果/freeze/operations/来源/稿件检查位于r12_output_loss，六入口旧字节及hash归档archive/research_workflow_20260907/r12_close_20260907T224022Z/manifest.json。此COMPLETE落盘后才完成计数11→12、extension3→4，退出已完成卡；验收保持NOT_MET。本地增量R12_DELIVERY_MANIFEST随后登记，白名单代码/配置/tests/master_log成组commit/push由R12_SYNC核对，稿件/数据/参考PDF本地保留，未扩大公开范围。收尾脚本首个工具调用在JavaScript解析时退出、未执行写入，改正工具字符串后执行；不算实验或科学失败。
 
 第13轮按已授权最终科学整合与完整项目包收口：集中处理整篇贡献/可懂性/用途的决定性缺口，实际对比最邻近原文和已有强控制，不再无限续调loss/metric；统一稿图、所有阶段证据/失败、源码环境数据获取和全部轮次日志并实际提取重放。完成最终诚实对标后原ccad置PAUSED且保留配置历史，不启动14；本轮不暂停，不用轮数或文件齐全宣布主会达标。
+
+
+## INSERTED_R13 — START: learned superposition and operational correspondence
+
+实际写入UTC：2026-09-07T23:11:34Z。round_id INSERTED_R13，用户额外插入科学轮START；登记开始同UTC，23:06:20.653501Z为可证实用户请求事件，此前阅读的有效工作时长未知。用户明确要求在最后大更新前针对Toy Models of Superposition的启发再进行一轮大更新。因此累计上限13→14，新13为独立插入轮，原新增阶段5/5最终交付顺延14；原五轮不被挤占。completed仍12、extension completed仍4，只有本轮完整成果与COMPLETE落盘后才能加13。
+
+选择理由：既有手工split/GL合成与真实LM操作没有回答学习何时产生可恢复的组成、数据共现何时令概念区分缺失。训练Toy Models式压缩器后冻结共同hook，再训练五个同配置/同数据流、仅初始化seed变化的SAE；比较atom、紧凑多成员、full/raw及状态约束，分开source操作保真和真实生成因子干预。先小开发，保留差配置；有明确方法/适用范围后冻结并使用新生成样本确认，不能把by-construction对应、弱源教师或共现泄漏当发现。共现打破测试和真值上界用于区分素材信息缺失与映射失败。
+
+本轮同时推进学习原文/官方源码、数学与实现、训练质量/曲线、真实比较、可理解实例及唯一paper/main.pdf，不能只给启发或协议。原稿及五入口已逐字归档archive/research_workflow_20260907/r13_start_20260907T231134Z，原R12结果不变。现GPU NVIDIA GeForce RTX 5070 Ti, 16303 MiB, 1859 MiB, 3 %，共享gpu-0 free；预算5400秒管理GPUwall、4GB新项目、0新bulk/付费/大模型，复用lockedr004。未测有效工作/计算与等待分别未知。下一步读取官方MIT实现并训练小型开发模型。原ccad仍由本对话执行，5分钟既有loop不复制；14完成后原位暂停保留，不自动开15。
+
+
+## INSERTED_R13 — PROGRESS / CORRECTION: learned pilot and frozen confirmation
+
+实际写入UTC：2026-09-07T23:38:24Z。round_id INSERTED_R13，PROGRESS/CORRECTION。事件为本轮7个已结束开发run；各开始/结束时间在manifest/status，训练/运行wall在summary；本块不是新增轮。3个压缩器、两种L1共12个SAE完成训练，其余为复用权重的拟合重放，全部原run保留。有效工作与等待未连续计时，不能把起止跨度当有效时长。
+
+开发结果与选择：4目标成员直接拟合preactivation后ReLU在完整代码有效，紧凑预算却差于code回归，保留失败。改为同code OLS支持上拟合有限ReLU源状态，用原source decoder Gram加0.05对角项及标准L-BFGS；所有dense/full/atom/random同类比较得到同样拟合。另补可拟合截距的linear+clip控制，排除仅多一个bias参数。稳定重放在三条件六evaluation/independent-shift单元，相对同成员affine+clip的功能误差均下降。高L1(.15)固定其余训练条件的source真因子删除NMSE由.6521/.6309/.6412降至.4760/.5085/.4750（独立/完全复制/80%复制开发evaluation）。其FVE下降，不能用重建排定因子品质；source误差仍大，不宣称纯概念恢复。
+
+具体缺陷已修正并留账：v1–v3对空source组只在fit状态记载却未写指标，真值全分母不完整；v4以后每个factor/每个方向/每个method保留零source操作和非零真值误差，旧原件不改。前3run evidence_level误写five但实际cfg为2seed，属于元数据误标，现根据实际长度生成，旧2seed开发不冒充五seed确认。v5发现full有限拟合在两evaluation单元NMSE达261/241，而shift约.004；不是可利用的强基线失败。定位到逐feature标准化令近死变量原单位系数达到2,000–4,000。改用统一RMS与同原单位岭惩罚后v6/v7重放恢复full误差.0016–.0040，compact收益保留；六项针对性测试含近死变量回归、encoder复合/secant、同seed共享流梯度和空组边界全部通过。修复是消除真实不稳定性，不删坏比较。
+
+FREEZE.json现在冻结两新toy seeds202/303、每个五同配置SAE、L1.05/.15、四相关结构、全部12因子/20方向/24方法、主端点和强控制。新的coactive条件只共享出现事件而幅度独立；旧correlated是更强的完全复制，不能与原文相关特征混称。主方法fixed-support finite ReLU，主材料.15，同时完整报告.05和未探索的coactive结果。1024/4096/2048/3072的独立mean/fit/cal/audit与独立shift3072均用新种子；每个训练材料的全部实际map先存freeze文件，再生成和编码audit。新结果不得调参，仍保留两toy模型与共享SAE的依赖，0新付费、无外部agent。本轮注册预算5400s/4GB仍足够，实际已用见各runsummary。下一步执行冻结确认，同时完成数学、论文及图版。
+
+
+## INSERTED_R13 — PROGRESS/CORRECTION: confirmed material/method effects and integrated paper
+
+实际写入UTC：2026-09-08T00:31:39Z。round_id INSERTED_R13。确认计算最后事件UTC 2026-09-07T23:48:24.949165+00:00；此前START为2026-09-07T23:11:34Z。两新toy seed×四条件×五SAE×两L1完成，source/paired/audit身份分离，80确认SAE，加开发共92SAE/11compressor。原分布源真值误差低→高L1改善24.68–27.06%，FVE从99.24–99.31%降至95.93–96.41%；真值误差仍0.464–0.508，只对指定源分组成立。有限ReLU同四支持/截距与affine+clip比较，八原/独立分布格功能误差降低21.83–25.64%，两底模、全部关联方向与incident删除保留优势；dense有限汇总八格也更差，full-code原分布仍更准7.0–8.5倍。空组与源错全部保留，字典matching不冒充功能或概念身份。
+
+数学补齐source-error恒等式、encoder组合与Lipschitz界、有限ReLU系数目标、secant组成及显式基线、严格sum-only下界。勘误：共同RMS对应lambda*s²的原坐标均匀罚项，不能称跨支持恒强度原单位正则；方程和实际代码已核对。近塌缩训练结果不升级严格信息消失证明。固定factor缺席row0仍被source/预测共同压低输出0.196，作为继承源错误实例。
+
+新正文/两主图/学习图/九表片段及四附录已进入唯一paper/main.pdf。编译卡住444.969秒后只停止核实的本轮tectonic进程；all-ones宏边界与表百分号转义两次编译失败分别修复，日志均保留，未安装字体或暂停研究。57页最终稿实际查看，384新功能值、8真值行、32鲁棒性单元、原38表及冻结身份核对；paper-only七helper重建57页文字/14PNG一致。完整操作接口每L1重放11796480已保存向量，误差0，components加baseline最大6.67e-16；真实CLI删除/contrast各3×4误差0，非新科学重复。
+
+## INSERTED_R13 — COMPLETE: learned-superposition round delivered
+
+实际写入UTC：2026-09-08T00:31:39Z。round_id INSERTED_R13。可证实登记开始2026-09-07T23:11:34Z，实验结束2026-09-07T23:48:24.949165+00:00，本轮稿件/结果交付完成事件UTC 2026-09-08T00:31:39Z。选择理由、改法、实际正负判断、数学、源码/许可、全部run/图文与恢复路径在artifacts/inserted_superposition_20260907/R13_REPORT.md和README。数据/代码身份FREEZE.json SHA256 146ac92d01f0bfa83d71d9eca1efeab9562954fbf0f377795e56a3c4a9139606；主稿paper/main.pdf SHA256 c4f014af0d55a9214f042e3a0154b4084e90c5d3eddc0a8d739b7bb0011625e6。九run全PASS/contract PASS，原始sha由R13_BUDGET列出；旧坏缩放/不完整早期分母/两seed误写等开发记录不重写。
+
+实际脚本wall 674.374035秒，九gpu-0租约占用700.995秒，含CPU与IO而非kernel时间；0付费/新bulk/环境，原预算5400秒/4GB，磁盘库存见R13_BUDGET。有效研究工作和未连续计时等待未知，不以起止跨度代替；编译卡住时间已另列。收尾资源只读状态{"cpu-heavy": {"state": "free", "project": null}, "disk-d-io": {"state": "free", "project": null}, "disk-e-io": {"state": "free", "project": null}, "gpu-0": {"state": "free", "project": null}}，其他项目lease未改。完整本地增量/当前入口hash见R13_DELIVERY_MANIFEST，白名单sync另附R13_SYNC。旧入口逐字归档archive/research_workflow_20260907/r13_close_20260908T003139Z，旧主稿在START归档。
+
+本COMPLETE之后tracker仅把completed12→13、inserted0→1，extension仍4/5；next14，未启动或完成14。本轮是额外插入，不挤占最后一轮。下一轮完成整篇贡献整合/具名对标/可提取项目包及真实成熟度总结，完成14后原ccad PAUSED保留历史，不自动加15。acceptance仍NOT_MET；文件、轮数与局部改善不证明一线主会成熟度。

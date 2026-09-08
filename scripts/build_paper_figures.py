@@ -264,6 +264,8 @@ def main():
     plot_components(data.get('component_reuse'),save)
     from state_projection_paper import plot as plot_states
     plot_states(data.get('source_state_projection'),save)
+    from toy_paper import plot as plot_toys
+    plot_toys(data.get('learned_superposition'),save)
     (out/'FIGURE_MANIFEST.json').write_text(json.dumps(dict(input_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),font_family=family,
         font_source=str(font) if font.exists() else 'Matplotlib STIXGeneral',outputs=outputs,
         scope='Descriptive plots of retained data; intervals are source-seed ranges or dependent-direction distributions, not confidence intervals.'),indent=2)+'\n',encoding='utf-8')

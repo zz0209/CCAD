@@ -241,6 +241,9 @@ def main():
     from state_projection_paper import export as export_states
     states=export_states(root,out,read)
     if states:plot['source_state_projection']=states
+    from toy_paper import export as export_toys
+    toys=export_toys(root,out,read)
+    if toys:plot['learned_superposition']=toys
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -260,36 +263,36 @@ def main():
              evidence=['paper/sections/appendix_theory.tex','artifacts/seven_round_rebuild_20260906/R5_METHODS_AND_PROOFS.md','src/ccad/factor_correspondence.py']),
         dict(id='rrr_and_composition',paper='Sections 2.3, A.4-A.6',result='Exact penalized rank fit and position-aware composition; standard algebra',
              evidence=['artifacts/seven_round_rebuild_20260906/R3_METHODS_AND_ALGEBRA.md','artifacts/seven_round_rebuild_20260906/R4_METHODS_AND_ALGEBRA.md','src/ccad/factor_correspondence.py']),
-        dict(id='controlled_material',paper='Section 3.1; Appendix C.1; fig:learning and tab:quality',result='Five controlled late-hook SAEs and fixed-checkpoint quality/function; no convergence certificate',
+        dict(id='controlled_material',paper='Language-model experimental design; Appendix C.1; fig:learning and tab:quality',result='Five controlled late-hook SAEs and fixed-checkpoint quality/function; no convergence certificate',
              evidence=['artifacts/seven_round_rebuild_20260906/r4_l15/TRAINING_SUMMARY.json','artifacts/seven_round_rebuild_20260906/r4_l15/FUNCTIONAL_LEARNING_SUMMARY.json','configs/seven_r4_l15_train_k64_five_v1.json','configs/seven_r4_l15_checkpoint_function_v1.json']),
-        dict(id='role_confirmation',paper='Section 4; Figures 1-2; Appendix C.2-C.3',result='New-role source operation reuse; raw/full more accurate; source mistakes retained',
+        dict(id='role_confirmation',paper='Context-sensitive operation reuse; fig:example and fig:roles; Appendix C.2-C.3',result='New-role source operation reuse; raw/full more accurate; source mistakes retained',
              evidence=['artifacts/seven_round_rebuild_20260906/r4_l15/PANEL_PREDECLARATION.json','artifacts/seven_round_rebuild_20260906/r4_l15/frozen/FREEZE.json','artifacts/seven_round_rebuild_20260906/r4_l15/R4_L15_CONTEXT_SUMMARY.json','configs/seven_r4_l15_confirmation_v1.json','scripts/run_frozen_composition.py']),
-        dict(id='early_positive_and_counterexample',paper='Section 4.3; Appendix C.4; tab:early',result='Early development positive, weaker frozen confirmation, and prefix-rank limitation all preserved',
+        dict(id='early_positive_and_counterexample',paper='The early-hook counterexample; Appendix C.4; tab:early',result='Early development positive, weaker frozen confirmation, and prefix-rank limitation all preserved',
              evidence=['artifacts/seven_round_rebuild_20260906/R2_RESULT_SUMMARY.json','artifacts/seven_round_rebuild_20260906/r3_composition/R3_RESULT_SUMMARY.json','artifacts/seven_round_rebuild_20260906/r4_frozen/R4_FROZEN_SUMMARY.json','artifacts/seven_round_rebuild_20260906/r4_frozen/R4_PREFIX_DIAGNOSTIC.json']),
-        dict(id='member_mechanism',paper='Section 5; Figures 3-4; Appendix C.5',result='Individual attenuation, norm-matched swaps and complete member removal; follow-up on exposed panel',
+        dict(id='member_mechanism',paper='Inspecting the components; fig:members and fig:member_cases; Appendix C.5',result='Individual attenuation, norm-matched swaps and complete member removal; follow-up on exposed panel',
              evidence=['artifacts/seven_round_rebuild_20260906/r5_mechanism/R5_MECHANISM_SUMMARY.json','configs/seven_r5_member_mechanism_v1.json','scripts/run_member_mechanism.py','scripts/summarize_member_mechanism.py']),
-        dict(id='fixed_examples_and_signed_relations',paper='Figures 1,4,6; Appendix C.5-C.7',result='All 16 fixed contexts/48 operations, complete signed matrices and heterogeneous natural examples',
+        dict(id='fixed_examples_and_signed_relations',paper='fig:example and fig:member_cases; signed-relation results; Appendix C.5-C.7',result='All 16 fixed contexts/48 operations, complete signed matrices and heterogeneous natural examples',
              evidence=['artifacts/seven_round_rebuild_20260906/r5_mechanism/fixed_cases.csv','artifacts/seven_round_rebuild_20260906/r5_mechanism/figure_member_example_manifest.json','configs/seven_r5_member_natural_contexts_v1.json','scripts/run_member_natural_contexts.py']),
         dict(id='swapped_native_control_correction',paper='Appendix B.4; complete comparisons in C.2',result='Historical wrong_factor swaps native group operations; at the same position its joint edit equals direct native. It is not an independent joint-specificity test.',
              evidence=['scripts/run_frozen_composition.py','scripts/run_composition_correspondence.py','paper/sections/appendix_methods.tex']),
     ]
     if donor:
         claims.extend([
-            dict(id='frozen_map_donor_specificity',paper='Section 5.2; Figure 2; Appendix A.8 and C.8',
+            dict(id='frozen_map_donor_specificity',paper='fig:roles; wrong-donor diagnostic; Appendix A.8 and C.8',
                  result='Wrong-factor code inputs increase source KL, including after matching total physical edit norm. Follow-up on the exposed panel, not new confirmation or unique semantic identification.',
                  evidence=[donor_path.as_posix(),'configs/seven_r7_donor_specificity_v1.json','scripts/run_donor_specificity.py','scripts/summarize_donor_specificity.py','paper/sections/appendix_theory.tex']),
             dict(id='executable_predictive_operation',paper='Appendix D.2',
                  result='Forty portable signed maps reproduce frozen physical operations; output is a source-aligned residual update, not native feature deletion.',
                  evidence=['src/ccad/predictive_operation.py','scripts/apply_predictive_operation.py','runs/SEVEN_R7_donor_specificity_v1_20260907/operations/INDEX.json','tests/test_predictive_operation.py'])])
     if pair_complete:
-        claims.append(dict(id='contrast_and_pair_common_completion',paper='Section 4.4; Appendix A.9 and C.9; Figure 7',
+        claims.append(dict(id='contrast_and_pair_common_completion',paper='Completing the source contribution; Appendix A.9 and C.9',
             result='Contrasts omit pair-common contribution. Complete ridge improves source-group removal but can worsen contrasts. Pair-conditioned completion preserves frozen contrasts and improves removal on exposed development data; needs a donor and does not solve unpaired/native/semantic correspondence.',
             evidence=[(pair_base/'R9_PAIR_COMPLETE_SUMMARY.json').as_posix(),(pair_base/'R9_PAIR_ANCHOR_SUMMARY.json').as_posix(),
                       'src/ccad/pair_complete_correspondence.py','scripts/run_pair_complete_correspondence.py','scripts/summarize_pair_complete.py',
                       'configs/ext_r9_pair_complete_v2.json','configs/ext_r9_pair_anchor_v1.json','paper/sections/appendix_theory.tex',
                       'scripts/apply_paired_completion.py','scripts/export_paired_completion.py',(pair_base/'operations/INDEX.json').as_posix()]))
     if complete_support:
-        claims.append(dict(id='complete_support_and_controlled_target_training',paper='Sections 2.4, 4.5; Appendix A.10 and C.10',
+        claims.append(dict(id='complete_support_and_controlled_target_training',paper='From a contrast to a complete contribution; Selecting for the complete contribution; Appendix A.10 and C.10',
             result='At the original4M target checkpoint, classical shared OLS improves both consumers over same-budget dense selection on exposed development. Continued targets improve number but worsen time correspondence under fixed4M teachers; reconstruction and source function also improve, so they do not establish monotone transfer quality.',
             evidence=complete_support['input_summary_paths']+['src/ccad/complete_support.py','scripts/run_complete_support.py','scripts/run_continued_code_cache.py','scripts/summarize_continued_material.py',
                 'configs/ext_r10_complete_support_v1.json','configs/ext_r10_target8m_support_v1.json','configs/ext_r10_l15_continue8m_five_v1.json','paper/sections/appendix_theory.tex']))
@@ -301,6 +304,10 @@ def main():
         claims.append(dict(id='admissible_source_states_and_finite_loss',paper='Source-state subsection and theory/method/results appendices',
             result='Classical nonnegative projection constrains absolute source allocations before signed operations; its state-metric guarantee does not imply contrast or finite-KL improvement. Frozen fresh-input comparison retains identical constraints for all strong controls, and finite-output development failures remain.',
             evidence=states['input_summary_paths']+['src/ccad/source_state_projection.py','src/ccad/finite_output_fit.py','scripts/run_source_state_correspondence.py','scripts/run_finite_output_correspondence.py','configs/ext_r12_state_confirmation_v1.json','paper/sections/appendix_theory.tex']))
+    if toys:
+        claims.append(dict(id='learned_superposition_fidelity_and_truth',paper='Learned-toy main section; toy theory, methods, result and reproduction appendices',
+            result='Two new trained toy seeds and five controlled SAEs per material confirm fixed-support finite ReLU fitting while preserving stronger full-code controls. A controlled L1 change improves the specified source grouping against latent-factor truth while lowering FVE; this does not identify optimal semantic information or replace the real LM evidence.',
+            evidence=toys['input_summary_paths']+['src/ccad/toy_superposition.py','src/ccad/rectified_operation.py','scripts/run_r13_learned_superposition.py','scripts/apply_rectified_operation.py','scripts/export_r13_operations.py','configs/insert_r13_frozen_low_l1_v1.json','configs/insert_r13_frozen_high_l1_v1.json','paper/sections/toy_theory.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

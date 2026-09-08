@@ -1,0 +1,73 @@
+{
+  "block_size": 512,
+  "samples": {
+    "mean": 1024,
+    "discovery": 4096,
+    "calibration": 2048,
+    "evaluation": 3072,
+    "shift": 3072
+  },
+  "quality_data_seed": 810003,
+  "regimes": [
+    "independent",
+    "coactive",
+    "correlated",
+    "mixed"
+  ],
+  "sae_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "ridge_fraction": 1e-05,
+  "hidden": 4,
+  "sae_width": 24,
+  "training_data_seed": 810001,
+  "sae_lr": 0.002,
+  "run_id": "INSERT_R13_frozen_high_l1_v1_20260907",
+  "toy_steps": 3000,
+  "device": "cuda",
+  "data_seeds": {
+    "mean": 92001,
+    "discovery": 92002,
+    "calibration": 92003,
+    "evaluation": 92004,
+    "shift": 92005
+  },
+  "probability": 0.1,
+  "l1": 0.15,
+  "features": 12,
+  "target_budget": 4,
+  "audit_opened": true,
+  "frozen": true,
+  "sae_training_data_seed": 810002,
+  "log_every": 1000,
+  "batch_size": 512,
+  "purpose": "Frozen learned-toy confirmation: finite rectified source-state fitting and controlled SAE sparsity, full factor universe including empty source groups",
+  "sae_steps": 4000,
+  "toy_seeds": [
+    202,
+    303
+  ],
+  "toy_lr": 0.003,
+  "quality_samples": 4096,
+  "rectified_fit": true,
+  "rectified_maxiter": 200,
+  "prediction_examples": [
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      1,
+      2,
+      2
+    ]
+  ],
+  "retain_all_predictions": false,
+  "load_training_run": "INSERT_R13_frozen_low_l1_v1_20260907",
+  "retrain_sae": true
+}

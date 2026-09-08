@@ -1,0 +1,51 @@
+{
+  "block_size": 128,
+  "samples": {
+    "calibration": 512,
+    "evaluation": 1024,
+    "mean": 1024,
+    "shift": 1024,
+    "discovery": 4096
+  },
+  "quality_data_seed": 610003,
+  "regimes": [
+    "independent",
+    "correlated",
+    "mixed"
+  ],
+  "sae_seeds": [
+    1,
+    2
+  ],
+  "ridge_fraction": 1E-05,
+  "hidden": 4,
+  "sae_width": 24,
+  "training_data_seed": 610001,
+  "sae_lr": 0.002,
+  "run_id": "INSERT_R13_learned_toy_pilot_v1_20260907",
+  "toy_steps": 3000,
+  "device": "cuda",
+  "data_seeds": {
+    "calibration": 71003,
+    "evaluation": 71004,
+    "mean": 71001,
+    "shift": 71005,
+    "discovery": 71002
+  },
+  "probability": 0.1,
+  "l1": 0.05,
+  "features": 12,
+  "target_budget": 4,
+  "audit_opened": false,
+  "frozen": false,
+  "sae_training_data_seed": 610002,
+  "log_every": 1000,
+  "batch_size": 512,
+  "purpose": "Develop threshold-respecting compact correspondence in learned toy superposition, separate source fidelity and factor truth",
+  "sae_steps": 4000,
+  "toy_seeds": [
+    101
+  ],
+  "toy_lr": 0.003,
+  "quality_samples": 4096
+}
