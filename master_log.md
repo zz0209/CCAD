@@ -5300,3 +5300,67 @@ round_id: FINAL_FIVE_R14。实际写入UTC：2026-09-08T09:26:36Z。可证实本
 实际资源/失败：23run全部结束，19PASS/4FAIL，4失败为语料容量不足、重复文本、CPU导入设备错误和Sinkhorn原容差未达，修复另run且保留原件。GPU训练脚本wall6268.639829s，32M目标消费者228.668439s，其他消费者、CPU原始计时和磁盘字节逐run记账；并行wall不相加当有效工时。主动研究/写作与零散等待未连续计时，精确时间未知；没有人为拖时、付费采购或委派。收尾实查CPU/GPU/磁盘lease均free。本轮E盘run2,121,493,822bytes、D盘新训练6,042,361,044bytes，未超本轮预算。
 
 下一步依据失败改源操作的位置覆盖和目标表示，优先外部多位置raw/完整SAE有效性、source-only联合功能组及跨位置native对应的真实下游用途；不再在同弱源上扫writer参数。第15轮重新登记实际预算/START，继续原目标和原5分钟automation，不增第19轮。旧tracker/plan逐字归档archive/research_workflow_20260908/r14_close_20260908T092636Z/manifest.json；长期规则未改。此工作单元白名单代码/日志成组同步，论文与原始数据本地保留且path/hash留账，同步完成身份随后在R14_SYNC.json记录。
+
+
+## FINAL_FIVE_R15 START — multi-position source operations and executable shared groups
+
+round_id: FINAL_FIVE_R15。实际写入UTC：2026-09-08T09:38:22Z；本轮可证实启动事件同此时刻，heartbeat触发2026-09-08T09:35:49.257Z不是实验启动时间。已完成14/18、最后五轮1/5，当前启动15，不再执行旧总结轮，不增加限额。
+
+选题理由：R14有限target writer和更长训练没有一致解决跨seed功能差距；外部单位置源对NPI/NPZ等本身较弱。实际检验任务信息是否分散在多个prefix位置，以及共享源/目标组成能否执行有效操作。先做同任务/同组件上的单位置、多非final位置、final与全raw/完整SAE操作效力比较，再依据源侧证据改联合功能组和target-native消费者。尚无多位置正结果，不能预称机制成立。
+
+实际准备与范围：已读当前tracker/plan、R14原始消费者和数据卡，定向核对最近邻CausalGym原文4.1/5.1的region-end与分布式interchange定义/原代码。复用原模型、五个layer3权重及已有late32M素材；不读官方test。R14开发组件仍是开发，完整prompt连通组件/互逆配对保持，不按目标结果挑源。新增功能消费者须保留source错误、raw/full、atom/SemanticOT/稳定span强参照，分开位置/读写成员/监督与计算预算，测真实下游和未训练组成。
+
+资源实查与投入：CPU/GPU/磁盘lease均free，RTX5070Ti16GB当前1690MiB占用/4%util，D盘约3.72TB与E盘170.0GB可用。初始本轮可承受4小时GPU管理任务wall、2小时独立长CPU任务wall、60GB新增D盘/15GB新增E盘、0新增付费；先小判别量测吞吐，按科学收益调整，原轮预算不当永久上限。使用.aris/compute/local.md锁定r004与既有overlay/shared manager，运行前复查租约，不停止其他项目任务。不委派/不新建task。
+
+本轮计划同时完成必要数学和方法实改、实际强对照、文献采用/差异及唯一paper/main.pdf主图正文；启动和准备不计研究完成。真实有效思考/阅读/写作与零散等待未连续计时，未知，不用heartbeat间隔冒充工时。证据入口artifacts/final_five_research_20260908/r15_multisite/R15_BUDGET.json，旧入口逐字归档archive/research_workflow_20260908/r15_start_20260908T093822Z/manifest.json；当前没有运行结果或完成记录。
+
+
+## FINAL_FIVE_R15 PROGRESS / CORRECTION — multi-position source signal and exact-state replay
+
+round_id FINAL_FIVE_R15。实际写入UTC：2026-09-08T09:57:33Z；START2026-09-08T09:38:22Z，当前未完成。v1启动2026-09-08T09:45:16.758130Z/结束09:46:39.004252Z，v2启动2026-09-08T09:50:17.314378Z/结束09:51:00.601353Z；实际结果在结束后读取。
+
+v1完成10740行但原整段替换max全词表logprob阈值.0002未通过，最大.00031662，故保留FAIL（contract本身PASS）。v2未改输入/五seed/操作，用同批次donor状态直接替换严格检查索引与hook，四任务误差全0；缓存float32差分相加仍有约3e-4尾词logprob误差，双精度归一化后最大KL在1e-9附近。原阈值假设未获支持，不能把FAIL改名PASS。新消费者统一float64 logsoftmax，消除float32归一化误差主导1e-7级KL的问题；模型/代码仍float32、未改已发表旧run。v2 PASS/contractPASS，43.2680714s GPU脚本wall/11264完整序列/88378tokens，10740结果行，峰值VRAM约4.24GB；v1额外82.2284818s全部留账。
+
+实际新信号：在fit组件选最佳单位置后，以同七个留出开发组件比较多非final suffix。五seed完整SAE的任务效应/目标标签成功率均独立分栏，结果见SOURCE_COVERAGE_SUMMARY.json及OVERVIEW。NPI与filler-gap的多位置操作明显增强，NPZ也提高；这支持修正操作覆盖，不证明已经解决紧凑跨seed对应。raw/full仍是上限参照，官方test未读，单位置选择不看held。下一步用source-only跨位置贡献选共享组，并直接拟合目标原生成员对这些源组成的参与，而不是继续拟合任意物理读出后投影。
+
+方法准备：对于固定源组成控制m，探索目标增量D_t diag(z_d-z_b) G m，G行非负且行和≤1；m在[0,1]时目标代码为base/donor的逐成员凸组合，非负和组成线性有直接代数保证。G是fuzzy参与矩阵，signed效应来自真实代码差和decoder，不声明其等于任意signed线性换基或人类语义。训练/未训练source mask与实际输出需检验，标准稀疏优化不冒充原创。先开发一个明确预算的原生组消费者，保留直接target监督、atom/随机/同预算源读出/full/raw强控制；准备不计科学完成。当前没有新paper/PDF交付。
+
+读取原文CausalGym4.1/5.1/6、官方interventions.py说明跨位置与pooled prior，来源/实际差异入registry。资源自动释放；下一run重查原manager。有效思考/阅读/编码与零散等待未连续计时为未知；无付费或委派。
+
+## FINAL_FIVE_R15 PROGRESS — source-controlled native participation and five-seed expansion
+
+round_id FINAL_FIVE_R15。实际写入UTC：2026-09-08T10:25:08Z。首个参与矩阵run启动2026-09-08T10:09:46.995808Z，结束10:13:21.003954Z；PASS/contractPASS，5568原始行，GPU管理脚本wall213.9927845s、进程CPU188.734375s、62352完整序列/470094tokens、峰值分配4366240256bytes。首轮实际源/目标为1→2，四个既有CausalGym训练任务及原组件分割，没有独立test或新确认。
+
+方法实际改变：source-only fit组件上4点IG按跨位置signed效应选32个源成员，交错score rank定义两个组成。目标G有32个非零行，行非负/行和≤1，使用真实目标donor-minus-base代码及目标decoder，保留base残差；整体/两个组成接受160步完整输出KL监督，半量/混合量不进拟合。完整码/raw/compact/dense readers都收到相同160步和calibration schedule；另外保留完整字典Hungarian、任务相关Pearson assignment、随机组、wrong-task G和直接target-label监督。新的source groups还没有真正SemanticOT/DAS/原版DBM结果，不能借R14的旧source groups冒充。
+
+实际结果：参与矩阵四任务whole KL均低于同32成员全字典Hungarian，目标效应分别约3.58/4.21/4.66/.98nat。源约4.08/4.67/5.21/1.39nat；NPZ32源仍明显弱于完整源约3.63nat。紧凑readout在gender/filler/NPI仍更保真，强参照未删除。这是值得扩展的可执行目标信号，不是独特价值、语义身份或主会闭合。完整数据runs/FINAL5_R15_native_participation_v1_20260908，原始汇总以metrics.summary.json而非不存在的summary.json为准。
+
+已启动五受控seed循环方向和独立优化exclusive成员对照，配置final5_r15_participation_five_s1至s5_v2.json，原160步和32成员预算保持，source按各自seed-only选定；记录共享seed依赖，不按五条独立重复估计CI。wrapper83920实际2026-09-08T10:23:10.7772426Z启动，顺序脚本scripts/run_native_participation_five.ps1逐run申请释放gpu-0。第一次10:21:54启动在共享lease文件权限处失败，未建科学run；原launcher日志逐字保留r15_multisite/launch_failure，权限恢复后重启同未执行配置。未取消他项目，未修改manager，未新增付费。扩展预计25分钟GPU管理wall，原预算充足。
+
+数学与阅读：加入可行非负凸组合、同上下文物理组成、置换/正尺度不变及操作族需要共享成员的简单反例；明确人工拆分同变量也会产生共享需要，不能当两个语义概念。MIB2025原文4/E.2–E.4、固定commit b69dabe...和CausalAbstraction f9ed677...实际mask代码已读：sigmoid温度训练、二值eval、base误差保留；本地G不是原版DBM复现。原PDF/hash及官方文件在reference_views，避免把成熟技术重命名为创新。paper/sections/native_theory.tex已实改但新版PDF未构建，本轮没有COMPLETE。主动研究/阅读/写作未连续计时为未知，不用运行wall冒充有效工时。
+
+
+## FINAL_FIVE_R15 COMPLETE — multisite source operations and executable native participation
+
+round_id FINAL_FIVE_R15。实际写入UTC：2026-09-08T11:10:01Z；可证实START2026-09-08T09:38:22Z，最后科学run结束2026-09-08T10:43:35.111495+00:00，最后主稿缓存编译完成2026-09-08T10:58:51Z附近（精确值见BUILD_RECEIPT），纸稿副本核验完成2026-09-08T11:02:38.884433Z；本块为全部结果与稿件整理后的完成记录，不倒填实验时间。最后五轮第2/5完成，累计15/18；acceptance仍NOT_MET，剩余16–18，计数在本块写入后更新。
+
+选择理由与实改：上轮单位置source及有限writer没有一致收益，本轮先改非final多位置源覆盖，再学习同一目标支持的G组成参与，真实执行D_t diag(z_d−z_b)Gc而非任意source-decoder读出。source-only fit四点signedIG32，whole/交错rank两parts拟合，half/mixed不训练；G≥0、行和≤1保证逐坐标base/donor凸组合，保留残差。补入可行性、同上下文物理线性、置换/正尺度不变证明及split–merge例子；一般GL/TopK重新编码/非线性输出不据此得到。人工拆分同变量可制造共享需要，不声明独立语义或新优化器。
+
+实际科学结果：五受控layer3/4M SAEs、同四CausalGym训练任务、14/3/7exact-prompt组件分割、五循环方向。完整SAE多位置效应在四任务五seed均优于fit选单位置，filler–gap约2.35→4.76nat、NPI1.34→5.02nat。source32对应约4.79/5.20nat；NPZ仍仅1.36nat/30percent指定donor-vs-recipient偏好，对比完整3.54/raw4.88nat，失败未筛除。独立共享/互斥优化同32成员160步：whole KL共享[.027960,.010610,.012854,.058911]、互斥[.053367,.060264,.024252,.059478]，gender/filler/NPI改善47.6/82.4/47.0percent，在五方向及删除每seed双incident方向后均保持。NPZ改善约1percent/2of5，genderparts仅2of5且条件组件区间跨零。强度平均相对互斥改善70.7/91.5/61.1/13.7percent但NPI只有4of5方向。五方向不当独立replicate，bootstrap按7组件把全部seed/正反行一起重采样；区间只条件于该面板和五SAEs。官方test未读，整面板永久开发。
+
+明确强参照与缺口：共享G在filler/NPI的KL是compact读出的8.8/7.1倍，full/raw更强；gender与dense响应读出几乎相同。完整初始ridge/响应优化、geometry/Hungarian/task Pearson/random/wrong-task/true-label监督都保留。G实际55–64个正权重，互斥32，均32成员及rank2但非同权重预算；不能把局部优势当预算无关的算法突破。两sourceparts交错排序，没有独立语义。本轮早层4M素材不能借用上轮late32M训练结果。跨seed目标可执行性有增量，但独特解释用途、主会核心贡献仍未建立，不能靠限定语或改投降目标解决。
+
+原文/实现比较：实际阅读CausalGym方法和官方干预；MIB2025原文4/E.1–E.4、PDF图版5/7/8、主库b69dabe9899251d4a8fe90789afa4d655afc84c7和子模块f9ed6777ea5d88bfd88a1488f0903daa50402cc7的mask/featurizer/train函数。识别sigmoid温度、binaryeval、残差保留。无外部代码复制/安装/运行；主库Apache2声明与子模块未见独立license的范围都保留。新source组还没有原定义PW-MCC/真正SemanticOT/原版DBM/DAS结果；R14不同源组的SemanticOT结果不能冒充本轮比较。来源身份REFERENCE_REGISTRY.md及reference_views/MIB_SOURCE_MANIFEST.json。
+
+失败与资源：8science runs全结束，7PASS/1FAIL、contract均PASS，56288rawrows含失败/pilot重放，不按行数当replication。sourcev1保留float32tailLP容差FAIL；v2直接同批次donor state替换误差0，cached差分误差分列，float64归一化KL最大6.36e-10。firstlauncher共享lease权限失败未建run，保留launch_failure后按同未执行config恢复。8driver GPU管理wall1558.3266697s，processCPU1363.015625s，446004完整序列/3369310tokens，run480764018bytes，峰值分配约4.37GB；无新训练/权重bulk/收费/委派。有效思考阅读编码写作与未连续计时等待为未知，不拿driver wall或UTC跨度冒充有效工时。11:02UTCmanager四类leasefree，GPU桌面1690MiB/5percent；没有待接续实验或wrapper，不干预其他项目。
+
+论文构建保留两次失败：10:47编译在核实own PID后停止，latex wall178.297s；10:50缓存编译3221225477。缺新粗体数学字形，经官方Tectonicbundle增6fontcache299147bytes后恢复；哈希TEX_FONT_CACHE_ADDITION.json，无实验环境变更。10:58缓存编译1.828s，当前唯一paper/main.pdf72页SHA256 29581edc5d411d24b7c79fe87108b5071d44e524175ffcd4fa2a67daf3306d0f。已同步摘要/Intro/native公式/外部主结果、附录证明/方法/全表和固定上下文；Figures7–8/17和Tables46–49。全72页布局及新页整页实际查看，修复参考文献孤页和图例裁切；不是venue模板认证。20目标map/fixedstates输出，part0与mixed两次NumPy CLI误差0。仅paper+10helpers的独立归档副本在8.172s绘图+3.5s编译重建72页相同文字/21PNG字节相同，不带原runs/weights/GPU；仅证明同机包可用，不是全科学独立复现。
+
+交付：artifacts/final_five_research_20260908/R15_REPORT.md SHA256 9cbf07dc6c0c26286769854b86d54abd079309b4e1dfd9e0930f959943ab3054，R15_RUN_INVENTORY.json、R15_DELIVERY_MANIFEST.json；paper/EVIDENCE_INDEX.json、data/native_participation.json及CSV；r15_multisite/operations/INDEX.json/CLI_REPLAY.json、ACTIVE_WEIGHT_BUDGETS.json、PAPER_ONLY_REPLAY.json和pdf_final_review。整合前tracker/plan逐字归档archive\research_workflow_20260908\r15_close_20260908T110655Z/manifest.json；旧稿完整r15_paper_20260908T101250Z归档，本轮失败不删除。
+
+下一步：第16轮优先改变源操作族的独立语义/组合预测与跨seed实际使用，补同新源组的PW-MCC/SemanticOT/subspace/DBM或DAS及ridge消费者，分开成员/非零权重/rank/位置/监督成本，检验共享组成的真实独特收益；依结果调整方法/素材，并在新数据确认。不能在交错parts同面板上无界调参或计准备为新科研轮。原ccad本对话5分钟ACTIVE（本次读取核实），18轮完成项目包后原位暂停，无19轮、无新增loop。代码/master按原白名单成组同步，论文/素材保持本地，随后SYNC receipt核对HEAD=origin/main。
+
+
+## FINAL_FIVE_R15 CORRECTION — exact manuscript completion timestamp
+
+round_id FINAL_FIVE_R15。实际写入UTC：2026-09-08T11:10:53Z。补充上一COMPLETE块中10:58:51Z附近的近似事件描述：原始paper/build/BUILD_RECEIPT.json可直接核实本次主稿构建started_at_utc=2026-09-08T10:58:49.205630+00:00，completed_at_utc=2026-09-08T10:58:51.049161+00:00。本条只补精确来源时间，不改写旧块、不改变科学结果或轮次计数；有效研究时长仍未连续记录。

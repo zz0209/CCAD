@@ -251,6 +251,9 @@ def main():
     from training_curve_paper import export as export_training32
     training32=export_training32(root,out,read)
     if training32:plot['training32_curve']=training32
+    from native_participation_paper import export as export_participation
+    participation=export_participation(root,out,read)
+    if participation:plot['native_participation']=participation
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -330,6 +333,13 @@ def main():
             evidence=training32['input_summary_paths']+['scripts/training_curve_paper.py','scripts/run_training_checkpoint_curve.py',
                 'scripts/run_checkpoint_atom_matching.py','scripts/run_composition_checkpoint_function.py',
                 'configs/final5_r14_l15_continue32m_five_v1.json','configs/final5_r14_continued_source_function_v1.json']))
+    if participation:
+        claims.append(dict(id='multisite_native_participation',paper='External source coverage and native participation; native appendices',
+            result='Five controlled cyclic SAE pairs on four exposed CausalGym train tasks. Source-only shared-member selection, feasible target participation and independently optimized exclusive rows test source whole, parts and untrained doses. Strong readouts and all weak-source outcomes remain; interleaved source parts do not establish independent semantic variables or a general matcher advantage.',
+            evidence=participation['input_summary_paths']+['src/ccad/native_participation.py','scripts/run_causalgym_multisite.py',
+                'scripts/run_causalgym_native_participation.py','scripts/native_participation_paper.py',
+                'configs/final5_r15_multisite_source_v2.json','paper/sections/native_theory.tex']+
+                [f'configs/final5_r15_participation_five_s{s}_v2.json' for s in range(1,6)]))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

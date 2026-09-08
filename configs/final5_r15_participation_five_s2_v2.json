@@ -1,0 +1,67 @@
+{
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "layer": 3,
+  "sae_root": "D:/CCAD_Storage/training_curves/SEVEN_R2_1b_train_k64_five_v1_20260906/step_4096",
+  "tasks": [
+    "agr_gender",
+    "filler_gap_obj",
+    "npi_any_obj-relc",
+    "garden_npz_v-trans"
+  ],
+  "components_per_task": 24,
+  "pairs_per_component": 1,
+  "split_salt": "final5-r14-causalgym-development-20260908",
+  "sparsify_source": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "run_id": "FINAL5_R15_participation_five_s2_v2_20260908",
+  "purpose": "Five controlled cyclic pairs: native shared participation versus independently optimized exclusive membership, same full-output component supervision and strong reader/native controls",
+  "device": "cuda:0",
+  "cpu_threads": 4,
+  "batch_size": 16,
+  "budget_seconds": 1800,
+  "seeds": [
+    2,
+    3
+  ],
+  "budget": "Each driver at most1800s GPU-managed wall, existing 4M layer3 SAEs; pilot213.99s plus one160-update native control and full8192 dictionary assignment. Five drivers estimated25minutes total, within R15 4hour ceiling. Global assignment briefly uses4CPUthreads/under3GBworkspace; no long separate CPU or disk saturation. Zero paid cost.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "scope": "Exposed four-task CausalGym train components; same split as the source coverage probe, no new confirmation or test read. Source-only mean signed IG ranks select one shared32-member group across positions. Two interleaved source-rank parts are experimental controls, not semantic names. Nonnegative target participation rows sum at most1 and support at most32 target members; actual signed delta uses target donor minus base codes and target decoder. Only whole/two parts train target matching; half/mixed doses are held out of target fitting. All compact/dense/full/raw readers receive160 full-output source-KL updates and identical calibration schedule. Direct target-label native training has different supervision and is labeled separately. Task activation assignment is not PW-MCC, and this pilot does not claim to include a new SemanticOT retrieval for its new source group. Full dictionary cosine assignment uses the exact existing SAE pair. One pair remains pilot; no solver or semantic identity novelty is asserted. Extension adds all five cyclic controlled-seed directions and independently optimized row-exclusive native participation under the same target budget,160 updates and calibration schedule. This remains development, and no new SemanticOT, original DBM or DAS result is claimed. Components are alternating source-IG ranks, not distinct known causal variables.",
+  "generator_script": "scripts/run_causalgym_native_participation.py",
+  "source_seed": 2,
+  "target_seed": 3,
+  "mode": "suffix_nonfinal",
+  "source_budget": 32,
+  "target_budget": 32,
+  "source_curve_budgets": [
+    16,
+    32,
+    64
+  ],
+  "ig_points": [
+    0.125,
+    0.375,
+    0.625,
+    0.875
+  ],
+  "response_steps": 160,
+  "response_lr": 0.03,
+  "calibration_steps": [
+    20,
+    40,
+    80,
+    160
+  ],
+  "optimizer_seed": 9150915,
+  "ridge_alphas": [
+    0.001,
+    0.03,
+    0.3
+  ],
+  "lasso_steps": 2000,
+  "global_assignment": null,
+  "compute_global_assignment": true,
+  "exclusive_control": true
+}
