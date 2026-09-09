@@ -6166,3 +6166,10 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 证据和范围：first_pythia_edge/selection_summary.json与PROGRESS_SUMMARY.json保留全部方法IIA/KL、每个预算/选择计数、输入hash和真实运行时间。13个冻结源码hash现场核对全部不变，未改候选/源query/方法/阈值/预算，未额外拟合或启动GPU任务。当前suite已转入第二Pythia方向seed2→3，当前物化320/435；r21_confirmation/first_pythia_edge/RUNTIME_SNAPSHOT.json为准确状态。旧五GPT2结果与全部弱源/失败保留；完整五节点/任务/frame统计仍等十run齐备后按冻结程序执行。
 
 调度、稿件与下一步：第二方向于2026-09-09T17:22:45Z附近启动，17:28:18Z尚无完整query，以首同族run的43.49分钟wall及38.98分钟query合计作为运行参考，估计约余35–45分钟，当前倍率1是假设而非已测。按用户最新要求原位把ccad临时恢复20分钟，实际配置更新2026-09-09T17:28:23.213000+00:00，回读确认ACTIVE/当前对话/prompt一致；约2026-09-09T17:48Z复查、剩余≤20分钟时恢复5分钟。旧tracker/automation逐字归档archive/research_workflow_20260909/r21_first_pythia_entry_20260909T172818Z/manifest.json。唯一paper/main.pdf22页SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c未重复改图编译；六run新结果已归入同轮证据，完整suite后统一正文/图表/统计与最终包。现有r004/RTX5070Ti及共享wrapper继续其余四run，无安装、下载、重训或新付费。全部交付完成才写R21 COMPLETE、计3/3并原位暂停，未增加轮数。
+
+
+### FINAL_THREE_R21 PROGRESS — restore five-minute checks for the second Pythia edge
+
+实际写入UTC：2026-09-09T17:53:15Z。round_id：FINAL_THREE_R21，仍2/3，无新增完整科学结果或研究轮。2026-09-09T17:52:06.563270Z，第二Pythia方向完成18/29，整套337/435。以首Pythia同任务实际query耗时为参照，当前中位比率1.02761、剩余参考770.84秒，预计还需13.20分钟；观测比率范围对应11.06–14.99分钟，仅为调度估计，不是置信区间。运行日志继续正常推进。
+
+实际动作与下一步：满足≤20分钟恢复条件，使用automation_update原位将ccad恢复5分钟，实际配置更新时间2026-09-09T17:52:33.583000+00:00；回读确认ACTIVE、原对话及prompt一致。旧tracker和20分钟配置逐字保留于archive/research_workflow_20260909/heartbeat_restore_20260909T175227Z/manifest.json；receipt为artifacts/final_three_research_20260909/r21_confirmation/HEARTBEAT_RESTORED_20260909T1752Z.json。只读计算和记录约数秒，主动总时长未单独计量，未知；没有改候选/冻结源码/数据或中断GPU，也未把等待算研究。继续当前方向，完整后汇总实测结果并给下一run重新估时。当前稿、结论和最终三轮限额保持原状态。
