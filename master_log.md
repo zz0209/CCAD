@@ -6090,3 +6090,18 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 稿件、记录和资源：新增第二edge全部方法/选择/强对照导出及原始source file hash；raw SHA256 edcf8fd91ea11390a49258ad0db51cb1757e1478b784f8f8d0979f006a063c29已实际核对。现有唯一paper/main.pdf保持22页SHA256 99cd28275c9f19b7594f3b154e03768bd724aeba5455f18d2e3381db1d49db4a，仍明确展示first-edge interim；本次不把未完成整套结果混入正式五seed表，第二结果先归入同轮证据，完整suite后统一整合。沿用已验证r004环境做几秒只读分析，无重训/额外GPU作业/下载/安装/外部付费。现有suite session18578已继续第三edge，六查询energy/direction control session11686尚无run/status，仍排队；不抢占或改变共享租约。
 
 下一步：继续剩余八个冻结run与已排队机制对照；全部实际完成后运行已写好的分条件、按seed/task/frame依赖组织的统计，统一改稿出图、完成最终可用包，然后才写R21 COMPLETE、计数3/3并暂停原automation。当前只是有实证内容的跨heartbeat PROGRESS，不新增研究轮，也不把确认中的局部稳定增益宣称为核心闭合。
+
+
+### FINAL_THREE_R21 PROGRESS — direction and magnitude separate the mechanism
+
+实际写入UTC：2026-09-09T14:08:25Z。round_id：FINAL_THREE_R21，仍为2/3，未完成整轮。第三测试run FINAL3_R21_gpt2_original29_test_s13_t14_v1_20260909于2026-09-09T13:53:50.389161Z报告COMPLETE，PASS；实际driver wall 4848.834739秒、process CPU 4140.484375秒。六查询机制run于2026-09-09T13:54:02.554309Z开始，2026-09-09T13:55:07.745940Z状态PASS，实际wall65.184758秒、CPU16.578125秒；此前为共享资源排队，不计主动研究。第三run只读分析工具wall3.350287秒；本阶段主动分析/写作总时长未单独计量，未知。第四方向正在执行，当前物化177/435查询；未新增研究轮或确认方案。
+
+理由与新机制结果：优先区分输出拟合改变的是方向还是幅度，避免把准确率改善误读为更好的概念方向。固定先前全部六开发query（3任务×2目标）及同一reader/support，以保存的geometric/fitted两方向交叉两范数，不进行任何新拟合，保留每个held-dev输入。四格IIA依次为GG60.2941%、GF81.1275%、FG57.3529%、FF78.6765%；对应source KL为0.0746553/0.0154593/0.0651742/0.0061690。只换范数在原方向六项IIA均改善，平均+20.8333点；同拟合范数下改方向三降三平，平均−2.4510点，但六项KL均降低。IIA交互0.4902点。准确率与完整源输出分布保真应分开解释；此pilot的IIA收益主要由幅度变化产生，不支持把方向变化本身当作准确率或独特语义对应的突破。范数来自已拟合算子，不是独立确认的两参数训练算法；该开发诊断不替换或偷改冻结测试候选。
+
+第三测试方向结果：TopK/Matryoshka compiled IIA66.6552/67.0690%，dynamic55.7586/58.7931%，分别+10.8966/+8.2759点；54增3平1降完整保留。matched unrestricted为66.7586/67.3103%，raw DAS均74.1034%，仍有强对照差距。自然误差screen在24/48/96全部预算均58/58选固定compiled；source screen在48为66.3793/66.5862%，未超固定方法。全部22方法的IIA/source KL、每个预算与选择计数在third_completed_edge/PROGRESS_SUMMARY.json，不选择有利预算。三个edge共享SAE/任务，不能作为三次独立重复；仍待五节点和第二模型条件的整套冻结统计。
+
+实际验证、资源与证据：机制run为1632行（6查询×68开发行×4变体），原source/geometric/functional margin重放误差均0，逐输入范数匹配、实际非负native增量和256上限通过。原始raw SHA256 edbf2ecb04ec2b0519d4210b8ecd563e2845436485412f9db8ffffaf3ce9e007，第三run raw SHA256 3caa028e751d003455fbbdb4bf6dc8d13a3d451ed67aff286a0e6dac17266a02均已实际复算。原r004 Python3.13.7/Torch2.8.0+cu128、RTX5070Ti，5040forward sequences、37788tokens、峰值2089961984字节、无反向/重训/下载/安装/新付费。控制session11686已exit0，共享租约由既有wrapper释放；正式suite session18578继续。13个冻结源码hash均未改变。
+
+稿件与交付：唯一paper/main.pdf为22页，SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c，正文§5.2与附录B.3加入上述相反端点关系及全部六query四格表。数据/TeX重建成功，实际查看第5/6/8/13/14页；最初23页产生孤立主文末页，移入附录重复的cost细节后恢复8主文+1引用+13附录，没有缩小字体或删去证据。图内容未变，未重复全套作图/实验测试。旧当前稿/源逐字归档r21_before_energy_result_20260909T140349Z/manifest.json，旧交付入口归档archive/research_workflow_20260909/r21_before_energy_delivery_20260909T140825Z/manifest.json；文档更新机制完成与恢复入口。新EVIDENCE_INDEX机制条目逐文件hash已核对。当前测试图仍明确first-edge interim，第三edge纳入同轮结果记录，不冒充已完成整套图表。
+
+下一步：继续剩余七个冻结run；开发机制对照已完成，不再排队或追加局部调参。全部实际完成后统一执行既定分条件/依赖统计、更新正文主图与完整交付包，留下R21 COMPLETE再计3/3并原位暂停。当前证据强化候选执行增益的同时缩小其机制解释，尚不能据此宣称核心闭合或主会竞争力已建立。
