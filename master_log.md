@@ -6064,3 +6064,16 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 产物与检查：新增scripts/summarize_selection_headroom.py，直接流式重算原始127600条method记录的每query/每method IIA，与保存结果全部一致；分析wall 1.138847秒，process CPU 0.781250秒。原始58-query分母不变。输出first_completed_edge/headroom/SUMMARY.json、queries.csv、policies.csv，包含所有候选及选择分解；其输入身份及源码hash在SUMMARY。正文5.3现在明确候选机会与raw缺口，附录C.4给实际最大值、命中数与分解，paper/data/axis_selection_headroom.csv和EVIDENCE_INDEX纳入证据链。旧稿/相关源/入口逐字归档见MENU_HEADROOM_PAPER_PROGRESS.json。当前唯一paper/main.pdf为22页（8正文/1引用/13附录），SHA256 99cd28275c9f19b7594f3b154e03768bd724aeba5455f18d2e3381db1d49db4a。最初新增文字导致24页和孤立尾段，已在保留完整数据/方法的前提下精简重复发展叙述，所有构建日志保留；实际查看新的正文结果页、页8、附录页19和末页22，排版清楚。
 
 实际资源与下一步：沿用既有r004轻量原始数据分析及独立plot/TeX环境；本次无新GPU作业/训练/外部资源/安装。最后数据与TeX构建分别约11.688秒和1.312秒，图未变化故复用既有图。现有Fontconfig配置提示仍出现，但没有缺失字形/引用/overfull，PDF实际可读；不是科学验证。1136个引用的实际hash通过，全部13个冻结源码保持相同。既有GPU套件继续、energy-control manager session11686仍在等待，无控制结果。automation实际核对ACTIVE、5分钟、target当前对话；不新增或暂停loop。下一步等待十个run与控制实际完成，按已冻结依赖单位统计完整结果，替换interim并交付最终包后才COMPLETE与3/3。
+
+
+### FINAL_THREE_R21 PROGRESS — exported-data manuscript delivery exercise
+
+实际写入UTC：2026-09-09T12:15:39Z。round_id：FINAL_THREE_R21，仍在进行，计数2/3，未新开或完成研究轮。此次触发为2026-09-09T12:09:30.425Z；实际可证实的独立目录重建从2026-09-09T12:12:19.833631+00:00至2026-09-09T12:12:40.370319+00:00，wall 20.536232秒。其余有效工作和等待未单独计时，明确未知。当前已物化100/435查询，仍为首edge PASS、第二edge执行中；没有新的完整科学单元或新的科学结论。
+
+理由和实际推进：最终交付需要脱离作者原始run/模型目录仍能重建当前稿件，不能只给一张PDF或未经使用的命令。本次阅读既有build_research_package.py，核对其明确参数可收齐FINAL3运行、整个final_three_research目录和逐字历史稿源目录；未复制旧ZIP、未改变打包规则、未对未完成运行打包。以paper/README现有18个helper和已导出的data/tables/sections建立全新paper_only目录，既不复制run树、src/ccad或模型权重，也不复制已有图文件。真正运行build_paper.py --skip-data后，41张PNG逐字节一致、22页PDF逐页提取文本一致；PDF容器hash不同，不声称字节相同。原paper/main.pdf保持唯一当前稿，SHA256 99cd28275c9f19b7594f3b154e03768bd724aeba5455f18d2e3381db1d49db4a；复制稿仅为明确命名的重建检查。
+
+证据与边界：实际命令、输入hash、18helper清单、41PNG身份和执行结果保存在r21_confirmation/paper_only_20260909T121219Z/CHECK.json，driver是check_current_paper_only.py。18helper/独立目录与缺失实验树均实际核对，使用同机已有Python3.12.14、Matplotlib/Times-STIX和Tectonic缓存；17.031秒绘图、2.484秒TeX，非新环境或独立科学复现。新增检查目录332文件/134275734字节。没有GPU调用、训练、下载、安装或新增资源购买，未更改冻结实验源码/候选/选择。早先已归档的99页及历史证明源保持可定位，最终整包仍须在全套实验和论文整合后实际构建与检查。
+
+交付入口修正：delivery/README明确当前含首edge interim；REPRODUCTION原有14helper旧计数更正为实际18并记录本次检查范围；REPRO_FINAL3加入可执行的首edge有限菜单分析命令及全十run的分条件用法，明确事后oracle不可部署、不能替代冻结统计。修改前四份文档/入口逐字归档于r21_before_paper_only_guides_20260909T121421Z/manifest.json。本次仅为必要交付验证和运行接续，不把重建成功/文件数当科学进展；科学判断维持上一阶段。
+
+下一步：原冻结suite继续剩余query/edge和Pythia，六查询方向/能量对照仍排队无结果。全部完成后统一执行冻结统计、整合正文与图表、对最终稿与完整ZIP做实际使用检查，再写R21 COMPLETE、更新3/3并原位暂停。没有追加研究轮。运行与本次交付记录集中在r21_confirmation/PAPER_ONLY_DELIVERY_PROGRESS.json；当前论文内容没有改动。
