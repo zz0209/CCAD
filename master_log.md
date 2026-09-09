@@ -6239,3 +6239,30 @@ The original ccad automation was updated in place from20to5minutes at the verifi
 The paper exporter now accepts the already planned separate-model/objective dependence report and additional lexical sensitivity and emits the complete22-method source-KL table. This is artifact plumbing, not a method change or scientific improvement. Python syntax and git diff whitespace checks pass; end-to-end export awaits the actual ten-run summary. GPU-0 remains held by the existing final run with a valid lease; no new GPU task, download or experiment was started. Human/agent effective work duration is unknown; this bounded preparation began after the20:09:07Z heartbeat and is not counted as another research unit.
 
 Next: all10PASS -> frozen node/task/frame summaries and separate lexical sensitivity -> complete main-paper results, figures and evidence index -> final reproduction/package verification -> R21COMPLETE, then3/3and original automation pause. Previous negative gaps, all budgets and historical packages remain.
+
+
+## FINAL_THREE_R21 PROGRESS — complete frozen confirmation and finite-menu diagnosis
+
+Actual write UTC: 2026-09-09T20:29:17Z. Round ID: FINAL_THREE_R21. The last query run completed at 2026-09-09T20:23:46.363506Z and the suite recorded COMPLETE at 2026-09-09T20:23:50.361578Z. All ten runs are PASS, all 435 queries and 957,000 method/test rows are retained. Complete raw hashes and all 13 frozen source files were verified; `COMPLETE_SUITE_RECEIPT.json` records 38,125.0388 seconds summed serial run wall and 33,314.1875 seconds process CPU time. These are not pure GPU hours or effective agent-work measurements.
+
+The complete three-condition result confirms a reusable-writing gain. GPT2 TopK, GPT2 Matryoshka and Pythia TopK compiled IIA are 66.9448%, 67.5379% and 73.9034%; gains over dynamic native are 11.9034, 9.0069 and 14.9379 points. The frozen observed-node/task/frame intervals are [8.87,15.10], [6.54,12.01] and [11.52,18.63] points. Query signs are {"GPT2 topk": {"up": 137, "tie": 6, "down": 2}, "GPT2 matryoshka": {"up": 134, "tie": 9, "down": 2}, "Pythia topk": {"up": 145, "tie": 0, "down": 0}}. These shared tasks and nodes are not independent replications. Matched unrestricted IIA remains higher at 67.7241%, 67.9103% and 74.0414%; their difference intervals and all incident-node ranges are retained.
+
+At primary allowance 48, source screening beats halving by 1.9931, .8966 and 3.0414 points, with positive node/task/frame intervals in TopK GPT2 and Pythia but not Matryoshka. However, fixed compiled deployment is higher than source screening in all three conditions. A direct replay of all original IIA rows shows finite-menu extra headroom .1172, .1103 and zero points; test-outcome menu maxima are descriptive, not fitted selectors or population bounds. This changes the practical diagnosis: improving selection within this observed menu cannot supply the missing gain over fixed compiled deployment. Candidate repair and decision-rule value remain separate.
+
+Evidence is under `artifacts/final_three_research_20260909/r21_confirmation/`: `dependence/SUMMARY.json` (20.1954 seconds, 2,000 draws for each declared partition), `dependence/LEXICAL_DEPENDENCE.json` (4.6772 seconds, separately labeled repeated-span multiplier sensitivity), `headroom/SUMMARY.json` (6.2339 seconds, all budgets and exact IIA replay), and `FULL_CONFIRMATION_PROGRESS.json`. Both statistical jobs used an automatically released cpu-heavy lease. No new scientific run or model fitting was launched.
+
+Main results, abstract/materials and appendix source have been rewritten around the complete confirmation, with the primary contrasts and matched controls in the main text. The sole main PDF is currently rebuilding from the complete manifest; an earlier copy is preserved by the20:11:42Z archive. End-to-end data/figures/TeX and final visual/extracted-copy/package checks remain pending. Effective agent work duration is unknown; computation and bounded editing are not an additional round. R21 remains in progress and the count stays 2/3. Next: finish actual paper and complete project delivery before COMPLETE, 3/3 and in-place automation pause.
+
+
+## FINAL_THREE_R21 CORRECTION — compilation-time export source
+
+Actual write UTC: 2026-09-09T20:30:14Z. The full paper data build started at 2026-09-09T20:27:44.923115Z and failed after 53.0470 seconds in the new cost-table formatter: `ValueError: min() iterable argument is empty`. Preserved evidence: `paper/build/20260909T202744923115Z/data.log` and `BUILD_FAILED.json`. The measured geometric setup time is stored under `compiled_shared_axis`, while the output-fitted operator records its separate fitting and application times. The initial table incorrectly expected a duplicate compile-time field in the fitted record. The exporter now reads the existing geometric predecessor's setup time for that table column and leaves an actually unavailable time explicitly missing. No experiment or statistical result changed. The failed build and previous PDF remain; rebuild and visual verification follow. This is a bounded delivery correction, not an extra research round.
+
+
+## FINAL_THREE_R21 PROGRESS — final manuscript verified; full local package begins
+
+实际写入UTC：2026-09-09T20:46:06Z。round_id：FINAL_THREE_R21；同一轮继续，2/3计数未变。本块事件为20:41:22.612002Z至20:41:40.114606Z的paper-only重建和此后最终参考文献页检查；有效agent工作时长未知，不把重建或等待计为研究投入。
+
+完整25页稿已取代临时首edge稿，主文8页、引用1页、附录16页。独立目录使用18个helper和导出数据重建，17.502秒，全部25页文字与39张PNG一致；实际PDF SHA256为b9ab1b4164bda33afda065d94e7de32b491ecf232b85973e58f917891f559dff。最终页面视觉检查和未变页面身份见r21_confirmation/FINAL_VISUAL_REVIEW.json，科学判断保持NOT_MET。原失败构建及旧稿保留。
+
+下一步理由是把已完成科学工作交付为可使用整体：在约15分钟、30GB上限内流式制作新ZIP，disk-e-io协调，E盘实测可用121.45GB；不新增GPU实验。之后实际ZIP抽取并重建论文、重放目标编码接口，才写COMPLETE和3/3并暂停原ccad。复现指南已用最终稿实测替换早期临时稿描述；旧文本逐字归档于archive/research_workflow_20260909/r21_before_package_20260909T204606Z/manifest.json。新包为delivery/ccad_complete_r21_20260909.zip，旧四份ZIP全部保留，包验证不代表干净机器完整重训或主会科学达标。

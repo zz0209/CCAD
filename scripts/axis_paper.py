@@ -219,6 +219,29 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
   path=spec['lexical_dependence'];data['lexical_dependence']=read(path);inputs.append(path)
   rows=[dict(training_run=c['training_run'],objective=c['objective'],**r) for c in data['lexical_dependence']['conditions'] for r in c['comparisons']]
   csvwrite(out/'data/axis_lexical_dependence.csv',rows)
+  lines=[]
+  for c in data['lexical_dependence']['conditions']:
+   model='GPT2Medium' if 'gpt2' in c['training_run'] else 'Pythia1B'
+   for r in c['comparisons']:
+    pair=(r['left'],r['right'])
+    if pair not in contrasts:continue
+    values=[tex(labels[(model,c['objective'])]),contrasts[pair],f"{100*r['difference']:.2f}"]
+    for key in ['seed_task_frame_span_interval','seed_frame_span_fixed_task_interval']:
+     values.append('['+', '.join(f'{100*v:.2f}' for v in r[key])+']')
+    lines.append(' & '.join(values)+r' \\')
+  (out/'tables/axis_lexical_dependence.tex').write_text('\n'.join(lines)+'\n')
+ if compiled_costs:
+  lines=[]
+  for c in conditions:
+   rows=[r for r in compiled_costs if r['condition']==c['label'] and r['method']=='compiled_functional_axis']
+   if not rows:continue
+   def span(key):
+    source_rows=[r for r in compiled_costs if r['condition']==c['label'] and r['method']=='compiled_shared_axis'] if key=='compile_seconds' else rows
+    v=[r[key] for r in source_rows if r[key] is not None]
+    if not v:return '--'
+    return f'{np.median(v):.4f} [{min(v):.4f}, {max(v):.4f}]'
+   lines.append(' & '.join([tex(c['label']),span('compile_seconds'),span('output_fit_seconds'),span('kernel_milliseconds_per_row')])+r' \\')
+  (out/'tables/axis_compilation_costs.tex').write_text('\n'.join(lines)+'\n')
  csvwrite(out/'data/axis_compilation_costs.csv',compiled_costs)
  (out/'data/axis_transfer.json').write_text(json.dumps(data,indent=2)+'\n')
  csvwrite(out/'data/axis_task_edge_results.csv',flat);csvwrite(out/'data/axis_writer_costs.csv',costs);csvwrite(out/'data/axis_choice_calibration.csv',calibration);csvwrite(out/'data/axis_refusal.csv',refusal)
@@ -249,6 +272,11 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
    lines.append(' & '.join([tex(c['label']),tex(SELECTORS[s]),f"{100*a['top1_iia']:.2f}",f"{100*a['tie_uniform_top1_iia']:.2f}",f"{100*a['top3_uniform_iia']:.2f}",f"{a.get('ranking_spearman',float('nan')):.3f}",f"{100*a['regret']:.2f}"])+r' \\')
  (out/'tables/axis_selector_details.tex').write_text('\n'.join(lines)+'\n')
  values={'AxisQueries':sum(c['queries'] for c in conditions)}
+ for c in conditions:
+  key={'GPT2 TopK':'GptTopK','GPT2 Matryoshka':'GptMatry','Pythia TopK':'PythiaTopK'}[c['label']]
+  for tag,method in [('Compiled','compiled_functional_axis'),('Dynamic','native_shared_axis'),('Unrestricted','raw_signed_distill'),('RawDas','raw_das')]:
+   if method in c['fixed_iia']:values['Axis'+key+tag]=100*c['fixed_iia'][method]
+  if 'compiled_functional_axis' in c['fixed_iia']:values['Axis'+key+'Gain']=100*(c['fixed_iia']['compiled_functional_axis']-c['fixed_iia']['native_shared_axis'])
  for label,key in [('Native','native_task_ridge_axis'),('Reencode','reencode_shared_axis'),('Source','source'),('RawDAS','raw_das'),('Shared','native_shared_axis')]:values['Axis'+label]=100*mean(c['fixed_iia'][key] for c in conditions)
  for label,key in [('Endpoint','source_endpoint'),('Finite','finite_margin'),('Cosine','cosine')]:values['Axis'+label]=100*mean(c['selector_metrics'][key]['top1_iia'] for c in conditions)
  (out/'tables/axis_values.tex').write_text('\n'.join('\\newcommand{\\'+k+'}{'+(str(v) if k=='AxisQueries' else f'{v:.2f}')+'}' for k,v in values.items())+'\n')
