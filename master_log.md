@@ -6193,3 +6193,16 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 实际写入UTC：2026-09-09T18:35:38Z。round_id：FINAL_THREE_R21，仍2/3，无新增完整科学结果或研究轮。2026-09-09T18:34:30.441506Z第三Pythia方向完成15/29、整套363/435。以先前两个Pythia同任务中位耗时为参照，当前中位比率1.04592、剩余参考985.60秒，预计剩余17.18分钟；观测比率范围对应15.59–18.31分钟，仅为调度估计，非置信区间。进度正常，满足≤20分钟恢复条件。
 
 实际动作与下一步：automation_update原位恢复ccad每5分钟唤醒，实际配置更新2026-09-09T18:34:59.502000+00:00；回读确认ACTIVE/原对话/prompt一致。旧tracker和20分钟配置逐字归档archive/research_workflow_20260909/heartbeat_restore_20260909T183454Z/manifest.json，receipt为artifacts/final_three_research_20260909/r21_confirmation/HEARTBEAT_RESTORED_20260909T1834Z.json。仅秒级只读估时/规则状态记录，主动总时长未知，等待不计研究；未改候选、冻结源码、数据或运行进程。继续第三方向，完整后汇总并给下一run重新估时；当前稿与科学判断不因调度改变，最后三轮限额与最终交付安排保留。
+
+
+### FINAL_THREE_R21 PROGRESS — third Pythia edge retains the gain and a small matched-raw reversal
+
+实际写入UTC：2026-09-09T18:55:54Z。round_id：FINAL_THREE_R21，仍2/3，未完成整轮。run FINAL3_R21_pythia_original29_test_s3_t4_v1_20260909于2026-09-09T18:51:36.454073Z报告COMPLETE，PASS；driver wall2723.124789秒、process CPU2461.421875秒。保留29任务×100原始test行×22方法的63800行raw；SHA256 1f04354dabc31ff5fc4d0b4e2755fe3040506d957992f97fc3a00c3f1e707ede已实际复算一致。既有只读汇总工具wall2.184673秒，主动分析与记录总时长未计量，未知；GPU计算和唤醒等待不计研究轮。
+
+理由和真实结果：继续把第二模型的固定writer增益扩展至第三方向，保留所有正负差。compiled IIA74.2069%、dynamic59.0690%、geometric53.2069%、reader71.6897%、source74.0345%；compiled较dynamic提高15.1379点，29项全部改善。matched raw IIA74.1379%，本方向compiled略高0.0690点；前两个Pythia方向compiled低于matched raw的负差仍保留，不能以这一微小逆转宣称总体超越。raw DAS为78.6207%，仍高4.4138点。source KL compiled0.00343482、dynamic0.10794127、matched raw0.00358367，compiled略低不等于语义同一性。三个Pythia方向共87项对dynamic改善，但共享SAE节点与29任务，不能作为87独立样本或三次独立seed重复。
+
+选择结果与判断：source screen24/48为74.0345%、96等于固定74.2069%；natural所有预算与balanced96等于固定，balanced24/48为69.6552/74.0345%，halving24/48/96为74.0345/71.4138/74.0690%。现有native菜单逐query测试最大值均值仍等于固定compiled，事后有限菜单内无额外IIA选择空间；不外推到未见总体或所有可能方法。固定native操作实现的正增益持续，selector的额外使用价值仍未建立；未据此宣布主会贡献闭合。原始单source-only hook完整29任务结果不冒充官方所有层汇总；六开发query幅度/方向机制仍独立留在开发证据层。
+
+实现、记录与资源：third_pythia_edge/selection_summary.json、PROGRESS_SUMMARY.json保留22方法IIA/KL、每个预算和选择计数、原始hash及真实运行时间；13个冻结源码hash现场核对不变。未改方法/query/候选/阈值/预算，未新增拟合、训练、下载、安装或GPU作业。第四方向seed4→5实际于2026-09-09T18:51:38.735525Z启动，当前物化377/435，精确快照third_pythia_edge/RUNTIME_SNAPSHOT.json。前三同族run wall43.49/43.38/45.39分钟，现有r004/RTX5070Ti和共享wrapper继续最后两个run，原证据全部保留。
+
+调度与下一步：18:54:27Z第四方向已运行168.72秒，基于前三wall中位数估计剩余40.68分钟，操作范围约35–45分钟而非置信区间。原ccad暂调20分钟，实际配置更新2026-09-09T18:54:31.440000+00:00，回读确认ACTIVE/原对话/prompt一致；约2026-09-09T19:14Z复查，剩余≤20分钟恢复5分钟。旧tracker与automation逐字归档archive/research_workflow_20260909/r21_third_pythia_entry_20260909T185427Z/manifest.json。唯一paper/main.pdf22页SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c保持当前明确标注的interim，不重复局部重建；最后两run齐备后统一正文/图表/分条件依赖统计与最终可用包，R21 COMPLETE后才计3/3并原位暂停，不新增轮次。
