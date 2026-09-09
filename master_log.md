@@ -6266,3 +6266,25 @@ Actual write UTC: 2026-09-09T20:30:14Z. The full paper data build started at 202
 完整25页稿已取代临时首edge稿，主文8页、引用1页、附录16页。独立目录使用18个helper和导出数据重建，17.502秒，全部25页文字与39张PNG一致；实际PDF SHA256为b9ab1b4164bda33afda065d94e7de32b491ecf232b85973e58f917891f559dff。最终页面视觉检查和未变页面身份见r21_confirmation/FINAL_VISUAL_REVIEW.json，科学判断保持NOT_MET。原失败构建及旧稿保留。
 
 下一步理由是把已完成科学工作交付为可使用整体：在约15分钟、30GB上限内流式制作新ZIP，disk-e-io协调，E盘实测可用121.45GB；不新增GPU实验。之后实际ZIP抽取并重建论文、重放目标编码接口，才写COMPLETE和3/3并暂停原ccad。复现指南已用最终稿实测替换早期临时稿描述；旧文本逐字归档于archive/research_workflow_20260909/r21_before_package_20260909T204606Z/manifest.json。新包为delivery/ccad_complete_r21_20260909.zip，旧四份ZIP全部保留，包验证不代表干净机器完整重训或主会科学达标。
+
+
+## FINAL_THREE_R21 COMPLETE
+
+实际写入UTC：2026-09-09T21:00:53Z。round_id：FINAL_THREE_R21。可证实事件开始2026-09-09T09:43:22Z，实验队列完成2026-09-09T20:23:50.361578Z，本轮结果/稿件/包验证完成2026-09-09T21:00:53Z。选题理由是确认修复源作用与目标原生执行后的真实收益，并在相同候选、信息和选择预算下区分候选提升与selector增量。
+
+实际科学结果：10/10冻结run全部PASS，共435个查询、957000条原始记录。GPT2 TopK、GPT2 Matryoshka、Pythia TopK的compiled IIA为66.9448%、67.5379%、73.9034%，较dynamic提升11.9034、9.0069、14.9379点；观察节点/任务/frame敏感性区间为[8.87,15.10]、[6.54,12.01]、[11.52,18.63]。matched unrestricted点估计仍稍高，主要差值区间跨零；source screening主要预算结果低于固定compiled，有限菜单额外IIA为.1172/.1103/0点，仅事后诊断。六开发query的同支持/读出范数与方向交换说明准确率收益主要来自范数，方向改善KL，不冒充冻结norm-only确认。完整强对照、负差、原始任务/依赖边界和机制结果均保留。
+
+实际交付：唯一paper/main.pdf为25页（8主文、1引用、16附录），SHA256 b9ab1b4164bda33afda065d94e7de32b491ecf232b85973e58f917891f559dff。全文视觉检查已完成；新目录重建全部25页文字和39PNG一致。新ZIP初始19798728180字节、27124条目、158个run目录，全CRC通过；实际抽取375个文件SHA256一致，目标编码CLI所有输出数组精确相同，抽取后全文/39PNG重建相同。包包含正文源、证明、图表数据、代码/配置/环境说明、主张索引、许可来源、轮次日志与失败；bulk资产/可再生cache的身份和恢复说明显式保留。该验证使用原有环境，不是干净机器完整科学复现。
+
+资源：冻结run wall合计38125.04秒、process CPU合计33314.19秒；主统计20.20秒，词项敏感性4.68秒，原始IIA与菜单重放6.23秒。包构建785.92秒、抽取/使用验证23.67秒单独记录。有效agent工作时长及纯GPU核时间未知，不倒算或把等待/打包充作研究。GPU已释放；本轮新增付费资源为零。完整稿第一次导出失败、旧负差、原始run和旧ZIP全部保留。
+
+科学判断：固定原生操作相对动态写入的改善已跨三个条件获得冻结确认，意义和实用性有所增强；独特且有用的跨seed模糊many-to-many概念对应仍未充分成立，selector未超越强固定部署，故一线主会scientific_acceptance保持NOT_MET，不靠降目标或增轮掩盖。全部三轮R19–R21已完成，接下来才更新tracker为3/3，并原位暂停原ccad、执行既有白名单同步及具名ZIP收尾。没有第22轮，没有投稿或新增公开。
+
+证据和阅读位置：artifacts/final_three_research_20260909/R21_REPORT.md/json；r21_confirmation/COMPLETE_SUITE_RECEIPT.json、dependence、headroom、FINAL_VISUAL_REVIEW.json、PACKAGE_BUILD.json、PACKAGE_EXTRACT_VERIFICATION.json、R21_COMPLETION_EVENT.json；paper/EVIDENCE_INDEX.json；delivery/FINAL_DELIVERY.md及REPRO_FINAL3.md。最终具名收尾与包外SHA256由r21_confirmation/PACKAGE_FINAL.json给出。
+
+
+## FINAL_THREE_R21 CLOSEOUT — original automation paused
+
+实际写入UTC：2026-09-09T21:01:08Z。round_id：FINAL_THREE_R21；这是已完成轮次的行政收尾，不是新研究轮。原ccad实际更新时间为2026-09-09T21:01:02.878000+00:00，当前状态PAUSED，原5分钟配置、当前对话归属、长期prompt及全部历史保留。依据是三轮限额与已完成的完整包验证，不把科学NOT_MET本身当停工条件。GPU实验已结束；无新增实验、采购、投稿或公开。
+
+实际凭据为artifacts/final_three_research_20260909/r21_confirmation/AUTOMATION_PAUSED.json，配置和覆盖前tracker身份见archive/research_workflow_20260909/r21_pause_20260909T210108Z/manifest.json。接下来仅同步既有白名单并把具名完成记录追加至已验证ZIP，最终外部hash位置为r21_confirmation/PACKAGE_FINAL.json及delivery/ccad_complete_r21_20260909.sha256.json。有效agent工作时长未知，未把配置操作计为研究产出。
