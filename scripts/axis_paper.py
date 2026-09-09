@@ -153,7 +153,20 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
   for m in ['source','shared_axis_reader','reencode_shared_axis','native_reencode_count','native_shared_axis','native_calibrated_shared_axis','native_residual_task_ridge_axis','compiled_shared_axis','compiled_functional_axis','raw_signed_distill','raw_das']:
    lines.append(tex(METHODS[m])+' & '+' & '.join(f"{100*mean(r['iia'] for r in pilot if r['objective']==o and r['method']==m):.2f}" for o in ['topk','matryoshka'])+r' \\')
   (out/'tables/axis_development_pilot.tex').write_text('\n'.join(lines)+'\n')
- data=dict(stage=spec['stage'],conditions=conditions,method_labels=METHODS,selector_labels=SELECTORS,rows=flat,writer_costs=costs,compiled_costs=compiled_costs,calibration=calibration,refusal=refusal,training=training,development_pilot=pilot,input_summary_paths=inputs,scope=spec['scope'])
+ objective_comparisons=[]
+ for item in spec.get('objective_comparisons',[]):
+  comparison=read(item['path']);inputs.append(item['path'])
+  inputs.extend(v['path'].replace('\\','/') for v in comparison['input_files'])
+  objective_comparisons.append(dict(label=item['label'],**comparison))
+ if objective_comparisons:
+  entries=[v for c in objective_comparisons for v in c['comparisons']]
+  lines=[]
+  for r in entries:
+   g,f=r['geometric'],r['functional']
+   lines.append(' & '.join([tex(task_label(g['task'])),tex(g['objective']),f"{g['requested_hidden_rmse']:.2f} / {f['requested_hidden_rmse']:.2f}",f"{g['mean_source_kl']:.4f} / {f['mean_source_kl']:.4f}",f"{100*g['iia']:.2f} / {100*f['iia']:.2f}"])+r' \\')
+  (out/'tables/axis_objective_comparison.tex').write_text('\n'.join(lines)+'\n')
+  csvwrite(out/'data/axis_objective_comparison.csv',[dict(stage=c['label'],**r[m]) for c in objective_comparisons for r in c['comparisons'] for m in ['geometric','functional']])
+ data=dict(stage=spec['stage'],conditions=conditions,method_labels=METHODS,selector_labels=SELECTORS,rows=flat,writer_costs=costs,compiled_costs=compiled_costs,calibration=calibration,refusal=refusal,training=training,development_pilot=pilot,objective_comparisons=objective_comparisons,input_summary_paths=inputs,scope=spec['scope'])
  csvwrite(out/'data/axis_compilation_costs.csv',compiled_costs)
  (out/'data/axis_transfer.json').write_text(json.dumps(data,indent=2)+'\n')
  csvwrite(out/'data/axis_task_edge_results.csv',flat);csvwrite(out/'data/axis_writer_costs.csv',costs);csvwrite(out/'data/axis_choice_calibration.csv',calibration);csvwrite(out/'data/axis_refusal.csv',refusal)
