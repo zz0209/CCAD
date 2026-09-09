@@ -6077,3 +6077,16 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 交付入口修正：delivery/README明确当前含首edge interim；REPRODUCTION原有14helper旧计数更正为实际18并记录本次检查范围；REPRO_FINAL3加入可执行的首edge有限菜单分析命令及全十run的分条件用法，明确事后oracle不可部署、不能替代冻结统计。修改前四份文档/入口逐字归档于r21_before_paper_only_guides_20260909T121421Z/manifest.json。本次仅为必要交付验证和运行接续，不把重建成功/文件数当科学进展；科学判断维持上一阶段。
 
 下一步：原冻结suite继续剩余query/edge和Pythia，六查询方向/能量对照仍排队无结果。全部完成后统一执行冻结统计、整合正文与图表、对最终稿与完整ZIP做实际使用检查，再写R21 COMPLETE、更新3/3并原位暂停。没有追加研究轮。运行与本次交付记录集中在r21_confirmation/PAPER_ONLY_DELIVERY_PROGRESS.json；当前论文内容没有改动。
+
+
+### FINAL_THREE_R21 PROGRESS — second original-test edge repeats the native fitting improvement
+
+实际写入UTC：2026-09-09T12:40:12Z。round_id：FINAL_THREE_R21，保持2/3，仍未完成整轮。第二完整run FINAL3_R21_gpt2_original29_test_s12_t13_v1_20260909的实际结束时间为2026-09-09T12:32:49.016279+00:00，PASS；driver wall 4904.832461秒，process CPU 4182.531250秒。队列于2026-09-09T12:33:00.473879Z记录前两个完成并转向seed13-to14。当前已物化117/435查询，完整条件/资源/输入身份在r21_confirmation/second_completed_edge/PROGRESS_SUMMARY.json。此次实际读取分析短命令工具wall3.878078秒，其有效研究工作总时长未单独计量，未知；不将GPU计算或跨heartbeat等待当主动研究时长。
+
+理由和实际结果：优先检验最有希望的固定输出拟合能否在下一方向重复改善真实操作。保留第二run全部29任务、58query/objective cells、127600条22-method原始记录，未改冻结方法或重新筛选。TopK/Matryoshka output-fitted compiled达到67.6897/67.7586%，dynamic native为55.0345/57.7586%，分别提高12.6552/10.0000个百分点。TopK为27增/2平/0降，Matry为26增/3平/0降。这是重复出现的候选consumer改进：共53增5平无降，不能称58个独立seed复制。相同source读出/训练输出预算的unrestricted双方向仍为68.3793/68.2069%，不同操作类的raw DAS均74.1034%，仍保留强对照差距。所有方法的平均source KL也写入PROGRESS_SUMMARY，IIA不冒充完整输出分布或语义同一性。
+
+选择价值与科学边界：第二edge的自然读误差筛选在24/48/96全部预算均58/58返回同一个固定compiled方法。source筛选在48为67.6552/67.5517%，未超过固定compiled；balanced direct为66.1724/67.3448%，halving为66.6552/66.1379%。其他预算包括balanced在Matry96的局部优势也完整保留，不选最有利预算宣布成功。当前证据继续区分候选方法变好与selector额外价值。两个已完成edge共享seed12和原始测试任务，不能据此计算独立双样本统计或替代整套五节点分析。原拟定模型/SAE/task条件均继续，主会竞争力尚未据此建立。
+
+稿件、记录和资源：新增第二edge全部方法/选择/强对照导出及原始source file hash；raw SHA256 edcf8fd91ea11390a49258ad0db51cb1757e1478b784f8f8d0979f006a063c29已实际核对。现有唯一paper/main.pdf保持22页SHA256 99cd28275c9f19b7594f3b154e03768bd724aeba5455f18d2e3381db1d49db4a，仍明确展示first-edge interim；本次不把未完成整套结果混入正式五seed表，第二结果先归入同轮证据，完整suite后统一整合。沿用已验证r004环境做几秒只读分析，无重训/额外GPU作业/下载/安装/外部付费。现有suite session18578已继续第三edge，六查询energy/direction control session11686尚无run/status，仍排队；不抢占或改变共享租约。
+
+下一步：继续剩余八个冻结run与已排队机制对照；全部实际完成后运行已写好的分条件、按seed/task/frame依赖组织的统计，统一改稿出图、完成最终可用包，然后才写R21 COMPLETE、计数3/3并暂停原automation。当前只是有实证内容的跨heartbeat PROGRESS，不新增研究轮，也不把确认中的局部稳定增益宣称为核心闭合。
