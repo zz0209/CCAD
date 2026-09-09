@@ -65,7 +65,16 @@ def entropic_dual_plan(cost, left, right, regularization, tolerance):
                     options=dict(maxiter=5000,maxls=40,gtol=min(1e-10,tolerance*.01),ftol=1e-15))
     plan=objective(result.x,True)
     error=max(float(np.max(np.abs(plan.sum(axis=1)-a))),float(np.max(np.abs(plan.sum(axis=0)-b))))
-    return plan,int(result.nit),error<=tolerance,error
+    # L-BFGS can stop on objective roundoff just above the marginal tolerance.
+    # Diagonal rebalancing stays in the same entropic scaling family. It refines
+    # that same plan/objective; it neither changes epsilon nor relaxes tolerance.
+    polishing=0
+    while error>tolerance and polishing<20000:
+        plan*=np.divide(a,plan.sum(axis=1),out=np.ones_like(a),where=plan.sum(axis=1)>0)[:,None]
+        plan*=np.divide(b,plan.sum(axis=0),out=np.ones_like(b),where=plan.sum(axis=0)>0)[None,:]
+        polishing+=1
+        if polishing%20==0:error=max(float(np.max(np.abs(plan.sum(axis=1)-a))),float(np.max(np.abs(plan.sum(axis=0)-b))))
+    return plan,int(result.nit)+polishing,error<=tolerance,error
 
 
 def retrieve(source_ids, source_distributions, target_distributions, source_centroids,
@@ -112,3 +121,72 @@ def retrieve(source_ids, source_distributions, target_distributions, source_cent
         rows.append(row)
         if progress:progress(row)
     return rows
+
+
+class TensorContextIndex:
+    """Same top-context/centroid/transport recipe, batched on the active device.
+
+    Tensorization changes no cost or marginal objective. Any unconverged pair
+    uses the existing same-objective dual; missing activity stays unmatched.
+    """
+    def __init__(self,z,reference,top_k=64,minimum_count=30,reference_distance=None):
+        import torch
+        self.reference=reference;self.minimum_count=minimum_count
+        self.distance=reference_distance if reference_distance is not None else torch.cdist(reference.double(),reference.double())
+        self.distance.diagonal().zero_()
+        self.count=(z>0).sum(0);self.value,self.index=z.topk(top_k,dim=0,sorted=True)
+        self.value=self.value.T.double();self.index=self.index.T
+        self.mass=self.value/self.value.sum(1,keepdim=True).clamp_min(1e-30)
+        self.centroid=torch.zeros((z.shape[1],reference.shape[1]),device=z.device,dtype=reference.dtype)
+        for off in range(0,z.shape[1],128):
+            self.centroid[off:off+128]=(reference[self.index[off:off+128]]*self.mass[off:off+128,:,None]).sum(1).to(reference.dtype)
+        self.cache={}
+
+    def match(self,source,source_ids,*,candidate_count=50,regularization,tolerance=1e-7,max_iterations=512,progress=None):
+        import torch
+        eligible=torch.where(self.count>=self.minimum_count)[0];assert len(eligible)>=candidate_count
+        pending=[];all_targets=[];all_distances=[]
+        for s in source_ids:
+            s=int(s);key=(id(source),s)
+            if key in self.cache:continue
+            if int(source.count[s])<source.minimum_count:
+                row=dict(source_member=s,status='INSUFFICIENT_REFERENCE_ACTIVITY',target_member=None,reference_activations=int(source.count[s]),candidates=[])
+                self.cache[key]=row
+                if progress:progress(row)
+                continue
+            distances=(self.centroid[eligible]-source.centroid[s]).norm(dim=1)
+            order=torch.argsort(distances,stable=True)[:candidate_count];targets=eligible[order]
+            pending.append(s);all_targets.append(targets);all_distances.append(distances[order])
+        if not pending:return [self.cache[id(source),int(s)] for s in source_ids]
+        source_flat=torch.tensor(pending,device=self.reference.device).repeat_interleave(candidate_count)
+        target_flat=torch.cat(all_targets);distance_flat=torch.cat(all_distances);cost_records=[]
+        # Ground distances are shared across every feature pair; batch many
+        # transport problems to avoid repeated tiny decoder-space products.
+        for off in range(0,len(source_flat),2048):
+            sf=source_flat[off:off+2048];tf=target_flat[off:off+2048];ix=source.index[sf];iy=self.index[tf]
+            left=source.mass[sf];right=self.mass[tf];C=self.distance[ix[:,:,None],iy[:,None,:]]
+            loga=left.log();logb=right.log();K=-C/regularization;u=torch.zeros_like(left);v=torch.zeros_like(right);error=None
+            for it in range(max_iterations):
+                u=loga-torch.logsumexp(K+v[:,None,:],2)
+                v=logb-torch.logsumexp(K+u[:,:,None],1)
+                if it%32==31 or it==max_iterations-1:
+                    P=(K+u[:,:,None]+v[:,None,:]).exp();error=torch.maximum((P.sum(2)-left).abs().amax(1),(P.sum(1)-right).abs().amax(1))
+                    if float(error.max())<=tolerance:break
+            assert bool(torch.isfinite(error).all()),'Nonfinite transport residual'
+            for j,t in enumerate(tf.cpu().tolist()):
+                err=float(error[j]);solver='tensor_log_sinkhorn';steps=it+1
+                if err>tolerance:
+                    keepa=left[j]>0;keepb=right[j]>0;cost=C[j][keepa][:,keepb].cpu().numpy()
+                    plan,extra,ok,err=entropic_dual_plan(cost,left[j][keepa].cpu().numpy(),right[j][keepb].cpu().numpy(),regularization,tolerance)
+                    if not ok:raise RuntimeError(f'Context transport marginal residual {err}: {int(sf[j])}->{t}')
+                    val=float((plan*cost).sum());solver='tensor_then_same_objective_dual';steps+=extra
+                else:val=float((P[j]*C[j]).sum())
+                cost_records.append(dict(target_member=t,distance=val,centroid_distance=float(distance_flat[off+j]),marginal_error=err,solver=solver,iterations=steps))
+            if progress:progress(dict(status='TRANSPORT_BATCH_COMPLETE',pairs=min(off+2048,len(source_flat)),total_pairs=len(source_flat)))
+        for i,s in enumerate(pending):
+            costs=cost_records[i*candidate_count:(i+1)*candidate_count]
+            costs.sort(key=lambda r:(r['distance'],r['target_member']))
+            row=dict(source_member=s,status='MATCHED',target_member=costs[0]['target_member'],reference_activations=int(source.count[s]),distance=costs[0]['distance'],candidates=costs)
+            self.cache[id(source),s]=row
+            if progress:progress(row)
+        return [self.cache[id(source),int(s)] for s in source_ids]

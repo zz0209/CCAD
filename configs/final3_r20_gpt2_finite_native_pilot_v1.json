@@ -1,0 +1,72 @@
+{
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "positions": {
+    "agr_gender": "changed",
+    "filler_gap_obj": "last",
+    "npi_any_obj-relc": "last"
+  },
+  "tasks": [
+    "agr_gender",
+    "npi_any_obj-relc",
+    "filler_gap_obj"
+  ],
+  "budget_seconds": 3600,
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "fit_pool": 256,
+  "target_members": 64,
+  "run_id": "FINAL3_R20_gpt2_finite_native_pilot_v1_20260909",
+  "finite_budget_total_sequences": 96,
+  "checkpoint_step": 16384,
+  "seeds": [
+    1,
+    2
+  ],
+  "audit_opened": false,
+  "official_data_module": "artifacts/final_three_research_20260909/reference_views/CausalGym/0f3129ff3b6c5c8264892f30a25be25150ae9179/data.py",
+  "source_members": 64,
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "scope": "Three original CausalGym development tasks; same original fit128/cal32/held68 and sites as R19. Source fixed native group now fits original donor-label full-vocabulary CE; target native_finite fits actual source full-vocabulary KL. Both projected-Adam fits use a relaxed mass64/box phase then fixed64 support. Candidate groups have unequal fitting information, but all selectors receive the identical eleven-candidate family. Raw rank1 DAS-style QR reference uses original CE and declared100x4 update budget; not an unchanged pyvene solver reproduction. Source/target membership and norms/fit costs are retained. Test unopened; development only.",
+  "training_run": "runs/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "seed_pairs": [
+    [
+      1,
+      2
+    ]
+  ],
+  "purpose": "Test whether actual finite-response fitting closes source and native group errors before broader official-task evaluation",
+  "train_rows_per_task": 128,
+  "calibration_rows": 32,
+  "batch_size": 16,
+  "paired_manifest": "artifacts/final_three_research_20260909/paired_material/TOKEN_MANIFEST.json",
+  "natural_tokens": {
+    "mean": 2048,
+    "discovery": 8192,
+    "calibration": 4096
+  },
+  "source_mode": "gradient",
+  "round_id": "FINAL_THREE_R20",
+  "finite_source": {
+    "pool_size": 256,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "finite_target": {
+    "pool_size": 256,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "das_reference": {
+    "rank": 1,
+    "steps": 100,
+    "batch_size": 4,
+    "lr": 0.005
+  }
+}

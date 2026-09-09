@@ -24,7 +24,7 @@ def main():
         p=ROOT/rel;dst=run/'source_snapshot'/rel;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_bytes(p.read_bytes())
         codes.append(dict(path=rel,sha256=sha256(p),bytes=p.stat().st_size,snapshot_path='source_snapshot/'+rel))
     write(run/'code_hashes.json',dict(files=codes,aggregate_sha256=aggregate(codes),snapshot_root='source_snapshot'))
-    write(run/'manifest.json',dict(schema_version='causalgym.model.screen.v1',run_id=cfg['run_id'],run_parent='FINAL_THREE_R19',
+    write(run/'manifest.json',dict(schema_version='causalgym.model.screen.v1',run_id=cfg['run_id'],run_parent=cfg.get('round_id','FINAL_THREE_R19'),
         purpose=cfg['purpose'],milestone='M4',evidence_level='official_train_protocol_development',started_utc=started,
         project_root=str(ROOT),config_hash=sha256(run/'config.resolved.json'),code_snapshot_hash=aggregate(codes),source_snapshot_required=True,
         audit_opened=False,candidate_family_frozen=False,mean_constants_source_split='not used',threshold_source_split='no outcome filtering',
@@ -89,6 +89,9 @@ def main():
                 batch=ref.Batch(pairs,tokenizer,'cuda:0');align=batch.compute_pos('last')
                 changed=[max(j for j,(a,b) in enumerate(zip(r['base'],r['src'])) if a!=b) for r in rows]
                 regions={'changed':changed,'last': [len(r['base'])-1 for r in rows]}
+                if cfg.get('all_regions'):
+                    regions={f'region_{j}':[j]*len(rows) for j in range(min(len(r['base']) for r in rows))
+                             if all(len(batch.alignment_base[i][j]) and len(batch.alignment_src[i][j]) for i in range(len(rows)))}
                 for i,r in enumerate(rows):
                     if len(tokenizer(''.join(r['base']))['input_ids'])!=sum(len(s) for s in batch.alignment_base[i]):
                         raise ValueError('Original region token alignment disagrees with full GPT tokenization')
@@ -137,7 +140,7 @@ def main():
         for model in cfg['models']:
             for task in cfg['tasks']:
                 for layer in model['layers']:
-                    for position in ['changed','last']:
+                    for position in sorted({r['position'] for r in records if (r['model'],r['task'],r['layer'])==(model['name'],task,layer)}):
                         rows=[r for r in records if (r['model'],r['task'],r['layer'],r['position'])==(model['name'],task,layer,position)]
                         summary.append(dict(model=model['name'],task=task,layer=layer,position=position,n=len(rows),
                             base_accuracy=float(np.mean([r['base_correct'] for r in rows])),iia=float(np.mean([r['iia'] for r in rows])),
@@ -149,7 +152,7 @@ def main():
     finally:
         status='PASS' if error is None else 'FAIL';write(run/'inputs.json',dict(inputs=inputs));write(run/'environment.json',env)
         write(run/'metrics.summary.json',dict(run_status=status,metrics_raw_sha256=sha256(run/'metrics.raw.jsonl'),generator_script_path='scripts/run_causalgym_model_screen.py',generator_script_sha256=codes[0]['sha256'],metrics={'rows':len(records),'wall_seconds':time.perf_counter()-timer,'process_cpu_seconds':time.process_time()-cpu_start},checks=checks,error=error,
-            scope='Prespecified three original train tasks; exact original Batch, last-region alignment, first-token labels and log odds. New full benchmark/test not run.'))
+            scope=cfg.get('scope','Prespecified three original train tasks; exact original Batch, last-region alignment, first-token labels and log odds. New full benchmark/test not run.')))
         write(run/'status.json',dict(status=status,updated_utc=datetime.now(timezone.utc).isoformat(),error=error))
         validation=validate_run_directory(run);write(run/'artifact_validation.json',dict(ok=validation.ok,errors=validation.errors))
     return 0 if error is None and validation.ok else 1

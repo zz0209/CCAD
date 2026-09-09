@@ -280,6 +280,8 @@ def main():
     plot_confirmation(data.get('semantic_confirmation'),save)
     from selector_paper import plot as plot_selector
     plot_selector(data.get('group_selection'),save)
+    from axis_paper import plot as plot_axis
+    plot_axis(data.get('axis_transfer'),save)
     (out/'FIGURE_MANIFEST.json').write_text(json.dumps(dict(input_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),font_family=family,
         font_source=str(font) if font.exists() else 'Matplotlib STIXGeneral',outputs=outputs,
         scope='Source-backed plots. Individual captions distinguish seed ranges, dependent directions, sensitivity analyses and conditional bootstrap intervals; none treats shared-seed directions as independent repetitions.'),indent=2)+'\n',encoding='utf-8')

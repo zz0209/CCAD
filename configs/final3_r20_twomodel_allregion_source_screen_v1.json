@@ -1,0 +1,62 @@
+{
+  "run_id": "FINAL3_R20_twomodel_allregion_source_screen_v1_20260909",
+  "purpose": "Source-only original-region selection over all23 development tasks in two model families",
+  "audit_opened": false,
+  "official_data_module": "artifacts/final_three_research_20260909/reference_views/CausalGym/0f3129ff3b6c5c8264892f30a25be25150ae9179/data.py",
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "train_json": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156/train.json",
+  "tasks": [
+    "agr_gender",
+    "agr_refl_num_obj-relc",
+    "agr_refl_num_pp",
+    "agr_refl_num_subj-relc",
+    "agr_sv_num_obj-relc",
+    "agr_sv_num_pp",
+    "agr_sv_num_subj-relc",
+    "filler_gap_embed_3",
+    "filler_gap_embed_4",
+    "filler_gap_hierarchy",
+    "filler_gap_obj",
+    "filler_gap_pp",
+    "filler_gap_subj",
+    "garden_mvrr",
+    "garden_mvrr_mod",
+    "garden_npz_obj",
+    "garden_npz_obj_mod",
+    "garden_npz_v-trans",
+    "garden_npz_v-trans_mod",
+    "npi_any_obj-relc",
+    "npi_any_subj-relc",
+    "npi_ever_obj-relc",
+    "npi_ever_subj-relc"
+  ],
+  "rows_per_task": 32,
+  "batch_size": 8,
+  "models": [
+    {
+      "name": "gpt2_medium",
+      "model_id": "openai-community/gpt2-medium",
+      "revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+      "path": "D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+      "license": "MIT",
+      "module_prefix": "transformer.h.",
+      "layers": [
+        11
+      ]
+    },
+    {
+      "name": "pythia_1b",
+      "model_id": "EleutherAI/pythia-1b-deduped",
+      "revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+      "path": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+      "license": "Apache-2.0",
+      "module_prefix": "gpt_neox.layers.",
+      "layers": [
+        7
+      ]
+    }
+  ],
+  "round_id": "FINAL_THREE_R20",
+  "all_regions": true,
+  "scope": "Original first32 training rows of each of23 tasks; six reserved task families and official test unused. Every non-null aligned original region is evaluated. Region selection must use source raw IIA then mean log odds then lowest numeric region, with complete32-row coverage. No target SAE or target outcome enters this source-site rule."
+}

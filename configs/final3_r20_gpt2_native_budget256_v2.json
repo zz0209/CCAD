@@ -1,0 +1,79 @@
+{
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "positions": {
+    "agr_gender": "changed",
+    "filler_gap_obj": "last",
+    "npi_any_obj-relc": "last"
+  },
+  "tasks": [
+    "agr_gender",
+    "npi_any_obj-relc",
+    "filler_gap_obj"
+  ],
+  "budget_seconds": 3600,
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "fit_pool": 1024,
+  "target_members": 256,
+  "run_id": "FINAL3_R20_gpt2_native_budget256_v2_20260909",
+  "finite_budget_total_sequences": 96,
+  "checkpoint_step": 16384,
+  "seeds": [
+    1,
+    2
+  ],
+  "audit_opened": false,
+  "official_data_module": "artifacts/final_three_research_20260909/reference_views/CausalGym/0f3129ff3b6c5c8264892f30a25be25150ae9179/data.py",
+  "source_members": 256,
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "scope": "Three original previously exposed development tasks/sites, all400 original train examples and unchanged32/68 dev split. Source and target cardinality increase64 to256; geometric/activation candidate writes now transfer the actual source weights. These two changes are bundled and not separately attributed. Exact complete-dictionary PW native writer and signed reader included; every selector receives the same candidate family. Full response source CE/target KL fit,64x16 plus initial loss-gradient pass; DAS64x16 matched update presentations. No original test read, no new independent confirmation.",
+  "training_run": "runs/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "seed_pairs": [
+    [
+      1,
+      2
+    ]
+  ],
+  "purpose": "Direct source/target capacity repair test with transferred fractional source weights and matched raw DAS update budget",
+  "train_rows_per_task": 400,
+  "calibration_rows": 32,
+  "batch_size": 16,
+  "paired_manifest": "artifacts/final_three_research_20260909/paired_material/TOKEN_MANIFEST.json",
+  "natural_tokens": {
+    "mean": 2048,
+    "discovery": 8192,
+    "calibration": 4096
+  },
+  "source_mode": "gradient",
+  "round_id": "FINAL_THREE_R20",
+  "finite_source": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "finite_target": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "das_reference": {
+    "rank": 1,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.005
+  },
+  "screening_budgets": [
+    12,
+    24,
+    48,
+    96
+  ],
+  "global_pw_run": "runs/FINAL3_R20_gpt2_complete_pw_mcc_v1_20260909"
+}

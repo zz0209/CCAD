@@ -1,0 +1,43 @@
+{
+  "run_id": "FINAL3_R20_gpt2_complete_pw_mcc_v1_20260909",
+  "round_id": "FINAL_THREE_R20",
+  "purpose": "Complete all-feature Pearson/Hungarian baseline on the exact R19 natural cache",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "seed_pairs": [
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      1
+    ]
+  ],
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "reference_run": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909",
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "budget_seconds": 2400,
+  "scope": "Exact complete8192-by8192 absolute-Pearson Hungarian objective, every atom included. Same natural discovery8192 reference tokens per SAE and independent mean constants. Scalar natural OLS gains are retained for a separate signed reader; native group copying uses bounded participation and cannot assume negative gains are native. No task labels, official test or new outputs. Five edges share dictionary identities.",
+  "audit_opened": false
+}

@@ -1,0 +1,132 @@
+{
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "positions": {
+    "agr_gender": "region_1",
+    "agr_refl_num_obj-relc": "region_6",
+    "agr_refl_num_pp": "region_5",
+    "agr_refl_num_subj-relc": "region_6",
+    "agr_sv_num_obj-relc": "region_2",
+    "agr_sv_num_pp": "region_1",
+    "agr_sv_num_subj-relc": "region_2",
+    "filler_gap_embed_3": "region_13",
+    "filler_gap_embed_4": "region_16",
+    "filler_gap_hierarchy": "region_6",
+    "filler_gap_obj": "region_5",
+    "filler_gap_pp": "region_8",
+    "filler_gap_subj": "region_8",
+    "garden_mvrr": "region_3",
+    "garden_mvrr_mod": "region_3",
+    "garden_npz_obj": "region_7",
+    "garden_npz_obj_mod": "region_8",
+    "garden_npz_v-trans": "region_6",
+    "garden_npz_v-trans_mod": "region_7",
+    "npi_any_obj-relc": "region_8",
+    "npi_any_subj-relc": "region_8",
+    "npi_ever_obj-relc": "region_7",
+    "npi_ever_subj-relc": "region_7"
+  },
+  "tasks": [
+    "agr_gender",
+    "npi_any_obj-relc",
+    "filler_gap_obj"
+  ],
+  "budget_seconds": 1200,
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "fit_pool": 1024,
+  "target_members": 256,
+  "run_id": "FINAL3_R20_gpt2_axis_anchored_pilot_v4_20260909",
+  "finite_budget_total_sequences": 96,
+  "checkpoint_step": 16384,
+  "seeds": [
+    1,
+    2
+  ],
+  "audit_opened": false,
+  "official_data_module": "artifacts/final_three_research_20260909/reference_views/CausalGym/0f3129ff3b6c5c8264892f30a25be25150ae9179/data.py",
+  "source_members": 256,
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "scope": "Six exposed development queries only. Same original400train/32cal/68held, source-only sites and source rank1, same target256 native write cap. Retain all previous readers; add scalar shared-axis calibration and task-selected residual ridge anchored to the complete shared reader. FeatureSemanticOT omitted only in this method-development pilot; original23v3 has that substantive comparison. No official test or reserved-task use. Also refit the shared-axis greedy path at each input actual re-encoding change count; padded dummy decoder columns and increments are exactly zero. Same write count does not imply same computation. Compile both signs of the source axis into fixed nonnegative target decoder updates once, then scale the appropriate update by the target-only predicted coordinate. Each deployment uses at most256 actual target members. This tests reusable native correspondence and removes per-context pursuit from that candidate. Within the same six-query pilot, add fixed nonnegative coefficient fitting to source training full-vocabulary KL,64x16 updates and unit-direction regularizer. Same scalar/read support and geometric supports; no held fitting. An unconstrained two-direction fit uses the same source information, sampled rows,64x16 budget and direction-space penalty, and remains a separate reference. No additional tasks or test data.",
+  "training_run": "runs/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "seed_pairs": [
+    [
+      1,
+      2
+    ]
+  ],
+  "purpose": "Repair task readers and reusable native synthesis across two SAE objectives; fit actual source outputs and retain a matched unrestricted two-direction control",
+  "train_rows_per_task": 400,
+  "calibration_rows": 32,
+  "batch_size": 16,
+  "paired_manifest": "artifacts/final_three_research_20260909/paired_material/TOKEN_MANIFEST.json",
+  "natural_tokens": {
+    "mean": 2048,
+    "discovery": 8192,
+    "calibration": 4096
+  },
+  "source_mode": "gradient",
+  "round_id": "FINAL_THREE_R20",
+  "finite_source": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "finite_target": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "das_reference": {
+    "rank": 1,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.005
+  },
+  "screening_budgets": [
+    24,
+    48,
+    96
+  ],
+  "global_pw_run": "runs/FINAL3_R20_gpt2_complete_pw_mcc_v1_20260909",
+  "query_mode": "sae_axis",
+  "axis_source": {
+    "rank": 1,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.005
+  },
+  "axis_read_budget": 256,
+  "axis_ridge": 0.01,
+  "axis_writer_budget": 256,
+  "axis_writer_batch": 8,
+  "axis_writer_steps": 1000,
+  "axis_writer_tolerance": 0.0001,
+  "axis_fixed_mask": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "selection_writer_forward_ratio": 20.0,
+  "selection_source_rows": 1,
+  "feature_semantic_ot": null,
+  "recovery": "Previous GPT2v2 failed before any query completed on transport marginal residual1.0577e-7 above1e-7. New code preserves epsilon/tolerance and refines the same dual plan by diagonal balancing; shared ground matrix and batch2048 solve the identical problems more efficiently. Original run/failure retained. Actual failed-pair replay now1.04e-9 residual; sparse zero-mass fixture matches selected atoms.",
+  "axis_anchored_task_correction": {
+    "ridge": 0.1
+  },
+  "axis_match_reencode_count": true,
+  "axis_compile_nonnegative": true,
+  "axis_compile_functional": {
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.005,
+    "penalty": 0.001
+  }
+}

@@ -65,13 +65,14 @@ def source_path_prediction(base, source, gbase, gsource, qsource, qtarget):
 
 
 def candidate_groups(Zs, Zt, means, Ds, Dt, members, task_dzs, task_dzt,
-                     gradients, *, budget=64, pool_size=256, semantic_weights=None):
+                     gradients, *, budget=64, pool_size=256, semantic_weights=None,source_weights=None):
     """Same-source native candidate family; records each candidate's information."""
     import torch
     from scipy.optimize import linear_sum_assignment
     source_mean,target_mean=means
     sc=Zs[:,members]-source_mean[members];tc=Zt-target_mean
-    desired=sc@Ds[members];desired_op=task_dzs[:,members]@Ds[members]
+    a=torch.ones(len(members),device=Ds.device) if source_weights is None else source_weights[members]
+    desired=(sc*a)@Ds[members];desired_op=(task_dzs[:,members]*a)@Ds[members]
     width=Dt.shape[0];group={};details={}
     cosine=Ds[members]@Dt.T
     xs=Zs[:,members]-Zs[:,members].mean(0);xt=Zt-Zt.mean(0)
@@ -79,14 +80,14 @@ def candidate_groups(Zs, Zt, means, Ds, Dt, members, task_dzs, task_dzt,
     for name,similarity,n in [('cosine_nn',cosine,1),('cosine_top2',cosine,2),('activation_nn',corr.abs(),1)]:
         chosen=torch.argsort(similarity,dim=1,descending=True,stable=True)[:,:n]
         w=torch.zeros(width,device=Dt.device)
-        w.scatter_add_(0,chosen.flatten(),torch.ones_like(chosen,dtype=Dt.dtype).flatten()/n)
+        w.scatter_add_(0,chosen.flatten(),a[:,None].expand_as(chosen).flatten()/n)
         w=w.clamp(0,1);keep=torch.argsort(w,descending=True,stable=True)[:budget]
         mask=torch.zeros_like(w);mask[keep]=1;group[name]=w*mask
     _,cols=linear_sum_assignment(-corr.abs().detach().cpu().numpy())
-    w=torch.zeros(width,device=Dt.device);w[torch.as_tensor(cols,device=Dt.device)]=1;group['pw_mcc']=w
+    w=torch.zeros(width,device=Dt.device);w[torch.as_tensor(cols,device=Dt.device)]=a;group['pw_mcc']=w
     choices=torch.argsort(corr.abs(),dim=1,descending=True,stable=True)[:,:4]
     mass=torch.softmax(corr.abs().gather(1,choices)*10,dim=1)
-    w=torch.zeros(width,device=Dt.device);w.scatter_add_(0,choices.flatten(),mass.flatten());w=w.clamp(0,1)
+    w=torch.zeros(width,device=Dt.device);w.scatter_add_(0,choices.flatten(),(mass*a[:,None]).flatten());w=w.clamp(0,1)
     keep=torch.argsort(w,descending=True,stable=True)[:budget];mask=torch.zeros_like(w);mask[keep]=1;group['soft_correlation']=w*mask
     if semantic_weights is not None:group['semantic_ot']=semantic_weights
     # Candidate support discovery uses declared data, not held-out outcomes.

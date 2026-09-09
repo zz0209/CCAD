@@ -1,0 +1,89 @@
+{
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "positions": {},
+  "tasks": [],
+  "budget_seconds": 3600,
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "fit_pool": 1024,
+  "target_members": 256,
+  "run_id": "FINAL3_R20_gpt2_newcohort_natural_reference_v1_20260909",
+  "finite_budget_total_sequences": 96,
+  "checkpoint_step": 16384,
+  "seeds": [
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "audit_opened": false,
+  "official_data_module": "artifacts/final_three_research_20260909/reference_views/CausalGym/0f3129ff3b6c5c8264892f30a25be25150ae9179/data.py",
+  "source_members": 256,
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "scope": "Natural-reference material only for the new controlled initialization cohort. No task fit or candidate intervention and no new research round.",
+  "training_run": "runs/FINAL3_R20_gpt2_independent_cohort_16m_v1_20260909",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "seed_pairs": [
+    [
+      11,
+      12
+    ],
+    [
+      12,
+      13
+    ],
+    [
+      13,
+      14
+    ],
+    [
+      14,
+      15
+    ],
+    [
+      15,
+      11
+    ]
+  ],
+  "purpose": "Natural reference for the independent GPT2 initialization cohort",
+  "train_rows_per_task": 400,
+  "calibration_rows": 32,
+  "batch_size": 16,
+  "paired_manifest": "artifacts/final_three_research_20260909/paired_material/TOKEN_MANIFEST.json",
+  "natural_tokens": {
+    "mean": 2048,
+    "discovery": 8192,
+    "calibration": 4096
+  },
+  "source_mode": "gradient",
+  "round_id": "FINAL_THREE_R20",
+  "finite_source": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "finite_target": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "das_reference": {
+    "rank": 1,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.005
+  },
+  "screening_budgets": [
+    12,
+    24,
+    48,
+    96
+  ]
+}

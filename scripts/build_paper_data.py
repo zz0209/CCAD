@@ -266,6 +266,9 @@ def main():
     from selector_paper import export as export_selector
     selection=export_selector(root,out,read)
     if selection:plot['group_selection']=selection
+    from axis_paper import export as export_axis
+    axis=export_axis(root,out,read)
+    if axis:plot['axis_transfer']=axis
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -371,6 +374,8 @@ def main():
                 'src/ccad/semantic_family.py','src/ccad/semantic_readout.py','scripts/apply_semantic_family.py','paper/sections/semantic_theory.tex']))
     if selection:
         claims.append(dict(id='source_conditioned_candidate_selection',paper='Selection methods and original CausalGym development',result='Two SAE objectives on GPT2Medium, five controlled seeds each. Fixed native candidate groups are selected before held-dev candidate execution. Descriptive choice/ranking/calibration and direct-trial controls retain source failures; development is not official-test confirmation.',evidence=selection['input_summary_paths']+['scripts/run_causalgym_group_selector.py','scripts/summarize_group_selection.py','src/ccad/native_group_selection.py','src/ccad/causalgym_interface.py','paper/sections/selection_theory.tex']))
+    if axis:
+        claims.append(dict(id='source_axis_native_transfer_and_selection',paper='Original-task source-axis transfer, complete native comparisons and selection decisions',result=axis['scope'],evidence=axis['input_summary_paths']+['scripts/axis_paper.py','scripts/summarize_group_selection.py','scripts/summarize_selection_dependence.py','src/ccad/axis_transfer_selection.py','src/ccad/selection_budget.py','src/ccad/finite_native_group.py','paper/sections/selection_theory.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:

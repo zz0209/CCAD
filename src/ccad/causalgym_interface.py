@@ -21,7 +21,7 @@ class CausalGymModel:
         if int(bp.min())<0 or int(sp.min())<0:raise ValueError('Null original benchmark region')
         return bp,sp
 
-    def forward(self,batch,*,donor=False,positions=None,delta=None,gradient=False,oracle=False):
+    def forward(self,batch,*,donor=False,positions=None,delta=None,gradient=False,oracle=False,differentiable=False):
         import torch
         packed=batch.src if donor else batch.base;capture={}
         def hook(module,inp,out):
@@ -33,7 +33,7 @@ class CausalGymModel:
             return (h,)+out[1:] if isinstance(out,tuple) else h
         handle=self.module.register_forward_hook(hook)
         try:
-            with torch.set_grad_enabled(gradient):
+            with torch.set_grad_enabled(gradient or differentiable):
                 result=self.model(**packed,use_cache=False,output_hidden_states=oracle)
                 ix=torch.arange(len(batch.pairs),device='cuda:0');last=packed['attention_mask'].sum(1)-1
                 logits=result.logits[ix,last];margin=logits[ix,batch.src_labels]-logits[ix,batch.base_labels]
@@ -45,5 +45,5 @@ class CausalGymModel:
             if oracle:
                 error=float((capture['hidden']-result.hidden_states[self.layer+1]).abs().max());self.checks['hook_oracle_max_error']=max(self.checks.get('hook_oracle_max_error',0),error)
                 if error!=0:raise ValueError('Native hidden-state hook mismatch')
-            return dict(margin=margin.detach(),log_probs=lp.detach(),hidden=capture['hidden'].detach(),gradient=grad)
+            return dict(margin=margin if differentiable else margin.detach(),log_probs=lp if differentiable else lp.detach(),hidden=capture['hidden'].detach(),gradient=grad)
         finally:handle.remove()
