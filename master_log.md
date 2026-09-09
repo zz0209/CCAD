@@ -5789,3 +5789,75 @@ round_id: FINAL_FIVE_R18。实际写入UTC：2026-09-08T19:55:43Z。在19:54:49Z
 ## FINAL_FIVE_R18 CLOSEOUT CORRECTION — Git空白提示
 
 round_id: FINAL_FIVE_R18。实际写入UTC：2026-09-08T19:57:16Z。首次同步已stage既有28文件，git diff --cached --check报告src/ccad/semantic_family.py第44行已有文件末尾空行，故前一脚本在commit前exit。没有commit/push发生，没有权限拒绝或科学错误。为保留已冻结且已打包代码的逐字身份，不改该非功能性空行；确认唯一提示后继续同一批提交，将该已知空白提示留账，不新增研究轮或重跑实验。
+
+
+## FINAL_THREE_R19 START — 把对应评价转成可检验的选择收益，并扩展外部条件
+
+实际写入UTC：2026-09-09T05:35:35Z。round_id：FINAL_THREE_R19。可证实事件开始：本START写入时；此前本次请求的阅读与工具检查开始时间未单独记录，未知，不倒填。用户新授权最后三轮19–21，替代原“无第19轮”的未来状态；历史18轮及原交付结论不改写。当前计数18完成、最后三轮0/3。TMLR仅曾讨论，没有自动改投或降低一线主会目标。
+
+选题理由：用户指出复杂correspondence框架未证明会改善实际方法选择，且单模型、单SAE体系、改造benchmark及主文/附录失衡限制结论。优先检验信息、估计目标与真实消费者之间的根本失配：在相同候选和选择预算下，用自然/校准操作评分选择对应，是否比PW-MCC、cosine、SemanticOT及普通回归更好地预测并实现未参与选择的操作。同步准备第二模型家族、第二SAE训练机制和官方原始非城市benchmark；全部新增条件必须服务同一正面主张，不用广度计数冒充贡献。
+
+已完成的启动检查：AGENTS、tracker、plan、资源账本及当前稿件定位；现有GPU为RTX5070Ti约16GB，管理器四资源均free，nvidia-smi显示1538MiB使用、9%利用率，仅为瞬时快照。旧R18已包含删除任一SAE及其incident edges分析，直接复用而不当新增成果。Get-Volume只读查询被操作系统拒绝访问，改用标准库disk_usage，无提权修改系统或科学数据。旧入口、主稿及hash归档至archive/research_workflow_20260909/before_final_three_20260909T053535Z。
+
+推进安排：R19寻找并实现决定选择价值的数学/方法改动，实测新模型/官方评测兼容性并开始受控素材；R20根据R19实际结果发展正信号，完成跨任务/机制及选择收益比较；R21冻结后用未参与选择的任务/实体确认，完成自足主文、真实图例与完整交付。每轮都包含阅读、数学、实现/真实实验和稿件，准备/排队/轮询不计完成。阶段预算先采用本地现有资源，新增购买0；大规模训练和推理在实测pilot吞吐后定量预算，预算与当前run只写tracker。科学状态目前无新增结果。
+
+下一步：读取官方CausalGym方法、完整数据和评测代码，核对第二模型及SAE目标的现有资产/许可；同时审视候选映射评分与实际写入的可识别性和决策端点。官方test在方法及使用方式确定前不进入选择。原ccad自动化将按既有5分钟周期原位恢复，当前对话负责，不增加loop或subagent。
+
+
+## FINAL_THREE_R19 PROGRESS / CORRECTION — 第二家族真实干预与原始benchmark接口
+
+实际写入UTC：2026-09-09T05:49:21Z。round_id：FINAL_THREE_R19。科学事件结束时间来自run/status.json；资源driver总时间37.6024s、进程CPU21.5156s，第一家族864序列6300tokens、第二家族864序列6399tokens，包含完整前向和一次梯度前向。GPT2Medium355M模型MIT、revision6dcaa7a952f72f9298047fd5137cd6e4f05f41da，权重1,519,984,962bytes、SHA256fc5a354a19255ad494f3d71549390baca1ccf61d1d822b9408971705c687c9cd匹配官方LFS。小模型下载31.1546s，不计科研时间、无购买。
+
+实际运行FINAL3_R19_second_family_source_screen_v1_20260909，三项预先指定原始train任务、每任务32行、两模型三hook两区域，共1152行实际干预。原CausalGym commit0f3129ff3b6c5c8264892f30a25be25150ae9179的Pair/Batch直接负责token/区域，完整29任务已核对，但此时只做三项开发；未下载/读取test。所有hook与原生hidden_states差0，梯度前向对无梯度前向logits差0。峰值CUDA为GPT2 1,653,758,976bytes与Pythia 4,238,021,120bytes。原论文pp1–5方法/指标已读，PDF1/7页实际查看，现有官方代码只支持GPTNeoX，实际模型适配保持原任务与评分。
+
+运行末尾科学状态PASS但进程exit1：artifact契约缺raw_metrics_sha256和config显式audit_opened=false。原metadata逐字保存在run/metadata_before_correction，原执行源码不改；当前补齐已有事实并记录METADATA_CORRECTION.json，契约结果False。没有为元数据重跑模型，没有改变原结果。原ccad已原位恢复ACTIVE，5分钟周期和target不变；当前计数仍0/3，不将source screen/下载/记录当轮次完成。
+
+下一步：依据实际source作用与局部梯度误差设计可预测/可选用的correspondence，训练第二家族的五seed双SAE机制，并以官方非城市任务和未参与选择的操作检验收益；保留所有负源。
+
+
+## FINAL_THREE_R19 CORRECTION — source screen metadata
+
+实际写入UTC：2026-09-09T05:55:14Z。round_id：FINAL_THREE_R19。前次补记使用了错误字段名raw_metrics_sha256；已按src/ccad/artifacts.py实际契约改为metrics_raw_sha256，保留纠正前原件。当前契约ok=True，原始1152行hash与源码快照未变，未重跑科学计算。证据：runs/FINAL3_R19_second_family_source_screen_v1_20260909/METADATA_HASH_FIELD_CORRECTION.json。
+
+
+## FINAL_THREE_R19 PROGRESS — 改变对应对象、第二训练目标与实测预算
+
+实际写入UTC：2026-09-09T06:04:40Z。round_id：FINAL_THREE_R19。训练事件开始2026-09-09T05:58:47.798361Z，仍运行，无结束时间。run：FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909。同一GPT2Medium中层、8192维字典、k64，两种官方dictionary_learning目标各seed1–5，训练16,777,216tokens；自然训练24018文档与验证64文档按原split保留并重新编码，24.8477s完成，无网络，全文hash与paired所有split的文档/文本身份排除通过。第一次64步9.0095s，后续每步0.11–0.12s，首测投影2306.4s；9000s资源守卫保存权重/Adam/scheduler/counters/RNG。D盘间歇写约4.75GB，不复制底模。GPU租约原管理器自动续租，已分配CUDA3.506GB。统计口径与预算见R19_TRAINING_BUDGET.json，预算不冒充实际用量。
+
+第256步已有固定验证：TopK FVE约.9606–.9608、CE恢复.9049–.9069、L0=64；Matryoshka FVE约.9475–.9481、CE恢复.8126–.8148，EMA阈值推理L0约37.5–38.9。这是早期曲线，不能判定训练充分或原生作用提升；训练k相同不意味着当前推理L0匹配，后续比较必须保留实际L0。原trainer数学/实现已读取，未改其训练loss；两机制差异同时包含BatchTopK与prefix objective。
+
+科学改法：把跨输入固定的fuzzy target group当对应输出，在0≤w≤1类内直接拟合动态贡献，确保每次互换在非负原生码内可实现；不再默认任意readout之后临时全字典求解就等于可复用组。选择指标在source理想干预端点展开target实现偏差，检验其是否比在base点预测完整编辑更准确/有用。完整推导与待证预测见NATIVE_GROUP_AND_SELECTION_DERIVATION.md；尚无新native/correspondence效应，不能宣称正结果。
+
+下一步：训练继续时完成官方29任务接口、固定组候选与匹配选择预算实现，并阅读新邻近论文方法/图版；先三项开发任务反馈，再决定扩大。最终六个未用任务族和官方test保留到程序冻结后。当前R19未完成，计数0/3。
+
+
+## FINAL_THREE_R19 PROGRESS / CLARIFICATION — 实现完成、既有类复用与正文证明
+
+实际写入UTC：2026-09-09T06:30:25Z。round_id：FINAL_THREE_R19。已复核src/ccad/native_participation.py和R15原始日志：跨输入固定的凸参与矩阵是旧R15已实现的类，本轮不能称其为首次改法；本轮新增假说在训练目标、natural/operation/endpoint拟合比较及选择收益。前次“改法”一词若被理解为新对象，以上澄清取代该理解，保留旧记录。新增src/ccad/native_group_selection.py给出实际贡献Gram、固定支持box拟合和score；src/ccad/causalgym_interface.py使用原Pair/Batch。CPU小矩阵核对Q梯度与直接张量loss最大差4.44e-15，原生预算/非负凸组合通过；不作为真实效应证据。
+
+第二家族16M十SAE训练接近结束；三任务两seed方法pilot已在原GPU管理器排队，驱动session18070，配置final3_r19_gpt2_group_selector_pilot_v1.json。其所有selector面对相同候选，包含有限预算直接试跑；候选选择文件先写入再执行held-dev候选。原始train/dev JSON会整体解析、只计算声明三任务；读取/物化不等于用于选择，不能把保留六任务声称成原文从未读过。官方test仍未读取。PW-MCC限定参与支持、SemanticOT组扩展、原始benchmark站点子集均显式命名，不混称完整原方法规模复现。
+
+自然paired前缀已按原token身份校验并可逆解码后重编码：mean31872/discovery130560/calibration65664tokens；每split最后一个被旧stream截断且无法检验完整hash的文档排除，UTF8边界移除逐项留账。原hash10/40/20/30 split身份保留，audit token未读。资产在paired_material/TOKEN_MANIFEST.json；没有重下载正文。
+
+已读Matryoshka pp1–4、reliability pp1–4和OSAE pp1–4/p6，并实际查看对应图版；完整版本/hash/借鉴与差异追加REFERENCE_REGISTRY。作者稿重组前paper/main和全部section源逐字归档archive/research_workflow_20260909/r19_main_reorganization_20260909T062723Z。新增selection_theory.tex给出二维精确反例、原生类、Gram与source端点Taylor界及统计/选择定义，尚未编译为新当前PDF。论文重组将围绕实际选择结果，不能将待证预测写成发现。
+
+下一步：检查训练末曲线和真实方法pilot，按结果改方法或扩大；完成本轮主稿、正式图表和完成日志后才计入R19。
+
+
+## FINAL_THREE_R19 PROGRESS — training complete and first real selector result
+
+Written UTC: 2026-09-09T06:37:48Z. The ten-SAE run completed at 2026-09-09T06:30:24.967632Z: five TopK and five MatryoshkaBatchTopK seeds, 16,777,216 natural tokens each. Actual wall 1897.178693 s, process CPU 1580.234375 s; all 50 quality checkpoints and exact optimizer state retained, contract PASS. Final CE recovery is about .990 for TopK and .988 for Matryoshka; quality alone is not functional validation or convergence. The first six-query selector pilot completed at 2026-09-09T06:31:30Z (event from retained run status), 63.8129685 s wall and 39.71875 s CPU, 5304 held-dev rows, no test use. Macro choices: {"anchored_base_linear": 0.3848039215686274, "base_linear": 0.3700980392156863, "cosine": 0.32107843137254904, "finite_budget": 0.36764705882352944, "natural_mse": 0.31862745098039214, "pw_mcc": 0.338235294117647, "semantic_ot_group": 0.27941176470588236, "source_endpoint": 0.38235294117647056}. Source-endpoint selection exceeds geometric choices here but not anchored-base linear prediction; this is not a breakthrough claim. Native endpoint fitting itself is weak. Source groups selected by activation contrast lose much of the raw operation on gender and NPI.
+
+Next action addresses this concrete mismatch: use source-only mean gradient contribution to choose source members, retain matched 32-member and 64-member target budgets separately, and test a standard cubic Hermite response surrogate using the already available source/base values and derivatives. This is interpolation reuse, not novel mathematics; uncontrolled transverse curvature is an explicit failure mode. These two development experiments change a source rule and then capacity, not an unseen-data confirmation. Original results, code snapshots and configs are retained. GPU allocation is bounded to the same single device; each six-query pilot cost about 64 s, prospective two-run budget 20 minutes including initialization, each has 3600 s failure guard. R19 remains incomplete until the substantive results and manuscript are incorporated.
+
+
+## FINAL_THREE_R19 PROGRESS — expand the candidate-choice signal
+
+Written UTC: 2026-09-09T06:41:40Z. The source-only gradient32 run completed at 2026-09-09T06:39:13.117691Z (70.8863 s wall), and gradient64 at 2026-09-09T06:41:03.998077Z (45.8215 s wall). Both are PASS and preserve every original pilot. At64, source-endpoint selection equals the best held-dev native candidate on all six current queries, whereas source-path Hermite falls behind on two; finite-margin selection remains a close strong comparator. This is an exposed development signal, not a population claim. Source and target capacities both increased, so their effects cannot be separately attributed. Reproduce fixed gradient64/endpoint/base/path/finite selectors over five dependent cyclic edges for each of the two SAE objectives and all three tasks. The 30-query prospective budget is 15 minutes based on measured 45.8 s for six queries; initialization/cache cost and shared-edge dependence retained. Keep all candidates and selected rules, source failures and strong raw/full references. No extra scientific round is added; R19 is still in progress. GPU lease will release automatically. Manuscript restructuring continues during calculation.
+
+
+## FINAL_THREE_R19 COMPLETE
+
+Written UTC: 2026-09-09T06:58:23Z. Verifiable round start: 2026-09-09T05:35:35Z; completion event: 2026-09-09T06:58:23Z. The scientific results, mathematical source, full main-result tables, figure sources, and single current manuscript are assembled before advancing the tracker. Report: artifacts/final_three_research_20260909/R19_REPORT.md; detailed raw identities/resources: R19_REPORT.json. The round added a second model family with two controlled SAE-objective bundles (five seeds each), four real selector runs and source-only source-rule/capacity comparisons on original non-city CausalGym development rows. The final thirty-query source-endpoint selection is .3955882353 IIA, cosine .3544117647, anchored base .3848039216 and direct smooth-margin trials .3921568627. Endpoint rank correlation .90565 is higher here; direct trial gap .00343137 is small. Source .468627451, full-target .536274510 and raw .602941176 remain stronger than selected native candidates. Cubic path prediction improves pointwise margin MAE yet lowers choice utility. No result is independent official-test confirmation; no general correspondence superiority or main-conference closure is claimed. Overall goal remains NOT_MET.
+
+Manuscript: paper/main.pdf SHA256 dfb2d90a3bad54d56905e3e545280834edb1e73a45befd0ca0c93115b2375b85, 18 pages (8 main, 1 references, 9 appendix), editable source and all supporting exports preserved in archive/research_workflow_20260909/r19_completed_manuscript_20260909T065823Z/manifest.json. The original 99-page manuscript and R18 ZIP are unchanged. Full page contact sheets and main pages5/6/8 were actually viewed; a missing cached longtable dependency was safely obtained from Tectonic official bundle after a preserved failed compile, then cached rebuild succeeded. No undefined reference or missing-glyph warnings; a small reference-balancing vertical-box warning does not clip the inspected page. Run clocks and CPU counters are retained; wall span includes overlapping computation/writing, uninstrumented effective-work and wait durations are unknown. GPU leases automatically released, no other project stopped or paid resource used. Next: R20 changes actual finite-response source/native fitting, adds the independent initialization cohort and broader original-task/model tests before R21 frozen confirmation and final package. This completes one of the exactly three extra rounds; preparation and engineering are not counted as separate rounds.

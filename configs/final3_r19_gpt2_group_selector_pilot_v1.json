@@ -1,0 +1,52 @@
+{
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "positions": {
+    "agr_gender": "changed",
+    "filler_gap_obj": "last",
+    "npi_any_obj-relc": "last"
+  },
+  "tasks": [
+    "agr_gender",
+    "npi_any_obj-relc",
+    "filler_gap_obj"
+  ],
+  "budget_seconds": 3600,
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "fit_pool": 256,
+  "target_members": 32,
+  "run_id": "FINAL3_R19_gpt2_group_selector_pilot_v1_20260909",
+  "finite_budget_total_sequences": 96,
+  "checkpoint_step": 16384,
+  "seeds": [
+    1,
+    2
+  ],
+  "audit_opened": false,
+  "official_data_module": "artifacts/final_three_research_20260909/reference_views/CausalGym/0f3129ff3b6c5c8264892f30a25be25150ae9179/data.py",
+  "source_members": 32,
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "scope": "Three declared development tasks, original train prefix128 and original dev100 with first32calibration/68held-dev. Original Pair/Batch, regions, labels, IIA and log-odds unchanged. Sites chosen from preceding source-only raw screen. New fixed-group fitting and source-endpoint candidate selection are compared with geometry, support PW-MCC, explicit group SemanticOT extension, natural error and direct finite-budget validation. Actual original train/dev parsing is distinguished from use; six reserved task families do not enter computations. No official test opened; no full-benchmark or cross-seed main-suite claim from this two-seed pilot. Bound membership ensures native convex code interchange. Ridge reader/full/raw are unrestricted references.",
+  "training_run": "runs/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "seed_pairs": [
+    [
+      1,
+      2
+    ]
+  ],
+  "purpose": "Test source-endpoint error prediction and native participation selection on three original non-city CausalGym development tasks",
+  "train_rows_per_task": 128,
+  "calibration_rows": 32,
+  "batch_size": 16,
+  "paired_manifest": "artifacts/final_three_research_20260909/paired_material/TOKEN_MANIFEST.json",
+  "natural_tokens": {
+    "mean": 2048,
+    "discovery": 8192,
+    "calibration": 4096
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "hook_module_path": "transformer.h.11",
+  "audit_opened": false,
+  "threshold_start_step": 128,
+  "learning_rate": 0.000282842712474619,
+  "group_fractions": [
+    0.125,
+    0.125,
+    0.25,
+    0.5
+  ],
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "k": 64,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "eval_batch_size_sequences": 4,
+  "model_local_dir": "D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "token_manifest": "artifacts/final_three_research_20260909/training_material/TOKEN_MANIFEST.json",
+  "dictionary_commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+  "layer": 11,
+  "steps": 16384,
+  "model_id": "openai-community/gpt2-medium",
+  "batch_size_sequences": 8,
+  "bulk_output_dir": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909",
+  "dict_size": 8192,
+  "purpose": "Test whether a nested reconstruction objective supplies more reusable cross-seed functional compositions on a second model family",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "decay_start": 8192,
+  "checkpoint_steps": [
+    256,
+    1024,
+    4096,
+    8192,
+    16384
+  ],
+  "budget_seconds": 9000,
+  "run_id": "FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909",
+  "scope": "Ten controlled SAEs on the exact same 16,777,216 natural training tokens; identical settings within each five-seed objective. Matryoshka uses original BatchTopK and prefix reconstruction implementation, so differences bundle objective and sparse activation rule. Fixed 256 validation sequences, source token hash exclusions; no benchmark or paired data in training. Training curve is not a convergence certificate. First 64 steps measure throughput; 9000-second loop guard saves exact state. No paid resources.",
+  "warmup_steps": 128
+}
