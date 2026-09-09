@@ -6133,3 +6133,14 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 证据层、实现和资源：fifth_completed_edge/PROGRESS_SUMMARY.json保留第五完整结果及全部输入hash；GPT2_COHORT_DESCRIPTIVE.json保留五个已完成summary的身份和整体统计。13个冻结代码hash现场核对均不变；未重新拟合、筛query、改方法/阈值/预算或额外申请GPU任务。五个方向共享五个SAE节点、29任务与提示，290query/objective cells不是290个独立重复，也不构成五次独立edge实验。本次为描述分析，既定完整十run的seed/task/frame统计不提前改口径；仍等Pythia五方向后执行。当前物化291/435查询，准确运行快照fifth_completed_edge/RUNTIME_SNAPSHOT.json。现有r004/RTX5070Ti与资源wrapper继续运行，无安装、下载、重训或新增付费。
 
 稿件与下一步：唯一paper/main.pdf22页SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c保持不变，现为R20加首方向interim及六开发query机制对照；完整GPT2新数值进入同轮证据，待全suite完成统一替换正式确认主图、正文与依赖统计，不把局部稿冒充最终交付。tracker旧字节归档archive/research_workflow_20260909/r21_gpt2_cohort_entry_20260909T164621Z/manifest.json。继续现有Pythia五run，以第二模型检验相同方法，随后完整分析/改稿/ZIP及COMPLETE，再计3/3并原位暂停。没有新增轮数，现有正结果及端点tradeoff仍不足以宣布一线主会核心闭合。
+
+
+### FINAL_THREE_R21 PROGRESS — user-authorized adaptive heartbeat scheduling
+
+实际写入UTC：2026-09-09T16:51:41Z。round_id：FINAL_THREE_R21，仍2/3，未新增或完成科学轮。用户本次要求单个长实验不高频唤醒，依据预计剩余时间临时延长间隔，快结束时恢复5分钟。本次是调度改进，无新增科学结果，未改冻结方法、实验队列或运行进程。
+
+估计依据与执行：2026-09-09T16:49:40.592024Z，Pythia第一方向已完成3/29，三项实际query耗时282.63/121.60/87.18秒；相同任务GPT2五方向中位耗时219.14/114.84/74.78秒。剩余任务GPT2参考工作1834.10秒，按三项实测比率外推32.37–39.42分钟；据此采用约30–45分钟的早期操作估计，不当置信区间或完成承诺。不能用首次模型准备耗时重复放大每个剩余query。后续按实际完成任务与剩余构成重估，整体suite完成时刻仍未确定。
+
+实际变更与验证：通过automation_update原位将现有ccad保持ACTIVE并改为20分钟，绑定仍为当前对话01a06e15-b222-7b21-a8cd-eb058a3159e5。实际配置更新时间2026-09-09T16:50:37.812000+00:00，文件回读核对间隔/状态/归属和prompt一致。下一次复查估计约2026-09-09T17:10Z，届时若预计剩余不超过20分钟、已完成、发生故障或需要主动分析即恢复5分钟。AGENTS.md和configs/CCAD_AUTOMATION_PROMPT.md只写持久的自适应原则，当前间隔/估计/恢复点仅在tracker；旧三入口及原automation配置逐字归档archive/research_workflow_20260909/adaptive_heartbeat_20260909T165030Z/manifest.json，receipt为artifacts/final_three_research_20260909/r21_confirmation/ADAPTIVE_HEARTBEAT_RECEIPT.json。没有创建重复automation、转交执行、暂停或中断GPU。
+
+成本与下一步：只进行几秒文本读取和时间估计、规则编辑及原位工具更新；主动总时长未单独计量，未知，运行等待不计研究。当前paper/main.pdf与实验代码保持原样，本调整不声称推进核心贡献。下次按上述估计检查当前run，接近完成恢复5分钟并完成结果/稿件/完整交付；原三轮限额和达到限额后的原位暂停安排均保留。
