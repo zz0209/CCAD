@@ -1,5 +1,5 @@
 """Recover exact retained non-audit document prefixes, then tokenize for GPT-2."""
-import os,sys,json,time,hashlib
+import os,sys,json,time,hashlib,argparse
 from pathlib import Path
 from datetime import datetime,timezone
 os.environ.update(HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',TOKENIZERS_PARALLELISM='false')
@@ -8,9 +8,14 @@ from ccad.artifacts import sha256
 from ccad.data_manifest import canonical_sha256
 import numpy as np
 from transformers import AutoTokenizer
-start=time.perf_counter();parent=ROOT/'runs/R008a_paired_corpus_v3_20260903T234000Z';out=ROOT/'artifacts/final_three_research_20260909/paired_material';out.mkdir(exist_ok=False)
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--source-run',type=Path,default=ROOT/'runs/R008a_paired_corpus_v3_20260903T234000Z')
+parser.add_argument('--model',type=Path,default=Path('D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da'))
+parser.add_argument('--source-tokenizer',type=Path)
+parser.add_argument('--output',type=Path,default=ROOT/'artifacts/final_three_research_20260909/paired_material')
+args=parser.parse_args();start=time.perf_counter();parent=args.source_run;out=args.output;out.mkdir(exist_ok=False,parents=True)
 cfg=json.loads((parent/'config.resolved.json').read_text());manifest=json.loads((parent/'artifacts/token_manifest.json').read_text());docs=[json.loads(s) for s in (parent/'artifacts/documents.jsonl').open()]
-old=AutoTokenizer.from_pretrained(cfg['tokenizer_local_dir'],local_files_only=True);new=AutoTokenizer.from_pretrained('D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da',local_files_only=True)
+old=AutoTokenizer.from_pretrained(args.source_tokenizer or cfg['tokenizer_local_dir'],local_files_only=True);new=AutoTokenizer.from_pretrained(args.model,local_files_only=True)
 records=[];outputs={};exclusions=[]
 for split in ['mean','discovery','calibration']:
  info=manifest['outputs'][split];p=parent/info['path'];assert sha256(p)==info['sha256'];tokens=np.fromfile(p,dtype='<u2').tolist();assert tokens[0]==old.eos_token_id;cursor=1;packed=[new.eos_token_id];spans=[]

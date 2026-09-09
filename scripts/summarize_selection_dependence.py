@@ -13,6 +13,12 @@ def frame(row):
     parts=[a if a==b else f'<ALTERNATING_REGION_{i}>' for i,(a,b) in enumerate(zip(row['base'],row['src']))]
     return hashlib.sha256(json.dumps(parts,ensure_ascii=False).encode()).hexdigest()
 
+def alternating_identities(row):
+    # These are observed changed lexical spans, not automatic NER labels.
+    # In gender tasks they include the actual names that the frame masks out.
+    spans=sorted({' '.join(v.split()) for a,b in zip(row['base'],row['src']) if a!=b for v in [a,b]})
+    return [hashlib.sha256(v.encode()).hexdigest() for v in spans]
+
 def load(run,budget_replay=None):
     cfg=json.loads((run/'config.resolved.json').read_text());cs=json.loads((run/'selection_choices.json').read_text())['choices'];byq={c['query']:c for c in cs};panel=json.loads((run/'panel.json').read_text())['rows'];pmap={r['row_id']:r for r in panel}
     replay=defaultdict(list)
@@ -37,7 +43,7 @@ def load(run,budget_replay=None):
     for c in cs:
         ids=sorted({i for _,i in values[c['query']]});frames=[frame(pmap[i]) for i in ids]
         Y={p:[float(np.mean([values[c['query']][(method,i)] for method in methods])) for i in ids] for p,methods in policies[c['query']].items()}
-        output.append(dict(run=run.name,task=c['task'],objective=c['objective'],training_run=cfg['training_run'],source_seed=c['source_seed'],target_seed=c['target_seed'],query=c['query'],frames=frames,values=Y))
+        output.append(dict(run=run.name,task=c['task'],objective=c['objective'],training_run=cfg['training_run'],source_seed=c['source_seed'],target_seed=c['target_seed'],query=c['query'],frames=frames,alternating_identities=[alternating_identities(pmap[i]) for i in ids],values=Y))
     return output
 
 def analyze(rows,draws=2000):
@@ -65,6 +71,7 @@ def analyze(rows,draws=2000):
     pairs += [('fixed:'+a,'fixed:'+b) for a,b in [('native_task_ridge_axis','reencode_shared_axis'),('native_shared_axis','reencode_shared_axis'),('native_task_ridge_axis','native_global_pw_axis'),('native_task_ridge_axis','native_semantic_ot_axis'),('native_task_ridge_axis','raw_das'),('native_shared_axis','native_random_support'),('native_shared_axis','native_wrong_axis')]]
     pairs += [('fixed:'+a,'fixed:'+b) for a,b in [('native_reencode_count','reencode_shared_axis'),('native_residual_task_ridge_axis','native_shared_axis'),('native_calibrated_shared_axis','native_shared_axis')]]
     pairs += [('fixed:compiled_shared_axis','fixed:'+b) for b in ['native_shared_axis','reencode_shared_axis','native_reencode_count','native_global_pw_axis','raw_das']]
+    pairs += [('fixed:compiled_functional_axis','fixed:'+b) for b in ['native_shared_axis','compiled_shared_axis','raw_signed_distill','raw_das','source','shared_axis_reader','reencode_shared_axis','native_reencode_count','native_global_pw_axis','native_semantic_ot_axis','native_task_ridge_axis','native_random_support','native_wrong_axis']]
     pairs += [('source_screen_'+str(b),p+'_'+str(b)) for b in [24,48,96] for p in ['direct_all','direct_balanced','direct_halving','cosine_screen','pw_screen','natural_screen']]
     for a,b in pairs:
         if a not in policies or b not in policies:continue

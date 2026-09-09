@@ -1,5 +1,5 @@
 """Re-tokenize retained disjoint natural training/validation documents for GPT-2."""
-import os,json,sys,time,hashlib
+import os,json,sys,time,hashlib,argparse
 from pathlib import Path
 from datetime import datetime,timezone
 os.environ.update(HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',TOKENIZERS_PARALLELISM='false',OMP_NUM_THREADS='2')
@@ -7,11 +7,17 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'src'))
 from ccad.artifacts import sha256
 import numpy as np
 from transformers import AutoTokenizer
-start=time.perf_counter();out=ROOT/'artifacts/final_three_research_20260909/training_material';out.mkdir(exist_ok=False)
-model=Path('D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da')
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--model',type=Path,default=Path('D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da'))
+parser.add_argument('--train-documents',type=Path,default=ROOT/'runs/FINAL5_R14_unique24m_repack_v3_20260908/artifacts/sampled_documents.jsonl')
+parser.add_argument('--validation-documents',type=Path,default=ROOT/'runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/sampled_documents.jsonl')
+parser.add_argument('--paired-records',type=Path,default=ROOT/'runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl')
+parser.add_argument('--output',type=Path,default=ROOT/'artifacts/final_three_research_20260909/training_material')
+args=parser.parse_args();start=time.perf_counter();out=args.output;out.mkdir(exist_ok=False,parents=True)
+model=args.model
 tokenizer=AutoTokenizer.from_pretrained(model,local_files_only=True)
-paths={'train':ROOT/'runs/FINAL5_R14_unique24m_repack_v3_20260908/artifacts/sampled_documents.jsonl','validation':ROOT/'runs/R011_NR1_long_budget_corpus_v2_20260904T012000Z/artifacts/sampled_documents.jsonl'}
-paired=ROOT/'runs/R008a_paired_corpus_v3_20260903T234000Z/artifacts/documents.jsonl'
+paths={'train':args.train_documents,'validation':args.validation_documents}
+paired=args.paired_records
 paired_rows=[json.loads(s) for s in paired.open(encoding='utf-8')]
 forbidden_ids={r['document_id'] for r in paired_rows};forbidden_hash={r['text_sha256'] for r in paired_rows}
 allrecords=[];outputs={};seen={};inputs=[]

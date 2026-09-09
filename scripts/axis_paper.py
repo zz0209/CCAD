@@ -49,7 +49,7 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
  manifest=Path(manifest_path)
  if not (root/manifest).exists():return None
  from summarize_group_selection import describe
- spec=read(manifest);conditions=[];inputs=[manifest.as_posix()];flat=[];costs=[]
+ spec=read(manifest);conditions=[];inputs=[manifest.as_posix()];flat=[];costs=[];compiled_costs=[]
  for item in spec['runs']:
   run=root/item['path'];status=json.loads((run/'status.json').read_text());assert status['status']=='PASS',(run,status)
   result=describe(run);choices=json.loads((run/'selection_choices.json').read_text())['choices']
@@ -79,7 +79,11 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
     diagpath=run/(c['query']+'_axis_writer_diagnostics.json')
     if diagpath.exists():
      diag=json.loads(diagpath.read_text())
+     inputs.append(str(diagpath.relative_to(root)))
      for m,d in diag.items():
+      if m.startswith('compiled_'):
+       kernel=d.get('application_kernel',{})
+       compiled_costs.append(dict(condition=label,query=c['query'],method=m,compile_seconds=d.get('compile_seconds'),output_fit_seconds=d.get('fit',{}).get('wall_seconds'),kernel_milliseconds_per_row=kernel.get('milliseconds_per_row'),kernel_rows=kernel.get('rows'),native_replay_max_abs=d.get('saved_native_replay_max_abs'),actual_changed_min=min(d.get('actual_changed_counts',[0])),actual_changed_max=max(d.get('actual_changed_counts',[0])),distinct_union_members=d.get('distinct_union_members'),scope='Setup and warm batched application are separate; kernel excludes encoding and language-model execution.'))
       if 'wall_seconds' in d:
        count=sum(len(s.get('relative_errors',[])) for s in d.get('solver',[]))
        # Every writer executes all calibration + held task rows. Use the
@@ -87,6 +91,27 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
        with np.load(run/(c['query']+'_'+m+'_write.npz')) as z:count=len(z['row_ids']) if 'row_ids' in z else int(z['shape'][0])
        costs.append(dict(condition=label,query=c['query'],method=m,rows=count,wall_seconds=d['wall_seconds'],milliseconds_per_row=1000*d['wall_seconds']/count))
    conditions.append(dict(label=label,objective=objective,run=item['path'],queries=len(cs),tasks=result['config']['tasks'],fixed_iia=fixed,fixed_metrics=fixed_metrics,method_records=method_records,selector_metrics=metrics,budget_metrics=budget,records=rr,budget_records=bb,budget_scope=replay['scope'] if replay else 'Budget choices retained in the original run.'))
+ # Edge-isolated executions share one displayed model/objective condition.
+ # Aggregate their retained query rows; do not display seed edges as different
+ # model conditions or treat them as independent statistical repetitions.
+ grouped={}
+ for c in conditions:grouped.setdefault(c['label'],[]).append(c)
+ merged=[]
+ for label,parts in grouped.items():
+  if len(parts)==1:merged.append(parts[0]);continue
+  assert all(c['tasks']==parts[0]['tasks'] and c['objective']==parts[0]['objective'] for c in parts)
+  mr=[r for c in parts for r in c['method_records']];rr=[r for c in parts for r in c['records']];bb=[r for c in parts for r in c['budget_records']]
+  methods=sorted(set.intersection(*(set(c['fixed_iia']) for c in parts)))
+  fixed={m:mean(r['iia'] for r in mr if r['method']==m) for m in methods}
+  fm={m:{k:mean(r[k] for r in mr if r['method']==m and r[k] is not None) for k in ['iia','iia_flip','base_correct_fraction','donor_ce','log_odds_ratio','source_kl'] if any(r[k] is not None for r in mr if r['method']==m)} for m in methods}
+  metrics={}
+  for s in SELECTORS:
+   q=[r for r in rr if r['selector']==s]
+   if q:metrics[s]={k:mean(r[k] for r in q if r[k] is not None) for k in ['top1_iia','tie_uniform_top1_iia','top3_uniform_iia','ranking_spearman','regret'] if any(r[k] is not None for r in q)}
+  budget={}
+  for b in bb:budget.setdefault(str(b['budget']),{}).setdefault(b['policy'],[]).append(b['held_iia'])
+  merged.append(dict(label=label,objective=parts[0]['objective'],runs=[c['run'] for c in parts],queries=sum(c['queries'] for c in parts),tasks=parts[0]['tasks'],fixed_iia=fixed,fixed_metrics=fm,method_records=mr,selector_metrics=metrics,budget_metrics={b:{p:mean(v) for p,v in values.items()} for b,values in budget.items()},records=rr,budget_records=bb,budget_scope='Original choices retained across edge-isolated runs; these edges share SAE nodes.'))
+ conditions=merged
  calibration=[];refusal=[]
  for c in conditions:
   for s in ['source_endpoint','base_linear','finite_margin']:
@@ -128,7 +153,8 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
   for m in ['source','shared_axis_reader','reencode_shared_axis','native_reencode_count','native_shared_axis','native_calibrated_shared_axis','native_residual_task_ridge_axis','compiled_shared_axis','compiled_functional_axis','raw_signed_distill','raw_das']:
    lines.append(tex(METHODS[m])+' & '+' & '.join(f"{100*mean(r['iia'] for r in pilot if r['objective']==o and r['method']==m):.2f}" for o in ['topk','matryoshka'])+r' \\')
   (out/'tables/axis_development_pilot.tex').write_text('\n'.join(lines)+'\n')
- data=dict(stage=spec['stage'],conditions=conditions,method_labels=METHODS,selector_labels=SELECTORS,rows=flat,writer_costs=costs,calibration=calibration,refusal=refusal,training=training,development_pilot=pilot,input_summary_paths=inputs,scope=spec['scope'])
+ data=dict(stage=spec['stage'],conditions=conditions,method_labels=METHODS,selector_labels=SELECTORS,rows=flat,writer_costs=costs,compiled_costs=compiled_costs,calibration=calibration,refusal=refusal,training=training,development_pilot=pilot,input_summary_paths=inputs,scope=spec['scope'])
+ csvwrite(out/'data/axis_compilation_costs.csv',compiled_costs)
  (out/'data/axis_transfer.json').write_text(json.dumps(data,indent=2)+'\n')
  csvwrite(out/'data/axis_task_edge_results.csv',flat);csvwrite(out/'data/axis_writer_costs.csv',costs);csvwrite(out/'data/axis_choice_calibration.csv',calibration);csvwrite(out/'data/axis_refusal.csv',refusal)
  csvwrite(out/'data/axis_all_method_metrics.csv',[dict(condition=c['label'],**r) for c in conditions for r in c['method_records']])
@@ -218,3 +244,57 @@ def plot(data,save):
   for ax in axs[:,j]:ax.grid(color='#eeeeee',lw=.4)
  fig.legend(*axs[0,0].get_legend_handles_labels(),loc='upper center',bbox_to_anchor=(.54,1),ncol=3,frameon=False,fontsize=8)
  save(fig,'axis_calibration')
+ if all('compiled_functional_axis' in c['fixed_iia'] for c in conditions):
+  plot_compiled(data,save)
+
+
+def plot_compiled(data,save):
+ """Show the fixed compiled contrast, retaining shared edges and every task."""
+ import matplotlib.pyplot as plt
+ from matplotlib.lines import Line2D
+ from matplotlib.colors import LinearSegmentedColormap,TwoSlopeNorm
+ GREEN='#286956';PURPLE='#785481';INK='#262626';GREY='#777777'
+ conditions=data['conditions'];methods=[('native_shared_axis','Dynamic native',GREEN),('raw_signed_distill','Unrestricted two-direction',PURPLE)]
+ fig,axs=plt.subplots(1,2,figsize=(7,2.6),sharey=True)
+ fig.subplots_adjust(left=.20,right=.985,bottom=.27,top=.77,wspace=.18)
+ for ax,(baseline,label,col) in zip(axs,methods):
+  for i,c in enumerate(conditions):
+   rows=[r for r in data['rows'] if r['condition']==c['label']]
+   edges=sorted({(r['source_seed'],r['target_seed']) for r in rows});values=[]
+   for edge in edges:
+    vals={m:mean(r['iia'] for r in rows if r['method']==m and (r['source_seed'],r['target_seed'])==edge) for m in ['compiled_functional_axis',baseline]}
+    values.append(100*(vals['compiled_functional_axis']-vals[baseline]))
+   # Offsets identify distinct edges; neither their extent nor their count is
+   # a confidence interval or a count of independent model replications.
+   ax.scatter(values,i+np.linspace(-.11,.11,len(values)),s=15,facecolors='white',edgecolors=col,linewidths=.7,zorder=3)
+   ax.scatter([mean(values)],[i],s=27,marker='D',color=col,zorder=4)
+  ax.axvline(0,color=GREY,lw=.7,ls='--');ax.grid(axis='x',color='#eeeeee',lw=.45)
+  ax.set(yticks=range(len(conditions)),yticklabels=[c['label'] for c in conditions],ylim=(len(conditions)-.55,-.45),xlabel='Compiled native minus comparator (points)')
+  ax.set_title(label,loc='left',fontsize=9);ax.tick_params(axis='y',length=0,labelsize=8)
+ lo=min(ax.get_xlim()[0] for ax in axs);hi=max(ax.get_xlim()[1] for ax in axs)
+ for ax in axs:ax.set_xlim(min(-1,lo),max(1,hi))
+ fig.legend(handles=[Line2D([],[],marker='o',mfc='white',mec=INK,lw=0,ms=4,label='Each shared-seed edge'),Line2D([],[],marker='D',color=INK,lw=0,ms=4,label='Mean over all tasks and edges')],frameon=False,ncol=2,loc='upper center',bbox_to_anchor=(.58,.99),fontsize=8)
+ save(fig,'axis_compiled_edges')
+ tasks=conditions[0]['tasks'];values=[]
+ for task in tasks:
+  line=[]
+  for c in conditions:
+   rows=[r for r in data['rows'] if r['condition']==c['label'] and r['task']==task]
+   compiled=mean(r['iia'] for r in rows if r['method']=='compiled_functional_axis')
+   line.extend(100*(compiled-mean(r['iia'] for r in rows if r['method']==m)) for m,_,_ in methods)
+  values.append(line)
+ values=np.asarray(values);bound=max(5,5*np.ceil(np.max(np.abs(values))/5))
+ cmap=LinearSegmentedColormap.from_list('native_difference',[PURPLE,'#ffffff',GREEN])
+ fig,axs=plt.subplots(1,len(conditions),figsize=(7,max(3.4,1.25+.19*len(tasks))),sharey=True,squeeze=False)
+ fig.subplots_adjust(left=.235,right=.915,bottom=.21 if len(tasks)<8 else .10,top=.83 if len(tasks)<8 else .91,wspace=.25)
+ for j,(ax,c) in enumerate(zip(axs[0],conditions)):
+  im=ax.imshow(values[:,2*j:2*j+2],cmap=cmap,norm=TwoSlopeNorm(vmin=-bound,vcenter=0,vmax=bound),aspect='auto',interpolation='nearest')
+  ax.set(xticks=[0,1],xticklabels=['Dynamic\nnative','Unrestricted\ntwo-direction'],yticks=range(len(tasks)),yticklabels=[task_label(t) for t in tasks])
+  ax.set_title(c['label'],loc='left',fontsize=8.5);ax.tick_params(length=0,labelsize=7.4)
+  for i in range(len(tasks)):
+   for k in range(2):
+    value=values[i,2*j+k];ax.text(k,i,f'{value:+.1f}',ha='center',va='center',fontsize=7.1,color='white' if abs(value)>.58*bound else INK)
+  for spine in ax.spines.values():spine.set_visible(False)
+ cax=fig.add_axes([.939,.26,.012,.46]);cb=fig.colorbar(im,cax=cax);cb.ax.tick_params(labelsize=7,length=2)
+ fig.text(.24,.972,'Compiled native minus comparator: mean IIA difference (points)',ha='left',va='top',fontsize=9)
+ save(fig,'axis_compiled_task_contrasts')

@@ -1,0 +1,172 @@
+{
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "positions": {
+    "agr_gender": "region_1",
+    "agr_refl_num_obj-relc": "region_6",
+    "agr_refl_num_pp": "region_5",
+    "agr_refl_num_subj-relc": "region_6",
+    "agr_sv_num_obj-relc": "region_2",
+    "agr_sv_num_pp": "region_1",
+    "agr_sv_num_subj-relc": "region_2",
+    "filler_gap_embed_3": "region_13",
+    "filler_gap_embed_4": "region_16",
+    "filler_gap_hierarchy": "region_6",
+    "filler_gap_obj": "region_5",
+    "filler_gap_pp": "region_8",
+    "filler_gap_subj": "region_8",
+    "garden_mvrr": "region_3",
+    "garden_mvrr_mod": "region_3",
+    "garden_npz_obj": "region_7",
+    "garden_npz_obj_mod": "region_8",
+    "garden_npz_v-trans": "region_6",
+    "garden_npz_v-trans_mod": "region_7",
+    "npi_any_obj-relc": "region_8",
+    "npi_any_subj-relc": "region_8",
+    "npi_ever_obj-relc": "region_7",
+    "npi_ever_subj-relc": "region_7",
+    "gss_subord": "region_4",
+    "gss_subord_subj-relc": "region_7",
+    "gss_subord_obj-relc": "region_8",
+    "gss_subord_pp": "region_5",
+    "cleft": "region_3",
+    "cleft_mod": "region_4"
+  },
+  "tasks": [
+    "agr_gender",
+    "agr_refl_num_obj-relc",
+    "agr_refl_num_pp",
+    "agr_refl_num_subj-relc",
+    "agr_sv_num_obj-relc",
+    "agr_sv_num_pp",
+    "agr_sv_num_subj-relc",
+    "filler_gap_embed_3",
+    "filler_gap_embed_4",
+    "filler_gap_hierarchy",
+    "filler_gap_obj",
+    "filler_gap_pp",
+    "filler_gap_subj",
+    "garden_mvrr",
+    "garden_mvrr_mod",
+    "garden_npz_obj",
+    "garden_npz_obj_mod",
+    "garden_npz_v-trans",
+    "garden_npz_v-trans_mod",
+    "npi_any_obj-relc",
+    "npi_any_subj-relc",
+    "npi_ever_obj-relc",
+    "npi_ever_subj-relc",
+    "gss_subord",
+    "gss_subord_subj-relc",
+    "gss_subord_obj-relc",
+    "gss_subord_pp",
+    "cleft",
+    "cleft_mod"
+  ],
+  "budget_seconds": 21600,
+  "dataset_dir": "D:/CCAD_Storage/references/causalgym/95349c3a5e53e2506e8b212482ea6dd784978156",
+  "fit_pool": 1024,
+  "target_members": 256,
+  "run_id": "FINAL3_R21_gpt2_original29_test_s14_t15_v1_20260909",
+  "finite_budget_total_sequences": 96,
+  "checkpoint_step": 16384,
+  "seeds": [
+    14,
+    15
+  ],
+  "audit_opened": true,
+  "official_data_module": "artifacts/final_three_research_20260909/reference_views/CausalGym/0f3129ff3b6c5c8264892f30a25be25150ae9179/data.py",
+  "source_members": 256,
+  "dataset_revision": "95349c3a5e53e2506e8b212482ea6dd784978156",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "scope": "All original400train,32dev calibration and every original test record for all29 tasks. Frozen source-only sites at one layer per base model, not the original multi-layer benchmark aggregation. Source operations and every candidate fit only train. New GPT initialization seeds11–15; Pythia fixed earlier five seeds. Five cyclic dependent edges, not independent repetitions. Same complete inventory and256 native cap. Source-screen versus direct-balanced/halving at24/48/96 uses explicit work accounting, not equal measured wall time. No held tuning, source filtering or task exclusion. Both successful and weak sources retained.",
+  "training_run": "runs/FINAL3_R20_gpt2_independent_cohort_16m_v1_20260909",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "seed_pairs": [
+    [
+      14,
+      15
+    ]
+  ],
+  "purpose": "Frozen original29-task test of reusable output-fitted target-native correspondence and candidate choice",
+  "train_rows_per_task": 400,
+  "calibration_rows": 32,
+  "batch_size": 16,
+  "paired_manifest": "artifacts/final_three_research_20260909/paired_material/TOKEN_MANIFEST.json",
+  "natural_tokens": {
+    "mean": 2048,
+    "discovery": 8192,
+    "calibration": 4096
+  },
+  "source_mode": "gradient",
+  "round_id": "FINAL_THREE_R21",
+  "finite_source": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "finite_target": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "das_reference": {
+    "rank": 1,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.005
+  },
+  "screening_budgets": [
+    24,
+    48,
+    96
+  ],
+  "global_pw_run": "runs/FINAL3_R20_gpt2_newcohort_complete_pw_mcc_v1_20260909",
+  "query_mode": "sae_axis",
+  "axis_source": {
+    "rank": 1,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.005
+  },
+  "axis_read_budget": 256,
+  "axis_ridge": 0.01,
+  "axis_writer_budget": 256,
+  "axis_writer_batch": 8,
+  "axis_writer_steps": 1000,
+  "axis_writer_tolerance": 0.0001,
+  "axis_fixed_mask": {
+    "pool_size": 1024,
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.1
+  },
+  "selection_writer_forward_ratio": 20.0,
+  "selection_source_rows": 1,
+  "feature_semantic_ot": {
+    "top_k": 64,
+    "minimum_count": 30,
+    "candidate_count": 50,
+    "scale_fraction": 0.02
+  },
+  "axis_anchored_task_correction": {
+    "ridge": 0.1
+  },
+  "axis_match_reencode_count": true,
+  "axis_compile_nonnegative": true,
+  "axis_compile_functional": {
+    "steps": 64,
+    "batch_size": 16,
+    "lr": 0.005,
+    "penalty": 0.001
+  },
+  "evaluation_split": "test",
+  "evidence_level": "controlled_frozen_original_test",
+  "freeze_manifest": "artifacts/final_three_research_20260909/r21_confirmation/RESOLVED_PROCEDURE_FREEZE.json",
+  "freeze_manifest_sha256": "3254f8e9affb26bb719f89cc6439c1d09bb45996816c957f71c9f31d8ffa6be7"
+}
