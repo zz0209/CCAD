@@ -6105,3 +6105,16 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 稿件与交付：唯一paper/main.pdf为22页，SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c，正文§5.2与附录B.3加入上述相反端点关系及全部六query四格表。数据/TeX重建成功，实际查看第5/6/8/13/14页；最初23页产生孤立主文末页，移入附录重复的cost细节后恢复8主文+1引用+13附录，没有缩小字体或删去证据。图内容未变，未重复全套作图/实验测试。旧当前稿/源逐字归档r21_before_energy_result_20260909T140349Z/manifest.json，旧交付入口归档archive/research_workflow_20260909/r21_before_energy_delivery_20260909T140825Z/manifest.json；文档更新机制完成与恢复入口。新EVIDENCE_INDEX机制条目逐文件hash已核对。当前测试图仍明确first-edge interim，第三edge纳入同轮结果记录，不冒充已完成整套图表。
 
 下一步：继续剩余七个冻结run；开发机制对照已完成，不再排队或追加局部调参。全部实际完成后统一执行既定分条件/依赖统计、更新正文主图与完整交付包，留下R21 COMPLETE再计3/3并原位暂停。当前证据强化候选执行增益的同时缩小其机制解释，尚不能据此宣称核心闭合或主会竞争力已建立。
+
+
+### FINAL_THREE_R21 PROGRESS — fourth original-test edge preserves the improvement and remaining gap
+
+实际写入UTC：2026-09-09T15:22:16Z。round_id：FINAL_THREE_R21，仍为2/3，未完成整轮。第四run FINAL3_R21_gpt2_original29_test_s14_t15_v1_20260909于2026-09-09T15:15:18.155620Z报告COMPLETE，PASS；driver wall4809.261922秒、process CPU4152.781250秒。全部29任务、58查询、127600条22方法原始记录保留，raw SHA256 1ed8611b0b7f70edb4de18fc266f0362e2cd74fb16d78df96c01f6e837fb788c已实际复算一致。只读汇总工具wall3.951879秒，主动分析与记录总时长未单独计量，未知；GPU计算/排队不计主动研究。本次是现有确认的实质阶段结果，不增加科学轮数。
+
+理由与实际结果：继续检验已冻结的输出拟合收益能否跨受控初始化方向重复，同时保留强对照。TopK/Matryoshka compiled IIA67.1034/67.6207%，dynamic54.6552/58.6552%，分别+12.4483/+8.9655个百分点；TopK27增2平0降，Matry28增0平1降，共55增2平1降。matched unrestricted为68.5172/67.8966%，raw DAS均74.1034%；较固定compiled仍高1.4138/0.2759与7.0000/6.4828点。compiled/source KL为0.00736891/0.00624762，dynamic为0.05562698/0.03683688，matched raw为0.00576489/0.00609875。完整结果避免把IIA、分布保真和语义有效性互相替代。
+
+选择结果：第四TopK的natural screen在全部预算仍选固定compiled。Matry在24/48分别27/28个任务选compiled，其余选calibrated，IIA67.5862/67.5517%，均略低于固定67.6207%；96全部回到固定。由此不延续前三方向“所有自然筛选均同一个固定方法”的全局说法，差异完整留存；改变选择本身未产生额外收益。source screen在48为67.1034/67.4828%，TopK持平、Matry更低；balanced为66.7586/67.5862%，halving为65.3103/66.2069%。24/48/96全部预算与每个选择计数均保存在fourth_completed_edge/PROGRESS_SUMMARY.json，不挑选有利预算。
+
+科学判断与边界：第四方向继续支持固定native consumer相对动态实现的功能提升，也继续保留强raw差距和未建立的选择价值。四个edge共享SAE节点与29测试任务，不能算四次独立重复或替代完整五节点统计。开发机制对照已完成并留在原开发证据层：其幅度解释IIA、方向改善KL的结论不因第四方向重复而自动获得独立验证。未改源query、方法、候选、阈值或预算，未追加GPU任务。第五方向seed15→11已启动，当前物化233/435查询；准确运行快照fourth_completed_edge/RUNTIME_SNAPSHOT.json。
+
+稿件与下一步：当前唯一paper/main.pdf22页SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c保持不变，已含最近机制对照；第四方向结果先进入同轮证据记录，完整suite后统一换正式确认主图与表。没有为一次局部更新重复编译/作图/接口测试。tracker与交付入口旧字节保存于archive/research_workflow_20260909/r21_fourth_edge_entry_20260909T152216Z/manifest.json。现有suite session18578继续剩余六run，后续沿冻结统计、全稿整合与完整ZIP收尾；实际完成后才写R21 COMPLETE、计3/3并原位暂停，不将当前稳定局部增益宣称为主会核心闭合。
