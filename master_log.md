@@ -6206,3 +6206,10 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 实现、记录与资源：third_pythia_edge/selection_summary.json、PROGRESS_SUMMARY.json保留22方法IIA/KL、每个预算和选择计数、原始hash及真实运行时间；13个冻结源码hash现场核对不变。未改方法/query/候选/阈值/预算，未新增拟合、训练、下载、安装或GPU作业。第四方向seed4→5实际于2026-09-09T18:51:38.735525Z启动，当前物化377/435，精确快照third_pythia_edge/RUNTIME_SNAPSHOT.json。前三同族run wall43.49/43.38/45.39分钟，现有r004/RTX5070Ti和共享wrapper继续最后两个run，原证据全部保留。
 
 调度与下一步：18:54:27Z第四方向已运行168.72秒，基于前三wall中位数估计剩余40.68分钟，操作范围约35–45分钟而非置信区间。原ccad暂调20分钟，实际配置更新2026-09-09T18:54:31.440000+00:00，回读确认ACTIVE/原对话/prompt一致；约2026-09-09T19:14Z复查，剩余≤20分钟恢复5分钟。旧tracker与automation逐字归档archive/research_workflow_20260909/r21_third_pythia_entry_20260909T185427Z/manifest.json。唯一paper/main.pdf22页SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c保持当前明确标注的interim，不重复局部重建；最后两run齐备后统一正文/图表/分条件依赖统计与最终可用包，R21 COMPLETE后才计3/3并原位暂停，不新增轮次。
+
+
+### FINAL_THREE_R21 PROGRESS — restore short checks for the fourth Pythia edge
+
+实际写入UTC：2026-09-09T19:18:34Z。round_id：FINAL_THREE_R21，仍2/3，无新增完整科学结果或研究轮。2026-09-09T19:17:31.650238Z第四Pythia完成14/29、整套391/435；以前三同任务中位耗时为参照，中位比率1.04782、剩余参考1060.56秒，预计剩余18.52分钟，观测比率范围对应17.47–20.11分钟，仅为调度估计而非置信区间。实际日志继续正常推进，中位预计剩余已进入20分钟恢复窗口。
+
+实际动作与下一步：automation_update原位将ccad恢复5分钟，配置实际更新2026-09-09T19:17:55.226000+00:00；回读核对ACTIVE、当前对话和prompt一致。旧tracker及20分钟配置逐字归档archive/research_workflow_20260909/heartbeat_restore_20260909T191751Z/manifest.json，receipt为artifacts/final_three_research_20260909/r21_confirmation/HEARTBEAT_RESTORED_20260909T1917Z.json。只有短只读估时与调度状态记录，主动总时长未知，等待不计研究；未改冻结数据/方法/源码或中断GPU。继续第四方向，完整后汇总，再为最后一个长run估时；主稿和科学判断未改变，最后三轮计数和最终包收尾要求保留。
