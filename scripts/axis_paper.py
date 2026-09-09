@@ -197,6 +197,28 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
  if headroom:
   data['selection_headroom']=headroom
   csvwrite(out/'data/axis_selection_headroom.csv',[dict(stage=c['label'],**r) for c in headroom for r in c['query_records']])
+ if spec.get('confirmation_dependence'):
+  path=spec['confirmation_dependence'];summary=read(path);inputs.append(path)
+  inputs.extend(v['path'] for v in summary['input_files'])
+  data['confirmation_dependence']=summary
+  csvwrite(out/'data/axis_confirmation_dependence.csv',summary['comparisons'])
+  labels={('GPT2Medium','topk'):'GPT2 TopK',('GPT2Medium','matryoshka'):'GPT2 Matryoshka',('Pythia1B','topk'):'Pythia TopK'}
+  contrasts={('fixed:compiled_functional_axis','fixed:native_shared_axis'):'Compiled $-$ dynamic',('fixed:compiled_functional_axis','fixed:raw_signed_distill'):'Compiled $-$ unrestricted',('source_screen_48','direct_halving_48'):'Screen $-$ halving (48)'}
+  primary=[];extended=[]
+  for r in summary['comparisons']:
+   pair=(r['left'],r['right'])
+   if pair not in contrasts:continue
+   label=labels[(r['model'],r['objective'])]
+   interval=lambda lo,hi:f"[{100*r[lo]:.2f}, {100*r[hi]:.2f}]"
+   values=[tex(label),contrasts[pair],f"{100*r['difference']:.2f}",interval('node_task_frame_low','node_task_frame_high'),interval('node_frame_fixed_task_low','node_frame_fixed_task_high'),interval('incident_seed_min','incident_seed_max')]
+   extended.append(' & '.join([tex(r['partition'])]+values)+r' \\')
+   if r['partition']=='all29':primary.append(' & '.join(values[:4]+[values[-1]])+r' \\')
+  (out/'tables/axis_confirmation_primary.tex').write_text('\n'.join(primary)+'\n')
+  (out/'tables/axis_confirmation_dependence.tex').write_text('\n'.join(extended)+'\n')
+ if spec.get('lexical_dependence'):
+  path=spec['lexical_dependence'];data['lexical_dependence']=read(path);inputs.append(path)
+  rows=[dict(training_run=c['training_run'],objective=c['objective'],**r) for c in data['lexical_dependence']['conditions'] for r in c['comparisons']]
+  csvwrite(out/'data/axis_lexical_dependence.csv',rows)
  csvwrite(out/'data/axis_compilation_costs.csv',compiled_costs)
  (out/'data/axis_transfer.json').write_text(json.dumps(data,indent=2)+'\n')
  csvwrite(out/'data/axis_task_edge_results.csv',flat);csvwrite(out/'data/axis_writer_costs.csv',costs);csvwrite(out/'data/axis_choice_calibration.csv',calibration);csvwrite(out/'data/axis_refusal.csv',refusal)
@@ -215,6 +237,11 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
   if all(m not in c['fixed_metrics'] for c in conditions):continue
   lines.append(tex(label)+' & '+' & '.join(f"{100*c['fixed_metrics'][m]['iia']:.2f} / {100*c['fixed_metrics'][m]['iia_flip']:.2f}" if m in c['fixed_metrics'] else '--' for c in conditions)+r' \\')
  (out/'tables/axis_methods_flip.tex').write_text('\n'.join(lines)+'\n')
+ lines=['Method & '+headers+r' \\',r'\midrule']
+ for m,label in METHODS.items():
+  if all(m not in c['fixed_metrics'] for c in conditions):continue
+  lines.append(tex(label)+' & '+' & '.join(f"{c['fixed_metrics'][m]['source_kl']:.5f}" if 'source_kl' in c['fixed_metrics'].get(m,{}) else '--' for c in conditions)+r' \\')
+ (out/'tables/axis_source_fidelity.tex').write_text('\n'.join(lines)+'\n')
  table('axis_selectors.tex',SELECTORS,lambda c,k:c['selector_metrics'].get(k,{}).get('top1_iia'))
  lines=[]
  for c in conditions:

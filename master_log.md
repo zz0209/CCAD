@@ -6226,3 +6226,16 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 证据、实现和当前资源：fourth_pythia_edge/selection_summary.json与PROGRESS_SUMMARY.json完整保留22方法IIA/KL、所有预算/选择计数、原始hash和运行时间；13个冻结源码hash未变，无新拟合/方法/query/候选/阈值/预算调整。最后run FINAL3_R21_pythia_original29_test_s5_t1_v1_20260909于2026-09-09T19:37:51.519591Z启动，当前物化406/435，快照fourth_pythia_edge/RUNTIME_SNAPSHOT.json。继续原r004/RTX5070Ti/shared wrapper，无新增GPU作业、安装、下载、重训或付费。前三加本run实测wall43.49/43.38/45.39/46.13分钟。
 
 调度和收尾：19:43:34Z最后run已运行342.65秒，按前四wall中位数估计剩余38.73分钟，操作范围35–45分钟，非置信区间。ccad原位暂调20分钟，实际更新2026-09-09T19:43:39.683000+00:00，回读确认ACTIVE/原对话/prompt一致；约2026-09-09T20:03Z复查、剩余≤20分钟恢复5分钟，最终分析/改稿/交付期间维持短间隔。旧tracker和automation逐字归档archive/research_workflow_20260909/r21_fourth_pythia_entry_20260909T194334Z/manifest.json。唯一paper/main.pdf22页SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c仍明确interim，九run新结果已有同轮证据；最后run后执行既定分条件五节点/任务/frame主统计及另列lexical敏感性、统一正文图表和证据索引、最终paper-only重建和全稿视觉核查、完整新ZIP与日志，交付完成再写R21 COMPLETE、计3/3并原位暂停，不新增轮次。
+
+
+## FINAL_THREE_R21 PROGRESS — final-run timing and integrated evidence preparation
+
+Actual write UTC: 2026-09-09T20:13:35Z. Round ID: FINAL_THREE_R21; continuation of the START at2026-09-09T09:43:22Z, not another round.
+
+The last frozen Pythia run is healthy; its latest complete query event is2026-09-09T20:12:55.340464+00:00. At this snapshot it has20/29 complete queries and the suite has426/435. Nine full runs remain PASS. No new complete-condition scientific result is asserted. The4previous runs provide same-task timing medians; adjusted by the current median speed ratio1.039, remaining query work is estimated at10.3minutes, excluding final artifact overhead. The actual query and timing records are in `artifacts/final_three_research_20260909/r21_confirmation/LAST_RUN_ESTIMATE.json`.
+
+The original ccad automation was updated in place from20to5minutes at the verified update time2026-09-09T20:09:56.424000+00:00, retaining its target, prompt and ACTIVE status. `FINAL_INTEGRATION_PREPARATION.json` verifies all13frozen experiment source hashes. Snapshot archive `archive/research_workflow_20260909/r21_before_complete_confirmation_paper_20260909T201142Z/manifest.json` preserves exact current manuscript/delivery/source bytes before final integration.
+
+The paper exporter now accepts the already planned separate-model/objective dependence report and additional lexical sensitivity and emits the complete22-method source-KL table. This is artifact plumbing, not a method change or scientific improvement. Python syntax and git diff whitespace checks pass; end-to-end export awaits the actual ten-run summary. GPU-0 remains held by the existing final run with a valid lease; no new GPU task, download or experiment was started. Human/agent effective work duration is unknown; this bounded preparation began after the20:09:07Z heartbeat and is not counted as another research unit.
+
+Next: all10PASS -> frozen node/task/frame summaries and separate lexical sensitivity -> complete main-paper results, figures and evidence index -> final reproduction/package verification -> R21COMPLETE, then3/3and original automation pause. Previous negative gaps, all budgets and historical packages remain.
