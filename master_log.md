@@ -6144,3 +6144,12 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 实际变更与验证：通过automation_update原位将现有ccad保持ACTIVE并改为20分钟，绑定仍为当前对话01a06e15-b222-7b21-a8cd-eb058a3159e5。实际配置更新时间2026-09-09T16:50:37.812000+00:00，文件回读核对间隔/状态/归属和prompt一致。下一次复查估计约2026-09-09T17:10Z，届时若预计剩余不超过20分钟、已完成、发生故障或需要主动分析即恢复5分钟。AGENTS.md和configs/CCAD_AUTOMATION_PROMPT.md只写持久的自适应原则，当前间隔/估计/恢复点仅在tracker；旧三入口及原automation配置逐字归档archive/research_workflow_20260909/adaptive_heartbeat_20260909T165030Z/manifest.json，receipt为artifacts/final_three_research_20260909/r21_confirmation/ADAPTIVE_HEARTBEAT_RECEIPT.json。没有创建重复automation、转交执行、暂停或中断GPU。
 
 成本与下一步：只进行几秒文本读取和时间估计、规则编辑及原位工具更新；主动总时长未单独计量，未知，运行等待不计研究。当前paper/main.pdf与实验代码保持原样，本调整不声称推进核心贡献。下次按上述估计检查当前run，接近完成恢复5分钟并完成结果/稿件/完整交付；原三轮限额和达到限额后的原位暂停安排均保留。
+
+
+### FINAL_THREE_R21 PROGRESS — restore short interval near Pythia completion
+
+实际写入UTC：2026-09-09T17:14:48Z。round_id：FINAL_THREE_R21，仍2/3。本次是同一长实验的调度复查，没有新增完整科学结果或研究轮。2026-09-09T17:13:31.530617Z，Pythia第一方向完成21/29，整套311/435。按当前21项query耗时相对GPT2同任务五方向中位耗时的比率，剩余参考537.61秒、中位倍率1.01892，预计剩余9.13分钟；观测倍率范围对应7.86–11.56分钟。此为近结束调度估计，不是统计置信区间或完成承诺。
+
+实际动作：满足tracker所记剩余≤20分钟恢复条件，通过automation_update将原ccad恢复5分钟；配置实际更新时间2026-09-09T17:14:03.671000+00:00，回读确认ACTIVE、原对话归属、长期prompt一致。旧tracker和原20分钟配置逐字归档archive/research_workflow_20260909/heartbeat_restore_20260909T171356Z/manifest.json，验证记录artifacts/final_three_research_20260909/r21_confirmation/HEARTBEAT_RESTORED_20260909T1713Z.json。未改候选/配置/冻结源码/数据，未停止或新起GPU任务，未创建其他loop。只读分析几秒，主动总时长未计量，未知，等待不充作研究。
+
+下一步：按5分钟节奏核对当前run完成，形成首个完整Pythia真实test方向的结果判断和留痕，随后按下一长run重新估时；R21整套确认、统一改稿和最终包仍继续，达到三轮交付完成后再原位暂停。当前论文与科学结论未因调度改变。
