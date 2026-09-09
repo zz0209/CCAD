@@ -189,6 +189,14 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
   for method in order:
    lines.append(tex(METHODS[method])+' & '+' & '.join(f"{100*c['fixed_iia'][method]:.2f}" for c in interim['conditions'])+r' \\')
   (out/'tables/axis_interim_confirmation.tex').write_text('\n'.join(lines)+'\n')
+ headroom=[]
+ for item in spec.get('selection_headroom',[]):
+  report=read(item['path']);inputs.append(item['path'])
+  inputs.extend(v['path'] for v in report['input_files'])
+  headroom.append(dict(label=item['label'],**report))
+ if headroom:
+  data['selection_headroom']=headroom
+  csvwrite(out/'data/axis_selection_headroom.csv',[dict(stage=c['label'],**r) for c in headroom for r in c['query_records']])
  csvwrite(out/'data/axis_compilation_costs.csv',compiled_costs)
  (out/'data/axis_transfer.json').write_text(json.dumps(data,indent=2)+'\n')
  csvwrite(out/'data/axis_task_edge_results.csv',flat);csvwrite(out/'data/axis_writer_costs.csv',costs);csvwrite(out/'data/axis_choice_calibration.csv',calibration);csvwrite(out/'data/axis_refusal.csv',refusal)

@@ -6049,3 +6049,18 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 检查与资源：实际查看全部初版PDF页面和修改后的主要结果页、首edge完整任务图及最终页。修正主文孤立尾页和附录图/重复运行说明造成的空白；不缩字体、不删结果。最后完整数据/证据重建见paper/build/20260909T114039059503Z，约10.906秒数据处理与1.313秒TeX；绘图初次约16.703秒，使用既有独立plot runtime，未重训或重放LM。933个证据索引引用与实际文件hash核对一致；13个正式冻结源码仍与freeze逐字一致。这些检查验证呈现/身份范围，不充当科学独立验证。
 
 下一步：原冻结队列继续其余edge与Pythia，等待已排队六查询方向/范数交换的真实结果。全部435查询到位后执行预先设计的分条件依赖分析，替换当前interim块为完整确认，完成论文/图表/证据与最终包，然后才写R21 COMPLETE和计数3/3并暂停原automation。当前方法改善与选择价值分开判断，主会目标不因图表完善而被宣布达成。
+
+
+### FINAL_THREE_R21 PROGRESS — finite candidate opportunity and the remaining method gap
+
+实际写入UTC：2026-09-09T12:01:23Z。round_id：FINAL_THREE_R21，仍在进行，完成计数保持2/3。延续既有R21 START，不另开研究轮。此次heartbeat触发时间为2026-09-09T11:51:30.151Z，不能冒充实际有效工作开始。可证实的分析事件为2026-09-09T11:55:18.037053+00:00至2026-09-09T11:55:19.175896+00:00；有效研究工作总时长和非计算等待时间未单独计量，明确未知。正式suite当前已完成查询88/435，首edge PASS、第二edge继续；完整计数与当前PDF身份见r21_confirmation/MENU_HEADROOM_PAPER_PROGRESS.json。
+
+选择理由与规划：自然筛选反复选择一个固定候选后，关键问题是现有候选是否仍存在足以改变实用性判断的可选择机会。直接读取首个完整58-query测试单元的原始数据，分开计算冻结候选菜单的逐query事后最大值、固定compiled方法、实际保存的各预算选择，以及shortlist和refinement误差。没有拟合新selector、改变候选、选预算或调用新的测试模型。这个诊断直接决定应该继续改选择分数还是改候选方法，不将诊断本身当母问题突破。
+
+实际科学结果：在16个原生候选中，TopK观察到的事后最大IIA为67.0000%，固定compiled为66.6552%，剩余0.3448个百分点；Matryoshka为67.8621%对67.8276%，仅剩0.03448个百分点。固定方法在26/29与28/29任务达到观察最大值，包含平局。四个query/objective细胞存在更好候选，全部保留在queries.csv；其中三个不同任务，不误写成四个独立任务或seed。即便用测试答案做这种不允许部署的选择，该菜单与匹配信息的unrestricted双方向仍差0.5172/0.3448个百分点，与不同源操作类的raw DAS仍差7.1034/6.2414个百分点。两类raw参考不混为相同预算。因而这批样本的主要剩余raw差距无法由query级更换selector消除，下一步仍是当前冻结方法跨条件确认和既有开发方向/能量控制；没有据此新增研究轮或重新解释为主会目标已达成。
+
+选择误差细分：保存全部24/48/96预算。以48为完整报告中的一个可读例子，source筛选TopK/Matryoshka的shortlist regret为0.03448/0.9310点，refinement regret为0.1724/0.03448点。自然筛选始终返回固定compiled。恒等式oracle-selected=(oracle-shortlist maximum)+(shortlist maximum-selected)仅解释已观察的菜单级选择；不是新理论、总体置信上界、未来任务承诺或逐测试样本自适应策略的上界。所有任务/共享seed依赖保留，整套预先冻结统计尚未运行。
+
+产物与检查：新增scripts/summarize_selection_headroom.py，直接流式重算原始127600条method记录的每query/每method IIA，与保存结果全部一致；分析wall 1.138847秒，process CPU 0.781250秒。原始58-query分母不变。输出first_completed_edge/headroom/SUMMARY.json、queries.csv、policies.csv，包含所有候选及选择分解；其输入身份及源码hash在SUMMARY。正文5.3现在明确候选机会与raw缺口，附录C.4给实际最大值、命中数与分解，paper/data/axis_selection_headroom.csv和EVIDENCE_INDEX纳入证据链。旧稿/相关源/入口逐字归档见MENU_HEADROOM_PAPER_PROGRESS.json。当前唯一paper/main.pdf为22页（8正文/1引用/13附录），SHA256 99cd28275c9f19b7594f3b154e03768bd724aeba5455f18d2e3381db1d49db4a。最初新增文字导致24页和孤立尾段，已在保留完整数据/方法的前提下精简重复发展叙述，所有构建日志保留；实际查看新的正文结果页、页8、附录页19和末页22，排版清楚。
+
+实际资源与下一步：沿用既有r004轻量原始数据分析及独立plot/TeX环境；本次无新GPU作业/训练/外部资源/安装。最后数据与TeX构建分别约11.688秒和1.312秒，图未变化故复用既有图。现有Fontconfig配置提示仍出现，但没有缺失字形/引用/overfull，PDF实际可读；不是科学验证。1136个引用的实际hash通过，全部13个冻结源码保持相同。既有GPU套件继续、energy-control manager session11686仍在等待，无控制结果。automation实际核对ACTIVE、5分钟、target当前对话；不新增或暂停loop。下一步等待十个run与控制实际完成，按已冻结依赖单位统计完整结果，替换interim并交付最终包后才COMPLETE与3/3。
