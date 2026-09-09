@@ -181,6 +181,14 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
   (out/'tables/axis_energy_control.tex').write_text('\n'.join(lines)+'\n')
   csvwrite(out/'data/axis_energy_control.csv',[dict(stage=c['label'],**r) for c in energy_controls for r in c['cells']])
  data=dict(stage=spec['stage'],conditions=conditions,method_labels=METHODS,selector_labels=SELECTORS,rows=flat,writer_costs=costs,compiled_costs=compiled_costs,calibration=calibration,refusal=refusal,training=training,development_pilot=pilot,objective_comparisons=objective_comparisons,energy_controls=energy_controls,input_summary_paths=inputs,scope=spec['scope'])
+ if spec.get('interim_confirmation_data'):
+  path=spec['interim_confirmation_data'];interim=read(path);inputs.append(path)
+  inputs.extend(interim['input_summary_paths']);data['interim_confirmation']=interim
+  order=['source','native_shared_axis','compiled_shared_axis','compiled_functional_axis','raw_signed_distill','raw_das']
+  lines=['Method & '+' & '.join(tex(c['label']) for c in interim['conditions'])+r' \\',r'\midrule']
+  for method in order:
+   lines.append(tex(METHODS[method])+' & '+' & '.join(f"{100*c['fixed_iia'][method]:.2f}" for c in interim['conditions'])+r' \\')
+  (out/'tables/axis_interim_confirmation.tex').write_text('\n'.join(lines)+'\n')
  csvwrite(out/'data/axis_compilation_costs.csv',compiled_costs)
  (out/'data/axis_transfer.json').write_text(json.dumps(data,indent=2)+'\n')
  csvwrite(out/'data/axis_task_edge_results.csv',flat);csvwrite(out/'data/axis_writer_costs.csv',costs);csvwrite(out/'data/axis_choice_calibration.csv',calibration);csvwrite(out/'data/axis_refusal.csv',refusal)
@@ -240,25 +248,7 @@ def plot(data,save):
  handles=[Line2D([],[],color=GREEN,marker='o',ms=3,lw=.7,label='Shared-axis native'),Line2D([],[],color=GREY,marker='o',ms=3,mfc='white',lw=0,label='Actual re-encoding'),Line2D([],[],color=INK,marker='|',ms=6,lw=0,label='Raw DAS-style')]
  fig.legend(handles=handles,loc='upper center',bbox_to_anchor=(.57,.98),ncol=3,frameon=False,fontsize=8)
  save(fig,'axis_all_tasks')
- fig,axs=plt.subplots(1,2,figsize=(7,3.1));fig.subplots_adjust(left=.08,right=.985,bottom=.33,top=.87,wspace=.29)
- colors={'source_screen':GREEN,'direct_balanced':INK,'direct_halving':PURPLE,'cosine_screen':GREY}
- labels={'source_screen':'Source screen','direct_balanced':'Balanced direct','direct_halving':'Direct halving','cosine_screen':'Cosine screen'}
- budgets=sorted(set.intersection(*(set(c['budget_metrics']) for c in conditions)),key=int)
- for off,(p,col) in enumerate(colors.items()):
-  y=[100*mean(c['budget_metrics'][b][p] for c in conditions) for b in budgets]
-  axs[0].plot(range(len(budgets)),y,color=col,marker=['o','s','^','D'][off],ms=3.5,lw=.9,label=labels[p])
- axs[0].set(xticks=range(len(budgets)),xticklabels=budgets,xlabel='Declared native-trial budget',ylabel='Selected IIA (%)');axs[0].grid(axis='y',color='#eeeeee',lw=.5);axs[0].set_title('(a) Candidate choice at fixed accounting budget',loc='left',fontsize=8)
- styles=[('source_endpoint','Source endpoint',GREEN,'o'),('finite_margin','Direct trials',INK,'s'),('cosine','Cosine',GREY,'^'),('natural_mse','Natural error',PURPLE,'D')]
- for j,(s,label,col,marker) in enumerate(styles):
-  for i,c in enumerate(conditions):
-   m=c['selector_metrics'][s];y=i+(j-1.5)*.16
-   axs[1].plot([100*m['top1_iia'],100*m['tie_uniform_top1_iia']],[y,y],color=col,lw=.8)
-   axs[1].plot(100*m['top1_iia'],y,marker=marker,color=col,ms=3.5)
-   axs[1].plot(100*m['tie_uniform_top1_iia'],y,marker=marker,mfc='white',mec=col,mew=.8,ms=3.5)
- axs[1].set(yticks=range(len(conditions)),yticklabels=[c['label'] for c in conditions],ylim=(len(conditions)-.4,-.6),xlabel='Selected IIA (%)');axs[1].tick_params(axis='y',labelsize=7);axs[1].grid(axis='x',color='#eeeeee',lw=.5);axs[1].set_title('(b) Filled: fixed ties; open: tie average',loc='left',fontsize=8)
- axs[0].legend(frameon=False,fontsize=7,ncol=2,loc='upper center',bbox_to_anchor=(.5,-.27))
- axs[1].legend(handles=[Line2D([],[],color=c,marker=m,lw=0,ms=3,label=l) for _,l,c,m in styles],frameon=False,fontsize=7,ncol=2,loc='upper center',bbox_to_anchor=(.5,-.27))
- save(fig,'axis_selection')
+ plot_selection(data,save)
  fig,axs=plt.subplots(2,len(conditions),figsize=(7,4.4),squeeze=False);fig.subplots_adjust(left=.075,right=.985,bottom=.13,top=.9,wspace=.33,hspace=.4)
  for j,c in enumerate(conditions):
   for s,label,col,marker in [('source_endpoint','Source endpoint',GREEN,'o'),('base_linear','Base linear',PURPLE,'D'),('finite_margin','Direct trials',INK,'s')]:
@@ -273,6 +263,61 @@ def plot(data,save):
  save(fig,'axis_calibration')
  if all('compiled_functional_axis' in c['fixed_iia'] for c in conditions):
   plot_compiled(data,save)
+ if data.get('interim_confirmation'):
+  interim_save=lambda fig,name:save(fig,'interim_'+name)
+  plot_compiled(data['interim_confirmation'],interim_save)
+  plot_selection(data['interim_confirmation'],interim_save)
+
+
+def plot_selection(data,save):
+ """Keep budget decisions conditional on each model/SAE, with a fixed method."""
+ import matplotlib.pyplot as plt
+ from matplotlib.lines import Line2D
+ GREEN='#286956';PURPLE='#785481';INK='#262626';GREY='#777777'
+ conditions=data['conditions'];budgets=sorted(set.intersection(*(set(c['budget_metrics']) for c in conditions)),key=int)
+ styles=[('source_screen','Source screen',GREEN,'o'),('direct_balanced','Balanced direct',INK,'s'),
+         ('direct_halving','Direct halving',PURPLE,'^'),('natural_screen','Natural screen',GREY,'x')]
+ compiled=all('compiled_functional_axis' in c['fixed_iia'] for c in conditions)
+ fixed='compiled_functional_axis' if compiled else 'native_shared_axis'
+ fixed_label='Fixed output-fitted native' if compiled else 'Fixed shared-axis native'
+ fig,axs=plt.subplots(1,len(conditions),figsize=(7,2.8),squeeze=False,sharex=True,sharey=True)
+ fig.subplots_adjust(left=.10,right=.99,bottom=.23,top=.74,wspace=.10)
+ all_values=[]
+ for ax,c in zip(axs[0],conditions):
+  reference=100*c['fixed_iia'][fixed];all_values.append(reference)
+  ax.axvline(reference,color=GREY,lw=.75,ls=(0,(3,2)),zorder=1)
+  for j,(policy,label,col,marker) in enumerate(styles):
+   x=[100*c['budget_metrics'][b][policy] for b in budgets];all_values.extend(x)
+   y=np.arange(len(budgets))+(j-1.5)*.15
+   ax.scatter(x,y,s=21 if marker=='x' else 16,marker=marker,color=col,linewidths=.8,zorder=3)
+  for row in np.arange(len(budgets))+.5:ax.axhline(row,color='#eeeeee',lw=.45,zorder=0)
+  ax.set(yticks=range(len(budgets)),yticklabels=budgets,ylim=(len(budgets)-.48,-.5),xlabel='Selected IIA (%)')
+  ax.set_title(c['label'],loc='left',fontsize=8.5);ax.tick_params(axis='y',length=0)
+  ax.grid(axis='x',color='#eeeeee',lw=.45)
+ lo=5*np.floor((min(all_values)-1)/5);hi=5*np.ceil((max(all_values)+1)/5)
+ for ax in axs[0]:ax.set_xlim(max(0,lo),min(100,hi))
+ axs[0,0].set_ylabel('Native-trial allowance')
+ handles=[Line2D([],[],marker=marker,color=col,lw=0,ms=4,label=label) for _,label,col,marker in styles]
+ handles.append(Line2D([],[],color=GREY,lw=.75,ls=(0,(3,2)),label=fixed_label))
+ fig.legend(handles=handles,frameon=False,ncol=3,loc='upper center',bbox_to_anchor=(.54,1),fontsize=7.8)
+ save(fig,'axis_selection')
+ # Unrestricted full-score ties answer a different question from budgeted
+ # decisions, so retain their plot separately with its own sample counts.
+ fig,ax=plt.subplots(figsize=(7,2.35));fig.subplots_adjust(left=.20,right=.99,bottom=.26,top=.77)
+ tie_styles=[('source_endpoint','Source endpoint',GREEN,'o'),('finite_margin','Direct trials',INK,'s'),
+             ('cosine','Cosine',GREY,'^'),('natural_mse','Natural error',PURPLE,'D')]
+ for j,(selector,label,col,marker) in enumerate(tie_styles):
+  for i,c in enumerate(conditions):
+   values=c['selector_metrics'][selector];y=i+(j-1.5)*.16
+   ax.plot([100*values['top1_iia'],100*values['tie_uniform_top1_iia']],[y,y],color=col,lw=.8)
+   ax.plot(100*values['top1_iia'],y,marker=marker,color=col,ms=3.5)
+   ax.plot(100*values['tie_uniform_top1_iia'],y,marker=marker,mfc='white',mec=col,mew=.8,ms=3.5)
+ ax.set(yticks=range(len(conditions)),yticklabels=[c['label'] for c in conditions],
+        ylim=(len(conditions)-.45,-.5),xlabel='Selected IIA (%); filled: fixed ties, open: tie average')
+ ax.tick_params(axis='y',length=0,labelsize=8);ax.grid(axis='x',color='#eeeeee',lw=.5)
+ fig.legend(handles=[Line2D([],[],color=col,marker=marker,lw=0,ms=3,label=label) for _,label,col,marker in tie_styles],
+            frameon=False,fontsize=8,ncol=4,loc='upper center',bbox_to_anchor=(.57,1))
+ save(fig,'axis_selection_ties')
 
 
 def plot_compiled(data,save):

@@ -6036,3 +6036,16 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 稿件与交付：当前唯一paper/main.pdf仍为20页的现有稿，没有提前写入未完成control结果。paper/guide修改前5个文件逐字保存于archive/research_workflow_20260909/r21_before_energy_explanation_20260909T110854Z/manifest.json。REPRO_FINAL3增加准确控制运行步骤；axis_paper提供全四条件数据表出口，尚未启用到当前稿。独立test首edge的全部描述量与来源hash见r21_confirmation/first_completed_edge/PROGRESS_SUMMARY.json及selection_summary.json，原run未修改，原R20与失败证据保留。
 
 下一步：同一R21继续剩余九个正式run和已排队的单项开发机制对照；完成后按冻结统计单位合并三条件、检验相同候选预算选择价值，再将全部结果、数学解释、正式图表及复现材料组成当前论文和最终ZIP。此处不追加新轮、不增加拟合、不改变test配置；结果不足时如实作完整目标判断。
+
+
+### FINAL_THREE_R21 PROGRESS — candidate quality, selector value and the current paper
+
+实际写入UTC：2026-09-09T11:43:04Z。round_id：FINAL_THREE_R21，仍在进行，计数2/3。已完成第一edge的实验事件时间沿其原run记录；正在执行第二edge。当前已物化完成查询数73/435，明细见r21_confirmation/FIRST_CONFIRMATION_PAPER_PROGRESS.json。本次有效研究工作精确时长未知；没有新增GPU任务，原套件计算与开发方向/范数对照排队分别记录，不把等待或改稿计成新研究轮。
+
+选择理由与实际科学判断：第一完整独立edge已表明候选consumer修复的正信号，本单元检验其是否被误归因于selector。读取全部58项保存的预算轨迹后，natural-screen在24/48/96每个预算均58/58选择同一个compiled_functional_axis；TopK的29个shortlist均为functional compiled、geometric compiled、random support，三者共享原始读出。Matryoshka的25个同此，4个以scalar-calibrated替代random。其后直接试验每候选8/16/32条校准样本才选出固定方法。因此高选择后IIA不能证明natural read score能区分native writer。完整分数中的natural top1为TopK66.6552%/Matry67.1379%，同分均匀平均则45.9770%/49.0000%；同分数处理实质改变判断。该分析没有改候选、没有根据test筛方法，也没有增加独立样本。
+
+实际产出：axis_paper改为各模型/SAE条件单独展示24/48/96预算，并加入不按query选择的固定方法参考；full-score tie图独立于预算图。新增首edge所有29任务的功能差图，同时显示dynamic native和匹配信息raw signed差值，保留唯一负差和全部平局。当前paper/main.pdf已纳入first-edge interim结果、完整图表和选择解释；不是整个五seed确认结果。稿件为22页，8正文/1引用/13附录，PDF SHA256 5263a787600362154005f1c2667d48ed70b1912c79a22364eb22d3f4af37d61f。当前唯一可编辑源已同步；旧20页稿和6份修改前源码逐字保存在archive/research_workflow_20260909/r21_before_first_confirmation_paper_20260909T113053Z/manifest.json。当前交付入口修改前的字节亦单独归档。
+
+检查与资源：实际查看全部初版PDF页面和修改后的主要结果页、首edge完整任务图及最终页。修正主文孤立尾页和附录图/重复运行说明造成的空白；不缩字体、不删结果。最后完整数据/证据重建见paper/build/20260909T114039059503Z，约10.906秒数据处理与1.313秒TeX；绘图初次约16.703秒，使用既有独立plot runtime，未重训或重放LM。933个证据索引引用与实际文件hash核对一致；13个正式冻结源码仍与freeze逐字一致。这些检查验证呈现/身份范围，不充当科学独立验证。
+
+下一步：原冻结队列继续其余edge与Pythia，等待已排队六查询方向/范数交换的真实结果。全部435查询到位后执行预先设计的分条件依赖分析，替换当前interim块为完整确认，完成论文/图表/证据与最终包，然后才写R21 COMPLETE和计数3/3并暂停原automation。当前方法改善与选择价值分开判断，主会目标不因图表完善而被宣布达成。
