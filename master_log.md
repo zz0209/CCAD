@@ -6118,3 +6118,18 @@ Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the 
 科学判断与边界：第四方向继续支持固定native consumer相对动态实现的功能提升，也继续保留强raw差距和未建立的选择价值。四个edge共享SAE节点与29测试任务，不能算四次独立重复或替代完整五节点统计。开发机制对照已完成并留在原开发证据层：其幅度解释IIA、方向改善KL的结论不因第四方向重复而自动获得独立验证。未改源query、方法、候选、阈值或预算，未追加GPU任务。第五方向seed15→11已启动，当前物化233/435查询；准确运行快照fourth_completed_edge/RUNTIME_SNAPSHOT.json。
 
 稿件与下一步：当前唯一paper/main.pdf22页SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c保持不变，已含最近机制对照；第四方向结果先进入同轮证据记录，完整suite后统一换正式确认主图与表。没有为一次局部更新重复编译/作图/接口测试。tracker与交付入口旧字节保存于archive/research_workflow_20260909/r21_fourth_edge_entry_20260909T152216Z/manifest.json。现有suite session18578继续剩余六run，后续沿冻结统计、全稿整合与完整ZIP收尾；实际完成后才写R21 COMPLETE、计3/3并原位暂停，不将当前稳定局部增益宣称为主会核心闭合。
+
+
+### FINAL_THREE_R21 PROGRESS — complete GPT2 cohort and Pythia transition
+
+实际写入UTC：2026-09-09T16:46:21Z。round_id：FINAL_THREE_R21，仍为2/3，未完成整轮。第五run FINAL3_R21_gpt2_original29_test_s15_t11_v1_20260909于2026-09-09T16:39:09.514539Z报告COMPLETE，PASS；driver wall5018.907726秒、process CPU4338.406250秒。队列于2026-09-09T16:39:13.201893Z转入Pythia第一方向。第五run保留29任务×两目标的58查询、127600条22方法原始记录，raw SHA256 d0e1dd9cc71de7635f2734d37b2e819bf1fa44d825f6a7ab4430c0663b63996a已实际复算一致。只读汇总工具wall3.388022秒、五方向描述分析0.372589秒；主动分析和记录总时长未单独计量，未知，GPU计算及排队不计主动研究。
+
+选择理由和第五方向结果：完成最后一个GPT2方向后整体汇总，避免只选择有利方向。第五TopK/Matryoshka compiled IIA66.6207/67.4138%，dynamic54.1034/59.5172%，分别+12.5172/+7.8966点；共53增4平1降。matched unrestricted IIA67.4483/67.9310%，raw DAS均74.1034%。第五source screen在48和96的TopK66.6552%略超固定0.0345点，Matry66.8966/66.9310%低于固定；该局部微小正差与其他预算完整保留，不能改写为所有方向都没有任何筛选正差。自然筛选全部预算均返回固定方法。
+
+完整GPT2科学结果：五个循环方向、两条件各145查询、全部原始29测试任务。TopK/Matryoshka compiled IIA66.9448/67.5379%，dynamic55.0414/58.5310%，平均提高11.9034/9.0069个百分点；TopK137增6平2降，Matry134增9平2降，共271增15平4降。matched unrestricted IIA67.7241/67.9103%，raw DAS均74.1034%，准确率差距仍为0.7793/0.3724和7.1586/6.5655点。compiled source KL为0.00729722/0.00556120，dynamic0.06182146/0.03434276，matched raw0.00582836/0.00576586；Matry compiled平均KL略低于matched raw而IIA较低，故不笼统声称raw在所有端点都更优，也不把KL优势等同语义同一性。
+
+选择使用判断：两条件source screen在48的IIA66.9172/67.0828%，仍未超过固定方法；balanced65.7655/66.7448%，halving64.9241/66.1862%。全24/48/96结果、全部22方法、每个预算的选择计数已完整导出GPT2_COHORT_DESCRIPTIVE.json。TopK自然screen每预算145/145选compiled；Matry24/48/96分别143/144/145个选compiled，剩余为calibrated，未增加准确率。观测有限native候选集逐query测试最大值的均值67.0621/67.6483%，只高于固定0.1172/0.1103点；这是事后有限菜单诊断，不是未见总体或所有对应方法的上界，不作新选择方案。当前结果更清楚地支持候选写入实现改进，仍未建立operation-aware selector的额外使用价值。
+
+证据层、实现和资源：fifth_completed_edge/PROGRESS_SUMMARY.json保留第五完整结果及全部输入hash；GPT2_COHORT_DESCRIPTIVE.json保留五个已完成summary的身份和整体统计。13个冻结代码hash现场核对均不变；未重新拟合、筛query、改方法/阈值/预算或额外申请GPU任务。五个方向共享五个SAE节点、29任务与提示，290query/objective cells不是290个独立重复，也不构成五次独立edge实验。本次为描述分析，既定完整十run的seed/task/frame统计不提前改口径；仍等Pythia五方向后执行。当前物化291/435查询，准确运行快照fifth_completed_edge/RUNTIME_SNAPSHOT.json。现有r004/RTX5070Ti与资源wrapper继续运行，无安装、下载、重训或新增付费。
+
+稿件与下一步：唯一paper/main.pdf22页SHA256 e2bd03af11af776f115316272e652e2fb90669d1e630af39202bae866972e53c保持不变，现为R20加首方向interim及六开发query机制对照；完整GPT2新数值进入同轮证据，待全suite完成统一替换正式确认主图、正文与依赖统计，不把局部稿冒充最终交付。tracker旧字节归档archive/research_workflow_20260909/r21_gpt2_cohort_entry_20260909T164621Z/manifest.json。继续现有Pythia五run，以第二模型检验相同方法，随后完整分析/改稿/ZIP及COMPLETE，再计3/3并原位暂停。没有新增轮数，现有正结果及端点tradeoff仍不足以宣布一线主会核心闭合。
