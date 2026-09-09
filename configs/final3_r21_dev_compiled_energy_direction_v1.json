@@ -1,0 +1,29 @@
+{
+  "run_id": "FINAL3_R21_dev_compiled_energy_direction_v1_20260909",
+  "round_id": "FINAL_THREE_R21",
+  "parent_run": "runs/FINAL3_R20_gpt2_axis_anchored_pilot_v4_20260909",
+  "parent_config_sha256": "3242cb70e69b0622a4c5df19f866564db747306e85ce146d1425c969b7062d3c",
+  "queries": [
+    "agr_gender_topk_s1_t2",
+    "agr_gender_matryoshka_s1_t2",
+    "npi_any_obj-relc_topk_s1_t2",
+    "npi_any_obj-relc_matryoshka_s1_t2",
+    "filler_gap_obj_topk_s1_t2",
+    "filler_gap_obj_matryoshka_s1_t2"
+  ],
+  "batch_size": 16,
+  "budget_seconds": 600,
+  "margin_replay_tolerance": 0.001,
+  "norm_match_rtol": 1e-05,
+  "audit_opened": false,
+  "evidence_level": "exposed_development_mechanism",
+  "purpose": "Separate learned edit magnitude from direction on all six existing development queries, using a deterministic norm/orientation exchange with no new fitting.",
+  "scope": "Exploratory explanation after observing R20 outcomes and after the R21 primary procedure was frozen. Only the retained R20 original dev rows are evaluated. Four variants use geometric or output-fitted orientation crossed with geometric or output-fitted norm. Positive rescaling preserves nonnegative target writes and the same 256-member cap. It does not enter or change the frozen confirmation candidate set, selection policies or parameters, and is not independent confirmation. No scalar fit or held-data tuning.",
+  "variants": {
+    "geometric_original": "geometric unit directions, original norms",
+    "geometric_learned_norm": "geometric direction rescaled to the norm of the fitted direction for each sign",
+    "functional_original_norm": "fitted direction rescaled to the original geometric norm for each sign",
+    "functional_learned_norm": "original output-fitted directions"
+  },
+  "written_at_utc": "2026-09-09T10:58:49Z"
+}

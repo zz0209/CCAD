@@ -166,7 +166,21 @@ def export(root,out,read,manifest_path='paper/axis_runs.json'):
    lines.append(' & '.join([tex(task_label(g['task'])),tex(g['objective']),f"{g['requested_hidden_rmse']:.2f} / {f['requested_hidden_rmse']:.2f}",f"{g['mean_source_kl']:.4f} / {f['mean_source_kl']:.4f}",f"{100*g['iia']:.2f} / {100*f['iia']:.2f}"])+r' \\')
   (out/'tables/axis_objective_comparison.tex').write_text('\n'.join(lines)+'\n')
   csvwrite(out/'data/axis_objective_comparison.csv',[dict(stage=c['label'],**r[m]) for c in objective_comparisons for r in c['comparisons'] for m in ['geometric','functional']])
- data=dict(stage=spec['stage'],conditions=conditions,method_labels=METHODS,selector_labels=SELECTORS,rows=flat,writer_costs=costs,compiled_costs=compiled_costs,calibration=calibration,refusal=refusal,training=training,development_pilot=pilot,objective_comparisons=objective_comparisons,input_summary_paths=inputs,scope=spec['scope'])
+ energy_controls=[]
+ for item in spec.get('energy_controls',[]):
+  comparison=read(item['path']);inputs.append(item['path'])
+  inputs.extend(v['path'].replace('\\','/') for v in comparison['inputs'])
+  energy_controls.append(dict(label=item['label'],**comparison))
+ if energy_controls:
+  order=['geometric_original','geometric_learned_norm','functional_original_norm','functional_learned_norm']
+  lines=[]
+  for c in energy_controls:
+   for comparison in c['comparisons']:
+    cells={r['method']:r for r in c['cells'] if r['query']==comparison['query']}
+    lines.append(' & '.join([tex(task_label(comparison['task'])),tex(comparison['objective'])]+[f"{100*cells[m]['iia']:.2f}" for m in order])+r' \\')
+  (out/'tables/axis_energy_control.tex').write_text('\n'.join(lines)+'\n')
+  csvwrite(out/'data/axis_energy_control.csv',[dict(stage=c['label'],**r) for c in energy_controls for r in c['cells']])
+ data=dict(stage=spec['stage'],conditions=conditions,method_labels=METHODS,selector_labels=SELECTORS,rows=flat,writer_costs=costs,compiled_costs=compiled_costs,calibration=calibration,refusal=refusal,training=training,development_pilot=pilot,objective_comparisons=objective_comparisons,energy_controls=energy_controls,input_summary_paths=inputs,scope=spec['scope'])
  csvwrite(out/'data/axis_compilation_costs.csv',compiled_costs)
  (out/'data/axis_transfer.json').write_text(json.dumps(data,indent=2)+'\n')
  csvwrite(out/'data/axis_task_edge_results.csv',flat);csvwrite(out/'data/axis_writer_costs.csv',costs);csvwrite(out/'data/axis_choice_calibration.csv',calibration);csvwrite(out/'data/axis_refusal.csv',refusal)

@@ -6012,3 +6012,27 @@ Raw source:FINAL3_R20_gpt2_axis_anchored_pilot_v4_20260909, complete68held-dev r
 Current paper adds the six paired outcomes, the exact source/output-reference distinction, and a self-contained derivation of the standard local softmax-KL Hessian. It is explicitly not a novel theorem, a uniform bound on large Transformer edits or a proof that distance alone identifies semantic parts. Relevant paragraph is in main5.2, complete values and derivation inappendixB.3. The prior manuscript/source bytes were archived atr21_before_objective_explanation_20260909T103809Z. Full data/figure/LaTeX build succeeded; all21initially renderedpages were viewed, then the final example was kept with its heading on the preceding page. Final20-page PDF SHAa246f9a989aaad73af98cf9fade1d19b9d4155bd54d26681b522a4b3aac17816;8main/1references/11appendix, no undefined/Overfull warning, final changedpage20actuallyviewed. Final buildreceiptpaper/build/20260909T104137855216Z/BUILD_RECEIPT.json. A rendering-only negative page-index error was fixed by using the explicit final index.
 
 All13 frozen scientific source hashes still match; no confirmation rule or output-guided method change. New code/data/PDF identities are inOBJECTIVE_EXPLANATION_PROGRESS.json. Active attention versus waiting is unknown and not inferred from this record. Next: continue the exact queue, apply the declared condition/seed/task/frame analyses to the complete test suite, then integrate final outcomes, package and close onlyR21.
+
+
+## FINAL_THREE_R21 PROGRESS — plan the edit-energy control
+
+round_id: FINAL_THREE_R21. Actual written_at_utc: 2026-09-09T10:58:49Z. This remains the existing final research round. The formal ten-run test queue is still running, with its code, candidates and settings unchanged. Resource status at2026-09-09T10:57:41Z confirms its GPU lease is healthy; other resources were free. No lease was removed or transferred.
+
+A focused read of the six retained development operators identifies an unresolved explanation: output fitting changes both norm and direction. Best parallel scale factors range about1.08–1.47; nonparallel fractions range about0.19–0.45. Those vectors alone do not show whether direction adaptation is functionally necessary. The next bounded control crosses geometric/fitted orientation with geometric/fitted norm, producing four feasible nonnegative writes at the same scalar and member allowance. All six existing development queries are included. Norms come only from the already trained operators; there is no new scalar fitting, calibration selection or test tuning.
+
+Configurationconfigs/final3_r21_dev_compiled_energy_direction_v1.json fixes the two-by-two comparison before its outputs are computed. This is a post-exposure explanatory control, not another confirmation cohort and not an addition to the frozen16-candidate inventory. It directly checks whether simple energy amplification explains the observed improvement. Plan: reuse the pinned GPT2 model, four saved SAE checkpoints, source axes and original panel; replay original methods while evaluating the two rescaled controls. Budget: at most600seconds of managed execution once the GPU lease is acquired, expected a few minutes of inference, below6GBVRAM and100MBnew output; waiting is separate. No new training, download, installation or paid resource. Driver and execution are pending; the existing queue continues. Results will support or weaken the direction-adaptation explanation without changing the R21 primary analysis or adding a round.
+
+
+### FINAL_THREE_R21 PROGRESS — first complete original-test edge and norm control queue
+
+实际写入UTC：2026-09-09T11:14:42Z。round_id：FINAL_THREE_R21，仍进行中，完成计数仍为2/3。首个正式run的事件开始时间为其manifest记录，结束时间为2026-09-09T11:10:59.677556+00:00；该run实际wall为5085.886268秒，process CPU为4389.562500秒。这里的run wall包含脚本工作，不能冒充纯GPU kernel时间。当前增量实现/分析的精确有效工作时长未知；资源等待单列，不计研究完成。
+
+选题理由和判断：先检查独立训练seed及原始test是否保留R20的consumer修复信号，同时用固定的方向/幅度交换解释其潜在混杂。GPT2 seed11→12的TopK与Matryoshka各29项、每项100条原始test已全部结束，总58项、127600行方法输出。TopK动态原生写入IIA 55.6552%→输出拟合固定写入66.6552%；Matryoshka为57.9310%→67.8276%。两个条件分别28胜/0平/1负与28胜/1平/0负。匹配信息的raw signed拟合为67.5172%和68.2069%，raw DAS均74.1034%；这些差距保留，不能由局部改善宣布核心闭合或主会达标。
+
+实际选择判断：预算48的source-screen与direct-halving，TopK为66.7931%与63.8621%，Matryoshka为66.8966%与66.5517%；但自然分数筛选分别66.6552%与67.8276%，固定拟合写入本身已经很强。24/48/96全部条件原样保留，不能挑预算或忽略固定方法，选择价值尚不能据此宣布成立。计费是冻结的构造/forward等价proxy，不是等墙钟时间。
+
+实际动作：scripts/run_compiled_energy_control.py与summarize_compiled_energy.py完成；新runner复用原始Pair/Batch和锁定模型/SAE，重放源/原始两种writer、逐样本匹配范数并保存全部四条件。通过原共享管理器排队，session11686，尚未取得GPU且尚无控制结果；预算为获租后600秒，等待不算计算或科学产出。主队列session18578已自动开始第二edge seed12→13，不中断主任务。全部13个已冻结源码hash仍一致。轻量新源码AST/CLI检查通过；真实control结果仍待执行，不把这些检查当科学验证。
+
+稿件与交付：当前唯一paper/main.pdf仍为20页的现有稿，没有提前写入未完成control结果。paper/guide修改前5个文件逐字保存于archive/research_workflow_20260909/r21_before_energy_explanation_20260909T110854Z/manifest.json。REPRO_FINAL3增加准确控制运行步骤；axis_paper提供全四条件数据表出口，尚未启用到当前稿。独立test首edge的全部描述量与来源hash见r21_confirmation/first_completed_edge/PROGRESS_SUMMARY.json及selection_summary.json，原run未修改，原R20与失败证据保留。
+
+下一步：同一R21继续剩余九个正式run和已排队的单项开发机制对照；完成后按冻结统计单位合并三条件、检验相同候选预算选择价值，再将全部结果、数学解释、正式图表及复现材料组成当前论文和最终ZIP。此处不追加新轮、不增加拟合、不改变test配置；结果不足时如实作完整目标判断。
