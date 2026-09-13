@@ -1,0 +1,139 @@
+{
+  "run_id": "FINAL_VALUE_R30_pythia_functional_queries_v1_20260913",
+  "run_parent": "FINAL_VALUE_R30",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Transfer functional member relations and unfitted unions to Pythia and new grammar functions",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk"
+  ],
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_revision": "generator-blimp-7b93dccc-seed300913",
+  "budget": "Target consumer upper budget3000driver seconds on existing5070Ti after the source bank. Four member allowances and seven rankings; all regions/unions for shared,cached,mean,scalar. Combined source+consumer budget5400seconds, revised only from measured throughput.",
+  "budget_seconds": 3000,
+  "max_length": 24,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "data_manifest": "artifacts/final_value_five_20260913/r30_fresh_grammar/DATA_MANIFEST.json",
+  "scope": "Fresh samples source0–63, calibration64–79, evaluation80–207 per task. Pythia1B layer7 with five controlled same-training Sparsify TopK SAEs; each target uses the other four source paths. All full-dictionary rankings precede calibration; singleton choices, all exact membership regions and all pair/triple unions precede evaluation. Seven singleton proposals share4allowances8/16/32/64 and0/4/16validation budgets. Shared/cached/mean/scalar structural requests are all retained. The primary mean pair-union benefit is frozen before new outcomes. Generated grammar labels are from original author code, not newly human-validated. Paired sentence inference conditions on the entire dependent SAE network and calibration choices.",
+  "written_at_utc": "2026-09-13T20:10:15Z",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "determiner_noun_agreement_1",
+    "irregular_past_participle_verbs",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 16384,
+  "target_members_per_component": 64,
+  "fit_steps": 800,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "determiner": [
+      1,
+      0,
+      0
+    ],
+    "past_form": [
+      0,
+      1,
+      0
+    ],
+    "anaphor_gender": [
+      0,
+      0,
+      1
+    ]
+  },
+  "methods": [
+    "shared_path_full",
+    "mean_path_full",
+    "shared_scalar_full",
+    "wrong_shared_path_full",
+    "single_path_full",
+    "clean32_full",
+    "cached64_full"
+  ],
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "reuse_raw_parent": "runs/REFORM_R26_raw_regularization_controls_v1_20260913",
+  "consumer_ranges": {
+    "calibration": [
+      64,
+      80
+    ],
+    "evaluation": [
+      80,
+      208
+    ]
+  },
+  "member_allowances": [
+    8,
+    16,
+    32,
+    64
+  ],
+  "validation_pairs_per_task": [
+    0,
+    4,
+    16
+  ],
+  "path_source_range": [
+    0,
+    32
+  ],
+  "path_fit_steps": 800,
+  "path_ridge": 0.01,
+  "structure_families": [
+    "shared_path_full",
+    "cached64_full",
+    "mean_path_full",
+    "shared_scalar_full"
+  ],
+  "primary_validation_budget": 16,
+  "evidence_level": "fresh_generator_samples_in_dependent_five_sae_network",
+  "training_run": "runs/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908",
+  "checkpoint_step": 16384,
+  "sae_loader": "sparsify",
+  "reuse_consumer_parent": "runs/FINAL_VALUE_R30_pythia_source_paths_v1_20260913",
+  "path_ensemble_parent": "runs/FINAL_VALUE_R30_pythia_source_paths_v1_20260913",
+  "independent_consensus": true,
+  "leave_target_out": true,
+  "target_seeds": [
+    2,
+    3,
+    4,
+    5,
+    1
+  ],
+  "consumer_statistics_unit": "Five-SAE source/target network with target source annotation excluded. Targets share source banks. Paired inference resamples generated pairs within each fixed grammar while holding all SAE material and calibration decisions fixed.",
+  "primary_endpoint": "Equal average of all three unfitted pair-union requested-minus-collateral error rates at16calibration pairs/task. Shared path versus cached64 is primary; mean and identically aggregated scalar are predeclared controls. Singletons, all regions, triple and other validation budgets are reported."
+}

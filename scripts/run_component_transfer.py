@@ -19,6 +19,7 @@ def main():
     if cfg.get('reuse_consumer_parent'):source_files.append('scripts/functional_reuse_consumer.py')
     if cfg.get('path_midpoints') or cfg.get('path_ensemble_parent'):source_files.append('scripts/functional_path_credit.py')
     if cfg.get('independent_consensus'):source_files.append('scripts/independent_functional_consensus.py')
+    if cfg.get('source_path_export_only'):source_files.append('scripts/export_functional_source_paths.py')
     w=MultisiteWork(cfg,args.config,source_files)
     error=None
     def checked(path):return w.checked(ROOT/Path(path))
@@ -30,16 +31,28 @@ def main():
     try:
         import numpy as np,torch,transformers
         w.torch=torch;w.device=torch.device('cuda:0');torch.set_num_threads(2);torch.use_deterministic_algorithms(True);torch.set_float32_matmul_precision('highest')
-        base=ROOT/cfg['group_run'];gc=json.loads(checked(base/'config.resolved.json').read_text());ref=ROOT/gc['reference_run'];rc=json.loads(checked(ref/'config.resolved.json').read_text());tr=ROOT/rc['training_run'];tc=json.loads(checked(tr/'config.resolved.json').read_text())
-        assert json.loads(checked(base/'status.json').read_text())['status']=='PASS'
-        sys.path.append(tc['dictionary_source_dir']);sys.path.append(tc['dictionary_overlay_dir'])
-        from dictionary_learning.trainers.top_k import AutoEncoderTopK
-        from dictionary_learning.trainers.matryoshka_batch_top_k import MatryoshkaBatchTopKSAE
-        for f in ['dictionary_learning/trainers/top_k.py','dictionary_learning/trainers/matryoshka_batch_top_k.py','LICENSE']:checked(Path(tc['dictionary_source_dir'])/f)
+        if cfg.get('training_run'):
+            tr=ROOT/cfg['training_run'];tc=json.loads(checked(tr/'config.resolved.json').read_text());rc=dict(checkpoint_step=cfg['checkpoint_step'])
+            assert json.loads(checked(tr/'status.json').read_text())['status']=='PASS'
+        else:
+            base=ROOT/cfg['group_run'];gc=json.loads(checked(base/'config.resolved.json').read_text());ref=ROOT/gc['reference_run'];rc=json.loads(checked(ref/'config.resolved.json').read_text());tr=ROOT/rc['training_run'];tc=json.loads(checked(tr/'config.resolved.json').read_text())
+            assert json.loads(checked(base/'status.json').read_text())['status']=='PASS'
+        if cfg.get('sae_loader')!='sparsify':
+            sys.path.append(tc['dictionary_source_dir']);sys.path.append(tc['dictionary_overlay_dir'])
+            from dictionary_learning.trainers.top_k import AutoEncoderTopK
+            from dictionary_learning.trainers.matryoshka_batch_top_k import MatryoshkaBatchTopKSAE
+            for f in ['dictionary_learning/trainers/top_k.py','dictionary_learning/trainers/matryoshka_batch_top_k.py','LICENSE']:checked(Path(tc['dictionary_source_dir'])/f)
         for f in ['config.json','model.safetensors','tokenizer.json']:checked(Path(tc['model_local_dir'])/f)
         tokenizer=transformers.AutoTokenizer.from_pretrained(tc['model_local_dir'],local_files_only=True)
         model=transformers.AutoModelForCausalLM.from_pretrained(tc['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to(w.device);model.requires_grad_(False);model.config.use_cache=False
-        module=model.get_submodule(tc['hook_module_path']);saes={};D={}
+        module=model.get_submodule(tc['hook_module_path']);saes={};D={};dim=int(model.config.hidden_size)
+        class SparsifyTopK(torch.nn.Module):
+            def __init__(self,state,k):
+                super().__init__();self.k=k
+                for n,key in [('ew','encoder.weight'),('eb','encoder.bias'),('db','b_dec'),('dw','W_dec')]:self.register_buffer(n,state[key])
+            def encode(self,x):
+                v=torch.nn.functional.linear(x-self.db,self.ew,self.eb).relu();values,indices=v.topk(self.k,sorted=False)
+                return torch.zeros_like(v).scatter_(-1,indices,values)
         cohorts=[(tr,tc,cfg['seeds'],rc['checkpoint_step'])]
         if cfg.get('target_training_run'):
             tt=checked(Path(cfg['target_training_run'])/'config.resolved.json').parent
@@ -53,9 +66,17 @@ def main():
             snapshots=json.loads(checked(cohort/'checkpoints.json').read_text())['checkpoints']
             for obj in cfg['objectives']:
                 for seed in seeds:
-                    snap=next(s for s in snapshots if s['objective']==obj and s['seed']==seed and s['step']==step);sp=checked(snap['path']);assert sha256(sp)==snap['sha256']
+                    snap=next(s for s in snapshots if s.get('objective',obj)==obj and s['seed']==seed and s['step']==step)
+                    if cfg.get('sae_loader')=='sparsify':
+                        from safetensors.torch import load_file
+                        sp=checked(Path(snap['path'])/'sae.safetensors');assert sha256(sp)==snap['sha256']
+                        scfg=json.loads(checked(Path(snap['path'])/'cfg.json').read_text());assert scfg['activation']=='topk' and not scfg['skip_connection']
+                        ae=SparsifyTopK(load_file(str(sp),device=str(w.device)),scfg['k']);ae.eval();ae.requires_grad_(False)
+                        saes[obj,seed]=ae;D[obj,seed]=ae.dw;assert ae.dw.shape[1]==dim
+                        continue
+                    sp=checked(snap['path']);assert sha256(sp)==snap['sha256']
                     state=torch.load(sp,map_location=w.device,weights_only=True)
-                    ae=AutoEncoderTopK(1024,ct['dict_size'],ct['k']) if obj=='topk' else MatryoshkaBatchTopKSAE(1024,ct['dict_size'],ct['k'],state['group_sizes'].cpu().tolist())
+                    ae=AutoEncoderTopK(dim,ct['dict_size'],ct['k']) if obj=='topk' else MatryoshkaBatchTopKSAE(dim,ct['dict_size'],ct['k'],state['group_sizes'].cpu().tolist())
                     ae=ae.to(w.device);ae.load_state_dict(state);ae.eval();ae.requires_grad_(False);saes[obj,seed]=ae;D[obj,seed]=ae.decoder.weight.T if obj=='topk' else ae.W_dec
         sys.path.append(cfg['scipy_overlay'])
         from scipy.optimize import linear_sum_assignment
@@ -81,7 +102,7 @@ def main():
         write(w.run/'panel.json',dict(rows=panel,scope=cfg['scope']))
         manifest=json.loads((w.run/'manifest.json').read_text());manifest.update(schema_version='contrast.components.v1',mean_constants_source_split='Absolute native code deletions preserve original residual and decoder bias; no empirical centering',statistics_unit='Shared cyclic SAE seeds and original lexical pairs within fixed paradigms');write(w.run/'manifest.json',manifest)
         if cfg.get('independent_consensus'):
-            manifest['statistics_unit']='Independent target initializations conditional on the fixed five-source bank; generated sentence draws within three fixed grammars, shared across all targets and methods'
+            manifest['statistics_unit']=cfg.get('consumer_statistics_unit','Independent target initializations conditional on the fixed five-source bank; generated sentence draws within three fixed grammars, shared across all targets and methods')
             write(w.run/'manifest.json',manifest)
         w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,numpy=np.__version__,scipy=scipy.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),threads=2,model=tc['model_id'],hook=tc['hook_module_path'])
         max_hidden=0.;phases={}
@@ -95,7 +116,7 @@ def main():
                     ids[2*i+j,:len(r[key])]=torch.tensor(r[key],device=w.device);length.append(len(r[key]));positions.append(r['position'])
             idx=torch.arange(2*batch,device=w.device);pos=torch.tensor(positions,device=w.device);cache={}
             if delta is not None:
-                delta=torch.cat([delta,torch.zeros((batch-actual,1024),device=w.device)]).repeat_interleave(2,0)
+                delta=torch.cat([delta,torch.zeros((batch-actual,dim),device=w.device)]).repeat_interleave(2,0)
             def hook(m,i,out):
                 h=out[0] if isinstance(out,tuple) else out;cache['h']=h[idx,pos].detach()
                 if delta is None and not gradient:return out
@@ -112,9 +133,9 @@ def main():
                     total=(per*mask).double().sum(1).reshape(-1,2);margin=total[:,0]-total[:,1]
                     lp=logits[idx,pos].detach().double().log_softmax(-1).reshape(-1,2,logits.shape[-1])[:,0]
                     grad=None
-                    if gradient:grad=torch.autograd.grad(margin.sum(),cache['leaf'])[0][idx,pos].reshape(batch,2,1024).sum(1).detach()
+                    if gradient:grad=torch.autograd.grad(margin.sum(),cache['leaf'])[0][idx,pos].reshape(batch,2,dim).sum(1).detach()
             finally:handle.remove()
-            h=cache['h'].reshape(batch,2,1024);err=float((h[:,0]-h[:,1]).abs().max());max_hidden=max(max_hidden,err);assert err<cfg['hidden_atol'],err
+            h=cache['h'].reshape(batch,2,dim);err=float((h[:,0]-h[:,1]).abs().max());max_hidden=max(max_hidden,err);assert err<cfg['hidden_atol'],err
             w.sequence_forwards+=len(ids);w.token_forwards+=ids.numel();phases[phase]=phases.get(phase,0)+len(ids)
             return margin[:actual].detach(),h[:actual,0],lp[:actual],None if grad is None else grad[:actual]
         def capture(split,gradient=False):
@@ -171,7 +192,13 @@ def main():
         np.savez_compressed(w.run/'source_gradients.npz',hidden=select['hidden'].cpu().numpy(),gradient=select['gradient'].cpu().numpy(),clean_margin=select['clean'].cpu().numpy())
         write(w.run/'source_selection.json',dict(sources=source_meta,rule=cfg['scope']))
         write(w.run/'SOURCE_FREEZE.json',dict(written_at_utc=datetime.now(timezone.utc).isoformat(),source_sha256=sha256(w.run/'source_selection.json'),target_fit_or_intervention_outcomes_consumed=0,held_model_outcomes_consumed=0))
-        log('SOURCE_COMPONENTS_FROZEN',components=30)
+        log('SOURCE_COMPONENTS_FROZEN',components=len(cfg['objectives'])*len(cfg['seeds'])*len(cfg['source_tasks']))
+        if cfg.get('source_path_export_only'):
+            from export_functional_source_paths import export_paths
+            export_paths(cfg,w,D,sources,select,forward,write,log,budget)
+            w.checks['prefix_hidden_equality_and_replay']=max_hidden<cfg['hidden_atol']
+            w.environment.update(maximum_prefix_hidden_error=max_hidden,forwards_by_phase=phases)
+            return w.finish()
         del select
         fitdata=capture('fit');maps={};fit_meta=[]
         # A split/merge allocation verifies the actual projected solver.
@@ -199,7 +226,7 @@ def main():
                 native['assignment64'],details['assignment64']=fit(K,B,steps=cfg['fit_steps'],ridge_fraction=cfg['ridge_fraction'],allowed=allowed,capacity=True)
                 y=torch.stack([(zs*sg[:,k].double())@ds for k in range(3)],1)
                 A=x.T@x/n;A+=cfg['ridge_fraction']*A.diag().mean().clamp_min(1e-12)*torch.eye(len(tp),device=w.device,dtype=torch.float64)
-                raw=torch.linalg.solve(A,x.T@y.reshape(n,-1)/n).reshape(len(tp),3,1024);rootA=torch.linalg.cholesky(A).T;low=[]
+                raw=torch.linalg.solve(A,x.T@y.reshape(n,-1)/n).reshape(len(tp),3,dim);rootA=torch.linalg.cholesky(A).T;low=[]
                 for k in range(3):
                     _,_,vh=torch.linalg.svd(rootA@raw[:,k],full_matrices=False);low.append(raw[:,k]@vh[:2].T@vh[:2])
                 rank2=torch.stack(low,1)

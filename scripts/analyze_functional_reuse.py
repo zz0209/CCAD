@@ -48,6 +48,7 @@ def analyze(run,out):
     result=dict(run=str(run),status=json.loads((run/'status.json').read_text())['status'],cells=cells,operations=summary,selected=selected,aggregates=aggregates,scope='Equal task/seed-cell descriptive summaries. Five cyclic shared seeds and original lexical pairs remain dependent. Selectivity measures requested introduced errors minus collateral introduced errors; it is a causal feature-choice outcome, not model quality or human annotation agreement.')
     if cfg.get('independent_consensus'):
         result['scope']='Equal means over three fixed functions and five independently initialized target SAEs, conditional on one fixed five-source bank and shared training material/model. Generated pairs are shared across methods and targets. Primary16-pair validation choices precede new evaluation. Structural/union requests have separate summaries.'
+        if cfg.get('leave_target_out'):result['scope']='Equal means over three fixed functions and a five-SAE source/target network. Each target excludes its own source annotation; target effects remain dependent through shared source banks. Generated pairs and calibration choices are shared. Region/union requests have separate summaries.'
     (out/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
     return result
 

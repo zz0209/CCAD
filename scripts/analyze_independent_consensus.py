@@ -40,10 +40,10 @@ def main():
                 cj=families.index(comparator);diff=errors[oi,mi]-errors[oi,cj]
                 seed_diff=u[oi,mi]-u[oi,cj];boot=[]
                 for _ in range(replicates):
-                    ss=rng.integers(0,len(seeds),len(seeds));v=diff[ss]
+                    ss=np.arange(len(seeds)) if cfg.get('leave_target_out') else rng.integers(0,len(seeds),len(seeds));v=diff[ss]
                     vv=np.stack([v[:,:,j,rng.integers(0,n,n)].mean(-1) for j in range(3)],-1)
                     boot.append(float((vv*weights).sum(-1).mean()))
-                contrasts.append(dict(objective=obj,method=method,comparator=comparator,gain_points=float(seed_diff.mean()*100),target_seed_gains_points=(seed_diff*100).tolist(),paired_target_and_within_grammar_percentile95=(np.quantile(boot,[.025,.975])*100).tolist(),replicates=replicates))
+                contrasts.append(dict(objective=obj,method=method,comparator=comparator,gain_points=float(seed_diff.mean()*100),target_seed_gains_points=(seed_diff*100).tolist(),paired_target_and_within_grammar_percentile95=(np.quantile(boot,[.025,.975])*100).tolist(),replicates=replicates,interval_units='generated pairs within each fixed grammar; complete SAE network held fixed' if cfg.get('leave_target_out') else 'target seeds and generated pairs within each fixed grammar'))
     byfunction=[]
     for obj in cfg['objectives']:
         for family in families:
@@ -79,6 +79,7 @@ def main():
         maxerror=max(maxerror,abs(prev['selectivity']-r['selectivity']))
     assert maxerror<1e-12,maxerror
     summary=dict(status=base['status'],raw_rows=rawcount,aggregates=base['aggregates'],by_function=byfunction,contrasts=contrasts,structures=rebuilt,structure_aggregates=aggregate,focused_check=dict(maximum_raw_recompute_difference=maxerror,complete_primary_tensor=True,structural_rows=len(rebuilt)),scope='Intervals resample target initializations and generated pairs independently within each fixed grammar, with each draw shared across methods/requests. Conditional on the five-source bank, training corpus/model/hook, three grammars, and realized calibration choices. No cross-grammar or source-bank population claim; no multiple-testing-adjusted claims. Primary shared path versus cached64 and identically aggregated scalar are fixed in the config.')
+    if cfg.get('leave_target_out'):summary['scope']='Paired intervals resample generated pairs within each of three fixed grammars, holding the complete five-SAE source/target network and realized calibration choices fixed. Each target excludes its own source annotation. The five target effects are dependent through shared source banks; target-specific effects are reported descriptively, not as independent population repetitions.'
     (a.out/'independent_summary.json').write_text(json.dumps(summary,indent=2)+'\n')
     np.savez_compressed(a.out/'primary_paired_outcomes.npz',errors=errors,margin_decrements=margins,objectives=np.asarray(cfg['objectives']),families=np.asarray(families),source_index=np.asarray(seeds),target_seeds=np.asarray(cfg['target_seeds']),operations=np.asarray(ops),tasks=np.asarray(tasks),row_ids=np.arange(lo,hi))
     for r in summary['aggregates']:

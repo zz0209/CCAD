@@ -36,21 +36,24 @@ def run_consumer(cfg,w,D,saes,capture,forward,checked,write,log,budget):
                 sources[s]=(torch.tensor(a['source_members'],device=w.device),torch.tensor(a['source_gate'],device=w.device))
         G=torch.stack(bank);factors=(G*gp[None,None]).sum(-1)/gp.square().sum(1).clamp_min(1e-16)[None,None]
         for s,t in zip(cfg['seeds'],cfg['target_seeds']):
+            available=[i for i,v in enumerate(cfg['seeds']) if not cfg.get('leave_target_out') or v!=t]
+            assert available and cfg['seeds'].index(s) in available
             d=D[obj,t]
             with torch.no_grad():z64=saes[obj,t].encode(h)
             z=z64[ix];clean=z*(gp@d.T);credit64=z64*(g0@d.T)
             roles=[];scalars=[];wrongs=[];meanC=None
             for i,source in enumerate(cfg['seeds']):
+                if i not in available:continue
                 C=z[None]*torch.einsum('knd,pd->knp',G[i],d)
-                meanC=C/len(cfg['seeds']) if meanC is None else meanC+C/len(cfg['seeds'])
+                meanC=C/len(available) if meanC is None else meanC+C/len(available)
                 roles.append(role(C));scalars.append(role(factors[i,:,:,None]*clean[None]));wrongs.append(role(C[[1,2,0]]))
             roles=torch.stack(roles);scalars=torch.stack(scalars)
             rankings=dict(shared_path_full=roles.amin(0),mean_path_full=role(meanC),
                 shared_scalar_full=scalars.amin(0),wrong_shared_path_full=torch.stack(wrongs).amin(0),
-                single_path_full=roles[cfg['seeds'].index(s)],clean32_full=role(clean[None].expand(3,-1,-1)),
+                single_path_full=roles[available.index(cfg['seeds'].index(s))],clean32_full=role(clean[None].expand(3,-1,-1)),
                 cached64_full=role(credit64[None].expand(3,-1,-1),groups64))
             assert set(rankings)==set(cfg['methods'])
-            masks={};details=[];payload={'source_seeds':np.asarray(cfg['seeds']),
+            masks={};details=[];payload={'source_seeds':np.asarray([cfg['seeds'][i] for i in available]),
                 'source_role_scores':roles.cpu().numpy(),'source_scalar_role_scores':scalars.cpu().numpy()}
             for family,score in rankings.items():
                 payload[family+'_score']=score.cpu().numpy()
@@ -63,8 +66,8 @@ def run_consumer(cfg,w,D,saes,capture,forward,checked,write,log,budget):
                         details.append(dict(operation=op,family=family,allowance=cap,actual_members=len(ids),members=ids.cpu().tolist()))
             path=w.run/f'{obj}_s{s}_t{t}_proposals.npz';np.savez_compressed(path,**payload)
             maps[obj,s]=dict(target=t,masks=masks,source=sources[s])
-            meta.append(dict(objective=obj,source=s,target=t,source_bank=cfg['seeds'],proposals=details,path=path.name,sha256=sha256(path)))
-            log('INDEPENDENT_PROPOSALS_READY',objective=obj,source_bank=cfg['seeds'],target=t,proposals=len(details));budget()
+            meta.append(dict(objective=obj,source=s,target=t,source_bank=[cfg['seeds'][i] for i in available],proposals=details,path=path.name,sha256=sha256(path)))
+            log('INDEPENDENT_PROPOSALS_READY',objective=obj,source_bank=[cfg['seeds'][i] for i in available],target=t,proposals=len(details));budget()
     write(w.run/'PROPOSAL_FREEZE.json',dict(written_at_utc=datetime.now(timezone.utc).isoformat(),rows=meta,target_validation_outcomes_consumed=0,target_evaluation_outcomes_consumed=0,scope=cfg['scope']))
     del h,g0,hp,gp,z,z64,clean,credit64,C,G,roles,scalars
     outcomes=defaultdict(list);decisions=[];structural=[]
@@ -160,4 +163,4 @@ def run_consumer(cfg,w,D,saes,capture,forward,checked,write,log,budget):
     write(w.run/'consumer_results.json',dict(cells=cells,selected=selected,scope=cfg['scope']))
     w.checks.update(all_proposals_before_validation_and_selection_before_evaluation=True,
         all_actual_deletions_have_binary_nonnegative_remaining_codes=True,
-        disjoint_target_initializations=True,all_structural_requests_before_evaluation=True)
+        target_source_bank_separation=all(r['target'] not in r['source_bank'] for r in meta),all_structural_requests_before_evaluation=True)

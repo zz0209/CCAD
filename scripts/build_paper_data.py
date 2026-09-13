@@ -304,6 +304,10 @@ def main():
             from independent_consensus_paper import export as export_independent_consensus
             independent_consensus=export_independent_consensus(root,out)
             sources.extend(independent_consensus['inputs'])
+        if json.loads((out/'reform_runs.json').read_text()).get('external_functional_run'):
+            from external_functional_paper import export as export_external_functional
+            external_functional=export_external_functional(root,out)
+            sources.extend(external_functional['inputs'])
         sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in reform['inputs'])
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
@@ -454,6 +458,10 @@ def main():
         claims.append(dict(id='independent_functional_structure_and_union_use',paper='Queryable functional structure after retraining',
             result='Five source realizations per mechanism define target response relations. Independent target initializations11–15 and432 newly generated grammar pairs support frozen member choices, every exact membership region and every pair/triple union. Primary16-pair shared-versus-scalar gains have positive paired intervals. Secondary mean pair-union gains over cached64 are3.75/3.8542 points with paired intervals[1.7708,5.8333]/[1.8229,6.0423]. All queries were frozen before evaluation. Pair-average inference is conditional on fixed source bank/calibration and three grammars; triple disruption has no collateral endpoint.',
             evidence=[v['path'] for v in independent_consensus['inputs']]+['scripts/independent_functional_consensus.py','scripts/analyze_independent_consensus.py','scripts/analyze_functional_unions.py','paper/sections/functional_structure.tex','paper/sections/functional_structure_details.tex']))
+    if (out/'reform_runs.json').exists() and json.loads((out/'reform_runs.json').read_text()).get('external_functional_run'):
+        claims.append(dict(id='external_functional_queries',paper='Functional queries in a different model',
+            result='Pythia1B layer7 with five controlled Sparsify TopK SAEs and three original grammar generators. All target proposals exclude the target source annotation. Fresh source, calibration and evaluation sentences separate component definition, member choice and actual region/union effects. All pair requests form the predeclared primary endpoint, with cached credit, mean-response and same-aggregation scalar controls. Paired uncertainty resamples sentences within each grammar while holding the dependent five-SAE network fixed.',
+            evidence=[v['path'] for v in external_functional['inputs']]+['scripts/external_functional_paper.py','scripts/export_functional_source_paths.py','scripts/independent_functional_consensus.py','paper/sections/external_functional_queries.tex','paper/sections/functional_path_details.tex']))
     for claim in claims:
         if claim['id']=='source_conditioned_finite_response_correspondence' and json.loads((out/'reform_runs.json').read_text()).get('functional_consensus_run'):
             claim['evidence'].extend(v['path'] for v in functional_consensus['inputs'])
@@ -469,6 +477,7 @@ def main():
     current_ids.append('actual_feature_choice_and_functional_selectivity')
     current_ids.append('source_conditioned_finite_response_correspondence')
     current_ids.append('independent_functional_structure_and_union_use')
+    current_ids.append('external_functional_queries')
     (out/'EVIDENCE_INDEX.json').write_text(json.dumps(dict(current_manuscript_claim_ids=[c['id'] for c in claims if c['id'] in current_ids],claims=claims,data_manifest='data/DATA_MANIFEST.json',figure_manifest='figures/FIGURE_MANIFEST.json',
         raw_hashes=manifest['original_raw_sha256'],scope='Current manuscript evidence locator. Hashes establish file identity, not scientific validity; source and member KL references differ.'),indent=2)+'\n',encoding='utf-8')
     print(json.dumps(dict(context_rows=len(context['rows']),source_seed_rows=len(seed_rows),member_directions=20,fixed_cases=16,tables=len(list(table_dir.glob('*.tex'))),output=str(out))))

@@ -1,0 +1,127 @@
+{
+  "run_id": "FINAL_VALUE_R30_pythia_source_paths_v1_20260913",
+  "run_parent": "FINAL_VALUE_R30",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Source-only functional components and finite response bank for Pythia and new grammar functions",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_revision": "generator-blimp-7b93dccc-seed300913",
+  "budget": "Source bank upper budget2400driver seconds on existing5070Ti,2CPU threads. No new training or purchase. Four midpoint gradients for each of15source components on96pairs; actual throughput reported after first source.",
+  "budget_seconds": 2400,
+  "max_length": 24,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "data_manifest": "artifacts/final_value_five_20260913/r30_fresh_grammar/DATA_MANIFEST.json",
+  "scope": "Pythia1B layer7 Sparsify TopK width16384 k128, five controlled16M-token SAEs. Source-only64pairs/task define disjoint64-member components; first32/task estimate four-midpoint deletion paths. New determiner-noun and irregular past-participle functions plus anaphor gender. No target calibration/evaluation in this run. Original source/target network dependencies remain explicit.",
+  "written_at_utc": "2026-09-13T20:10:15Z",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "determiner_noun_agreement_1",
+    "irregular_past_participle_verbs",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 16384,
+  "target_members_per_component": 64,
+  "fit_steps": 800,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "determiner": [
+      1,
+      0,
+      0
+    ],
+    "past_form": [
+      0,
+      1,
+      0
+    ],
+    "anaphor_gender": [
+      0,
+      0,
+      1
+    ]
+  },
+  "methods": [
+    "shared_path_full",
+    "mean_path_full",
+    "shared_scalar_full",
+    "wrong_shared_path_full",
+    "single_path_full",
+    "clean32_full",
+    "cached64_full"
+  ],
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "reuse_raw_parent": "runs/REFORM_R26_raw_regularization_controls_v1_20260913",
+  "consumer_ranges": {
+    "source_selection": [
+      0,
+      64
+    ]
+  },
+  "member_allowances": [
+    8,
+    16,
+    32,
+    64
+  ],
+  "validation_pairs_per_task": [
+    0,
+    4,
+    16
+  ],
+  "path_source_range": [
+    0,
+    32
+  ],
+  "path_fit_steps": 800,
+  "path_ridge": 0.01,
+  "structure_families": [
+    "shared_path_full",
+    "cached64_full"
+  ],
+  "primary_validation_budget": 16,
+  "evidence_level": "fresh_generator_sample_and_independent_target_initialization",
+  "training_run": "runs/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908",
+  "checkpoint_step": 16384,
+  "sae_loader": "sparsify",
+  "source_path_export_only": true,
+  "path_midpoints": [
+    0.125,
+    0.375,
+    0.625,
+    0.875
+  ]
+}

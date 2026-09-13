@@ -6634,3 +6634,30 @@ R23_REPORT.md SHA256e83a0703fa73878449a4d308a8dafe60b4591e58fbdb6b7ca6de3e00fac4
 唯一当前paper/main.pdf SHA256 3e75808d285271b41f56d37af71a71bc1e5c770c10c3aca4b2305d5e2f66a2d2，48页（6主文/1参考/41附录）。三张新主图、全部主文及新附录实际查看，修复点/色标裁切与公式溢出；最新latex build为20260913T195159194749Z，完整data/figure build20260913T194807435932Z。R29_REPORT、r29_analysis、R29_FOCUSED_CHECK、R29_VISUAL_REVIEW、R29_COMPLETE、单套可编辑源/证据索引/复现说明提供交付定位。入口原文归档archive/research_workflow_20260913/R29_closeout_entries_20260913T195532Z，原始run/旧PDF不改。
 
 R29将功能作用保真推进到可查询成员结构和真实未拟合组合收益；全项目科学目标保持NOT_MET且继续推进，不从轮数或局部效果宣称主会闭合。下一轮R30沿该正结果检验已有Pythia模型/新功能任务，并补充必要的结构作用证据；R31完成剩余核心科学工作及整体交付。此COMPLETE之后才把tracker推进3/5，R30未开始，不自行增加第六轮。
+
+## FINAL_VALUE_R30 START — 2026-09-13T19:58:38Z
+
+实际写入UTC：2026-09-13T19:58:38Z，本轮事件开始为当前时刻。第4/5轮开始，已完成3/5。R29的共享/独有区域与未拟合并集已有新目标/新句对证据，本轮沿同一使用价值扩展到Pythia1B deduped layer7五个受控Sparsify TopK SAE，同时在不同语法功能上检验关系。优先官方determiner-noun agreement、irregular past participle与anaphor gender三功能；先读原作者生成类及source-only样本，不按target评价挑任务。任务具体token/site可行性在freeze前核对。不会把Sparsify实现差异冒称全新SAE机制。
+
+复用R16已PASS16M、width16384/k128的五seed资产；训练/材料身份与实际资源已核对。源bank在目标seed之外取其余四个源实现，所有目标SAE原训练配置一致。共享seed网络按依赖结构报告，评价句对可独立抽样；不称新的独立目标cohort。拟用源0–63定义组件，0–31每task构建有限路径，cal64–79/eval80–207新样本；源/验证/评价句子彼此及旧数据排除。路径、minimum/mean/scalar/cached等同候选比较继续，全部共享/独有区域与未拟合并集由singleton选择冻结。进一步结构消融按源bank/预算预定后再测，不用evaluation挑支持。
+
+数学与解释继续连接功能role、区域及组合，在新任务实际source作用和target使用收益中检验。论文/主图与新结果同步推进，最近邻阅读服务新模型/语法接口与结构解释。初始预算在既有GPU上源gradient bank约900–1800秒、真实consumer约1200–2400秒，总5400秒上限；依据Pythia1B实际batch/显存/吞吐修正，无新训练或付费。运行前申请共享gpu-0。R30不是单纯扩展规模，要回答同一结构性解释在另一模型和新功能上是否继续支持实际请求。全部失败/调整留账，R31仍保留实质科学与最终整体交付，不自行加轮。
+
+## FINAL_VALUE_R30 PROGRESS — 2026-09-13T20:10:33Z
+
+实际写入UTC：2026-09-13T20:10:33Z。已读两个新官方生成类的完整抽样方法并取得固定版本原1000题文件用于去重。新样本208pair/任务共624pair生成完成；deterministic第一次partial208句对保留并逐字重放一致。past-form原始sample出现6个相同好坏句，作为无效最小对照计数跳过，另16个IndexError和7重复排除；gender9个DTypePromotionError、1IndexError、2重复排除。首次生成在相同句assert结束，未运行模型；修正后仅跳过不构成对照的抽样，完整计数/代码hash保留。新panel排除原9文件与R29新3文件，source/cal/eval内部也互斥。
+
+实现复用既有driver，增加Pythia2048维与原Sparsify checkpoint loader、只导出source路径模式；不再拟合无用的总贡献membership。新consumer每个目标排除自身source注释，并保留shared/cached/mean/scalar的全部区域和联合请求，正面回答共同聚合与方向信息是否帮助联合使用。主要终点在结果前固定为16pair预算下全部三对请求的等权U，配对推断对共享五SAE网络条件化，只重采样各grammar内的句对。静态检查已过；source-bank及consumer配置、样本token预检与最初freeze即将完成，尚无新模型结果。完成计数3/5不变。
+
+## FINAL_VALUE_R30 PROGRESS — 2026-09-13T20:16:12Z
+
+实际写入UTC：2026-09-13T20:16:12Z。Pythia source-bank run实际2026-09-13T20:11:04.353875Z—20:14:29.206131Z，PASS/contract_ok，204.819735秒、1440原始source效果，17672sequence/424128token forwards。全部15组件在source-only数据有distinct profile；五seed确定词number的自身margin作用3.48–3.76nats，past1.00左右，gender1.49–2.00；跨任务作用接近零或较小。四点积分相对MAE约.3–1.8%，源gradient有限差分最大误差.003596。实际显存约7862MiB；目标consumer3000秒预算保持，预计明显低于源侧初估。源GPU租约已释放，接下来新申请consumer，未重复源计算。
+
+配置与分析的最后身份写R30_CONSUMER_FREEZE。消费者的copied evidence_level从independent初始化改为dependent五SAE网络；任务、方法、主要pair终点和预算不变，尚未消费target校准或评价。source run原resolved配置仍保留曾复制的evidence_level标签，准确scope和全部source_selection原始记录明确其是source-only，不冒称独立target证据。R30_INITIAL_FREEZE与该metadata勘误均保留。新样本真实最大17token，全部共同padding24，R30_PREFLIGHT已于20:10:15Z完成，不需要改接口或重生成。
+
+
+## FINAL_VALUE_R30 COMPLETE — 2026-09-13T20:40:16Z
+
+实际写入UTC：2026-09-13T20:40:16Z。本轮事件开始19:58:38Z，结果/稿图/记录整理结束为当前时间。两run实际时间、资源、失败/勘误与科学结果见R30_REPORT（同一目录下FOCUSED_CHECK/WRITING_REVIEW/VISUAL_REVIEW及r30_analysis）。源204.819735秒、consumer962.951392秒，PASS1440/158784raw行，GPU已释放，无付费。源功能可靠；Pythia shared−scalar联合U +1.61458[0.13021,3.125]，shared−cached+0.75521[-0.18229,1.66667]，mean强结果保留。目标间依赖不当独立seed重复。新增组级响应下界、Sparsify接口、新语法/生成器原文阅读、实际区域/并集与完整同套稿图。
+
+当前paper/main.pdf a789414ed40e4df30df7d0558f0ba28fb7b5d1f5d8caa349ab9e3134f06cc743，50页=7主文+1参考+42附录，full build20260913T203500451979Z，final latex20260913T203744930790Z。实际查看新图、主文接续、新附录与contact；修复旧重复label并纠正R29无重复label说法，其他旧结果/文字身份保留。两指定写作skill已经用于实稿。旧入口归档archive/research_workflow_20260913/R30_closeout_20260913T204006Z。COMPLETE后才把计数推进4/5。最后R31以关系驱动的删除A/保留B新请求及匹配成员数控制验证可使用的结构价值，同时整理完整论文包。不改FCC母问题、不降主会目标、不自行加轮。
