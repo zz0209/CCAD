@@ -10,7 +10,9 @@ def analyze(run,out):
     operation_task={op:cfg['source_tasks'][weights.index(1)] for op,weights in cfg['operations'].items()}
     raw=defaultdict(lambda:dict(n=0,errors=0,clean_correct=0,decrement=0.,edit_norm=0.))
     for line in (run/'metrics.raw.jsonl').open(encoding='utf-8'):
-        r=json.loads(line);key=tuple(r[k] for k in ['split','objective','seed','operation','method','allowance','task'])
+        r=json.loads(line)
+        if r['kind']!='functional_reuse':continue
+        key=tuple(r[k] for k in ['split','objective','seed','operation','method','allowance','task'])
         c=raw[key];c['n']+=1;c['errors']+=r['introduced_error'];c['clean_correct']+=r['clean_margin']>0
         c['decrement']+=r['clean_margin']-r['margin'];c['edit_norm']+=r['edit_norm']
     cells=[];grouped=defaultdict(dict)
@@ -44,6 +46,8 @@ def analyze(run,out):
                 w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
     for n,rows in [('cells.csv',cells),('operations.csv',summary),('selected.csv',selected),('aggregates.csv',aggregates)]:save(n,rows)
     result=dict(run=str(run),status=json.loads((run/'status.json').read_text())['status'],cells=cells,operations=summary,selected=selected,aggregates=aggregates,scope='Equal task/seed-cell descriptive summaries. Five cyclic shared seeds and original lexical pairs remain dependent. Selectivity measures requested introduced errors minus collateral introduced errors; it is a causal feature-choice outcome, not model quality or human annotation agreement.')
+    if cfg.get('independent_consensus'):
+        result['scope']='Equal means over three fixed functions and five independently initialized target SAEs, conditional on one fixed five-source bank and shared training material/model. Generated pairs are shared across methods and targets. Primary16-pair validation choices precede new evaluation. Structural/union requests have separate summaries.'
     (out/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
     return result
 

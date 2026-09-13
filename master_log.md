@@ -6571,3 +6571,66 @@ R23_REPORT.md SHA256e83a0703fa73878449a4d308a8dafe60b4591e58fbdb6b7ca6de3e00fac4
 稿件同一入口paper/main.pdf，SHA256 9851b7919b42eddaf44acb5d6a005fc12d2485fcd89a074ff8fca9569c522464，43页（7主文/1参考/35附录）；新图和主文/附录已实际查看，完整布局联系图保留。最新latex receipt=paper/build/20260913T183623014097Z，完整数据/图build=20260913T183058835063Z。证据、复现说明、病例、分项和可编辑源齐备于本轮快照；R28_REPORT、R28_COMPLETE和两focused checks给出定位/hash。R27两个被改文件经反向恢复与R27_COMPLETE逐字hash一致后归档r28_recovered_r27_sources，恢复写入时间如实记录；此前入口归档及本次closeout_entries保持原文。
 
 本轮仍是开发，source0–31、cal384–399、evaluation512–543保留曝光身份，共享seed/固定范式依赖不变。科学目标NOT_MET；下一轮R29固定共同响应方法，优先在独立目标初始化cohort和未参与开发的句对上确认真实使用收益，并匹配minimum的scalar-only控制及强全字典梯度。之后才依据真实结果形成更广证据。到本条完成记录后再将tracker计数更新2/5，R29尚未开始，不增加授权总轮数。
+
+
+## USER_STEERING — 全面五轮与维护要求 — 2026-09-13T18:44:14Z
+
+实际写入UTC：2026-09-13T18:44:14Z。用户再次要求这五轮完整、全面，不草草收尾，必须追求原科学目标；要求重读AGENTS、此前prompt/讨论，并及时维护master_log等。已重读当前AGENTS全部长期要求、自动化长期prompt、plan/tracker、R26拒绝级缺口、R27/R28 START/COMPLETE及本对话用户讨论。现有2/5计数不变，本要求核对不占一轮。恢复核心要求：不能只复制功能作用，需要证明多对多成员关系提供独立可检验知识；每个剩余单元同时推进数学/方法、材料/实现、近邻比较、实际证据与稿图。两项指定writing skills贯穿，不以缩小意义、工程宽度或自评替代主会贡献。
+
+
+## FINAL_VALUE_R29 START — 2026-09-13T18:44:14Z
+
+实际写入UTC：2026-09-13T18:44:14Z，本轮事件从此刻开始。第3/5轮开始，完成仍2/5。R28共同源响应在两SAE机制有真实选择正信号，本轮将其发展为新目标初始化cohort上的冻结程序，并补上对应结构的可检验含义。主要检验新seed、新句对上的相同验证预算使用收益；结构检验将已选成员分为单功能独有与多功能共享区域，再测未参与选择的区域删除与联合请求。这些区域和请求由已冻结单组成关系给出，不能按评价效果重定义。
+
+复用R19源seeds1–5的已验证功能/路径和R20目标seeds11–15，两机制同模型/hook/width/k/16M，目标训练已PASS。全字典候选让min、mean、同min聚合的scalar-only、wrong-path、单源path、clean32、cached64共享真实可用目标成员与源信息。源bank数量及候选范围与R28的变化明确记录。本轮在评价前固定配置/主要终点/选择预算；新句对先核查精确身份和旧panel消费，尚未打开新模型评价。
+
+数学/解释围绕源响应关系的共享/独有成员与并集干预，已有FTC/Lipschitz连接继续用于说明路径信息，region因果效应检验关系的含义；用同真实成员结构的cached梯度作实用比较。文献比较需进一步对照functional ablation/substitution与circuit角色证据，不能把简单min/IG称首创。稿件继续同一main.pdf，实际正反例与完整对照进入当前论证。现稿/所有sections和入口归档archive/research_workflow_20260913/before_R29_20260913T184414Z。
+
+初始可承受预算：已有GPU、两CPU线程，主套件约2600 driver秒，联合/区域扩展约1000–1400秒，合计5400秒上限，显存约8GiB；依据R28约330 padded sequence forwards/s估算，实际启动再核对资源与吞吐。无新增训练或付费。每轮至少几十分钟实质研究可跨heartbeat，真实工作/计算/等待分别记录，无法分离的净工作时间明写未知。普通负结果按范围保留并据证据改法，R31仍按原限额完整收尾，不默认新增第6轮。
+
+
+## FINAL_VALUE_R29 CORRECTION — 旧句对已曝光 — 2026-09-13T18:46:42Z
+
+实际写入UTC：2026-09-13T18:46:42Z。逐run读取发现R25 official_v2的panel和真实metrics已覆盖与R26–R28相同的regular_plural_subject_verb_agreement_1、anaphor_number_agreement、anaphor_gender_agreement的全部pair0–999，非其他三个范式。R27所谓“新句对”只与R26拟合/开发分离，不能称项目层面未见确认；R27原始输出、mask和已冻结选择不变，科学身份改为开发。R28原本已按开发表述，结果数值不变。R27_COMPLETE/旧run配置及旧稿不重写，本勘误与R29_EXPOSURE_CORRECTION.json保留实际源文件hash/覆盖计数；当前论文和tracker同步纠正。R29不再从原文件其他题号取伪独立数据，已查官方BLiMP README指向数据生成代码，正在读取原作者生成器以取得新的语法样本并核对与全部旧句对零重复。目标、主要U及新target cohort不变，尚未开始新目标模型评价。
+
+
+## FINAL_VALUE_R29 PROGRESS — 2026-09-13T19:02:20Z
+
+实际写入UTC：2026-09-13T19:02:20Z。官方generator的blimp分支及三套sample方法已读取并保留原文/hash。两处运行兼容问题在材料生成前处理：初次缺NLTK，用独立项目overlay补齐；第二次原expression U100000固定缓冲造成约16.5GB工作集，19:00UTC附近按已核实PID只停止本轮生成进程，未输出样本、未评价模型。保留原作者代码，wrapper运行时改为U4096并检查所有句子小于1024字符，重启纳入共享cpu-heavy租约；当前实测约1.5GB工作集。停止精确时刻未额外计时，不倒填。
+
+新consumer已实现新目标cohort加载、全8192字典共同source响应、同minimum聚合的scalar-only以及独有/共享区域和全部pair/triple并集；所有结构请求由16-pair预算单组成选择产生，在评价前冻结。现有forward/原始指标/环境与artifact实现复用，未新造运行框架。配置configs/final_value_r29_independent_consensus_v1.json写出，最终冻结在样本身份/tokenizer检查后；尚未启动GPU或打开新评价。当前完成仍2/5。
+
+
+## FINAL_VALUE_R29 PROGRESS — 2026-09-13T19:14:21Z
+
+实际写入UTC：2026-09-13T19:14:21Z。三套新样本共432pair/864句完成；旧生成器的空候选错误按其原有跳过语义处理，gender记录39个DTypePromotionError、7个IndexError和1个旧句/重复排除，全部计数在DATA_MANIFEST；前两套partial逐字重放一致。R29_PREFLIGHT核对8个历史R24–R28 panel和原始七文件，所有新good/bad句与历史、彼此均零重复，全部官方prefix/boundary分词通过，尚无模型输出。最终配置/分析/输入/代码身份见R29_FINAL_FREEZE。
+
+真实最长序列15token，评价padding从64改16以利用实测长度，所有方法共同使用；此前源路径缓存不变。预计driver1000–1600秒，仍保留5400秒上限。新目标素材来源/最终FVE/CE/L0/alive/dead/norm完整提取R29_MATERIAL；目标TopK FVE.985752、CE recovery.990142，Matry .983124/.988160，训练设置核对与source一致。GPU即将启动，真实开始时间以后读status，当前不伪填。计数仍2/5。
+
+
+## FINAL_VALUE_R29 PROGRESS — 2026-09-13T19:21:58Z
+
+实际写入UTC：2026-09-13T19:21:58Z。GPU run实际启动2026-09-13T19:14:26.797437Z；840提案在2026-09-13T19:15:04.705245+00:00冻结，630预算决定在2026-09-13T19:16:49.983041+00:00冻结，220结构请求在2026-09-13T19:16:50.077419+00:00冻结，之后才捕获fresh evaluation。新目标各请求均有64个正共同credit候选。结构包含独有三组及共享组，全部七标签包括空组保留；目前成员数只是结构定义，不宣称功能验证通过。原始真实singleton评价正在正常推进。
+
+原论文/官方代码学习与方法比较已完成一轮聚焦读：Hanna等COLM2024原pp3–9/15–16及MIT EAP-IG官方attribute.py的input/activation插值实现。R29用真实区域profile检验语义角色而不把重叠率当证据。统计分析与主图生成代码已准备，原始结果尚未汇总，不挑选中途正例改方法。
+
+## FINAL_VALUE_R29 PROGRESS — 2026-09-13T19:40:09Z
+
+实际写入UTC：2026-09-13T19:40:09Z。R29真实run于2026-09-13T19:26:39.122449Z结束，PASS/contract_ok，driver732.161557秒，264960原始行，530784序列forward/8492544 token forwards，gpu-0已自动释放。全部630选择及220结构请求从raw重算最大差0。主要16-pair U为20.2604/21.2240点；相同minimum的scalar对照17.9427/18.5156，paired gain95区间[.7031,4.0104]/[.7025,4.8438]。cached64为18.8021/19.6875；singleton优势区间包含零，mean在Matry更强，完整七方法均保留。
+
+更明确的使用收益是无需联合拟合的pair并集：三对请求等权平均U为21.4583/23.5938，cached为17.7083/19.7396；gain3.7500/3.8542，4000次配对seed及同grammar句对bootstrap区间[1.7708,5.8333]/[1.8229,6.0423]，两机制各五targetseed的平均pair gain均正。所有pair与triple请求在新评价前冻结；合并区间为观察结果后的完整secondary分析，源bank/calibration/固定三个grammar条件明示，triple无collateral任务单列。证据r29_analysis/union_intervals.json和scripts/analyze_functional_unions.py。
+
+共享/独有区域确有可检验角色：number+gender组平均6.8/6.6成员，number/gender margin作用为.459/.832和.764/1.052；number-only为.824/.095和1.060/.169。全部七区域及cached相同区域控制保留；未做union-minus-shared干预，不把并集收益唯一归因给shared core。当前正在将有限源响应→角色区域→实际未拟合并集收益统一写入正文与新主图，R29完成计数仍未推进。
+
+
+## FINAL_VALUE_R29 COMPLETE — 2026-09-13T19:55:42Z
+
+实际写入UTC：2026-09-13T19:55:42Z。本轮事件开始2026-09-13T18:44:14Z，结果/稿图/记录整理结束为当前时间；run实际19:14:26.797437Z—19:26:39.122449Z，driver732.161557秒。理由是发展跨源共同响应的实际价值并确认新目标/新样本；已完成独立target seeds11–15、两机制、432新pair、七提案族、全部区域与并集的真实实验。选择/结构在评价前冻结，PASS264960原始行，530784sequence forwards/8492544token forwards。共享gpu-0和cpu-heavy均已释放，无新增训练或付费。工作和计算重叠，净工作/等待未分离计时；生成器内存/兼容失败和partial保留。
+
+科学结果：三对未拟合联合请求平均U增益3.7500/3.8542点，paired95[1.7708,5.8333]/[1.8229,6.0423]；相同minimum的scalar主要对照增益区间[.7031,4.0104]/[.7025,4.8438]。共享number/gender区域确有双任务作用，number-only作用更集中；cached也有功能区域。保留singleton对cached区间含0、mean/single强结果、全部预算与空弱区域。数据按新generator draw解释，R27原unused身份纠正；不把sourcebank/calibration/三个grammar条件消去。pair合并区间为完整secondary分析，未伪称主要预注册端点。
+
+数学/实现/文献/论文同轮完成：有限source路径、signed credit与共同角色、区域划分/合法并集及Hessian交互关系已连接；Hanna COLM2024原文与官方MIT代码、BLiMP generator已实际读取。一次聚焦检查重算全部630选择与220效果差0，全部220结构mask与minimum公式一致，输入/冻结身份保留。anti-defensive-writing与defensive-writing-checker实际重建全文逻辑，R29_WRITING_REVIEW记录实施；没有降低科学意义或改主会目标。
+
+唯一当前paper/main.pdf SHA256 3e75808d285271b41f56d37af71a71bc1e5c770c10c3aca4b2305d5e2f66a2d2，48页（6主文/1参考/41附录）。三张新主图、全部主文及新附录实际查看，修复点/色标裁切与公式溢出；最新latex build为20260913T195159194749Z，完整data/figure build20260913T194807435932Z。R29_REPORT、r29_analysis、R29_FOCUSED_CHECK、R29_VISUAL_REVIEW、R29_COMPLETE、单套可编辑源/证据索引/复现说明提供交付定位。入口原文归档archive/research_workflow_20260913/R29_closeout_entries_20260913T195532Z，原始run/旧PDF不改。
+
+R29将功能作用保真推进到可查询成员结构和真实未拟合组合收益；全项目科学目标保持NOT_MET且继续推进，不从轮数或局部效果宣称主会闭合。下一轮R30沿该正结果检验已有Pythia模型/新功能任务，并补充必要的结构作用证据；R31完成剩余核心科学工作及整体交付。此COMPLETE之后才把tracker推进3/5，R30未开始，不自行增加第六轮。

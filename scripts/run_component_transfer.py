@@ -18,6 +18,7 @@ def main():
     source_files=['scripts/run_component_transfer.py','scripts/fit_component_correspondence.py','scripts/component_raw_controls.py','scripts/run_causalgym_multisite.py','scripts/run_causalgym_native_transfer.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py','src/ccad/activation_contract.py']
     if cfg.get('reuse_consumer_parent'):source_files.append('scripts/functional_reuse_consumer.py')
     if cfg.get('path_midpoints') or cfg.get('path_ensemble_parent'):source_files.append('scripts/functional_path_credit.py')
+    if cfg.get('independent_consensus'):source_files.append('scripts/independent_functional_consensus.py')
     w=MultisiteWork(cfg,args.config,source_files)
     error=None
     def checked(path):return w.checked(ROOT/Path(path))
@@ -39,13 +40,23 @@ def main():
         tokenizer=transformers.AutoTokenizer.from_pretrained(tc['model_local_dir'],local_files_only=True)
         model=transformers.AutoModelForCausalLM.from_pretrained(tc['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to(w.device);model.requires_grad_(False);model.config.use_cache=False
         module=model.get_submodule(tc['hook_module_path']);saes={};D={}
-        snapshots=json.loads(checked(tr/'checkpoints.json').read_text())['checkpoints']
-        for obj in cfg['objectives']:
-            for seed in cfg['seeds']:
-                snap=next(s for s in snapshots if s['objective']==obj and s['seed']==seed and s['step']==rc['checkpoint_step']);sp=checked(snap['path']);assert sha256(sp)==snap['sha256']
-                state=torch.load(sp,map_location=w.device,weights_only=True)
-                ae=AutoEncoderTopK(1024,tc['dict_size'],tc['k']) if obj=='topk' else MatryoshkaBatchTopKSAE(1024,tc['dict_size'],tc['k'],state['group_sizes'].cpu().tolist())
-                ae=ae.to(w.device);ae.load_state_dict(state);ae.eval();ae.requires_grad_(False);saes[obj,seed]=ae;D[obj,seed]=ae.decoder.weight.T if obj=='topk' else ae.W_dec
+        cohorts=[(tr,tc,cfg['seeds'],rc['checkpoint_step'])]
+        if cfg.get('target_training_run'):
+            tt=checked(Path(cfg['target_training_run'])/'config.resolved.json').parent
+            ttc=json.loads((tt/'config.resolved.json').read_text())
+            assert json.loads(checked(tt/'status.json').read_text())['status']=='PASS'
+            for key in ['model_id','model_revision','hook_module_path','dict_size','k','steps','learning_rate','token_manifest','batch_size_sequences','warmup_steps','decay_start','group_fractions']:
+                assert tc[key]==ttc[key],key
+            assert set(cfg['target_seeds']).isdisjoint(cfg['seeds'])
+            cohorts.append((tt,ttc,cfg['target_seeds'],cfg['target_checkpoint_step']))
+        for cohort,ct,seeds,step in cohorts:
+            snapshots=json.loads(checked(cohort/'checkpoints.json').read_text())['checkpoints']
+            for obj in cfg['objectives']:
+                for seed in seeds:
+                    snap=next(s for s in snapshots if s['objective']==obj and s['seed']==seed and s['step']==step);sp=checked(snap['path']);assert sha256(sp)==snap['sha256']
+                    state=torch.load(sp,map_location=w.device,weights_only=True)
+                    ae=AutoEncoderTopK(1024,ct['dict_size'],ct['k']) if obj=='topk' else MatryoshkaBatchTopKSAE(1024,ct['dict_size'],ct['k'],state['group_sizes'].cpu().tolist())
+                    ae=ae.to(w.device);ae.load_state_dict(state);ae.eval();ae.requires_grad_(False);saes[obj,seed]=ae;D[obj,seed]=ae.decoder.weight.T if obj=='topk' else ae.W_dec
         sys.path.append(cfg['scipy_overlay'])
         from scipy.optimize import linear_sum_assignment
         from fit_component_correspondence import fit,project_rows
@@ -69,6 +80,9 @@ def main():
                                   sentence_good=r['sentence_good'],sentence_bad=r['sentence_bad']))
         write(w.run/'panel.json',dict(rows=panel,scope=cfg['scope']))
         manifest=json.loads((w.run/'manifest.json').read_text());manifest.update(schema_version='contrast.components.v1',mean_constants_source_split='Absolute native code deletions preserve original residual and decoder bias; no empirical centering',statistics_unit='Shared cyclic SAE seeds and original lexical pairs within fixed paradigms');write(w.run/'manifest.json',manifest)
+        if cfg.get('independent_consensus'):
+            manifest['statistics_unit']='Independent target initializations conditional on the fixed five-source bank; generated sentence draws within three fixed grammars, shared across all targets and methods'
+            write(w.run/'manifest.json',manifest)
         w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,numpy=np.__version__,scipy=scipy.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),threads=2,model=tc['model_id'],hook=tc['hook_module_path'])
         max_hidden=0.;phases={}
         def forward(records,delta=None,gradient=False,phase='clean'):
@@ -112,6 +126,12 @@ def main():
             with torch.no_grad():
                 for key,ae in saes.items():codes[key]=torch.cat([ae.encode(h[i:i+256]) for i in range(0,len(h),256)])
             return dict(rows=records,hidden=h,codes=codes,clean=torch.cat(margins),gradient=torch.cat(gs) if gs else None)
+        if cfg.get('independent_consensus'):
+            from independent_functional_consensus import run_consumer
+            run_consumer(cfg,w,D,saes,capture,forward,checked,write,log,budget)
+            w.checks['prefix_hidden_equality_and_replay']=max_hidden<cfg['hidden_atol']
+            w.environment.update(maximum_prefix_hidden_error=max_hidden,forwards_by_phase=phases)
+            return w.finish()
         if cfg.get('reuse_consumer_parent'):
             from functional_reuse_consumer import run_consumer
             run_consumer(cfg,w,D,saes,capture,forward,checked,write,log,budget)
