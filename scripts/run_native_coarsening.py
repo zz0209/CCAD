@@ -15,7 +15,7 @@ def main():
     started=datetime.now(timezone.utc).isoformat();timer=time.perf_counter();cpu=time.process_time()
     write(run/'config.resolved.json',cfg);codes=[]
     for rel in ['scripts/run_native_coarsening.py','src/ccad/native_coarsening.py',
-                'scripts/evaluate_native_coarsening.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']:
+                'scripts/evaluate_native_coarsening.py','scripts/refit_response_groups.py','scripts/finite_group_refit.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']:
         p=ROOT/rel;q=run/'source_snapshot'/rel;q.parent.mkdir(parents=True,exist_ok=True);q.write_bytes(p.read_bytes())
         codes.append(dict(path=rel,sha256=sha256(p),bytes=p.stat().st_size,snapshot_path='source_snapshot/'+rel))
     write(run/'code_hashes.json',dict(files=codes,aggregate_sha256=aggregate(codes),snapshot_root='source_snapshot'))
@@ -132,6 +132,12 @@ def main():
                     log('QUERY_COMPLETE',query=key,source_members=fit['source_members'],target_members=fit['target_members'],
                         calibrated_errors={name:met['calibration']['actual_relative_error'] for name,met in metrics.items()})
                     if time.perf_counter()-timer>cfg['budget_seconds']:raise TimeoutError('Bounded coarsening development budget exceeded')
+        if cfg.get('response'):
+            from refit_response_groups import refit
+            env['response']=refit(cfg,run,reference,rc,results,checked,write,log)
+        if cfg.get('finite_refit'):
+            from finite_group_refit import finite_refit
+            env['finite_refit']=finite_refit(cfg,run,reference,rc,results,checked,write,log)
         if cfg.get('functional'):
             from evaluate_native_coarsening import evaluate
             functional=evaluate(cfg,run,reference,rc,results,checked,write,log)

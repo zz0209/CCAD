@@ -1,0 +1,49 @@
+{
+  "run_id": "REFORM_R23_finite_native_groups_v2_20260913",
+  "round_id": "REFORM_R23",
+  "purpose": "Test the concrete local-to-finite mismatch by fitting actual native deletion fractions against finite source effects; compare same-context Euclidean, Fisher and one-scale controls; measure an untrained future-position endpoint.",
+  "reference_run": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909",
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "seeds": [
+    1,
+    2
+  ],
+  "seed_pairs": [
+    [
+      1,
+      2
+    ]
+  ],
+  "anchors_per_pair": 12,
+  "minimum_source_activations": 32,
+  "maximum_source_fraction": 0.15,
+  "source_pool": 64,
+  "target_pool": 128,
+  "penalty": 0.01,
+  "maxiter": 400,
+  "budget_seconds": 1800,
+  "audit_opened": false,
+  "scope": "Retained exposed natural development, same 24 source-only anchors and Euclidean-coarsened source gates, same target128 pools, one controlled seed edge and two mechanisms. Pointwise Fisher uses model-distribution score samples on discovery; source and target gates are native nonnegative deletion fractions. Same-row Euclidean, pointwise, shuffled-response and amplitude controls receive identical source operation and target pool. Actual model ablations on calibration remain development, with next-token response secondary and not independent causal semantics. No new dataset, seed, or main-conference claim. Adaptive finite follow-up after observing mixed v1 results. Frozen source groups, target pools and retained discovery gradients reused. A source-balanced96-entry discovery design refits all new methods. Actual gate and one-scale KL fits share initialization, minibatches,64updates and learning rate; all old methods remain. Offset4 future-token distribution is not an objective or selector input, measured only after fitting. This is an additional functional endpoint, not proof of semantic identity or an independent model.",
+  "written_at_utc": "2026-09-13T08:57:35Z",
+  "functional": {
+    "active_contexts": 12,
+    "uniform_contexts": 12,
+    "batch_size": 16,
+    "hidden_replay_atol": 0.001,
+    "budget_seconds": 900,
+    "future_offset": 4
+  },
+  "finite_refit": {
+    "parent_run": "runs/REFORM_R23_pointwise_native_groups_v1_20260913",
+    "active_contexts": 48,
+    "uniform_contexts": 48,
+    "updates": 64,
+    "learning_rate": 0.025,
+    "random_seed": 230923,
+    "budget_seconds": 1200
+  }
+}

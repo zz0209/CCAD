@@ -6322,3 +6322,30 @@ Actual write UTC: 2026-09-09T20:30:14Z. The full paper data build started at 202
 证据与资源：artifacts/scientific_reform_20260913/R22_REPORT.md SHA256 dc1cd5d67ceba3a0769d472e37cb210a10e96883df8216e72bb610ef215e73a7；R22_RUN_INVENTORY.json保存5个run，driver wall合计299.831秒，主v4峰值4.35GB，GPU已释放。无新训练/包/模型/付费资源；新增公开正式论文PDF2,914,950bytes。唯一当前稿paper/main.pdf 27页，SHA256 3b7161dc20491273e5c7edc62fb2283e83506bee678063ff9d0ae68bcb0f34c4，源/CSV/JSON/正式矢量图/证据索引及实际视觉检查已齐。旧稿逐字归档、旧ZIP未改，不交付为主会达标包。
 
 下一步R23改变功能度量/组成及真实使用判断，检验新操作预测、选择或语义复用对简单几何/幅度/低秩对照的优势；不能继续只扩大writer目录或换定语。R23–R26共四轮剩余，原ccad ACTIVE每5分钟继续，当前对话负责；到限额如实收尾，不擅自增轮。
+
+
+## REFORM_R23 START — 2026-09-13T08:50:25Z
+
+实际写入UTC：2026-09-13T08:50:25Z。可证实本次唤醒2026-09-13T08:38:59.236Z，首个现场检查08:39:11Z；本轮尚未完成，累计1/5。目标是改变实际模型功能不等价的拟合对象，检验固定source原生组的响应加权匹配能否改善新上下文真实删除及未参与拟合的次端点。先前Fisher固定support回归负/混合结果已读，不重复冒充新方法；本次直接拟合target自身code的有界gate，并与相同source组、候选池、上下文上的Euclidean、幅度及打乱响应对照比较。真实模型score梯度先逐上下文形成Gram再求平均，不平方平均Jacobian；四个模型分布抽样score估计标准Fisher，非新数学。观察到响应改善后再研究解释或真实选择收益，不能由KL训练直接推断语义。
+
+资源现场GPU空闲可用约14GB；复用r004/既有模型和缓存，计划48个每anchor source-active discovery样本加256uniform去重、4score抽样，24操作两机制，一个开发seed方向，GPU运行上限900秒加有限模型验证900秒；无需新资产或费用。所有样本仍exposed development。输入与旧稿逐字归档archive\research_workflow_20260913\before_R23_20260913T085025Z/manifest.json。本轮继续原文方法阅读、实际模型实验与当前唯一稿件图表，运行/等待不充作完成；原自动化每5分钟原位延续。
+
+
+## REFORM_R23 PROGRESS — 2026-09-13T08:57:35Z
+
+实际写入UTC：2026-09-13T08:57:35Z。v1完整24query、8580功能行PASS，梯度缓存1248上下文每个4score抽样，物理回放0；driver146.278秒，GPU峰值6.638GB。相同样本Euclidean比pointwise Fisher的等query相对KL为TopK .375248比.541315、Matryoshka .522163比.484779；以各自拟合误差选择同七候选时各自总选本算法，故没有建立通用实际选择收益。原始负/混合结果保留。
+
+下一同轮改法针对局部二次目标与完整删除之间的具体失配：source固定、target原生gate固定池，直接以完整模型source分布优化gate，同时用完全相同初始化/64步/样本拟合一个幅度。新增source-balanced96entry设计上的Euclidean/Fisher也同场，不能把采样变化归给方法。未来第4token预测作为未拟合次端点；不冒充语义验证。计划GPU上限1200秒，无新训练数据或费用。R23仍在进行，完成计数仍1/5。
+
+
+## REFORM_R23 COMPLETE — 2026-09-13T09:12:41Z
+
+实际写入UTC：2026-09-13T09:12:41Z。现场事件始于2026-09-13T08:39:11Z，主实验最终2026-09-13T09:04:00.561761Z，稿件/结果/视觉整理完成于本块。有效工作/计算/等待未单独连续计量；两个driver合计526.730261秒含加载/CPU/IO。R23完成后新授权累计2/5，本块之后才推进tracker计数。
+
+真实结果：pointwise响应拟合相对同样本Euclidean在TopK恶化、Matryoshka改善；自评分在同七候选总选自身，没有建立通用选择收益。针对局部到完整操作失配改成直接完整模型gate拟合，同96entry/64步单幅度仍更好：TopK .389615/.361740、Matryoshka .462710/.454259（full/scale相对KL）。未拟合future4端点full/scale .620103/.483109和.551030/.507896，同样不支持增益。局部NLL权衡及每query失败全部保留。
+
+定位根本失配：source单锚点粗化组discovery领先能量97.6%，active calibration99.3%/99.7%；仅删除anchor的真实source组相对KL .021638/.024799、future .019287/.017026。组主要仍是单方向作用，因此下一轮改变source概念/行为单元与真实消费者，而不再向此对象添加拟合变体。标准Fisher/有界优化/e2e损失不是新科学贡献。复读e2e/SHIFT/标准Fisher原文并查看正式图版；PLAN已更新科学路径。
+
+两runPASS、功能8580/10868行，峰值6.673GB，GPU释放；source物理回放0，旧572实例逐值复现，source组及候选未变。谱诊断的array-view归一化改copy，初稿保留，数值差约3e-9。无新增训练/安装/费用；官方PDF17.21MB。当前唯一paper/main.pdf28页/主文8页，SHA2566511ebe29823fe564793f404cfb8183926fe2e186bc4e663e583706d04c76edd；主文、附录D、图11/表16、原始数据/证据索引与可编辑源同步，最终8/27/28页实际检查无裁切。
+
+R23_REPORT.md SHA256e83a0703fa73878449a4d308a8dafe60b4591e58fbdb6b7ca6de3e00fac4db21，R23_RUN_INVENTORY.json及R23_FOCUSED_CHECK.json、r23_pdf_review/final均在artifacts/scientific_reform_20260913。未达主会科学标准，不交付为成功包。剩R24–R26三轮，原ccad ACTIVE每5分钟当前对话接续，有限计数不加轮。

@@ -57,10 +57,13 @@ def evaluate(cfg,run,reference,rc,results,checked,write,log):
         try:
             # Double-precision normalization resolves the very small effects
             # on uniform contexts without changing physical interventions.
-            with torch.no_grad():out=model(ids,use_cache=False).logits[idx,positions].double().log_softmax(-1)
+            with torch.no_grad():
+                logits=model(ids,use_cache=False).logits
+                out=logits[idx,positions].double().log_softmax(-1)
+                future=logits[idx,(positions+f['future_offset']).clamp(max=127)].double().log_softmax(-1) if f.get('future_offset') else None
         finally:h.remove()
         forwards+=len(ids)
-        return out[:actual],cache['hidden'][:actual]
+        return out[:actual],cache['hidden'][:actual],future[:actual] if future is not None else None
     for r in results:
         obj=r['objective'];s=r['source_seed'];t=r['target_seed'];key=r['query']
         with np.load(checked(run/(key+'_groups.npz'))) as a:group={k:a[k] for k in a.files}
@@ -90,15 +93,20 @@ def evaluate(cfg,run,reference,rc,results,checked,write,log):
             target_group_shuffled=target.roll(1,0),
             source_anchor=zs[select,r['anchor'],None]*ds[r['anchor']],
             target_for_anchor=(zt[select][:,tp]*atomt)@dt[tp])
+        for name,gate in group.items():
+            if name.startswith('extra_gate_'):
+                value=torch.as_tensor(gate,dtype=zt.dtype,device='cuda:0')
+                deltas[name.removeprefix('extra_gate_')]=(zt[select][:,tp]*value)@dt[tp]
         np.savez_compressed(run/(key+'_functional_edits.npz'),calibration_indices=select.cpu().numpy(),
             packed_positions=packed[select.cpu().numpy()],strata=np.array([stratum for _,stratum in chosen]),
             **{name:val.cpu().numpy() for name,val in deltas.items()})
         for off in range(0,n,f['batch_size']):
             local=select[off:off+f['batch_size']];positions=torch.tensor(packed[local.cpu().numpy()]%128,device='cuda:0')
             ids=torch.tensor(tokens[packed[local.cpu().numpy()]//128].astype('int64'),device='cuda:0')
-            clean,h=output(ids,positions);error=float((h-hidden[local]).abs().max());max_replay=max(max_replay,error)
+            clean,h,clean_future=output(ids,positions);error=float((h-hidden[local]).abs().max());max_replay=max(max_replay,error)
             assert error<f['hidden_replay_atol'],(key,error)
-            outputs={name:output(ids,positions,delta[off:off+len(local)])[0] for name,delta in deltas.items()}
+            packed_outputs={name:output(ids,positions,delta[off:off+len(local)]) for name,delta in deltas.items()}
+            outputs={name:value[0] for name,value in packed_outputs.items()}
             teacher=outputs['source_group'];anchor_teacher=outputs['source_anchor'];source_effect=(teacher.exp()*(teacher-clean)).sum(1)
             for name,lp in outputs.items():
                 kl=(teacher.exp()*(teacher-lp)).sum(1);act=(lp.exp()*(lp-clean)).sum(1)
@@ -111,6 +119,12 @@ def evaluate(cfg,run,reference,rc,results,checked,write,log):
                         source_effect_kl=float(source_effect[j]),effect_kl=float(act[j]),anchor_source_kl=float(anchor_kl[j]),
                         source_group_nll=-float(teacher[j,label]),nll=-float(lp[j,label]),clean_nll=-float(clean[j,label]),
                         edit_norm=float(deltas[name][off+j].norm()),source_norm=float(source[off+j].norm()))
+                    if f.get('future_offset') and pos+f['future_offset']<127:
+                        future_pos=pos+f['future_offset'];flabel=int(ids[j,future_pos+1])
+                        teacher_future=packed_outputs['source_group'][2][j];lp_future=packed_outputs[name][2][j]
+                        row.update(future_offset=f['future_offset'],source_future_kl=float((teacher_future.exp()*(teacher_future-lp_future)).sum()),
+                            source_future_effect_kl=float((teacher_future.exp()*(teacher_future-clean_future[j])).sum()),
+                            future_nll_error=abs(float(teacher_future[flabel]-lp_future[flabel])))
                     rows.append(row)
                     with (run/'functional.raw.jsonl').open('a') as out:out.write(json.dumps(row)+'\n')
             if off==0:
