@@ -6349,3 +6349,35 @@ Actual write UTC: 2026-09-09T20:30:14Z. The full paper data build started at 202
 两runPASS、功能8580/10868行，峰值6.673GB，GPU释放；source物理回放0，旧572实例逐值复现，source组及候选未变。谱诊断的array-view归一化改copy，初稿保留，数值差约3e-9。无新增训练/安装/费用；官方PDF17.21MB。当前唯一paper/main.pdf28页/主文8页，SHA2566511ebe29823fe564793f404cfb8183926fe2e186bc4e663e583706d04c76edd；主文、附录D、图11/表16、原始数据/证据索引与可编辑源同步，最终8/27/28页实际检查无裁切。
 
 R23_REPORT.md SHA256e83a0703fa73878449a4d308a8dafe60b4591e58fbdb6b7ca6de3e00fac4db21，R23_RUN_INVENTORY.json及R23_FOCUSED_CHECK.json、r23_pdf_review/final均在artifacts/scientific_reform_20260913。未达主会科学标准，不交付为成功包。剩R24–R26三轮，原ccad ACTIVE每5分钟当前对话接续，有限计数不加轮。
+
+
+## REFORM_R24 START — 2026-09-13T09:23:16Z
+
+实际写入UTC：2026-09-13T09:23:16Z。本轮唤醒2026-09-13T09:20:29.920Z，首个现场核对09:20:45Z。累计完成2/5，R24进行中；准备/等待不计完成。读取AGENTS/tracker/plan及既有R15任意interleaving、R16–R18原生语义/DBM/DAS来源实现，未把旧结果作新证据。当前机会：用源SAE特征在自然文本上的共同预测作用发现多组成source组，改变上一轮近单方向锚点对象。标准非负分解/行为聚类为组件，不声称算法首创；实际整组删除、单特征/低秩/对应目标组及自然正反例检验其价值。仅source端构造/选择，target结果不参与source分组，语义命名是待证假说。
+
+先用8192既有discovery状态的真实观察token梯度，正向贡献fingerprint非负分解；可负担初始预算GPU1800秒包括梯度/分组/真实功能。复用GPT2Medium两机制/现成受控seed与r004；GPU09:21现场free、约1.95GB占用。无新购买/训练/包；该路径若产生可信作用组成，再优先跨seed/新上下文发展。稿/入口逐字归档archive\research_workflow_20260913\before_R24_20260913T092316Z/manifest.json。全轮持续原文比较、方法/数学、真实实验与唯一paper稿图。
+
+
+## REFORM_R24 PROGRESS — 2026-09-13T09:37:59Z
+
+实际写入UTC：2026-09-13T09:37:59Z。v1已完成24组，driver154.033秒、CPU95.641秒；8033 observed-token gradients、8048forward、503backward、缓存重放误差0。TopK相同64成员预算group相对KL .167262、一对一contribution .498789，256group .155783、rank1 .543617、raw .053690；Matry .335354/.808978/.292344/.337833/.006538。不能以局部差距声称整体闭合。自然实例复查发现Matry多数组由packed块开头主导，位置与rank诊断保存在R24_V1_POSITION_DIAGNOSIS.json，保留v1完整结果。
+
+接续同一R24工作单元，当前启动v2：用至少16个前文token的source行为剖面重做组发现与target fit，五受控seed环、两机制共120组；这是已暴露数据上的适应性开发，限制来自已观察位置失配，不改名为独立确认。新增相同assignment支持集的全gate拟合及单幅度对照，避免把联合幅度优化卖作对应结构；wrong-group按范数匹配、未来4token保留。复用原gradient hash7747de16、无模型重训；gpu-0现场free，预算1800秒（v1基于154秒预测本次约5–10分钟），functional上限1200秒。后续以全部组功能/自然实例和负差决定论文表述，绝不仅按target成功选source。当前R24仍未计完成。
+
+
+## REFORM_R24 PROGRESS / CORRECTION — 2026-09-13T09:49:17Z
+
+实际写入UTC：2026-09-13T09:49:17Z。v2于2026-09-13T09:43:33.341987Z完成，120source组、57525功能行、61440forward sequences，wall314.838秒/CPU276.609秒/peak9.803GB，物理重放误差0。TopK相同64预算group/共同优化assignment相对KL .273185/.411730，54/60胜；未来 .309192/.369857，53/60胜。Matry58/60组改善但主均值1.842808反而差于1.592084，严重失败绝不删除；最差group56.90relativeKL，absolute1.102nats/sourceeffect .0194nats。raw .070753/.069099仍明显更优。来源已从近单方向变成实际多方向source组，但没有由此证明语义/独有用途。
+
+聚焦检查120组source membership逐项由保存的source-only NMF复算、64成员预算/native0–1范围/至少16前文位置均一致。发现wrong_group_matched_norm这个内部字段名过强：若下一个错误组不活跃，其向量为0不能重标到非零范数；共有755/3835context instances，其中463/1920source-active。原始control行为保留，论文改称wrong group, rescaled if active并明确零值例外；不是全面等能量wrong-query检验。无重新跑科学数据。初次新增稿编译因math中texttt调用未缓存小字号等宽字体失败，改用现有正文数学字体；旧有效main.pdf保留，构建失败日志保留。
+
+
+## REFORM_R24 COMPLETE — 2026-09-13T09:56:51Z
+
+实际写入UTC：2026-09-13T09:56:51Z。本轮开始现场09:20:45Z，START写入09:23:16Z；v2真实实验结束2026-09-13T09:43:33.341987Z，稿图/报告/核对截至本写入。有效操作/计算/等待未独立全程计时，未知部分不倒算。五轮第3轮实质完成，本COMPLETE之后tracker才更新3/5。
+
+源端自然预测贡献NMF改变旧近单方向对象，两机制五受控seed120source组的完整模型删除给出新证据：TopK同64成员group/共同refit assignment为.273185/.411730，54/60胜，未来4token.309192/.369857、53/60胜；改善不只来自权重联合优化。Matry58/60胜但严重失败使主均值1.842808差于1.592084，保留全部失败和辅助pooled差异；raw.070753/.069099仍更强。source-active第一方向57.1%/59.2%，anchor-only作用不再替代整组，但PCA失败不证明所有低秩拟合不可能。自然don’/It’/May’和代词实例是待检验假说，语义与使用收益未闭合，科学接受NOT_MET。
+
+初始v1的163/192 Matry前16位置主导促成v2上下文处理，两个版本全部保存；新条件依旧exposed development，不改名为独立确认。source-only membership/预算/native范围/位置逐项检查通过；wrong-group零向量755/3835、其中active463/1920不能等能量，稿已明确。两runwall468.871秒、CPU372.25秒，peak9.803GB，真实重放0，GPU释放；无新训练/安装/费用。首个TeX缺小字号等宽字体失败已修并保留日志，最终图包含所有极值。
+
+当前唯一paper/main.pdf30页/主文8页，SHA256fcc1758a019a3797eaf75be7b267a7610314a5c4bd5bb1f76fed07f37fb6e9c1；主文、附录D.5、表17/图12、全query数据与可编辑源/证据索引/manifest已同步，最终29/30页实际查看。R24_REPORT.md SHA256a3fe3513d9b83c769b6d3a8434834ae3cd51a9eb0dbda19bf5e9348eca0e9852，RUN_INVENTORY/FOCUSED_CHECK/V1_POSITION_DIAGNOSIS及r24_pdf_review/final在artifacts/scientific_reform_20260913；恢复before_R24_20260913T092316Z。下一单元R25以未参与发现的source行为反例/新上下文检验语义选择性与实际组成/决策用途，严格source-only、保留强可学习简单对照；余两轮内继续目标，不增加轮数或宣称顶会成功。原ccad ACTIVE、5min、当前对话，09:50文件现场核对。

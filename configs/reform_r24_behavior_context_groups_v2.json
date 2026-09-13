@@ -1,0 +1,74 @@
+{
+  "run_id": "REFORM_R24_behavior_context_groups_v2_20260913",
+  "round_id": "REFORM_R24",
+  "purpose": "Discover source-only multi-feature behavioral units from observed-token contribution profiles and test actual native cross-seed ablations, matched-cardinality assignments, low-rank compression and same-pool raw regression.",
+  "reference_run": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909",
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "seed_pairs": [
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      1
+    ]
+  ],
+  "anchors_per_pair": 12,
+  "minimum_source_activations": 32,
+  "maximum_source_fraction": 0.15,
+  "source_pool": 64,
+  "target_pool": 256,
+  "penalty": 0.01,
+  "maxiter": 400,
+  "budget_seconds": 1800,
+  "audit_opened": false,
+  "scope": "Adaptive exposed development after v1 revealed packed-boundary-dominated source groups. All source discovery, target fitting, functional context selection and low-rank compression use positions with at least16 preceding tokens; initial v1 remains unchanged. Standard source-only positive observed-token credit NMF,12 components,64 source members,256 target candidates. Five same-configuration seeds in one dependent cycle for each of two SAE mechanisms. Added same-assignment64 joint refit and one-scale controls, same-norm wrong group, and probability-mass natural examples. No target-based source filtering. Retained calibration/discovery remain exposed; neither a fresh confirmation nor unique semantic concept evidence. Future four-token endpoint is not fitted.",
+  "written_at_utc": "2026-09-13T09:37:59Z",
+  "functional": {
+    "active_contexts": 16,
+    "uniform_contexts": 16,
+    "batch_size": 16,
+    "hidden_replay_atol": 0.001,
+    "budget_seconds": 1200,
+    "source_context_rule": "group_activation",
+    "future_offset": 4,
+    "minimum_context_position": 16,
+    "wrong_group_control": true
+  },
+  "behavior": {
+    "components": 12,
+    "nmf_iterations": 200,
+    "minimum_feature_activations": 16,
+    "random_seed": 240917,
+    "gradient_budget_seconds": 900,
+    "raw_ridge_fraction": 0.001,
+    "gradient_cache": "runs/REFORM_R24_behavior_native_groups_v1_20260913/behavior_gradients.npz",
+    "gradient_cache_sha256": "7747de1634a60ac0a8b2bc468048d6ee78db2d5980b80577da7f78daa8430f94",
+    "minimum_context_position": 16,
+    "assignment_controls": true
+  }
+}

@@ -15,7 +15,7 @@ def main():
     started=datetime.now(timezone.utc).isoformat();timer=time.perf_counter();cpu=time.process_time()
     write(run/'config.resolved.json',cfg);codes=[]
     for rel in ['scripts/run_native_coarsening.py','src/ccad/native_coarsening.py',
-                'scripts/evaluate_native_coarsening.py','scripts/refit_response_groups.py','scripts/finite_group_refit.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']:
+                'scripts/evaluate_native_coarsening.py','scripts/refit_response_groups.py','scripts/finite_group_refit.py','scripts/behavior_source_groups.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']:
         p=ROOT/rel;q=run/'source_snapshot'/rel;q.parent.mkdir(parents=True,exist_ok=True);q.write_bytes(p.read_bytes())
         codes.append(dict(path=rel,sha256=sha256(p),bytes=p.stat().st_size,snapshot_path='source_snapshot/'+rel))
     write(run/'code_hashes.json',dict(files=codes,aggregate_sha256=aggregate(codes),snapshot_root='source_snapshot'))
@@ -65,6 +65,11 @@ def main():
                 z[torch.as_tensor(ar['rows'].astype('int64'),device='cuda:0'),torch.as_tensor(ar['columns'].astype('int64'),device='cuda:0')]=torch.as_tensor(ar['values'],device='cuda:0')
             return z
         def gram(zs,ds,zt,dt):return contribution_gram(zs,ds,zt,dt)
+        behavior_response=None
+        if cfg.get('behavior'):
+            from behavior_source_groups import prepare,discover
+            behavior_response=prepare(cfg,run,reference,rc,checked,write,log)
+            env['behavior']=behavior_response['metadata']
         for objective in cfg['objectives']:
             Z={};D={};means={}
             for seed in cfg['seeds']:
@@ -76,6 +81,9 @@ def main():
                 means[seed]=Z[seed]['mean'].mean(0)
             for source,target in cfg['seed_pairs']:
                 zs=Z[source]['discovery'];zt=Z[target]['discovery'];ds=D[source];dt=D[target]
+                source_discovery=zs
+                if behavior_response is not None and cfg['behavior'].get('minimum_context_position',0):
+                    zs=zs[behavior_response['indices']];zt=zt[behavior_response['indices']]
                 source_energy=zs.square().mean(0)*ds.square().sum(1)
                 target_energy=zt.square().mean(0)*dt.square().sum(1)
                 active=(zs>0).sum(0)
@@ -83,12 +91,16 @@ def main():
                 ordered=eligible[torch.argsort(source_energy[eligible],descending=True,stable=True)]
                 positions=torch.linspace(0,len(ordered)-1,cfg['anchors_per_pair']+2,device='cuda:0').long()[1:-1]
                 anchors=ordered[positions].cpu().tolist()
-                log('SOURCE_ANCHORS',objective=objective,source=source,target=target,eligible=len(eligible),anchors=anchors)
-                for anchor in anchors:
+                source_groups=[dict(anchor=anchor) for anchor in anchors]
+                if behavior_response is not None:source_groups=discover(cfg,run,source_discovery,ds,behavior_response,objective,source,write,log)
+                log('SOURCE_ANCHORS',objective=objective,source=source,target=target,eligible=len(eligible),anchors=[v['anchor'] for v in source_groups])
+                for source_group in source_groups:
+                    anchor=source_group['anchor']
                     # Discovery-only native contribution affinity chooses a local pool.
                     ka=gram(zs[:,anchor:anchor+1],ds[anchor:anchor+1],zs,ds)[0]
                     sa=ka.abs()/source_energy.sqrt().clamp_min(1e-8)
                     sp=torch.argsort(sa,descending=True,stable=True)[:cfg['source_pool']]
+                    if 'source_members' in source_group:sp=source_group['source_members']
                     if not bool((sp==anchor).any()):sp[-1]=anchor
                     cross=gram(zs[:,sp],ds[sp],zt,dt)
                     affinity=cross.abs()/source_energy[sp].sqrt().clamp_min(1e-8)[:,None]/target_energy.sqrt().clamp_min(1e-8)[None,:]
@@ -96,7 +108,8 @@ def main():
                     Kss=gram(zs[:,sp],ds[sp],zs[:,sp],ds[sp]).double().cpu().numpy()
                     Kst=cross[:,tp].double().cpu().numpy()
                     Ktt=gram(zt[:,tp],dt[tp],zt[:,tp],dt[tp]).double().cpu().numpy()
-                    aidx=int(torch.where(sp==anchor)[0][0]);s,t,fit=fit_groups(Kss,Kst,Ktt,aidx,penalty=cfg['penalty'],maxiter=cfg['maxiter'])
+                    aidx=int(torch.where(sp==anchor)[0][0]);fixed=source_group['source_gate'].cpu().numpy() if 'source_gate' in source_group else None
+                    s,t,fit=fit_groups(Kss,Kst,Ktt,aidx,penalty=cfg['penalty'],maxiter=cfg['maxiter'],fixed_source=fixed)
                     atom=np.zeros(len(sp));atom[aidx]=1.
                     _,atomt,atomfit=fit_groups(Kss,Kst,Ktt,aidx,penalty=cfg['penalty'],maxiter=cfg['maxiter'],fixed_source=atom)
                     masks={'joint_group':(s,t),'anchored_atom':(atom,atomt)}
@@ -105,6 +118,28 @@ def main():
                     cross_group=s@Kst;gain=np.clip(cross_group/np.diag(Ktt).clip(1e-12),0,1)
                     errors=s@Kss@s-2*gain*cross_group+gain*gain*np.diag(Ktt);best=int(errors.argmin())
                     onehot=np.zeros(len(tp));onehot[best]=gain[best];masks['same_group_best_atom']=(s,onehot)
+                    extras={}
+                    if behavior_response is not None:
+                        from scipy.optimize import linear_sum_assignment
+                        scale=np.sqrt(np.maximum(np.diag(Kss),1e-12))[:,None]*np.sqrt(np.maximum(np.diag(Ktt),1e-12))[None,:]
+                        cosine=(ds[sp]@dt[tp].T/ds[sp].norm(dim=1)[:,None]/dt[tp].norm(dim=1)[None,:]).double().cpu().numpy()
+                        for name,affinity in [('contribution_assignment',Kst/scale),('decoder_assignment',cosine)]:
+                            si,ti=linear_sum_assignment(-affinity);gate=np.zeros(len(tp))
+                            gate[ti]=s[si]*np.clip(Kst[si,ti]/np.diag(Ktt)[ti].clip(1e-12),0,1)
+                            extras['extra_gate_'+name]=gate;masks[name]=(s,gate)
+                            if name=='contribution_assignment' and cfg['behavior'].get('assignment_controls'):
+                                _,joint,assignment_fit=fit_groups(Kss,Kst[:,ti],Ktt[np.ix_(ti,ti)],aidx,penalty=cfg['penalty'],maxiter=cfg['maxiter'],fixed_source=s)
+                                refit_gate=np.zeros(len(tp));refit_gate[ti]=joint
+                                extras['extra_gate_assignment_joint_refit']=refit_gate;masks['assignment_joint_refit']=(s,refit_gate)
+                                amplitude=float(np.clip((s@Kst@gate)/(gate@Ktt@gate+1e-12),0,1/max(gate.max(),1e-12)))
+                                extras['extra_gate_assignment_one_scale']=amplitude*gate;masks['assignment_one_scale']=(s,amplitude*gate)
+                        keep=np.argsort(-(t*t*np.diag(Ktt)),kind='stable')[:cfg['source_pool']]
+                        _,gt64,inf64=fit_groups(Kss,Kst[:,keep],Ktt[np.ix_(keep,keep)],aidx,penalty=cfg['penalty'],maxiter=cfg['maxiter'],fixed_source=s)
+                        gate64=np.zeros(len(tp));gate64[keep]=gt64;extras['extra_gate_same_budget_group']=gate64;masks['same_budget_group']=(s,gate64)
+                        xt=zt[:,tp].double();ys=(zs[:,sp].double()*torch.as_tensor(s,device='cuda:0'))@ds[sp].double()
+                        A=xt.T@xt/len(xt);ridge=cfg['behavior']['raw_ridge_fraction']*A.diag().mean().clamp_min(1e-12)
+                        B=torch.linalg.solve(A+ridge*torch.eye(len(tp),device='cuda:0',dtype=torch.float64),xt.T@ys/len(xt))
+                        extras['extra_raw_reader_target_pool_ridge']=B.float().cpu().numpy()
                     metrics={}
                     for name,(sm,tm) in masks.items():
                         smt=torch.as_tensor(sm,dtype=zs.dtype,device='cuda:0');tmt=torch.as_tensor(tm,dtype=zs.dtype,device='cuda:0')
@@ -121,11 +156,17 @@ def main():
                                 mean_difference_squared=float((mean_s-mean_t).square().sum()),
                                 target_energy=float(yt.square().sum(1).mean()))
                     key=f'{objective}_s{source}_t{target}_a{anchor}'
+                    if 'component_id' in source_group:key+=f"_c{source_group['component_id']}"
                     np.savez_compressed(run/(key+'_groups.npz'),source_members=sp.cpu().numpy(),target_members=tp.cpu().numpy(),
                         source_gate=s,target_gate=t,atom_target_gate=atomt,best_atom_target_gate=onehot,anchor=np.array(anchor),
                         source_mean=means[source][sp].cpu().numpy(),target_mean=means[target][tp].cpu().numpy())
+                    if extras:
+                        p=run/(key+'_groups.npz')
+                        with np.load(p) as a:initial={k:a[k] for k in a.files}
+                        np.savez_compressed(p,**initial,**extras)
                     row=dict(query=key,objective=objective,source_seed=source,target_seed=target,anchor=anchor,
                         fit=fit,atom_fit=atomfit,metrics=metrics,source_active_count=int(active[anchor]))
+                    if 'component_id' in source_group:row['component_id']=source_group['component_id']
                     results.append(row)
                     with (run/'metrics.raw.jsonl').open('a') as f:f.write(json.dumps(row)+'\n')
                     write(run/'query_results.json',dict(queries=results,scope=cfg['scope']))

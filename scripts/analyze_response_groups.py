@@ -35,10 +35,11 @@ def analyze(run,out):
                     pooled_relative_kl=sum(r['source_kl']*r['rows'] for r in qq)/max(sum(r['source_effect']*r['rows'] for r in qq),1e-15))
                 if v['future_kl'] is not None:v['future_pooled_relative_kl']=sum(r['future_kl']*r['future_rows'] for r in qq)/max(sum(r['future_effect']*r['future_rows'] for r in qq),1e-15)
                 aggregate[obj][stratum][method]=v
-    fit_file=run/('finite_fits.json' if (run/'finite_fits.json').exists() else 'response_fits.json')
+    fit_file=next(run/name for name in ['finite_fits.json','response_fits.json','query_results.json'] if (run/name).exists())
     fits=json.loads(fit_file.read_text())['queries'];decisions=[]
     lookup={(r['query'],r['method'],r['stratum']):r for r in queries}
     for q in fits:
+        if 'scores' not in q:continue
         candidates=sorted(q['scores'])
         for metric in ['euclidean','fisher']:
             choice=min(candidates,key=lambda m:(q['scores'][m][metric]['error'],m))
@@ -51,6 +52,7 @@ def analyze(run,out):
         selectors[obj]={}
         for metric in ['euclidean','fisher']:
             dd=[d for d in decisions if d['objective']==obj and d['score']==metric]
+            if not dd:continue
             selectors[obj][metric]=dict(queries=len(dd),choices=dict(Counter(d['choice'] for d in dd)),
                 mean_relative_kl=statistics.mean(d['relative_kl'] for d in dd),mean_regret=statistics.mean(d['regret'] for d in dd))
     comparisons={}
@@ -65,7 +67,7 @@ def analyze(run,out):
     result=dict(run=str(run),scope=json.loads((run/'config.resolved.json').read_text())['scope'],
         inputs=[dict(path=str(p),sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in [run/'functional.raw.jsonl',fit_file]],
         aggregate=aggregate,comparisons=comparisons,selectors=selectors,decisions=decisions,queries=queries,
-        inference='Descriptive paired queries conditional on one shared seed edge and reused documents; no independent-seed interval or confirmation claim.')
+        inference='Descriptive paired queries conditional on the retained shared source/target seed identities and reused documents; query counts and cyclic edges are not independent seed replicates. No confirmation claim.')
     out.mkdir(parents=True,exist_ok=True);(out/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
     with (out/'query_metrics.csv').open('w',newline='') as f:
         w=csv.DictWriter(f,fieldnames=list(queries[0]));w.writeheader();w.writerows(queries)

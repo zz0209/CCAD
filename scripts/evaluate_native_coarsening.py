@@ -74,8 +74,10 @@ def evaluate(cfg,run,reference,rc,results,checked,write,log):
         atomt=torch.as_tensor(group['atom_target_gate'],dtype=zs.dtype,device='cuda:0')
         # Both strata are fixed from source activation or a deterministic grid.
         full_blocks=(len(tokens)//rc['batch_size'])*rc['batch_size']
-        allowed=np.where((packed%128<127)&(packed//128<full_blocks))[0]
-        order=torch.argsort(zs[allowed,r['anchor']],descending=True,stable=True).cpu().numpy()
+        allowed=np.where((packed%128<127)&(packed%128>=f.get('minimum_context_position',0))&(packed//128<full_blocks))[0]
+        context_score=zs[allowed,r['anchor']]
+        if f.get('source_context_rule')=='group_activation':context_score=(zs[allowed][:,sp]*gs).sum(1)
+        order=torch.argsort(context_score,descending=True,stable=True).cpu().numpy()
         chosen=[];seen=set()
         for i in np.asarray(allowed)[order]:
             block=int(packed[i]//128)
@@ -86,6 +88,10 @@ def evaluate(cfg,run,reference,rc,results,checked,write,log):
         select=torch.tensor([i for i,_ in chosen],device='cuda:0');n=len(select)
         source=(zs[select][:,sp]*gs)@ds[sp];target=(zt[select][:,tp]*gt)@dt[tp]
         qdisc=(codes('discovery',obj,t)[:,tp]*gt)@dt[tp]
+        if f.get('minimum_context_position',0):
+            with np.load(checked(reference/'natural_discovery_states.npz')) as a:
+                discovery_keep=np.where((a['packed_positions']%128>=f['minimum_context_position'])&(a['packed_positions']%128<127))[0]
+            qdisc=qdisc[discovery_keep]
         torch.manual_seed(417);_,_,basis=torch.pca_lowrank(qdisc,q=4,center=False,niter=3)
         deltas=dict(source_group=source,target_group=target,target_best_atom=(zt[select][:,tp]*best)@dt[tp],
             target_group_rank1=(target@basis[:,:1])@basis[:,:1].T,
@@ -97,6 +103,16 @@ def evaluate(cfg,run,reference,rc,results,checked,write,log):
             if name.startswith('extra_gate_'):
                 value=torch.as_tensor(gate,dtype=zt.dtype,device='cuda:0')
                 deltas[name.removeprefix('extra_gate_')]=(zt[select][:,tp]*value)@dt[tp]
+            if name.startswith('extra_raw_reader_'):
+                value=torch.as_tensor(gate,dtype=zt.dtype,device='cuda:0')
+                deltas[name.removeprefix('extra_raw_reader_')]=zt[select][:,tp]@value
+        if f.get('wrong_group_control'):
+            peers=[q for q in results if q['objective']==obj and q['source_seed']==s and q['target_seed']==t]
+            peer=peers[(next(i for i,q in enumerate(peers) if q['query']==key)+1)%len(peers)]
+            with np.load(checked(run/(peer['query']+'_groups.npz'))) as a:
+                wp=torch.as_tensor(a['target_members'],device='cuda:0');wg=torch.as_tensor(a['target_gate'],device='cuda:0',dtype=zt.dtype)
+            wrong=(zt[select][:,wp]*wg)@dt[wp]
+            deltas['wrong_group_matched_norm']=wrong*(target.norm(dim=1)/wrong.norm(dim=1).clamp_min(1e-12))[:,None]
         np.savez_compressed(run/(key+'_functional_edits.npz'),calibration_indices=select.cpu().numpy(),
             packed_positions=packed[select.cpu().numpy()],strata=np.array([stratum for _,stratum in chosen]),
             **{name:val.cpu().numpy() for name,val in deltas.items()})
@@ -131,8 +147,12 @@ def evaluate(cfg,run,reference,rc,results,checked,write,log):
                 examples=[]
                 for j in range(min(3,len(local))):
                     shift=teacher[j]-clean[j];top=torch.topk(shift.abs(),10).indices.cpu().tolist()
+                    probability_shift=teacher[j].exp()-clean[j].exp();mass_top=torch.topk(probability_shift.abs(),10).indices.cpu().tolist()
                     examples.append(dict(calibration_index=int(local[j]),context=tokenizer.decode(ids[j,:int(positions[j])+1].cpu().tolist()),
                         next_token=tokenizer.decode([int(ids[j,int(positions[j])+1])]),
+                        packed_position=int(packed[int(local[j])]),
+                        largest_source_probability_changes=[dict(token=tokenizer.decode([token]),clean_probability=float(clean[j,token].exp()),
+                            source_probability=float(teacher[j,token].exp()),target_probability=float(outputs['target_group'][j,token].exp())) for token in mass_top],
                         largest_source_log_probability_changes=[dict(token=tokenizer.decode([token]),source_change=float(shift[token]),
                             target_change=float(outputs['target_group'][j,token]-clean[j,token])) for token in top]))
                 write(run/(key+'_natural_examples.json'),dict(examples=examples))
