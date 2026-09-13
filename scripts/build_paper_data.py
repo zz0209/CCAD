@@ -280,6 +280,10 @@ def main():
             from behavior_paper import export as export_behavior
             behavior=export_behavior(root,out)
             sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in behavior['inputs'])
+        if json.loads((out/'reform_runs.json').read_text()).get('grammar_run'):
+            from grammar_paper import export as export_grammar
+            grammar=export_grammar(root,out)
+            sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in grammar['inputs'])
         sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in reform['inputs'])
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
@@ -410,6 +414,10 @@ def main():
             claims.append(dict(id='source_behavior_groups_and_matched_support',paper='Source-only behavioral groups and equal-member assignment controls',
                 result='Standard observed-token credit NMF defines source groups before target fitting. All120 groups across two mechanisms and five shared-seed cyclic edges retain matched64-member joint-fit assignment,64-member group,256-candidate raw,low-rank,wrong-group and future-position controls. Position-dominated initial groups and adaptive development scope are retained. Native replacement fidelity does not alone establish semantic identity or useful component transfer.',
                 evidence=[v['path'] for v in behavior['inputs']]+['scripts/behavior_source_groups.py','scripts/behavior_paper.py','paper/sections/native_group_development.tex']))
+        if json.loads((out/'reform_runs.json').read_text()).get('grammar_run'):
+            claims.append(dict(id='grammar_transfer_and_source_counterfactuals',paper='Source group relevance and cross-seed transfer on grammatical contrasts and fixed prompts',
+                result='Three original BLiMP paradigms,30 source-only task/seed selections,7 comparators and936 evaluation pairs per selected paradigm. Source grammatical relevance is separated from target fidelity. Original no-boundary run and corrected official-boundary repeat both retained; exposure is not reset. Two source hypotheses and128 authored contexts were frozen before model outcomes. Same-pool learned rank1/2 regression and all negative outcomes retained; no complete BLiMP, independent confirmation across repeated implementations, or human concept-identity claim.',
+                evidence=[v['path'] for v in grammar['inputs']]+['scripts/run_behavior_grammar_transfer.py','scripts/analyze_grammar_transfer.py','scripts/grammar_paper.py','paper/sections/grammar_transfer.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:
@@ -418,7 +426,7 @@ def main():
             verified.append(dict(path=rel,bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()))
         claim['evidence']=verified
     current_ids=['operation_and_native_equivalence','contrast_and_pair_common_completion','learned_superposition_fidelity_and_truth','frozen_named_operation_family_and_native_writes','source_axis_native_transfer_and_selection','complete_frozen_original_task_confirmation','compiled_fitting_objective_tradeoff','development_direction_and_magnitude_exchange','observed_finite_menu_selection_headroom']
-    if (out/'reform_runs.json').exists():current_ids.extend(['amplitude_attribution_and_native_coarsening','response_fitting_and_source_unit_bottleneck','source_behavior_groups_and_matched_support'])
+    if (out/'reform_runs.json').exists():current_ids.extend(['amplitude_attribution_and_native_coarsening','response_fitting_and_source_unit_bottleneck','source_behavior_groups_and_matched_support','grammar_transfer_and_source_counterfactuals'])
     (out/'EVIDENCE_INDEX.json').write_text(json.dumps(dict(current_manuscript_claim_ids=[c['id'] for c in claims if c['id'] in current_ids],claims=claims,data_manifest='data/DATA_MANIFEST.json',figure_manifest='figures/FIGURE_MANIFEST.json',
         raw_hashes=manifest['original_raw_sha256'],scope='Current manuscript evidence locator. Hashes establish file identity, not scientific validity; source and member KL references differ.'),indent=2)+'\n',encoding='utf-8')
     print(json.dumps(dict(context_rows=len(context['rows']),source_seed_rows=len(seed_rows),member_directions=20,fixed_cases=16,tables=len(list(table_dir.glob('*.tex'))),output=str(out))))

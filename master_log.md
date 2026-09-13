@@ -6381,3 +6381,60 @@ R23_REPORT.md SHA256e83a0703fa73878449a4d308a8dafe60b4591e58fbdb6b7ca6de3e00fac4
 初始v1的163/192 Matry前16位置主导促成v2上下文处理，两个版本全部保存；新条件依旧exposed development，不改名为独立确认。source-only membership/预算/native范围/位置逐项检查通过；wrong-group零向量755/3835、其中active463/1920不能等能量，稿已明确。两runwall468.871秒、CPU372.25秒，peak9.803GB，真实重放0，GPU释放；无新训练/安装/费用。首个TeX缺小字号等宽字体失败已修并保留日志，最终图包含所有极值。
 
 当前唯一paper/main.pdf30页/主文8页，SHA256fcc1758a019a3797eaf75be7b267a7610314a5c4bd5bb1f76fed07f37fb6e9c1；主文、附录D.5、表17/图12、全query数据与可编辑源/证据索引/manifest已同步，最终29/30页实际查看。R24_REPORT.md SHA256a3fe3513d9b83c769b6d3a8434834ae3cd51a9eb0dbda19bf5e9348eca0e9852，RUN_INVENTORY/FOCUSED_CHECK/V1_POSITION_DIAGNOSIS及r24_pdf_review/final在artifacts/scientific_reform_20260913；恢复before_R24_20260913T092316Z。下一单元R25以未参与发现的source行为反例/新上下文检验语义选择性与实际组成/决策用途，严格source-only、保留强可学习简单对照；余两轮内继续目标，不增加轮数或宣称顶会成功。原ccad ACTIVE、5min、当前对话，09:50文件现场核对。
+
+
+## REFORM_R25 START — 2026-09-13T10:10:09Z
+
+实际写入UTC：2026-09-13T10:10:09Z。本轮heartbeat2026-09-13T10:06:00.673Z，首个现场核对10:06:31Z；累计完成3/5，R25开始，不计准备为完成。读AGENTS/tracker/plan，回查原dictionary_learning两SAE encode实现与旧自然cache producer。当前机会：对上一轮NMF源组的字形/句法假说做真正新上下文的反例与功能检验，并用官方原始语言最小对照检验可迁移的源SAE功能判断，不再只增加整体KL行。源组本身和target自然对应固定；源端选组不消费target，正反语义作用与对应效果分开。读取BLiMP官方原文/README方法、原始good/bad句子概率评价与CC-BY许可，计划复用其明确grammar contrast，不把少数范式或改变干预位置当完整67范式benchmark。
+
+可逆内部初始GPU预算1800秒用于新source-only probe/grammar选择与冻结target检验；按实测吞吐收缩计算菜单，保留三类强比较：共同refit的64-member assignment、同pool raw及可学习低秩。既有R24自然拟合全部保留，新句子不训练SAE或修改预训练模型。资源现场free，复用r004与现有10SAE，外部仅少量官方开放数据/论文，无费用/新增算力。路径与精确冻结配置将在真正计算前保存，不按结果补写。档案archive/research_workflow_20260913/before_R25_20260913T101009Z/manifest.json保留当前稿和入口。
+
+## REFORM_R25 PROGRESS — 2026-09-13T10:28:20Z
+
+实际写入UTC：2026-09-13T10:28:20Z。固定procedure和输入于2026-09-13T10:20:26Z留账，真实run于10:20:38.137771Z启动；源选择冻结事件为10:23:19.421429Z，SOURCE_SELECTION_FREEZE明确held模型结果与target干预均尚未消费。三类BLiMP原始范式各前64对作source选择，30个任务/seed选择涉及24个不同源组；剩936对及每个其他范式64对控制随后评估。源选择score是本任务margin下降减去另两任务平均下降，因此最大score也可能来自本任务改善较小，而非真正破坏语法；已经观察到若干负的source margin decrement，不把被选中直接称作语法概念。
+
+目前同轮检验在运行，已完成TopK若干source→target方向；所有30项及128个提前写定的角色/字形反例将完整保留。未见目标反馈不修改方法和源组；可学习秩1/秩2为原自然拟合数据上的ridge reduced-rank解，与R24的target-field PCA不同。source效应本身的大小/方向/选择性与target保真分开分析，简单保持弱源效应不作解释迁移成功。GPU租约run自动续租，1800秒预算无新增费用；运行等待不计完成，累计仍3/5。
+
+## REFORM_R25 PROGRESS / CORRECTION — 2026-09-13T10:38:13Z
+
+实际写入UTC：2026-09-13T10:38:13Z。深入核对BLiMP作者链接的jiant源码commit244c9d895236c3446c4c36060283645a57a3175a后，确认原始GPT2 apply_lm_boundary_tokens在句首句尾均加入endoftext，full-sentence消费者逐token logprob求和并包含结束标记。当前v1保留原句/标签但没有这两个边界，属于已预先说明的native干预研究中的另一评分实现，不能称为完整官方评分复现；仅以首词概率在对内抵消不足以使有无BOS的模型状态相等。源码modules.py88–120/458–514、models.py1022–1072、acceptablity_probing.py758–838已实际阅读，官方MIT代码与hash留在reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json。
+
+同轮完成v1原定数据后，将在保留代码/config/run的基础上以显式官方BOS/EOS处理补跑v2，仍是3/67范式和GPT2Medium的受控干预研究，非原论文GPT2Large全套。所见v1held结果永久记为曝光；v2是实现修正后的重复评估，不能重新叫独立确认。源选择仍只用每范式原前64对，在新boundary处理下冻结全部source ID后才运行target；原自然对应系数/强对照不因target成败调整。预计再用约21–23分钟driver（v1已观察每选择约37秒、30选择加源筛选约180秒），单次上限1800秒；不重复128个未变的authored反例。无额外费用/模型训练，不计新轮，R25仍未完成。
+
+## REFORM_R25 PROGRESS — 2026-09-13T10:46:21Z
+
+实际写入UTC：2026-09-13T10:46:21Z。v1于2026-09-13T10:42:12.517843Z前后完成（精确status实际时间见run/status.json，日志不以此近似代替原值）；driver1294.380秒、570496sequence、36,511,744tokens、248016行，源/前缀回放误差0，运行PASS。初版无BOS/EOS语法主均值Group64/Assignment64为TopK .157781/.146607、Matry .135230/.132811nats；常规99%decision agreement掩盖源真正改变的判断仅保留48.7%/24.6%。官方boundary修正版v2已于10:43:16.587481Z启动，源选择10:44:58.426659Z冻结，原自然target系数不变；v1原字节archive/research_workflow_20260913/before_R25_boundary_correction_20260913T104244Z保留，重复评估曝光明确留账。
+
+提前固定的128个反例出现局部功能区分：apostrophe组使curly续写均概率.1445降至.0002，target组.0005；在pronoun上下文几乎不变。pronoun组相反，在subject上下文指定verb概率.5382降至.4281，target.4548、assignment.4771、raw full.4072、learned rank1 .5177。subject probability MAE依次group .0374、assignment .0598、raw .0214、rank1 .1092；object也受影响(.0443→.0098)，不能把它命名为纯subject语法单元。两组自然来源身份在见新结果前固定，支持字形/代词续写的局部功能对应与反例区分，但仅一个seed方向、两组、预写metalinguistic上下文，不足以证明完整解释迁移或主会闭合。新figure已生成并实际查看，所有对照保留。
+
+
+## REFORM_R25 CORRECTION — 2026-09-13T10:46:34Z
+
+实际写入UTC：2026-09-13T10:46:34Z。刚读v1 status.json确认实际结束事件为2026-09-13T10:42:12.640469Z。上一PROGRESS中的10:42:12.517843Z是由开始加driver wall倒算的近似，不能作为结束事件时间；保留原文并明确以本条及run/status.json为准。科研数值与完成计数不变。
+
+## REFORM_R25 PROGRESS — 2026-09-13T10:56:57Z
+
+实际写入UTC：2026-09-13T10:56:57Z。修正版仍运行；已完成TopK15个选择并进入Matry，预期约11:04Z前后结束。保持原ccad每5分钟、当前对话继续同一R25，不计新轮，累计完成仍3/5。最新源码/图导出/分析已就绪，尚未将未完成v2写成科学结论或完成稿。当前main.pdf仍是有效R24稿；R25的grammar_transfer.tex与grammar_paper.py等待v2全结果后统一接入构建、检查并完成本轮。
+
+128个反例的learned rank2已核完：pronoun subject概率MAE .024910，优于native group .0374；与fullraw .0214、rank1 .1092、assignment .0598一起保留，不能只宣传胜过rank1。当前组保留可区分的字形/代词续写，但未证明复杂原生对应必要性。正式figure包含所有五个target方法与source，并将绝对概率变化与clean底值差异分开解释。
+
+官方boundary下源选择30项有11个ID不同于初版，再次说明两种输入状态不等价。原pair文本长度分析显示936个held pair/范式全部处在natural fit最小16位置之外：subject–verb前缀位置1–5、anaphor number2–9、gender2–7，均值2.010/4.228/4.025。因此该实验同时挑战短上下文分布迁移，不能以失败判定SAE概念不存在。新增按原good/bad词汇对分组的描述分析，检验margin平均是否混合词汇偏置，结果全保留而不用于重新挑选target/source。下一次续接先查run完成状态；PASS后完整分析v2并与v1比较，接入当前唯一稿件主文/附录/图表，记录真实完成时间和资源后才推进4/5。最终R26优先发展可用组成的正信号并改变源对象/拟合与消费者失配，不能继续只堆整组保真表。
+
+
+## REFORM_R25 PROGRESS — 2026-09-13T11:06:14Z
+
+实际写入UTC：2026-09-13T11:06:14Z。本次heartbeat2026-09-13T11:02:31.515Z接续同一R25。官方boundary修正版于2026-09-13T11:03:42.560849Z结束PASS；driver1225.854秒、CPU1096.563秒、566656sequence/36,265,984tokens/246480行，峰值4.635GB，回放误差0。Group64/Assignment64主均值为TopK .057699/.068913、Matry .108757/.114175，各11/15胜；rawfull .059811/.051328，learnedrank2 .121000/.087177。不能由小平均差声称主会突破。源本身TopK/Matry task accuracy仅下降.064/.278百分点，改变39/71个source–pair实例，跨seed重复pair不是独立样本；Group64保留31/39、39/71，rawfull30/39、53/71。原版与修正版全部保留，旧曝光不重置。
+
+当前已将数值、实际source效果、短prefix shift、强对照及两组固定反例写入主文与附录，构建唯一paper/main.pdf；未完成实际PDF查看、结果报告/完成留痕之前不增加3/5计数。下一步聚焦一次实现/来源/指标核对与完整稿件整理，不追加同类指标run。
+
+## REFORM_R25 COMPLETE — 2026-09-13T11:17:06Z
+
+实际写入UTC：2026-09-13T11:17:06Z。首个现场检查2026-09-13T10:06:31Z、START写入10:10:09Z，跨2026-09-13T11:02:31.515Z heartbeat接续；最后真实实验结束2026-09-13T11:03:42.560849Z。本轮科学结果、稿图及报告已整理完成，累计应为4/5，本COMPLETE之后才推进tracker计数。有效研究/等待未独立全程计量，不以墙钟或driver时间倒算。两个driver合计2520.234412秒含加载/CPU/IO，CPU2202.421875秒、1137152sequence/72,777,728paddedtokens、peak4.642GB；GPU现场free，无新增训练/安装/费用。
+
+新增科学证据：两个预先固定source组在128个新反例中呈现字形与代词续写的不同作用，target保留局部功能区分。pronoun subject概率误差group .0374、assignment .0598、learnedrawrank1 .1092、rank2 .0249、fullraw .0214；rank2已胜native，object也受影响，不能宣称subject语法概念或复杂对应必要性。官方boundary修正版三BLiMP范式、两机制五seed环、30source-only task选择的Group64/Assignment64平均margin误差TopK .057699/.068913、Matry .108757/.114175，两边11/15胜。fullraw .059811/.051328；源accuracy只变.064/.278百分点，实际39/71个source–pair改变并非独立pair，group保留31/39、39/71，raw30/39、53/71。局部保真正证据成立，但可实际使用的组成转移和主会贡献仍未闭合。
+
+初版遗漏官方两端endoftext，完整保存其较差/混合结果及代码；核对作者实际源码后补跑，改动11/30源选择，原held曝光不重置。全部语法prefix在位置1–9、超出原自然fit至少16前文的范围，源功能与分布迁移分开解释。60个source选择、6000原始token面板/边界及保存rank逐项聚焦核对，谱尾最大2.5143e-8、实际prefix回放0；不把检查当独立科学复核。构建首次因相对路径转身份失败修正，初图colorbar裁切和正文孤页已修复，失败日志/初图保留。
+
+唯一当前paper/main.pdf33页、主文8页，SHA256a7678a327565306c6a0590350e32230bde7e7bbabdf038ae6ffb0ebed7a984ab。主文、Appendix E、表18/图13–15、完整数据/源码/证据索引与manifest同步；最终8/31/32/33页实际查看。R25_REPORT.md SHA2568fbd0064cea569e5610eb5cd43e1f08b2b527d0c0df120b181612db426bdaf7b，R25_COMPLETE/FOCUSED_CHECK/RUN_INVENTORY在artifacts/scientific_reform_20260913；旧稿、初版代码和入口都有逐字archive/hash。SOURCE原文与官方实现差异已更新REFERENCE_REGISTRY。
+
+仅余R26一轮。优先将已验证的局部行为发展为可单独使用的组成关系，允许改变源功能定义/分解和对应拟合的上下文分布；用真实组成操作或解释决定检验收益，保留强raw/低秩/native对照，不能仅扩整组KL表或收窄故事。原ccad ACTIVE每5分钟、当前对话负责，不加第六轮；到最后限额完成授权收尾后原位暂停，未达标不交付为成功主会成果。本单元白名单成组同步随后执行，忽略的稿件/数据本地保留并hash留账。

@@ -1,0 +1,43 @@
+{
+  "run_id": "REFORM_R25_behavior_grammar_transfer_official_v2_20260913",
+  "run_parent": "REFORM_R25",
+  "generator_script": "scripts/run_behavior_grammar_transfer.py",
+  "purpose": "Test transfer of source-only native group relevance on original grammatical minimal pairs, and falsify orthographic versus grammatical source-group hypotheses with fixed new counterfactual contexts.",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+  "budget": "Existing shared gpu-0, two CPU threads,1800-second initial bounded run; no paid resource, training or package changes.",
+  "budget_seconds": 1800,
+  "max_length": 64,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "selection_pairs": 64,
+  "control_pairs": 64,
+  "group_run": "runs/REFORM_R24_behavior_context_groups_v2_20260913",
+  "data_manifest": "artifacts/scientific_reform_20260913/reference_material/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/SOURCE_MANIFEST.json",
+  "probe_manifest": "artifacts\\scientific_reform_20260913\\R25_CONTROLLED_PROBES.json",
+  "tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "source_rule": "For each SAE seed and each of three paradigms, choose among its12 fixed source NMF groups the largest mean grammatical good-minus-bad margin decrement on the first64 original pairs, minus the average decrement on the other two paradigms. Ties use the lower componentID. Save all candidates and selection before any target grammar intervention or any held-pair model outcome. No threshold or target-based source choice.",
+  "scope": "Corrected repeated evaluation on3 original BLiMP paradigms with official endoftext at both boundaries and full-sentence logprob sum including final endoftext. Different GPT2Medium model and native prefix intervention; not the complete original67-paradigm benchmark. v1 omitted boundary tokens; its observed held outcomes remain exposed. The64/936 source-selection/evaluation split is retained but is no longer independent confirmation across implementations. Source groups selected only on64 source pairs with the fixed rule, before target evaluation. Original natural target coefficients and all7 comparator methods unchanged; source task relevance and target fidelity reported separately. No new controlled probes: unchanged frozen authored prompts are evaluated once in v1. Shared seeds/templates/vocabulary prevent independent-replicate claims.",
+  "written_at_utc": "2026-09-13T10:41:51.099496+00:00",
+  "official_boundary_tokens": true,
+  "run_controlled_probes": false,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json"
+}
