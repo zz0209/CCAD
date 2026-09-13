@@ -6482,3 +6482,40 @@ R23_REPORT.md SHA256e83a0703fa73878449a4d308a8dafe60b4591e58fbdb6b7ca6de3e00fac4
 ## REFORM_R26 收尾：有限五轮后的原位暂停
 
 实际写入UTC：2026-09-13T12:37:33Z。本轮COMPLETE实际12:36:39Z已先写入，tracker已5/5。工具成功原位更新原ccad为PAUSED，随后直接读TOML核对；原prompt、5min规则、目标对话未变，不创建新loop，不删除automation或中断别的任务。理由是用户明确五轮授权已用尽，科学验收NOT_MET，不把普通负结果当无条件停工理由。全部实验已结束，现有材料/历史保留；回执artifacts/scientific_reform_20260913/R26_AUTOMATION_PAUSE.json。下一动作仅白名单成组commit/push与HEAD=origin/main验证，忽略成果本地保留。
+
+
+## FINAL_VALUE_R27 START — 最后五轮：复用功能解释，选择有针对性的目标组成
+
+实际写入UTC：2026-09-13T17:08:50Z。用户本轮明确新增最后5轮，编号R27–R31；此前R22–R26的5/5及未达标结论保留。新阶段0/5，当前R27进行中。本条记录现场写入开始时刻；收到用户消息的精确时间未另行计量，不回填。当前对话独立执行，不转交subagent；新长期goal已创建并保持active，最终主会目标不变。
+
+本轮机会：已有三个源SAE组成有可区分的真实功能，目标关系可跨seed调用。把它用于研究者的实际选择：依据源解释选择目标feature组，删除后集中改变所指功能，同时保留其他功能。在相同最终成员和目标验证预算下比较FCC、assignment、raw关系及直接复用现有source梯度；共同可获得的信息完整给强对照。主要观察固定验证预算后选出的mask在新句对上的功能选择性。现有方法是出发点，后续改法由这个用途的结果驱动；旧writer MAE不再单独充当目标。
+
+实际动作计划：重读并实用anti-defensive-writing/humanizer，将必要限制集中，主文围绕功能组成的正面问题/结果组织。第一轮同时完成真实消费者试验和全稿重构；数学解释组成归属如何转成可使用的target成员选择。复用GPT2Medium hook11、两机制五seed及原R26source/map/cache，读取真正未作模型评价的原始句对。初步现有GPU预算2400秒driver、约8GB显存、两CPU线程，配置确定后记录；不新增付费。源信息复用与目标验证调用分别计数。实验、有效工作和等待按实际记录，未独立计时者为未知。
+
+前稿/入口逐字归档archive/research_workflow_20260913/before_R27_20260913T170850Z/manifest.json。原ccad依照新增5轮授权恢复原5min唤醒，精确状态随后核对；每个实质轮完成结果与稿件并写COMPLETE后才增加计数，R31后完成收尾并原位暂停，不自行再加轮。
+
+
+## FINAL_VALUE_R27 PROGRESS — 真实feature选择已冻结，功能结果成为主文中心
+
+实际写入UTC：2026-09-13T17:24:38Z。run实际开始2026-09-13T17:14:04.875439Z，仍RUNNING。全部source-only proposals实际冻结2026-09-13T17:15:35.243568+00:00，全部540个预算/功能/方法选择实际冻结2026-09-13T17:19:16.649505+00:00，之后才执行评价。每个家族有8/16/32/64四个成员候选、目标验证0/4/16pair每任务；缓存source梯度同时给pool和全字典直接控制，raw .1沿原开发选择。target消费对应实际完整代码删除，主结果为请求功能的新增错误率减另两功能平均新增错误率，绝对两项分别保留。原三任务384–399验证、512–575评价，精确句对与旧0–319及彼此0重叠，文件读取/模型计算身份分开。TopK部分完整task/seed单元提示membership较低collateral可能有用，当前结果不完整，不改变已冻结规则或冒充五seed结论。
+
+按anti-defensive-writing重建paper/sections/main_text.tex：功能组成→目标membership→单独/联合真实作用→功能来源与可执行性的数学连接→固定操作参照，替换原按轮次经历叙述。功能响应矩阵移入主文，强raw联合误差/判断保持和源/目标统计单位保留；旧axis_methods/results转入完整附录，正文保留关键归因和source反例。编译成功，初稿主文5页、全稿39页，整段论证缩略图实际查看；会随真实R27结果加入使用段落和正式图，不将修稿计为科学完成。
+
+重新读Marks原PDF第6–7页§3.2–4，将真实retain/remove用途用于本研究，不声称人类标注收益或复现SHIFT。当前进度{"elapsed": 605.5111936999601, "objective": "topk", "operation": "verb", "process_cpu_seconds": 485.75, "sequence_forwards": 175200, "source": 4, "split": "evaluation", "stage": "REUSE_OPERATION_EVALUATED", "token_forwards": 11212800, "written_at_utc": "2026-09-13T17:24:10.384088+00:00"}。原ccad ACTIVE/5min已经现场核对，当前阶段仍0/5，本轮尚未完成。
+
+
+## FINAL_VALUE_R27 CORRECTION — 汇总按明确组件编号对应功能
+
+实际写入UTC：2026-09-13T17:30:02Z。部分汇总异常地给verb/gender源干预的自身任务0作用，触发直接原始配置/句对/组件身份核对。发现resolved JSON排序操作键，而新analyzer以字典顺序给操作对应task，颠倒verb与gender。实际运行读取的原config顺序为verb/number/gender，实验proposals、干预、原始记录与SELECTION_FREEZE正确且未改。analyzer现用operations显式one-hot组件编号对应task；当前helper也按编号排序以使今后从resolved config回放保持同义，正在执行的原run源码已逐字冻结。撤回此前基于错误部分汇总的TopK collateral正信号描述，旧summary保留，R27_ANALYSIS_CORRECTION定位。改正后TopK完整15task/seed单元在16验证预算下native选择性12.4479点，cached-gradient pool19.7396点。Matry仍在执行；不据此改变已冻结方法或评价。
+
+## FINAL_VALUE_R27 COMPLETE — 2026-09-13T17:44:34Z
+
+实际写入UTC：2026-09-13T17:44:34Z。round_id=FINAL_VALUE_R27。可证实本轮事件START为2026-09-13T17:08:50Z，本轮整理完成为当前写入时刻；净人工式有效工作/工具等待未分别计时，明确未知。GPU实验从17:14:04.875439Z至17:34:01.416087Z，实际driver1196.419秒，最后记录process CPU1020.547秒，374880 padded sequence forwards、23992320 padded token forwards；共享gpu-0正常释放，无新增训练/下载/费用。本轮按用户新授权最后五轮R27–R31执行，现已完成第一轮，后四轮仍有效。
+
+选题理由与真实结果：把已验证源功能转成实际目标成员选择，以指定功能clean-correct→wrong减其他两功能平均变化为U。六种同信息提案、4个成员上限、0/4/16目标验证pair每任务，真实binary target-code deletion，原三范式384–399验证及512–575评价，保留精确句对无重复及共享范式/seed依赖。16验证时FCC membership U为TopK12.4479/Matryoshka14.8438点，同池缓存源梯度19.7396/18.5938点；raw系数投影11.7188/13.8542，assignment11.1458/11.6667。membership×credit仍弱于梯度。其含义是总贡献拟合的成员分配未充分解决选择性删除消费者；主会科学目标仍未完成。
+
+数学/阅读/稿件：源组件→目标M→请求→实际选择统一定义，保留强raw及缓存梯度可以输出成员的事实。已读Sparse Feature Circuits原文pp3–7，区分其积分梯度元素路径与拟采用源组件联合路径。anti-defensive-writing实际用于摘要、引言和全部主文重组，功能响应成为首图、实际选择成为第二主图，固定操作完整方法移附录，必要反例/source错误/幅度控制留主文。paper/main.pdf为唯一当前稿，40页，SHA18b44e1d113fc6c20b6e162ac60ecd49256b601c97ec2e0cd06949530d63dc2e；对应源、数据和完整表已更新，实际查看所有40页总览和新主图，最后主文页较空的排版事项保留到完整组稿。
+
+数据/代码/核对：runs/FINAL_VALUE_R27_functional_reuse_v1_20260913为PASS，180000原始行、720提案、540冻结决定；configs/final_value_r27_functional_reuse_v1.json、scripts/functional_reuse_consumer.py及既有runner。R27_FOCUSED_CHECK.json核对全部540个执行汇总与按raw重算完全一致、成员上限和冻结规则/时序。一次analysis排序键导致verb/gender错配的局部判断已在17:30:02Z CORRECTION撤回；实际干预/冻结正确，旧summary和修正receipt保留，不改历史。没有再执行无关全套测试。
+
+阅读/恢复：artifacts/final_value_five_20260913/R27_REPORT.md、R27_COMPLETE.json与paper/README.md。旧全稿归档archive/research_workflow_20260913/before_R27_20260913T170850Z/manifest.json及入口归档r27_closeout_entries_20260913T174225Z。下一轮改为源组件有限删除过程中的功能credit及响应对应，先看这种信息能否改善同一真实成员选择，并用clean梯度和其他路径的同预算比较检验源组件信息的贡献；不把成熟积分梯度本身称为创新。先本COMPLETE记录，随后tracker增加到1/5。原ccad保持ACTIVE、5min、当前对话执行。

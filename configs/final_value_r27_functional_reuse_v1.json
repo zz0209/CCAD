@@ -1,0 +1,111 @@
+{
+  "run_id": "FINAL_VALUE_R27_functional_reuse_v1_20260913",
+  "run_parent": "FINAL_VALUE_R27",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Reuse source functional explanations to select target feature deletions with a fixed target-validation budget; measure requested functional disruption and collateral disruption on new original pairs.",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+  "budget": "Existing free gpu-0; two CPU threads; up to2400 seconds driver based onR25 throughput; no new training, packages or paid resources.",
+  "budget_seconds": 2400,
+  "max_length": 64,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "group_run": "runs/REFORM_R24_behavior_context_groups_v2_20260913",
+  "data_manifest": "artifacts/scientific_reform_20260913/R26_DATA_MANIFEST.json",
+  "scope": "Functional explanation reuse development. Source component annotations, maps and cached source-model gradients are inherited with their original identities. All proposed target masks remove full codes of selected actual features. Every family offers8/16/32/64 target members and receives the same0/4/16 validation pairs per task. Primary use outcome is requested clean-correct-to-wrong fraction minus mean collateral fraction across the other two grammar functions, with all absolute rates retained. Cached source gradients are directly reusable across shared-hidden-space seeds and are supplied to strong controls; raw ridge.1 reuses the prior old-development choice. All source-only proposals freeze before target validation, and all chosen allowances freeze before new evaluation. Original pairIDs384-399 validation and512-575 evaluation of3source paradigms were not evaluated inR25/R26, but files were previously parsed. Shared five-seed cycles, lexical pairs and fixed paradigms are dependent. This finite original BLiMP subset studies causal feature selection, not human annotation agreement or a complete benchmark.",
+  "written_at_utc": "2026-09-13T17:12:54.926905+00:00",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 512,
+  "target_members_per_component": 64,
+  "fit_steps": 800,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "verb": [
+      1,
+      0,
+      0
+    ],
+    "anaphor_number": [
+      0,
+      1,
+      0
+    ],
+    "anaphor_gender": [
+      0,
+      0,
+      1
+    ]
+  },
+  "methods": [
+    "fcc_members",
+    "assignment",
+    "raw_pullback",
+    "cached_gradient_pool",
+    "cached_gradient_full",
+    "fcc_functional_priority"
+  ],
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "reuse_consumer_parent": "runs/REFORM_R26_contrast_components_v2_20260913",
+  "reuse_raw_parent": "runs/REFORM_R26_raw_regularization_controls_v1_20260913",
+  "consumer_ranges": {
+    "calibration": [
+      384,
+      400
+    ],
+    "evaluation": [
+      512,
+      576
+    ]
+  },
+  "member_allowances": [
+    8,
+    16,
+    32,
+    64
+  ],
+  "validation_pairs_per_task": [
+    0,
+    4,
+    16
+  ]
+}

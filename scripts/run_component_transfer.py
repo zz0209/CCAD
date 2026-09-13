@@ -15,7 +15,9 @@ from ccad.artifacts import sha256
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--config',type=Path,required=True);args=p.parse_args();cfg=json.loads(args.config.read_text())
-    w=MultisiteWork(cfg,args.config,['scripts/run_component_transfer.py','scripts/fit_component_correspondence.py','scripts/component_raw_controls.py','scripts/run_causalgym_multisite.py','scripts/run_causalgym_native_transfer.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py','src/ccad/activation_contract.py'])
+    source_files=['scripts/run_component_transfer.py','scripts/fit_component_correspondence.py','scripts/component_raw_controls.py','scripts/run_causalgym_multisite.py','scripts/run_causalgym_native_transfer.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py','src/ccad/activation_contract.py']
+    if cfg.get('reuse_consumer_parent'):source_files.append('scripts/functional_reuse_consumer.py')
+    w=MultisiteWork(cfg,args.config,source_files)
     error=None
     def checked(path):return w.checked(ROOT/Path(path))
     def log(stage,**kw):
@@ -49,12 +51,12 @@ def main():
         import scipy
         sm=json.loads(checked(cfg['data_manifest']).read_text());panel=[]
         checked(cfg['official_implementation_manifest'])
-        for task in cfg['source_tasks']+cfg['new_tasks']:
+        for task in dict.fromkeys(cfg['source_tasks']+cfg['new_tasks']):
             fi=next(x for x in sm['files'] if x['task']==task);fp=checked(fi['path']);assert sha256(fp)==fi['sha256']
             for r in [json.loads(s) for s in fp.read_text().splitlines()]:
                 rid=int(r['pairID']);split=None
-                for name in (['source_selection','fit','development'] if task in cfg['source_tasks'] else ['new']):
-                    lo,hi=cfg[name+'_range']
+                ranges=cfg.get('consumer_ranges') or {name:cfg[name+'_range'] for name in (['source_selection','fit','development'] if task in cfg['source_tasks'] else ['new'])}
+                for name,(lo,hi) in ranges.items():
                     if lo<=rid<hi:split=name
                 if split is None:continue
                 good=[tokenizer.eos_token_id]+tokenizer.encode(r['sentence_good'])+[tokenizer.eos_token_id]
@@ -109,6 +111,12 @@ def main():
             with torch.no_grad():
                 for key,ae in saes.items():codes[key]=torch.cat([ae.encode(h[i:i+256]) for i in range(0,len(h),256)])
             return dict(rows=records,hidden=h,codes=codes,clean=torch.cat(margins),gradient=torch.cat(gs) if gs else None)
+        if cfg.get('reuse_consumer_parent'):
+            from functional_reuse_consumer import run_consumer
+            run_consumer(cfg,w,D,saes,capture,forward,checked,write,log,budget)
+            w.checks['prefix_hidden_equality_and_replay']=max_hidden<cfg['hidden_atol']
+            w.environment.update(maximum_prefix_hidden_error=max_hidden,forwards_by_phase=phases)
+            return w.finish()
         if cfg.get('raw_control_parent'):
             from component_raw_controls import run_controls
             run_controls(cfg,w,D,capture,forward,checked,write,log,budget)
