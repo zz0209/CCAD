@@ -6288,3 +6288,37 @@ Actual write UTC: 2026-09-09T20:30:14Z. The full paper data build started at 202
 实际写入UTC：2026-09-09T21:01:08Z。round_id：FINAL_THREE_R21；这是已完成轮次的行政收尾，不是新研究轮。原ccad实际更新时间为2026-09-09T21:01:02.878000+00:00，当前状态PAUSED，原5分钟配置、当前对话归属、长期prompt及全部历史保留。依据是三轮限额与已完成的完整包验证，不把科学NOT_MET本身当停工条件。GPU实验已结束；无新增实验、采购、投稿或公开。
 
 实际凭据为artifacts/final_three_research_20260909/r21_confirmation/AUTOMATION_PAUSED.json，配置和覆盖前tracker身份见archive/research_workflow_20260909/r21_pause_20260909T210108Z/manifest.json。接下来仅同步既有白名单并把具名完成记录追加至已验证ZIP，最终外部hash位置为r21_confirmation/PACKAGE_FINAL.json及delivery/ccad_complete_r21_20260909.sha256.json。有效agent工作时长未知，未把配置操作计为研究产出。
+
+
+## REFORM_R22 START — 2026-09-13T07:57:08Z
+
+实际写入UTC：2026-09-13T07:57:08Z。用户新授权五轮科学改革，5分钟唤醒、当前对话执行、主会目标保持。第一项现场资源核对发生于2026-09-13T07:49:13Z；更早本轮事件起点及有效工作分钟未计量，不倒填。R22为五轮中第一轮，完成0/5。
+
+选题理由：旧固定两向量可被raw缓存复制，且旧norm交换提示幅度校准可能解释主要IIA改善；现有跨seed概念对应的使用价值未闭合。实际已读新写作技能、旧原始配置与实现，定向检索crosscoder/共同分解原文，并重组科学路径。第一项计算将独立拟合norm-only以定位归因，同时研究可复用功能组成而非扩展writer清单。本块尚无新实验结果，不计研究完成。
+
+覆盖前AGENTS、plan、tracker、prompt与完整paper逐字归档：E:/Projects/SAE_Lab/CCAD/archive/research_workflow_20260913/before_five_round_reform_20260913T075708Z/manifest.json。新计划和工作卡已写；旧R21及ZIP不变。预算与现场GPU/存储记录在artifacts/scientific_reform_20260913/CAMPAIGN_START.json和tracker，使用已验证本地环境，无采购/外发/投稿。自动化恢复随后原位执行。下一步先完成决定归因的实际对照，定向原文/代码借鉴转为组成操作试验，持续写入唯一当前稿。
+
+
+## REFORM_R22 PROGRESS — 2026-09-13T08:10:00Z
+
+实际写入UTC：2026-09-13T08:10:00Z。独立norm拟合run于2026-09-13T08:03:02.693575Z完成PASS。六个原R20开发query：原geometric60.2941% IIA，匹配64步norm-only72.0588%，更强256步norm-only78.9216%，完整512系数拟合78.6765%；对应full-vocabulary KL为.074655/.027361/.013331/.006169。完整拟合在分布模仿上更优，足够训练的两个幅度已解释该开发集IIA提升；不能据此推断旧435query确认的全部归因。新结果保存在runs/REFORM_R22_independent_norm_fit_v1_20260913，旧结果未改。第一次sandbox内管理器申请因租约目录写权限拒绝，随后经授权提升执行成功，未修改其他项目租约。
+
+方法已转成锚定source特征的联合软分组：实际贡献的二次型差异，加小的组成成本，两边gate限于[0,1]。单feature原生作用无法对应时，允许扩展source及target组，而非把已有raw轴编译成固定向量。分裂/合并已知真值检查通过，24个真实source-only anchor、两SAE机制的留出自然贡献差异完成；有改善也有明显失败，尚不作因果或语义主张。该首次run初始contract因summary遗漏raw hash失败；逐字保留初始summary/validator并补字段后通过，未改数值。接下来v2执行真实模型删除、同source组的atom/rank1/rank2/上下文错配对照，并记录自然实例。R22仍进行中，0/5。
+
+
+## REFORM_R22 CORRECTION — 2026-09-13T08:11:57Z
+
+实际写入UTC：2026-09-13T08:11:57Z。v2自然组删除在第一个上下文数值回放检查失败，hidden最大差.0376739502；尚未写任何功能端点。原因定位为新二次型求解使用highest matmul，而原自然缓存生产器使用high，并且新batch12与原16不同。v3恢复原high及16形状，末batch补齐；源端上下文规则先排除原唯一不完整尾batch，保持原.001检查阈值。未改变拟合组、原始数据、科学比较或容差，v2全部失败证据保留。下一步实际验证恢复后模型状态和操作。
+
+
+## REFORM_R22 COMPLETE — 2026-09-13T08:31:16Z
+
+实际写入UTC：2026-09-13T08:31:16Z。R22完成，新授权五轮中第一轮；本记录写入后才推进tracker到1/5。可证实现场开始07:49:13Z；最后主实验v4完成2026-09-13T08:15:45.952372Z，稿件/图表/证据整理完成于本记录。纯有效工作和等待分钟未独立计量，不用二者相减伪造时长。
+
+实际科学结果：独立两幅度norm-only在六个开发query以更强256步达到78.9216% IIA，完整512系数64步78.6765%；同64步幅度72.0588%。全拟合KL .006169仍优于强幅度.013331，原accuracy贡献因此不能归因为独特结构。新增锚定联合原生组，24个source-only anchor、两机制、572上下文实例、4576功能行；等query相对KL由最佳atom .499917/.673359降至联合组.435096/.594496，但rank1 .441665/.592944近似保留行为。都是开发结果，原435query确认不新增主張。
+
+方法/数学/文献/实际消费者/稿件本轮共同推进：实际非负删除组与贡献Gram凸目标、split/merge真值例子、真实自然LM作用、Leask/crosscoder/SHIFT原文和图版、独立norm对照与解释实例；反防御写作不隐藏负结果。首次metadata遗漏、功能v2数值策略错误、v3弱效应float32解析与v4修复均保留。图稿初始Tk后端及lambda排版问题已修复；没有改变科学容差。
+
+证据与资源：artifacts/scientific_reform_20260913/R22_REPORT.md SHA256 dc1cd5d67ceba3a0769d472e37cb210a10e96883df8216e72bb610ef215e73a7；R22_RUN_INVENTORY.json保存5个run，driver wall合计299.831秒，主v4峰值4.35GB，GPU已释放。无新训练/包/模型/付费资源；新增公开正式论文PDF2,914,950bytes。唯一当前稿paper/main.pdf 27页，SHA256 3b7161dc20491273e5c7edc62fb2283e83506bee678063ff9d0ae68bcb0f34c4，源/CSV/JSON/正式矢量图/证据索引及实际视觉检查已齐。旧稿逐字归档、旧ZIP未改，不交付为主会达标包。
+
+下一步R23改变功能度量/组成及真实使用判断，检验新操作预测、选择或语义复用对简单几何/幅度/低秩对照的优势；不能继续只扩大writer目录或换定语。R23–R26共四轮剩余，原ccad ACTIVE每5分钟继续，当前对话负责；到限额如实收尾，不擅自增轮。

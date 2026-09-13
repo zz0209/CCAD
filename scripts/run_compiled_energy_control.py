@@ -1,4 +1,4 @@
-"""Retained-development norm/orientation exchange; no fitting or task selection."""
+"""Retained-development norm/orientation exchange and optional train-only scale fitting."""
 from __future__ import annotations
 import argparse, json, os, platform, sys, time, traceback
 from pathlib import Path
@@ -20,7 +20,7 @@ def main():
     write(run/'config.resolved.json',cfg)
     codes=[]
     for rel in ['scripts/run_compiled_energy_control.py','scripts/run_r011s1_raw_hook_asset.py',
-                'src/ccad/causalgym_interface.py','src/ccad/artifacts.py']:
+                'src/ccad/causalgym_interface.py','src/ccad/finite_native_group.py','src/ccad/artifacts.py']:
         p=ROOT/rel; q=run/'source_snapshot'/rel; q.parent.mkdir(parents=True,exist_ok=True); q.write_bytes(p.read_bytes())
         codes.append(dict(path=rel,sha256=sha256(p),bytes=p.stat().st_size,snapshot_path='source_snapshot/'+rel))
     write(run/'code_hashes.json',dict(files=codes,aggregate_sha256=aggregate(codes),snapshot_root='source_snapshot'))
@@ -126,6 +126,29 @@ def main():
             one=torch.ones_like(gn)
             variants={'geometric_original':(g,one),'geometric_learned_norm':(g,fn/gn),
                 'functional_original_norm':(f,gn/fn),'functional_learned_norm':(f,one)}
+            if cfg.get('norm_fits'):
+                from ccad.finite_native_group import fit_compiled
+                reference=[]
+                for off in range(0,nfit,batch_size):
+                    batch=api.batch(taskrows[off:off+batch_size]); bp,_=api.positions(batch,region)
+                    reference.append(api.forward(batch,positions=bp,delta=q[off:off+len(batch.pairs)])['log_probs'])
+                reference=torch.cat(reference)
+                alpha_train=(zt1-zt0)[:nfit]@g['target_reader']
+                unit=torch.cat([U.T,-U.T])
+                for name,fit_config in cfg['norm_fits'].items():
+                    # One fixed ray per sign makes the existing nonnegative
+                    # fitter optimize exactly two amplitudes. No learned full
+                    # writer weights or held outcomes initialize these fits.
+                    scale,fit=fit_compiled(api,taskrows[:nfit],region,alpha_train,
+                        torch.ones((2,1),device='cuda:0'),unit,reference,
+                        decoder=gv[:,None,:],**fit_config)
+                    variants[name]=(g,scale[:,0])
+                    fit.update(query=query,parameters=2,initial_scales=[1.,1.],
+                        independently_fitted=True,scales=scale[:,0].cpu().tolist(),
+                        fixed_geometric_directions=True,held_outcomes_used=False)
+                    write(run/(query+'_'+name+'_fit.json'),fit)
+                    log('NORM_FIT_COMPLETE',query=query,method=name,scales=fit['scales'],
+                        wall_seconds=fit['wall_seconds'],final_train=fit['trace'][-1])
             deltas={}; writes={}; diagnostics={}
             for name,(op,scale) in variants.items():
                 rays=op['realized_unit_directions']*scale[:,None]
@@ -179,7 +202,8 @@ def main():
             log('QUERY_COMPLETE',query=query,summary=summary,replay_margin_max_abs=replay_max)
             if time.perf_counter()-timer>cfg['budget_seconds']:raise TimeoutError('Bounded development control exceeded budget')
         checks.update(completed_queries=len(results),official_hook=api.checks,test_read=False,
-                      norm_match=True,nonnegative_native_writes=True,unchanged_original_IIA=True)
+                      norm_match=True,nonnegative_native_writes=True,unchanged_original_IIA=True,
+                      independent_norm_fits=list(cfg.get('norm_fits',{})))
     except BaseException as exc:
         error=repr(exc); (run/'stderr.log').write_text(traceback.format_exc()); log('FAIL',error=error)
     if api is not None:

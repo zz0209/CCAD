@@ -1,0 +1,39 @@
+{
+  "run_id": "REFORM_R22_native_coarsening_function_v2_20260913",
+  "round_id": "REFORM_R22",
+  "purpose": "Find whether cross-seed split/merge incompatibility can be repaired by compact joint native groups anchored to source-only features.",
+  "reference_run": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909",
+  "scipy_overlay_dir": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "seeds": [
+    1,
+    2
+  ],
+  "seed_pairs": [
+    [
+      1,
+      2
+    ]
+  ],
+  "anchors_per_pair": 12,
+  "minimum_source_activations": 32,
+  "maximum_source_fraction": 0.15,
+  "source_pool": 64,
+  "target_pool": 128,
+  "penalty": 0.01,
+  "maxiter": 400,
+  "budget_seconds": 1200,
+  "audit_opened": false,
+  "scope": "Exposed natural discovery8192 and calibration4096 tokens, one shared seed edge, two controlled SAE mechanisms. Source anchors selected solely from source activity and energy quantiles. Joint groups fit actual nonnegative zero-ablation contributions, with independent mean/Phi reported separately. Soft gates in[0,1], anchor fixed1, bounded convex quadratic and standard L-BFGS-B. Calibration is development feedback, not fresh confirmation. Group correspondence error is not yet a measured finite model effect or semantic certificate. Best-atom comparator applies to exactly the same learned source group; anchored-atom comparison changes source granularity and is reported as such. Also evaluate actual full-LM zero ablations on source-selected active and uniform calibration contexts; compare the same source group with a target group, best target atom, rank1/rank2 compression and shuffled-context control. These are all exposed development contexts, not fresh confirmation. The first operator-only run had complete scientific arrays but missed the raw hash field in its summary; corrected in place with original metadata preserved.",
+  "written_at_utc": "2026-09-13T08:05:42Z",
+  "functional": {
+    "active_contexts": 12,
+    "uniform_contexts": 12,
+    "batch_size": 12,
+    "hidden_replay_atol": 0.001,
+    "budget_seconds": 900
+  }
+}

@@ -269,6 +269,10 @@ def main():
     from axis_paper import export as export_axis
     axis=export_axis(root,out,read)
     if axis:plot['axis_transfer']=axis
+    if (out/'reform_runs.json').exists():
+        from reform_paper import export as export_reform
+        reform=export_reform(root,out)
+        sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in reform['inputs'])
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
         matrix_rows=[dict(target_member=member,**{f'source_{source}':value for source,value in zip(relation['source_members'],row)})
@@ -386,6 +390,10 @@ def main():
             claims.append(dict(id='development_direction_and_magnitude_exchange',paper='Output fitting mechanism in the main results and Appendix output geometry',result='Across all six exposed development queries, exchanging the saved geometric and fitted norms shows that magnitude explains the IIA improvement. At fitted norm, fitted orientation lowers IIA in three cells and ties in three while lowering source-output KL in all six. Same reader and fixed supports; no new fitting or official-test use. This is explanatory development evidence, not an independently confirmed norm-only method or semantic correspondence.',evidence=axis['input_summary_paths']+['scripts/run_compiled_energy_control.py','scripts/summarize_compiled_energy.py','paper/sections/axis_results.tex','paper/sections/selection_theory.tex']))
         if axis.get('selection_headroom'):
             claims.append(dict(id='observed_finite_menu_selection_headroom',paper='Candidate quality and finite-menu selection headroom',result='Post-outcome query-level maxima on the same frozen finite candidate menu separate observed candidate limitations from shortlist and refinement regret. These maxima use test outcomes: they are neither deployable policies nor population or per-example adaptive-policy upper bounds.',evidence=axis['input_summary_paths']+['scripts/summarize_selection_headroom.py','paper/sections/axis_results.tex','paper/sections/appendix_evidence.tex']))
+    if (out/'reform_runs.json').exists():
+        claims.append(dict(id='amplitude_attribution_and_native_coarsening',paper='Output-fitting attribution and native-group development',
+            result='Six-cell independently trained amplitude control and24 native source-only anchors. Strong two-scale IIA matches full weight fitting on development; full fit improves KL. Joint native groups improve on the same-source singleton comparison, but rank-one compression retains similar behavior. All conditions remain development.',
+            evidence=[v['path'] for v in reform['inputs']]+['scripts/reform_paper.py','src/ccad/native_coarsening.py','paper/sections/native_group_development.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:
@@ -394,6 +402,7 @@ def main():
             verified.append(dict(path=rel,bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()))
         claim['evidence']=verified
     current_ids=['operation_and_native_equivalence','contrast_and_pair_common_completion','learned_superposition_fidelity_and_truth','frozen_named_operation_family_and_native_writes','source_axis_native_transfer_and_selection','complete_frozen_original_task_confirmation','compiled_fitting_objective_tradeoff','development_direction_and_magnitude_exchange','observed_finite_menu_selection_headroom']
+    if (out/'reform_runs.json').exists():current_ids.append('amplitude_attribution_and_native_coarsening')
     (out/'EVIDENCE_INDEX.json').write_text(json.dumps(dict(current_manuscript_claim_ids=[c['id'] for c in claims if c['id'] in current_ids],claims=claims,data_manifest='data/DATA_MANIFEST.json',figure_manifest='figures/FIGURE_MANIFEST.json',
         raw_hashes=manifest['original_raw_sha256'],scope='Current manuscript evidence locator. Hashes establish file identity, not scientific validity; source and member KL references differ.'),indent=2)+'\n',encoding='utf-8')
     print(json.dumps(dict(context_rows=len(context['rows']),source_seed_rows=len(seed_rows),member_directions=20,fixed_cases=16,tables=len(list(table_dir.glob('*.tex'))),output=str(out))))

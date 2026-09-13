@@ -1,0 +1,43 @@
+{
+  "run_id": "REFORM_R22_independent_norm_fit_v1_20260913",
+  "round_id": "REFORM_R22",
+  "parent_run": "runs/FINAL3_R20_gpt2_axis_anchored_pilot_v4_20260909",
+  "parent_config_sha256": "3242cb70e69b0622a4c5df19f866564db747306e85ce146d1425c969b7062d3c",
+  "queries": [
+    "agr_gender_topk_s1_t2",
+    "agr_gender_matryoshka_s1_t2",
+    "npi_any_obj-relc_topk_s1_t2",
+    "npi_any_obj-relc_matryoshka_s1_t2",
+    "filler_gap_obj_topk_s1_t2",
+    "filler_gap_obj_matryoshka_s1_t2"
+  ],
+  "batch_size": 16,
+  "budget_seconds": 1800,
+  "margin_replay_tolerance": 0.001,
+  "norm_match_rtol": 1e-05,
+  "audit_opened": false,
+  "evidence_level": "exposed_development_mechanism",
+  "purpose": "Independently train two amplitude parameters on original source training responses and compare with complete code-weight fitting.",
+  "scope": "All six retained exposed R20 development queries. No original test data. Same frozen source axes, target reader, geometric supports and output-KL plus direction penalty. Matched64 uses the old full fitter optimizer settings and sampled rows; stronger256 uses four times the update budget and ten times the learning rate, with both reported and no held-data selection. This is an attribution experiment on development data, not a new independent confirmation.",
+  "variants": {
+    "geometric_original": "geometric unit directions, original norms",
+    "geometric_learned_norm": "geometric direction rescaled to the norm of the fitted direction for each sign",
+    "functional_original_norm": "fitted direction rescaled to the original geometric norm for each sign",
+    "functional_learned_norm": "original output-fitted directions"
+  },
+  "written_at_utc": "2026-09-13T07:59:13Z",
+  "norm_fits": {
+    "norm_only_matched64": {
+      "steps": 64,
+      "batch_size": 16,
+      "lr": 0.005,
+      "penalty": 0.001
+    },
+    "norm_only_stronger256": {
+      "steps": 256,
+      "batch_size": 16,
+      "lr": 0.05,
+      "penalty": 0.001
+    }
+  }
+}
