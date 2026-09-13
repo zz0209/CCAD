@@ -308,6 +308,10 @@ def main():
             from external_functional_paper import export as export_external_functional
             external_functional=export_external_functional(root,out)
             sources.extend(external_functional['inputs'])
+        if json.loads((out/'reform_runs.json').read_text()).get('response_query_runs'):
+            from response_query_paper import export as export_response_queries
+            response_queries=export_response_queries(root,out)
+            sources.extend(response_queries['inputs'])
         sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in reform['inputs'])
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
@@ -462,6 +466,10 @@ def main():
         claims.append(dict(id='external_functional_queries',paper='Functional queries in a different model',
             result='Pythia1B layer7 with five controlled Sparsify TopK SAEs and three original grammar generators. All target proposals exclude the target source annotation. Fresh source, calibration and evaluation sentences separate component definition, member choice and actual region/union effects. All pair requests form the predeclared primary endpoint, with cached credit, mean-response and same-aggregation scalar controls. Paired uncertainty resamples sentences within each grammar while holding the dependent five-SAE network fixed.',
             evidence=[v['path'] for v in external_functional['inputs']]+['scripts/external_functional_paper.py','scripts/export_functional_source_paths.py','scripts/independent_functional_consensus.py','paper/sections/external_functional_queries.tex','paper/sections/functional_path_details.tex']))
+    if (out/'reform_runs.json').exists() and json.loads((out/'reform_runs.json').read_text()).get('response_query_runs'):
+        claims.append(dict(id='functional_response_queries',paper='Conditioning the relation on a new request',
+            result='Fresh delete-A/preserve-B queries distinguish membership subtraction from the response of source A on task B. The corrected component-by-task tensor supports query-conditioned member ranking with no new target calibration and matched full dictionaries/cardinalities. Conditional cached64, same-aggregation scalar and unchanged shared ranking are retained on all six ordered requests. Earlier failed set/score subtraction remains in its original fresh-panel study. Inference conditions on the prior source bank/calibration and uses the stated independent-target or dependent-network units.',
+            evidence=response_queries['inputs'] and [v['path'] for v in response_queries['inputs']]+['scripts/response_conditioned_queries.py','scripts/relational_exclusion_queries.py','scripts/analyze_relational_queries.py','scripts/response_query_paper.py','paper/sections/response_queries.tex','paper/sections/relational_query_details.tex']))
     for claim in claims:
         if claim['id']=='source_conditioned_finite_response_correspondence' and json.loads((out/'reform_runs.json').read_text()).get('functional_consensus_run'):
             claim['evidence'].extend(v['path'] for v in functional_consensus['inputs'])
@@ -478,6 +486,8 @@ def main():
     current_ids.append('source_conditioned_finite_response_correspondence')
     current_ids.append('independent_functional_structure_and_union_use')
     current_ids.append('external_functional_queries')
+    current_ids.append('functional_response_queries')
+    current_ids=[x for x in current_ids if x not in ['contrast_and_pair_common_completion','observed_finite_menu_selection_headroom','response_fitting_and_source_unit_bottleneck','source_behavior_groups_and_matched_support','grammar_transfer_and_source_counterfactuals']]
     (out/'EVIDENCE_INDEX.json').write_text(json.dumps(dict(current_manuscript_claim_ids=[c['id'] for c in claims if c['id'] in current_ids],claims=claims,data_manifest='data/DATA_MANIFEST.json',figure_manifest='figures/FIGURE_MANIFEST.json',
         raw_hashes=manifest['original_raw_sha256'],scope='Current manuscript evidence locator. Hashes establish file identity, not scientific validity; source and member KL references differ.'),indent=2)+'\n',encoding='utf-8')
     print(json.dumps(dict(context_rows=len(context['rows']),source_seed_rows=len(seed_rows),member_directions=20,fixed_cases=16,tables=len(list(table_dir.glob('*.tex'))),output=str(out))))

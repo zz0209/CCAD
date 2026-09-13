@@ -1,0 +1,105 @@
+{
+  "run_id": "FINAL_VALUE_R31_pythia_relational_exclusion_v1_20260913",
+  "run_parent": "FINAL_VALUE_R31",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Use frozen fuzzy member relations for new delete-A preserve-B decisions",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk"
+  ],
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_revision": "generator-blimp-7b93dccc-seed310913",
+  "budget": "Upper3600driver seconds per model,7200combined, on existing5070Ti. Reuse exactly identical masks within each target; no new gradient/fitting/training or paid resources.",
+  "budget_seconds": 3600,
+  "max_length": 16,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "data_manifest": "artifacts/final_value_five_20260913/r31_fresh_grammar/DATA_MANIFEST.json",
+  "scope": "New128generated evaluation pairs per grammar, all prior sentences excluded. Saved R29/R30 source relations and16-pair singleton choices are fixed. No new fitting or target calibration. Within each chosen A set, normalize each full-dictionary nonnegative relation column by its maximum and rank A minus B; keep exactly size(A minus B). Compare full A, hard difference, same-count own ranking, same-count continuous exclusion. All six ordered function pairs and shared/mean/cached families retained. Interventions delete full native code contributions with residual preserved. Paired inference conditions on original calibration/source bank; Pythia retains dependent network.",
+  "written_at_utc": "2026-09-13T20:47:37Z",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "determiner_noun_agreement_1",
+    "irregular_past_participle_verbs",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 16384,
+  "target_members_per_component": 64,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "determiner": [
+      1,
+      0,
+      0
+    ],
+    "past_form": [
+      0,
+      1,
+      0
+    ],
+    "anaphor_gender": [
+      0,
+      0,
+      1
+    ]
+  },
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "reuse_raw_parent": "runs/REFORM_R26_raw_regularization_controls_v1_20260913",
+  "consumer_ranges": {
+    "evaluation": [
+      0,
+      128
+    ]
+  },
+  "primary_validation_budget": 16,
+  "evidence_level": "fresh_generator_samples_in_dependent_five_sae_network",
+  "training_run": "runs/FINAL5_R16_l7_w16k_k128_train16m_five_v1_20260908",
+  "checkpoint_step": 16384,
+  "sae_loader": "sparsify",
+  "leave_target_out": true,
+  "target_seeds": [
+    2,
+    3,
+    4,
+    5,
+    1
+  ],
+  "consumer_statistics_unit": "Five-SAE source/target network with target source annotation excluded. Targets share source banks. Paired inference resamples generated pairs within each fixed grammar while holding all SAE material and calibration decisions fixed.",
+  "primary_endpoint": "Shared-response soft exclusion minus identical-count own ranking, equal mean over all six ordered delete-A/preserve-B pairs, introduced-error(A) minus introduced-error(B). Hard difference, full A, mean/cached proposal families and margin contrasts are predeclared comparisons.",
+  "relational_query_parent": "runs/FINAL_VALUE_R30_pythia_functional_queries_v1_20260913",
+  "query_families": [
+    "shared_path_full",
+    "mean_path_full",
+    "cached64_full"
+  ]
+}

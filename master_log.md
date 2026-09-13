@@ -6661,3 +6661,39 @@ R29将功能作用保真推进到可查询成员结构和真实未拟合组合�
 实际写入UTC：2026-09-13T20:40:16Z。本轮事件开始19:58:38Z，结果/稿图/记录整理结束为当前时间。两run实际时间、资源、失败/勘误与科学结果见R30_REPORT（同一目录下FOCUSED_CHECK/WRITING_REVIEW/VISUAL_REVIEW及r30_analysis）。源204.819735秒、consumer962.951392秒，PASS1440/158784raw行，GPU已释放，无付费。源功能可靠；Pythia shared−scalar联合U +1.61458[0.13021,3.125]，shared−cached+0.75521[-0.18229,1.66667]，mean强结果保留。目标间依赖不当独立seed重复。新增组级响应下界、Sparsify接口、新语法/生成器原文阅读、实际区域/并集与完整同套稿图。
 
 当前paper/main.pdf a789414ed40e4df30df7d0558f0ba28fb7b5d1f5d8caa349ab9e3134f06cc743，50页=7主文+1参考+42附录，full build20260913T203500451979Z，final latex20260913T203744930790Z。实际查看新图、主文接续、新附录与contact；修复旧重复label并纠正R29无重复label说法，其他旧结果/文字身份保留。两指定写作skill已经用于实稿。旧入口归档archive/research_workflow_20260913/R30_closeout_20260913T204006Z。COMPLETE后才把计数推进4/5。最后R31以关系驱动的删除A/保留B新请求及匹配成员数控制验证可使用的结构价值，同时整理完整论文包。不改FCC母问题、不降主会目标、不自行加轮。
+
+
+## FINAL_VALUE_R31 START — 2026-09-13T20:42:15Z
+
+实际写入UTC与可证实事件开始：2026-09-13T20:42:15Z。最后第5轮，R30已完整COMPLETE。理由：已成立的成员功能关系还应帮助实际保留/删除决策。预期机会是利用共同/独有成员以及连续模糊关系，在相同成员数下更好保留另一功能。具体工作：Use the R29/R30 frozen relation and16-pair member allowances to answer all six delete-A/preserve-B requests. Compare full A, A minus B, same-count own-score ranking, and same-count normalized continuous A-minus-B relation scores within A. Primary continuous relation versus same-count own ranking, equal mean over all ordered queries; hard difference is a mechanism comparison. Three proposal families shared/mean/cached, both GPT2 mechanisms and Pythia. No new target fitting or calibration. All masks frozen before fresh evaluation; all outcomes and empty/identical sets retained. Reuse exact identical masks to avoid redundant model calls. Conditional paired within-grammar inference, independent target-seed bootstrap for GPT2 and fixed dependent network for Pythia. Then complete the full manuscript, focused nearest-work positioning, mathematical query interpretation, visuals and reproducible package without adding another round.
+
+数据采用原作者五grammar新生成128pair/类，seed310913，排除R29/R30及原task文件所有旧句。既有关系和选择冻结，先前结果仅用于本轮问题设计，新评价不再调参。资源沿用锁定运行时与共享管理器，上限7200driver秒、实际按既有吞吐和精确mask复用缩减，无新采购。归档archive/research_workflow_20260913/before_R31_20260913T204215Z保留全部当前稿/入口/代码身份。轮内同时推进数学/文献/科学/稿图与整体使用包，继续两个指定writing skills；当前未完成，不提前计数，不用收尾代替实质实验。
+
+
+## FINAL_VALUE_R31 PROGRESS — 2026-09-13T20:55:56Z
+
+实际写入UTC：2026-09-13T20:55:56Z。初次GPT2查询run20:47:57.118139Z—20:53:15.408262Z，318.159032秒PASS，276480raw行，273408序列前向。720mask在任何新前向前冻结；355唯一mask/365精确重复请求复用。连续关系减法对同成员数own排序U差−1.22396/−2.36979点；硬集合差−4.66146/−5.07813。作用损失集中在请求本身，不能宣称保护另一功能带来净收益。初次Pythia仍按冻结规则运行，保留完整结果。
+
+根本失配是把成员在source B路径上的角色，误作source A删除时在task B上的副作用。现有source路径已保留完整component×task响应，可以直接形成消费者所需的条件对比。Replace cross-function membership subtraction with the actual source-A path response on task B. For each source realization and target member, retain the complete component-by-task response tensor. A delete-A/preserve-B query ranks positive mean credit on A minus positive mean credit on B along the SAME source-A deletion path; take the source minimum. Use the original16-pair chosen A cardinality and full target dictionary. Compare unconditional shared ranking, query-conditioned path, identical-aggregation scalar projection and query-conditioned cached64 clean gradients. All six ordered queries, both GPT2 mechanisms and Pythia retained; no new target calibration. Freeze all requests before new seed310914 evaluation, excluding the exposed310913 panel. This is one targeted within-R31 correction of the representation/consumer mismatch; all prior negative results retained.
+
+这是同一R31实质方法/表示修正，使用另批新数据确认，旧评价不改称未见或覆写。总预算仍7200driver秒，无新轮次/训练/采购。论文整理已将当前关系证明、功能结果置前，旧实验过程保留源码/归档，强raw/幅度/读写反例继续主文自足。Gerasimov原文方法/功能mask/附录实际复读，OpenReview验证页面没有绕过。
+
+
+## FINAL_VALUE_R31 PROGRESS — 2026-09-13T21:26:10Z
+
+实际写入UTC：2026-09-13T21:26:10Z。四个run实际事件20:47:57.118139Z–21:07:19.155675Z，均PASS；具体分段见R31_REPORT。早期成员相减结果为负，保留；修正为同一source路径下的完整component×task响应，21:01:04Z冻结后用另批seed310914新数据确认。对条件缓存主要U增益5.390625/4.557292/1.119792，paired95均正；标量路径对照也正，对原shared排序区间均含零。所有六请求、三个条件、失败/弱组和margin完整保留。918.8567068driver秒、552960raw行、626688序列forward，无新增梯度/训练/采购。
+
+唯一当前稿已重建：40页，新增完整响应方法/证明/主图/所有比较，旧研究过程保留源码与归档，强raw与幅度/读写/语义结果保留。两指定writing skill实际全稿使用，R31_WRITING_REVIEW定位改法。分数/排序/成员数/source排除/原始统计聚焦重算差零。整包收尾尚在进行，计数仍4/5。旧维护文件逐字归档archive/research_workflow_20260913/R31_closeout_20260913T212610Z及MANIFEST。科学证据与整体主会目标判断见FINAL_ASSESSMENT；不因轮数结束自行宣称科学成功。下一步完成完整包验证、实际COMPLETE与原automation暂停，不另加轮。
+
+
+## FINAL_VALUE_R31 COMPLETE — 2026-09-13T21:45:35Z
+
+实际写入UTC：2026-09-13T21:45:35Z。round_id FINAL_VALUE_R31；可证实本轮事件开始2026-09-13T20:42:15Z，科学计算最后结束21:07:19.155675Z，稿件/复现整包完成于本记录时刻。R27–R31五个实质研究轮全部完成，不增第六轮。本轮选题是通过对应关系回答新的删除A/保留B请求；最初成员相减负结果揭示操作路径与功能标签的失配，轮内改为完整source-component×task响应，并在独立新生成句子上确认。四run均PASS，918.8567068driver秒、552960raw行、626688序列/10027008token forwards，无新增训练、路径梯度、目标验证或采购。工作/计算/等待重叠，未单独计净时间。
+
+主要matched-count条件请求对缓存梯度U增益5.390625/4.557292/1.119792点，paired95[2.552083,8.307292]/[2.786458,6.406250]/[0.130208,2.135417]；同路径标量控制正，对原shared排序区间均含零。所有六请求、三条件、目标seed、margin、首次负结果和旧曝光勘误完整保留。加上R29独立目标上的unfitted union与R30不同模型功能区域，核心使用主张有确认结果；整体优秀一线主会目标仍不能凭局部区间或材料完整宣称达成。完整判断见FINAL_ASSESSMENT.md，目标和意义未降级。
+
+唯一当前paper/main.pdf为40页（8正文/1参考/31附录），SHA256 a506b5a7130d36744c6dc2e6267cb31fc8b4237745a11e8bc0d7ca23c8df3e02。正文重建逻辑并保留决定结论的强raw、幅度、counterexample和统计单位，附录保留证明及全部当前对照；历史源码/PDF逐字归档。两个指定writing skills用于实稿，全稿视觉实际检查，R31_REPORT/WRITING_REVIEW/VISUAL_REVIEW/FOCUSED_CHECK/Cases与paper/EVIDENCE_INDEX定位证据和使用。
+
+新完整本地包delivery/ccad_complete_r31_20260913.zip，基础快照21172684189字节、30976文件、182runs，实际组装895.647秒；预算40GB内，旧包完整保留。全部CRC通过。实际从ZIP抽取835文件逐项hash匹配，脱离原目录编译出40页且逐页文本一致；第五轮两个响应run全部138240raw行重算，整个summary及全部区间与原件逐项一致。使用现有runtime/TeX cache，没有冒称独立训练或科学复现。恢复检查首尝试因Windows与ZIP路径分隔符不同，在抽取前误报已有证据缺失；仅修正检查程序并在新目录重试，首失败记录/代码保留于closure。共享disk-e-io/cpu-heavy租约随程序释放。完整包最后追加独立命名的closure记录、暂停和同步receipt，最终archive hash以delivery/ccad_complete_r31_20260913.sha256.json为准，避免自指hash。
+
+在本COMPLETE之后才推进tracker到5/5。已完成授权科学、稿件和整包验证，剩余为同轮行政收尾：原ccad automation原位暂停/核对，白名单成组commit/push与HEAD=origin/main核对，closure实际文件身份归档。不存在续跑或新轮次。所有历史未提交研究文档本地保留，不扩大上传白名单，不投稿/公开发布。

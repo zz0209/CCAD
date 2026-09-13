@@ -20,6 +20,8 @@ def main():
     if cfg.get('path_midpoints') or cfg.get('path_ensemble_parent'):source_files.append('scripts/functional_path_credit.py')
     if cfg.get('independent_consensus'):source_files.append('scripts/independent_functional_consensus.py')
     if cfg.get('source_path_export_only'):source_files.append('scripts/export_functional_source_paths.py')
+    if cfg.get('relational_query_parent'):source_files.append('scripts/relational_exclusion_queries.py')
+    if cfg.get('response_query_parent'):source_files.extend(['scripts/response_conditioned_queries.py','scripts/relational_exclusion_queries.py'])
     w=MultisiteWork(cfg,args.config,source_files)
     error=None
     def checked(path):return w.checked(ROOT/Path(path))
@@ -101,7 +103,7 @@ def main():
                                   sentence_good=r['sentence_good'],sentence_bad=r['sentence_bad']))
         write(w.run/'panel.json',dict(rows=panel,scope=cfg['scope']))
         manifest=json.loads((w.run/'manifest.json').read_text());manifest.update(schema_version='contrast.components.v1',mean_constants_source_split='Absolute native code deletions preserve original residual and decoder bias; no empirical centering',statistics_unit='Shared cyclic SAE seeds and original lexical pairs within fixed paradigms');write(w.run/'manifest.json',manifest)
-        if cfg.get('independent_consensus'):
+        if cfg.get('independent_consensus') or cfg.get('relational_query_parent') or cfg.get('response_query_parent'):
             manifest['statistics_unit']=cfg.get('consumer_statistics_unit','Independent target initializations conditional on the fixed five-source bank; generated sentence draws within three fixed grammars, shared across all targets and methods')
             write(w.run/'manifest.json',manifest)
         w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,numpy=np.__version__,scipy=scipy.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),threads=2,model=tc['model_id'],hook=tc['hook_module_path'])
@@ -147,6 +149,18 @@ def main():
             with torch.no_grad():
                 for key,ae in saes.items():codes[key]=torch.cat([ae.encode(h[i:i+256]) for i in range(0,len(h),256)])
             return dict(rows=records,hidden=h,codes=codes,clean=torch.cat(margins),gradient=torch.cat(gs) if gs else None)
+        if cfg.get('response_query_parent'):
+            from response_conditioned_queries import run_response_queries
+            run_response_queries(cfg,w,D,saes,capture,forward,checked,write,log,budget)
+            w.checks['prefix_hidden_equality_and_replay']=max_hidden<cfg['hidden_atol']
+            w.environment.update(maximum_prefix_hidden_error=max_hidden,forwards_by_phase=phases)
+            return w.finish()
+        if cfg.get('relational_query_parent'):
+            from relational_exclusion_queries import run_queries
+            run_queries(cfg,w,D,capture,forward,checked,write,log,budget)
+            w.checks['prefix_hidden_equality_and_replay']=max_hidden<cfg['hidden_atol']
+            w.environment.update(maximum_prefix_hidden_error=max_hidden,forwards_by_phase=phases)
+            return w.finish()
         if cfg.get('independent_consensus'):
             from independent_functional_consensus import run_consumer
             run_consumer(cfg,w,D,saes,capture,forward,checked,write,log,budget)
