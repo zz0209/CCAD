@@ -284,6 +284,10 @@ def main():
             from grammar_paper import export as export_grammar
             grammar=export_grammar(root,out)
             sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in grammar['inputs'])
+        if json.loads((out/'reform_runs.json').read_text()).get('component_transfer_run'):
+            from component_transfer_paper import export as export_components
+            component_reuse=export_components(root,out)
+            sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in component_reuse['inputs'])
         sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in reform['inputs'])
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
@@ -418,6 +422,10 @@ def main():
             claims.append(dict(id='grammar_transfer_and_source_counterfactuals',paper='Source group relevance and cross-seed transfer on grammatical contrasts and fixed prompts',
                 result='Three original BLiMP paradigms,30 source-only task/seed selections,7 comparators and936 evaluation pairs per selected paradigm. Source grammatical relevance is separated from target fidelity. Original no-boundary run and corrected official-boundary repeat both retained; exposure is not reset. Two source hypotheses and128 authored contexts were frozen before model outcomes. Same-pool learned rank1/2 regression and all negative outcomes retained; no complete BLiMP, independent confirmation across repeated implementations, or human concept-identity claim.',
                 evidence=[v['path'] for v in grammar['inputs']]+['scripts/run_behavior_grammar_transfer.py','scripts/analyze_grammar_transfer.py','scripts/grammar_paper.py','paper/sections/grammar_transfer.tex']))
+    if (out/'reform_runs.json').exists() and json.loads((out/'reform_runs.json').read_text()).get('component_transfer_run'):
+        claims.append(dict(id='contrast_components_and_unfitted_joint_use',paper='Contrast-defined components, actual target requests and new grammar paradigms',
+            result='Source-only grammatical margin gradients define three disjoint native components per SAE. All10 target allocations are frozen before singleton and unfitted joint deletion on exposed development and three previously unused BLiMP paradigms. Row capacity establishes native eligibility; actual response matrices, strong assignment/full and rank2 raw controls, source changes and nonlinear composition determine functional scope. Fixed128-pair subsets, dependent seed cycles and single base-model/hook remain explicit.',
+            evidence=[v['path'] for v in component_reuse['inputs']]+['scripts/run_component_transfer.py','scripts/fit_component_correspondence.py','scripts/component_raw_controls.py','scripts/analyze_component_transfer.py','scripts/component_transfer_paper.py','paper/sections/component_transfer.tex','paper/sections/component_results.tex','paper/sections/component_raw_results.tex']))
     for claim in claims:
         verified=[]
         for rel in claim['evidence']:
@@ -427,6 +435,7 @@ def main():
         claim['evidence']=verified
     current_ids=['operation_and_native_equivalence','contrast_and_pair_common_completion','learned_superposition_fidelity_and_truth','frozen_named_operation_family_and_native_writes','source_axis_native_transfer_and_selection','complete_frozen_original_task_confirmation','compiled_fitting_objective_tradeoff','development_direction_and_magnitude_exchange','observed_finite_menu_selection_headroom']
     if (out/'reform_runs.json').exists():current_ids.extend(['amplitude_attribution_and_native_coarsening','response_fitting_and_source_unit_bottleneck','source_behavior_groups_and_matched_support','grammar_transfer_and_source_counterfactuals'])
+    current_ids.append('contrast_components_and_unfitted_joint_use')
     (out/'EVIDENCE_INDEX.json').write_text(json.dumps(dict(current_manuscript_claim_ids=[c['id'] for c in claims if c['id'] in current_ids],claims=claims,data_manifest='data/DATA_MANIFEST.json',figure_manifest='figures/FIGURE_MANIFEST.json',
         raw_hashes=manifest['original_raw_sha256'],scope='Current manuscript evidence locator. Hashes establish file identity, not scientific validity; source and member KL references differ.'),indent=2)+'\n',encoding='utf-8')
     print(json.dumps(dict(context_rows=len(context['rows']),source_seed_rows=len(seed_rows),member_directions=20,fixed_cases=16,tables=len(list(table_dir.glob('*.tex'))),output=str(out))))

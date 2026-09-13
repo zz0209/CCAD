@@ -6438,3 +6438,47 @@ R23_REPORT.md SHA256e83a0703fa73878449a4d308a8dafe60b4591e58fbdb6b7ca6de3e00fac4
 唯一当前paper/main.pdf33页、主文8页，SHA256a7678a327565306c6a0590350e32230bde7e7bbabdf038ae6ffb0ebed7a984ab。主文、Appendix E、表18/图13–15、完整数据/源码/证据索引与manifest同步；最终8/31/32/33页实际查看。R25_REPORT.md SHA2568fbd0064cea569e5610eb5cd43e1f08b2b527d0c0df120b181612db426bdaf7b，R25_COMPLETE/FOCUSED_CHECK/RUN_INVENTORY在artifacts/scientific_reform_20260913；旧稿、初版代码和入口都有逐字archive/hash。SOURCE原文与官方实现差异已更新REFERENCE_REGISTRY。
 
 仅余R26一轮。优先将已验证的局部行为发展为可单独使用的组成关系，允许改变源功能定义/分解和对应拟合的上下文分布；用真实组成操作或解释决定检验收益，保留强raw/低秩/native对照，不能仅扩整组KL表或收窄故事。原ccad ACTIVE每5分钟、当前对话负责，不加第六轮；到最后限额完成授权收尾后原位暂停，未达标不交付为成功主会成果。本单元白名单成组同步随后执行，忽略的稿件/数据本地保留并hash留账。
+
+## REFORM_R26 START — 最后一轮：用功能对比重建组成，并检验未拟合的组成使用
+
+实际写入 UTC：2026-09-13T11:33:05Z。事件：本轮由2026-09-13T11:30:01.830Z heartbeat启动，当前已完成4/5；R26是第五个、最后一个实质研究单元，跨heartbeat不另计。源/目标功能研究和记录由当前对话直接执行，不转交任务。
+
+选题理由：R25的自然NMF组在真实语法任务中源效应弱，且长自然fit与短任务prefix失配；局部撇号/代词功能存在但可学习rank2 raw仍更好。因此本轮改变源组成定义，以语法正反margin贡献找source内部功能组成，再以相同短prefix信息拟合可独立调用的目标关系。候选改法是目标feature对多个源组成的非负归属，逐feature总归属不超过1，使任意组成子集或软权重都产生合法native删除。检验源单组成、未拟合合并组成及对其他语法判断的作用，比较共同优化assignment、无组成容量约束、可学习raw/full及rank2、wrong组成。数学性质仅说明操作闭合，实际功能收益须真实前向证据。
+
+范围与投入：现有GPT2Medium hook11、TopK/Matry五seed、共享GPU当前free（现场约1992MiB后台显存）；复用r004和SciPyoverlay，不训练新SAE、不安装、不付费。按R25约1226秒/22万pair-method预测，初步允许2400秒GPU driver、两CPU线程及约8GB显存，设计后冻结实际任务/操作/样本配置。源梯度、小规模凸拟合与真实干预为本轮研究；原3个BLiMP范式已曝光均属开发，新增未用原始范式在规则/操作冻结后才评价，来源版本和边界评分沿R25官方核对实现。
+
+同时完成唯一当前稿paper/main.pdf及可编辑源、主文关键强对照/反例/统计单位、证据索引与可运行材料。启动前逐字归档：archive/research_workflow_20260913/before_R26_20260913T113305Z/manifest.json。实际有效工作/计算/等待尚未独立计量，未知写未知。达到5/5后按用户有限轮次要求原位暂停ccad并保留全部材料；若核心贡献仍不足，报告未成功，不以包齐全或此轮数学新形式宣称达到主会。
+
+## REFORM_R26 CORRECTION — 2026-09-13T11:41:40Z
+实际写入UTC：2026-09-13T11:41:40Z。v1实际2026-09-13T11:39:28.451078Z–11:40:23.650460Z，55.179秒driver。源两pair解析方向导数.338507/.201026、epsilon .01对称真实前向.550246/.213772，max差.211739超过原.02检查；在source选择/target拟合/new句式评价前FAIL。没有科学结果。怀疑既有high矩阵精度造成有限差分量化，v2全流程改highest，所有hidden/grad/code从模型一致重算，不复用R25缓存，不放宽阈值。失败快照与gradient_check保留，R26_PRECISION_CORRECTION_FREEZE记代码/config身份。是同一轮修复，计数仍4/5。资源55秒含CPU加载；等待/有效工作未独立计量。
+
+## REFORM_R26 PROGRESS — 2026-09-13T11:48:51Z
+实际写入UTC：2026-09-13T11:48:51Z。v2以highest完整float32重算，epsilon .01对称梯度检查max绝对差.010977，原.02容差通过（两个source选择pair，一方向/例；不推广为全局梯度证明）。source组件实际冻结2026-09-13T11:41:59.177430Z，全10个跨seed映射2026-09-13T11:42:49.952095Z冻结，均在任何development/new模型评价之前。所有组件保留64源features；投影拟合最终stationarity max约8.7e-6；independent联合门超过1的目标行仅每方向1–3行，约束有明确操作意义但目前不足以证明实用优势。开发早期源效应变强，full raw仍更准，完整两机制/新句式还在运行，不据局部结果改变冻结方法或操作。
+记录语义澄清：fit capture函数实际计算384个fit pair的clean full-sentence margin，但拟合只读取codes/decoder；fit_summary的target_output_labels_consumed=false应解读为没有进入target拟合目标或选择，而非这些输出从未计算。全部sentence标签已解析，source选择用192个source pair梯度，fit margin被计算后丢弃；新句式尚未作为拟合输入。正文附录将分别说明读文件、计算与决策用途，不重写run原字段。实际工作包括矩阵行容量与组合残差关系推导、真实实验、Marks论文§2–3方法及原PDF第5页Figure3实际查看、全稿/分析更新；计算/等待按driver记录，未独立计时的工作不虚报。
+
+## REFORM_R26 PROGRESS — 2026-09-13T12:03:49Z
+实际写入UTC：2026-09-13T12:03:49Z。TopK完整新句式结果出现native联合删除MAE.368049优于rawfull.457433，源准确率从.848958下降到.655208，实际强源效应。相同新范式已曝光；原fit n384/p512、ridge .001留下具体较弱正则替代解释。保持全部source/native关系、样本与操作，追加同一科学单元的raw正则归因对照：full ridge .01/.1/1、learnedrank8；旧development的source hidden-field MSE在六候选中选择一个raw程序，全部单独控制也报告。此控制不会重获独立确认，不用新结果挑native方法。复用现有runner加入可选parent模式，primary正在执行的代码已在v2 source_snapshot逐字冻结，不改变其已加载算法。配置与代码冻结R26_RAW_CONTROL_FREEZE；预期300–450秒、最大900秒现有GPUdriver，不新增研究轮、不付费。primary先完成释放租约，再启动控制。
+
+
+## REFORM_R26 COMPLETE — 五轮结束，功能组成可复用，主会科学目标未达到
+
+实际写入UTC：2026-09-13T12:36:39Z。round_id=REFORM_R26。本轮事件由2026-09-13T11:30:01.830Z heartbeat启动；首START实际写入11:33:05Z，最后真实实验于12:10:27.282877Z结束。本块写入时本轮结果、稿件、图表、复现入口及五轮科学评估已整理完成，累计应为5/5；本COMPLETE之后才推进tracker计数。没有第六轮。实际有效研究与等待没有独立连续计时，均未知，不以driver或墙钟差倒算。
+
+选题及实际改变：从R25自然组的弱源效应和短prefix分布失配出发，改为源SAE feature对语法正反margin的一阶贡献及跨任务对比，定义三个功能组成；目标学习逐feature总归属不超过1的三组关系，同一关系支持单组成和未拟合联合删除。source/all-map实际冻结11:41:59.177430Z/11:42:49.952095Z，均早于新句式评价。Marks原始理论/实验与原PDF第5页实际查看；源归因、凸拟合和Hungarian属既有技术，不宣称算法首创。共用GPT2Medium hook11、两机制各五受控seed的10条循环边，三个旧范式开发、三个未用原始范式各128pair新评价，非完整BLiMP或新模型家族。
+
+正结果：源三个组成在各自任务作用最强且有交叉影响，source准确率下降14.79/16.61百分点；目标保留功能区分。在新句式未拟合联合删除中，所有状态至少两个组成共同激活，联合效应与单组成效应和的平均绝对差.871/1.066nats。Native margin MAE .368/.649，保留397/458、377/476个source判断翻转，形成源功能—对应—实际组成使用的一条证据链。seed–pair含共享seed和重复pair，不能当独立样本数。
+
+决定性归因与科学判断：原raw n384/p512、ridge .001留下过弱正则解释。固定原生关系后追加ridge .01/.1/1和learnedrank8，以旧development hidden-field MSE在六raw候选选择，全部十方向选.1；MAE .389/.599，实际翻转保留406/458、395/476。普通正则化缩小TopK优势并反转Matry排名，判断保留两边raw更高。控制在新结果曝光后提出，属于诊断，不重获独立确认。容量约束仅每边1–3行起作用，与独立拟合clip均值差小于.002nats，没有额外功能收益。功能组成可复用是实际进展，但correspondence机制的稳定使用增量、解释收益或新预测规律仍未建立；科学验收NOT_MET，不交付为成功或足够主会论文，不降低主会目标。
+
+失败及聚焦核对：v1因TF32方向导数差.211739在source选择前FAIL，v2完整float32重算后原阈值下max差.010977；两个pair的检查不推广为全局证书。主实验215040行和控制46080行均PASS。7680条source回放最大margin差.000128269、clean0、判断及翻转不一致0。fit capture计算clean margin但不进入目标拟合，语义已在文稿/日志澄清。实际target完整decode与便携CLI在两条保存状态的最大差6.56e-6，codes非负；是接口检查而非新科学复现。首次稿data构建因变量覆盖失败已修正，失败日志保留；图16冗余标题重叠移除，最终实际重看。
+
+资源：三run driver合计1767.844649秒（含CPU、加载、IO）、CPU1566.765625秒，604432padded sequence/38683648padded token，peakCUDA4,148,665,856bytes。复用原环境、模型与字典，无新SAE训练、安装、付费或外部计算；收尾现场所有共享租约free，未修改其他项目租约。原始v1/v2/强raw控制、source/map冻结、数据来源及全部失败保留在R26_RUN_INVENTORY/FOCUSED_CHECK指向的位置。
+
+稿件与交付定位：唯一当前paper/main.pdf共37页、主文8页、SHA256 975c54a75e1edb52620360092efc75b6aa38296cccd0fe7e21da1265c4577b2e；sections/component_*.tex、两张正式功能图、完整表/原始实例、数据和EVIDENCE_INDEX同步。全稿缩略与1/7/8/34–37页实际查看；R26_REPORT.md、FIVE_ROUND_ASSESSMENT.md、R26_COMPLETE.json和delivery/REPRO_REFORM.md定位完整结果、当前可编辑材料、实际CLI演示与复现范围。旧稿及入口逐字归档before_R26_*/before_R26_closure_20260913T122856Z，R21及更早ZIP不重写，没有新成功交付ZIP。
+
+本阶段按用户明确五轮限额收尾，下一动作仅为原位暂停原ccad、验证状态及白名单成组同步，不创建新loop、不自行增轮、不更改公开/投稿范围。科学缺口不是新增审批门；完整项目材料和历史保留，后续研究需新的用户授权。同步/暂停实际事实另追加，不倒填本块时间。
+
+
+## REFORM_R26 收尾：有限五轮后的原位暂停
+
+实际写入UTC：2026-09-13T12:37:33Z。本轮COMPLETE实际12:36:39Z已先写入，tracker已5/5。工具成功原位更新原ccad为PAUSED，随后直接读TOML核对；原prompt、5min规则、目标对话未变，不创建新loop，不删除automation或中断别的任务。理由是用户明确五轮授权已用尽，科学验收NOT_MET，不把普通负结果当无条件停工理由。全部实验已结束，现有材料/历史保留；回执artifacts/scientific_reform_20260913/R26_AUTOMATION_PAUSE.json。下一动作仅白名单成组commit/push与HEAD=origin/main验证，忽略成果本地保留。

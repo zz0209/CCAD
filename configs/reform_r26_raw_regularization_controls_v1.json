@@ -1,0 +1,89 @@
+{
+  "run_id": "REFORM_R26_raw_regularization_controls_v1_20260913",
+  "run_parent": "REFORM_R26",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Test whether the native extrapolation signal survives stronger raw regularization and a learned rank8 control, using exactly the frozen source components and target input pool.",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+  "budget": "Same R26 unit, up to900 seconds existing sharedGPU driver; expected300\u2013450 seconds from primary throughput. Frozen source/native maps reused; no new training/packages/payment.",
+  "budget_seconds": 900,
+  "max_length": 64,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "group_run": "runs/REFORM_R24_behavior_context_groups_v2_20260913",
+  "data_manifest": "artifacts/scientific_reform_20260913/R26_DATA_MANIFEST.json",
+  "scope": "Diagnostic control after the primary new-paradigm outcomes were observed. The native/source maps,512 target candidates,384 fitting contexts and128-pair new panels remain unchanged. Three stronger full-ridge penalties and learned rank8 are fitted on the original fit fields. A deployable selector chooses among6 fixed raw candidates by source-field MSE on old exposed development contexts; no new-paradigm outputs enter this choice. All individual controls and the selected method are reported; no independent confirmation is claimed by reusing the exposed new panel.",
+  "written_at_utc": "2026-09-13T12:03:49.561839+00:00",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [
+    "irregular_plural_subject_verb_agreement_1",
+    "distractor_agreement_relational_noun",
+    "distractor_agreement_relative_clause"
+  ],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 512,
+  "target_members_per_component": 64,
+  "fit_steps": 800,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "verb": [
+      1,
+      0,
+      0
+    ],
+    "all_components": [
+      1,
+      1,
+      1
+    ]
+  },
+  "methods": [
+    "source",
+    "full_ridge_0.01",
+    "full_ridge_0.1",
+    "full_ridge_1",
+    "rank8_ridge_0.001",
+    "selected_raw"
+  ],
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "parent_failure": "v1 failed directional finite-difference check before source selection; no map or held outcomes. Analytic .338507/.201026 versus finite .550246/.213772 under high TF32 precision.",
+  "raw_control_parent": "runs/REFORM_R26_contrast_components_v2_20260913"
+}

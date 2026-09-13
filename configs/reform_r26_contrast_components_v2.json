@@ -1,0 +1,99 @@
+{
+  "run_id": "REFORM_R26_contrast_components_v2_20260913",
+  "run_parent": "REFORM_R26",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Define native source components from grammatical contrast gradients; fit a reusable target membership with per-feature capacity, and test single components and an untrained joint deletion on original old and new grammar paradigms.",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+  "budget": "Existing free gpu-0; two CPU threads; up to2400 seconds driver based onR25 throughput; no new training, packages or paid resources.",
+  "budget_seconds": 2400,
+  "max_length": 64,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "group_run": "runs/REFORM_R24_behavior_context_groups_v2_20260913",
+  "data_manifest": "artifacts/scientific_reform_20260913/R26_DATA_MANIFEST.json",
+  "scope": "Development reform of source definition and target fit distribution. Old3 paradigms exposed inR25;128 original pairs from each of3 unused paradigms are evaluated only after all source memberships and all target fits are frozen. Original full-sentence scoring with official EOS at both ends;6 paradigm subsets are not the full BLiMP benchmark. Source mean first-order margin contribution minus mean positive contribution on other tasks determines disjoint source component membership, positive winner only, top64 per component. No target response or held response chooses source groups. All target fits use only384 shared unlabelled prefix states from old tasks, never their labels/margins/gradients. Target allocation row capacity<=1 guarantees native eligibility of any subset, while actual functional transfer and selectivity require full model interventions. Same target512 candidate codes,64 final members per component for native methods, assignment joint refit; raw full/rank2 have unrestricted decoder directions. Joint removal not fitted or selected. Shared seed cycles, recurring lexical pairs and fixed paradigms are not independent replications.",
+  "written_at_utc": "2026-09-13T11:41:40.799511+00:00",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [
+    "irregular_plural_subject_verb_agreement_1",
+    "distractor_agreement_relational_noun",
+    "distractor_agreement_relative_clause"
+  ],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 512,
+  "target_members_per_component": 64,
+  "fit_steps": 800,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "verb": [
+      1,
+      0,
+      0
+    ],
+    "anaphor_number": [
+      0,
+      1,
+      0
+    ],
+    "anaphor_gender": [
+      0,
+      0,
+      1
+    ],
+    "all_components": [
+      1,
+      1,
+      1
+    ]
+  },
+  "methods": [
+    "source",
+    "partition64",
+    "independent64_clipped",
+    "assignment64",
+    "raw_full",
+    "raw_rank2",
+    "wrong_partition"
+  ],
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "parent_failure": "v1 failed directional finite-difference check before source selection; no map or held outcomes. Analytic .338507/.201026 versus finite .550246/.213772 under high TF32 precision."
+}
