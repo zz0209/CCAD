@@ -320,6 +320,12 @@ def main():
         for ext in ['pdf','svg','png']:
             p=paper/'figures'/('functional_reuse.'+ext)
             outputs.append(dict(path=p.relative_to(paper).as_posix(),bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()))
+    if (paper/'data/final_value_r28.json').exists():
+        from functional_reuse_paper import plot_path
+        plot_path(paper)
+        for ext in ['pdf','svg','png']:
+            p=paper/'figures'/('functional_path.'+ext)
+            outputs.append(dict(path=p.relative_to(paper).as_posix(),bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()))
     (out/'FIGURE_MANIFEST.json').write_text(json.dumps(dict(input_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),font_family=family,
         font_source=str(font) if font.exists() else 'Matplotlib STIXGeneral',outputs=outputs,
         scope='Source-backed plots. Individual captions distinguish seed ranges, dependent directions, sensitivity analyses and conditional bootstrap intervals; none treats shared-seed directions as independent repetitions.'),indent=2)+'\n',encoding='utf-8')

@@ -292,6 +292,14 @@ def main():
             from functional_reuse_paper import export as export_functional_reuse
             functional_choice=export_functional_reuse(root,out)
             sources.extend(functional_choice['inputs'])
+        if json.loads((out/'reform_runs.json').read_text()).get('functional_path_run'):
+            from functional_reuse_paper import export as export_functional_path, PATH_FAMILIES
+            functional_path=export_functional_path(root,out,key='functional_path_run',stem='functional_path',tag='final_value_r28',families=PATH_FAMILIES)
+            sources.extend(functional_path['inputs'])
+        if json.loads((out/'reform_runs.json').read_text()).get('functional_consensus_run'):
+            from functional_reuse_paper import export as export_functional_consensus, CONSENSUS_FAMILIES
+            functional_consensus=export_functional_consensus(root,out,key='functional_consensus_run',stem='functional_consensus',tag='final_value_r28_consensus',families=CONSENSUS_FAMILIES)
+            sources.extend(functional_consensus['inputs'])
         sources.extend(dict(path=v['path'],sha256=v['sha256'],bytes=(root/v['path']).stat().st_size) for v in reform['inputs'])
     (data_dir/'figure_data.json').write_text(json.dumps(plot,indent=2)+'\n',encoding='utf-8')
     for relation in plot['memberships']:
@@ -434,7 +442,13 @@ def main():
         claims.append(dict(id='actual_feature_choice_and_functional_selectivity',paper='Feature choice after SAE retraining',
             result='Six member proposals and four allowances share source information and target validation budgets. Choices on 0/4/16 pairs per task precede evaluation on original pair IDs512–575. Binary target-code deletions measure requested and collateral introduced errors. Five cyclic edges per objective and the same three task paradigms are descriptive dependent units.',
             evidence=[v['path'] for v in functional_choice['inputs']]+['scripts/functional_reuse_consumer.py','scripts/analyze_functional_reuse.py','scripts/functional_reuse_paper.py','paper/sections/functional_reuse.tex']))
+    if (out/'reform_runs.json').exists() and json.loads((out/'reform_runs.json').read_text()).get('functional_path_run'):
+        claims.append(dict(id='source_conditioned_finite_response_correspondence',paper='Correspondence from finite functional responses',
+            result='Source-component deletion paths yield functional response credits and a constrained target membership. Exact finite source effects supervise both clean and path response fits on96 source-selection pairs. Seven candidate families, four binary member allowances and three target-validation budgets are evaluated on previously exposed development pairs. Numerical source integration and actual target intervention have separate endpoints and meanings.',
+            evidence=[v['path'] for v in functional_path['inputs']]+['scripts/functional_path_credit.py','paper/sections/functional_path.tex','paper/sections/functional_path_details.tex']))
     for claim in claims:
+        if claim['id']=='source_conditioned_finite_response_correspondence' and json.loads((out/'reform_runs.json').read_text()).get('functional_consensus_run'):
+            claim['evidence'].extend(v['path'] for v in functional_consensus['inputs'])
         verified=[]
         for rel in claim['evidence']:
             p=root/rel
@@ -445,6 +459,7 @@ def main():
     if (out/'reform_runs.json').exists():current_ids.extend(['amplitude_attribution_and_native_coarsening','response_fitting_and_source_unit_bottleneck','source_behavior_groups_and_matched_support','grammar_transfer_and_source_counterfactuals'])
     current_ids.append('contrast_components_and_unfitted_joint_use')
     current_ids.append('actual_feature_choice_and_functional_selectivity')
+    current_ids.append('source_conditioned_finite_response_correspondence')
     (out/'EVIDENCE_INDEX.json').write_text(json.dumps(dict(current_manuscript_claim_ids=[c['id'] for c in claims if c['id'] in current_ids],claims=claims,data_manifest='data/DATA_MANIFEST.json',figure_manifest='figures/FIGURE_MANIFEST.json',
         raw_hashes=manifest['original_raw_sha256'],scope='Current manuscript evidence locator. Hashes establish file identity, not scientific validity; source and member KL references differ.'),indent=2)+'\n',encoding='utf-8')
     print(json.dumps(dict(context_rows=len(context['rows']),source_seed_rows=len(seed_rows),member_directions=20,fixed_cases=16,tables=len(list(table_dir.glob('*.tex'))),output=str(out))))

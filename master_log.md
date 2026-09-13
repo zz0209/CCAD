@@ -6519,3 +6519,55 @@ R23_REPORT.md SHA256e83a0703fa73878449a4d308a8dafe60b4591e58fbdb6b7ca6de3e00fac4
 数据/代码/核对：runs/FINAL_VALUE_R27_functional_reuse_v1_20260913为PASS，180000原始行、720提案、540冻结决定；configs/final_value_r27_functional_reuse_v1.json、scripts/functional_reuse_consumer.py及既有runner。R27_FOCUSED_CHECK.json核对全部540个执行汇总与按raw重算完全一致、成员上限和冻结规则/时序。一次analysis排序键导致verb/gender错配的局部判断已在17:30:02Z CORRECTION撤回；实际干预/冻结正确，旧summary和修正receipt保留，不改历史。没有再执行无关全套测试。
 
 阅读/恢复：artifacts/final_value_five_20260913/R27_REPORT.md、R27_COMPLETE.json与paper/README.md。旧全稿归档archive/research_workflow_20260913/before_R27_20260913T170850Z/manifest.json及入口归档r27_closeout_entries_20260913T174225Z。下一轮改为源组件有限删除过程中的功能credit及响应对应，先看这种信息能否改善同一真实成员选择，并用clean梯度和其他路径的同预算比较检验源组件信息的贡献；不把成熟积分梯度本身称为创新。先本COMPLETE记录，随后tracker增加到1/5。原ccad保持ACTIVE、5min、当前对话执行。
+
+## USER_STEERING — two writing skills and unchanged scientific value — 2026-09-13T17:48:38Z
+
+实际写入UTC：2026-09-13T17:48:38Z；本次检查与修改发生在当前用户补充之后，精确逐动作开始时间未单独记录。用户要求必须同时使用anti-defensive-writing和defensive-writing-checker，最终work意义不得减少。已实际读完两项SKILL.md，更新AGENTS长期规则、plan科学目标表达和tracker后四轮要求。checker按当前用户明确调用使用；两项skill的文字建议不改变用户的母问题、科学意义、实用性或主会目标，决定结论的真实对照继续完整保留。
+
+实际检查发现：引言末段按raw胜负/约束增量/自我设问组织，呈现项目自评。已改为功能解释重用的两项实际要求、对应测量及强比较逻辑；原始数值、强raw、R27梯度比较及正文结果均保留。摘要仍需随后续核心方法与结果重建；这项写作任务与研究并进，不作为科学达标。修改前完整入口及当前PDF/主文逐字归档archive/research_workflow_20260913/writing_checker_steering_20260913T174838Z/manifest.json。
+
+技能身份：[{"name": "anti-defensive-writing", "path": "C:\\Users\\zz\\.codex\\skills\\anti-defensive-writing\\SKILL.md", "sha256": "d4a3547e7155467ecd12efae5580647f7761b68539ce4486a2b871d45bbe3a8f"}, {"name": "defensive-writing-checker", "path": "C:\\Users\\zz\\.codex\\skills\\defensive-writing-checker\\SKILL.md", "sha256": "cee1d5524b1af8515301f42880ff7dc073d229e8cbd90d93e6f78a52a6309ed9"}]。此为用户要求接续和有限文字修改，无GPU计算、无新实验或新科学结果，不计R28开始或完成；已完成计数维持1/5，后四轮继续按tracker推进。原有自动化执行归属和间隔保持。
+
+## USER_STEERING manuscript update — 2026-09-13T17:49:14Z
+
+实际写入UTC：2026-09-13T17:49:14Z。前述双skill要求接续后的引言重写已编译成功，paper/main.pdf当前SHA9c8b9d1809d18cd390272e54b117b20d51494ec4279a705bbc8412fd6a4afc9a；同套main_text.tex与EVIDENCE_INDEX身份已更新，tracker指向当前PDF。R27完成时PDF、COMPLETE和SYNC保留其原身份，此次要求接续不新增研究轮；本次master_log更新随R28工作单元成组同步。
+
+## FINAL_VALUE_R28 START — 2026-09-13T17:52:10Z
+
+实际写入UTC：2026-09-13T17:52:10Z；事件开始为当前记录时刻。上一goal turn实际更新两项指定skill要求及引言/当前PDF，属于写作与执行状态进展，不是研究轮。现在开始新授权五轮中的R28（第2轮），完成计数仍1/5。
+
+正结果机会：共享模型梯度已能选择有作用的目标成员，R27表明总隐藏贡献的membership没有把该功能信息充分转成成员责任。本轮把关系拟合改到源组件有限删除路径上的响应credit：同一源功能沿0→完整删除的路径产生梯度积分，目标成员以原始code和decoder在该路径上的响应与源效应配对。希望得到更有作用的实际成员组，并解释源组件信息是否具有增量。积分梯度/非负拟合为成熟积木，贡献须由真实使用和结构证据支持。
+
+计划实验：复用原source成员和512候选池，源0–31每任务计算4点中点积分及实际source删除端点；原64pair缓存梯度仍提供给强基线，增加相同32pair clean对照、指定/错配源路径和clean/path响应拟合。所有实际mask仍8/16/32/64成员，原验证384–399、已曝光评价512–543用于本轮开发比较，0/4/16验证预算，保留全部方法与依赖。三任务/五循环seed/两种SAE共同检查，不使用新的evaluation数据调整后再称独立确认。下一确认轮使用真正未见样本和固定程序。
+
+数学/文献/稿件并进：源积分精确分解有限source效应，目标近似误差由路径偏离和响应余项决定；用实际source端点核对四点积分精度，并测真实target mask结果。Sparse Feature Circuits原文方法已读，本轮明示组件联合路径与该文逐节点路径的区别。anti-defensive-writing和defensive-writing-checker用于将新的方法/证据放进统一功能解释主线；不降低科学意义或把新fit名称当突破。
+
+资源：现场gpu-0 free，RTX5070Ti16303MiB总/2395MiB占用；复用R27锁定Python3.13.7/Torch2.8.0+cu128、2CPU线程及10个已训练SAE。初始预算3600秒driver、约8GiB显存；依据R27约1200秒180000记录和新增约11520 source-gradient pair估算本轮约1500–2600秒，启动后按实测修正。无训练/下载/新增收费。入口和当前稿已归档archive/research_workflow_20260913/before_R28_20260913T175210Z/manifest.json。
+
+## FINAL_VALUE_R28 PROGRESS — 2026-09-13T18:05:44Z
+
+实际写入UTC：2026-09-13T18:05:44Z。run已于2026-09-13T17:54:16.662139Z启动，当前RUNNING，进程会话40944最近轮询确认仍在执行。10组source路径和response拟合已完成并在447.328秒完成最后提案；现进入目标验证，最近事件2026-09-13T18:05:36.533645+00:00，matryoshka/source4/anaphor_gender，driver679.874秒。第一处intervened-gradient数值差分通过；不同Gram的已知可行M求解恢复误差2.3842e-8。
+
+实际source拟合结果：30组件的四点积分平均相对绝对误差0.007888，path响应拟合平均归一MSE0.004678，对照clean响应拟合0.273848；两者接收相同96个实际source有限效应。路径梯度平均与clean余弦0.947697，目标credit中不能由逐输入clean梯度标量投影重建的相对范数0.477871。以上为拟合/机制描述，实际target使用收益等待后续冻结选择及干预。R28_PATH_DIAGNOSTICS.json和全部path_relation.npz/path_fit.json保留。
+
+理论已写paper/sections/functional_path.tex及functional_path_details.tex，明确source联合路径的积分恒等式、target路径偏离余项以及Hessian交互含义；结果未完成前不写效果结论。主文新增已有cross-seed ablation/substitution benchmark的引用，官方索引仅可读首面，PDF/browser验证受限，未绕过，未声称已读其完整方法或复现。SemanticOT官方§§3.1–3.2/6.2刷新记录在REFERENCE_REGISTRY；代码未复制。当前估计总driver约1300–1700秒，剩余约820秒，初始3600秒预算保持；原5min heartbeat保持，计算不重复启动。
+
+
+## FINAL_VALUE_R28 PROGRESS — 2026-09-13T18:18:49Z
+
+实际写入UTC：2026-09-13T18:18:49Z。首个路径实验于2026-09-13T18:14:44.946888Z结束，PASS、125280原始行、1228.169 driver秒。16验证pair下路径credit U为21.25/20.625点，cached64为20.4167/18.2292，clean32为20.8333/17.7083；response membership为19.6875/19.1667，原membership为13.5417/15.9375。完整两机制各15 task/seed cells；均为已曝光开发数据，不能称独立确认。首run路径拟合与控制全部保留在r28_analysis。
+
+据两机制路径credit正信号，同一R28单元开展source consensus follow-up：复用四个非目标seed的功能路径，比较mean、worst-source以及仅将路径梯度投影至clean梯度的scalar-only控制；保留cached64。目标消费者、数据、四member allowances和验证预算不变；额外source信息明确记录。配置configs/final_value_r28_source_consensus_v1.json已落盘；尚未启动，不填写伪造开始时间。按首run吞吐预计550–800秒、1800秒上限，本轮计划总driver仍在3600秒以内。共享GPU当前free；不新增梯度/训练/付费资源。当前1/5，不新增轮次。
+
+
+## FINAL_VALUE_R28 COMPLETE — 2026-09-13T18:39:38Z
+
+实际写入UTC：2026-09-13T18:39:38Z。本轮事件开始2026-09-13T17:52:10Z，研究/整稿完成时间为本记录当前写入时刻；运行事件起止见R28_REPORT与两个status，不以run日期倒填。理由是R27总贡献拟合与实际成员选择失配；本轮改用源组件有限干预响应，并保留多源共同正credit形成可查询关系。两种SAE的真实选择均出现开发正信号：四源minimum U=22.1875/21.25点，cached64=20.4167/18.2292；单源path=21.25/20.625，mean=21.0417/19.8958，scalar-only mean=20.625/18.3333。scalar比较匹配mean而非minimum，后续同聚合控制保留。response membership优于旧membership但低于直接path，gender差异、wrong-path结果及全部预算保留。
+
+实际run为FINAL_VALUE_R28_source_path_response_v1_20260913（17:54:16.662139Z—18:14:44.946888Z，1228.168629秒）与FINAL_VALUE_R28_source_consensus_v1_20260913（18:18:56.384594Z—18:26:48.541223Z，472.109584秒），均PASS，合计198720行、1320提案和990提前冻结选择。原锁定RTX5070Ti环境、两CPU线程、共享gpu-0已释放，无新增购买或训练。累计driver1700.278213秒；工作/计算重叠，净工作和等待未单独计时，不将空等计为轮次。
+
+数学连接、有限差分与响应求解已核对；全部990实际决定与raw重算一致，4源排除目标注释与min公式核对，重复cached控制一致。最近邻原文方法、许可和实际已读范围见REFERENCE_REGISTRY；新OpenReview论文仅可读取首页，未冒称全文已读。两项用户指定写作skills用于摘要/引言/结果/主图的实质重组，R28_WRITING_REVIEW记录实施；研究意义和主会目标不降级。
+
+稿件同一入口paper/main.pdf，SHA256 9851b7919b42eddaf44acb5d6a005fc12d2485fcd89a074ff8fca9569c522464，43页（7主文/1参考/35附录）；新图和主文/附录已实际查看，完整布局联系图保留。最新latex receipt=paper/build/20260913T183623014097Z，完整数据/图build=20260913T183058835063Z。证据、复现说明、病例、分项和可编辑源齐备于本轮快照；R28_REPORT、R28_COMPLETE和两focused checks给出定位/hash。R27两个被改文件经反向恢复与R27_COMPLETE逐字hash一致后归档r28_recovered_r27_sources，恢复写入时间如实记录；此前入口归档及本次closeout_entries保持原文。
+
+本轮仍是开发，source0–31、cal384–399、evaluation512–543保留曝光身份，共享seed/固定范式依赖不变。科学目标NOT_MET；下一轮R29固定共同响应方法，优先在独立目标初始化cohort和未参与开发的句对上确认真实使用收益，并匹配minimum的scalar-only控制及强全字典梯度。之后才依据真实结果形成更广证据。到本条完成记录后再将tracker计数更新2/5，R29尚未开始，不增加授权总轮数。

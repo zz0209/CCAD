@@ -1,0 +1,124 @@
+{
+  "run_id": "FINAL_VALUE_R28_source_path_response_v1_20260913",
+  "run_parent": "FINAL_VALUE_R28",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Construct source-conditioned finite-response correspondence and test actual target member selection.",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+  "budget": "Existing gpu-0, two CPU threads, up to3600 driver seconds; no new training or paid resources.",
+  "budget_seconds": 3600,
+  "max_length": 64,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "group_run": "runs/REFORM_R24_behavior_context_groups_v2_20260913",
+  "data_manifest": "artifacts/scientific_reform_20260913/R26_DATA_MANIFEST.json",
+  "scope": "Source-conditioned finite-response correspondence development. OriginalR26 source components/pool and64-pair cached gradients remain available. Four midpoint gradients along each source-component deletion use original source pairIDs0-31 per task; clean32 and cached64 controls remain. Source/path and clean response membership receive identical measured finite source effects, candidate pools and coefficient constraints. All binary target-member proposals freeze before original validation384-399 and previously exposed evaluation512-543. Same8/16/32/64 allowances and0/4/16 validation budgets. All outcomes and failed/mismatched paths retained. Five shared cyclic seeds, three fixed grammar paradigms and lexical templates are dependent. This is method development with exposed evaluation, not independent confirmation.",
+  "written_at_utc": "2026-09-13T17:53:44.863127+00:00",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 512,
+  "target_members_per_component": 64,
+  "fit_steps": 800,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "verb": [
+      1,
+      0,
+      0
+    ],
+    "anaphor_number": [
+      0,
+      1,
+      0
+    ],
+    "anaphor_gender": [
+      0,
+      0,
+      1
+    ]
+  },
+  "methods": [
+    "fcc_members",
+    "cached_gradient_pool",
+    "clean_gradient_matched",
+    "source_path_gradient",
+    "wrong_path_gradient",
+    "response_membership",
+    "response_clean_membership"
+  ],
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "reuse_consumer_parent": "runs/REFORM_R26_contrast_components_v2_20260913",
+  "reuse_raw_parent": "runs/REFORM_R26_raw_regularization_controls_v1_20260913",
+  "consumer_ranges": {
+    "calibration": [
+      384,
+      400
+    ],
+    "evaluation": [
+      512,
+      544
+    ]
+  },
+  "member_allowances": [
+    8,
+    16,
+    32,
+    64
+  ],
+  "validation_pairs_per_task": [
+    0,
+    4,
+    16
+  ],
+  "path_source_range": [
+    0,
+    32
+  ],
+  "path_midpoints": [
+    0.125,
+    0.375,
+    0.625,
+    0.875
+  ],
+  "path_fit_steps": 800,
+  "path_ridge": 0.01
+}

@@ -50,6 +50,13 @@ def run_consumer(cfg,w,D,saes,capture,forward,checked,write,log,budget):
                 'cached_gradient_pool':(tp,role[tp]),
                 'cached_gradient_full':(torch.arange(len(d),device=w.device),role),
                 'fcc_functional_priority':(tp,part*role[tp])}
+            if cfg.get('path_midpoints'):
+                from functional_path_credit import propose
+                rankings.update(propose(cfg,w,D,saes,forward,log,budget,obj,s,t,h,grad,source_panel,tp,sp,sg))
+            if cfg.get('path_ensemble_parent'):
+                from functional_path_credit import propose_consensus
+                rankings.update(propose_consensus(cfg,w,D,saes,checked,log,obj,s,t,h,grad,source_panel,tp))
+            rankings={name:rankings[name] for name in cfg['methods']}
             masks={};members={};details=[]
             for family,(pool,score) in rankings.items():
                 for k,op in enumerate(ops):

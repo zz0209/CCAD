@@ -17,6 +17,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--config',type=Path,required=True);args=p.parse_args();cfg=json.loads(args.config.read_text())
     source_files=['scripts/run_component_transfer.py','scripts/fit_component_correspondence.py','scripts/component_raw_controls.py','scripts/run_causalgym_multisite.py','scripts/run_causalgym_native_transfer.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py','src/ccad/activation_contract.py']
     if cfg.get('reuse_consumer_parent'):source_files.append('scripts/functional_reuse_consumer.py')
+    if cfg.get('path_midpoints') or cfg.get('path_ensemble_parent'):source_files.append('scripts/functional_path_credit.py')
     w=MultisiteWork(cfg,args.config,source_files)
     error=None
     def checked(path):return w.checked(ROOT/Path(path))
