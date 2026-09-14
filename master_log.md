@@ -7186,3 +7186,35 @@ Three runsPASS, driver640.907170seconds, CPU593.671875seconds,100160padded seque
 Current paper/main.pdf50pages/main8, SHA2569f6ce5e0632cc99850dbc7aebfec5de13802b1adc902250f693a83f9f1853f13. ActualPDF8/9/31/32/33viewed; table31 andfigure14 updated, old18setting diagnostics retainedtable32. Compileexit0, no undefined references or missingcharacters; bibliography balancing retains1.66975pt vbox warning with no visible clipping. R36_WRITING_VISUAL_REVIEW.md records bothmandatory skills and actualtext/research choices. R36_FOCUSED_CHECK independently reparses7680outputs, checks unchanged frozen masks/config and retainedstatic replay; R36_EVIDENCE_CHECK validates131mutablecurrent-claim entries. The limited scopes of those checks are explicit.
 
 Stage package: artifacts/correspondence_reform_20260913/R36_REPORT.md,R36_RUNS.json,R36_COST.json,R36_DELIVERY.json; r36_confirmation/confirmation.json andcluster_outcomes.npz; paper/data/arithmetic_positions.json andevidence index. Sources/licence/commit andPDFhash at r36_peap_reading/identity.json andREFERENCE_REGISTRY. Initialpaper archive r36_before_20260914T160503Z; finalentry-input archive r36_completion_inputs_20260914T163257Z. Allprevious failures/negativecontrasts and the correctedfractional timestamp remain inhistory. Tracker completion is updated only after this record. Authorizedwhite-list Git sync follows.
+
+## R37 START
+
+实际写入UTC：2026-09-14T16:52:57Z。可证实事件开始：2026-09-14T16:52:57Z。选题理由：R36角色对应在冻结新题上改善固定权重，但源十位完整干预成功率仅5.625%；先改革源组件在答案角色上的参与，检验能否产生可迁移的完整功能。复用R34源拟合和R36角色schema，直接对照获得同样角色自由度与监督预算。计划先两seed开发，再依真实信号扩展；既有问题均为开发，不重命名为确认。初始预算1200driver秒，尚未启动计算；有效工作时长未知，当前GPU状态待实读。本轮前入口和稿件逐字归档：artifacts\correspondence_reform_20260913\r37_before_20260914T165257Z/MANIFEST.json。后续实际结果、失败、稿图与资源分开记录。
+
+
+## R37 CORRECTION
+实际写入UTC：2026-09-14T16:55:40Z。准备脚本首试漏设项目PYTHONPATH，导入ccad失败，因此配置未创建；随后启动在读取缺失配置前退出，未加载模型、未形成run目录或科学结果。补设锁定环境既有PYTHONPATH后，穷举小矩阵所有二成员支持验证角色union投影的最小欧氏误差，配置成功生成。共享管理器自动释放早退租约。下一次先检查准备退出码，再启动GPU。
+
+
+## R37 PROGRESS
+实际写入UTC：2026-09-14T16:59:28Z。首个run于2026-09-14T16:55:45.398673Z开始、16:57:45.971728Z完成，PASS，driver120.573秒（精确成本以summary为准）。两seed角色梯度组件unit H95.703125%、tens H54.296875%；同256更新静态梯度unit50%、tens15.625%。保护分别100%/99.21875%对67.96875%/91.796875%。四个新旧训练schedule数组逐元素相同。Fisher角色unit96.484375%、tens5.078125%，表明角色自由度未修复差候选，保留该负结果。选择梯度定义的功能组件作为源，扩展余下三个seed，同时补对应静态对照；之后检验64成员union的角色field跨seed迁移与最优cosine assignment。原始run与NPZ均保留。
+
+
+## R37 PROGRESS — source-role replication and approval timeout
+实际写入UTC：2026-09-14T17:55:14Z。余下三个seed run于2026-09-14T16:59:34.213963Z开始、17:02:23.286832Z结束，PASS，driver169.063658秒。五seed统一分析：角色梯度完整准确率73.28125%，静态梯度32.1875%，同405fit问句、相同256更新日程、64成员union；差41.09375点，固定五SAE的问题cluster开发区间[35,47.1875]。请求位+27.5、保护位+18.984375点。原始开发数组和日程身份见r37_development.json/npz。已实现角色field和最优assignment；合成已知角色field恢复max误差2.384185793236071e-8、union2。
+跨seed run首次启动的自动权限审核超时，工具返回review未在deadline前完成，可重试一次。该functions cell报告3067.9秒墙钟等待；不能当研究或GPU计算。17:54:25Z实读run目录不存在、所有共享lease free；CIM进程枚举被系统拒绝，未据此推断进程清单。已按指示单次重试，当前仍待返回。期间整理本轮方法、实际源证据、图表与文献，不重复启动。
+
+
+## R37 COMPLETE — written UTC 2026-09-14T18:09:23Z
+
+Actual START2026-09-14T16:52:57Z. The final scientific experiment ended2026-09-14T18:00:42.185204Z; exact four-run intervals are retained inR37_RUNS.json. This unit completed source-role mathematical parameterization and shared-union projection, five controlled source fits with matched static controls, no-target-output role-field/assignment transfer, a frozen310-question confirmation, original methods/code reading, actual generated-answer analysis, paper/table/figure integration and one focused implementation/evidence check. Preparation, approval waiting and research work are distinguished; no independent active-work timer was maintained.
+
+Frozen source role56.5625% versusstatic30.15625%;+26.40625points[19.140625,33.984375]. Role field56.015625% versusassignment60.703125%;−4.6875points[−6.642578125,−2.654296875], jointprimaryfalse. Units source95.625%,field91.71875%,assignment87.8125%; tens17.5%,20.3125%,33.59375%. All5120texts independently reparsed;620baseprompts include618correct, failures retained. FiveSAE-dependent question clusters determine inference. Source functionality improves, while currentfield fitting does not establish a many-to-many correspondence advantage. Final main-conference target remains notmet.
+
+Four runsPASS, driver632.069332seconds, processCPU588.296875seconds,90560paddedsequences/4980800tokens. Sharedmanager actuallyfree aftercompletion; no externalcost/newSAEtraining. Firstfieldrun launch approval timedout beforeprocesscreation, toolwait3067.9seconds; oneauthorized retry succeeded. This wait is notresearch orGPUtime. PreparationPYTHONPATH and transientPathconcatenation errors are retained inreport/history, notscientificfailures. Initial1200driversecond budget respected.
+
+Current paper/main.pdf51pages/main8 SHA256ff1df2b3bb56009ff6435b155148a58ab3171e2a9c5f0811ad91a9549481e597. Source/readablemath/frozencomparison atAppendixH.1pages27–28, table25,figure12; mainDiscussionpage8. Actual finalpage9viewed; final8/27/28renders arepixel-identical toviewedfirstbuild. No visible overlap/clipping; compilerexit0,undefined/missingcharacters0,small1.37/1.66975pt balancing vboxwarnings retained. Mandatoryanti-defensive-writing anddefensive-writing-checker changes are traceable inR37_WRITING_VISUAL_REVIEW.md. Currentevidence142mutableentries/116distinctfiles verified; check counts are not scientificclaims.
+
+Stage reportR37_REPORT.md; runsR37_RUNS.json; costsR37_COST.json; confirmationr37_confirmation/confirmation.json/cluster_outcomes.npz; freezeR37_CONFIRMATION_FREEZE.json; currenteditablepaper andevidenceindex; reproducibleconfigs andsource snapshots. Initialarchive r37_before_20260914T165257Z, precompletionentryarchive artifacts/correspondence_reform_20260913/r37_completion_inputs_20260914T180923Z. StageR37_DELIVERY.json records finalfileidentities afterthisentry. Trackercompletion follows thisrecord. Authorizedwhitelistgit sync follows.
+
+R38ready: improve the correspondence object around identifiable functional parts and actualunfitted interventions. The role source offers usefulunit function; matching is the strongbasecase. Separate task-bearing/source-background contributions and test whether the resultingrelation improves component predictions or use under matchedinformation/validation budgets; avoid another blindsourceexpansion orresponse-dimension sweep. OriginalccadACTIVE5minute automation attached tothisthread wasverified; no newloop,delegation orpause.

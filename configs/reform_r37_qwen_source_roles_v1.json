@@ -1,0 +1,89 @@
+{
+  "run_id": "REFORM_R37_qwen_source_roles_v1_20260914",
+  "run_parent": "R37",
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "purpose": "Learn functional source components with answer-role participation and a matched direct-gradient control",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "budget": "600 driver seconds for four256-step fits and two-seed actual free generation; existing weights only.",
+  "budget_seconds": 600,
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "batch_size": 8,
+  "max_new_tokens": 5,
+  "scope": "Adaptive development on exposed original arithmetic questions. Same R34 deterministic schedule, member union64 and256 backward updates per method/seed; semantic role weights replace constant weights. Both Fisher initialization and direct-gradient initialization get the same role freedom. Roles after the newline have zero weights. No new confirmation.",
+  "written_at_utc": "2026-09-14T16:55:39.846077+00:00",
+  "round_id": "R37",
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "operand_range": [
+    10,
+    50
+  ],
+  "split_salt": "ccad-r32-digit-source-1",
+  "pairs_per_template": 64,
+  "selection_rules": [
+    "fisher_contrast"
+  ],
+  "members": [
+    64
+  ],
+  "max_length": 72,
+  "hidden_atol": 0.002,
+  "statistics_unit": "Unordered operand pairs remain in the same split and prompt-connected recipient-donor pairs; five controlled source SAE initializations with common prompts",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "intervention_span": "generated_prefix",
+  "source_selection_step": {
+    "unit": 1,
+    "tens": 0
+  },
+  "source_cache_run": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+  "reuse_rules": [
+    "fisher_contrast",
+    "counterfactual_weighted"
+  ],
+  "counterfactual_fit": {
+    "steps": 256,
+    "lr": 0.05,
+    "seed": 93214,
+    "answer_prefixes": {
+      "1": " "
+    },
+    "role_schema": true
+  },
+  "source_refit": {
+    "latent_rank": 16,
+    "objectives": {
+      "ce_roles": 0.0,
+      "gradient_roles": 0.0
+    },
+    "selection_batches": {
+      "gradient_roles": 16
+    },
+    "use_latent_reference": false
+  },
+  "source_view_augmentation": {
+    "template": 1,
+    "require_base_correct": true
+  }
+}

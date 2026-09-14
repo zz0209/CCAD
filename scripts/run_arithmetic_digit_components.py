@@ -264,7 +264,8 @@ def main():
             refitted={};k=cfg["members"][0]
             for seed in cfg["seeds"]:
                 for name,weight in sc["objectives"].items():
-                    learned=fit_gates(w,cfg,model,module,tok,saes[seed],rows,tokenrows,codes[seed],
+                    fit_cfg={**cfg,'counterfactual_fit':{**cfg['counterfactual_fit'],**sc.get('fit_overrides',{}).get(name,{})}}
+                    learned=fit_gates(w,fit_cfg,model,module,tok,saes[seed],rows,tokenrows,codes[seed],
                                       gates[seed,"fisher_contrast",k],seed,k,physical_length,budget,
                                       tag=name,latent_context=latent,latent_weight=weight,view_map=view_map,
                                       selection_batches=sc.get('selection_batches',{}).get(name,0))
@@ -357,7 +358,7 @@ def main():
                 if raw_trajectory:patch=lambda current,step:h[donors,:step+1]-current
                 elif gate is not None:
                     ae=saes[seed]
-                    role_schema=cfg.get('position_relation',{}).get('role_schema',False) or cfg.get('frozen_adaptation',{}).get('role_schema',False)
+                    role_schema=any(cfg.get(key,{}).get('role_schema',False) for key in ['position_relation','relation_transfer','frozen_adaptation','counterfactual_fit'])
                     def patch(current,step):
                         g=gate
                         if gate.ndim==2:

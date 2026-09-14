@@ -22,7 +22,7 @@ def main():
     raw_hash = hashlib.sha256(raw.read_bytes()).hexdigest()
     assert raw_hash == json.loads((run / 'metrics.summary.json').read_text())['metrics_raw_sha256']
     methods = list(dict.fromkeys([spec.get('reference', 'clean')] + spec['comparators'] +
-                                [m for pair in spec.get('secondary_contrasts', []) for m in pair]))
+                                [m for pair in spec.get('secondary_contrasts', []) + spec.get('primary_contrasts', []) for m in pair]))
     updates = cfg['frozen_adaptation']['updates']
     seeds = cfg['seeds']
     metrics = ['exact_hybrid', 'target_digit_success', 'preserve_digit_success']
@@ -55,11 +55,12 @@ def main():
     draws = rng.integers(len(identities), size=(spec['bootstrap_replicates'], len(identities)))
     primary = []
     u = updates.index(spec['primary_updates'])
-    for comparator in spec['comparators']:
-        diff = (outcomes[0, u, ..., 0] - outcomes[methods.index(comparator), u, ..., 0]).mean(axis=(1, 2, 3))
+    comparisons = spec.get('primary_contrasts', [(methods[0], c) for c in spec['comparators']])
+    for reference, comparator in comparisons:
+        diff = (outcomes[methods.index(reference), u, ..., 0] - outcomes[methods.index(comparator), u, ..., 0]).mean(axis=(1, 2, 3))
         boot = diff[draws].mean(1)
         lo, hi = np.quantile(boot, [.025, .975])
-        primary.append(dict(comparator=comparator, difference_points=100 * float(diff.mean()),
+        primary.append(dict(reference=reference, comparator=comparator, difference_points=100 * float(diff.mean()),
                             interval_points=[100 * float(lo), 100 * float(hi)],
                             positive_lower_bound=bool(lo > 0)))
     cells = []

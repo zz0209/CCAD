@@ -2,7 +2,7 @@
 
 Reuses CCAD's sparse bounded-gate projection and RAVEL's Cause/Iso objective.
 Training uses labelled hybrid sequences; evaluation remains free generation.
-The same learned gate acts at every generated position, including preserved digits.
+Gates can share weights across positions or condition them on answer roles.
 """
 from __future__ import annotations
 
@@ -11,6 +11,27 @@ import random
 import time
 
 from ccad.semantic_participation import project_sparse_gates
+
+
+def project_role_members(value, members):
+    """Project role-by-feature weights onto [0,1] with a feature-union budget.
+
+    Retaining feature f reduces squared projection error by the sum, over roles,
+    of 2*v*clip(v)-clip(v)^2. Selecting the largest gains is the exact projection.
+    """
+    import torch
+    with torch.no_grad():
+        feasible = value.clamp(0, 1)
+        gain = (2 * value * feasible - feasible.square()).sum(0)
+        keep = torch.argsort(gain, descending=True, stable=True)[:members]
+        result = torch.zeros_like(value)
+        result[:, keep] = feasible[:, keep]
+        value.copy_(result)
+
+
+def member_counts(gate):
+    active = gate > 0
+    return (active.any(0) if gate.ndim == 3 else active).sum(0)
 
 
 def natural_latent_reference(w, rows, hidden, base, rank=16):
@@ -78,8 +99,15 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
                       and not {rows[i]['a'], rows[i]['b']} & {rows[j]['a'], rows[j]['b']}]
         training_pairs.append((i, rng.choice(candidates)))
     assert all(rows[i]['template'] == 0 for pair in training_pairs for i in pair)
-    param = torch.nn.Parameter(initial_gate.detach().clone() * initial_scale)
-    support = initial_gate > 0 if fixed_support else None
+    role_schema = cfg['counterfactual_fit'].get('role_schema', False)
+    start = initial_gate.detach().clone()
+    if role_schema and start.ndim == 2:
+        start = start[None].repeat(cfg['max_new_tokens'] + 1, 1, 1)
+        # No training target follows the newline; those later roles remain zero.
+        start[4:] = 0
+    assert start.ndim == (3 if role_schema else 2)
+    param = torch.nn.Parameter(start * initial_scale)
+    support = start > 0 if fixed_support else None
     saved = ({0: param.detach().clone()} if 0 in checkpoints else {}) if checkpoints is not None else None
     stem = f'counterfactual_seed{seed}_k{members}' + (f'_{tag}' if tag else '')
     optimizer = torch.optim.Adam([param], lr=cfg['counterfactual_fit']['lr'])
@@ -124,7 +152,12 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
             h = output[0] if isinstance(output, tuple) else output
             current = h[ix[:, None], sites]
             z = ae.encode(current.reshape(-1, current.shape[-1])).reshape(batch, nsites, -1)
-            delta = ((donor - z) * gate) @ ae.decoder.weight.T
+            applied_gate = gate
+            if role_schema:
+                shift = torch.tensor([1 - rows[i]['template'] for i, j in pairs], device=w.device)
+                roles = torch.arange(nsites, device=w.device)[None] + shift[:, None]
+                applied_gate = gate[roles]
+            delta = ((donor - z) * applied_gate) @ ae.decoder.weight.T
             if source_alpha:
                 source_ae, source_codes, source_gate = source_context
                 source_z = source_ae.encode(current.reshape(-1,current.shape[-1])).reshape(batch,nsites,-1)
@@ -166,16 +199,16 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
     # One finite difference at an interior gate verifies the actual model path.
     check_pairs = training_pairs[:batch]
     check_alpha = .5 if source_context is not None else 0.
-    loss = objective(check_pairs, 0, param[:, 0], source_alpha=check_alpha)
+    loss = objective(check_pairs, 0, param[..., 0], source_alpha=check_alpha)
     grad = torch.autograd.grad(loss, param)[0]
-    interior = torch.where(initial_gate[:, 0] > 0)[0]
-    coord = int(interior[grad[interior, 0].abs().argmax()])
-    analytic = float(grad[coord, 0])
+    interior = torch.where(start[..., 0].flatten() > 0)[0]
+    coord = int(interior[grad[..., 0].flatten()[interior].abs().argmax()])
+    analytic = float(grad[..., 0].flatten()[coord])
     eps = .01
     with torch.no_grad():
-        plus, minus = param[:, 0].clone(), param[:, 0].clone()
-        plus[coord] += eps
-        minus[coord] -= eps
+        plus, minus = param[..., 0].clone().contiguous(), param[..., 0].clone().contiguous()
+        plus.view(-1)[coord] += eps
+        minus.view(-1)[coord] -= eps
         finite = float((objective(check_pairs, 0, plus, source_alpha=check_alpha)
                         - objective(check_pairs, 0, minus, source_alpha=check_alpha)) / (2 * eps))
     error = abs(finite - analytic)
@@ -187,14 +220,14 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
         view_pairs = [(view_map[i], view_map[j]) for i, j in training_pairs
                       if view_map[i] != i and view_map[j] != j][:batch]
         assert len(view_pairs) == batch
-        loss = objective(view_pairs, 0, param[:, 0])
+        loss = objective(view_pairs, 0, param[..., 0])
         derivative = torch.autograd.grad(loss, param)[0]
-        coord_v = int(interior[derivative[interior, 0].abs().argmax()])
-        analytic_v = float(derivative[coord_v, 0])
+        coord_v = int(interior[derivative[..., 0].flatten()[interior].abs().argmax()])
+        analytic_v = float(derivative[..., 0].flatten()[coord_v])
         with torch.no_grad():
-            plus, minus = param[:, 0].clone(), param[:, 0].clone()
-            plus[coord_v] += eps
-            minus[coord_v] -= eps
+            plus, minus = param[..., 0].clone().contiguous(), param[..., 0].clone().contiguous()
+            plus.view(-1)[coord_v] += eps
+            minus.view(-1)[coord_v] -= eps
             finite_v = float((objective(view_pairs, 0, plus) - objective(view_pairs, 0, minus)) / (2 * eps))
         error_v = abs(finite_v - analytic_v)
         assert error_v < .015 + .05 * abs(analytic_v), (finite_v, analytic_v, error_v)
@@ -231,13 +264,13 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
                 alpha = 0.
             # A source-functional path changes the source component; the target
             # gate is a zero-valued probe whose derivative scores all members.
-            probe = torch.full_like(param[:, operation], 0. if source_context is not None else alpha,
+            probe = torch.full_like(param[..., operation], 0. if source_context is not None else alpha,
                                     requires_grad=True)
             selection_loss = objective(pairs, operation, probe,
                                        source_alpha=alpha if source_context is not None else 0.)
             derivative = torch.autograd.grad(selection_loss, probe)[0]
             assert torch.isfinite(derivative).all()
-            selection_scores[:, operation] -= derivative.detach()
+            selection_scores[..., operation] -= derivative.detach()
             selection_trace.append(dict(step=step + 1, operation=operation,
                                         alpha=alpha, loss=float(selection_loss.detach()),
                                         pairs=[list(p) for p in pairs]))
@@ -245,43 +278,51 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
                 with torch.no_grad():
                     param.zero_()
                     for c in range(2):
-                        chosen = torch.argsort(selection_scores[:, c], descending=True, stable=True)[:members]
-                        chosen = chosen[selection_scores[chosen, c] > 0]
-                        param[chosen, c] = .5
+                        score = selection_scores[..., c]
+                        ranking = score.clamp_min(0).square().sum(0) if role_schema else score
+                        chosen = torch.argsort(ranking, descending=True, stable=True)[:members]
+                        chosen = chosen[ranking[chosen] > 0]
+                        if role_schema:
+                            param[:, chosen, c] = .5 * (score[:, chosen] > 0)
+                        else:
+                            param[chosen, c] = .5
                 if saved is not None and step + 1 in checkpoints:
                     saved[step + 1] = param.detach().clone()
                 w.progress('TARGET_GRADIENT_SELECTION', seed=seed, initialization=tag,
                            backward_batches=selection_batches, integrated_steps=integrated_steps,
-                           active=(param.detach() > 0).sum(0).cpu().tolist())
+                           active=member_counts(param.detach()).cpu().tolist())
             budget()
             continue
         optimizer.zero_grad(set_to_none=True)
-        loss = objective(pairs, operation, param[:, operation])
+        loss = objective(pairs, operation, param[..., operation])
         assert torch.isfinite(loss)
         loss.backward()
         optimizer.step()
         for c in range(2):
             # This projects a possibly noncontiguous column; the helper preserves
             # storage by copying its result back, with a separate per-request budget.
-            column = param[:, c].detach().clone()
+            column = param[..., c].detach().clone()
             if support is not None:
-                column *= support[:, c]
-            project_sparse_gates(column, members)
+                column *= support[..., c]
+            if role_schema:
+                project_role_members(column, members)
+            else:
+                project_sparse_gates(column, members)
             with torch.no_grad():
-                param[:, c].copy_(column)
+                param[..., c].copy_(column)
         if saved is not None and step + 1 in checkpoints:
             saved[step + 1] = param.detach().clone()
         if step == 0 or (step + 1) % 32 == 0 or step + 1 == steps:
             item = dict(step=step + 1, operation=operation, loss=float(loss.detach()),
                         objective_components=dict(objective_components),
                         fit_elapsed_seconds=time.perf_counter() - train_start,
-                        active=(param.detach() > 0).sum(0).cpu().tolist())
+                        active=member_counts(param.detach()).cpu().tolist())
             history.append(item)
             w.progress('COUNTERFACTUAL_SOURCE_FIT', seed=seed, members=members, initialization=tag, **item)
         budget()
     fitted = param.detach()
     assert bool(((fitted >= 0) & (fitted <= 1)).all())
-    assert bool(((fitted > 0).sum(0) <= members).all())
+    assert bool((member_counts(fitted) <= members).all())
     if support is not None:
         assert not bool((fitted[~support] > 0).any())
     np.savez_compressed(w.run / f'{stem}.npz',
@@ -303,8 +344,9 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
         source_functional_path=source_context is not None,
         latent_weight=latent_weight, natural_latent_objective=latent_context is not None,
         answer_equivalent_views=view_map is not None,
+        role_schema=role_schema, role_order=['leading_space','tens','units','following_token','later_1','later_2'] if role_schema else None,
         selection_trace=selection_trace,
         supervision='Hybrid full-answer CE: donor target digit, recipient preserved digit, newline. Fit split only.',
-        evaluation='A single bounded gate is applied at every generated position; no answer prefix at evaluation.',
-        final_active=(fitted > 0).sum(0).cpu().tolist()), indent=2) + '\n')
+        evaluation='Bounded gates at each generated prefix; answer-role weights with a shared member union.' if role_schema else 'A single bounded gate is applied at every generated position; no answer prefix at evaluation.',
+        final_active=member_counts(fitted).cpu().tolist()), indent=2) + '\n')
     return (fitted, saved) if checkpoints is not None else fitted
