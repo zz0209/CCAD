@@ -74,6 +74,8 @@ def main():
         sources += ["scripts/arithmetic_relation_transfer.py", "scripts/fit_component_correspondence.py"]
     if cfg.get("response_relation"):
         sources += ["scripts/arithmetic_response_relation.py", "scripts/fit_component_correspondence.py"]
+    if cfg.get("position_relation"):
+        sources += ["scripts/arithmetic_position_relation.py", "scripts/fit_component_correspondence.py"]
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -280,6 +282,10 @@ def main():
             gates,response_meta=fit_response_relations(w,cfg,model,module,tok,rows,tokenrows,
                                                        saes,codes,physical_length,budget)
             metadata.extend(response_meta)
+        if cfg.get("position_relation"):
+            from arithmetic_position_relation import fit_positions
+            gates,position_meta=fit_positions(w,cfg,saes,codes,rows,budget)
+            metadata.extend(position_meta)
         if cfg.get("adaptation"):
             from arithmetic_counterfactual_fit import fit_gates
             ac=cfg["adaptation"];relation_parent=ROOT/ac["relation_run"]
@@ -343,7 +349,7 @@ def main():
             gates=loaded
             metadata.append(dict(frozen_adaptation=fc,current_fit_updates=0,current_output_gradients=0,
                                  original_source_and_target_fit_labels_shared=True))
-        write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=bool(cfg.get("relation_transfer") or cfg.get("response_relation") or cfg.get("adaptation") or cfg.get("frozen_adaptation")),task_output_gradients="shared fit-pair requested/preserved margins; see RESPONSE_FREEZE.json" if cfg.get("response_relation") else "fit split hybrid CE" if cfg.get("counterfactual_fit") else "inherited source and target fit only" if cfg.get("frozen_adaptation") else "inherited source fit only" if source_parent else 0,source_functional_outcomes_used_for_selection=bool(cfg.get("counterfactual_fit") or source_parent),development_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
+        write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=bool(cfg.get("relation_transfer") or cfg.get("response_relation") or cfg.get("position_relation") or cfg.get("adaptation") or cfg.get("frozen_adaptation")),task_output_gradients="inherited shared two-role response bank; no new gradients; see POSITION_FREEZE.json" if cfg.get("position_relation") else "shared fit-pair requested/preserved margins; see RESPONSE_FREEZE.json" if cfg.get("response_relation") else "fit split hybrid CE" if cfg.get("counterfactual_fit") else "inherited source and target fit only" if cfg.get("frozen_adaptation") else "inherited source fit only" if source_parent else 0,source_functional_outcomes_used_for_selection=bool(cfg.get("counterfactual_fit") or source_parent),development_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
         def evaluate(seed,method,k,operation,deltas,gate=None,raw_trajectory=False):
             for off in range(0,len(pairs),batch):
                 pp=pairs[off:off+batch];ix=[p["recipient"] for p in pp];donors=[p["donor"] for p in pp]
@@ -351,7 +357,15 @@ def main():
                 if raw_trajectory:patch=lambda current,step:h[donors,:step+1]-current
                 elif gate is not None:
                     ae=saes[seed]
-                    patch=lambda current,step:((codes[seed][donors,:step+1]-ae.encode(current.reshape(-1,current.shape[-1])).reshape(*current.shape[:-1],-1))*gate)@ae.decoder.weight.T
+                    role_schema=cfg.get('position_relation',{}).get('role_schema',False) or cfg.get('frozen_adaptation',{}).get('role_schema',False)
+                    def patch(current,step):
+                        g=gate
+                        if gate.ndim==2:
+                            if role_schema:
+                                shift=torch.tensor([1-rows[i]['template'] for i in ix],device=w.device)
+                                g=gate[torch.arange(step+1,device=w.device)[None]+shift[:,None]]
+                            else:g=gate[:step+1]
+                        return ((codes[seed][donors,:step+1]-ae.encode(current.reshape(-1,current.shape[-1])).reshape(*current.shape[:-1],-1))*g)@ae.decoder.weight.T
                 ans,txt,hh,norm=generate(ix,deltas[off:off+len(pp)] if deltas is not None else None,patch)
                 replay=float(((hh[:,0]-h[ix,0]) if trajectory else (hh-h[ix])).abs().max());assert replay<cfg["hidden_atol"],replay
                 for j,p in enumerate(pp):
@@ -376,12 +390,12 @@ def main():
                 continue
             z=codes[seed];D=saes[seed].decoder.weight.T
             for c,operation in enumerate(["unit","tens"]):
-                if trajectory:evaluate(seed,rule,k,operation,None,gate=gate[:,c])
+                if trajectory:evaluate(seed,rule,k,operation,None,gate=gate[...,c])
                 else:
                     delta=((z[jj]-z[ii])*gate[:,c])@D
                     evaluate(seed,rule,k,operation,delta)
         w.checks.update(source_selection_only_fit_data=True,donor_changes_both_digits=True,real_generation_no_answer_prefix=True,all_failed_base_cases_retained=True)
-        if not any(cfg.get(k) for k in ["relation_transfer","response_relation","adaptation","frozen_adaptation"]):
+        if not any(cfg.get(k) for k in ["relation_transfer","response_relation","position_relation","adaptation","frozen_adaptation"]):
             w.checks["no_target_used"]=True
         if not cfg.get("counterfactual_fit") and source_parent is None:
             w.checks["source_selection_only_fit_labels_and_activations"]=True

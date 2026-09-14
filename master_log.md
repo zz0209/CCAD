@@ -7136,3 +7136,53 @@ Archive currentmanuscript/plan/tracker before edits: artifacts/correspondence_re
 响应+field26.641%相对旧field19.688%改善6.953点；直接候选+正确source profile32.891%，source swap26.719%，scalar32.344%。source身份有作用，member-specific权重的独立收益未证实；20项digit profile没有改善。全部18设置及描述性cluster区间在paper/data/arithmetic_response.json和r35_cluster_outcomes.npz。首次数值FAIL及所有改法保留；未打开新问题、未降低母目标、未宣称核心闭合。下一工作单元改革同一目标成员在不同生成位置的权重，保持成员总预算并给直接归因同等自由度。
 
 唯一paper/main.pdf50页/主文8页，SHA256 10adc4b93348b6bf7375a3642c5d2176ff19147460e5c64ddee4598533048f8a；新方法31页、表31在32页、图14在33页。实际查看主文8及31–33页；最终编译发现主文8有1.37pt vbox超高，删去重复的对应说明后重编译，overfull/undefined citation/missing character均0，保留已有字体请求与underfull提示。报告R35_REPORT.md、清单R35_RUNS.json、写作落实R35_WRITING_VISUAL_REVIEW.md、真实bank和旧2560输出检查R35_FOCUSED_CHECK.json、当前证据R35_EVIDENCE_CHECK.json，来源与实际借鉴在REFERENCE_REGISTRY和r35_fega_reading/identity.json。开始/收尾前归档为r35_before_20260914T145020Z及r35_completion_inputs_20260914T152928Z/MANIFEST.json。白名单代码/配置/本log将在同单元同步，Git事实以R35_SYNC.json为准，当前阶段交付索引R35_DELIVERY.json。原ccad保持ACTIVE/5分钟，由当前对话继续，不重复loop，不因局部负结果停工。
+
+## R36 START — position-dependent correspondence on a fixed member set
+
+实际写入UTC：2026-09-14T16:05:03Z；round_id=R36，事件开始为本次写入。R35已完整收尾，原ccad5分钟继续，无有限轮次上限。问题：同一targetfeature是否因生成位置改变作用，导致固定权重丢失source功能？固定五SAE/源mask/64fitpairs和64个共同成员，先比较按位置的field与响应权重；直接归因/标量校准获得相同位置自由度。复用实际R35梯度和statebank，首先不新算梯度、不新训素材、不打开710新题。初始约1200driver秒，正信号后按收益与吞吐自主分配。阅读FEGA上下文作用及最邻近特征事件/电路方法，实际使用收益决定是否扩展；两writing skills按前轮已读规则继续落实。原入口/全稿逐字归档artifacts/correspondence_reform_20260913/r36_before_20260914T160503Z/MANIFEST.json。当前无新增科学结果，先做方法与实现；资源启动前实读。
+
+
+## R36 PROGRESS — written UTC 2026-09-14T16:14:52Z
+
+Resumed code and checked saved R35 completion, current R36 START, active original ccad automation and actual free GPU lease. Position pilot started2026-09-14T16:12:16.295765Z; all five source-target fits completed by16:12:37.176582Z. Shared response-matrix replay passed the fixed1e-4 absolute tolerance; same fixed64-member unions, source masks and fit-pair identities. Scalar restriction carries exactly the member quadratic ridge after accounting for64 repeated weights. No new backward batches; cached views recreated with400 padded forward sequences. Free-generation evaluation is running; no completed R36 functional conclusion yet.
+
+PEAP original method/schema/evaluation and pinned MIT implementation read; actual choice is matched positional freedom for all comparators, with task-role alignment as a concrete representation concern. Public download first hit the sandbox socket boundary, then the same small public files were retrieved with authorized network access; no failed scientific run or installed dependency resulted.
+
+
+## R36 PROGRESS — written UTC 2026-09-14T16:17:26Z
+
+Position pilot ended2026-09-14T16:15:19.232364Z,PASS/contractPASS,182.923660driver seconds. Complete answer: position-member35.234375%,position-scalar32.5%,static-member32.890625%; position-field22.1875%vs identical static-field20%. Unit preservation59.21875%vs scalar52.8125%; tens preservation61.875%vs46.09375%, with target effect lower than scalar. Both roles and all five seeds are retained.
+
+Develop this signal by aligning the symbolic and English leading-space offsets into common answer roles, as motivated by PEAP schemas. The newrole run uses identical candidates,fitpairs,sourcebank and information for member/scalar fits, and includes the wrong-source finite profile from the retained identity run. Source states are measured on the original request prefix. No newgradient bank,newsource training or fresh evaluation questions. Budget400driver seconds for this second comparison; cumulative completed183seconds of initial1200.
+
+
+## R36 PROGRESS — confirmation freeze, written UTC 2026-09-14T16:22:31Z
+
+Role-aligned fit ended2026-09-14T16:20:56.204138Z (event end must be cross-checked against saved status if this differs),PASS/contractPASS,183.144645driver seconds. Member37.34375%,scalar32.578125%,wrong-source17.8125%,field28.515625%. Member-scalar H+4.765625[2.5,7.109375],P+17.5[14.6875,20.390625]; request change decreases9.0625points. This is exposed-development evidence.
+
+Freeze role-member as the whole method, without choosing separate variants by digit or seed. Two primary full-hybrid contrasts are versus same-role scalar and static-member controls. Wrong-source,source and direct320 are retained secondary contrasts. All methods use the same64direct candidate sets where applicable; role-member/scalar/swapped share role schema and retained gradients/source-response budget. All20distinct mask-file hashes and400new question identities are frozen in R36_CONFIRMATION_FREEZE.json/config before any model outputs on them. No new target fitting. Currentstage has used366.068305driver seconds; budget500seconds for the six-method confirmation within the initial1200 allowance.
+
+
+## R36 CORRECTION — written UTC 2026-09-14T16:23:09Z
+
+The immediately preceding freeze paragraph included an unverified fractional end timestamp for the role development run. Its saved status.json establishes the actual end as 2026-09-14T16:20:56.164713+00:00; this replaces the provisional16:20:56.204138Z text. The same paragraph’s result values and driver duration are unchanged. Event times must be read directly from retained status, not estimated.
+
+
+## R36 PROGRESS — frozen result, written UTC 2026-09-14T16:30:31Z
+
+Confirmation ended2026-09-14T16:27:34.105479+00:00,PASS/contractPASS,274.838865driver seconds. All7680interventions analyzed using frozen64question-cluster resampling. Role-member25.625%,role-scalar26.953125%,constant-member21.25%,wrong-source16.09375%,direct32023.75%,source21.5625%. Primary member-scalar difference-1.328125[-4.375,1.640625]; member-constant+4.375[3.046875,5.78125]. Joint primaryfalse. Preservation versus scalar+17.5[14.765625,20.390625] with request-change-14.0625; versusconstant preservation+6.328125 and requestchange+0.703125. No new-panel refit or second confirmation.
+
+Independent parsing of all7680generated texts and recomputation of expected digits reproduce every H/T/P value. Frozenconfig and20mask-file hashes unchanged. Source tens5.625% versusunits37.5% identifies an upstream functional weakness on this range. Next improvement should address the source operation across answer roles and future contexts, with equally flexible direct controls; repeating response fitting to the same weak source is not the priority. Current manuscript is being rebuilt around functional profiles, role participation and the frozen tradeoff; no main-conference closure claimed.
+
+
+## R36 COMPLETE — written UTC 2026-09-14T16:40:30Z
+
+R36 START2026-09-14T16:05:03Z; three actual experiment intervals are retained in R36_RUNS.json, final experiment ended2026-09-14T16:27:34.105479Z. This completion includes the source-role math, fixed-candidate implementation, PEAP methods/code/figure reading, two developmental comparisons, one frozen six-method confirmation, independent output parsing, full manuscript/table/figure and source/evidence integration. No duplicated research round or new delegation. Active research/writing versus wait time was not independently timed; wall-clock gaps are not counted as measured work.
+
+Confirmed role-member versusconstant-member H+4.375[3.046875,5.78125]points. Role-scalar contrast-1.328125[-4.375,1.640625], jointprimaryfalse. Role versuswrong-source+9.53125[6.171875,13.203125]. Preservation versusrole-scalar+17.5points trades off14.0625fewer requested changes. Source tens5.625% versusunits37.5%; all800new unedited prompts correct. These outcomes support role-sensitive reuse and identify a source-function improvement opportunity; they do not establish an irreplaceable member relation or fullmain-conference closure.
+
+Three runsPASS, driver640.907170seconds, CPU593.671875seconds,100160padded sequences/5508800tokens. GPU sharedlease released and actual manager state free. No new gradients for position fitting, newSAEweights or paid resources. Originalccad ACTIVE5minute automation remains attached to this task; R37ready, notSTART. Nextunit prioritizes source-operation/answer-role mismatch with equally flexible direct controls and actualsource/target function before adding more responsefits.
+
+Current paper/main.pdf50pages/main8, SHA2569f6ce5e0632cc99850dbc7aebfec5de13802b1adc902250f693a83f9f1853f13. ActualPDF8/9/31/32/33viewed; table31 andfigure14 updated, old18setting diagnostics retainedtable32. Compileexit0, no undefined references or missingcharacters; bibliography balancing retains1.66975pt vbox warning with no visible clipping. R36_WRITING_VISUAL_REVIEW.md records bothmandatory skills and actualtext/research choices. R36_FOCUSED_CHECK independently reparses7680outputs, checks unchanged frozen masks/config and retainedstatic replay; R36_EVIDENCE_CHECK validates131mutablecurrent-claim entries. The limited scopes of those checks are explicit.
+
+Stage package: artifacts/correspondence_reform_20260913/R36_REPORT.md,R36_RUNS.json,R36_COST.json,R36_DELIVERY.json; r36_confirmation/confirmation.json andcluster_outcomes.npz; paper/data/arithmetic_positions.json andevidence index. Sources/licence/commit andPDFhash at r36_peap_reading/identity.json andREFERENCE_REGISTRY. Initialpaper archive r36_before_20260914T160503Z; finalentry-input archive r36_completion_inputs_20260914T163257Z. Allprevious failures/negativecontrasts and the correctedfractional timestamp remain inhistory. Tracker completion is updated only after this record. Authorizedwhite-list Git sync follows.

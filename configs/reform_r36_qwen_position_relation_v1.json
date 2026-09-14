@@ -1,0 +1,123 @@
+{
+  "run_id": "REFORM_R36_qwen_position_relation_v1_20260914",
+  "run_parent": "R35",
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "purpose": "Match finite source effects in requested and preserved digit roles",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "budget": "400 driver seconds, five existing SAEs and retained response bank; four position-weight methods, no new model backward passes.",
+  "budget_seconds": 400,
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "batch_size": 8,
+  "max_new_tokens": 5,
+  "scope": "Development on previously exposed original arithmetic panel. Fixed union of at most64 candidates; position-dependent weights and equally flexible scalar comparator; unobserved positions retain original weights.",
+  "written_at_utc": "2026-09-14T16:12:01.046477+00:00",
+  "round_id": "R36",
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "operand_range": [
+    10,
+    50
+  ],
+  "split_salt": "ccad-r32-digit-source-1",
+  "pairs_per_template": 64,
+  "selection_rules": [
+    "fisher_contrast"
+  ],
+  "members": [
+    64
+  ],
+  "max_length": 72,
+  "hidden_atol": 0.002,
+  "statistics_unit": "Unordered operand pairs remain in the same split and prompt-connected recipient-donor pairs; five controlled source SAE initializations with common prompts",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "intervention_span": "generated_prefix",
+  "source_selection_step": {
+    "unit": 1,
+    "tens": 0
+  },
+  "source_cache_run": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+  "reuse_rules": [
+    "fisher_contrast",
+    "counterfactual_weighted"
+  ],
+  "source_view_augmentation": {
+    "template": 1,
+    "require_base_correct": true
+  },
+  "evaluation_rules": [
+    "position_s1_field",
+    "position_s1_direct",
+    "position_s1_scalar",
+    "position_s1_field_static",
+    "position_s2_field",
+    "position_s2_direct",
+    "position_s2_scalar",
+    "position_s2_field_static",
+    "position_s3_field",
+    "position_s3_direct",
+    "position_s3_scalar",
+    "position_s3_field_static",
+    "position_s4_field",
+    "position_s4_direct",
+    "position_s4_scalar",
+    "position_s4_field_static",
+    "position_s5_field",
+    "position_s5_direct",
+    "position_s5_scalar",
+    "position_s5_field_static"
+  ],
+  "position_relation": {
+    "response_run": "runs/REFORM_R35_qwen_response_relation_v2_20260914",
+    "scalar_run": "runs/REFORM_R35_qwen_profile_identity_v1_20260914",
+    "seed_pairs": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        1
+      ]
+    ],
+    "steps": 512,
+    "ridge_fraction": 0.001,
+    "response_replay_atol": 0.0001
+  }
+}
