@@ -6920,3 +6920,85 @@ clean迁移个位/十位混合答案20.625%/14.0625%，path20.3125%/13.75%，所
 唯一paper/main.pdf为44页/主文8页，实际查看页8、9、27、28，新增式与表无裁切；finalSHA25619b9e87b97a6e226f32b1960fcfde737f5723bcb41179a594e3d2556321a39f7，build20260914T065051435506Z。EVIDENCE_INDEX.json及data/arithmetic_evidence.json、三个数据导出、统计数组/配置/code/原始hash均更新；R32_RESUMED_RUNS.json是完整定位，研究报告及writing review同步。先前文稿/入口逐字归档manifest与hash保留；本次前tracker归档artifacts/correspondence_reform_20260913/tracker_before_r32_completion_20260914.md SHA2560cea44592ae2ce9061c6719dda26e1c8001f66b7e5a19b5b7c86f1dc23df7392。
 
 下一工作单元沿已确认的功能恢复发展：在实际相同目标梯度预算下加入直接目标梯度选成员，并用源功能身份预测目标成员组干预，检验关系提供的知识。重用现有五SAE与fit数据，暂不增训源素材。已曝光确认不得改名再计独立证据；新改法的确认使用新输入范围/上下文并先冻结。R33尚未START，具体工作卡见tracker；本条完成记录后才更新tracker，未将完成轮数当科学目标达标。
+
+
+### R33 START — functional identity and target attribution budget
+实际写入 UTC：2026-09-14T07:04:32Z。round_id=R33；本轮实质工作从本条开始，此前是恢复与核对，未倒算研究时长。用户最新意见要求处理根本差距。原始论文确认：minimum无稳定优于mean的证据；旧conditional相对shared无独立显著收益；5760/192是pair-gradient计算量30倍，非自动30倍墙钟。新算术在约55–79%保护成功下检验完整混合答案，但尚不能替旧minimum/conditional主张作证。
+
+本轮正结果机会：源功能身份携带可复用的目标成员知识。沿已有收益，使用EAP/EAP-IG原始方法及MIT官方实现的梯度乘激活差，给直接目标成员选择完整64 backward预算，选择所花16批计入其中，余48批适配。与正确source-field同预算历史结果比较；另测试交换源功能身份，以及固定已翻译support只调权重的恢复。后者是方法简化与结构解释机会，避免把成员漂移全归于已知解释。64成员、同fit标签及数据可用，旧开发结果保留。四方法五seed，两个checkpoint，预计约8分钟、driver预算1200秒；已有gpu-0实读free。目标、素材和模型不变，无新下载/付款/训练。
+
+anti-defensive-writing与defensive-writing-checker继续具体落实：主张围绕解释重用的作用、证据及使用决策，不以minimum不可替代为预设，不用额外限定词代替实验。本轮改法在已曝光开发数据上执行，不作为独立确认。原文/入口归档artifacts/correspondence_reform_20260913/r33_before_20260914T070432Z/MANIFEST.json。下一步实现并执行真实目标梯度/固定成员恢复，按结果发展方法与论文。有效工作/等待未独立计时。
+
+
+### R33 PROGRESS — direct attribution and retained membership execution
+实际写入 UTC：2026-09-14T07:13:33Z。run事件开始时间直接读取：2026-09-14T07:05:58.624420+00:00；当前状态RUNNING。受管session40458，既有RTX5070Ti/r004环境；20个fit已进入完整生成评价，未宣布科学结果。选择梯度16批计入64批总预算；另每fit1个数值梯度check和2个差分额外前向单列。IG实际沿整个target code interchange的4midpoint重复同batch，非原EAP-IG输入embedding算法。代码编译及diff空白检查通过；真实模型梯度检查随run执行，不另造validator。
+
+新增分析scripts/analyze_arithmetic_identity.py逐pair/seed保留H/T/P与全部结果类别，开发不作新显著性确认；同fit日程核对及双向自然失败案例定位同一文件。图设计采用各完整答案类别的比例，不只强调主成功率；scientific-visualization实际应用于Times字体、原始分母、零至100共同轴和灰度可区分填充。已实际查看Hanna原PDF第5–6页的方法与Figure3。REFERENCE_REGISTRY与plan已将阅读落到计算预算/真实作用消费者。
+
+下一步根据完整结果决定是否固定翻译成员、是否仅有一般初始化收益，并比较更長的直接目标拟合预算。当前正结果仍是R32冻结确认，R33尚未读完完整新结果。
+
+
+### R33 PROGRESS — checkpoint scope and cost clarification
+实际写入 UTC：2026-09-14T07:16:07Z。identity_gradient_v1仍按其启动时source_snapshot执行；现有helper继承了无条件保存/评价0步的行为，所以除配置要求16/64外还产生0步诊断。这些额外结果和消耗完整保留，0步不列新预设主检验。后续helper仅在配置列0时保存它，减少无用途评价；不回写当前run或旧结果。新支持固定成员统一权重及按方法预算配置，为下一步功能身份与总成本比较准备；尚未据此运行或宣称结果。
+
+
+### R33 PROGRESS — functional identity result and attribution-path reform
+实际写入 UTC：2026-09-14T07:18:46Z。首run 2026-09-14T07:05:58.624420+00:00至2026-09-14T07:16:20.895646+00:00，PASS/契约PASS，session40458退出0。16975行，wall622.2223154s、89440padded前向、4919200tokens，rawSHA256b5e198b6297336cafd469fbaf8b001a69c3b2d2711f81fced8828dcc48e8bbea。完整开发均值：source-field40.3125%，直接target-gradient41.328125%，target gate-IG37.890625%，固定源翻译成员38.59375%，交换源身份37.1875%；Fisher31.015625%，assignment25.703125%。固定成员保留95.7%的原均值比例只是描述，交换身份差仅3.125点且各seed异质，不能宣称功能身份强恢复。直接梯度消除了原总平均优势，源方法十位仍更好、个位更差，完整两指标/全部种子保留identity.json。
+
+据此改革根本失配：普通target gate-IG的端点同时替换两位，目标请求却要求只换一位；改为沿已验证的source单功能interchange路径积分，用clean target激活差作为probe，直接选功能成员。正确与交换source路径16批归因+48批适配；直接target-gradient延长到320批，并复现64批前缀，检验总拟合投入。新增假说不是已知发现。该改法复用已有source组件、标签、solver和真实模型consumer，不增训素材、不引入新框架。1200秒已授权本地GPU预算，预计约6–8分钟；当前尚未launch。所有旧证据继续保持原范围，不用目标保留率掩盖直接对照的胜利。下一步真实执行与实际结果驱动改进，R33继续。
+
+
+### R33 PROGRESS — identity is informative before supervised recovery
+实际写入 UTC：2026-09-14T07:25:45Z。完整首run曲线经实际analysis核对：正确source-field0/16/64步均值17.34375/33.28125/40.3125%；交换source为3.828125/15.15625/37.1875%。16步身份差18.125点，64步差3.125点。此前把64步差较小直接解作身份知识不足过于粗略；监督适配能够重新学回被交换的功能。证据支持检验知识带来的早期恢复收益，而非要求错误初始化在充分监督后永久失败。新端点不回称原R32主检验。
+
+直接gradient在16步全部用于成员选择，尚无适配，不能用该分配作为最强短预算对照。因此补一个有界分配试验：2/4/8批评分，各配14/12/8批适配，均16批；当前只建配置，尚未launch。按开发平均完整hybrid选择最强对照，保留全三种分配；如有真实收益，在新的operand范围先冻结后确认。科学目标仍是功能解释重用的恢复成本和未见干预；不把新预算范围当已确认发现，不续开无目标压力测试。
+
+
+### R33 PROGRESS — matched functional-path result and longer direct fit
+实际写入 UTC：2026-09-14T07:29:11Z。功能路径run实际2026-09-14T07:19:21.127045+00:00至2026-09-14T07:25:30.206797+00:00，PASS/契约PASS，session50176退出0。wall369.0686168s，6735行，45800padded前向、2519000tokens；rawSHA256b99acb8429f956c683c7cd33d7165c0c62e5beb531dd503203ef50b2b87171a4。完整开发均值{"adapt_source_path_gradient_u64": 41.875, "adapt_source_swapped_path_gradient_u64": 39.140625, "adapt_target_gradient_u64": 41.328125, "adapt_target_gradient_u320": 43.90625}。正确源路径41.875%相对直接梯度41.328125%仅+0.546875点，交换路径39.140625%；不把这个小局部差称变革。直接320批达到43.90625%，没有支持源方法总拟合计算优势。五seed的直接64批gate及fit_schedule前缀与首run逐元素完全一致，文件prefix_check.json。
+
+更强直接拟合同时产生一个有实际作用的新source候选：其source自身完整hybrid均值43.90625%，旧Fisher初始化256步source为32.65625%，两位单独为58.4375/29.375对43.59375/21.71875%。这定位了源解释拟合的具体不足，允许直接复用该更好候选，不能误称改训了SAE。短预算公平分配run已启动session68671，事件开始以status.json为准，尚未读完结果。后续优先依据真实差距改变源功能及对应估计，并在新范围确认有效方法。
+
+
+### R33 PROGRESS — fixed functional members and new-range confirmation frozen
+实际写入 UTC：2026-09-14T07:33:59Z。short_budget完整开发均值：2/4/8批评分的16批总预算分别26.953125/25.859375/26.171875%，按先定开发规则选择s2；正确source-field固定support16为32.890625%，差5.9375点。固定成员已足以取得收益，目标端无需重新选择成员；源功能身份通过同固定约束交换条件检验。交换固定support拟合run已PASS，事件直接读取status.json，尚未凭其开发结果改变方法。
+
+冻结新范围配置configs/reform_r33_qwen_new_range_confirmation_v1.json，SHA256246617c0ad15037da381f1ed56cb6713b6df7bfcb02f61fd27cbeed546dc2781。15个mask输入均带hash；a2..9,b50..89，与所有旧source/targetfit和已观察题目完全不重合。所有参数、64配对、两个原提示及两共同主比较先冻结：固定正确源16相对最强direct2+14和固定交换源16，完整hybrid按功能/提示/五SAE平均，10000配对cluster bootstrap，条件于固定任务/模型/网络。新范围base和干预结果均未读取。保护、修改、失败完整保留，源解释建立成本与边际目标预算分开。当前尚未launch；计划900秒GPU预算，预估约3–5分钟；确认后无论结果均写入当前完整稿。R33仍进行，不把准备计完成。
+
+
+### R33 PROGRESS — frozen new-range execution and manuscript integration
+实际写入 UTC：2026-09-14T07:37:08Z。确认run实际开始2026-09-14T07:34:06.286571+00:00，当前PASS，受管session91583。所有640新base问题已进入同一冻结run；此时未运行结果分析或根据新干预调整配置。新输入question tuples与所有既往sourcefit/targetfit/evaluation逐集合验证不重合；15mask各有冻结hash，确认阶段零拟合/零输出梯度。统计仍执行两共同主差值与固定配对cluster抽样。
+
+现有main正文及附录按两writing技能整理：把source-field相对Fisher的已确认收益准确标明比较对象；加入真实64批直接梯度、角色交换和固定成员结果，以及一张完整答案分布图，避免研发过程式自评。主文待新确认结果后集中更新使用意义；已确认的旧结果和强对照均保留。科学图片实际查看Hanna方法图，Times/STIX、共同0–100尺度和结果类别冗余编码；新图已经实际查看，待放回全稿核对。
+
+
+### R33 PROGRESS — new-range identity confirmed; joint recovery claim not confirmed
+实际写入 UTC：2026-09-14T07:39:54Z。新范围确认PASS/契约PASS，实际2026-09-14T07:34:06.286571+00:00至2026-09-14T07:36:44.957787+00:00，session91583退出0；原status已直接读回。4864原始行，3840分析行，wall158.6582058s，24320padded前向、1313280tokens。冻结两共同主比较：固定正确源14.0625%相对direct12.34375%，+1.71875[-1.328125,4.84375]；相对固定交换源7.1875%，+6.875[3.515625,10.390625]。两个同时通过的科学判定为false，原数值和判定保留，不能只报通过的比较并称整个primary通过。源身份有独立功能效应；新范围成本优势未确认。原base准确率95.3125%/100%，明显高于干预成功，不能把主要掉点归咎于模型不会算题。
+
+下一步小诊断直接执行原source256和更强source320在同一已曝光新范围，定位源功能泛化和翻译损失；不重拟合、不当新确认。这决定后续改革应指向source counterfactual学习还是目标编码/写入估计。先给出数据定位，避免凭低结果猜根因。该源诊断600秒预算，当前尚未launch。主会目标继续，当前不交付为已达标论文。
+
+
+### R33 COMPLETE — source-functional identity and root generalization gap
+实际写入 UTC：2026-09-14T07:55:09Z。round_id=R33。本轮START实际写入2026-09-14T07:04:32Z；到本条为连续研究/实现/计算/分析/稿件工作单元，工作与等待未独立计时，不把全墙钟冒充有效人工投入。当前六个实质run的事件时间从原status逐项读取：
+- runs/REFORM_R33_qwen_identity_gradient_v1_20260914: 2026-09-14T07:05:58.624420+00:00 — 2026-09-14T07:16:20.895646+00:00; rawSHA256 b5e198b6297336cafd469fbaf8b001a69c3b2d2711f81fced8828dcc48e8bbea
+- runs/REFORM_R33_qwen_functional_path_v1_20260914: 2026-09-14T07:19:21.127045+00:00 — 2026-09-14T07:25:30.206797+00:00; rawSHA256 b99acb8429f956c683c7cd33d7165c0c62e5beb531dd503203ef50b2b87171a4
+- runs/REFORM_R33_qwen_short_budget_v1_20260914: 2026-09-14T07:26:14.320982+00:00 — 2026-09-14T07:28:53.694585+00:00; rawSHA256 32fcaa048c73d522fc13fc6efcde9d8c19319082b7e2166dec663cb62e612592
+- runs/REFORM_R33_qwen_fixed_identity_v1_20260914: 2026-09-14T07:31:06.026139+00:00 — 2026-09-14T07:32:15.036374+00:00; rawSHA256 6e976b254b739e3ced6a5ad137ecf1446a83bda9b076c6314baf4e4f5a209636
+- runs/REFORM_R33_qwen_new_range_confirmation_v1_20260914: 2026-09-14T07:34:06.286571+00:00 — 2026-09-14T07:36:44.957787+00:00; rawSHA256 20422051d6b86307c49616cd3c786f9c988a62eb044d58b192efb0588ea53a9f
+- runs/REFORM_R33_qwen_source_range_diagnostic_v1_20260914: 2026-09-14T07:39:58.841652+00:00 — 2026-09-14T07:41:58.667474+00:00; rawSHA256 1d0c50d38a470ff0fdea41fc8a4701e44fc2ecf9db1452742efdd9385ed105d6
+
+全部数值/契约PASS，六个受管session40458/50176/68671/26976/91583/75583退出0；共享GPU最后实读free。总driver墙钟1498.127579s，processCPU1259.375000s，209960padded前向/11505560tokens。无新SAE训练/模型下载/安装/付款/数据外发，复用锁定r004环境及现有资源。
+
+科学判断：固定源对应成员在新范围的正确/交换身份差6.875[3.515625,10.390625]点，关系携带可检验的功能身份。对最强短预算direct的差1.71875[-1.328125,4.84375]，两共同主比较的联合判定false，未声称成本优势确认或主会闭合。64批direct41.328125%高于source-field40.3125%；源功能路径改法41.875%，仅小幅差，320批direct43.90625%，完整保留。这些结果阻止把初始化或额外计算误当独有价值。
+
+核心定位来自源端真实干预：原source由32.65625%降至新范围17.421875%；更长/更好初始化source由43.90625%降至16.875%。目标固定成员由32.890625%降至14.0625%。主要功能损失在source自身出现，更多同分布拟合不恢复它。源/目标不同输入范围的比较是描述性定位，不把差值比例当因果归因。新范围确认已曝光，后续改法只能把它作为开发，另用新范围/任务形式确认。
+
+本轮实际借鉴EAP/EAP-IG原方法及MIT实现，实装gate梯度、预算一致的功能路径和固定support消费者；一轮聚焦数值/数据/比较检查落实到真实模型差分、五seed64步精确复现、旧/新panel逐字数据身份一致及冻结maskhash。没有把检查数量当科学贡献。anti-defensive-writing和defensive-writing-checker落实于实际研究选择、正文Discussion、重写附录H及新的完整答案图。当前paper/main.pdf46页、主文8页，H27–30；实际查看页8/27/28/29/30及Figure12。page8的1.37pt balance-vbox警告仍保留，实际无裁切或叠印。最终PDF SHA256 eea27eb2267c4411b2c2a8f4e654e6a1e322d159bb6ed3b413306c1db350dfed；build20260914T074842563061Z。可编辑源、四新表/图及数据、统计数组、脚本/config、证据索引均更新。
+
+交付定位及本次身份：{"artifacts\\correspondence_reform_20260913\\R33_REPORT.md": "0a598910e365cac462ce0720dfb8eece381c5d5460335a432fcc404565a1a632", "artifacts\\correspondence_reform_20260913\\R33_RUNS.json": "6aea87659d6a0f38a45dadca546a213d1be4b2e8d9333b6adf7605449c526528", "artifacts\\correspondence_reform_20260913\\R33_WRITING_VISUAL_REVIEW.md": "90fed56fd87ae67bbd97b1b1d1b9e9b09df5d96334a6456de3408f0a7365b9ae"}。R33报告是本轮可审阅成果，不是最终科学目标已完成的声明。当前入口旧稿逐字归档artifacts/correspondence_reform_20260913/tracker_before_r33_completion_20260914.md，SHA256cc8f2c62d40f0a570b70af0d4cd05a475640af44475134a791ea1a6fca127df1；R33前完整稿/plan/tracker见r33_before_20260914T070432Z/MANIFEST.json。原5分钟ccad loop保持ACTIVE，本对话执行，不另建loop或委派任务。
+
+下一工作卡R34：改变源解释学习目标，优先检验自然反事实表示约束与等价输入/无关变量变化的一致性，再把稳定有效的源组成用于FCC估计与真实成员请求。先区别源生成操作的表示失配与数据覆盖，不盲目增加同分布训练轮数，不通过缩小研究意义解决。现有更长source拟合已实证不能修复新范围性能；需要方法变化。R34未START。本COMPLETE之后才更新tracker；计划及原始失败保留，继续一线主会目标。
+
+
+### R33 PROGRESS — final package receipt refresh
+实际写入 UTC：2026-09-14T07:57:03Z。完成记录后为同步最终代码/证据身份重新生成build20260914T075553217181Z，PDF当前SHA256e0fb7eda2553443a5a4877d3d62748800d043b3a61b59fecebcf47db088a20ed，46页；上一COMPLETE时的eea27eb2267c4411b2c2a8f4e654e6a1e322d159bb6ed3b413306c1db350dfed是当时实际版本。两个build的全部TeX/bib/figure文件hash相同；新PDF页8/27/28/29/30与已实际审阅PNG像素逐一完全相同，版面与科学内容未改变。当前report、tracker与visualreview已更新实际最终hash。所有实验结果/判定/完成轮数保持，R34仍未START。

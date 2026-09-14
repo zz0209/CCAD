@@ -3,7 +3,7 @@
 A donor differs in both answer digits. A successful unit/tens intervention
 copies just that digit and preserves the other. All edits start at the same
 prompt-final hidden state; no correct answer prefix is supplied to generation.
-Feature selection uses source activations and arithmetic labels only.
+Configurations select source fitting, target adaptation, or frozen evaluation.
 """
 from __future__ import annotations
 import argparse, hashlib, json, os, platform, re, sys, time, traceback
@@ -17,17 +17,20 @@ from ccad.artifacts import sha256
 
 def panel(cfg):
     rows=[]
+    operands=cfg.get("evaluation_operand_pairs")
+    if operands is None:
+        operands=[[a,b] for a in range(*cfg["operand_range"]) for b in range(a,cfg["operand_range"][1])]
     for t,template in enumerate(cfg["templates"]):
-        for a in range(*cfg["operand_range"]):
-            for b in range(a,cfg["operand_range"][1]):
-                if [a,b] in cfg.get("excluded_pairs",[]):continue
-                key=f"{cfg['split_salt']}:{a}:{b}"
-                split="fit" if int(hashlib.sha256(key.encode()).hexdigest()[:8],16)%2==0 else "development"
-                if t and split=="fit":continue
-                total=a+b
-                assert 10<=total<100
-                rows.append(dict(template=t,a=a,b=b,total=total,unit=total%10,tens=total//10,
-                                 carry=(a%10+b%10)>=10,split=split,prompt=template.format(a=a,b=b)))
+        for a,b in operands:
+            if [a,b] in cfg.get("excluded_pairs",[]):continue
+            key=f"{cfg['split_salt']}:{a}:{b}"
+            split="fit" if int(hashlib.sha256(key.encode()).hexdigest()[:8],16)%2==0 else "development"
+            if cfg.get("evaluation_operand_pairs") is not None:split="development"
+            if t and split=="fit":continue
+            total=a+b
+            assert 10<=total<100
+            rows.append(dict(template=t,a=a,b=b,total=total,unit=total%10,tens=total//10,
+                             carry=(a%10+b%10)>=10,split=split,prompt=template.format(a=a,b=b)))
     excluded_operands=set()
     if cfg.get("evaluation_holdout"):
         prior=json.loads((ROOT/cfg["evaluation_holdout"]["from_run"]/"panel.json").read_text())
@@ -93,6 +96,11 @@ def main():
             ae=AutoEncoderTopK(model.config.hidden_size,tc["dict_size"],tc["k"]).to(w.device)
             ae.load_state_dict(torch.load(path,map_location=w.device,weights_only=True));ae.eval();ae.requires_grad_(False);saes[seed]=ae
         rows,pairs=panel(cfg);write(w.run/"panel.json",dict(rows=rows,pairs=pairs,scope=cfg["scope"]))
+        if cfg.get("evaluation_operand_pairs") is not None:
+            assert cfg.get("frozen_adaptation") and not cfg.get("counterfactual_fit")
+            prior_panel=json.loads(w.checked(ROOT/cfg["frozen_adaptation"]["development_panel_run"]/"panel.json").read_text())
+            assert not {(r["a"],r["b"]) for r in rows}&{(r["a"],r["b"]) for r in prior_panel["rows"]}
+            w.checks["new_operand_questions_disjoint_from_all_source_fit_and_prior_evaluation"]=True
         tokenrows=[tok.encode(r["prompt"],add_special_tokens=False) for r in rows]
         batch=cfg["batch_size"];padding=cfg["max_length"]
         physical_length=max(map(len,tokenrows))+cfg["max_new_tokens"]
@@ -177,6 +185,9 @@ def main():
                 continue
             with torch.no_grad():z=torch.cat([ae.encode(h[i:i+256].reshape(-1,h.shape[-1])).reshape(*h[i:i+256].shape[:-1],-1) for i in range(0,len(h),256)])
             codes[seed]=z
+            if cfg.get("evaluation_operand_pairs") is not None:
+                np.savez_compressed(w.run/f"evaluation_seed{seed}.npz",codes=z.cpu().numpy())
+                continue
             fs=torch.stack([fisher(z[fitix,cfg["source_selection_step"][factor]] if trajectory else z[fitix],[rows[i][factor] for i in fitix]) for factor in ["unit","tens"]],1)
             for rule in cfg["selection_rules"]:
                 score=fs if rule=="fisher" else fs-fs.flip(1)
@@ -220,24 +231,51 @@ def main():
                 with np.load(w.checked(relation_parent/f"relation_s{source}_t{seed}.npz")) as data:
                     starts={name:torch.tensor(data[name],device=w.device) for name in ["clean","assignment"]}
                 starts["fisher_contrast"]=gates[seed,"fisher_contrast",k]*.5
-                for name,initial in starts.items():
-                    _,saved=fit_gates(w,cfg,model,module,tok,saes[seed],rows,tokenrows,codes[seed],
-                                     initial,seed,k,physical_length,budget,tag=name,initial_scale=1.,checkpoints=ac["updates"])
+                requested=ac.get("initializations",list(starts))
+                if "clean_swapped" in requested:starts["clean_swapped"]=starts["clean"].flip(1)
+                if "clean_fixed" in requested:starts["clean_fixed"]=starts["clean"].clone()
+                if "clean_swapped_fixed" in requested:starts["clean_swapped_fixed"]=starts["clean"].flip(1)
+                for name in ["target_gradient","target_integrated_gradient","source_path_gradient","source_swapped_path_gradient"]:
+                    if name in requested:starts[name]=starts["fisher_contrast"].clone()
+                for name in requested:
+                    if name.startswith("target_gradient_s"):starts[name]=starts["fisher_contrast"].clone()
+                for name in requested:
+                    initial=starts[name]
+                    fit_cfg=cfg
+                    if name in ac.get("steps_by_initialization",{}):
+                        fit_cfg={**cfg,"counterfactual_fit":{**cfg["counterfactual_fit"],"steps":ac["steps_by_initialization"][name]}}
+                    saved_steps=ac.get("updates_by_initialization",{}).get(name,ac["updates"])
+                    source_context=None
+                    if name in ["source_path_gradient","source_swapped_path_gradient"]:
+                        sg=gates[source,"counterfactual_weighted",k]
+                        if name=="source_swapped_path_gradient":sg=sg.flip(1)
+                        source_context=(saes[source],codes[source],sg)
+                    _,saved=fit_gates(w,fit_cfg,model,module,tok,saes[seed],rows,tokenrows,codes[seed],
+                                     initial,seed,k,physical_length,budget,tag=name,initial_scale=1.,checkpoints=saved_steps,
+                                     selection_batches=ac.get("gradient_selection_by_initialization",{}).get(name,ac.get("gradient_selection_batches",0)) if (name.startswith("target_") or source_context is not None) else 0,
+                                     integrated_steps=ac.get("integrated_steps",4) if (name=="target_integrated_gradient" or source_context is not None) else 1,
+                                     fixed_support=name.endswith("fixed"),source_context=source_context)
                     for updates,g in saved.items():adapted[seed,f"adapt_{name}_u{updates}",k]=g
-                    metadata.append(dict(source_seed=source,target_seed=seed,initialization=name,updates=ac["updates"],
-                                         optimization="Same deterministic labelled fit pairs and update order; alternating requests; shared labels already available before this experiment."))
+                    metadata.append(dict(source_seed=source,target_seed=seed,initialization=name,updates=saved_steps,
+                                         optimization="Same deterministic labelled fit bank; alternating requests. Direct gradient selection is included in total backward budget; IG repeats batches at each midpoint. Shared labels already available."))
             gates=adapted
         if cfg.get("frozen_adaptation"):
-            fc=cfg["frozen_adaptation"];prior=ROOT/fc["run"]
-            assert json.loads(w.checked(prior/"status.json").read_text())["status"]=="PASS"
-            pc=json.loads(w.checked(prior/"config.resolved.json").read_text())
-            assert pc["source_cache_run"]==cfg["source_cache_run"]
+            fc=cfg["frozen_adaptation"]
             loaded={};k=cfg["members"][0]
             for seed in cfg["seeds"]:
                 for name in fc["initializations"]:
-                    with np.load(w.checked(prior/f"counterfactual_seed{seed}_k{k}_{name}.npz")) as data:
+                    prior=ROOT/fc.get("initialization_runs",{}).get(name,fc.get("run",""))
+                    assert json.loads(w.checked(prior/"status.json").read_text())["status"]=="PASS"
+                    pc=json.loads(w.checked(prior/"config.resolved.json").read_text())
+                    assert pc.get("source_cache_run",prior.relative_to(ROOT).as_posix())==cfg.get("source_cache_run",fc.get("source_cache_identity"))
+                    assert all(pc[key]==cfg[key] for key in ["model_revision","training_run","checkpoint_step","intervention_span"])
+                    pattern=fc.get("file_patterns",{}).get(name,"counterfactual_seed{seed}_k{members}_"+name+".npz")
+                    maskfile=w.checked(prior/pattern.format(seed=seed,members=k))
+                    if fc.get("mask_sha256"):assert sha256(maskfile)==fc["mask_sha256"][maskfile.relative_to(ROOT).as_posix()]
+                    with np.load(maskfile) as data:
                         for u in fc["updates"]:
-                            loaded[seed,f"adapt_{name}_u{u}",k]=torch.tensor(data[f"updates_{u}"],device=w.device)
+                            array_key=fc.get("array_keys",{}).get(name,{}).get(str(u),f"updates_{u}")
+                            loaded[seed,f"adapt_{name}_u{u}",k]=torch.tensor(data[array_key],device=w.device)
             gates=loaded
             metadata.append(dict(frozen_adaptation=fc,current_fit_updates=0,current_output_gradients=0,
                                  original_source_and_target_fit_labels_shared=True))

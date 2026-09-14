@@ -21,7 +21,7 @@ def main():
     raw = run / 'metrics.raw.jsonl'
     raw_hash = hashlib.sha256(raw.read_bytes()).hexdigest()
     assert raw_hash == json.loads((run / 'metrics.summary.json').read_text())['metrics_raw_sha256']
-    methods = ['clean'] + spec['comparators']
+    methods = [spec.get('reference', 'clean')] + spec['comparators']
     updates = cfg['frozen_adaptation']['updates']
     seeds = cfg['seeds']
     metrics = ['exact_hybrid', 'target_digit_success', 'preserve_digit_success']

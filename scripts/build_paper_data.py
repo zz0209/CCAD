@@ -477,9 +477,10 @@ def main():
         claims.append(dict(id='task_free_source_profile_fidelity',paper='Source-profile fidelity appendix',
             result='Development on exposed grammar pairs: target encoder-response memberships and contribution/decoder baselines preserve frozen source intervention profiles without task gradients; the new coefficient has no established advantage over those correspondence controls. Raw regression and dynamic reencoding remain separate execution references.',
             evidence=[crun+f for f in ['config.resolved.json','status.json','inputs.json','code_hashes.json','metrics.raw.jsonl','code_response_results.json','RELATION_FREEZE.json','fit_rows.npz']]+[str(code_response_summary.relative_to(root)).replace(chr(92),'/'),'scripts/code_response_correspondence.py','scripts/code_response_analysis.py','paper/sections/code_response_details.tex']))
-    arithmetic_evidence=out/'data/arithmetic_evidence.json'
-    if arithmetic_evidence.is_file():
-        claims.append(json.loads(arithmetic_evidence.read_text()))
+    for name in ['arithmetic_evidence.json','arithmetic_identity_evidence.json']:
+        arithmetic_evidence=out/'data'/name
+        if arithmetic_evidence.is_file():
+            claims.append(json.loads(arithmetic_evidence.read_text()))
     for claim in claims:
         if claim['id']=='source_conditioned_finite_response_correspondence' and json.loads((out/'reform_runs.json').read_text()).get('functional_consensus_run'):
             claim['evidence'].extend(v['path'] for v in functional_consensus['inputs'])
@@ -499,6 +500,7 @@ def main():
     current_ids.append('functional_response_queries')
     current_ids.append('task_free_source_profile_fidelity')
     current_ids.append('arithmetic_functional_recovery')
+    current_ids.append('arithmetic_fixed_membership_identity')
     current_ids=[x for x in current_ids if x not in ['contrast_and_pair_common_completion','observed_finite_menu_selection_headroom','response_fitting_and_source_unit_bottleneck','source_behavior_groups_and_matched_support','grammar_transfer_and_source_counterfactuals']]
     (out/'EVIDENCE_INDEX.json').write_text(json.dumps(dict(current_manuscript_claim_ids=[c['id'] for c in claims if c['id'] in current_ids],claims=claims,data_manifest='data/DATA_MANIFEST.json',figure_manifest='figures/FIGURE_MANIFEST.json',
         raw_hashes=manifest['original_raw_sha256'],scope='Current manuscript evidence locator. Hashes establish file identity, not scientific validity; source and member KL references differ.'),indent=2)+'\n',encoding='utf-8')
