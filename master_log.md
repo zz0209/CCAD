@@ -7494,3 +7494,11 @@ round_id：R41。实际写入UTC：2026-09-14T23:02:30Z。本轮START写入2026-
 实际核对当前62页PDF源、R41结果与附加AI意见的版本差异，重读两个明确要求的writing skills。官方网页核对ICLR reviewer guide和ARR review form；复读Semantic Optimal Transport v1 §6.1–6.2、C.4、C.7、D，记录条件上下文/模块共现对固定参与关系的启发。无外部源码复用、新引用凑数或新依赖。STRONG_ACCEPT_DIRECTION.md给出实际取舍：围绕同一解释的新干预判断，将源预测保真与完整功能成功分开；从已有readout/native差距定位可改革部分，再在算术和绑定中检验共同主张。未把局部执行优化自动算核心突破，决定性强对照继续保留。
 
 本次是授权目标维护和方向判断，无新科学结果、训练、推理run或GPU租约；有效思考/阅读秒数及各工具等待总量未测量，不冒充研究时长。paper/main.pdf及R41实证结论保持，SHA256为3774362968a1b9da0b4a20693e17efd768e8408212b16271409837d2fd5fd85d。旧入口逐字与hash保存在artifacts/correspondence_reform_20260913/strong_accept_direction_20260914T230941Z/MANIFEST.json。下一实际研究从tracker工作卡接续并写R42 START；本次不推进完成计数。
+
+## USER_DISCUSSION — 贡献归因与最近邻补充（非研究轮）
+
+实际写入UTC：2026-09-14T23:17:55Z。round_id：无新增；R41 COMPLETE，R42未开始。事件开始精确秒数未单独记录，未知；本次附件归档发生于此写入时段。
+
+完整读取用户补充讨论，归档artifacts\correspondence_reform_20260913\user_discussion_20260914T231755Z/pasted-text.txt，SHA256 1d41e2ab3fd3f64a2287ed223a6c53fbcd44b9f783b0f8219ec9e92bca303710；目录MANIFEST保留原文及修改前tracker/direction的byte身份。讨论评价57页旧稿，当前实际PDF仍为62页/hash3774362968a1b9da0b4a20693e17efd768e8408212b16271409837d2fd5fd85d。采纳贡献归因与明确使用判断的要求，不照搬录用概率或未经当前全文比较的论文级排名。
+
+实际复核Haklay等ACL2025正式页面/26页PDF§3.1和§5；source-role增益不能单独承担新颖性。将源功能定义、关系恢复及新增解释判断三项贡献归因写入STRONG_ACCEPT_DIRECTION.md；联合响应的强度替代解释作为具体研究问题，未新增硬门或压力测试支线。两writing skills延续本对话已读原则，正面中心是解释跨重训后继续产生准确的新干预判断。当前工作卡接续原路线，无新实验/训练/GPU占用，阅读和工具等待分项时长未测量，不计完成轮。原ccad loop和strong accept目标保持。
