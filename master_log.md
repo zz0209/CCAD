@@ -6777,3 +6777,39 @@ round_id R32; actual write UTC 2026-09-14T00:03:57Z. Natural train retokenizatio
 REFORM_R32_qwen_digit_components_v1使用同一gpu-0释放后的资源，1800秒等候上限，script会先核对训练PASS。数据划分/Fisher解析例已核对；生成结束token与固定物理batch形状在运行前修正，尚无受影响实验。405fit/415development、128conflicting donorpairs、五source32/64Fisher与contrast配置已保存。原source数据标签同样允许强目标Fisher基线使用，不把复用旧标签伪称新增监督预算。
 
 形成R32_REPORT.md阶段快照，完整实际科学结果、弱源失败、新素材状态和待检验主张均有定位。未COMPLETE，未宣称主会完成。准备成组同步既有白名单代码/config/master_log；current paper与忽略研究资料本地保留及hash，不上传权重/数据。有效工作/等待未独立计时。
+
+
+### R32 PROGRESS — ongoing execution and stage sync
+实际写入 UTC：2026-09-14T00:32:43Z。训练与源实验的结束时间未知，本轮继续，未记 COMPLETE。
+
+训练现为 11392 / 16384 步，每步 0.0952 秒；含约100秒最后验证的剩余粗估 9.6 分钟。原 ccad heartbeat 已核对 ACTIVE、5分钟、当前 task，不创建新loop或增加轮数。源实验已经由 manager 排队；训练释放后由同一实验脚本执行。
+
+十个改动研究脚本语法核对通过；自然对应已有完整实测/数值重建和论文编译，uint32训练真实执行，新增数字源实验仅数据/Fisher针对性检查完成。规范main远程并发检查0/0后按17文件白名单commit/push，阶段提交70b49a9410bd50a13a4b38dc7637c087d12e43a1，HEAD=origin/main，未上传权重/数据/忽略文档。后来准备的analyze_arithmetic_components.py等待真实run，归纳全部与双基准正确两个分母、四种不同数字结果及各seed，尚未执行。R32报告明确进行中。有效研究/计算等待未独立测量，未将排队计为科学结果。
+
+
+### R32 PROGRESS — execution checkpoint
+实际写入 UTC：2026-09-14T00:40:17Z。本次为运行接续检查，R32 未 COMPLETE，不计新轮或新科学结果。训练仍正常，实测 16192 / 16384 步，原源组成作业仍在 manager 队列；无重复启动、无新 GPU 申请或外部费用。4,096 步五 seed 自然 CE 恢复 .97463–.97538，最终状态尚未写入。训练加最终验证剩余粗估 2.0 分钟，保持原 5 分钟周期。
+
+整理 tracker，退出旧 640 步和“准备代码”的过期当前描述，保留唯一执行路径与真实科学结论；旧卡逐字归档 artifacts/correspondence_reform_20260913/tracker_before_0038_heartbeat.md，SHA256 adb2c733207d6648a52a1b7f4a67ac4d44933c2695ad4e735759c3bd7523bf70。本次没有新的功能干预数据，计算/等待不计研究完成；运行结束时间未知。
+
+
+### R32 PROGRESS — completed controlled material and source consumer reform
+实际写入 UTC：2026-09-14T00:58:20Z。训练事件 2026-09-14T00:09:47.949747Z 至 2026-09-14T00:42:05.713672Z；源实验事件 2026-09-14T00:42:07.169473Z 至 2026-09-14T00:44:38.436669Z。R32 仍在进行，未计 COMPLETE。
+
+五个 Qwen TopK 完成 16,384 步、每个16,777,216同序自然 tokens。训练 run PASS，hook oracle/截断状态误差均为0，20条质量记录完整。最终 CE 恢复 .98537–.98595，L0约64，alive8076–8103；FVE约.99948不能替代功能验证。wall1937.7724秒，processCPU1657.875秒，训练循环1901.5288秒含质量309.5172秒及checkpoint保存33.9343秒。exact_state.json 指向完整优化器/scheduler/RNG及五权重，SHA2561639fe5f220c65ee9c5c300a3c0d8806f2a3aeddea6b128353b6d09b722fe2fe。
+
+源数字实验计算 PASS，151.2672秒、6611条结果、26464实际padded前向、476352tokens。两位数原提示基准准确率仅约26%/16%，经常生成解释文字。所有40组mask的混合答案成功率0；完整raw prompt末状态替换也未达到混合答案，且几乎不能转移供体数字。因此失败同时定位到提示格式与“只在prompt末状态干预”的消费者，未归因为对应或五seed素材无效。完整分析 digit_source_analysis/summary.json、旧原始run保持。
+
+按同一96对算式实测四提示（REFORM_R32_qwen_twodigit_format_screen_v1_20260914），原符号提示1.04%，固定两例后的符号/问答/自然表述为98.96%/100%/100%；示例与题目按两种操作数次序排除。原符号输出常先给占位符，数字后置，严格首数字规则不改。此结果用于开发格式，不作外部benchmark结论。
+
+启动REFORM_R32_qwen_digit_trajectory_v2_20260914，沿生成前缀的各位置持久替换同一native成员，同时保留改进提示下的raw prompt-only与完整生成前缀对照。每个位置的新code为(1-g)z_recipient+g z_donor，原残差不变；每步重新计算完整prefix，先前已生成位置的同一编辑仍保留。源码/config留独立身份；原v1不覆盖。通过实际结果定位失配后修改消费者，而不是扩大主张或隐藏原负结果。
+
+
+### R32 PROGRESS — causal hook localized and controlled material changed
+实际写入 UTC：2026-09-14T01:11:39Z。第23层定位事件2026-09-14T01:00:35.634683Z至01:01:36.925149Z；最终norm定位事件01:01:38.421530Z至01:02:36.758617Z；晚层五seed训练开始01:04:20.264701Z，仍运行，结束未知。R32未COMPLETE。
+
+同一改进提示/同一128对开发算式，完整生成前缀raw替换在中间层13不能转移供体答案，在第23层及最终norm两种提示都达到100%。原晚层prompt-only仅1/64和0/64完整供体答案。arithmetic_site_comparison.json保留完整base/unit/tens/donor四种结果，不能把完整供体成功计为混合组成成功。v2生成前缀源候选仍全部0，6735条数据、237.2406秒、33680实际padded前向/1852400tokens完整保留。两个定位run分别61.2814/58.3277秒、各1615结果和8080前向，无SAE选择、无新训练，直接确认了干预hook失配及代码执行链。
+
+据此启动REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914：与完成的13层队列仅hook不同，复用同一token文件、自然数据/优化器/五seeds。首64步8.7216秒，稳定每步约.127–.137秒，预计纯训练35–37分钟，加质量/保存约5–6分钟；9000秒guard不变。已有本地GPU/存储足够，无购买、安装或外部服务。源组成实验session55260排在该训练后，等待6000秒，不争抢其他资源。
+
+原automation保留prompt/任务归属/ACTIVE，因稳定单训练暂改15分钟，已核对落盘；下次约01:22UTC，剩余不足10分钟或进入结果分析/故障时恢复5分钟。此调度不计研究轮。tracker旧版归档artifacts/correspondence_reform_20260913/tracker_before_causal_hook_training.md，SHA25660e23a12f48248def5b741de03a0f30c1edd7e06abe1795676b1e23c9e11229b。R32报告和源操作说明已按实际结果更新；两项writing技能要求落实为改变具体失配、保留决定结论的强对照，不靠改写目标宣称闭合。有效研究与等待未独立计时。

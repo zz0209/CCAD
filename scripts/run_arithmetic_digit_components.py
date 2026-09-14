@@ -20,6 +20,7 @@ def panel(cfg):
     for t,template in enumerate(cfg["templates"]):
         for a in range(*cfg["operand_range"]):
             for b in range(a,cfg["operand_range"][1]):
+                if [a,b] in cfg.get("excluded_pairs",[]):continue
                 key=f"{cfg['split_salt']}:{a}:{b}"
                 split="fit" if int(hashlib.sha256(key.encode()).hexdigest()[:8],16)%2==0 else "development"
                 if t and split=="fit":continue
@@ -68,7 +69,7 @@ def main():
         for name in ["config.json","model.safetensors","tokenizer.json","tokenizer_config.json"]:w.checked(Path(tc["model_local_dir"])/name)
         tok=transformers.AutoTokenizer.from_pretrained(tc["model_local_dir"],local_files_only=True,trust_remote_code=False)
         model=transformers.AutoModelForCausalLM.from_pretrained(tc["model_local_dir"],local_files_only=True,trust_remote_code=False,dtype=torch.float32,attn_implementation="eager").eval().to(w.device)
-        model.requires_grad_(False);module=model.get_submodule(tc["hook_module_path"])
+        model.requires_grad_(False);module=model.get_submodule(cfg.get("hook_override",tc["hook_module_path"]))
         sys.path.extend([tc["dictionary_source_dir"],tc["dictionary_overlay_dir"]])
         from dictionary_learning.trainers.top_k import AutoEncoderTopK
         w.checked(Path(tc["dictionary_source_dir"])/"dictionary_learning/trainers/top_k.py")
@@ -86,17 +87,27 @@ def main():
         assert physical_length<=padding
         def budget():
             if time.perf_counter()-w.wall_start>cfg["budget_seconds"]:raise TimeoutError("Arithmetic source development budget")
-        def generate(indices,delta=None):
+        trajectory=cfg.get("intervention_span")=="generated_prefix"
+        def generate(indices,delta=None,patch=None):
             padded=indices+[indices[0]]*(batch-len(indices));ids=torch.full((batch,padding),tok.eos_token_id,device=w.device,dtype=torch.long)
             mask=torch.zeros_like(ids);pos=[]
             for j,i in enumerate(padded):
                 tokens=tokenrows[i];ids[j,:len(tokens)]=torch.tensor(tokens,device=w.device);mask[j,:len(tokens)]=1;pos.append(len(tokens)-1)
-            pos=torch.tensor(pos,device=w.device);ix=torch.arange(batch,device=w.device);cache={};generated=[];finished=torch.zeros(batch,device=w.device,dtype=torch.bool)
+            pos=torch.tensor(pos,device=w.device);ix=torch.arange(batch,device=w.device);cache={"trajectory":[]};generated=[];finished=torch.zeros(batch,device=w.device,dtype=torch.bool)
             def hook(m,a,out):
                 h=out[0] if isinstance(out,tuple) else out
                 if "hidden" not in cache:cache["hidden"]=h[ix,pos].detach().clone()
-                if delta is None:return out
-                hh=h.clone();hh[ix[:len(indices)],pos[:len(indices)]]+=delta
+                cache["trajectory"].append(h[ix,pos+step].detach().clone())
+                if patch is not None:
+                    sites=pos[:len(indices),None]+torch.arange(step+1,device=w.device)[None,:]
+                    current=h[ix[:len(indices),None],sites]
+                    change=patch(current,step)
+                    hh=h.clone();hh[ix[:len(indices),None],sites]+=change
+                    cache["edit_norm"]=change.flatten(1).norm(dim=1)
+                elif delta is not None:
+                    hh=h.clone();hh[ix[:len(indices)],pos[:len(indices)]]+=delta
+                    cache["edit_norm"]=delta.norm(dim=1)
+                else:return out
                 return (hh,)+out[1:] if isinstance(out,tuple) else hh
             handle=module.register_forward_hook(hook)
             try:
@@ -113,22 +124,23 @@ def main():
             answers=[]
             for s in text[:len(indices)]:
                 match=re.match(r"\s*(\d+)",s);answers.append(int(match[1]) if match else None)
-            return answers,text[:len(indices)],cache["hidden"][:len(indices)]
+            return answers,text[:len(indices)],(torch.stack(cache["trajectory"],1) if trajectory else cache["hidden"])[:len(indices)],cache.get("edit_norm",torch.zeros(len(indices),device=w.device))
         all_h=[];base=[];base_text=[]
         for off in range(0,len(rows),batch):
-            indices=list(range(off,min(off+batch,len(rows))));ans,txt,h=generate(indices);all_h.append(h);base.extend(ans);base_text.extend(txt)
+            indices=list(range(off,min(off+batch,len(rows))));ans,txt,h,_=generate(indices);all_h.append(h);base.extend(ans);base_text.extend(txt)
             if off%(batch*16)==0:w.progress("SOURCE_STATES",completed=off+len(indices),total=len(rows))
             budget()
         h=torch.cat(all_h);fitix=[i for i,r in enumerate(rows) if r["split"]=="fit"]
         for i,r in enumerate(rows):w.record(kind="base",task="template_"+str(r["template"]),row_id=i,component=f"{r['a']}+{r['b']}",method="greedy",split=r["split"],answer=base[i],correct_answer=r["total"],correct=base[i]==r["total"],generated_text=base_text[i])
         codes={};gates={};metadata=[]
         for seed,ae in saes.items():
-            with torch.no_grad():z=torch.cat([ae.encode(h[i:i+256]) for i in range(0,len(h),256)])
-            codes[seed]=z;fs=torch.stack([fisher(z[fitix],[rows[i][factor] for i in fitix]) for factor in ["unit","tens"]],1)
+            with torch.no_grad():z=torch.cat([ae.encode(h[i:i+256].reshape(-1,h.shape[-1])).reshape(*h[i:i+256].shape[:-1],-1) for i in range(0,len(h),256)])
+            codes[seed]=z
+            fs=torch.stack([fisher(z[fitix,cfg["source_selection_step"][factor]] if trajectory else z[fitix],[rows[i][factor] for i in fitix]) for factor in ["unit","tens"]],1)
             for rule in cfg["selection_rules"]:
                 score=fs if rule=="fisher" else fs-fs.flip(1)
                 for k in cfg["members"]:
-                    gate=torch.zeros((z.shape[1],2),device=w.device)
+                    gate=torch.zeros((z.shape[-1],2),device=w.device)
                     for c in range(2):gate[torch.argsort(score[:,c],descending=True,stable=True)[:k],c]=1
                     gates[seed,rule,k]=gate
                     metadata.append(dict(seed=seed,rule=rule,members=k,unit_members=torch.where(gate[:,0]>0)[0].cpu().tolist(),tens_members=torch.where(gate[:,1]>0)[0].cpu().tolist(),overlap=int((gate[:,0]*gate[:,1]).sum())))
@@ -136,10 +148,16 @@ def main():
             np.savez_compressed(w.run/f"source_seed{seed}.npz",codes=z.cpu().numpy(),fisher=fs.cpu().numpy(),**payload)
         np.savez_compressed(w.run/"states.npz",hidden=h.cpu().numpy(),fit_indices=np.array(fitix))
         write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=False,task_output_gradients=0,source_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
-        def evaluate(seed,method,k,operation,deltas):
+        def evaluate(seed,method,k,operation,deltas,gate=None,raw_trajectory=False):
             for off in range(0,len(pairs),batch):
-                pp=pairs[off:off+batch];ix=[p["recipient"] for p in pp];ans,txt,hh=generate(ix,deltas[off:off+len(pp)] if deltas is not None else None)
-                replay=float((hh-h[ix]).abs().max());assert replay<cfg["hidden_atol"],replay
+                pp=pairs[off:off+batch];ix=[p["recipient"] for p in pp];donors=[p["donor"] for p in pp]
+                patch=None
+                if raw_trajectory:patch=lambda current,step:h[donors,:step+1]-current
+                elif gate is not None:
+                    ae=saes[seed]
+                    patch=lambda current,step:((codes[seed][donors,:step+1]-ae.encode(current.reshape(-1,current.shape[-1])).reshape(*current.shape[:-1],-1))*gate)@ae.decoder.weight.T
+                ans,txt,hh,norm=generate(ix,deltas[off:off+len(pp)] if deltas is not None else None,patch)
+                replay=float(((hh[:,0]-h[ix,0]) if trajectory else (hh-h[ix])).abs().max());assert replay<cfg["hidden_atol"],replay
                 for j,p in enumerate(pp):
                     expected=p[operation+"_answer"] if operation in ["unit","tens"] else p["donor_answer"]
                     a=ans[j];numeric=a is not None and 10<=a<100
@@ -148,18 +166,24 @@ def main():
                     w.record(kind="source_patch",task="template_"+str(p["template"]),row_id=off+j,component=str(p["recipient"])+"<-"+str(p["donor"]),seed=seed,method=method,mode="k"+str(k),operation=operation,
                              answer=a,expected_answer=expected,exact_hybrid=a==expected,target_digit_success=target,preserve_digit_success=preserve,
                              base_answer=p["base_answer"],donor_answer=p["donor_answer"],base_correct=base[p["recipient"]]==p["base_answer"],donor_correct=base[p["donor"]]==p["donor_answer"],
-                             recipient_carry=p["recipient_carry"],donor_carry=p["donor_carry"],generated_text=txt[j],hidden_replay_error=replay,edit_norm=float(deltas[off+j].norm()) if deltas is not None else 0.)
+                             recipient_carry=p["recipient_carry"],donor_carry=p["donor_carry"],generated_text=txt[j],hidden_replay_error=replay,edit_norm=float(norm[j]))
                 budget()
             w.progress("SOURCE_PATCH",seed=seed,method=method,members=k,operation=operation)
         ii=[p["recipient"] for p in pairs];jj=[p["donor"] for p in pairs]
-        evaluate(0,"no_edit",0,"unit",None);evaluate(0,"raw_full_patch",model.config.hidden_size,"unit",h[jj]-h[ii])
+        evaluate(0,"no_edit",0,"unit",None)
+        if trajectory:
+            evaluate(0,"raw_prompt_patch",model.config.hidden_size,"unit",h[jj,0]-h[ii,0])
+            evaluate(0,"raw_generated_prefix_patch",model.config.hidden_size,"unit",None,raw_trajectory=True)
+        else:evaluate(0,"raw_full_patch",model.config.hidden_size,"unit",h[jj]-h[ii])
         for (seed,rule,k),gate in gates.items():
             z=codes[seed];D=saes[seed].decoder.weight.T
             for c,operation in enumerate(["unit","tens"]):
-                delta=((z[jj]-z[ii])*gate[:,c])@D
-                evaluate(seed,rule,k,operation,delta)
+                if trajectory:evaluate(seed,rule,k,operation,None,gate=gate[:,c])
+                else:
+                    delta=((z[jj]-z[ii])*gate[:,c])@D
+                    evaluate(seed,rule,k,operation,delta)
         w.checks.update(source_selection_only_fit_labels_and_activations=True,no_target_used=True,donor_changes_both_digits=True,real_generation_no_answer_prefix=True,all_failed_base_cases_retained=True)
-        w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,numpy=np.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),precision="float32 matmul high",hook=tc["hook_module_path"],model=tc["model_id"],forward_accounting="Actual no-cache generation forward calls including padded batch members and lengths")
+        w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,numpy=np.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),precision="float32 matmul high",hook=cfg.get("hook_override",tc["hook_module_path"]),model=tc["model_id"],forward_accounting="Actual no-cache generation forward calls including padded batch members and lengths")
     except Exception as exc:
         error=repr(exc);(w.run/"traceback.log").write_text(traceback.format_exc())
     return w.finish(error)

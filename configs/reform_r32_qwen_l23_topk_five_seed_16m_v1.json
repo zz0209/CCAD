@@ -1,0 +1,51 @@
+{
+  "audit_opened": false,
+  "batch_size_sequences": 8,
+  "budget_seconds": 9000,
+  "bulk_output_dir": "D:/CCAD_Storage/training_curves/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "checkpoint_steps": [
+    256,
+    1024,
+    4096,
+    16384
+  ],
+  "decay_start": 8192,
+  "dict_size": 8192,
+  "dictionary_commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "eval_batch_size_sequences": 1,
+  "group_fractions": [
+    0.125,
+    0.125,
+    0.25,
+    0.5
+  ],
+  "hook_module_path": "model.layers.23",
+  "k": 64,
+  "layer": 23,
+  "learning_rate": 0.000282842712474619,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "objectives": [
+    "topk"
+  ],
+  "purpose": "Establish five controlled SAE dictionaries at the arithmetic-causal layer verified by full-state interventions",
+  "run_id": "REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "scope": "Five TopK SAEs share the same16,777,216natural tokens, data order, dictionary width, sparsity, learning rate, optimizer schedule and initialization seeds as the R32 layer13 cohort. Only the hook changes to model.layers.23. Same-prompt raw generated-prefix swaps transfer0%donor answers at layer13 and100%at layer23 in both development forms; final norm swaps verify the implementation. This is a targeted material change after causal localization, not an architecture comparison or concept-quality claim. No task text enters SAE training. Preserve all four quality checkpoints and exact final state.9000second loop guard; actual64step throughput will update the completion estimate.",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "steps": 16384,
+  "threshold_start_step": 128,
+  "token_manifest": "artifacts/correspondence_reform_20260913/qwen_training_material_v2/TOKEN_MANIFEST.json",
+  "warmup_steps": 128,
+  "round_id": "R32",
+  "model_license": "Apache-2.0",
+  "written_at_utc": "2026-09-14T01:04:19.933996+00:00"
+}

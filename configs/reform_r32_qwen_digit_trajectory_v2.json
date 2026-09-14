@@ -1,0 +1,65 @@
+{
+  "run_id": "REFORM_R32_qwen_digit_trajectory_v2_20260914",
+  "run_parent": "R32",
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "purpose": "Establish source SAE components that exchange one arithmetic digit while preserving the other under conflicting donors",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "budget": "One local RTX5070Ti via gpu-0 after training releases it; 40 source masks on128conflicting-donor pairs; source-only development,<=2400wall seconds, no external service",
+  "budget_seconds": 2400,
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "batch_size": 8,
+  "max_new_tokens": 5,
+  "scope": "Source development reform: two fixed numeric demonstrations repair task formatting; both examples excluded in either unordered orientation. Same original operand split, so old development outcomes remain development. Donor changes both digits. At every decoding step the source mask replaces its codes across the generated prefix, preserving each recipient reconstruction residual, while keeping the rest of the original prompt. The first selection form generates digits immediately: source unit Fisher uses the state before the second digit, tens Fisher before the first. Native masks apply to all generated positions, so the other digit is not supplied or protected by intervention timing. Raw prompt-only and generated-prefix controls isolate the intervention-site issue. This is a source functionality test before correspondence fitting; prior zero-shot prompt/one-site failure remains intact.",
+  "written_at_utc": "2026-09-14T00:56:28.352867+00:00",
+  "round_id": "R32",
+  "training_run": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "operand_range": [
+    10,
+    50
+  ],
+  "split_salt": "ccad-r32-digit-source-1",
+  "pairs_per_template": 64,
+  "selection_rules": [
+    "fisher",
+    "fisher_contrast"
+  ],
+  "members": [
+    32,
+    64
+  ],
+  "max_length": 72,
+  "hidden_atol": 0.002,
+  "statistics_unit": "Unordered operand pairs remain in the same split and prompt-connected recipient-donor pairs; five controlled source SAE initializations with common prompts",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "intervention_span": "generated_prefix",
+  "source_selection_step": {
+    "unit": 1,
+    "tens": 0
+  }
+}

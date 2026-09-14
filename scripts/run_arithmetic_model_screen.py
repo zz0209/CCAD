@@ -17,7 +17,11 @@ def main():
         tok=transformers.AutoTokenizer.from_pretrained(cfg['model_local_dir'],local_files_only=True,trust_remote_code=False,padding_side='left')
         if tok.pad_token_id is None:tok.pad_token=tok.eos_token
         model=transformers.AutoModelForCausalLM.from_pretrained(cfg['model_local_dir'],local_files_only=True,trust_remote_code=False,dtype=torch.float32,attn_implementation='eager').eval().to(w.device);model.requires_grad_(False)
-        rows=[dict(template=t,a=x,b=y,total=x+y,prompt=template.format(a=x,b=y)) for t,template in enumerate(cfg['templates']) for x in range(cfg['operand_limit']) for y in range(cfg['operand_limit'])]
+        lo,hi=cfg.get('operand_range',[0,cfg.get('operand_limit',10)])
+        pairs=[(x,y) for x in range(lo,hi) for y in range(lo,hi) if [x,y] not in cfg.get('excluded_pairs',[])]
+        if cfg.get('sample_pairs'):
+            rng=np.random.default_rng(cfg['data_seed']);pairs=[pairs[i] for i in rng.choice(len(pairs),size=cfg['sample_pairs'],replace=False)]
+        rows=[dict(template=t,a=x,b=y,total=x+y,prompt=template.format(a=x,b=y)) for t,template in enumerate(cfg['templates']) for x,y in pairs]
         write(w.run/'panel.json',dict(rows=rows));records=[]
         for off in range(0,len(rows),cfg['batch_size']):
             rr=rows[off:off+cfg['batch_size']];inputs=tok([r['prompt'] for r in rr],padding=True,return_tensors='pt').to(w.device)
@@ -25,7 +29,7 @@ def main():
             generated=tok.batch_decode(out[:,inputs['input_ids'].shape[1]:],skip_special_tokens=True)
             for r,s in zip(rr,generated):
                 match=re.match(r'\s*(\d+)',s);answer=int(match[1]) if match else None
-                w.record(kind='arithmetic_capability',task='template_'+str(r['template']),row_id=r['a']*cfg['operand_limit']+r['b'],component=f"{r['a']}+{r['b']}",method='greedy_generation',prompt=r['prompt'],generated_text=s,answer=answer,correct_answer=r['total'],correct=answer==r['total'])
+                w.record(kind='arithmetic_capability',task='template_'+str(r['template']),row_id=r['a']*hi+r['b'],component=f"{r['a']}+{r['b']}",method='greedy_generation',prompt=r['prompt'],generated_text=s,answer=answer,correct_answer=r['total'],correct=answer==r['total'])
                 records.append(dict(**r,generated=s,answer=answer,correct=answer==r['total']))
             w.sequence_forwards+=len(rr);w.token_forwards+=int(inputs['attention_mask'].sum())+int(out.shape[1]-inputs['input_ids'].shape[1])*len(rr)
             w.progress('CAPABILITY_BATCH',completed=len(records),total=len(rows))
