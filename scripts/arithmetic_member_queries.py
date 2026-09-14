@@ -8,12 +8,40 @@ def prepare_queries(w,cfg,saes):
     import torch
     from scipy.optimize import linear_sum_assignment
     spec=cfg['member_queries'];parent=w.run.parent.parent/spec['relation_run']
+    if spec.get('partitions',1)>1:
+        import copy
+        gates={};banks=[]
+        for bank in range(spec['partitions']):
+            cc=copy.deepcopy(cfg)
+            cc['member_queries']['partitions']=1
+            cc['member_queries']['partition_seed']=spec['partition_seed']+104729*bank
+            gg,meta=prepare_queries(w,cc,saes)
+            for (seed,name,cap),g in gg.items():
+                gates[seed,f'{name}_bank{bank}',cap]=g
+            for p in w.run.glob('member_queries_s*_t*.npz'):
+                if '_bank' not in p.stem:
+                    p.rename(p.with_name(p.stem+f'_bank{bank}.npz'))
+            banks.append(meta)
+        if spec.get('include_full'):
+            cap=cfg['members'][0]
+            for s,t in json.loads(w.checked(parent/'config.resolved.json').read_text())['relation_transfer']['seed_pairs']:
+                with np.load(w.checked(parent/f'relation_s{s}_t{t}.npz')) as z:
+                    for name,key,seed in [('source_full','source_gate',s),('member_full','clean',t),('assignment_full','assignment',t)]:
+                        gates[seed,name,cap]=torch.tensor(z[key],device=w.device)
+        meta=dict(written_at_utc=datetime.now(timezone.utc).isoformat(),banks=banks,
+                  scope=cfg['scope'],partitions=spec['partitions'],target_output_gradients=0,
+                  target_output_labels=0,include_full=spec.get('include_full',False))
+        (w.run/'MEMBER_QUERY_FREEZE.json').write_text(json.dumps(meta,indent=2)+'\n')
+        return gates,meta
     assert json.loads(w.checked(parent/'status.json').read_text())['status']=='PASS'
     prior=json.loads(w.checked(parent/'config.resolved.json').read_text())
-    assert all(prior[k]==cfg[k] for k in ['training_run','checkpoint_step','model_revision','source_cache_run'])
+    assert all(prior[k]==cfg[k] for k in ['training_run','checkpoint_step','model_revision'])
+    assert prior['source_cache_run']==spec.get('source_cache_identity',cfg.get('source_cache_run'))
     cap=cfg['members'][0];gates={};records=[]
     for s,t in prior['relation_transfer']['seed_pairs']:
         path=w.checked(parent/f'relation_s{s}_t{t}.npz')
+        if spec.get('relation_sha256'):
+            assert hashlib.sha256(path.read_bytes()).hexdigest()==spec['relation_sha256'][path.name]
         with np.load(path) as z:
             source=torch.tensor(z['source_gate'],device=w.device)
             masks={f'{name}_part{part}':torch.zeros_like(source) for name in
@@ -54,7 +82,7 @@ def prepare_queries(w,cfg,saes):
             records.append(dict(source_seed=s,target_seed=t,parent=path.as_posix(),
                                 parent_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),queries=query_records))
     meta=dict(written_at_utc=datetime.now(timezone.utc).isoformat(),records=records,
-              scope='Exposed development. Two source-only complementary partitions, no query-output fitting. Source rows indexed by sourceSAE, translated rows by targetSAE; analysis aligns the cycle.',
+              scope=cfg['scope']+' Source rows indexed by source SAE, translated rows by target SAE; analysis aligns the cycle.',
               target_output_gradients=0,target_output_labels=0,partition_seed=spec['partition_seed'],
               assignment_budget='One-to-one uses32; duplicated assignment uses64 distinct target members per32-member sourcepart. All methods allowed64.')
     (w.run/'MEMBER_QUERY_FREEZE.json').write_text(json.dumps(meta,indent=2)+'\n')

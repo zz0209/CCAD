@@ -78,6 +78,8 @@ def main():
         sources += ["scripts/arithmetic_position_relation.py", "scripts/fit_component_correspondence.py"]
     if cfg.get("member_queries"):
         sources += ["scripts/arithmetic_member_queries.py"]
+    if cfg.get('query_readouts'):
+        sources += ['scripts/arithmetic_readout_queries.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -103,9 +105,13 @@ def main():
             ae.load_state_dict(torch.load(path,map_location=w.device,weights_only=True));ae.eval();ae.requires_grad_(False);saes[seed]=ae
         rows,pairs=panel(cfg);write(w.run/"panel.json",dict(rows=rows,pairs=pairs,scope=cfg["scope"]))
         if cfg.get("evaluation_operand_pairs") is not None:
-            assert cfg.get("frozen_adaptation") and not cfg.get("counterfactual_fit")
-            prior_panel=json.loads(w.checked(ROOT/cfg["frozen_adaptation"]["development_panel_run"]/"panel.json").read_text())
-            assert not {(r["a"],r["b"]) for r in rows}&{(r["a"],r["b"]) for r in prior_panel["rows"]}
+            assert (cfg.get("frozen_adaptation") or cfg.get('member_queries')) and not cfg.get("counterfactual_fit")
+            exclusion_runs=cfg.get('evaluation_exclusion_runs')
+            if exclusion_runs is None:
+                exclusion_runs=[cfg["frozen_adaptation"]["development_panel_run"]]
+            for prior_run in exclusion_runs:
+                prior_panel=json.loads(w.checked(ROOT/prior_run/'panel.json').read_text())
+                assert not {tuple(sorted((r['a'],r['b']))) for r in rows}&{tuple(sorted((r['a'],r['b']))) for r in prior_panel['rows']}
             w.checks["operand_questions_disjoint_from_designated_development_panel"]=True
         tokenrows=[tok.encode(r["prompt"],add_special_tokens=False) for r in rows]
         batch=cfg["batch_size"];padding=cfg["max_length"]
@@ -356,6 +362,11 @@ def main():
             from arithmetic_member_queries import prepare_queries
             gates,query_meta=prepare_queries(w,cfg,saes)
             metadata.append(query_meta)
+        readouts={}
+        if cfg.get('query_readouts'):
+            from arithmetic_readout_queries import prepare_readouts
+            readouts,readout_meta=prepare_readouts(w,cfg)
+            metadata.append(dict(query_readouts=readout_meta))
         write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=bool(cfg.get("relation_transfer") or cfg.get("response_relation") or cfg.get("position_relation") or cfg.get("adaptation") or cfg.get("frozen_adaptation") or cfg.get("member_queries")),task_output_gradients="inherited shared two-role response bank; no new gradients; see POSITION_FREEZE.json" if cfg.get("position_relation") else "shared fit-pair requested/preserved margins; see RESPONSE_FREEZE.json" if cfg.get("response_relation") else "fit split hybrid CE" if cfg.get("counterfactual_fit") else "inherited source and target fit only" if cfg.get("frozen_adaptation") else "inherited source fit only" if source_parent else 0,source_functional_outcomes_used_for_selection=bool(cfg.get("counterfactual_fit") or source_parent),development_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
         completed_keys=set()
         if cfg.get('resume_interventions'):
@@ -373,13 +384,25 @@ def main():
                     assert key not in completed_keys
                     completed_keys.add(key)
             w.checks['resume_scientific_inputs_and_panel_identical']=True
-        def evaluate(seed,method,k,operation,deltas,gate=None,raw_trajectory=False):
+        def evaluate(seed,method,k,operation,deltas,gate=None,raw_trajectory=False,readout=None):
             for off in range(0,len(pairs),batch):
                 pp=pairs[off:off+batch];ix=[p["recipient"] for p in pp];donors=[p["donor"] for p in pp]
                 if all((seed,method,operation,off+j) in completed_keys for j in range(len(pp))):
                     continue
                 patch=None
                 if raw_trajectory:patch=lambda current,step:h[donors,:step+1]-current
+                elif readout is not None:
+                    ae=saes[seed]
+                    def patch(current,step):
+                        if readout['kind']=='raw':
+                            difference=h[donors,:step+1]-current
+                        else:
+                            target_current=ae.encode(current.reshape(-1,current.shape[-1])).reshape(*current.shape[:-1],-1)
+                            difference=(codes[seed][donors,:step+1]-target_current)[...,readout['indices']]
+                        shift=torch.tensor([1-rows[i]['template'] for i in ix],device=w.device)
+                        roles=torch.arange(step+1,device=w.device)[None]+shift[:,None]
+                        predicted=torch.einsum('blj,blji->bli',difference,readout['coef'][roles])
+                        return (predicted*readout['q'])@readout['decoder']
                 elif gate is not None:
                     ae=saes[seed]
                     role_schema=any(cfg.get(key,{}).get('role_schema',False) for key in ['position_relation','relation_transfer','frozen_adaptation','counterfactual_fit','member_queries'])
@@ -421,6 +444,11 @@ def main():
                 else:
                     delta=((z[jj]-z[ii])*gate[:,c])@D
                     evaluate(seed,rule,k,operation,delta)
+        for (seed,rule,k),operations in readouts.items():
+            if cfg.get('evaluation_rules') and rule not in cfg['evaluation_rules']:
+                continue
+            for operation,data in operations.items():
+                evaluate(seed,rule,k,operation,None,readout=data)
         w.checks.update(source_selection_only_fit_data=True,donor_changes_both_digits=True,real_generation_no_answer_prefix=True,all_failed_base_cases_retained=True)
         if not any(cfg.get(k) for k in ["relation_transfer","response_relation","position_relation","adaptation","frozen_adaptation","member_queries"]):
             w.checks["no_target_used"]=True

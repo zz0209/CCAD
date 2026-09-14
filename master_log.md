@@ -7272,3 +7272,73 @@ Tenactualruns:9PASS,1FAIL. Queryv1longunexplainedpause producedwallbudgetfailure
 Currentpaper/main.pdf54pages/main8 SHA256 d1923703a7b0f70cc189f5814de225c82e7cb617d05b6383c24e08e4ecc69599. Main6–7 andAppendixH.2pages28–30/table26/figure13 carrymemberrelationmath,actualqueryvalue andreal28/24example;H.3/table27/figure14carrycomparisongeometry. Bothwriting skills aretraceableinR38_WRITING_VISUAL_REVIEW. Finalnewpagesandmain7actuallyviewed;figures/labels/formulaelegible,noclippingobserved. Compilerexit0,noundefinedrefs/missingcharacters;1.32825ptbibliographybalancingvboxwarningretained. Currentevidence159mutableentries/131distinctfiles checked,withnewclaimIDsactuallyincluded. Countsareartifactscope,not scientificproof.
 
 Stage material: R38_REPORT.md,R38_RUNS.json,R38_COST.json,r38_objectives/range.json+npz,r38_member_queries.json+npz,R38_FOCUSED_CHECK,R38_QUERY_MASK_CHECK,R38_COMPILE_CHECK,R38_EVIDENCE_CHECK, editablepaper/sourcefigures/data/readme andR38_DELIVERY. Initialarchive r38_before_20260914T181814Z;precompletionentryarchive artifacts/correspondence_reform_20260913/r38_completion_inputs_20260914T194224Z. R38_QUERY_ANALYSIS_SPEC records preinspection butpostgenerationanalysis timing. Queryno_target_usedmetadata defect andprovisionalfractional eventtimeerrorsareexplicitlycorrectedabove. Trackercompletion follows thisrecord;authorizedallowlistGit sync follows.
+
+
+## R39 START — written UTC 2026-09-14T19:52:26Z
+
+Actual research start 2026-09-14T19:52:26Z, after user requested continuation following a Windows update/shutdown. Recovery verified R38 COMPLETE and final PDF hash, no surviving Python/TeX process reported by Get-Process, GPU 1448 MiB/10 percent and all shared leases free. CIM boot/process queries were access-denied; the reboot time is unknown. Original ccad remains ACTIVE every 5 minutes in this thread. R38 allowlisted code/config/log sync is complete at b22907eb0b9f17f12699c999fedc80e87129da3c; ignored delivery and evidence remain local. Recovery is not counted as another scientific round.
+
+Develop the positive source-member query result with independently drawn source subsets and previously unused operands, keeping frozen R38 relations and actual 64-member assignment, wrong-part, full-operation and no-edit controls. Then compare normalized sparse activation prediction and same-information structured raw predictors using the same source fit states; output data and fitting data remain separate. Read Li et al. arXiv1511.07543v3 section4 directly, especially normalized squared prediction plus L1 and interpretation of sparse maps. Both writing skills govern the scientific question and eventual text: establish reusable part knowledge with functional predictions. No method-result or main-conference completion claim is made by this start.
+
+Initial additional local driver allowance 1500 seconds, based on prior query evaluation throughput and cached matrices, with no new SAE training or acquisition. Independent work uses existing locked environment; shared GPU lease required for inference. All original results stay exposed. Initial snapshot: artifacts/correspondence_reform_20260913/r39_before_20260914T195226Z/MANIFEST.json. This unit remains IN_PROGRESS until analysis, closest comparisons and paper integration are finished.
+
+
+## R39 PROGRESS / CORRECTION — written UTC 2026-09-14T19:56:23Z
+
+The proposed one-digit operand range was already consumed by R33/R34. The all-history operand check rejected that configuration before saving or generating outputs. The actual frozen panel contains 226 remaining unexposed unordered addition identities, with 64 recipient/donor clusters and the same two prompts; this is a boundary-concentrated finite pool, not a newly sampled uniform original range. Four new independent source-only partitions are crossed with those questions. R38 relation hashes, methods and primary balanced-response metric are frozen in R39_CONFIRMATION_FREEZE.json before generation. Full operations and wrong-part controls remain. Batch16 uses existing runtime; 1800 driver seconds allowed for four query banks, based on R38 approximately 30–40 outputs/second plus loading. Total unit allowance updated to2000 driver seconds; initial1500 was provisional before the four-bank count. No purchase or new training.
+
+A multi-file patch initially failed atomically because of a quote mismatch; corrected before any run. The new query wrapper preserves each bank separately and validates frozen relation hashes. Current target-generation results remain unobserved at this write.
+
+
+## R39 PROGRESS — written UTC 2026-09-14T20:01:40Z
+
+Frozen confirmation actually started 2026-09-14T19:56:47.755684Z under shared gpu-0. Startup/source-state collection completed; generation progresses normally at about128 outputs/3.5 seconds, GPU observed10021MiB/85percent. Expected completion approximately20:23–20:25UTC. Original ccad interval temporarily20minutes; restore5minutes on completion, failure or analysis. Current response outcomes have not been inspected. The analysis now implements both question-cluster and crossed question/partition bootstrap and separately retains full-operation H/T/P. Closest-method source reading continues during this same unit.
+
+
+## R39 CORRECTION / PROGRESS — written UTC 2026-09-14T20:07:44Z
+
+Readout fit v1 exitedFAIL in2.238781seconds before any fit: original cached panel lacks the equivalent-view rows included in R38 fit_pairs. v2 loads the exact R38 augmented panel and saved view hidden states, retains original cached codes, and encodes only those views with the same pinned SAE. A CPU-versus-cached activation witness is required. All64pair identities and source role weights are unchanged; no R39 functional outputs have been read. OriginalFAIL andfreeze are preserved.
+
+
+## R39 CORRECTION / PROGRESS — written UTC 2026-09-14T20:11:04Z
+
+Readout v2 failed before fitting at the CPU-versus-cached encoder check, maximum error0.008520126343, wall34.085354seconds. The original GPU high-matmul mode and full256-question encoding batch are restored for v3. No tolerance is relaxed and no failed result is used. v3 queues for the shared GPU after the continuing confirmation, then performs its regressions on two CPU threads. R39 generated outcomes remain uninspected. This isolates a numerical reproduction issue without pausing the main experiment.
+
+
+## R39 PROGRESS — written UTC 2026-09-14T20:25:46Z
+
+Primary confirmation completed2026-09-14T20:21:49.171368Z, PASS,1501.352012driver seconds. All55040 experimental outputs independently reparsed. Balanced source-response agreement member68.191805%,assignment63.660230%,64-member assignment54.447840%; crossed question/partition differences+4.531575[2.448016,7.021693] and+13.743965[10.449655,17.278994]. Allfour partition banks retainpositive differences. Source changes29.667969percent of queries;95.546875percent source outputs are validtwo-digit integers. Fullmember operation56.015625%,assignment51.953125%,source57.96875%;units/tens andpreservation remainseparate inr39_member_confirmation.json. This confirms newrequest prediction onnewboundary-operand questions for thefixedfive-SAEcohort; no main-conferenceclosure claim.
+
+Readout v3 completed20:22:43.377155Z,PASS,52.3driverseconds approximately; exactstatus/summary providefullprecision. GPU/cache encoder witness maximumerror0. Two of40finalLasso fits hit3000iterations. v4 raises solveriterations to30000, retainingtol,databudget,pool64union andpenaltygrids; no readout functionaloutputs havebeen generated. Strongcomparisonfamily wasfrozen beforeprimary results; solvercorrection isprompted bysource-fit residuals. Budgeted sparseactivationprediction is arow-group adaptationofLi etal,notexactunconstrainedL1 replication. Originalccad intervalrestored5minutes afterprimarycompletion.
+
+R39 includes actual query-moment identity derivation/check, closestsource-methodreading, implementation, independentconfirmation andfrozenstrongcontrols; paperintegration waitsforthe latter. Additionalreadoutfunctionalrun planned23040outputs, estimated650seconds atobservedthroughput plusloading; drivercap850seconds. Unitallowanceupdated3000seconds based on actual1501primary andremainingfit/evaluation. No newtraining,acquisition orpaidresource. R39 remainsIN_PROGRESS.
+
+
+## R39 PROGRESS — written UTC 2026-09-14T20:28:50Z
+
+Readout v4 completed2026-09-14T20:27:54.181521Z,PASS,121.488724driver seconds. All40 finalLasso fits finishbelow30000iterations; maximumfinaldual gap5.508956e-5. A few screening/innerfits retainwarnings near tolerance; theyandtheirsource-onlyscoresarepreserved. No further numerical gate isadded. Allfivepredictormatrices frozenbyhash beforefunctionalcomparison. Primarysourcequery outputs containno missingnumericanswers;453three-digit and3single-digitanswers explain the95.546875percenttwo-digit rate. Theiractualintegervalues remainin thepredictionmetric; nofilterorprimaryendpointchange. Readoutevaluation nowuses frozenv2config, source/activation/rawidentity andsamequeries.
+
+
+## R39 PROGRESS — written UTC 2026-09-14T20:37:06Z
+
+The same frozen readout comparison is running. All200 saved query-mask arrays equal the primary confirmation exactly; predictor hashes remain unchanged. New confirmation text, result tables and the interval figure are in the editable paper; the figure was actually viewed at output size. Current PDF remains the R38 release until strong-comparison integration and final compile. Tracker consolidated after byte-exact archive artifacts/correspondence_reform_20260913/r39_tracker_before_20260914T203706Z.md; no completed-round count advanced. Full kernel/evidence/report checks follow actual final comparison, not another research round.
+
+
+## R39 PROGRESS — written UTC 2026-09-14T20:46:59Z
+
+The readout evaluation ended2026-09-14T20:39:48.185038Z, PASS. Analysis written2026-09-14T20:43:45.510087Z reparses all23040 experimental outputs and verifies identical panels/unedited answers. Balanced source-answer prediction is raw72.990162%, sparseactivation65.327101%, member68.191805%. Crossed question/partition member differences are -4.798357[-6.699054,-2.756273] againstraw and+2.864704[0.885896,4.969800] against sparseactivation. The latter confirms an advantage over the budgeted sparse predictor; raw preserves source-member structure and is stronger on this endpoint. No parameters or endpoint changed after reading results. Fullfunction readouts and preservation are reported separately.
+
+The abstract, introduction, main comparison and conclusion now connect functional regions and within-function requests; the raw result appears next to the positive comparisons in the main text and forest plot. The plot with all controls was actually viewed. Both required writing skills guide this argument-level change; they do not authorize hiding a decisive comparator. Plan and reproduction guide updated after byte-exact archive artifacts/correspondence_reform_20260913/r39_completion_inputs_20260914T204659Z/MANIFEST.json. R39 remains IN_PROGRESS through build, visual inspection and completion recording.
+
+
+## R39 COMPLETE — written UTC 2026-09-14T20:55:56Z
+
+round_id R39. Verifiable unit START record:2026-09-14T19:52:26Z; scientific driver activity begins2026-09-14T19:56:47.755684Z and the last evaluation ends2026-09-14T20:39:48.185038Z. Analysis, source-method reading, query-moment derivation, paper integration and visual/evidence review completed by this write. Effective active-research time and GPU-active time were not separately measured; no elapsed interval is substituted for either.
+
+Frozen cross-seed member relations retain a reproducible new-request prediction advantage on four new partitions and64 question clusters: balanced68.191805%, assignment63.660230%, doubleassignment54.447840%, sparseactivation65.327101%, raw72.990162%. Crossed question/partition member differences +4.531575[2.448016,7.021693],+13.743965[10.449655,17.278994],+2.864704[0.885896,4.969800], and-4.798357[-6.699054,-2.756273], respectively. Allfour partition banks favor member over bothassignment controls. Fullfunction member56.015625%, assignment51.953125%, source57.96875%; task/preservation results retained separately. New source-part prediction is confirmed for this fixedcohort/newboundary-input panel. Random source halves still lack an independently validated semantic interpretation, and raw demonstrably retains queryable source structure. The main-conference FCC target remains unfinished and unchanged.
+
+Final main.pdf SHA256 235f1b71eadc9befce95de2749e4181aa7f21f0ddb1fe2e14d784606bdf58894,57pages/main8; editable sources, full strong-comparison tables and main Figure5 updated. Two explicitly requested writing skills changed abstract/introduction/section6/conclusion and figure priority. Conditional figure remains inappendixD with allnumbers retainedinmain. Actual finalchanged pages viewed; no undefinedreferences/missingcharacters. Existing1.32825pt bibliography vboxwarning preserved. R39_REPORT.md, R39_WRITING_VISUAL_REVIEW.md, R39_COMPILE_CHECK.json, R39_EVIDENCE_CHECK.json andR39_FOCUSED_CHECK.json locate exact evidence and checks.
+
+Six actualruns:4PASS/2pre-fitFAIL. Totaldriver2364.013700s,processCPU2081.359375s,398880sequenceforwards,21938400paddedtokens; no newtraining,weights,dependencies,purchases. Source-view and CPU/GPU numerical failures, v3 solverlimit and v4correction remaininR39_RUNS.json andallfreezes. Shared manager reports GPU/CPU/diskresourcesfree atcloseout; no otherproject interrupted. Historicaltracker/plan/README snapshots inr39_completion_inputs_20260914T204659Z/MANIFEST.json.
+
+Delivery entry R39_DELIVERY.json includes currentfiles, report/run/cost/check indexes and scientific-targetfalse. Authorized allowlisted code/config/log sync follows this completion block in the same unit; its exactgitreceipt is R39_SYNC.json. Only afterthisCOMPLETErecord maytracker advance toR39COMPLETE/R40READY. Next scientific opportunity: source-only validated functional subparts and their target-member use, guided by the measured raw/sparse results and nearest-source methods; do not reclassify these exposed226identities asfresh. Originalccad remainsACTIVEevery5minutes inthissame thread. No newresearchround startedduringcloseout.

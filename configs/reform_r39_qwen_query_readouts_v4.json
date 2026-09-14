@@ -1,0 +1,85 @@
+{
+  "run_id": "REFORM_R39_qwen_query_readouts_v4_20260914",
+  "run_parent": "R39",
+  "generator_script": "scripts/fit_arithmetic_query_readouts.py",
+  "purpose": "Same source-member readout predictors with sufficient Lasso iterations",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "Frozen R38 source fit pairs",
+  "budget": "Up to300 driver seconds. Same GPU encoder precision/batch witness for source views, then two-thread CPU readout fit under one gpu-0 lease; no language-model forwards.",
+  "budget_seconds": 300,
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "batch_size": 16,
+  "max_new_tokens": 5,
+  "scope": "Readout fits use only original R38 source fit pairs and source member amplitudes. No R39 functional outputs used. Budgeted group-sparse prediction adapts Li-style normalized sparse prediction; it is not an exact replication of their unconstrained full-layer L1 model.",
+  "written_at_utc": "2026-09-14T20:25:46Z",
+  "round_id": "R39",
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "operand_range": [
+    10,
+    50
+  ],
+  "split_salt": "ccad-r39-members-confirmation-20260914-1",
+  "pairs_per_template": 64,
+  "selection_rules": [],
+  "members": [
+    64
+  ],
+  "max_length": 72,
+  "hidden_atol": 0.002,
+  "statistics_unit": "64 question clusters crossed with four independent partition banks; both complementary parts, operations, prompts, and fixed dependent SAE cycle retained.",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "intervention_span": "generated_prefix",
+  "source_selection_step": {
+    "unit": 1,
+    "tens": 0
+  },
+  "source_cache_run": null,
+  "reuse_rules": [],
+  "readout_fit": {
+    "relation_run": "runs/REFORM_R38_qwen_member_fields_five_v1_20260914",
+    "source_cache_identity": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+    "pool": 512,
+    "members": 64,
+    "screen_alpha": 0.01,
+    "lasso_grid": [
+      0.001,
+      0.01,
+      0.1
+    ],
+    "ridge_grid": [
+      0.001,
+      0.01,
+      0.1,
+      1.0,
+      10.0
+    ],
+    "fold_seed": 9392043,
+    "solver_max_iter": 30000
+  },
+  "encoder_device": "cuda:0"
+}
