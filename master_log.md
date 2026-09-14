@@ -6813,3 +6813,35 @@ REFORM_R32_qwen_digit_components_v1使用同一gpu-0释放后的资源，1800秒
 据此启动REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914：与完成的13层队列仅hook不同，复用同一token文件、自然数据/优化器/五seeds。首64步8.7216秒，稳定每步约.127–.137秒，预计纯训练35–37分钟，加质量/保存约5–6分钟；9000秒guard不变。已有本地GPU/存储足够，无购买、安装或外部服务。源组成实验session55260排在该训练后，等待6000秒，不争抢其他资源。
 
 原automation保留prompt/任务归属/ACTIVE，因稳定单训练暂改15分钟，已核对落盘；下次约01:22UTC，剩余不足10分钟或进入结果分析/故障时恢复5分钟。此调度不计研究轮。tracker旧版归档artifacts/correspondence_reform_20260913/tracker_before_causal_hook_training.md，SHA25660e23a12f48248def5b741de03a0f30c1edd7e06abe1795676b1e23c9e11229b。R32报告和源操作说明已按实际结果更新；两项writing技能要求落实为改变具体失配、保留决定结论的强对照，不靠改写目标宣称闭合。有效研究与等待未独立计时。
+
+
+### R32 PROGRESS — user-requested pause after the current mini-stage
+实际写入 UTC：2026-09-14T01:20:12Z。用户新指令接收的精确秒级事件时间未知；本次现场核对、记录的结束时间为本写入时间。R32 未 COMPLETE，研究目标未改动。本条是执行边界变更，无新增科学结果，不计新轮。
+
+用户明确要求完成当前小阶段后暂停 loop，以使用硬件，使用结束后会通知。当前小阶段限定为已经运行的 REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914（session41863）及已排队的 REFORM_R32_qwen_l23_digit_trajectory_v1_20260914（session55260），加现有结果分析和阶段归档。不再接续新的训练、目标对应拟合、源候选优化或扩展实验；若现有作业故障，保存已有结果与诊断后收尾，不追加重跑。训练本次读取4544/16384步、每步0.1344秒，源实验run目录尚未出现；训练预计约01:48UTC结束、源实验随后约4分钟，均为估计，实际结束未知。
+
+两个现有作业终止并完成结果保存后，核对本项目进程与gpu-0租约释放，用automation_update原位暂停ccad并核对状态，再通知用户硬件释放。保留全部配置、checkpoint、原始结果与未完成工作，仅用户明确通知使用结束／恢复后才恢复。当前原automation仍ACTIVE、15分钟并归属原任务，只承担上述收尾；临近结束或分析时恢复5分钟，最后PAUSED。未停止其他项目作业，未申请新资源。
+
+tracker已将用户边界置顶并撤下立即接续目标对应拟合的旧下一步。原tracker归档artifacts/correspondence_reform_20260913/tracker_before_user_hardware_pause_20260914T012012Z.md，SHA256 d36307c3baabebaa43fc5bb3b73d1c58b916ebc302d143b71766fb76ee286a66。最新代码阶段074e98bc746aeb86e2709ee956efce902d887e2c，本次核对HEAD=origin/main且tracked工作区原为干净。已有当前paper/main.pdf及R32报告保持，待实际结果收尾；未把等待、状态记录或用户暂停当作科学完成。有效工作与等待未独立计时。
+
+
+### R32 PROGRESS — restore short checks before user-requested hardware release
+实际写入 UTC：2026-09-14T01:37:09Z。本次为原运行接续核对，事件检查精确开始未知，结束为本写入时间；R32 未 COMPLETE，不计新轮或科学结果。
+
+晚层训练仍正常，读取13056/16384步、每步0.1308秒，剩余纯训练估计7.3分钟，最终验证/保存估计约2分钟；源组成作业尚在原队列。为及时完成现有两作业后释放硬件，原ccad heartbeat已由15分钟恢复5分钟，核对ACTIVE、原prompt和task归属，预计下次01:42 UTC。最新用户暂停边界继续优先执行，不启动任何新研究作业，现有作业若故障则留存诊断后收尾暂停。
+
+原tracker归档artifacts/correspondence_reform_20260913/tracker_before_closeout_cadence_20260914T013709Z.md，SHA256 3feaf1d144bb06a7a3e92569c2c2f268a5169bbe250be345e0a77bc85062cdec。无新增资源申请、计算或数据暴露；等待不计成果，有效工作与等待未独立计时。
+
+
+### R32 PAUSE — current mini-stage COMPLETE; research retained for user-requested resume
+实际写入 UTC：2026-09-14T01:57:54Z。本条完成的是用户指定的当前小阶段收尾，R32整体研究保持PAUSED_INCOMPLETE，不增加已完成研究轮数，不宣称主会目标完成。
+
+训练事件2026-09-14T01:04:20.264701Z至2026-09-14T01:46:56.078022Z；源验证事件2026-09-14T01:47:00.171812Z至2026-09-14T01:53:55.207356Z。两个run均PASS、受管session41863和55260均退出0，训练20条质量/16384步完整，源验证6735条真实结果与契约完整。训练wall2555.8229s、processCPU2275.6875s、质量323.2856s、保存54.9818s；源验证wall415.0068s、processCPU236.9375s、33680前向/1852400tokens，peakCUDA8344164352bytes。训练最终CE恢复97.17%–97.25%、FVE约99.72%、L0约64；完整优化器/RNG状态sha256 48797361a309785514824a9c260a246b209f5bf9ccb5cac4fc172ab3190d9883保留原D盘路径。该大状态仅核对存在并沿用run写入hash，本次未重新读取大文件计算hash。
+
+晚层源成员出现局部选择性：Fisher contrast32成员个位组在同一128对算式和五seed下，平均混合答案19.6875%，两个提示19.0625%/20.3125%；五seed32.8125/18.75/7.03125/31.25/8.59375%。另一位保留23.59375%，完整供体输出48.28125%，说明仍有显著耦合。十位contrast高保护主要伴随弱修改，k32/k64混合答案0.78125%/2.65625%。全部八种方法/成员/操作配置和两提示单元均保留，不改开发身份，不把5seed重复题当独立640题。晚层raw完整供体仍100%，只核对操作链，不充当选择性raw比较；跨seed对应未在本小阶段建立。
+
+现有分析脚本实际执行并核对原始sha256 6dd55554553b9ffde3add1a1edb4d23b2a8f6cd63ef7ad939734cc64b2bbbf8e，输出artifacts/correspondence_reform_20260913/l23_digit_source_analysis/summary.json。R32_REPORT.md已重整全结果和当前暂停位置，R32_HARDWARE_PAUSE.json包含完整质量、成本、原始身份、所有聚合、原稿hash及归档。两个writing技能落实到直接陈述功能效果与保护代价、保持研究意义及完整对照，不把素材探索挪成正文新贡献；唯一paper/main.pdf保持本阶段已有附录与对应结果，sha256 03c0def78d82c4d4370a9bddc5a6026ca290b8df1fd5403eb0c7a4b08c5ce080。未作不必要的全稿重编译或21GB包重打包。
+
+根据用户原话“完成当前小阶段以后，暂停当前loop。我要用一下硬件资源。我结束了和你说。”，已用automation_update原位设ccad为PAUSED，核对原task与5分钟rrule保存；资源管理器核对gpu-0/cpu-heavy/disk-d-io/disk-e-io均free且无CCAD owner。两个受管session退出提供作业终止证据，未手工删租约或停止其他项目。用户明确通知使用结束／恢复以前不恢复loop、不追加实验。Windows全进程只读CIM初查因沙箱拒绝访问，未以该失败宣称完成进程全扫描；受管作业退出及无租约已独立核对。
+
+tracker与旧报告在改写前逐字归档，路径/hash在R32_HARDWARE_PAUSE.json。此轮从原START接续，现为用户硬件暂停而保留未完成工作；有效人工工作/等待未独立计时，不从墙钟倒算。代码阶段074e98bc746aeb86e2709ee956efce902d887e2c已同步，当前日志增量按白名单成组同步。
