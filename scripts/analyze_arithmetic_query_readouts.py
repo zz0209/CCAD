@@ -10,19 +10,19 @@ ROOT = Path(__file__).resolve().parents[1]
 ART = ROOT/'artifacts/correspondence_reform_20260913'
 
 
-def main():
-    freeze = json.loads((ART/'R39_READOUT_EVAL_FREEZE_v2.json').read_text())
-    path = ROOT/freeze['config_path']
-    assert hashlib.sha256(path.read_bytes()).hexdigest() == freeze['config_sha256']
+def main(freeze_name='R39_READOUT_EVAL_FREEZE_v2.json', primary_prefix='r39_member_confirmation', output_prefix='r39_query_readouts'):
+    freeze = json.loads((ART/freeze_name).read_text())
+    path = ROOT/freeze.get('readout_config',freeze.get('config_path'))
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == freeze.get('readout_config_sha256',freeze.get('config_sha256'))
     cfg = json.loads(path.read_text()); run = ROOT/'runs'/cfg['run_id']
     assert json.loads((run/'status.json').read_text())['status'] == 'PASS'
     assert json.loads((run/'config.resolved.json').read_text()) == cfg
-    with np.load(ART/'r39_member_confirmation.npz') as z:
+    with np.load(ART/(primary_prefix+'.npz')) as z:
         source, changed = z['source_aligned'], z['changed']
         ids = [tuple(x) for x in z['operand_pairs']]
         native = z['answers'][z['methods'].tolist().index('member')]
         baseline = z['baseline']
-    primary = json.loads((ART/'r39_member_confirmation.json').read_text())
+    primary = json.loads((ART/(primary_prefix+'.json')).read_text())
     panel = json.loads((run/'panel.json').read_text())
     assert panel == json.loads((ROOT/primary['run']/'panel.json').read_text())
     raw = run/'metrics.raw.jsonl'; digest = hashlib.sha256(raw.read_bytes()).hexdigest()
@@ -65,8 +65,9 @@ def main():
         cells.append(dict(method=name,exact_agreement=float(a.mean()),changed_agreement=float(a[changed].mean()),
                           unchanged_agreement=float(a[~changed].mean()),balanced_agreement=float(.5*(a[changed].mean()+a[~changed].mean()))))
         counts[name]=np.stack([(a&changed).sum(axes),(a&~changed).sum(axes)],-1)
-    nq,nb=source.shape[:2];rng=np.random.default_rng(9391957)
-    qw=rng.multinomial(nq,np.full(nq,1/nq),size=10000);bw=rng.multinomial(nb,np.full(nb,1/nb),size=10000)
+    nq,nb=source.shape[:2];rng=np.random.default_rng(freeze.get('analysis',{}).get('bootstrap_seed',9391957))
+    draws=freeze.get('analysis',{}).get('draws',10000)
+    qw=rng.multinomial(nq,np.full(nq,1/nq),size=draws);bw=rng.multinomial(nb,np.full(nb,1/nb),size=draws)
     contrasts=[]
     for units,ww in [('question_clusters',np.ones_like(bw)),('question_and_partition',bw)]:
         dd=np.einsum('dq,db,qbc->dc',qw,ww,den)
@@ -78,12 +79,18 @@ def main():
     out=dict(written_at_utc=datetime.now(timezone.utc).isoformat(),run=run.relative_to(ROOT).as_posix(),raw_sha256=digest,
              parsed_outputs=parsed,cells=cells,contrasts=contrasts,source_query_count=int(source.size),
              full_function=[dict(method=n,operation=op,**{m:float(a[:,o,...,k].mean()) for k,m in enumerate(['H','T','P'])}) for n,a in full.items() for o,op in enumerate(['unit','tens'])],
-             scope=freeze['comparison'])
-    (ART/'r39_query_readouts.json').write_text(json.dumps(out,indent=2)+'\n')
-    np.savez_compressed(ART/'r39_query_readouts.npz',methods=np.array(list(answers)),answers=np.stack(list(answers.values())),
+             scope=freeze.get('comparison',freeze.get('scope')))
+    (ART/(output_prefix+'.json')).write_text(json.dumps(out,indent=2)+'\n')
+    np.savez_compressed(ART/(output_prefix+'.npz'),methods=np.array(list(answers)),answers=np.stack(list(answers.values())),
                         source_aligned=source,changed=changed,full_function=np.stack(list(full.values())))
     print(json.dumps(out))
 
 
 if __name__=='__main__':
-    main()
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--freeze',default='R39_READOUT_EVAL_FREEZE_v2.json')
+    parser.add_argument('--primary-prefix',default='r39_member_confirmation')
+    parser.add_argument('--output-prefix',default='r39_query_readouts')
+    args=parser.parse_args()
+    main(args.freeze,args.primary_prefix,args.output_prefix)

@@ -111,8 +111,19 @@ def main():
                 exclusion_runs=[cfg["frozen_adaptation"]["development_panel_run"]]
             for prior_run in exclusion_runs:
                 prior_panel=json.loads(w.checked(ROOT/prior_run/'panel.json').read_text())
-                assert not {tuple(sorted((r['a'],r['b']))) for r in rows}&{tuple(sorted((r['a'],r['b']))) for r in prior_panel['rows']}
-            w.checks["operand_questions_disjoint_from_designated_development_panel"]=True
+                if cfg.get('evaluation_exclusion_unit')=='prompt':
+                    prior_text=set()
+                    for r in prior_panel['rows']:
+                        texts=[r[k] for k in ['prompt','sentence_good','sentence_bad'] if k in r]
+                        assert texts, 'Unrecognized historical prompt schema'
+                        prior_text.update(texts)
+                    assert not {r['prompt'] for r in rows}&prior_text
+                else:
+                    assert not {tuple(sorted((r['a'],r['b']))) for r in rows}&{tuple(sorted((r['a'],r['b']))) for r in prior_panel['rows']}
+            if cfg.get('evaluation_exclusion_unit')=='prompt':
+                w.checks['prompts_disjoint_from_designated_development_panels']=True
+            else:
+                w.checks["operand_questions_disjoint_from_designated_development_panel"]=True
         tokenrows=[tok.encode(r["prompt"],add_special_tokens=False) for r in rows]
         batch=cfg["batch_size"];padding=cfg["max_length"]
         physical_length=max(map(len,tokenrows))+cfg["max_new_tokens"]

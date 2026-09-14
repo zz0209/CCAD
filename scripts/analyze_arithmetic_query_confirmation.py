@@ -10,8 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ART = ROOT / 'artifacts/correspondence_reform_20260913'
 
 
-def analyze():
-    freeze = json.loads((ART / 'R39_CONFIRMATION_FREEZE.json').read_text())
+def analyze(freeze_name='R39_CONFIRMATION_FREEZE.json', output_prefix='r39_member_confirmation'):
+    freeze = json.loads((ART / freeze_name).read_text())
     config_path = ROOT / freeze['config_path']
     assert hashlib.sha256(config_path.read_bytes()).hexdigest() == freeze['config_sha256']
     cfg = json.loads(config_path.read_text())
@@ -113,8 +113,8 @@ def analyze():
                source_changed_fraction=float(changed.mean()), source_numeric_fraction=float(((source>=10)&(source<100)).mean()),
                cells=cells, contrasts=contrasts, by_partition=bank_scores, full_function=functional,
                full_contrasts=full_contrasts, statistics=freeze['analysis']['uncertainty'])
-    (ART / 'r39_member_confirmation.json').write_text(json.dumps(out, indent=2)+'\n')
-    np.savez_compressed(ART / 'r39_member_confirmation.npz', methods=np.array(names), answers=np.stack(list(answers.values())),
+    (ART / (output_prefix+'.json')).write_text(json.dumps(out, indent=2)+'\n')
+    np.savez_compressed(ART / (output_prefix+'.npz'), methods=np.array(names), answers=np.stack(list(answers.values())),
                         source_aligned=source, changed=changed, baseline=baseline, operand_pairs=np.array(ids),
                         full_methods=np.array(list(full)), full_answers=np.stack(list(full.values())),
                         full_function=np.stack(list(full_function.values())))
@@ -122,4 +122,9 @@ def analyze():
 
 
 if __name__ == '__main__':
-    analyze()
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--freeze',default='R39_CONFIRMATION_FREEZE.json')
+    parser.add_argument('--output-prefix',default='r39_member_confirmation')
+    args=parser.parse_args()
+    analyze(args.freeze,args.output_prefix)

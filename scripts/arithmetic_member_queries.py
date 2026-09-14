@@ -8,12 +8,13 @@ def prepare_queries(w,cfg,saes):
     import torch
     from scipy.optimize import linear_sum_assignment
     spec=cfg['member_queries'];parent=w.run.parent.parent/spec['relation_run']
-    if spec.get('partitions',1)>1:
+    if spec.get('partitions',1)>1 or spec.get('banked',False):
         import copy
         gates={};banks=[]
         for bank in range(spec['partitions']):
             cc=copy.deepcopy(cfg)
             cc['member_queries']['partitions']=1
+            cc['member_queries']['banked']=False
             cc['member_queries']['partition_seed']=spec['partition_seed']+104729*bank
             gg,meta=prepare_queries(w,cc,saes)
             for (seed,name,cap),g in gg.items():
@@ -51,7 +52,13 @@ def prepare_queries(w,cfg,saes):
             for c,op in enumerate(['unit','tens']):
                 si=z[f'{op}_source_indices'];ti=z[f'{op}_target_indices']
                 relation=torch.tensor(z[f'{op}_weights'],device=w.device)
-                order=np.random.default_rng(spec['partition_seed']+s*10+c).permutation(len(si))
+                if spec.get('partition_kind')=='role_participation':
+                    g=source[:,si,c].cpu().numpy()
+                    role_score=(g[2]**2-g[1]**2)/(g[2]**2+g[1]**2+1e-12)
+                    order=np.lexsort((si,-role_score))
+                else:
+                    role_score=None
+                    order=np.random.default_rng(spec['partition_seed']+s*10+c).permutation(len(si))
                 q=np.zeros(len(si),dtype=np.float32);q[order[:len(si)//2]]=1
                 qq=torch.tensor(q,device=w.device)
                 ss=torch.tensor(si,device=w.device);tt=torch.tensor(ti,device=w.device)
@@ -70,7 +77,9 @@ def prepare_queries(w,cfg,saes):
                     rr,cc=linear_sum_assignment(-cosine[duplicates])
                     masks[f'two_assignment_part{part}'][:,torch.tensor(cc,device=w.device),c]=source[:,torch.tensor(si[duplicates[rr]],device=w.device),c]
                 query_records.append(dict(operation=op,source_indices=si.tolist(),part0_indices=si[q>0].tolist(),
-                                          target_indices=ti.tolist(),source_members=len(si)))
+                                          target_indices=ti.tolist(),source_members=len(si),
+                                          partition_kind=spec.get('partition_kind','random'),
+                                          source_role_score=None if role_score is None else role_score.tolist()))
             for name,g in masks.items():
                 assert bool(((g>=0)&(g<=1+1e-6)).all())
                 assert bool(((g>0).any(0).sum(0)<=cap).all())
