@@ -1,0 +1,104 @@
+{
+  "run_id": "REFORM_R32_code_response_natural_v1_20260913",
+  "run_parent": "REFORM_R32",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Transfer source component identity through unlabelled target encoder responses",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "dataset_revision": "generator-blimp-7b93dccc-seed310914",
+  "budget": "At most3600driver seconds on existing5070Ti;4096unlabelled natural states,10independent source-target pairs,2SAE mechanisms,3source components and192exposed evaluation pairs. No training/new data generation/purchase.",
+  "budget_seconds": 3600,
+  "max_length": 16,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "group_run": "runs/REFORM_R24_behavior_context_groups_v2_20260913",
+  "data_manifest": "artifacts/final_value_five_20260913/r31_response_fresh_grammar/DATA_MANIFEST.json",
+  "scope": "DEVELOPMENT: R31 seed310914 evaluation rows0:64 already exposed. Frozen R26 source identities; natural R19 discovery states exclude early16prefix positions and supply all reusable fit values. Code response and contribution fit use no task labels/output/gradient; cached attribution is an explicitly information-rich control with192old source gradients. All methods freeze before this run evaluates. Equal64member ceiling; soft gates and binary masks reported separately. Raw field and dynamic source reencoding are realization controls. Source preservation across all tasks is the primary development question; no claim of new grammar or independent final confirmation.",
+  "written_at_utc": "2026-09-13T22:28:46Z",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 512,
+  "target_members_per_component": 64,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "verb": [
+      1,
+      0,
+      0
+    ],
+    "anaphor_number": [
+      0,
+      1,
+      0
+    ],
+    "anaphor_gender": [
+      0,
+      0,
+      1
+    ]
+  },
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "consumer_ranges": {
+    "evaluation": [
+      0,
+      64
+    ]
+  },
+  "target_training_run": "runs/FINAL3_R20_gpt2_independent_cohort_16m_v1_20260909",
+  "target_seeds": [
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "target_checkpoint_step": 16384,
+  "primary_validation_budget": 16,
+  "evidence_level": "controlled_development",
+  "consumer_statistics_unit": "Five disjoint source-target pairs per mechanism conditional on prior source selection; old exposed generated grammar pairs. Development summaries, not population confirmation.",
+  "code_response_parent": "runs/REFORM_R26_contrast_components_v2_20260913",
+  "natural_states": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909/natural_discovery_states.npz",
+  "natural_sequence_length": 128,
+  "minimum_prefix": 16,
+  "natural_fit_rows": 4096,
+  "fit_steps": 600,
+  "raw_ridge_fraction": 0.1
+}

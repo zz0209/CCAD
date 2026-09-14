@@ -470,6 +470,13 @@ def main():
         claims.append(dict(id='functional_response_queries',paper='Conditioning the relation on a new request',
             result='Fresh delete-A/preserve-B queries distinguish membership subtraction from the response of source A on task B. The corrected component-by-task tensor supports query-conditioned member ranking with no new target calibration and matched full dictionaries/cardinalities. Conditional cached64, same-aggregation scalar and unchanged shared ranking are retained on all six ordered requests. Earlier failed set/score subtraction remains in its original fresh-panel study. Inference conditions on the prior source bank/calibration and uses the stated independent-target or dependent-network units.',
             evidence=response_queries['inputs'] and [v['path'] for v in response_queries['inputs']]+['scripts/response_conditioned_queries.py','scripts/relational_exclusion_queries.py','scripts/analyze_relational_queries.py','scripts/response_query_paper.py','paper/sections/response_queries.tex','paper/sections/relational_query_details.tex']))
+    code_response_summary=root/'artifacts/correspondence_reform_20260913/r32_analysis/summary.json'
+    if code_response_summary.exists():
+        (out/'data/code_response_r32.json').write_bytes(code_response_summary.read_bytes())
+        crun='runs/REFORM_R32_code_response_natural_v1_20260913/'
+        claims.append(dict(id='task_free_source_profile_fidelity',paper='Source-profile fidelity appendix',
+            result='Development on exposed grammar pairs: target encoder-response memberships and contribution/decoder baselines preserve frozen source intervention profiles without task gradients; the new coefficient has no established advantage over those correspondence controls. Raw regression and dynamic reencoding remain separate execution references.',
+            evidence=[crun+f for f in ['config.resolved.json','status.json','inputs.json','code_hashes.json','metrics.raw.jsonl','code_response_results.json','RELATION_FREEZE.json','fit_rows.npz']]+[str(code_response_summary.relative_to(root)).replace(chr(92),'/'),'scripts/code_response_correspondence.py','scripts/code_response_analysis.py','paper/sections/code_response_details.tex']))
     for claim in claims:
         if claim['id']=='source_conditioned_finite_response_correspondence' and json.loads((out/'reform_runs.json').read_text()).get('functional_consensus_run'):
             claim['evidence'].extend(v['path'] for v in functional_consensus['inputs'])
@@ -487,6 +494,7 @@ def main():
     current_ids.append('independent_functional_structure_and_union_use')
     current_ids.append('external_functional_queries')
     current_ids.append('functional_response_queries')
+    current_ids.append('task_free_source_profile_fidelity')
     current_ids=[x for x in current_ids if x not in ['contrast_and_pair_common_completion','observed_finite_menu_selection_headroom','response_fitting_and_source_unit_bottleneck','source_behavior_groups_and_matched_support','grammar_transfer_and_source_counterfactuals']]
     (out/'EVIDENCE_INDEX.json').write_text(json.dumps(dict(current_manuscript_claim_ids=[c['id'] for c in claims if c['id'] in current_ids],claims=claims,data_manifest='data/DATA_MANIFEST.json',figure_manifest='figures/FIGURE_MANIFEST.json',
         raw_hashes=manifest['original_raw_sha256'],scope='Current manuscript evidence locator. Hashes establish file identity, not scientific validity; source and member KL references differ.'),indent=2)+'\n',encoding='utf-8')

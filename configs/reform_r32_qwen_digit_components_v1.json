@@ -1,0 +1,50 @@
+{
+  "run_id": "REFORM_R32_qwen_digit_components_v1_20260914",
+  "run_parent": "R32",
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "purpose": "Establish source SAE components that exchange one arithmetic digit while preserving the other under conflicting donors",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "budget": "One local RTX5070Ti via gpu-0 after training releases it; 40 source masks on128conflicting-donor pairs; source-only development,<=2400wall seconds, no external service",
+  "budget_seconds": 2400,
+  "templates": [
+    "The sum of {a} and {b} is",
+    "Q: What is {a} plus {b}? A:"
+  ],
+  "batch_size": 8,
+  "max_new_tokens": 4,
+  "scope": "Source development: operands10..49, two-digit sums20..98 including carries. Hash split groups unordered operand pairs across templates. Source features use Fisher label separation and the difference between unit/tens Fisher scores on fit activations, without output gradients or target dictionaries. Every donor changes both answer digits; a hybrid result must change just the requested digit. The intervention acts at the original prompt-final state throughout real autoregressive generation, never at a supplied correct answer prefix. Source behavior and failed base problems are retained. This adapts published digit-circuit selection/patching, not a novel arithmetic mechanism claim. Cross-seed correspondence and independent confirmation follow validated source functionality.",
+  "written_at_utc": "2026-09-14T00:17:11Z",
+  "round_id": "R32",
+  "training_run": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "operand_range": [
+    10,
+    50
+  ],
+  "split_salt": "ccad-r32-digit-source-1",
+  "pairs_per_template": 64,
+  "selection_rules": [
+    "fisher",
+    "fisher_contrast"
+  ],
+  "members": [
+    32,
+    64
+  ],
+  "max_length": 48,
+  "hidden_atol": 0.002,
+  "statistics_unit": "Unordered operand pairs remain in the same split and prompt-connected recipient-donor pairs; five controlled source SAE initializations with common prompts"
+}

@@ -22,6 +22,8 @@ def main():
     if cfg.get('source_path_export_only'):source_files.append('scripts/export_functional_source_paths.py')
     if cfg.get('relational_query_parent'):source_files.append('scripts/relational_exclusion_queries.py')
     if cfg.get('response_query_parent'):source_files.extend(['scripts/response_conditioned_queries.py','scripts/relational_exclusion_queries.py'])
+    if cfg.get('code_response_parent'):source_files.append('scripts/code_response_correspondence.py')
+    if cfg.get('arithmetic_source_discovery'):source_files.append('scripts/arithmetic_component_discovery.py')
     w=MultisiteWork(cfg,args.config,source_files)
     error=None
     def checked(path):return w.checked(ROOT/Path(path))
@@ -80,6 +82,11 @@ def main():
                     state=torch.load(sp,map_location=w.device,weights_only=True)
                     ae=AutoEncoderTopK(dim,ct['dict_size'],ct['k']) if obj=='topk' else MatryoshkaBatchTopKSAE(dim,ct['dict_size'],ct['k'],state['group_sizes'].cpu().tolist())
                     ae=ae.to(w.device);ae.load_state_dict(state);ae.eval();ae.requires_grad_(False);saes[obj,seed]=ae;D[obj,seed]=ae.decoder.weight.T if obj=='topk' else ae.W_dec
+        if cfg.get('arithmetic_source_discovery'):
+            from arithmetic_component_discovery import run_arithmetic_discovery
+            w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,numpy=np.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),threads=2,model=tc['model_id'],hook=tc['hook_module_path'])
+            run_arithmetic_discovery(cfg,w,model,tokenizer,module,saes,D,write,log,budget)
+            return w.finish()
         sys.path.append(cfg['scipy_overlay'])
         from scipy.optimize import linear_sum_assignment
         from fit_component_correspondence import fit,project_rows
@@ -149,6 +156,12 @@ def main():
             with torch.no_grad():
                 for key,ae in saes.items():codes[key]=torch.cat([ae.encode(h[i:i+256]) for i in range(0,len(h),256)])
             return dict(rows=records,hidden=h,codes=codes,clean=torch.cat(margins),gradient=torch.cat(gs) if gs else None)
+        if cfg.get('code_response_parent'):
+            from code_response_correspondence import run_code_response
+            run_code_response(cfg,w,D,saes,capture,forward,checked,write,log,budget)
+            w.checks['prefix_hidden_equality_and_replay']=max_hidden<cfg['hidden_atol']
+            w.environment.update(maximum_prefix_hidden_error=max_hidden,forwards_by_phase=phases)
+            return w.finish()
         if cfg.get('response_query_parent'):
             from response_conditioned_queries import run_response_queries
             run_response_queries(cfg,w,D,saes,capture,forward,checked,write,log,budget)

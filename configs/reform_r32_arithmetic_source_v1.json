@@ -1,0 +1,108 @@
+{
+  "run_id": "REFORM_R32_arithmetic_source_v1_20260913",
+  "run_parent": "REFORM_R32",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Discover source SAE addition-table components without task gradients and test their causal numeric selectivity",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "dataset_revision": "controlled-arithmetic-grid-v1",
+  "budget": "At most1800driver seconds for300arithmetic states and30source components across10existingSAEs. No target fitting, new weights or training.",
+  "budget_seconds": 1800,
+  "max_length": 32,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "group_run": "runs/REFORM_R24_behavior_context_groups_v2_20260913",
+  "data_manifest": "artifacts/final_value_five_20260913/r31_response_fresh_grammar/DATA_MANIFEST.json",
+  "scope": "Source development on the complete0..9addition grid and3fixed prompt templates. Feature groups are chosen only by standardized activation contrast for sums6/9/12 using template0 and a hash-selected operand fit subset. Causal evaluation uses held operand pairs of template0 and all pairs in the2new templates; repeated operand pairs across templates are dependent. No language-model output or gradient chooses source members. Actual source numeric-output selectivity is measured before any target relation is fit. Arithmetic prompts are our controlled probe, not an official benchmark.",
+  "written_at_utc": "2026-09-13T22:39:18Z",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 512,
+  "target_members_per_component": 64,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "verb": [
+      1,
+      0,
+      0
+    ],
+    "anaphor_number": [
+      0,
+      1,
+      0
+    ],
+    "anaphor_gender": [
+      0,
+      0,
+      1
+    ]
+  },
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "consumer_ranges": {
+    "evaluation": [
+      0,
+      64
+    ]
+  },
+  "primary_validation_budget": 16,
+  "evidence_level": "controlled_development",
+  "consumer_statistics_unit": "Five disjoint source-target pairs per mechanism conditional on prior source selection; old exposed generated grammar pairs. Development summaries, not population confirmation.",
+  "natural_states": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909/natural_discovery_states.npz",
+  "natural_sequence_length": 128,
+  "minimum_prefix": 16,
+  "natural_fit_rows": 4096,
+  "fit_steps": 600,
+  "raw_ridge_fraction": 0.1,
+  "arithmetic_source_discovery": true,
+  "arithmetic_templates": [
+    "{a}+{b}=",
+    "Q: What is {a} plus {b}? A:",
+    "The sum of {a} and {b} is"
+  ],
+  "arithmetic_concepts": [
+    6,
+    9,
+    12
+  ],
+  "operand_limit": 10,
+  "arithmetic_component_members": 8,
+  "arithmetic_batch": 32
+}

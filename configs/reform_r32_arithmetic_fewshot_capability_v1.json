@@ -1,0 +1,135 @@
+{
+  "run_id": "REFORM_R32_arithmetic_fewshot_capability_v1_20260913",
+  "run_parent": "REFORM_R32",
+  "generator_script": "scripts/run_component_transfer.py",
+  "purpose": "Check whether six fixed demonstrations recover arithmetic capability before expanding source discovery",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "objectives": [
+    "topk",
+    "matryoshka"
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "dataset_revision": "controlled-arithmetic-grid-v1",
+  "budget": "At most600driver seconds using existingGPT2Medium;282queries, no source fitting, new model or training.",
+  "budget_seconds": 600,
+  "max_length": 128,
+  "batch_pairs": 16,
+  "hidden_atol": 0.001,
+  "group_run": "runs/REFORM_R24_behavior_context_groups_v2_20260913",
+  "data_manifest": "artifacts/final_value_five_20260913/r31_response_fresh_grammar/DATA_MANIFEST.json",
+  "scope": "Development after weak zero-shot source results. Six fixed addition examples prime each prompt form. Those six operand pairs are excluded from every query; all94remaining pairs are evaluated for each of3forms. Numeric-candidate and full-vocabulary accuracy both reported. This diagnoses model/task suitability, not SAE correspondence or official benchmark performance.",
+  "written_at_utc": "2026-09-13T22:44:04Z",
+  "official_boundary_tokens": true,
+  "official_implementation_manifest": "artifacts/scientific_reform_20260913/reference_material/jiant_244c9d895236c3446c4c36060283645a57a3175a/SOURCE_MANIFEST.json",
+  "source_tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "new_tasks": [],
+  "source_selection_range": [
+    0,
+    64
+  ],
+  "fit_range": [
+    64,
+    192
+  ],
+  "development_range": [
+    192,
+    320
+  ],
+  "new_range": [
+    0,
+    128
+  ],
+  "gradient_batch_pairs": 2,
+  "source_members_per_component": 64,
+  "target_pool": 512,
+  "target_members_per_component": 64,
+  "ridge_fraction": 0.001,
+  "scipy_overlay": "D:/CCAD_Storage/environments/f4_sparse_overlay_v1",
+  "operations": {
+    "verb": [
+      1,
+      0,
+      0
+    ],
+    "anaphor_number": [
+      0,
+      1,
+      0
+    ],
+    "anaphor_gender": [
+      0,
+      0,
+      1
+    ]
+  },
+  "precision": "highest throughout; source/native maps and every actual model forward recomputed with consistent full float32 matrix multiplication. No R25 cached hidden values reused.",
+  "consumer_ranges": {
+    "evaluation": [
+      0,
+      64
+    ]
+  },
+  "primary_validation_budget": 16,
+  "evidence_level": "controlled_development",
+  "consumer_statistics_unit": "Five disjoint source-target pairs per mechanism conditional on prior source selection; old exposed generated grammar pairs. Development summaries, not population confirmation.",
+  "natural_states": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909/natural_discovery_states.npz",
+  "natural_sequence_length": 128,
+  "minimum_prefix": 16,
+  "natural_fit_rows": 4096,
+  "fit_steps": 600,
+  "raw_ridge_fraction": 0.1,
+  "arithmetic_source_discovery": true,
+  "arithmetic_templates": [
+    "1+2=3\n4+3=7\n7+5=12\n2+6=8\n8+1=9\n3+8=11\n{a}+{b}=",
+    "Q: What is 1 plus 2? A: 3\nQ: What is 4 plus 3? A: 7\nQ: What is 7 plus 5? A: 12\nQ: What is 2 plus 6? A: 8\nQ: What is 8 plus 1? A: 9\nQ: What is 3 plus 8? A: 11\nQ: What is {a} plus {b}? A:",
+    "The sum of 1 and 2 is 3.\nThe sum of 4 and 3 is 7.\nThe sum of 7 and 5 is 12.\nThe sum of 2 and 6 is 8.\nThe sum of 8 and 1 is 9.\nThe sum of 3 and 8 is 11.\nThe sum of {a} and {b} is"
+  ],
+  "arithmetic_concepts": [
+    6,
+    9,
+    12
+  ],
+  "operand_limit": 10,
+  "arithmetic_component_members": 8,
+  "arithmetic_batch": 8,
+  "arithmetic_model_only": true,
+  "arithmetic_excluded_pairs": [
+    [
+      1,
+      2
+    ],
+    [
+      4,
+      3
+    ],
+    [
+      7,
+      5
+    ],
+    [
+      2,
+      6
+    ],
+    [
+      8,
+      1
+    ],
+    [
+      3,
+      8
+    ]
+  ]
+}

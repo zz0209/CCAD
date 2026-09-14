@@ -6697,3 +6697,83 @@ R29将功能作用保真推进到可查询成员结构和真实未拟合组合�
 新完整本地包delivery/ccad_complete_r31_20260913.zip，基础快照21172684189字节、30976文件、182runs，实际组装895.647秒；预算40GB内，旧包完整保留。全部CRC通过。实际从ZIP抽取835文件逐项hash匹配，脱离原目录编译出40页且逐页文本一致；第五轮两个响应run全部138240raw行重算，整个summary及全部区间与原件逐项一致。使用现有runtime/TeX cache，没有冒称独立训练或科学复现。恢复检查首尝试因Windows与ZIP路径分隔符不同，在抽取前误报已有证据缺失；仅修正检查程序并在新目录重试，首失败记录/代码保留于closure。共享disk-e-io/cpu-heavy租约随程序释放。完整包最后追加独立命名的closure记录、暂停和同步receipt，最终archive hash以delivery/ccad_complete_r31_20260913.sha256.json为准，避免自指hash。
 
 在本COMPLETE之后才推进tracker到5/5。已完成授权科学、稿件和整包验证，剩余为同轮行政收尾：原ccad automation原位暂停/核对，白名单成组commit/push与HEAD=origin/main核对，closure实际文件身份归档。不存在续跑或新轮次。所有历史未提交研究文档本地保留，不扩大上传白名单，不投稿/公开发布。
+
+
+## R32 START — source intervention as a correspondence object
+
+round_id: R32. Actual write UTC: 2026-09-13T22:25:19Z. Verifiable round start: 2026-09-13T22:25:19Z; earlier context recovery and literature reading are preparation, with effective work duration not separately measured.
+
+The user has lifted the five-round cap and authorized continued substantial reform toward the unchanged FCC/main-conference goal. R27–R31 remain a completed historical phase. The original ccad heartbeat has been resumed in the same task; no additional task or delegated executor was created.
+
+Scientific opportunity: a frozen source component changes target SAE codes when removed from an unlabelled hidden state. Estimate this signed change to transfer component identity without target task gradients. Test whether reusable target members preserve the source intervention's functional response, including off-task responses, rather than maximizing target damage alone. Mean and single-source response remain strong attribution controls; minimum aggregation is not presumed necessary.
+
+The first comparison is development on previously exposed grammar states and existing paired natural discovery states. It will compare counterfactual code response with contribution projection, decoder matching, cached task attribution, and wrong-source identity. Source gates remain the validated R26 components; independent target cohorts and both SAE mechanisms are available. No new result is claimed by this START. Current resource check found the 5070 Ti free; initial run budget is at most 3600 driver seconds, using the existing experiment environment and resource manager. No training, downloads or purchases are needed for this pilot.
+
+Before editing, exact current entry documents and manuscript source/PDF were archived with hashes in artifacts/correspondence_reform_20260913/before_r32/MANIFEST.json. The sealed R31 delivery remains intact. Both anti-defensive-writing and defensive-writing-checker were read and will be applied to the claim/evidence structure, including negative comparisons. Next: implement and run the label-free relation pilot, inspect source specificity and full functional profiles, and update the same manuscript from actual results.
+
+
+## R32 PROGRESS — natural correspondence and arithmetic source test
+
+round_id R32; actual write UTC 2026-09-13T22:39:18Z. The natural relation run started2026-09-13T22:29:01.367607Z and ended2026-09-13T22:32:49.275263Z, PASS with51840actual rows and227.8651267driver seconds including loading/CPU/IO. It used104064padded model sequences/1665024tokens on the existing gpu-0, no training or purchase. Source-margin MAE averaged across all three tasks is0.2131/0.3222 for binary code response,0.2029/0.3203 for binary contribution fit,0.2222/0.3008 for decoder matching,0.4456/0.5588 for cached task attribution,0.1979/0.2433 for raw field. Dynamic reencoding, which still needs the source SAE at runtime, gives0.1882/0.2375. TopK/Matryoshka order is used throughout. The new coefficient does not outperform existing correspondence controls. Task-free source fidelity is possible; independent innovation of this estimator is not established. All are old exposed-data development results.
+
+Natural encoding response assigns20.37%/23.13%of its squared code-change energy to code increases, so source removal induces reallocation as well as suppression. This is a representation observation; functional importance of those increases is not isolated. Exact source/target operation classes and the residual-difference identity are inR32_METHOD_NOTE.md.
+
+Next substantive reform tests addition-table source components, so the project can develop a function family beyond grammar. The code selects source members from activation contrast for known arithmetic rules, without output gradients, and tests actual causal effects on held operand pairs and new prompt forms before fitting any target. Thirty components across the ten existing source SAEs, complete300stategrid; initial budget1800driver seconds. Config reform_r32_arithmetic_source_v1.json fixes sums6/9/12 and8members before outcomes. Arithmetic is a controlled probe, not an official benchmark claim.
+
+
+## R32 CORRECTION — arithmetic record identity
+
+round_id R32; actual write UTC 2026-09-13T22:44:04Z. Arithmetic source run2026-09-13T22:39:24.842853Z–22:40:46.904354Z completed all7050interventions in82.0461486driver seconds,8000padded sequences/256000tokens. Final statusFAIL arises solely from omitted shared-key task/row_id fields; originaltemplate/a/b and every numerical value are present. Finite results and source-only checks passed. Original run/status are unchanged. Exact recoverable identities are supplied in artifacts/correspondence_reform_20260913/arithmetic_metadata_recovery with old/new hashes; no model computation or scientific value was changed. The driver now emits these fields for subsequent runs.
+
+Scientifically, zero-shot model numeric accuracy is20%/10%/3%across forms, full-vocabulary20%/6%/0%; most source-group numeric effects are tiny and activation selectivity does not generalize. These weak source groups will not be promoted into correspondence evidence. A bounded capability check uses six fixed demonstrations, excludes all demonstration operand pairs from every query, and reports all remaining94pairs per form. This changes prompt context to diagnose the cause of weak task material, with no target/SAE fitting or new resources.
+
+
+## R32 PROGRESS — recovery and stronger source material
+
+round_id R32; actual write UTC 2026-09-13T23:58:10Z. Tools are responsive after a host negotiation failure. The interruption's effective downtime is unknown; it is not counted as research or computation. No experiment is rerun on recovery. The full manuscript build actually completed2026-09-13T23:05:41.053495Z,87.093seconds including data/figures/LaTeX. It is42pages with unchanged main entry paper/main.pdf; SHA25603c0def78d82c4d4370a9bddc5a6026ca290b8df1fd5403eb0c7a4b08c5ce080. New source-profile section and full comparison are in code_response_details.tex, with source-data figure and evidence-index entry. Changed pages have been rendered for review; review is not yet recorded as complete.
+
+The six-example GPT2 arithmetic screen completed2026-09-13T22:44:20.427646Z with282queries, PASS. Exact matched-candidate accuracies are12.77%/10.64%/6.38%; all in-prompt example pairs were excluded. This does not support scaling those source components.
+
+Pinned Qwen2.5-1.5B was acquired from the official Apache2.0 repository, revision8faed761d45a263340a0528343f099c05c9a4323. Download took70.5536729seconds;3,087,467,144weight bytes and tokenizer/config/license files occupy existing D bulk storage. The actual inference input hash matches the official LFS SHA256a961db72e75d52b18e6b0c9d379e51a26973b233385e0e127fdda7d648aec796. No fee, external inference or package install was used. The model screen ended2026-09-13T23:00:20.542542Z, PASS on300greedy generations. Exact integer accuracies44%/58%/88%across the same three prompt forms; highest6,230,678,528CUDA bytes. This is source-model capability, not SAE correspondence and not a matched tokenizer-independent comparison to earlier GPT2 candidate scores.
+
+Next: use the arithmetic-capable model to develop source functional parts and preserve their identity through retraining. Reuse existing controlled SAE trainer and disjoint natural documents; Qwen requires uint32 token storage because its vocabulary exceeds65535. A bounded five-seed training plan will precede new computation. Current R32 remains open until the completed evidence, writing/visual review and maintenance are consolidated.
+
+
+## R32 PROGRESS — controlled arithmetic-capable SAE material
+
+round_id R32; actual write UTC 2026-09-14T00:00:12Z. Changed manuscript pages7/8/26/27 were actually viewed; R32_WRITING_VISUAL_REVIEW locates the implementation of both required skills and the visual inspection. Main text remains8pages, fullPDF42.
+
+The positive opportunity is source functional parts in a model that actually performs the selected arithmetic task. We will train five controlled TopK dictionaries at Qwen layer13, width8192/k64, on the same16Mdisjoint natural tokens. A64-step measurement will establish throughput and resource use; full training-loop guard9000seconds saves state, with checks at256/1024/4096/16384. Approximate local storage allocation is under5GBnew SAE states plus67MBtoken IDs, with3.69TBfree measured before acquisition. Actual model generation peak6.23GBCUDA supports attempting the five-SAE allocation; any actual OOM is isolated and recorded. No new purchase or external compute.
+
+Minimal shared-code adaptations support tokenizer-dependent uint16/uint32 storage and manifest-driven input dtype, retaining olduint16defaults. This prevents Qwen vocabulary overflow. Existing public natural documents and metadata-based paired exclusions are reused; task examples do not enter training. Training adaptation is not counted as a correspondence result, and the round remains open while source functionality is developed.
+
+
+## R32 CORRECTION — Qwen validation token extent
+
+round_id R32; actual write UTC 2026-09-14T00:03:57Z. Natural train retokenization completed16,777,216uint32tokens withSHA256e959e02e341f0dd05528ee1d9e9495135175b8b7059b25eec81d8cdfc31c7542. The retained validation documents supply32,667Qwen tokens, below the requested32,768; packing raised an assertion before any training started. Event end second is unknown; the reported train packing stage took28.5101623seconds. The partial parent, exact producer snapshot and failure receipt remain in qwen_training_material. The new material request uses all255complete128-token validation blocks,32,640tokens, without repeated documents or padding. Config now points to qwen_training_material_v2; training remains16M. This is corpus tokenization extent, not a scientific failure or a changed held-task endpoint.
+
+
+### R32 PROGRESS — controlled Qwen SAE training
+实际写入UTC：2026-09-14T00:12:50Z。事件开始2026-09-14T00:09:47.949747Z，训练仍运行，结束未知。
+
+自然token材料v2于2026-09-14T00:04:35Z完成，实测28.510854s；训练16,777,216与验证32,640tokens，两个hash及输入文档身份在qwen_training_material_v2/TOKEN_MANIFEST.json，首份验证不足的FAIL完整保留。启动REFORM_R32_qwen_topk_five_seed_16m_v1_20260914，五同配置TopK共用Qwen model.layers.13自然激活，仅seed不同；uint32输入成功执行完整/截断模型hook检查。首64步8.282s含初始化，随后每步.094s，纯训练预计约26分钟，验证额外耗时待实测。CUDA分配7,759,927,296bytes，reserved8,445,231,104bytes；resource_manager gpu-0独占本任务计算，其他资源未修改。
+
+选题理由：Qwen自然提示100道一位数加法exact88%提供可建立功能组成的素材信号；新自然响应系数未赢贡献拟合，因此投入转向同一任务内部可解释组成与真实修改/保留收益。文献原文已读Nikankin等ICLR2025和Du等BlackboxNLP2025的实际分组/干预方法，借鉴个位/十位组成的具体后果；不会把这类分组本身称原创。训练期间准备同prompt状态出发的多token数字干预，保存完整生成与未见操作。
+
+两项writing技能已落实到新编码响应附录的主张与完整对照、实际改动页核对，见R32_WRITING_VISUAL_REVIEW.md；当前PDF SHA25603c0def78d82c4d4370a9bddc5a6026ca290b8df1fd5403eb0c7a4b08c5ce080。此为阶段结果和准备，R32未COMPLETE。人工有效工作/等待未独立计时，不从墙钟倒算。
+
+
+### R32 PROGRESS — meaningful source parts prepared during training
+实际写入UTC：2026-09-14T00:21:20Z。事件为本次准备与文献核对，精确开始未知，结束为本写入时间；GPU训练仍运行，R32未COMPLETE。
+
+已实现scripts/run_arithmetic_digit_components.py（166行）及配置reform_r32_qwen_digit_components_v1.json。源组件由个位/十位Fisher及其contrast选择，32/64成员，五seed各自选源；干预从同一prompt末状态出发实际生成，供体两位皆不同，要求仅改一位。CPU核对405fit/415development无序operand pairs分离、128对冲突供体四个答案各异、45.3125%recipient carry、多token数字编码与Fisher解析小例正确。尚未GPU执行，不能当功能结果。
+
+原始文献方法与图版用于具体改法，完整版本/path/hash/实际借鉴见REFERENCE_REGISTRY末项及R32_DIGIT_COMPONENT_NOTE.md。两项writing技能在问题与消费者选择上落实：保留冲突条件下的真实保护要求，并以具体预测连接源身份和未来对应。计划逐字归档artifacts/correspondence_reform_20260913/plan_before_digit_consumer.md，SHA2568fb7885b67354d447dcdd2576b57a18fca084b6a9505c032a60959b4c16ae9f5后加入这一用途。模型训练1024步自然CE recovery.9598–.9606，五seed接近；FVE高不替代待测功能。有效工作与等待未单独计时，无额外GPU/CPU-heavy资源争抢。
+
+
+### R32 PROGRESS — source intervention queued and phase snapshot
+实际写入UTC：2026-09-14T00:26:20Z。算术source实验已通过共享manager排队，精确排队开始以manager/exec记录为准，本记录未知到秒；实际GPU事件尚未开始。训练最新7360/16384步，checkpoint4096自然CE恢复0.9746–0.9754。
+
+REFORM_R32_qwen_digit_components_v1使用同一gpu-0释放后的资源，1800秒等候上限，script会先核对训练PASS。数据划分/Fisher解析例已核对；生成结束token与固定物理batch形状在运行前修正，尚无受影响实验。405fit/415development、128conflicting donorpairs、五source32/64Fisher与contrast配置已保存。原source数据标签同样允许强目标Fisher基线使用，不把复用旧标签伪称新增监督预算。
+
+形成R32_REPORT.md阶段快照，完整实际科学结果、弱源失败、新素材状态和待检验主张均有定位。未COMPLETE，未宣称主会完成。准备成组同步既有白名单代码/config/master_log；current paper与忽略研究资料本地保留及hash，不上传权重/数据。有效工作/等待未独立计时。

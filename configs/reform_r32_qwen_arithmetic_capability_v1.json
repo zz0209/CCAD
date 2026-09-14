@@ -1,0 +1,28 @@
+{
+  "run_id": "REFORM_R32_qwen_arithmetic_capability_v1_20260913",
+  "run_parent": "REFORM_R32",
+  "generator_script": "scripts/run_arithmetic_model_screen.py",
+  "purpose": "Verify exact arithmetic capability of new source model material before SAE training",
+  "device": "cuda:0",
+  "seeds": [
+    0
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "controlled-arithmetic-grid-v1",
+  "budget": "At most900driver seconds, one existing5070Ti, float32 inference for300prompts. Model is3.09GBstored and approximately6.2GBparameters at float32. No SAE training in this screen.",
+  "budget_seconds": 900,
+  "templates": [
+    "{a}+{b}=",
+    "Q: What is {a} plus {b}? A:",
+    "The sum of {a} and {b} is"
+  ],
+  "operand_limit": 10,
+  "batch_size": 8,
+  "max_new_tokens": 4,
+  "scope": "Development material screen: same300zero-shot arithmetic prompts, exact greedy generated integer, unrestricted model vocabulary. Source material suitability only, not correspondence or an official benchmark. Earlier GPT2 screens used a different tokenizer-dependent candidate score, so their numbers are not a matched model-comparison claim.",
+  "written_at_utc": "2026-09-13T22:58:15Z"
+}

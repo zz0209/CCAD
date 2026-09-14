@@ -1,0 +1,51 @@
+{
+  "audit_opened": false,
+  "batch_size_sequences": 8,
+  "budget_seconds": 9000,
+  "bulk_output_dir": "D:/CCAD_Storage/training_curves/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+  "checkpoint_steps": [
+    256,
+    1024,
+    4096,
+    16384
+  ],
+  "decay_start": 8192,
+  "dict_size": 8192,
+  "dictionary_commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "eval_batch_size_sequences": 1,
+  "group_fractions": [
+    0.125,
+    0.125,
+    0.25,
+    0.5
+  ],
+  "hook_module_path": "model.layers.13",
+  "k": 64,
+  "layer": 13,
+  "learning_rate": 0.000282842712474619,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "objectives": [
+    "topk"
+  ],
+  "purpose": "Develop controlled SAE material on an arithmetic-capable base model for reusable functional components",
+  "run_id": "REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+  "scope": "Five TopK SAEs share the same16,777,216natural tokens and order, optimizer settings and training steps, differing only in initialization seed. Qwen token IDs use uint32. No arithmetic or correspondence task states enter SAE training. Layer13is the predetermined middle hook of28layers;4096/16384checkpoints and natural validation retain training curves.64-step actual throughput determines scheduling,9000training-loop-second guard saves exact state. Arithmetic model capability is established separately; SAE concept quality and correspondence remain to be tested. Natural validation uses255complete128-token blocks from the existing held documents;32768requested tokens exceeded the32667available Qwen-tokenized tokens.",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "steps": 16384,
+  "threshold_start_step": 128,
+  "token_manifest": "artifacts/correspondence_reform_20260913/qwen_training_material_v2/TOKEN_MANIFEST.json",
+  "warmup_steps": 128,
+  "round_id": "R32",
+  "model_license": "Apache-2.0",
+  "written_at_utc": "2026-09-14T00:00:12Z"
+}
