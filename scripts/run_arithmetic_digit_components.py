@@ -172,6 +172,40 @@ def main():
                 if off%(batch*16)==0:w.progress("SOURCE_STATES",completed=off+len(indices),total=len(rows))
                 budget()
             h=torch.cat(all_h)
+        view_map=None;original_count=len(rows)
+        if cfg.get("source_view_augmentation"):
+            assert source_parent is not None and trajectory
+            vc=cfg['source_view_augmentation'] if isinstance(cfg['source_view_augmentation'],dict) else {}
+            view_template=vc.get('template',0)
+            view_map={};view_by_total={}
+            for i in range(original_count):
+                r=rows[i]
+                if r['split']!='fit':continue
+                answer=r['total']
+                if answer not in view_by_total:
+                    a,b=1,answer-1
+                    assert not any(q['a']==a and q['b']==b for q in rows[:original_count])
+                    v=dict(template=view_template,a=a,b=b,total=answer,unit=answer%10,tens=answer//10,
+                           carry=(a%10+b%10)>=10,split='fit',source_view=True,
+                           prompt=cfg['templates'][view_template].format(a=a,b=b))
+                    view_by_total[answer]=len(rows);rows.append(v)
+                    tokenrows.append(tok.encode(v['prompt'],add_special_tokens=False))
+                    assert len(tokenrows[-1])+cfg['max_new_tokens']<=physical_length
+                view_map[i]=view_by_total[answer]
+            view_h=[]
+            for off in range(original_count,len(rows),batch):
+                indices=list(range(off,min(off+batch,len(rows))))
+                ans,txt,hh,_=generate(indices);view_h.append(hh);base.extend(ans);base_text.extend(txt)
+            h=torch.cat([h,torch.cat(view_h)])
+            if vc.get('require_base_correct'):
+                view_map={i:(v if base[i]==rows[i]['total'] and base[v]==rows[v]['total'] else i)
+                          for i,v in view_map.items()}
+            write(w.run/'panel.json',dict(rows=rows,pairs=pairs,scope=cfg['scope'],source_view_map=view_map))
+            np.savez_compressed(w.run/'source_view_states.npz',hidden=h[original_count:].cpu().numpy(),
+                                original_indices=np.array(list(view_map)),view_indices=np.array(list(view_map.values())))
+            w.progress('SOURCE_EQUIVALENT_VIEWS',original_fit_rows=len(view_map),new_questions=len(view_by_total),
+                       changed_fit_rows=sum(i!=v for i,v in view_map.items()),
+                       correct=sum(base[i]==rows[i]['total'] for i in view_by_total.values()))
         fitix=[i for i,r in enumerate(rows) if r["split"]=="fit"]
         for i,r in enumerate(rows):w.record(kind="base",task="template_"+str(r["template"]),row_id=i,component=f"{r['a']}+{r['b']}",method="greedy",split=r["split"],answer=base[i],correct_answer=r["total"],correct=base[i]==r["total"],generated_text=base_text[i])
         codes={};gates={};metadata=[]
@@ -182,6 +216,10 @@ def main():
                     for rule in cfg["reuse_rules"]:
                         for k in cfg["members"]:
                             gates[seed,rule,k]=torch.tensor(data[f"{rule}_{k}"],device=w.device)
+                if view_map is not None:
+                    with torch.no_grad():
+                        extra=ae.encode(h[original_count:].reshape(-1,h.shape[-1])).reshape(len(rows)-original_count,h.shape[1],-1)
+                    codes[seed]=torch.cat([codes[seed],extra])
                 continue
             with torch.no_grad():z=torch.cat([ae.encode(h[i:i+256].reshape(-1,h.shape[-1])).reshape(*h[i:i+256].shape[:-1],-1) for i in range(0,len(h),256)])
             codes[seed]=z
@@ -214,9 +252,26 @@ def main():
             np.savez_compressed(w.run/f"source_seed{seed}.npz",codes=z.cpu().numpy(),fisher=fs.cpu().numpy(),**payload)
         if source_parent is None:
             np.savez_compressed(w.run/"states.npz",hidden=h.cpu().numpy(),fit_indices=np.array(fitix))
+        if cfg.get("source_refit"):
+            from arithmetic_counterfactual_fit import fit_gates, natural_latent_reference
+            sc=cfg["source_refit"]
+            latent=(natural_latent_reference(w,rows,h,base,rank=sc["latent_rank"])
+                    if sc.get('use_latent_reference',True) else None)
+            refitted={};k=cfg["members"][0]
+            for seed in cfg["seeds"]:
+                for name,weight in sc["objectives"].items():
+                    learned=fit_gates(w,cfg,model,module,tok,saes[seed],rows,tokenrows,codes[seed],
+                                      gates[seed,"fisher_contrast",k],seed,k,physical_length,budget,
+                                      tag=name,latent_context=latent,latent_weight=weight,view_map=view_map,
+                                      selection_batches=sc.get('selection_batches',{}).get(name,0))
+                    refitted[seed,name,k]=learned
+                    metadata.append(dict(seed=seed,source_objective=name,latent_weight=weight,
+                                         target_dictionaries_used=False,updates=cfg["counterfactual_fit"]["steps"]))
+            gates=refitted
         if cfg.get("relation_transfer"):
             from arithmetic_relation_transfer import fit_relations
-            transferred,relation_meta=fit_relations(w,cfg,saes,codes,gates,h,source_parent,generate,budget)
+            transferred,relation_meta=fit_relations(w,cfg,saes,codes,gates,h,source_parent,generate,budget,
+                                                  rows=rows,view_map=view_map)
             gates.update(transferred);metadata.extend(relation_meta)
         if cfg.get("adaptation"):
             from arithmetic_counterfactual_fit import fit_gates
@@ -264,13 +319,15 @@ def main():
             loaded={};k=cfg["members"][0]
             for seed in cfg["seeds"]:
                 for name in fc["initializations"]:
-                    prior=ROOT/fc.get("initialization_runs",{}).get(name,fc.get("run",""))
+                    prior=ROOT/fc.get('initialization_seed_runs',{}).get(name,{}).get(
+                        str(seed),fc.get("initialization_runs",{}).get(name,fc.get("run","")))
                     assert json.loads(w.checked(prior/"status.json").read_text())["status"]=="PASS"
                     pc=json.loads(w.checked(prior/"config.resolved.json").read_text())
                     assert pc.get("source_cache_run",prior.relative_to(ROOT).as_posix())==cfg.get("source_cache_run",fc.get("source_cache_identity"))
                     assert all(pc[key]==cfg[key] for key in ["model_revision","training_run","checkpoint_step","intervention_span"])
                     pattern=fc.get("file_patterns",{}).get(name,"counterfactual_seed{seed}_k{members}_"+name+".npz")
-                    maskfile=w.checked(prior/pattern.format(seed=seed,members=k))
+                    source=fc.get('source_seed_for_target',{}).get(str(seed),seed)
+                    maskfile=w.checked(prior/pattern.format(seed=seed,members=k,source=source))
                     if fc.get("mask_sha256"):assert sha256(maskfile)==fc["mask_sha256"][maskfile.relative_to(ROOT).as_posix()]
                     with np.load(maskfile) as data:
                         for u in fc["updates"]:
@@ -308,6 +365,8 @@ def main():
             evaluate(0,"raw_generated_prefix_patch",model.config.hidden_size,"unit",None,raw_trajectory=True)
         else:evaluate(0,"raw_full_patch",model.config.hidden_size,"unit",h[jj]-h[ii])
         for (seed,rule,k),gate in gates.items():
+            if cfg.get('evaluation_rules') and rule not in cfg['evaluation_rules']:
+                continue
             z=codes[seed];D=saes[seed].decoder.weight.T
             for c,operation in enumerate(["unit","tens"]):
                 if trajectory:evaluate(seed,rule,k,operation,None,gate=gate[:,c])

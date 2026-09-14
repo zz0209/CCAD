@@ -13,15 +13,63 @@ import time
 from ccad.semantic_participation import project_sparse_gates
 
 
+def natural_latent_reference(w, rows, hidden, base, rank=16):
+    """Fit answer-contrast coordinates from correct natural fit trajectories.
+
+    Conditional means average over operand identity. The projection is a
+    descriptive answer subspace, not an independently identified causal space.
+    Its sole purpose is an auxiliary training objective; free generation tests
+    whether the learned masks acquire more reusable functions.
+    """
+    import numpy as np
+    import torch
+
+    indices = [i for i, r in enumerate(rows)
+               if r['split'] == 'fit' and base[i] == r['total']]
+    assert indices and all(rows[i]['split'] == 'fit' for i in indices)
+    means = torch.zeros((100, 3, hidden.shape[-1]), device=hidden.device)
+    counts = torch.zeros(100, dtype=torch.long, device=hidden.device)
+    for answer in range(100):
+        group = [i for i in indices if rows[i]['total'] == answer]
+        counts[answer] = len(group)
+        if group:
+            means[answer] = hidden[group, :3].mean(0)
+    present = counts > 0
+    assert int(present.sum()) > rank
+    bases, scales = [], []
+    for site in range(3):
+        centered = means[present, site] - means[present, site].mean(0)
+        _, _, vh = torch.linalg.svd(centered.double(), full_matrices=False)
+        basis = vh[:rank].T.float()
+        bases.append(basis)
+        scales.append(((centered @ basis).square().sum(1)).mean().clamp_min(1e-8))
+    basis, scale = torch.stack(bases), torch.stack(scales)
+    projected = torch.einsum('asd,sdr->asr', means, basis)
+    # Check geometry independently of the model's TF32 matmul setting.
+    orthogonality_error = float((basis.double().transpose(1, 2) @ basis.double()
+                                - torch.eye(rank, device=hidden.device, dtype=torch.float64)).abs().max())
+    assert orthogonality_error < 1e-5, orthogonality_error
+    np.savez_compressed(w.run / 'natural_latent_reference.npz',
+                        basis=basis.cpu().numpy(), scale=scale.cpu().numpy(),
+                        projected=projected.cpu().numpy(), counts=counts.cpu().numpy(),
+                        fit_indices=np.array(indices))
+    w.checks['natural_latent_reference_fit_only'] = True
+    w.progress('NATURAL_LATENT_REFERENCE', fit_rows=len(indices),
+               answer_classes=int(present.sum()), rank=rank,
+               orthogonality_error=orthogonality_error,
+               normalization=scale.cpu().tolist())
+    return dict(basis=basis, scale=scale, projected=projected, present=present)
+
+
 def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
               initial_gate, seed, members, physical_length, budget,
               tag=None, initial_scale=.5, checkpoints=None,
               selection_batches=0, integrated_steps=1, fixed_support=False,
-              source_context=None):
+              source_context=None, latent_context=None, latent_weight=0., view_map=None):
     import numpy as np
     import torch
 
-    fit = [i for i, row in enumerate(rows) if row['split'] == 'fit']
+    fit = [i for i, row in enumerate(rows) if row['split'] == 'fit' and not row.get('source_view')]
     rng = random.Random(cfg['counterfactual_fit']['seed'])
     training_pairs = []
     for i in fit:
@@ -40,49 +88,75 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
     newline = tokenizer.encode('\n', add_special_tokens=False)
     assert len(newline) == 1
     history = []
+    objective_components = {}
     train_start = time.perf_counter()
 
     def objective(pairs, operation, gate, source_alpha=0.):
         ids = torch.full((batch, physical_length), tokenizer.eos_token_id,
                          device=w.device, dtype=torch.long)
         attention = torch.zeros_like(ids)
-        targets, positions = [], []
+        targets, positions, answers = [], [], []
         for b, (i, j) in enumerate(pairs):
             answer = (10 * rows[i]['tens'] + rows[j]['unit'] if operation == 0
                       else 10 * rows[j]['tens'] + rows[i]['unit'])
-            output_tokens = tokenizer.encode(str(answer), add_special_tokens=False)
-            assert len(output_tokens) == 2, (answer, output_tokens)
+            prefix = cfg['counterfactual_fit'].get('answer_prefixes', {}).get(str(rows[i]['template']), '')
+            assert rows[i]['template'] == rows[j]['template']
+            output_tokens = tokenizer.encode(prefix + str(answer), add_special_tokens=False)
+            assert len(output_tokens) in [2, 3], (answer, output_tokens)
             targets.append(output_tokens + newline)
+            answers.append(answer)
             prompt = tokenrows[i]
             seq = prompt + output_tokens
             assert len(seq) <= physical_length
             ids[b, :len(seq)] = torch.tensor(seq, device=w.device)
             attention[b, :len(seq)] = 1
             positions.append(len(prompt) - 1)
-        sites = torch.tensor(positions, device=w.device)[:, None] + torch.arange(3, device=w.device)
-        donor = codes[[j for i, j in pairs], :3]
+        nsites = max(map(len, targets))
+        target_tensor = torch.full((batch, nsites), -100, device=w.device, dtype=torch.long)
+        for b, target in enumerate(targets):
+            target_tensor[b, :len(target)] = torch.tensor(target, device=w.device)
+        active = target_tensor != -100
+        sites = torch.tensor(positions, device=w.device)[:, None] + torch.arange(nsites, device=w.device)
+        donor = codes[[j for i, j in pairs], :nsites]
+        latent = {}
 
         def hook(_module, _args, output):
             h = output[0] if isinstance(output, tuple) else output
             current = h[ix[:, None], sites]
-            z = ae.encode(current.reshape(-1, current.shape[-1])).reshape(batch, 3, -1)
+            z = ae.encode(current.reshape(-1, current.shape[-1])).reshape(batch, nsites, -1)
             delta = ((donor - z) * gate) @ ae.decoder.weight.T
             if source_alpha:
                 source_ae, source_codes, source_gate = source_context
-                source_z = source_ae.encode(current.reshape(-1,current.shape[-1])).reshape(batch,3,-1)
-                source_donor = source_codes[[j for i,j in pairs], :3]
+                source_z = source_ae.encode(current.reshape(-1,current.shape[-1])).reshape(batch,nsites,-1)
+                source_donor = source_codes[[j for i,j in pairs], :nsites]
                 delta = delta + source_alpha * ((source_donor-source_z)*source_gate[:,operation]) @ source_ae.decoder.weight.T
+            delta = delta * active[:, :, None]
             edited = h.clone()
             edited[ix[:, None], sites] += delta
+            if latent_context is not None:
+                assert nsites == 3
+                latent['projected'] = torch.einsum(
+                    'bsd,sdr->bsr', current + delta, latent_context['basis'])
             return (edited,) + output[1:] if isinstance(output, tuple) else edited
 
         handle = module.register_forward_hook(hook)
         try:
             result = model(ids, attention_mask=attention, use_cache=False)
             logits = result.logits[ix[:, None], sites]
-            loss = torch.nn.functional.cross_entropy(
+            ce = torch.nn.functional.cross_entropy(
                 logits.reshape(-1, logits.shape[-1]),
-                torch.tensor(targets, device=w.device).flatten())
+                target_tensor.flatten())
+            loss = ce
+            objective_components.clear()
+            objective_components['ce'] = float(ce.detach())
+            if latent_context is not None:
+                answer_ix = torch.tensor(answers, device=w.device)
+                valid = latent_context['present'][answer_ix]
+                # Unsupported hybrid totals retain CE and contribute zero CL.
+                distance = (latent['projected'] - latent_context['projected'][answer_ix]).square().sum(-1)
+                cl = ((distance / latent_context['scale']) * valid[:, None]).sum() / (3 * valid.sum().clamp_min(1))
+                loss = loss + latent_weight * cl
+                objective_components.update(cl=float(cl.detach()), natural_coverage=float(valid.float().mean()))
             w.sequence_forwards += batch
             w.token_forwards += batch * physical_length
             return loss
@@ -108,11 +182,39 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
     assert error < .015 + .05 * abs(analytic), (finite, analytic, error)
     w.checks[f'counterfactual_gradient_seed{seed}_k{members}' + (f'_{tag}' if tag else '')] = True
     del grad, loss
+    view_gradient = None
+    if view_map is not None and cfg['counterfactual_fit'].get('answer_prefixes'):
+        view_pairs = [(view_map[i], view_map[j]) for i, j in training_pairs
+                      if view_map[i] != i and view_map[j] != j][:batch]
+        assert len(view_pairs) == batch
+        loss = objective(view_pairs, 0, param[:, 0])
+        derivative = torch.autograd.grad(loss, param)[0]
+        coord_v = int(interior[derivative[interior, 0].abs().argmax()])
+        analytic_v = float(derivative[coord_v, 0])
+        with torch.no_grad():
+            plus, minus = param[:, 0].clone(), param[:, 0].clone()
+            plus[coord_v] += eps
+            minus[coord_v] -= eps
+            finite_v = float((objective(view_pairs, 0, plus) - objective(view_pairs, 0, minus)) / (2 * eps))
+        error_v = abs(finite_v - analytic_v)
+        assert error_v < .015 + .05 * abs(analytic_v), (finite_v, analytic_v, error_v)
+        view_gradient = dict(analytic=analytic_v, finite=finite_v, error=error_v)
+        w.checks[f'formatted_view_gradient_seed{seed}_{tag}'] = True
+        del derivative, loss
 
     steps = cfg['counterfactual_fit']['steps']
     assert 0 <= selection_batches < steps
     assert selection_batches % (2 * integrated_steps) == 0
     schedule = [rng.sample(training_pairs, batch) for _ in range(steps)]
+    original_schedule = [list(pairs) for pairs in schedule]
+    if view_map is not None:
+        # Each request sees equal numbers of original and answer-equivalent
+        # operand forms. Pair labels and total backward budget are unchanged.
+        for step in range(steps):
+            if (step // 2) % 2:
+                schedule[step] = [(view_map[i], view_map[j]) if view_map[i] != i and view_map[j] != j
+                                  else (i, j) for i, j in schedule[step]]
+        assert all(rows[i]['total'] == rows[v]['total'] for i, v in view_map.items())
     selection_scores = torch.zeros_like(param)
     selection_trace = []
     for step in range(steps):
@@ -171,6 +273,7 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
             saved[step + 1] = param.detach().clone()
         if step == 0 or (step + 1) % 32 == 0 or step + 1 == steps:
             item = dict(step=step + 1, operation=operation, loss=float(loss.detach()),
+                        objective_components=dict(objective_components),
                         fit_elapsed_seconds=time.perf_counter() - train_start,
                         active=(param.detach() > 0).sum(0).cpu().tolist())
             history.append(item)
@@ -184,17 +287,22 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
     np.savez_compressed(w.run / f'{stem}.npz',
                         gates=fitted.cpu().numpy(), fit_pairs=np.array(training_pairs),
                         fit_schedule=np.array(schedule), selection_scores=selection_scores.cpu().numpy(),
+                        **(dict(original_schedule=np.array(original_schedule),
+                                view_pairs=np.array([(view_map[i], view_map[j]) for i, j in training_pairs])) if view_map is not None else {}),
                         **({f'updates_{n}': g.cpu().numpy() for n, g in saved.items()} if saved is not None else {}))
     (w.run / f'{stem}.json').write_text(json.dumps(dict(
         seed=seed, members=members, gradient=dict(analytic=analytic, finite=finite, error=error,source_alpha=check_alpha),
+        formatted_view_gradient=view_gradient,
         trace=history, training_pairs=len(training_pairs), updates=steps, initialization=tag,
         initial_scale=initial_scale, saved_updates=sorted(saved) if saved is not None else [],
         backward_budget=dict(selection=selection_batches, optimization=steps-selection_batches,
-                             total=steps, numerical_check=1),
+                             total=steps, numerical_check=1 + int(view_gradient is not None)),
         forward_budget=dict(selection=selection_batches, optimization=steps-selection_batches,
-                            numerical_check=3),
+                            numerical_check=3 * (1 + int(view_gradient is not None))),
         integrated_steps=integrated_steps, fixed_support=fixed_support,
         source_functional_path=source_context is not None,
+        latent_weight=latent_weight, natural_latent_objective=latent_context is not None,
+        answer_equivalent_views=view_map is not None,
         selection_trace=selection_trace,
         supervision='Hybrid full-answer CE: donor target digit, recipient preserved digit, newline. Fit split only.',
         evaluation='A single bounded gate is applied at every generated position; no answer prefix at evaluation.',

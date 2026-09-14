@@ -21,7 +21,8 @@ def main():
     raw = run / 'metrics.raw.jsonl'
     raw_hash = hashlib.sha256(raw.read_bytes()).hexdigest()
     assert raw_hash == json.loads((run / 'metrics.summary.json').read_text())['metrics_raw_sha256']
-    methods = [spec.get('reference', 'clean')] + spec['comparators']
+    methods = list(dict.fromkeys([spec.get('reference', 'clean')] + spec['comparators'] +
+                                [m for pair in spec.get('secondary_contrasts', []) for m in pair]))
     updates = cfg['frozen_adaptation']['updates']
     seeds = cfg['seeds']
     metrics = ['exact_hybrid', 'target_digit_success', 'preserve_digit_success']
@@ -69,12 +70,25 @@ def main():
                 cells.append(dict(initialization=method, updates=count, operation=operation,
                                   **{m: float(a[..., k].mean()) for k, m in enumerate(metrics)},
                                   per_seed={str(s): float(a[:, :, si, 0].mean()) for si, s in enumerate(seeds)}))
+    secondary = []
+    for reference, comparator in spec.get('secondary_contrasts', []):
+        for operation, oi in [('both', None), ('unit', 0), ('tens', 1)]:
+            a = outcomes[methods.index(reference), u]
+            b = outcomes[methods.index(comparator), u]
+            if oi is not None:
+                a, b = a[:, oi], b[:, oi]
+            diff = (a - b).reshape(len(identities), -1, len(metrics)).mean(1)
+            intervals = np.quantile(diff[draws].mean(1), [.025, .975], axis=0)
+            secondary.append(dict(reference=reference, comparator=comparator, operation=operation,
+                metrics={m: dict(difference_points=100 * float(diff[:, k].mean()),
+                                interval_points=(100 * intervals[:, k]).tolist())
+                         for k, m in enumerate(metrics)}))
     result = dict(written_at_utc=datetime.now(timezone.utc).isoformat(), run=str(run.resolve()),
                   raw_sha256=raw_hash, config_sha256=hashlib.sha256((run / 'config.resolved.json').read_bytes()).hexdigest(),
                   distinct_operand_pair_clusters=len(identities), analyzed_rows=loaded,
                   spec=spec, primary=primary,
                   both_primary_comparisons_positive=all(x['positive_lower_bound'] for x in primary),
-                  cells=cells, scope=cfg['scope'])
+                  cells=cells, secondary=secondary, scope=cfg['scope'])
     args.output.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(args.output / 'cluster_outcomes.npz', outcomes=outcomes, operand_pairs=np.array(identities),
                         methods=np.array(methods), updates=np.array(updates), seeds=np.array(seeds), metrics=np.array(metrics))

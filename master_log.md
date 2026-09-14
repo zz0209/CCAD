@@ -7002,3 +7002,99 @@ anti-defensive-writing与defensive-writing-checker继续具体落实：主张围
 
 ### R33 PROGRESS — final package receipt refresh
 实际写入 UTC：2026-09-14T07:57:03Z。完成记录后为同步最终代码/证据身份重新生成build20260914T075553217181Z，PDF当前SHA256e0fb7eda2553443a5a4877d3d62748800d043b3a61b59fecebcf47db088a20ed，46页；上一COMPLETE时的eea27eb2267c4411b2c2a8f4e654e6a1e322d159bb6ed3b413306c1db350dfed是当时实际版本。两个build的全部TeX/bib/figure文件hash相同；新PDF页8/27/28/29/30与已实际审阅PNG像素逐一完全相同，版面与科学内容未改变。当前report、tracker与visualreview已更新实际最终hash。所有实验结果/判定/完成轮数保持，R34仍未START。
+
+
+### 执行方式决定 — 继续原 automation loop
+实际写入 UTC：2026-09-14T10:16:54Z。用户要求自行选择 Goal 或 automation，以达到既定科学要求为目的。当前工具核对：旧 Goal 的 objective 仍是跨 seed FCC、已验证功能解释复用、同目标验证预算和未见干预预测，status 为 blocked；工具只能创建目标或标记完成/阻塞，不提供恢复已有目标的入口。原 ccad heartbeat 实读 ACTIVE、5 分钟、执行对话 01a06e15-b222-7b21-a8cd-eb058a3159e5。决定保留这个有效执行入口；没有改写 Goal 为完成，没有创建新 loop 或转交执行，也没有暂停研究。
+
+理由与实际动作：研究需要持续的阅读、方法改革、GPU 实验、结果分析和全稿整合；原 heartbeat 支持同一工作单元跨周期接续及资源等待。核对了官方 Scheduled tasks 文档与本会话真实工具能力；检查了 AGENTS、tracker 和两项 writing skills。tracker 明确区分应用中的 blocked 状态与实际研究仍继续。五分钟不限制单元工作时长，不把唤醒或维护计入研究轮。两项 writing skills 用于围绕功能解释复用的实际价值安排实验和正文，主会目标及决定结论的强对照保持。
+
+本次没有科学实验、GPU 使用或论文内容变化；没有新增计算/付款。事件核对发生于本条写入前的当前交互，独立起始秒级时间未记录；不倒算工作时长。R33 COMPLETE，R34 未 START，下一步按既有 R34 工作卡改革源功能学习并检验真实泛化，随后推进目标对应与消费者。旧 tracker 保存在 `artifacts/correspondence_reform_20260913/tracker_before_mode_decision_20260914T101654Z.md`，SHA256 63ddd08bbd9c933b5ba004759b735e0e5a3b9155247d94dd807e9b2fc0ad03c9；本次仅更新当前入口并追加此事实记录。
+
+
+### R34 START — natural counterfactual constraints for reusable source functions
+实际写入 UTC：2026-09-14T10:24:21Z。本轮记账开始时间为本条写入时刻；此前入口和代码阅读已发生，未独立记录起始秒级时间。R33 已完成，当前接续原 ccad loop，R34 不受已解除的五轮限制。选题依据：原源操作与更充分拟合源操作都在新输入范围下降，固定源成员身份仍携带实际功能知识。正结果机会是用自然反事实表示约束改善跨上下文稳定的源功能，再推进目标对应与实际解释复用。
+
+计划在既有五个 Qwen layer23 TopK SAE 和缓存上比较输出监督与加入反事实表示约束的学习，公平控制拟合数据、成员和更新预算；先做有界开发，依信号发展对应关系与未见干预。原新范围已曝光，作为开发；未来独立确认另用新输入且先冻结。学习 Grant 等 CL 原数学与官方实现，核对无关变量、对应状态和生成位置，避免把全 hidden 对齐与功能子空间混同。实际自由生成决定作用，表示误差为机制量。
+
+资源实读：gpu-0 free，RTX5070Ti 16303MiB、已用622MiB、利用率0%；真实计算尚未启动。复用 r004 锁定环境和受管租约。初始比较预算不超过1800秒 GPU driver，根据既有约.07秒/拟合批及.006秒/padded生成序列估算；不新增训练SAE、下载权重或付费。预算涵盖小开发和有信号的五seed复核，不以限额替代科学完成。两writing技能已实际读过，本轮用核心使用问题组织方法与完整稿件。当前稿/入口/关键代码逐字归档 `artifacts/correspondence_reform_20260913/r34_before_20260914T102421Z/MANIFEST.json`。准备、等待和调度不计完成，结果与稿图整理后再记 COMPLETE。
+
+
+### R34 CORRECTION — orthogonality check precision
+实际写入 UTC：2026-09-14T10:30:15Z。首run REFORM_R34_qwen_natural_latent_pilot_v1_20260914 实际2026-09-14T10:27:12.512948+00:00至10:28:30.597923+00:00，FAIL/契约PASS，session71842退出1。78.0539294秒driver，1231继承base记录，零新模型前向/拟合；失败发生在 natural_latent_reference 的 float32 正交乘积阈值，原异常和输入/代码快照保留。既有模型全局 high matmul 允许TF32，该几何检查改用double乘积并输出实际误差；原阈值和模型计算模式不变。新v2配置只更换run身份/写入时刻，原v1不覆盖。随后用实际正交误差和模型梯度差分验证修复；当前不把故障当科学负结果。
+
+
+### R34 PROGRESS — natural-reference objective executing
+实际写入 UTC：2026-09-14T10:32:17Z。v2 已进入实际source拟合，session91572受管运行。自然reference用原训练split中398条base正确且生成前缀确为两位答案的自然轨迹；按答案总值平均后，在三个生成位置分别SVD选16维答案对比空间。固定reference/pair schedule不消费development功能结果。六个拟合为seeds1/2及权重0/.1/1，均64成员、256更新，标签、初始化和数据顺序相同。目标是自然表示约束能否提升实际自由生成的新范围功能；当前拟合损失不是科学完成结果。
+
+数学连接：对于固定自然参照分布与正交投影P，E||P(h_edit-h_cf)||²=||P(h_edit-Eh_cf)||²+E||P(h_cf-Eh_cf)||²；后一项与gate无关，故均值参照与平均逐自然样本平方损失有相同最优gate。这里的P由fit答案均值学得，只是答案对比坐标；不能由P命名宣称causal subspace。每个位置以参照间平均能量归一化，缺少自然答案参照的训练配对保留CE。
+
+实际阅读：Grant论文§5/附录A.5与Apache2官方CL实现，pinnedcommit及4文件hash见reference_material/rep_divergence_f2548d2ea9b4/SOURCE_MANIFEST.json。实际查看其PDF页10Figure3原图，采用表示—实际作用之间的对照思想；本稿图将按结果选择，避免复制过密多面板。重读Modular Arithmetic的单数字token附录B：功能随生成阶段变化，文中不支持每个位置都有独立完整个位/十位通路；这帮助解释我们要求同mask跨全部位置的约束。继续现有consumer，先以CL实际结果决定是否需改革组件表示。
+
+
+### R34 PROGRESS — latent regularization result and equivalent-source reform
+实际写入 UTC：2026-09-14T10:39:51Z。v2自然reference拟合实际10:30:20.691261Z至10:33:54.730508Z，PASS/契约PASS，214.0095087秒，22032padded前向，1211760tokens，3151行；几何double误差2.00393e-8，实际模型梯度差分均通过，旧CE两seed gate逐元素完全相同。旧源未保存逐步schedule，故仅对旧fit_pairs与最终gate核对；R34六配置的实际schedule已保存且完全相同。
+
+新范围run实际10:34:25.620687Z至10:36:32.073011Z附近（精确结束以后续status.json为准），PASS/契约PASS，126.4293291秒，12800padded前向，691200tokens，2560行。原范围CE/.1CL/1CL=37.109375/37.5/34.375%；新范围=21.6796875/16.9921875/18.75%。当前CL适配不改善功能泛化，不扩大其训练或转成正面主张。完整结果r34_latent_original.json与r34_latent_new_range.json保留。
+
+下一具体改革：对每个原训练答案y构造自然等价题1+(y-1)，改变加数形式但保留答案以及成对替换标签；每个请求在原形式与等价形式上均衡拟合，同64成员及256backward预算。所有新增题首加数为1，和原开发10..49及新开发2..9明确不重合。比较原Fisher初始化与16批直接梯度选择加240优化；两者使用同视图、配对、更新和实际生成端点。目的在让源功能直接经历无关输入形式改变，再以独立于新训练题的已有开发测试判断可复用作用。该改革是源学习数据/目标适配，不称新算法或跨seed增益已成立；有效后同轮推进对应与新数据。
+
+
+### R34 CORRECTION — exact event timestamp
+实际写入 UTC：2026-09-14T10:41:17Z。前条PROGRESS给new-range结束时刻写了未经核对的小数近似，不作为事件证据。现在直接读取 `runs/REFORM_R34_qwen_latent_new_range_v1_20260914/status.json`：started_at_utc=2026-09-14T10:34:25.620687+00:00，ended_at_utc=2026-09-14T10:36:32.076032+00:00。该实读值覆盖前条结束时刻；原记录保留，统计结果与成本未变。
+
+
+### R34 PROGRESS — verify semantic equivalence in the model
+实际写入 UTC：2026-09-14T10:46:33Z。equivalent_views_v1实际10:39:55.794240Z至10:42:36.379236Z，PASS/契约PASS，160.5354806秒，15728padded前向/865040tokens，2712行。其原范围CEviews/gradientviews均值29.8828125/38.28125%。新增73个source问题只43个base正确，实际例1+31输出42、1+34输出45。数学答案等价未保证模型轨迹承载同一功能值；该次结果保留，不能把此数据上的变化归因于有效不变性学习。
+
+修正使用已有英文完整问句，并要求原source题与其等价view均base正确才应用该view；否则该训练对中的成员退回原题，不删训练样本或调整评价分母。仍64成员、256backward、同两个初始化与原随机配对/更新顺序。source_view_map记录实际替换，包括退回原题的行。新run/config为valid_equivalent_views_v1，当前尚未执行或查看该形式下source1+b输出；没有据开发干预筛选训练view。
+
+
+### R34 CORRECTION — align the actual generated token sequence
+实际写入 UTC：2026-09-14T10:50:21Z。valid_equivalent_views_v1新增73条英文题全部base正确，398/405原fit行可对应到base正确等价题。实际生成前缀为例如` 32\nQ`，即空格、十位、个位、换行；此前fit helper对所有template都教师强制无空格两位数及换行，三预测位置与英文自然供体状态相差一个token。这是新英文训练消费者的真实格式/轨迹失配，旧source拟合仅symbolic三位置因此不受该修正影响。
+
+修正将回答前缀作为显式配置，英文四位置、symbolic三位置，混合batch用真实目标掩码；同一配对保持同一prompt格式，任何view无效则整对回到原题。增加一个实际四位置梯度差分检查，额外3前向/1backward作为数值验证单列，不计训练预算。所有旧run与原格式失配结果保留。v2仍同source语义、64成员、256训练批及两初始化；不增加CL或更多目标信息。当前尚未用v2新结果选择方法。
+
+
+### R34 PROGRESS — develop positive source-function signal across seeds
+实际写入 UTC：2026-09-14T10:57:43Z。valid_views_new_range_v1实际2026-09-14T10:53:41.179113+00:00至2026-09-14T10:55:26.237506+00:00，PASS/契约PASS，105.024185秒，10240padded前向/552960tokens，2048行。正确格式CEviews两seed原范围39.84375%，新范围26.5625%；原CE分别37.109375/21.6796875%。新范围个位H由30.46875到44.140625，保留位成功由69.53125到77.34375；seed1/2个位H分别由40.625/20.3125到49.21875/39.0625，方向一致。十位H由12.890625到8.984375，保留分解，不能把局部个位增益说成两功能均改善。gradientviews整体25.5859375%，不继续按其配置扩展。
+
+选择已验证正确格式/值的CEviews作为整体source学习候选。补充其余seeds3/4/5同配置256更新，不重跑1/2；保留原五seedsource及320批强source对照。随后使用现有source-field对应与成员指派，把改进源交给实际target组成，并在未见a2..9,b20..49的加数题确认；新确认尚未生成或读取base/干预输出。当前源改法是可信开发信号，尚未独立确认，FCC实际增量也须经过对应消费者。按实测剩余source拟合约120–160秒、关系/开发约200–300秒、新冻结生成约200–300秒，优先在初始1800秒driver预算内完成；若实际超出先重新记账与分配，不用时间限额抹去未完成步骤。
+
+## R34 PROGRESS — written UTC 2026-09-14T11:05:57Z
+
+The remaining source seeds3–5 completed at2026-09-14T11:00:04.848904Z, statusPASS; driver136.079776s. Their original-range mean full-hybrid accuracy is28.91%; combined with seeds1–2 this is33.28%. The two-seed new-range signal is still development evidence, not an independent confirmation. Five-source translation is now running as REFORM_R34_qwen_equivalent_source_transfer_v1_20260914.
+
+Budget decision: extend the R34 local driver allowance from1800 to2700seconds. Nine attempts have used approximately1247driver seconds, including the preserved78-second failed numerical check. Measured source fitting takes16–17seconds per seed after roughly50seconds loading; relation fitting plus evaluation is expected below250seconds, a matched-old-source control below200seconds, and one frozen six-method confirmation below350seconds. This bounded extension completes the same positive opportunity: test whether valid equivalent-input source learning improves actual target memberships. No added weights, SAE training, paid compute or new project.
+
+The matched-old-source control holds relation pair identities, valid-equivalent context availability,64pair budget,512candidate pool and64members fixed. It changes only the source gate. Confirmation will use previously ungenerated a2..9,b20..49 questions, disjoint from original two-digit data and source views with first operand1; methods and primary comparisons will be frozen before any output.
+
+## R34 PROGRESS — written UTC 2026-09-14T11:11:32Z
+
+Five-seed equivalent-source translation completed2026-09-14T11:08:03.851634Z (184.604252s). Original-range source33.28%,field19.69%,assignment19.22%. Matched-old-source control completed2026-09-14T11:10:20.925010Z; all five actual relation fit-pair arrays equal the new-source arrays. The fresh confirmation config is now frozen with all25distinct mask-file hashes (six banks, shared relation files), zero new fitting,64pair clusters and both original prompt forms. Primary full-hybrid contrasts: field(newsource)-field(oldsource), and field(newsource)-assignment(newsource); require both95%cluster interval lower bounds positive. Source new-vs-old,source-vs-direct320,and field-vs-direct320 plus request breakdowns are prespecified diagnostics. Fresh240operand questions a2..9,b20..49 are disjoint by actual identity from all original source/view questions and exposed50..89range. Their outputs remain unread at this writing. Config path configs/reform_r34_qwen_equivalent_source_confirmation_v1.json, SHA256 a1fd8f9436991ecb95f1f32aa710eb960f768510779f4f0d92f97fc34792f787.
+
+## R34 CORRECTION / PROGRESS — written UTC 2026-09-14T14:27:28Z
+
+User reports Windows update/shutdown and requests continuation. Recovery inspection found the confirmation v1 run marked RUNNING but its wrapper PID205104 dead; manager heartbeat last2026-09-14T11:12:17.901Z, expired recoverable CCAD lease. metrics.raw.jsonl is zero bytes; no panel/progress/output outcome was saved. Exact shutdown/end time and interrupted compute duration are unknown; downtime is not research work. Original status bytes saved as status.before_recovery.json, run now CUT with unknown end time. All previous eleven completed attempts and frozen masks retained. Current driver source hashes equal the interrupted snapshot; all25mask-file hashes equal the original freeze.
+
+Continue the identical scientific configuration in REFORM_R34_qwen_equivalent_source_confirmation_v2_20260914, linked to the interrupted attempt. No output-informed reselection, changed data, changed endpoints or additional fitting. Manager will recover its expired dead lease through the existing acquire path; no other project lease is removed. Existing ccad automation is ACTIVE every5minutes in this same conversation. R34 remains the same IN_PROGRESS unit.
+
+## R34 PROGRESS — written UTC 2026-09-14T14:37:01Z
+
+Restored frozen confirmation completed2026-09-14T14:33:52.819259Z, PASS/contractPASS, wrapper63167 exited0. Actual driver376.625956s,processCPU262.84375s,42720padded sequences/2306880tokens; no new fitting. All7680unique intervention records retained. New-source field26.484375%,matched-old field20.78125%,assignment24.453125%,direct32040.390625%. Primary field-old difference5.703125[3.671875,7.8125]points; field-assignment2.03125[-0.3125,4.375], so joint criterion false.
+
+Prespecified source diagnostic: source36.015625% versus old32.421875%,difference3.59375[1.328125,5.9375]. Source units61.25% versus56.5625% with identical88.28125%preservation; new-source field units46.875% versus37.5%,allfive targetseedmeans increase. Tens source10.78125%,field6.09375%,assignment12.8125%,direct21.25%. This independently confirms source learning improves subsequent functional translation; assignment-wide superiority and strong-direct performance remain unresolved. It does not close the full FCC contribution.
+
+Source/target methods and all25filehashes match the pre-shutdown freeze. Analysis extension exactly reproduces retained R33arrays/intervals, and independent stdlib sums agree with all36new H/T/Pcells. New figure paper/figures/arithmetic_source_learning.pdf actually viewed; source/target effect intervals use fixedSAEcluster dependence,Times/STIX and distinct markers. Editable arithmetic results and main discussion updated; currentPDF build underway.
+
+## R34 COMPLETE — written UTC 2026-09-14T14:42:02Z
+
+R34START2026-09-14T10:24:21Z; final experiment ended2026-09-14T14:33:52.819259Z; research/manuscript closeout recorded now. Windows interrupted the pre-freeze-identical confirmation after its last11:12:17.901Zlease heartbeat; exact shutdown/end time and active interruptedcompute unknown. Recovery was recorded14:27:28Z, using samefrozen scientificconfig in v2. Downtime and idle gaps are not research work; active thinking/writing/wait durations were not separately timed.
+
+Main result: equivalent-input source learning improves target field-translated full-hybrid accuracy26.48%vs20.78%,difference5.70[3.67,7.81]points on freshquestions. Source36.02%vs32.42%,difference3.59[1.33,5.94]. New-source field vsassignment2.03[-0.31,4.38],jointprimaryfalse; strongdirect32040.39% and weaktenstransfer6.09% retained. One complete scientificunit: literature/math adaptation, actualsource training, correctedformat, controlled5seeds,matchedcorrespondence,frozenconfirmation,fullstatistics and manuscript/figure integration. No claim of whole FCC closure or main-conference readiness.
+
+Known driver1925.180211s across12completed attempts,processCPU1319.953125s,188000paddedforwards/10264000tokens; additionalCUTdurationunknown. FinalconfirmationCPU262.921875s corrects the earlierlast-progress sample262.84375s. GPUleasefree and wrappersclosed; existingccad5minuteautomationACTIVE in originalconversation. R35notSTART.
+
+Uniquecurrentpaper/main.pdf47pages/main8, SHA2569a245e328d08718ae1923bdbbf6197f387e48cc3dcf00db4c193a63837c94c4f. MainDiscussionandAppendixH30–31,table30/figure13 updated. PDFpages8/30/31andstandalonefigure actuallyviewed; nooverflow/undefinedcitation/missingcharacterwarnings, nonfatalfontconfiguration/request/underfullwarnings retained.144mutableevidencefilehashesverified. R34_REPORT.md,R34_RUNS.json,R34_WRITING_VISUAL_REVIEW.md,R34_DELIVERY.json locate evidence,failures,readsources,costs andeditableoutputs. Bothwriting skills applied toactualresearchchoice,matchedcomparison andpositive-claim-ledparagraphs;strongcontrastsretained.
+
+Nextunit prioritizes the correspondence objective at function-relevant generation positions/directions, with sameavailable sourceinformation fordirect/raw/geometriccontrols and realunfitted full-answer interventions. Stop extending source fitting without a corresponding consumer gain; inspect membercapacity/role mismatch only as targeted alternatives. R34confirmedpanel is exposeddevelopment for futuremethodchanges. Currenttracker andplan priorversions archived verbatim at artifacts/correspondence_reform_20260913/r34_completion_inputs_20260914/MANIFEST.json. White-list sync follows this completion record.

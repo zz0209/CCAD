@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 from fit_component_correspondence import fit
 
 
-def fit_relations(w, cfg, saes, codes, gates, hidden, parent, generate, budget):
+def fit_relations(w, cfg, saes, codes, gates, hidden, parent, generate, budget,
+                  rows=None, view_map=None):
     import numpy as np
     import torch
     from scipy.optimize import linear_sum_assignment
@@ -22,18 +23,35 @@ def fit_relations(w, cfg, saes, codes, gates, hidden, parent, generate, budget):
     for s, t in rc['seed_pairs']:
         sg = gates[s, 'counterfactual_weighted', cap]
         ds, dt = saes[s].decoder.weight.T, saes[t].decoder.weight.T
-        with np.load(w.checked(parent / f'counterfactual_seed{s}_k{cap}.npz')) as data:
+        maskfile = parent / f'counterfactual_seed{s}_k{cap}.npz'
+        if rc.get('source_mask_runs'):
+            maskrun = w.run.parent.parent / rc['source_mask_runs'][str(s)]
+            assert json.loads(w.checked(maskrun / 'status.json').read_text())['status'] == 'PASS'
+            mc = json.loads(w.checked(maskrun / 'config.resolved.json').read_text())
+            assert all(mc[key] == cfg[key] for key in ['training_run','checkpoint_step','model_revision','source_cache_run'])
+            maskfile = maskrun / rc['source_mask_pattern'].format(seed=s, members=cap)
+        with np.load(w.checked(maskfile)) as data:
             all_pairs = data['fit_pairs']
+            if rc.get('source_mask_runs'):
+                sg = torch.tensor(data['gates'], device=w.device)
+                gates[s, 'counterfactual_weighted', cap] = sg
+        old_panel = json.loads((parent / 'panel.json').read_text())
+        assert all(old_panel['rows'][i]['split'] == 'fit' for pair in all_pairs for i in pair)
+        if rc.get('include_equivalent_views'):
+            assert rows is not None and view_map is not None
+            extra = [(view_map[i], view_map[j]) for i, j in all_pairs
+                     if view_map[i] != i and view_map[j] != j]
+            all_pairs = np.concatenate([all_pairs, np.array(extra)], axis=0)
+            assert all(rows[i]['split'] == 'fit' for pair in all_pairs for i in pair)
         order = np.random.default_rng(rc['pair_seed']).permutation(len(all_pairs))[:rc['fit_pairs']]
         pp = all_pairs[order].tolist()
-        old_panel = json.loads((parent / 'panel.json').read_text())
-        assert all(old_panel['rows'][i]['split'] == 'fit' for pair in pp for i in pair)
         ii, jj = [i for i, j in pp], [j for i, j in pp]
         clean, path, assignment = [torch.zeros_like(sg) for _ in range(3)]
         details = []
         for c, operation in enumerate(['unit', 'tens']):
             parts = []
-            for off in range(0, len(pp), cfg['batch_size']):
+            contexts = rc.get('contexts', ['clean', 'path'])
+            for off in (range(0, len(pp), cfg['batch_size']) if 'path' in contexts else []):
                 chunk = pp[off:off + cfg['batch_size']]
                 recipient, donor = [i for i, j in chunk], [j for i, j in chunk]
 
@@ -45,8 +63,10 @@ def fit_relations(w, cfg, saes, codes, gates, hidden, parent, generate, budget):
                 assert float((hpath[:, 0] - hidden[recipient, 0]).abs().max()) < cfg['hidden_atol']
                 parts.append(hpath)
                 budget()
-            intervention_states = torch.cat(parts)
-            for name, states, output in [('clean', hidden[ii], clean), ('path', intervention_states, path)]:
+            state_sets = [('clean', hidden[ii], clean)] if 'clean' in contexts else []
+            if 'path' in contexts:
+                state_sets.append(('path', torch.cat(parts), path))
+            for name, states, output in state_sets:
                 with torch.no_grad():
                     flat = states.reshape(-1, states.shape[-1])
                     zs = saes[s].encode(flat).reshape(*states.shape[:-1], -1)
@@ -81,16 +101,22 @@ def fit_relations(w, cfg, saes, codes, gates, hidden, parent, generate, budget):
             row, col = linear_sum_assignment(-cosine)
             assignment[torch.tensor(col, device=w.device), c] = sg[selected[torch.tensor(row, device=w.device)], c]
 
-        payload = dict(clean=clean.cpu().numpy(), path=path.cpu().numpy(),
-                       assignment=assignment.cpu().numpy(), source_gate=sg.cpu().numpy(),
+        payload = dict(assignment=assignment.cpu().numpy(), source_gate=sg.cpu().numpy(),
                        fit_pairs=np.array(pp), selected_pair_indices=order)
+        for name, g in [('clean', clean), ('path', path)]:
+            if name in contexts:
+                payload[name] = g.cpu().numpy()
         np.savez_compressed(w.run / f'relation_s{s}_t{t}.npz', **payload)
         for name, g in [('clean', clean), ('path', path), ('assignment', assignment)]:
+            if name != 'assignment' and name not in contexts:
+                continue
             assert bool(((g >= 0) & (g <= 1)).all()) and bool(((g > 0).sum(0) <= cap).all())
             result[t, f'transfer_s{s}_{name}', cap] = g
         item = dict(source_seed=s, target_seed=t, fit_pairs=len(pp), fit_contexts=details,
                     source_operation='counterfactual_weighted', target_output_labels_used=0,
                     target_output_gradients_used=0, candidate_allowance=cap,
+                    contexts=contexts, source_mask=str(maskfile),
+                    equivalent_pairs=sum(bool(rows[i].get('source_view')) for i, j in pp) if rows is not None else 0,
                     assignment='Optimal signed-cosine assignment of the selected source members to distinct target members; not full-dictionary PW-MCC.')
         metadata.append(item)
         w.progress('ARITHMETIC_RELATION_FIT', source_seed=s, target_seed=t, details=details)

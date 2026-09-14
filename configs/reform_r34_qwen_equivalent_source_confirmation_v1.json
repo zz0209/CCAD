@@ -1,0 +1,1157 @@
+{
+  "run_id": "REFORM_R34_qwen_equivalent_source_confirmation_v1_20260914",
+  "run_parent": "R34",
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "purpose": "Confirm source invariance and its cross-seed transfer on fresh addition questions",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD fresh a2..9,b20..49 arithmetic questions with both digits differing in donor pairs",
+  "budget": "Existing GPU500driver seconds; six frozen banks,five fixedSAEs,128pairpresentations,zero fitting.",
+  "budget_seconds": 500,
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "batch_size": 8,
+  "max_new_tokens": 5,
+  "scope": "One frozen confirmation on previously ungenerated questions. All64recipient-donor clusters retain two prompts,two requests and five fixedSAEs. Primary endpoint is full hybrid output at zero current target fitting. Compare new-source field translation to matched old-source field translation and new-source member assignment. Source-only improvements and the retained320-backward direct baseline are prespecified diagnostics. No mask or operating point changes on this panel.",
+  "written_at_utc": "2026-09-14T11:11:32.475278+00:00",
+  "round_id": "R34",
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "operand_range": [
+    10,
+    50
+  ],
+  "split_salt": "ccad-r34-equivalent-source-confirmation-20260914",
+  "pairs_per_template": 64,
+  "selection_rules": [
+    "fisher_contrast"
+  ],
+  "members": [
+    64
+  ],
+  "max_length": 72,
+  "hidden_atol": 0.002,
+  "statistics_unit": "Recipient-donor operand pair cluster, averaging the two prompt forms, two requests and five fixed target SAEs; no independent-seed or broader-task inference",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "intervention_span": "generated_prefix",
+  "source_selection_step": {
+    "unit": 1,
+    "tens": 0
+  },
+  "reuse_rules": [
+    "fisher_contrast",
+    "counterfactual_weighted"
+  ],
+  "frozen_adaptation": {
+    "initializations": [
+      "field_views",
+      "field_old",
+      "assignment_views",
+      "source_views",
+      "source_original",
+      "direct_320"
+    ],
+    "initialization_runs": {
+      "field_views": "runs/REFORM_R34_qwen_equivalent_source_transfer_v1_20260914",
+      "field_old": "runs/REFORM_R34_qwen_matched_old_source_transfer_v1_20260914",
+      "assignment_views": "runs/REFORM_R34_qwen_equivalent_source_transfer_v1_20260914",
+      "source_original": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+      "direct_320": "runs/REFORM_R33_qwen_functional_path_v1_20260914"
+    },
+    "initialization_seed_runs": {
+      "source_views": {
+        "1": "runs/REFORM_R34_qwen_valid_equivalent_views_v2_20260914",
+        "2": "runs/REFORM_R34_qwen_valid_equivalent_views_v2_20260914",
+        "3": "runs/REFORM_R34_qwen_valid_views_remaining_v1_20260914",
+        "4": "runs/REFORM_R34_qwen_valid_views_remaining_v1_20260914",
+        "5": "runs/REFORM_R34_qwen_valid_views_remaining_v1_20260914"
+      }
+    },
+    "source_seed_for_target": {
+      "1": 5,
+      "2": 1,
+      "3": 2,
+      "4": 3,
+      "5": 4
+    },
+    "updates": [
+      0
+    ],
+    "source_cache_identity": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+    "development_panel_run": "runs/REFORM_R34_qwen_valid_equivalent_views_v2_20260914",
+    "file_patterns": {
+      "field_views": "relation_s{source}_t{seed}.npz",
+      "field_old": "relation_s{source}_t{seed}.npz",
+      "assignment_views": "relation_s{source}_t{seed}.npz",
+      "source_views": "counterfactual_seed{seed}_k{members}_ce_views.npz",
+      "source_original": "counterfactual_seed{seed}_k{members}.npz",
+      "direct_320": "counterfactual_seed{seed}_k{members}_target_gradient.npz"
+    },
+    "array_keys": {
+      "field_views": {
+        "0": "clean"
+      },
+      "field_old": {
+        "0": "clean"
+      },
+      "assignment_views": {
+        "0": "assignment"
+      },
+      "source_views": {
+        "0": "gates"
+      },
+      "source_original": {
+        "0": "gates"
+      },
+      "direct_320": {
+        "0": "updates_320"
+      }
+    },
+    "mask_sha256": {
+      "runs/REFORM_R34_qwen_equivalent_source_transfer_v1_20260914/relation_s5_t1.npz": "ac932870053c357a7e144bd0ec1a9143b928048f197c60b1018d201e5eb17537",
+      "runs/REFORM_R34_qwen_equivalent_source_transfer_v1_20260914/relation_s1_t2.npz": "6b49b2c0d243a4124ba5cd05d42365420fc48894de0903852a05157d29e57078",
+      "runs/REFORM_R34_qwen_equivalent_source_transfer_v1_20260914/relation_s2_t3.npz": "40a08219e0ddb67909a37f0e9ee64b77be1f0e1acf0f3ee62a24cc29f4700101",
+      "runs/REFORM_R34_qwen_equivalent_source_transfer_v1_20260914/relation_s3_t4.npz": "33e8197f3a35592046d73a2154a378051ea6ee12adfc0e98e031b5750b283dd6",
+      "runs/REFORM_R34_qwen_equivalent_source_transfer_v1_20260914/relation_s4_t5.npz": "02faf80c80c5d3c8785fa4c6bcffcfc360d141a1896d8c75b618644300804ce3",
+      "runs/REFORM_R34_qwen_matched_old_source_transfer_v1_20260914/relation_s5_t1.npz": "69779bae324393d545c76494da6e120bcbdd5d7414fb039d1437ddbf257ec877",
+      "runs/REFORM_R34_qwen_matched_old_source_transfer_v1_20260914/relation_s1_t2.npz": "d505c076f33f8c014b4ae98a15d3648988811fad82b2f329c68463816cf751ab",
+      "runs/REFORM_R34_qwen_matched_old_source_transfer_v1_20260914/relation_s2_t3.npz": "de7c44732314e0af38833341e76da31efd45b56146f98a2b13cd851f302e8f33",
+      "runs/REFORM_R34_qwen_matched_old_source_transfer_v1_20260914/relation_s3_t4.npz": "9dfe95b1b74d55f38a75b9f21dfd219e0f750ebc70912acd8d71b66904eb8035",
+      "runs/REFORM_R34_qwen_matched_old_source_transfer_v1_20260914/relation_s4_t5.npz": "29d3ee0ae2b06ca4268036e6adcc11f95f1a27d078e4771d22cde1c91c048fca",
+      "runs/REFORM_R34_qwen_valid_equivalent_views_v2_20260914/counterfactual_seed1_k64_ce_views.npz": "952477232da7480c884ccf0b3238469961232326cf3e2c576391dc7978c8976a",
+      "runs/REFORM_R34_qwen_valid_equivalent_views_v2_20260914/counterfactual_seed2_k64_ce_views.npz": "66074d48fffcfe54b8a08b584966af94a3ce2a5acf3deeed2204d15f8460f5cf",
+      "runs/REFORM_R34_qwen_valid_views_remaining_v1_20260914/counterfactual_seed3_k64_ce_views.npz": "51c80bc82871b32d30c125937cdca4a8d7b3ff8b9a568539ade248e7688c06fb",
+      "runs/REFORM_R34_qwen_valid_views_remaining_v1_20260914/counterfactual_seed4_k64_ce_views.npz": "fc4405c6ff39f6066db2f9cee9191f60d63e9c1391c33d13efff2754c4608420",
+      "runs/REFORM_R34_qwen_valid_views_remaining_v1_20260914/counterfactual_seed5_k64_ce_views.npz": "95bb28133b648a65cd6608f7e0823fa886446dec89c130dfecbe3cccb0e84d9f",
+      "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914/counterfactual_seed1_k64.npz": "cc4aee3fd588096a4e20c0cca33cf3a50224582620ba51f203a6a840e4dbecc0",
+      "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914/counterfactual_seed2_k64.npz": "686e9c1b59620ab966378072a301d98f3529c9dda253d0895611cffae35a5eab",
+      "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914/counterfactual_seed3_k64.npz": "d6c2c890a2b7fdd55bd1aabb57570b2bc38963250cfcb1f5e1ac99d5aa6376db",
+      "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914/counterfactual_seed4_k64.npz": "0874e3e1b497b589855b27afdb84c57048b7472262a70fcb9f88b7cb6e8939d8",
+      "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914/counterfactual_seed5_k64.npz": "14a9d975d7355c7602474d38ed614fe4000d63db43f7b5d2d2bdb9d9e0264af3",
+      "runs/REFORM_R33_qwen_functional_path_v1_20260914/counterfactual_seed1_k64_target_gradient.npz": "5ce3d8f36185a37a1fa27e8b36ea449a56b8100ded5dfa399c103251eabd25be",
+      "runs/REFORM_R33_qwen_functional_path_v1_20260914/counterfactual_seed2_k64_target_gradient.npz": "211769959e846cbefeecc7d67aecd853be00ad16b7ebef3489dc64ecdb0dc8be",
+      "runs/REFORM_R33_qwen_functional_path_v1_20260914/counterfactual_seed3_k64_target_gradient.npz": "5abf818d9e2bae98ddfca2a9225ec35992caa6bde9c852aa0b02d2a2f2be6d0f",
+      "runs/REFORM_R33_qwen_functional_path_v1_20260914/counterfactual_seed4_k64_target_gradient.npz": "23339e67d3ffb54df9996626413fb018a4b9757116be3a82b123cc7745e390d5",
+      "runs/REFORM_R33_qwen_functional_path_v1_20260914/counterfactual_seed5_k64_target_gradient.npz": "7f7514f5c8e1328ed6876a3b314b633a30d236d28ced94a9ef9120678309f2d0"
+    }
+  },
+  "evaluation_operand_pairs": [
+    [
+      2,
+      20
+    ],
+    [
+      2,
+      21
+    ],
+    [
+      2,
+      22
+    ],
+    [
+      2,
+      23
+    ],
+    [
+      2,
+      24
+    ],
+    [
+      2,
+      25
+    ],
+    [
+      2,
+      26
+    ],
+    [
+      2,
+      27
+    ],
+    [
+      2,
+      28
+    ],
+    [
+      2,
+      29
+    ],
+    [
+      2,
+      30
+    ],
+    [
+      2,
+      31
+    ],
+    [
+      2,
+      32
+    ],
+    [
+      2,
+      33
+    ],
+    [
+      2,
+      34
+    ],
+    [
+      2,
+      35
+    ],
+    [
+      2,
+      36
+    ],
+    [
+      2,
+      37
+    ],
+    [
+      2,
+      38
+    ],
+    [
+      2,
+      39
+    ],
+    [
+      2,
+      40
+    ],
+    [
+      2,
+      41
+    ],
+    [
+      2,
+      42
+    ],
+    [
+      2,
+      43
+    ],
+    [
+      2,
+      44
+    ],
+    [
+      2,
+      45
+    ],
+    [
+      2,
+      46
+    ],
+    [
+      2,
+      47
+    ],
+    [
+      2,
+      48
+    ],
+    [
+      2,
+      49
+    ],
+    [
+      3,
+      20
+    ],
+    [
+      3,
+      21
+    ],
+    [
+      3,
+      22
+    ],
+    [
+      3,
+      23
+    ],
+    [
+      3,
+      24
+    ],
+    [
+      3,
+      25
+    ],
+    [
+      3,
+      26
+    ],
+    [
+      3,
+      27
+    ],
+    [
+      3,
+      28
+    ],
+    [
+      3,
+      29
+    ],
+    [
+      3,
+      30
+    ],
+    [
+      3,
+      31
+    ],
+    [
+      3,
+      32
+    ],
+    [
+      3,
+      33
+    ],
+    [
+      3,
+      34
+    ],
+    [
+      3,
+      35
+    ],
+    [
+      3,
+      36
+    ],
+    [
+      3,
+      37
+    ],
+    [
+      3,
+      38
+    ],
+    [
+      3,
+      39
+    ],
+    [
+      3,
+      40
+    ],
+    [
+      3,
+      41
+    ],
+    [
+      3,
+      42
+    ],
+    [
+      3,
+      43
+    ],
+    [
+      3,
+      44
+    ],
+    [
+      3,
+      45
+    ],
+    [
+      3,
+      46
+    ],
+    [
+      3,
+      47
+    ],
+    [
+      3,
+      48
+    ],
+    [
+      3,
+      49
+    ],
+    [
+      4,
+      20
+    ],
+    [
+      4,
+      21
+    ],
+    [
+      4,
+      22
+    ],
+    [
+      4,
+      23
+    ],
+    [
+      4,
+      24
+    ],
+    [
+      4,
+      25
+    ],
+    [
+      4,
+      26
+    ],
+    [
+      4,
+      27
+    ],
+    [
+      4,
+      28
+    ],
+    [
+      4,
+      29
+    ],
+    [
+      4,
+      30
+    ],
+    [
+      4,
+      31
+    ],
+    [
+      4,
+      32
+    ],
+    [
+      4,
+      33
+    ],
+    [
+      4,
+      34
+    ],
+    [
+      4,
+      35
+    ],
+    [
+      4,
+      36
+    ],
+    [
+      4,
+      37
+    ],
+    [
+      4,
+      38
+    ],
+    [
+      4,
+      39
+    ],
+    [
+      4,
+      40
+    ],
+    [
+      4,
+      41
+    ],
+    [
+      4,
+      42
+    ],
+    [
+      4,
+      43
+    ],
+    [
+      4,
+      44
+    ],
+    [
+      4,
+      45
+    ],
+    [
+      4,
+      46
+    ],
+    [
+      4,
+      47
+    ],
+    [
+      4,
+      48
+    ],
+    [
+      4,
+      49
+    ],
+    [
+      5,
+      20
+    ],
+    [
+      5,
+      21
+    ],
+    [
+      5,
+      22
+    ],
+    [
+      5,
+      23
+    ],
+    [
+      5,
+      24
+    ],
+    [
+      5,
+      25
+    ],
+    [
+      5,
+      26
+    ],
+    [
+      5,
+      27
+    ],
+    [
+      5,
+      28
+    ],
+    [
+      5,
+      29
+    ],
+    [
+      5,
+      30
+    ],
+    [
+      5,
+      31
+    ],
+    [
+      5,
+      32
+    ],
+    [
+      5,
+      33
+    ],
+    [
+      5,
+      34
+    ],
+    [
+      5,
+      35
+    ],
+    [
+      5,
+      36
+    ],
+    [
+      5,
+      37
+    ],
+    [
+      5,
+      38
+    ],
+    [
+      5,
+      39
+    ],
+    [
+      5,
+      40
+    ],
+    [
+      5,
+      41
+    ],
+    [
+      5,
+      42
+    ],
+    [
+      5,
+      43
+    ],
+    [
+      5,
+      44
+    ],
+    [
+      5,
+      45
+    ],
+    [
+      5,
+      46
+    ],
+    [
+      5,
+      47
+    ],
+    [
+      5,
+      48
+    ],
+    [
+      5,
+      49
+    ],
+    [
+      6,
+      20
+    ],
+    [
+      6,
+      21
+    ],
+    [
+      6,
+      22
+    ],
+    [
+      6,
+      23
+    ],
+    [
+      6,
+      24
+    ],
+    [
+      6,
+      25
+    ],
+    [
+      6,
+      26
+    ],
+    [
+      6,
+      27
+    ],
+    [
+      6,
+      28
+    ],
+    [
+      6,
+      29
+    ],
+    [
+      6,
+      30
+    ],
+    [
+      6,
+      31
+    ],
+    [
+      6,
+      32
+    ],
+    [
+      6,
+      33
+    ],
+    [
+      6,
+      34
+    ],
+    [
+      6,
+      35
+    ],
+    [
+      6,
+      36
+    ],
+    [
+      6,
+      37
+    ],
+    [
+      6,
+      38
+    ],
+    [
+      6,
+      39
+    ],
+    [
+      6,
+      40
+    ],
+    [
+      6,
+      41
+    ],
+    [
+      6,
+      42
+    ],
+    [
+      6,
+      43
+    ],
+    [
+      6,
+      44
+    ],
+    [
+      6,
+      45
+    ],
+    [
+      6,
+      46
+    ],
+    [
+      6,
+      47
+    ],
+    [
+      6,
+      48
+    ],
+    [
+      6,
+      49
+    ],
+    [
+      7,
+      20
+    ],
+    [
+      7,
+      21
+    ],
+    [
+      7,
+      22
+    ],
+    [
+      7,
+      23
+    ],
+    [
+      7,
+      24
+    ],
+    [
+      7,
+      25
+    ],
+    [
+      7,
+      26
+    ],
+    [
+      7,
+      27
+    ],
+    [
+      7,
+      28
+    ],
+    [
+      7,
+      29
+    ],
+    [
+      7,
+      30
+    ],
+    [
+      7,
+      31
+    ],
+    [
+      7,
+      32
+    ],
+    [
+      7,
+      33
+    ],
+    [
+      7,
+      34
+    ],
+    [
+      7,
+      35
+    ],
+    [
+      7,
+      36
+    ],
+    [
+      7,
+      37
+    ],
+    [
+      7,
+      38
+    ],
+    [
+      7,
+      39
+    ],
+    [
+      7,
+      40
+    ],
+    [
+      7,
+      41
+    ],
+    [
+      7,
+      42
+    ],
+    [
+      7,
+      43
+    ],
+    [
+      7,
+      44
+    ],
+    [
+      7,
+      45
+    ],
+    [
+      7,
+      46
+    ],
+    [
+      7,
+      47
+    ],
+    [
+      7,
+      48
+    ],
+    [
+      7,
+      49
+    ],
+    [
+      8,
+      20
+    ],
+    [
+      8,
+      21
+    ],
+    [
+      8,
+      22
+    ],
+    [
+      8,
+      23
+    ],
+    [
+      8,
+      24
+    ],
+    [
+      8,
+      25
+    ],
+    [
+      8,
+      26
+    ],
+    [
+      8,
+      27
+    ],
+    [
+      8,
+      28
+    ],
+    [
+      8,
+      29
+    ],
+    [
+      8,
+      30
+    ],
+    [
+      8,
+      31
+    ],
+    [
+      8,
+      32
+    ],
+    [
+      8,
+      33
+    ],
+    [
+      8,
+      34
+    ],
+    [
+      8,
+      35
+    ],
+    [
+      8,
+      36
+    ],
+    [
+      8,
+      37
+    ],
+    [
+      8,
+      38
+    ],
+    [
+      8,
+      39
+    ],
+    [
+      8,
+      40
+    ],
+    [
+      8,
+      41
+    ],
+    [
+      8,
+      42
+    ],
+    [
+      8,
+      43
+    ],
+    [
+      8,
+      44
+    ],
+    [
+      8,
+      45
+    ],
+    [
+      8,
+      46
+    ],
+    [
+      8,
+      47
+    ],
+    [
+      8,
+      48
+    ],
+    [
+      8,
+      49
+    ],
+    [
+      9,
+      20
+    ],
+    [
+      9,
+      21
+    ],
+    [
+      9,
+      22
+    ],
+    [
+      9,
+      23
+    ],
+    [
+      9,
+      24
+    ],
+    [
+      9,
+      25
+    ],
+    [
+      9,
+      26
+    ],
+    [
+      9,
+      27
+    ],
+    [
+      9,
+      28
+    ],
+    [
+      9,
+      29
+    ],
+    [
+      9,
+      30
+    ],
+    [
+      9,
+      31
+    ],
+    [
+      9,
+      32
+    ],
+    [
+      9,
+      33
+    ],
+    [
+      9,
+      34
+    ],
+    [
+      9,
+      35
+    ],
+    [
+      9,
+      36
+    ],
+    [
+      9,
+      37
+    ],
+    [
+      9,
+      38
+    ],
+    [
+      9,
+      39
+    ],
+    [
+      9,
+      40
+    ],
+    [
+      9,
+      41
+    ],
+    [
+      9,
+      42
+    ],
+    [
+      9,
+      43
+    ],
+    [
+      9,
+      44
+    ],
+    [
+      9,
+      45
+    ],
+    [
+      9,
+      46
+    ],
+    [
+      9,
+      47
+    ],
+    [
+      9,
+      48
+    ],
+    [
+      9,
+      49
+    ]
+  ],
+  "confirmation": {
+    "reference": "field_views",
+    "comparators": [
+      "field_old",
+      "assignment_views"
+    ],
+    "primary_updates": 0,
+    "primary_endpoint": "Full hybrid accuracy averaged equally over requests,prompts and five fixedtargetSAEs",
+    "joint_criterion": "Both paired95percent difference intervals have positive lower bounds",
+    "bootstrap_seed": 9341401,
+    "bootstrap_replicates": 10000,
+    "secondary_contrasts": [
+      [
+        "source_views",
+        "source_original"
+      ],
+      [
+        "source_views",
+        "direct_320"
+      ],
+      [
+        "field_views",
+        "direct_320"
+      ]
+    ],
+    "secondary_breakdown": [
+      "unit",
+      "tens",
+      "target digit",
+      "preserved digit",
+      "five fixedseeds"
+    ],
+    "disjointness": "All questions have firstoperand2..9,second20..49; no originaltwo-digit questions,no sourceviewswithfirstoperand1,no exposed50..89range.",
+    "frozen_before_any_new_panel_outputs": true
+  }
+}
