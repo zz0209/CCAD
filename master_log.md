@@ -7484,3 +7484,13 @@ round_id：R41。实际写入UTC：2026-09-14T23:02:30Z。本轮START写入2026-
 交付定位：paper/main.pdf（62页/主文8/参考2），SHA2563774362968a1b9da0b4a20693e17efd768e8408212b16271409837d2fd5fd85d；全部可编辑源、图数据、EVIDENCE_INDEX与README已更新。R41_DELIVERY.json、R41_REPORT.md、R41_WRITING_VISUAL_REVIEW.md、R41_FOCUSED_CHECK.json、R41_RUNS.json/R41_COST.json包含恢复与核对路径。全稿contact sheet及细看页见r41_visual；无溢出、缺字或未解析引用。适当检查为精确答案对独立重算、源fit不变/旧prompt排除、native64/权重界、梯度核对和原始输出复现；不把这些检查当科学贡献。
 
 实际资源：既有RTX5070Ti与锁定r004环境；12run、9PASS/3FAIL，共1460.270131driver秒、162048序列/5344000token forward，低于2400秒预算。全部本轮run已结束。有效研究、等待与GPU-active时长未知，不以墙钟冒充；无新训练/模型/包/购买。旧失败和数值/提示/暴露修正全部保留。下一R42未开始，不计额外轮。当前tracker前身逐字归档artifacts/correspondence_reform_20260913/r41_tracker_before_complete_20260914T230230Z.md，hashc2164301f43de423a0255ef82f5758346556b5b010d2b7d3f68a48c0f8a89c27。本COMPLETE写完后才推进tracker状态。白名单同步随后成组执行。
+
+## GOAL_DIRECTION — START / COMPLETE（目标与路径更新，不计研究轮）
+
+实际写入UTC：2026-09-14T23:14:19Z。round_id：无新增研究轮；R41已完成，R42未开始。本次自动化变更的可证实保存时间为2026-09-14T23:10:11.780Z（automation updated_at=1789427411780）；原目标归档写入时间见strong_accept_direction_20260914T230941Z/MANIFEST.json。最初阅读开始的精确事件时刻未单独记录，未知；本块不倒填开始时间。
+
+用户明确当前loop以ACL Main或ICLR Main strong accept质量为目标，整篇达到且完成交付后停止；未达到继续广泛学习和实质改革。已原位更新既有ccad automation，保存ACTIVE、5分钟、当前thread归属；本地长期prompt与实际automation prompt逐字内容核对一致。AGENTS和plan保留新目标及统一证据要求。录用概率、自评分、局部提升或轮数不作停止依据；科学发现、重要能力和有收益的方法均为合法路径，未新增“一般规律必需”的硬门。
+
+实际核对当前62页PDF源、R41结果与附加AI意见的版本差异，重读两个明确要求的writing skills。官方网页核对ICLR reviewer guide和ARR review form；复读Semantic Optimal Transport v1 §6.1–6.2、C.4、C.7、D，记录条件上下文/模块共现对固定参与关系的启发。无外部源码复用、新引用凑数或新依赖。STRONG_ACCEPT_DIRECTION.md给出实际取舍：围绕同一解释的新干预判断，将源预测保真与完整功能成功分开；从已有readout/native差距定位可改革部分，再在算术和绑定中检验共同主张。未把局部执行优化自动算核心突破，决定性强对照继续保留。
+
+本次是授权目标维护和方向判断，无新科学结果、训练、推理run或GPU租约；有效思考/阅读秒数及各工具等待总量未测量，不冒充研究时长。paper/main.pdf及R41实证结论保持，SHA256为3774362968a1b9da0b4a20693e17efd768e8408212b16271409837d2fd5fd85d。旧入口逐字与hash保存在artifacts/correspondence_reform_20260913/strong_accept_direction_20260914T230941Z/MANIFEST.json。下一实际研究从tracker工作卡接续并写R42 START；本次不推进完成计数。
