@@ -72,6 +72,8 @@ def main():
         sources += ["scripts/arithmetic_counterfactual_fit.py", "src/ccad/semantic_participation.py"]
     if cfg.get("relation_transfer"):
         sources += ["scripts/arithmetic_relation_transfer.py", "scripts/fit_component_correspondence.py"]
+    if cfg.get("response_relation"):
+        sources += ["scripts/arithmetic_response_relation.py", "scripts/fit_component_correspondence.py"]
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -273,6 +275,11 @@ def main():
             transferred,relation_meta=fit_relations(w,cfg,saes,codes,gates,h,source_parent,generate,budget,
                                                   rows=rows,view_map=view_map)
             gates.update(transferred);metadata.extend(relation_meta)
+        if cfg.get("response_relation"):
+            from arithmetic_response_relation import fit_response_relations
+            gates,response_meta=fit_response_relations(w,cfg,model,module,tok,rows,tokenrows,
+                                                       saes,codes,physical_length,budget)
+            metadata.extend(response_meta)
         if cfg.get("adaptation"):
             from arithmetic_counterfactual_fit import fit_gates
             ac=cfg["adaptation"];relation_parent=ROOT/ac["relation_run"]
@@ -336,7 +343,7 @@ def main():
             gates=loaded
             metadata.append(dict(frozen_adaptation=fc,current_fit_updates=0,current_output_gradients=0,
                                  original_source_and_target_fit_labels_shared=True))
-        write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=bool(cfg.get("relation_transfer") or cfg.get("adaptation") or cfg.get("frozen_adaptation")),task_output_gradients="fit split hybrid CE" if cfg.get("counterfactual_fit") else "inherited source and target fit only" if cfg.get("frozen_adaptation") else "inherited source fit only" if source_parent else 0,source_functional_outcomes_used_for_selection=bool(cfg.get("counterfactual_fit") or source_parent),development_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
+        write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=bool(cfg.get("relation_transfer") or cfg.get("response_relation") or cfg.get("adaptation") or cfg.get("frozen_adaptation")),task_output_gradients="shared fit-pair requested/preserved margins; see RESPONSE_FREEZE.json" if cfg.get("response_relation") else "fit split hybrid CE" if cfg.get("counterfactual_fit") else "inherited source and target fit only" if cfg.get("frozen_adaptation") else "inherited source fit only" if source_parent else 0,source_functional_outcomes_used_for_selection=bool(cfg.get("counterfactual_fit") or source_parent),development_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
         def evaluate(seed,method,k,operation,deltas,gate=None,raw_trajectory=False):
             for off in range(0,len(pairs),batch):
                 pp=pairs[off:off+batch];ix=[p["recipient"] for p in pp];donors=[p["donor"] for p in pp]
@@ -374,7 +381,7 @@ def main():
                     delta=((z[jj]-z[ii])*gate[:,c])@D
                     evaluate(seed,rule,k,operation,delta)
         w.checks.update(source_selection_only_fit_data=True,donor_changes_both_digits=True,real_generation_no_answer_prefix=True,all_failed_base_cases_retained=True)
-        if not cfg.get("relation_transfer") and not cfg.get("adaptation") and not cfg.get("frozen_adaptation"):
+        if not any(cfg.get(k) for k in ["relation_transfer","response_relation","adaptation","frozen_adaptation"]):
             w.checks["no_target_used"]=True
         if not cfg.get("counterfactual_fit") and source_parent is None:
             w.checks["source_selection_only_fit_labels_and_activations"]=True

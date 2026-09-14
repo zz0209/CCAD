@@ -27,6 +27,8 @@ def main():
             method = row['method']
             if args.pool_transfer_sources and method.startswith('transfer_s'):
                 method = 'transfer_' + method.split('_', 2)[2]
+            if args.pool_transfer_sources and method.startswith('response_s'):
+                method = 'response_' + method.split('_', 2)[2]
             groups[method, row['operation']].append(row)
     cells = []
     for (method, operation), rows in sorted(groups.items()):

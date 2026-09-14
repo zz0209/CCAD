@@ -7098,3 +7098,41 @@ Known driver1925.180211s across12completed attempts,processCPU1319.953125s,18800
 Uniquecurrentpaper/main.pdf47pages/main8, SHA2569a245e328d08718ae1923bdbbf6197f387e48cc3dcf00db4c193a63837c94c4f. MainDiscussionandAppendixH30–31,table30/figure13 updated. PDFpages8/30/31andstandalonefigure actuallyviewed; nooverflow/undefinedcitation/missingcharacterwarnings, nonfatalfontconfiguration/request/underfullwarnings retained.144mutableevidencefilehashesverified. R34_REPORT.md,R34_RUNS.json,R34_WRITING_VISUAL_REVIEW.md,R34_DELIVERY.json locate evidence,failures,readsources,costs andeditableoutputs. Bothwriting skills applied toactualresearchchoice,matchedcomparison andpositive-claim-ledparagraphs;strongcontrastsretained.
 
 Nextunit prioritizes the correspondence objective at function-relevant generation positions/directions, with sameavailable sourceinformation fordirect/raw/geometriccontrols and realunfitted full-answer interventions. Stop extending source fitting without a corresponding consumer gain; inspect membercapacity/role mismatch only as targeted alternatives. R34confirmedpanel is exposeddevelopment for futuremethodchanges. Currenttracker andplan priorversions archived verbatim at artifacts/correspondence_reform_20260913/r34_completion_inputs_20260914/MANIFEST.json. White-list sync follows this completion record.
+
+## R35 START — written UTC 2026-09-14T14:50:20Z
+
+Begin the next substantive unit on the correspondence objective. R34 completed and synced8aace7c; original5minloop remains active with no new round cap. Opportunity: source functions transfer a measurable benefit on freshinputs, but targetmembers still lose much of their source effect. Examine generation-position mismatch and response-aware linear fitting against same-information direct member attribution, retaining the old full-field and strong320batch references. Existing5SAEs/sourcegates/caches reused; initial1200driver-second budget, allocation revised only by actual throughput/value. Read/plan work before thisSTART was not independently timed. NoR35scientificresults or activeGPUrun atthiswrite.
+
+Archive currentmanuscript/plan/tracker before edits: artifacts/correspondence_reform_20260913/r35_before_20260914T145020Z/MANIFEST.json. Bothwriting skills remain inuse: scientificquestion and actualconsumer determine the experiment; observedpartial results do not reduce finalmain-conference ambition. Literature search now identifies Hoang etal2607.24645 downstream feature-effectgeometry and Srinivas/Fleuret1803.00443 Jacobianmatching as method-level leads; fulltexts are being read, not adopted as findings.
+
+## R35 CORRECTION — numerical response check
+
+实际写入UTC：2026-09-14T15:01:33Z。v1开始2026-09-14T14:59:31.616683Z，41.23 driver秒后在首个Jacobian有限差分检查失败：误差1.1518，容限0.08029；没有目标干预结论。原run与源码全部保留。当前高吞吐float32 matmul可能使0.001差分受量化误差影响；v2仅把响应bank内乘法切为highest，保持同检查和自由生成high，检验此解释，不放宽容限。
+
+## R35 PROGRESS — response bank and source reading
+
+实际写入UTC：2026-09-14T15:03:07Z。v2的两个数值梯度检查已通过，第二项误差0.02097<0.06421；采用highest矩阵乘法的解释得到支持。五条对应边已拟合完，当前正在原开发面板自由生成。共同bank为64fit句对、2功能角色、32backward/100forward batch；未给目标特定的额外梯度拟合。FEGA原文§§3–5及附录A/B、官方固定commit实现和PDF图1/2已实际阅读，来源/version/hash已记REFERENCE_REGISTRY。尚无完整实证结论。
+
+## R35 PROGRESS — finite-response mismatch
+
+实际写入UTC：2026-09-14T15:08:28Z。v2结束2026-09-14T15:06:43.403592Z、PASS；mean完整答案：响应17.578%、响应+0.1field19.688%、同位置field20.0%、原field19.688%、direct profile32.891%、source33.281%、direct32043.906%。位响应拟合MSE约0.38低于field0.62，但个位目标98.594%/保留15.938%，产生实际功能失配。下一实验比较J作用于两边field的对称线性响应和lambda1锚定；有据更改目标，不重复源训练。预算360driver秒，仍在本轮1200初始预算内。原始分析r35_response_original.json与代码snapshot保留。
+
+## R35 PROGRESS — develop the response-selection signal
+
+实际写入UTC：2026-09-14T15:12:57Z。对称线性响应23.438%、加0.1field24.375%，有限响应加1field26.641%，均有改善但未达到同资料direct profile32.891%。下一步发展最强现有信号：固定direct support，检验正确源profile的逐成员校准相对同profile单标量，以及真实交换源功能后在同一prefix测量的profile。三个办法共享Jacobian/候选/样本/64成员；计算预算300driver秒。测试决定source identity是否为实际增量，不预设其成立。
+
+## R35 PROGRESS — richer response representation
+
+实际写入UTC：2026-09-14T15:17:18Z。正确direct profile32.891%、交换源26.719%、单标量32.344%。成员特异权重的独立增量未出现，当前收益更接近source-response校准。纯响应个位的640条中352条改成供体十位，183条改成第三个十位（28.594%）；两个margin确有未覆盖的竞争输出。下一试验每位置保留相对十个数字的logit响应，两个功能角色共20项；同bank给予所有方法，320共同backward，最多500driver秒。此前已用约626driver秒，仍按本轮1200预算执行。710候选新问题只检查了身份未调用模型，r35_question_exposure.json保存全部33相关panel；不提前打开它们。
+
+## R35 PROGRESS — experiments complete, manuscript integration
+
+实际写入UTC：2026-09-14T15:26:12Z。所有5run已结束（4PASS/1FAIL），driver共908.132231秒、CPU791.593750秒；无需新问题确认，核心增量未达到预期。correct source相对swap +6.172[2.969,9.531]，相对scalar +0.547[-1.250,2.422]；全digit profile没改善。完整方法/18设置表/修改-保护图已写入唯一稿件，当前编译；R35_REPORT.md、R35_RUNS.json和r35_cluster_outcomes.npz已落盘。新问题仅做身份盘点未调用模型。下一步完成PDF与证据核对，再推进生成位置上的对应表示。
+
+## R35 COMPLETE — functional response and source calibration
+
+实际写入UTC：2026-09-14T15:33:31Z。round_id=R35；可证实开始2026-09-14T14:50:20Z，本轮完成事件为本次写入。最后实验实际结束2026-09-14T15:22:04.070723+00:00；4PASS/1FAIL，driver908.132231秒、CPU791.593750秒、129392 padded forwards/7116560 padded tokens。研究墙钟覆盖阅读、编码、真实计算、结果分析和稿图整理，彼此重叠，有效思考时间及各类等待无法精确分离；没有主动sleep。共享GPU租约已释放，资源实读free。
+
+响应+field26.641%相对旧field19.688%改善6.953点；直接候选+正确source profile32.891%，source swap26.719%，scalar32.344%。source身份有作用，member-specific权重的独立收益未证实；20项digit profile没有改善。全部18设置及描述性cluster区间在paper/data/arithmetic_response.json和r35_cluster_outcomes.npz。首次数值FAIL及所有改法保留；未打开新问题、未降低母目标、未宣称核心闭合。下一工作单元改革同一目标成员在不同生成位置的权重，保持成员总预算并给直接归因同等自由度。
+
+唯一paper/main.pdf50页/主文8页，SHA256 10adc4b93348b6bf7375a3642c5d2176ff19147460e5c64ddee4598533048f8a；新方法31页、表31在32页、图14在33页。实际查看主文8及31–33页；最终编译发现主文8有1.37pt vbox超高，删去重复的对应说明后重编译，overfull/undefined citation/missing character均0，保留已有字体请求与underfull提示。报告R35_REPORT.md、清单R35_RUNS.json、写作落实R35_WRITING_VISUAL_REVIEW.md、真实bank和旧2560输出检查R35_FOCUSED_CHECK.json、当前证据R35_EVIDENCE_CHECK.json，来源与实际借鉴在REFERENCE_REGISTRY和r35_fega_reading/identity.json。开始/收尾前归档为r35_before_20260914T145020Z及r35_completion_inputs_20260914T152928Z/MANIFEST.json。白名单代码/配置/本log将在同单元同步，Git事实以R35_SYNC.json为准，当前阶段交付索引R35_DELIVERY.json。原ccad保持ACTIVE/5分钟，由当前对话继续，不重复loop，不因局部负结果停工。

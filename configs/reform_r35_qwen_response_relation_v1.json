@@ -1,0 +1,132 @@
+{
+  "run_id": "REFORM_R35_qwen_response_relation_v1_20260914",
+  "run_parent": "R35",
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "purpose": "Match finite source effects in requested and preserved digit roles",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "budget": "650 driver seconds, existing GPU and five frozen SAEs; shared 64-pair response bank and seven free-generation methods.",
+  "budget_seconds": 650,
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "batch_size": 8,
+  "max_new_tokens": 5,
+  "scope": "Development on already exposed original arithmetic panel. Frozen R34 sources and exact mixed 64 fit pairs. Four response/field fits and old field, source, direct320 evaluated with all base failures retained; no independent confirmation claim.",
+  "written_at_utc": "2026-09-14T14:59:11.402882+00:00",
+  "round_id": "R35",
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "operand_range": [
+    10,
+    50
+  ],
+  "split_salt": "ccad-r32-digit-source-1",
+  "pairs_per_template": 64,
+  "selection_rules": [
+    "fisher_contrast"
+  ],
+  "members": [
+    64
+  ],
+  "max_length": 72,
+  "hidden_atol": 0.002,
+  "statistics_unit": "Unordered operand pairs remain in the same split and prompt-connected recipient-donor pairs; five controlled source SAE initializations with common prompts",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "intervention_span": "generated_prefix",
+  "source_selection_step": {
+    "unit": 1,
+    "tens": 0
+  },
+  "source_cache_run": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+  "reuse_rules": [
+    "fisher_contrast",
+    "counterfactual_weighted"
+  ],
+  "source_view_augmentation": {
+    "template": 1,
+    "require_base_correct": true
+  },
+  "evaluation_rules": [
+    "source_views",
+    "direct_320",
+    "response_s1_response",
+    "response_s1_response_anchor",
+    "response_s1_direct_profile",
+    "response_s1_field_teacher",
+    "response_s1_field_prior",
+    "response_s2_response",
+    "response_s2_response_anchor",
+    "response_s2_direct_profile",
+    "response_s2_field_teacher",
+    "response_s2_field_prior",
+    "response_s3_response",
+    "response_s3_response_anchor",
+    "response_s3_direct_profile",
+    "response_s3_field_teacher",
+    "response_s3_field_prior",
+    "response_s4_response",
+    "response_s4_response_anchor",
+    "response_s4_direct_profile",
+    "response_s4_field_teacher",
+    "response_s4_field_prior",
+    "response_s5_response",
+    "response_s5_response_anchor",
+    "response_s5_direct_profile",
+    "response_s5_field_teacher",
+    "response_s5_field_prior"
+  ],
+  "response_relation": {
+    "seed_pairs": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        1
+      ]
+    ],
+    "fit_pairs": 64,
+    "pool": 512,
+    "steps": 512,
+    "ridge_fraction": 0.001,
+    "relation_run": "runs/REFORM_R34_qwen_equivalent_source_transfer_v1_20260914",
+    "direct_run": "runs/REFORM_R33_qwen_functional_path_v1_20260914",
+    "field_anchor": 0.1
+  }
+}

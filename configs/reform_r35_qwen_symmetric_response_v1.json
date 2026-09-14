@@ -1,0 +1,136 @@
+{
+  "run_id": "REFORM_R35_qwen_symmetric_response_v1_20260914",
+  "run_parent": "R35",
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "purpose": "Resolve finite-source versus linear-target response mismatch",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "budget": "360 driver seconds; same bank and source; compare symmetric linear responses and stronger physical anchor.",
+  "budget_seconds": 360,
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "batch_size": 8,
+  "max_new_tokens": 5,
+  "scope": "Adaptive development after the finite-response fit displaced the preserved digit. Same data, five SAEs and64members. No independent confirmation.",
+  "written_at_utc": "2026-09-14T15:08:28Z",
+  "round_id": "R35",
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "operand_range": [
+    10,
+    50
+  ],
+  "split_salt": "ccad-r32-digit-source-1",
+  "pairs_per_template": 64,
+  "selection_rules": [
+    "fisher_contrast"
+  ],
+  "members": [
+    64
+  ],
+  "max_length": 72,
+  "hidden_atol": 0.002,
+  "statistics_unit": "Unordered operand pairs remain in the same split and prompt-connected recipient-donor pairs; five controlled source SAE initializations with common prompts",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "intervention_span": "generated_prefix",
+  "source_selection_step": {
+    "unit": 1,
+    "tens": 0
+  },
+  "source_cache_run": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+  "reuse_rules": [
+    "fisher_contrast",
+    "counterfactual_weighted"
+  ],
+  "source_view_augmentation": {
+    "template": 1,
+    "require_base_correct": true
+  },
+  "evaluation_rules": [
+    "response_s1_linear_response",
+    "response_s1_linear_anchor",
+    "response_s1_finite_anchor1",
+    "response_s2_linear_response",
+    "response_s2_linear_anchor",
+    "response_s2_finite_anchor1",
+    "response_s3_linear_response",
+    "response_s3_linear_anchor",
+    "response_s3_finite_anchor1",
+    "response_s4_linear_response",
+    "response_s4_linear_anchor",
+    "response_s4_finite_anchor1",
+    "response_s5_linear_response",
+    "response_s5_linear_anchor",
+    "response_s5_finite_anchor1"
+  ],
+  "response_relation": {
+    "seed_pairs": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        1
+      ]
+    ],
+    "fit_pairs": 64,
+    "pool": 512,
+    "steps": 512,
+    "ridge_fraction": 0.001,
+    "relation_run": "runs/REFORM_R34_qwen_equivalent_source_transfer_v1_20260914",
+    "field_anchor": 0.1,
+    "precision": "highest within response bank; high restored for existing free-generation consumer",
+    "methods": [
+      {
+        "name": "linear_response",
+        "anchor": 0.0,
+        "source_response": "linear"
+      },
+      {
+        "name": "linear_anchor",
+        "anchor": 0.1,
+        "source_response": "linear"
+      },
+      {
+        "name": "finite_anchor1",
+        "anchor": 1.0
+      }
+    ]
+  }
+}
