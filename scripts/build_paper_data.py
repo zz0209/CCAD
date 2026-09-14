@@ -477,7 +477,7 @@ def main():
         claims.append(dict(id='task_free_source_profile_fidelity',paper='Source-profile fidelity appendix',
             result='Development on exposed grammar pairs: target encoder-response memberships and contribution/decoder baselines preserve frozen source intervention profiles without task gradients; the new coefficient has no established advantage over those correspondence controls. Raw regression and dynamic reencoding remain separate execution references.',
             evidence=[crun+f for f in ['config.resolved.json','status.json','inputs.json','code_hashes.json','metrics.raw.jsonl','code_response_results.json','RELATION_FREEZE.json','fit_rows.npz']]+[str(code_response_summary.relative_to(root)).replace(chr(92),'/'),'scripts/code_response_correspondence.py','scripts/code_response_analysis.py','paper/sections/code_response_details.tex']))
-    for name in ['arithmetic_evidence.json','arithmetic_identity_evidence.json','arithmetic_source_learning_evidence.json','arithmetic_response_evidence.json','arithmetic_positions_evidence.json','arithmetic_source_roles_evidence.json','arithmetic_objectives_evidence.json','arithmetic_member_queries_evidence.json','arithmetic_query_confirmation_evidence.json','arithmetic_role_queries_evidence.json']:
+    for name in ['arithmetic_evidence.json','arithmetic_identity_evidence.json','arithmetic_source_learning_evidence.json','arithmetic_response_evidence.json','arithmetic_positions_evidence.json','arithmetic_source_roles_evidence.json','arithmetic_objectives_evidence.json','arithmetic_member_queries_evidence.json','arithmetic_query_confirmation_evidence.json','arithmetic_role_queries_evidence.json','binding_components_evidence.json']:
         arithmetic_evidence=out/'data'/name
         if arithmetic_evidence.is_file():
             claims.append(json.loads(arithmetic_evidence.read_text()))
@@ -506,6 +506,7 @@ def main():
     current_ids.append('arithmetic_role_memberships')
     current_ids.append('role_conditioned_source_functions')
     current_ids.extend(['task_contrast_correspondence','member_resolved_query_prediction','independent_member_query_confirmation','role_defined_member_queries'])
+    current_ids.append('semantic_binding_member_requests')
     current_ids=[x for x in current_ids if x not in ['contrast_and_pair_common_completion','observed_finite_menu_selection_headroom','response_fitting_and_source_unit_bottleneck','source_behavior_groups_and_matched_support','grammar_transfer_and_source_counterfactuals']]
     (out/'EVIDENCE_INDEX.json').write_text(json.dumps(dict(current_manuscript_claim_ids=[c['id'] for c in claims if c['id'] in current_ids],claims=claims,data_manifest='data/DATA_MANIFEST.json',figure_manifest='figures/FIGURE_MANIFEST.json',
         raw_hashes=manifest['original_raw_sha256'],scope='Current manuscript evidence locator. Hashes establish file identity, not scientific validity; source and member KL references differ.'),indent=2)+'\n',encoding='utf-8')

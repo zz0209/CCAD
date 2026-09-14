@@ -7378,3 +7378,109 @@ Two successful evaluation runs and one pre-generationFAIL retained in R40_RUNS.j
 Paper title now Reusing Functional Explanations across SAE Retraining. Current main.pdf SHA256567938400bbda6d5b7d384e757c73724b41cb622729b0984f67db7d50349e248,57pages/main7/references1. Source-invariance and source-role findings moved to the main argument; new Figure3 combines actual generation and full response matrix. Both required writing skills changed the argument and section order, with strong comparisons and distinction between source learning and target scalar calibration retained. Seven substantive primary-method additions, two code-method readings and Qwen asset attribution recorded in R40_LITERATURE_NOTES.md/downloads.json/REFERENCE_REGISTRY;50 bib entries,33 actually cited. No source-code copying. Visual review and successful cached compile in R40_WRITING_VISUAL_REVIEW.md and paper/build/BUILD_RECEIPT.json; final no undefined references/duplicate labels/overfull boxes.
 
 R40_REPORT.md and R40_DELIVERY.json are the stage entry. Prior paper/plan/tracker bytes and hashes remain in r40_before_20260914T210204Z/MANIFEST.json; README predecessor separately retained. Tracker advances only after this completion record. Originalccad heartbeat verified ACTIVE every5minutes on currentthread01a06e15-b222-7b21-a8cd-eb058a3159e5; five-round limit lifted. Next card: source-validated entity/attribute binding parts and their interaction, official-method/code-informed adaptation, actual unexplored intervention use with same-information strong controls. No next-round experiment has run. Authorized allowlisted stage commit/push follows, receipt R40_SYNC.json; ignoredpaper/data/history remain local by path/hash.
+
+
+## R41 START — written UTC 2026-09-14T21:58:53Z
+
+round_id R41. The next scientific unit studies whether a source-validated entity/attribute binding decomposition can be reused in target SAE members. R40 established queryable arithmetic parts and a descriptive cooperation pattern; the opportunity is a semantic relation with predicted changes under individual and combined interventions. Initial reading begins on this heartbeat at2026-09-14T21:56:32.004Z trigger; exact first-action time not separately recorded. This write is not backdated.
+
+Reread current AGENTS/tracker/plan and Feng–Steinhardt original factorization/additive-binding sections, plus official code organization. The paper distinguishes multi-layer context-state intervention with frozen downstream tokens from single-hook causal edits. Implementation must label the latter honestly and verify source efficacy instead of treating them as identical. Existing controlled Qwen SAE cohorts are available at layers13 and23, so no new training/model purchase is needed to test the source.
+
+Plan: inspect official generator/intervention methods and license; construct an explicit semantic source experiment in the existing run framework; measure clean task competence and source edit effects at existing hooks, then adapt the correspondence around a demonstrated source function. Initial total budget2400driverseconds across bounded source and relation experiments, adjustable on actual throughput. No target-outcome-selected source query; all development contexts and source failures retained. New source preparation is part of R41, not a separate completed round. Paper argument and source/target intervention diagram will be updated with actual results. Both requested writing skills continue to guide problem-first organization. R40 paper/history retained inartifacts/correspondence_reform_20260913/r41_before_20260914T215853Z/MANIFEST.json. No new experimental results yet.
+
+
+## R41 CORRECTION — written UTC 2026-09-14T22:04:00Z
+
+Source v1 started2026-09-14T22:02:56.871588Z and failed2026-09-14T22:03:20.703983Z before model loading or generation. CUDA peak-memory reset required explicit current-device initialization. Added torch.cuda.set_device before reset, retaining all scientific settings and the failed run. Retry v2 has a new immutable config/run identity. This is a runtime initialization correction, not a scientific result.
+
+
+## R41 PROGRESS — written UTC 2026-09-14T22:07:38Z
+
+Source v2 PASS,2026-09-14T22:04:05.491819Z–22:05:10.383020Z,64.849514 driver seconds. On32 development contexts/twoforms, raw layer13 requested-slot four-choice success92.19/100%, joint96.09%; layer23 only7.81/4.69%, joint9.38%. This localizes the usable source operation at an already available layer13 cohort. Full-vocabulary first-token correctness is44.34% overall because the first answer wording elicits 'home' on255 rows; four-choice success is not counted as full-generation success. Raw/source-all comparisons retain this consumer mismatch. Energy-selected64 source features are weak;256/all produce stronger4-choice behavior.
+
+Next reversible change addresses both mismatches directly: an answer-neutral prefix ending 'city of' and source-supervised64-member fitting atlayer13. New development contexts64fit/64evaluation, source-only16gradient scoring and112bounded-weightupdates. Original raw/energy64/256/all comparators retained; no target fitting yet. Configreform_r41_qwen_binding_sources_v3.json frozen before run. Source labels train the function, so this is not an unsupervised feature discovery claim. Official binding code fb7608d was read to distinguish context freezing from our single-hook recomputation; no top-level projectlicense, no code imported or executed.
+
+
+## R41 PROGRESS — written UTC 2026-09-14T22:13:22Z
+
+Source v3 PASS at2026-09-14T22:09:09.625568Z, started22:07:44.024473Z. Answer-neutral city prefix raises unedited next-token accuracy to99.3164%; raw replacement requested answers99.22/100%, protected100/97.66%, joint99.61%. Energy-selected64 source members yield62.50/50% requested success;128 source learning steps with64 members yield61.72/49.22%, so this source-gradient fitting did not improve the useful function. Energy256 yields88.28/87.50%; fullSAE93.75/100%. Preserve all results and learned masks.
+
+The next actual change uses source semantic information to choose a relevant part: source-fit country centroids define the64 largest predicted decoder contributions within the256-member parent for each recipient/donor country pair. This is an unfitted execution query after parent selection, with country labels taken from source context. Budget is64 members per edited country token; the stored bank is256 and a two-slot request can use up to128 distinctmembers. It must not be described as a fixed64-member union. Source v4 configuration written before its new generation, fresh development contexts and all static64/256/full controls retained. Strong signal would motivate translating these meaningful requests and comparing direct target-country selection under the same information.
+
+
+## R41 PROGRESS — written UTC 2026-09-14T22:17:43Z
+
+Source semantic-query v4 PASS2026-09-14T22:13:10.787Z approximately; precise runstatus retains event seconds. Runtime69.392876s. Country-conditioned64 queries within the256-member parent achieve complete two-entity binding accuracy92.97% first replacement,94.53% second and90.63% joint, versus56.25/51.56/33.59% static64. Context intervals on the three improvements are[26.56,46.88],[32.03,54.69],[46.88,67.19]points. Full256 parent93.75/94.53/90.63%, raw100/100/100. Sourcequery offers a concrete semantic use: select country-relevant members while preserving most of the fullcomponent effect at64 edited members/token. This is a development result; original bank size and joint union size retained. Source64 gradient fitting remains a negative attempt.
+
+Five-SAE confirmation and relation fitting now frozen in R41_BINDING_TRANSFER_FREEZE.json, configreform_r41_qwen_binding_transfer_v1.json. It uses the same64 fit contexts and64 new evaluation contexts after skipping all64 v4 pilot contexts; three old panels explicitly excluded. Strong controls include matching, same-source-column raw/code readout and direct target-country selection with identical country metadata. Primarycomplete bindingH macro acrossfirst/second/both requires bothentityanswers correct; comparisons fixed before target outcomes. Target256-memberbank is truncated to64 active members per edited token using contribution magnitudes, all information/selectionrules recorded. Runtime budget1800seconds within remainingR41allocation.
+
+
+## R41 CORRECTION — written UTC 2026-09-14T22:19:13Z
+
+Transfer v1 failed before generation because an exact recipient/donor prompt had appeared previously even though the larger four-country context identity was new. Started2026-09-14T22:17:49.086878+00:00; ended2026-09-14T22:17:57.581737+00:00. The explicit exposure check correctly blocked overlap. The deterministic generator now rejects the entire evaluation context if any of its prompts overlaps an old panel, continuing the same RNG to64 accepted contexts. The fit contexts, source definition, methods and statistical endpoints stay fixed. Transfer v2 and its freeze retain this precise correction and the rejected candidates; no target outcome was observed.
+
+Correction to the preceding source-v4 event timestamp approximation: authoritative status ended2026-09-14T22:13:10.743199+00:00. The preceding guessed fractional event time is not authoritative; actual write times in both log blocks remain their own recorded UTC.
+
+
+## R41 CORRECTION — written UTC 2026-09-14T22:21:48Z
+
+Transfer v2 started2026-09-14T22:19:18.269604+00:00 and ended2026-09-14T22:19:37.931961+00:00 before any edited generation. Base states were generated, first relation/readouts fitted, then the target-query weight feasibility assertion failed under float32/high matmul precision. The relation solver uses float64 row-simplex projection, but later query summation used lower-precision matrix multiplication. The correction composes qA in float64, asserts nonnegative weights and maximum<=1+1e−6, then rounds/clamps tiny float32 boundary error to[0,1]. This preserves the stated mathematical operation rather than relaxing the capacity test. Original exact weight excess was not saved, so its magnitude is unknown. Target intervention outcomes remain unobserved; same frozen questions/methods proceed in transfer v3 with original failed run retained.
+
+
+## R41 PROGRESS — 2026-09-14T22:29:24Z
+
+实际写入UTC：2026-09-14T22:29:24Z。事件：transfer_v3在2026-09-14T22:26:43.876763Z PASS，driver290.194779秒，44032序列/1453056token。首次读取全部结果后，五seed/三请求宏平均完整绑定source country64=88.697917%，static64=42.03125%，member-country=71.09375%，assignment-country=24.114583%，direct target-country=92.291667%，raw/code readout=87.760417/88.229167%，raw replacement98.958333%。完整256源/目标89.427083/89.53125%。原主要比较全部保留，不能以assignment优势抹去direct-target差距。
+
+实际改革：根据请求二阶矩的推导，直接最小化fit上下文实际source queries的向量场误差，保留同一256目标bank、64执行预算、非负行容量与全部原对照；旧逐成员目标作为控制。矩阵梯度通过独立autograd小矩阵核对，约束及目标下降通过；不是新的经典优化算法首创。开发仅回到原source-pilot64上下文和seed1→2，256步/600driver秒。新请求目标拟合不读target outputs。若有信号再冻结未暴露问题确认。代码scripts/binding_correspondence.py；配置configs/reform_r41_qwen_binding_query_fit_dev_v1.json。论文尚未改变，整体科学闭合未宣布。
+
+
+## R41 PROGRESS — 2026-09-14T22:33:04Z
+
+实际写入UTC：2026-09-14T22:33:04Z。query-fit开发PASS116.292076driver秒，源92.7083%、旧member69.7917%、同容量query-fit72.3958%、direct-target94.2708%；256bank不trim也72.3958%，定位损失不在64执行裁剪。数学失配：A行容量为所有可能source成员预分配总权重；一个target成员若服务多个重叠请求，部分请求中只能拿到分配的一部分，即使该成员应完整参加。改成g(q)=min(1,Aq)，A非负且逐元素不超过1，允许共享参与，每次执行仍合法且同一target成员只写一次；不再声称可加性。此为标准capped-union参与规则，贡献须由source解释复用的真实结果建立。开发仍同旧64context/seed1→2，256Adam步、lr.002、同source/targetbank、全部旧对照。新增错误query为行循环移位，实际差异将记录，不能假定全部不相同。配置reform_r41_qwen_binding_union_dev_v1.json；无target输出监督，无新source选择。
+
+
+## R41 PROGRESS — 2026-09-14T22:36:31Z
+
+实际写入UTC：2026-09-14T22:36:31Z。capped-union开发PASS100.635403秒：75.78125%对旧member69.791667%及同容量query72.395833%，direct-target94.270833%。增加执行容量到256不改变结果，进一步排除64裁剪解释。新方法有约6点开发信号，现冻结五seed/64新context确认；不靠新增source/目标预算提高。旧开发wrong-query移位1行使相邻重复prompt请求大量相同，确认预先改为整个8行context移位并报告实际变化率，旧结果留账。主终点仍完整绑定宏平均与旧member/additive-query/direct-target差值；所有强对照保留。原transfer_v3主检验保持独立记录，新确认不覆盖它。冻结R41_QUERY_CONFIRMATION_FREEZE.json。预计确认约6分钟，预算1200driver秒，总R41预期仍在2400driver秒内。
+
+
+## R41 PROGRESS — 2026-09-14T22:47:58Z
+
+实际写入UTC：2026-09-14T22:47:58Z。query_confirmation_v1于2026-09-14T22:44:04.19Z左右完成（该近似事件时刻仅用于说明；精确状态时间见status.json），PASS446.669657driver秒。新64context/两form/五依赖SAE确认：source country64=87.1875% vsfixed64=46.875%，+40.3125[33.6979,46.9271]；parent256=88.6979%。member=69.0625%，additivequery=69.0625%，sharedparticipation=73.4375%，对oldmember+4.375[2.8125,6.0417]，对additivequery+4.375[2.7604,6.1979]；assignment26.9271%，wrongquery29.1146%，direct-target92.0833%，raw/code readout85.3125/87.8646%。保留direct-target−18.6458[-24.0104,-13.4375]差距，主终点未替换；query-only拟合无净收益也保留。
+
+科学判断：国家条件化源成员选择有两次独立新prompt面板正结果；共享参与规则在新数据上改进目标执行，错误请求明显失效。整体解释复用仍应发展：source87.19/code-readout87.86对native73.44指向目标执行关系的损失；直接target92.08证明现有SAE素材能执行该功能。下一工作优先把可预测source member fields实现为输入依赖的target participation，而不是再增成员数或继续优化一个静态矩阵。该定位是假说，未宣称native投影一定解决。
+
+主文增加语义请求/共享参与，原始绑定实例Bob:N orway→Egypt、Thomas:Russia→Peru的实际城市对为(Cairo,Moscow)、(Oslo,Lima)、(Cairo,Lima)，source1/target2一致；图4同时呈全部关键对照和wrongquery。附录含五SAE质量、原/新冻结结果、全部方法、T/P、操作和信息预算。四篇方法阅读及官方binding实现推动了本轮选择。两writing skills落实到以source请求和对应参与为核心的段落，未将开发历史搬进主文。
+
+
+## R41 CORRECTION — 2026-09-14T22:49:40Z
+
+实际写入UTC：2026-09-14T22:49:40Z。上一PROGRESS的完成事件近似值现由status.json精确替换说明：query_confirmation_v1实际开始2026-09-14T22:36:37.418414+00:00、结束2026-09-14T22:44:04.149401+00:00。旧文字保持；不是反推事件时间。例子中的“N orway”是本轮补记手误，正确名称Norway；原panel、图和输出均为Norway，数据未变。
+
+
+## R41 PROGRESS — 2026-09-14T22:51:11Z
+
+实际写入UTC：2026-09-14T22:51:11Z。聚焦自审发现一个具体归因差异：additive-query使用FISTA及Gram尺度ridge，shared-participation使用Adam及归一化loss/均方系数penalty，因此4.38点不能直接全归给行容量。保持新确认已暴露面板，追加唯一同优化器/同ridge/同256步/lr.002对照，只变是否投影行总和<=1；共享参与重复生成核对原结果身份。不再调参，不把补充控制叫新独立确认。600driver秒预算，R41_CAPACITY_CONTROL_FREEZE.json。其他结论和稿件已整理；待这一具体归因澄清后完成本轮。
+
+
+## R41 PROGRESS — 2026-09-14T22:55:21Z
+
+实际写入UTC：2026-09-14T22:55:21Z。同Adam/系数penalty的行容量控制PASS142.490068driver秒，但38.8542%且训练query MSE从约.25恶化到.29，反映此投影Adam组合优化不足；不把其34.58点劣势当作新科学收益，不替代原69.06%凸优化对照。共享参与重复输出与原确认逐项完全一致。为完成这一具体归因修复，保持适合凸约束的FISTA256步，将ridge精确换算为与shared relativeSSE+.001mean(A²)相同，单独评估matched_additive_country。原面板已暴露，不调参、不叫新确认；预算600driver秒，R41_MATCHED_ADDITIVE_FREEZE.json。
+
+
+## R41 PROGRESS — 2026-09-14T22:59:47Z
+
+实际写入UTC：2026-09-14T22:59:47Z。matched_additive_v1 PASS92.225457秒；精确相同归一化query loss/均方系数penalty、合适凸求解器给69.114583%，shared73.4375%，+4.322917[2.760417,6.145833]。原主要新数据差值4.375点保留；补充控制针对已暴露面板，不扩充独立样本。失败的projectedAdam38.8542%及拟合退化如实留附录，没有用其34.58差值拔高结果。所有12run成本实际1460.270131driver秒，162048序列/5344000token forward，低于2400预算。报告、图4、全表与源码完成整合，正在核对最终PDF与白名单同步，尚未写COMPLETE。
+
+
+## R41 COMPLETE — 2026-09-14T23:02:30Z
+
+round_id：R41。实际写入UTC：2026-09-14T23:02:30Z。本轮START写入2026-09-14T21:58:53Z；最后计算事件精确时间见R41_RUNS.json各status，最后结果分析/稿件整理在本条写入前完成。选择理由：让跨SAE复用的部分有研究者能懂的语义请求，并据实际失配改变目标参与规则。
+
+实际产出：实体—国家—城市绑定源操作、两批独立新完整prompt的源正结果、五同配置seed跨seed请求确认、输入条件请求误差的数学连接、shared participation替代统一行容量的真实结果、matched penalty强控制、原始文献/官方实现阅读、正文图4和完整附录I。当前新确认源87.1875%对固定64源46.875%，+40.3125[33.6979,46.9271]；shared73.4375%对old69.0625%及matched additive69.114583%，matched差+4.322917[2.760417,6.145833]。wrong29.114583%、assignment26.927083%、direct-target92.083333%、raw/code85.3125/87.864583%均保留。shared重复输出与原确认逐项相同；projectedAdam的38.8542%及fit退化作为失败优化适配保留，不能放大主增益。
+
+科学判断：源语义选择和目标共享参与均有可检验结果，但整体一线主会目标继续推进；强readout/direct结果指向固定目标实现损失，下一工作检验输入依赖实现，不把本轮局部优势当整体突破。两指定writing skills落实于正文按请求—参与—结果组织及集中准确预算/边界；没有收窄最终目标。文献库52条、实际引用36条；四项方法阅读及官方binding实现边界见R41_LITERATURE_NOTES。
+
+交付定位：paper/main.pdf（62页/主文8/参考2），SHA2563774362968a1b9da0b4a20693e17efd768e8408212b16271409837d2fd5fd85d；全部可编辑源、图数据、EVIDENCE_INDEX与README已更新。R41_DELIVERY.json、R41_REPORT.md、R41_WRITING_VISUAL_REVIEW.md、R41_FOCUSED_CHECK.json、R41_RUNS.json/R41_COST.json包含恢复与核对路径。全稿contact sheet及细看页见r41_visual；无溢出、缺字或未解析引用。适当检查为精确答案对独立重算、源fit不变/旧prompt排除、native64/权重界、梯度核对和原始输出复现；不把这些检查当科学贡献。
+
+实际资源：既有RTX5070Ti与锁定r004环境；12run、9PASS/3FAIL，共1460.270131driver秒、162048序列/5344000token forward，低于2400秒预算。全部本轮run已结束。有效研究、等待与GPU-active时长未知，不以墙钟冒充；无新训练/模型/包/购买。旧失败和数值/提示/暴露修正全部保留。下一R42未开始，不计额外轮。当前tracker前身逐字归档artifacts/correspondence_reform_20260913/r41_tracker_before_complete_20260914T230230Z.md，hashc2164301f43de423a0255ef82f5758346556b5b010d2b7d3f68a48c0f8a89c27。本COMPLETE写完后才推进tracker状态。白名单同步随后成组执行。

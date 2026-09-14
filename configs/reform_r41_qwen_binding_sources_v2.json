@@ -1,0 +1,158 @@
+{
+  "run_id": "REFORM_R41_qwen_binding_sources_v2_20260914",
+  "run_parent": "R41",
+  "generator_script": "scripts/run_binding_components.py",
+  "purpose": "Locate a functional entity-attribute source intervention at existing SAE hooks",
+  "milestone": "semantic-source-function",
+  "evidence_level": "controlled_development",
+  "device": "cuda:0",
+  "seeds": [
+    1
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD binding-factorization adaptation v1",
+  "budget": "900 driver seconds, existing model/two SAE hooks; no fitting or new assets",
+  "budget_seconds": 900,
+  "scope": "Development adaptation with country-token edits at one residual hook and full downstream recomputation. Next-token vocabulary and four-answer accuracy; not the original calibrated multi-layer frozen-context benchmark.",
+  "statistics_unit": "context cluster, retaining both queries, prompts and operations",
+  "panel_seed": 9412159,
+  "fit_contexts": 32,
+  "evaluation_contexts": 32,
+  "batch_size": 8,
+  "layers": [
+    13,
+    23
+  ],
+  "checkpoint_step": 16384,
+  "members": [
+    64,
+    256,
+    8192
+  ],
+  "training_runs": {
+    "13": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+    "23": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914"
+  },
+  "names": [
+    "Alice",
+    "Bob",
+    "Carol",
+    "David",
+    "Emma",
+    "Frank",
+    "Grace",
+    "Henry",
+    "Irene",
+    "Jack",
+    "Karen",
+    "Laura",
+    "Mary",
+    "Nancy",
+    "Oliver",
+    "Paul",
+    "Rachel",
+    "Sarah",
+    "Thomas",
+    "Victor",
+    "William",
+    "Peter",
+    "Anna",
+    "James"
+  ],
+  "country_capitals": [
+    [
+      "France",
+      "Paris"
+    ],
+    [
+      "Japan",
+      "Tokyo"
+    ],
+    [
+      "Italy",
+      "Rome"
+    ],
+    [
+      "Germany",
+      "Berlin"
+    ],
+    [
+      "Spain",
+      "Madrid"
+    ],
+    [
+      "Russia",
+      "Moscow"
+    ],
+    [
+      "China",
+      "Beijing"
+    ],
+    [
+      "Canada",
+      "Ottawa"
+    ],
+    [
+      "Egypt",
+      "Cairo"
+    ],
+    [
+      "Kenya",
+      "Nairobi"
+    ],
+    [
+      "Greece",
+      "Athens"
+    ],
+    [
+      "Portugal",
+      "Lisbon"
+    ],
+    [
+      "Peru",
+      "Lima"
+    ],
+    [
+      "Chile",
+      "Santiago"
+    ],
+    [
+      "Cuba",
+      "Havana"
+    ],
+    [
+      "Austria",
+      "Vienna"
+    ],
+    [
+      "Poland",
+      "Warsaw"
+    ],
+    [
+      "Turkey",
+      "Ankara"
+    ],
+    [
+      "Thailand",
+      "Bangkok"
+    ],
+    [
+      "Norway",
+      "Oslo"
+    ]
+  ],
+  "templates": [
+    {
+      "statement": "{name} lives in the capital of {country}. ",
+      "question": "\nQuestion: Which city is home to {name}?\nAnswer: The city is"
+    },
+    {
+      "statement": "{name} works in the capital of {country}. ",
+      "question": "\nQuestion: In which city does {name} work?\nAnswer: The city is"
+    }
+  ],
+  "written_at_utc": "2026-09-14T22:04:00Z"
+}
