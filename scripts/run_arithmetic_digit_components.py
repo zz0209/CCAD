@@ -28,10 +28,16 @@ def panel(cfg):
                 assert 10<=total<100
                 rows.append(dict(template=t,a=a,b=b,total=total,unit=total%10,tens=total//10,
                                  carry=(a%10+b%10)>=10,split=split,prompt=template.format(a=a,b=b)))
+    excluded_operands=set()
+    if cfg.get("evaluation_holdout"):
+        prior=json.loads((ROOT/cfg["evaluation_holdout"]["from_run"]/"panel.json").read_text())
+        assert prior["rows"]==rows
+        excluded_operands={(prior["rows"][i]["a"],prior["rows"][i]["b"]) for p in prior["pairs"] for i in [p["recipient"],p["donor"]]}
     pairs=[]
     for t in range(len(cfg["templates"])):
-        ii=[i for i,r in enumerate(rows) if r["template"]==t and r["split"]=="development"]
-        ii=sorted(ii,key=lambda i:hashlib.sha256(f"pair:{cfg['split_salt']}:{rows[i]['a']}:{rows[i]['b']}".encode()).hexdigest())
+        ii=[i for i,r in enumerate(rows) if r["template"]==t and r["split"]=="development" and (r["a"],r["b"]) not in excluded_operands]
+        pair_salt=cfg.get("evaluation_holdout",{}).get("pair_salt",cfg["split_salt"])
+        ii=sorted(ii,key=lambda i:hashlib.sha256(f"pair:{pair_salt}:{rows[i]['a']}:{rows[i]['b']}".encode()).hexdigest())
         used=set()
         for i in ii:
             if i in used:continue
@@ -57,7 +63,13 @@ def fisher(z,labels):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument("--config",type=Path,required=True);args=parser.parse_args()
-    cfg=json.loads(args.config.read_text());w=MultisiteWork(cfg,args.config,["scripts/run_arithmetic_digit_components.py","scripts/run_causalgym_multisite.py","scripts/run_r011s1_raw_hook_asset.py","src/ccad/artifacts.py"])
+    cfg=json.loads(args.config.read_text())
+    sources=["scripts/run_arithmetic_digit_components.py","scripts/run_causalgym_multisite.py","scripts/run_r011s1_raw_hook_asset.py","src/ccad/artifacts.py"]
+    if cfg.get("counterfactual_fit"):
+        sources += ["scripts/arithmetic_counterfactual_fit.py", "src/ccad/semantic_participation.py"]
+    if cfg.get("relation_transfer"):
+        sources += ["scripts/arithmetic_relation_transfer.py", "scripts/fit_component_correspondence.py"]
+    w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
         import numpy as np, torch, transformers
@@ -125,15 +137,44 @@ def main():
             for s in text[:len(indices)]:
                 match=re.match(r"\s*(\d+)",s);answers.append(int(match[1]) if match else None)
             return answers,text[:len(indices)],(torch.stack(cache["trajectory"],1) if trajectory else cache["hidden"])[:len(indices)],cache.get("edit_norm",torch.zeros(len(indices),device=w.device))
-        all_h=[];base=[];base_text=[]
-        for off in range(0,len(rows),batch):
-            indices=list(range(off,min(off+batch,len(rows))));ans,txt,h,_=generate(indices);all_h.append(h);base.extend(ans);base_text.extend(txt)
-            if off%(batch*16)==0:w.progress("SOURCE_STATES",completed=off+len(indices),total=len(rows))
-            budget()
-        h=torch.cat(all_h);fitix=[i for i,r in enumerate(rows) if r["split"]=="fit"]
+        all_h=[];base=[];base_text=[];source_parent=None
+        if cfg.get("source_cache_run"):
+            source_parent=ROOT/cfg["source_cache_run"]
+            assert json.loads(w.checked(source_parent/"status.json").read_text())["status"]=="PASS"
+            old_cfg=json.loads(w.checked(source_parent/"config.resolved.json").read_text())
+            assert all(old_cfg[k]==cfg[k] for k in ["training_run","checkpoint_step","model_revision","intervention_span","max_new_tokens"])
+            saved_panel=json.loads(w.checked(source_parent/"panel.json").read_text())
+            assert saved_panel["rows"]==rows
+            if cfg.get("evaluation_holdout"):
+                old_ids={i for p in saved_panel["pairs"] for i in [p["recipient"],p["donor"]]}
+                new_ids={i for p in pairs for i in [p["recipient"],p["donor"]]}
+                assert not old_ids.intersection(new_ids)
+                w.checked(ROOT/cfg["evaluation_holdout"]["from_run"]/"panel.json")
+                w.checks["new_intervention_operands_disjoint_from_development_pairs"]=True
+            else:assert saved_panel["pairs"]==pairs
+            with np.load(w.checked(source_parent/"states.npz")) as data:
+                h=torch.tensor(data["hidden"],device=w.device)
+            old_base=[json.loads(x) for x in w.checked(source_parent/"metrics.raw.jsonl").read_text().splitlines() if json.loads(x)["kind"]=="base"]
+            old_base.sort(key=lambda r:r["row_id"])
+            assert [r["row_id"] for r in old_base]==list(range(len(rows)))
+            base=[r["answer"] for r in old_base];base_text=[r["generated_text"] for r in old_base]
+        else:
+            for off in range(0,len(rows),batch):
+                indices=list(range(off,min(off+batch,len(rows))));ans,txt,h,_=generate(indices);all_h.append(h);base.extend(ans);base_text.extend(txt)
+                if off%(batch*16)==0:w.progress("SOURCE_STATES",completed=off+len(indices),total=len(rows))
+                budget()
+            h=torch.cat(all_h)
+        fitix=[i for i,r in enumerate(rows) if r["split"]=="fit"]
         for i,r in enumerate(rows):w.record(kind="base",task="template_"+str(r["template"]),row_id=i,component=f"{r['a']}+{r['b']}",method="greedy",split=r["split"],answer=base[i],correct_answer=r["total"],correct=base[i]==r["total"],generated_text=base_text[i])
         codes={};gates={};metadata=[]
         for seed,ae in saes.items():
+            if source_parent is not None:
+                with np.load(w.checked(source_parent/f"source_seed{seed}.npz")) as data:
+                    codes[seed]=torch.tensor(data["codes"],device=w.device)
+                    for rule in cfg["reuse_rules"]:
+                        for k in cfg["members"]:
+                            gates[seed,rule,k]=torch.tensor(data[f"{rule}_{k}"],device=w.device)
+                continue
             with torch.no_grad():z=torch.cat([ae.encode(h[i:i+256].reshape(-1,h.shape[-1])).reshape(*h[i:i+256].shape[:-1],-1) for i in range(0,len(h),256)])
             codes[seed]=z
             fs=torch.stack([fisher(z[fitix,cfg["source_selection_step"][factor]] if trajectory else z[fitix],[rows[i][factor] for i in fitix]) for factor in ["unit","tens"]],1)
@@ -144,10 +185,63 @@ def main():
                     for c in range(2):gate[torch.argsort(score[:,c],descending=True,stable=True)[:k],c]=1
                     gates[seed,rule,k]=gate
                     metadata.append(dict(seed=seed,rule=rule,members=k,unit_members=torch.where(gate[:,0]>0)[0].cpu().tolist(),tens_members=torch.where(gate[:,1]>0)[0].cpu().tolist(),overlap=int((gate[:,0]*gate[:,1]).sum())))
+            if cfg.get("counterfactual_fit"):
+                from arithmetic_counterfactual_fit import fit_gates
+                assert trajectory
+                for k in cfg["members"]:
+                    learned=fit_gates(w,cfg,model,module,tok,ae,rows,tokenrows,z,
+                                      gates[seed,"fisher_contrast",k],seed,k,physical_length,budget)
+                    gates[seed,"counterfactual_weighted",k]=learned
+                    gates[seed,"counterfactual_binary",k]=(learned>0).to(learned.dtype)
+                    for rule in ["counterfactual_weighted","counterfactual_binary"]:
+                        gate=gates[seed,rule,k]
+                        metadata.append(dict(seed=seed,rule=rule,members=k,
+                                             unit_members=torch.where(gate[:,0]>0)[0].cpu().tolist(),
+                                             tens_members=torch.where(gate[:,1]>0)[0].cpu().tolist(),
+                                             overlap=int(((gate[:,0]>0)&(gate[:,1]>0)).sum())))
             payload={f"{rule}_{k}":gate.cpu().numpy() for (s,rule,k),gate in gates.items() if s==seed}
             np.savez_compressed(w.run/f"source_seed{seed}.npz",codes=z.cpu().numpy(),fisher=fs.cpu().numpy(),**payload)
-        np.savez_compressed(w.run/"states.npz",hidden=h.cpu().numpy(),fit_indices=np.array(fitix))
-        write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=False,task_output_gradients=0,source_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
+        if source_parent is None:
+            np.savez_compressed(w.run/"states.npz",hidden=h.cpu().numpy(),fit_indices=np.array(fitix))
+        if cfg.get("relation_transfer"):
+            from arithmetic_relation_transfer import fit_relations
+            transferred,relation_meta=fit_relations(w,cfg,saes,codes,gates,h,source_parent,generate,budget)
+            gates.update(transferred);metadata.extend(relation_meta)
+        if cfg.get("adaptation"):
+            from arithmetic_counterfactual_fit import fit_gates
+            ac=cfg["adaptation"];relation_parent=ROOT/ac["relation_run"]
+            assert json.loads(w.checked(relation_parent/"status.json").read_text())["status"]=="PASS"
+            prior=json.loads(w.checked(relation_parent/"config.resolved.json").read_text())
+            assert prior["source_cache_run"]==cfg["source_cache_run"]
+            relation_panel=json.loads(w.checked(relation_parent/"panel.json").read_text())
+            assert relation_panel["rows"]==rows and relation_panel["pairs"]==pairs
+            adapted={};k=cfg["members"][0]
+            for source,seed in prior["relation_transfer"]["seed_pairs"]:
+                with np.load(w.checked(relation_parent/f"relation_s{source}_t{seed}.npz")) as data:
+                    starts={name:torch.tensor(data[name],device=w.device) for name in ["clean","assignment"]}
+                starts["fisher_contrast"]=gates[seed,"fisher_contrast",k]*.5
+                for name,initial in starts.items():
+                    _,saved=fit_gates(w,cfg,model,module,tok,saes[seed],rows,tokenrows,codes[seed],
+                                     initial,seed,k,physical_length,budget,tag=name,initial_scale=1.,checkpoints=ac["updates"])
+                    for updates,g in saved.items():adapted[seed,f"adapt_{name}_u{updates}",k]=g
+                    metadata.append(dict(source_seed=source,target_seed=seed,initialization=name,updates=ac["updates"],
+                                         optimization="Same deterministic labelled fit pairs and update order; alternating requests; shared labels already available before this experiment."))
+            gates=adapted
+        if cfg.get("frozen_adaptation"):
+            fc=cfg["frozen_adaptation"];prior=ROOT/fc["run"]
+            assert json.loads(w.checked(prior/"status.json").read_text())["status"]=="PASS"
+            pc=json.loads(w.checked(prior/"config.resolved.json").read_text())
+            assert pc["source_cache_run"]==cfg["source_cache_run"]
+            loaded={};k=cfg["members"][0]
+            for seed in cfg["seeds"]:
+                for name in fc["initializations"]:
+                    with np.load(w.checked(prior/f"counterfactual_seed{seed}_k{k}_{name}.npz")) as data:
+                        for u in fc["updates"]:
+                            loaded[seed,f"adapt_{name}_u{u}",k]=torch.tensor(data[f"updates_{u}"],device=w.device)
+            gates=loaded
+            metadata.append(dict(frozen_adaptation=fc,current_fit_updates=0,current_output_gradients=0,
+                                 original_source_and_target_fit_labels_shared=True))
+        write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=bool(cfg.get("relation_transfer") or cfg.get("adaptation") or cfg.get("frozen_adaptation")),task_output_gradients="fit split hybrid CE" if cfg.get("counterfactual_fit") else "inherited source and target fit only" if cfg.get("frozen_adaptation") else "inherited source fit only" if source_parent else 0,source_functional_outcomes_used_for_selection=bool(cfg.get("counterfactual_fit") or source_parent),development_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
         def evaluate(seed,method,k,operation,deltas,gate=None,raw_trajectory=False):
             for off in range(0,len(pairs),batch):
                 pp=pairs[off:off+batch];ix=[p["recipient"] for p in pp];donors=[p["donor"] for p in pp]
@@ -182,7 +276,11 @@ def main():
                 else:
                     delta=((z[jj]-z[ii])*gate[:,c])@D
                     evaluate(seed,rule,k,operation,delta)
-        w.checks.update(source_selection_only_fit_labels_and_activations=True,no_target_used=True,donor_changes_both_digits=True,real_generation_no_answer_prefix=True,all_failed_base_cases_retained=True)
+        w.checks.update(source_selection_only_fit_data=True,donor_changes_both_digits=True,real_generation_no_answer_prefix=True,all_failed_base_cases_retained=True)
+        if not cfg.get("relation_transfer") and not cfg.get("adaptation") and not cfg.get("frozen_adaptation"):
+            w.checks["no_target_used"]=True
+        if not cfg.get("counterfactual_fit") and source_parent is None:
+            w.checks["source_selection_only_fit_labels_and_activations"]=True
         w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,numpy=np.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),precision="float32 matmul high",hook=cfg.get("hook_override",tc["hook_module_path"]),model=tc["model_id"],forward_accounting="Actual no-cache generation forward calls including padded batch members and lengths")
     except Exception as exc:
         error=repr(exc);(w.run/"traceback.log").write_text(traceback.format_exc())

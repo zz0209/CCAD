@@ -6845,3 +6845,78 @@ tracker已将用户边界置顶并撤下立即接续目标对应拟合的旧下�
 根据用户原话“完成当前小阶段以后，暂停当前loop。我要用一下硬件资源。我结束了和你说。”，已用automation_update原位设ccad为PAUSED，核对原task与5分钟rrule保存；资源管理器核对gpu-0/cpu-heavy/disk-d-io/disk-e-io均free且无CCAD owner。两个受管session退出提供作业终止证据，未手工删租约或停止其他项目。用户明确通知使用结束／恢复以前不恢复loop、不追加实验。Windows全进程只读CIM初查因沙箱拒绝访问，未以该失败宣称完成进程全扫描；受管作业退出及无租约已独立核对。
 
 tracker与旧报告在改写前逐字归档，路径/hash在R32_HARDWARE_PAUSE.json。此轮从原START接续，现为用户硬件暂停而保留未完成工作；有效人工工作/等待未独立计时，不从墙钟倒算。代码阶段074e98bc746aeb86e2709ee956efce902d887e2c已同步，当前日志增量按白名单成组同步。
+
+
+### R32 RESUME — user authorized continued research and broad method learning
+实际写入 UTC：2026-09-14T05:54:40Z。用户恢复指令精确接收秒级时间未知；本次核对/记录截至本写入时间，原R32 START保持，不新增完成轮。用户要求继续、广泛阅读学习、避免过分防御并遵守既有约定，已解除此前硬件暂停。
+
+核对AGENTS/tracker/plan、两项writing技能、compute账本及实际资源：所有共享租约free，RTX5070Ti 2137/16303MiB、6%。复用原ccad/task/5分钟恢复；此条先建立当前工作卡，再原位恢复automation并核对。恢复前tracker归档artifacts/correspondence_reform_20260913/tracker_before_user_resume_20260914T055440Z.md，SHA2565ad8387d88dd86c633cfa4f1b5d2dbd03996be903ce064ccfe2ad7fc2ca38ddf。
+
+读取原始Modular Arithmetic全文方法、单数字tokenizer相关部分定位、RAVEL原方法索引和干预表示偏移原文，重点将选择性源操作与真实混合答案学习对齐；引用和实际读到的源码在方法确定时单独写registry。已有源强目标位修改伴随低保护，改善这处失配直接服务跨seed解释重用，不增训SAE。初批单GPU预算1200秒含选择性成员学习和真实自由生成开发验证，实测pilot后固定规模。源训练可用旧任务标签，后续强对照获得同样信息；现有数据全部保持开发身份。无新增科学结果，未把阅读或恢复计为研究完成。
+
+
+### R32 PROGRESS — literature-guided joint functional source fitting
+实际写入 UTC：2026-09-14T06:04:09Z。新run实际开始2026-09-14T05:59:03.605091Z，尚未结束。读取Modular Arithmetic AppendixB、RAVEL原方法/固定MIT源码、CL原损失、CLeaR2026 context module原PDFpages3–8和SemanticOT匹配/稳定性方法，实际范围/来源/hash/借鉴均已追加REFERENCE_REGISTRY。
+
+关键改法是用完整混合答案的自回归CE共同拟合修改和保留，固定每个request最多64个源SAE成员，五个既有受控seed，每seed256更新。整个生成前缀复用同一gate，验证从原prompt真实生成，不通过人为关闭某个生成位置保护另一位。直接复用existing sparse gate projection/RAVEL思路；实际模型有限差分通过后才训练。保存原Fisher contrast、learned weighted和相同support的binary对照，原全部数据保持开发身份。
+
+run REFORM_R32_qwen_counterfactual_source_v1_20260914，execution session43424，gpu-0 manager自动续租。源1前224步16.54秒，源4已开始，当前实测规模在1200秒driver预算内。未增加SAE训练/模型下载/包或购买。SOURCE_FREEZE区分counterfactual训练输出梯度和开发结果；读到的单数字tokenizer差异是方法动机，当前不是新的SAE发现。plan改法前逐字归档artifacts/correspondence_reform_20260913/plan_before_joint_functional_source_20260914.md，SHA25630dd7e3763234b3580ca5eeb75a29b523d9edd8cdaf4f82537037f014741786c。本次仍R32，不将准备、阅读或运行进度计完成。
+
+
+### R32 PROGRESS — source selectivity improved; return to cross-seed reuse
+实际写入 UTC：2026-09-14T06:11:28Z。源学习run事件2026-09-14T05:59:03.605091Z至2026-09-14T06:05:17.321638Z，PASS及契约PASS，session43424退出0。5455条结果、五seed256更新/seed、每request最多64成员，wall373.6777s、37640actualpadded前向/2070200tokens。标准分析已执行，counterfactual_source_analysis/summary.json保留132单元与全部分母。
+
+同样64成员，Fisher contrast的个位混合答案17.8125%/保护20.9375%，联合拟合weighted为43.59375%/72.1875%；十位混合答案2.65625%提升至21.71875%。同support二值化的个位混合答案26.5625%、十位23.59375%，表明成员选择和连续权重作用不同，不能将全部提升归给结构。已有全部数据仍开发，源拟合使用旧fit标签；不以局部百分比宣称FCC闭合。
+
+现将投入直接返回对应研究：准备REFORM_R32_qwen_operation_context_transfer_v1_20260914，五受控seed循环1→2→3→4→5→1。复用完整源缓存/已拟合gates，64个固定source-fitpairs/方向，比较clean与真实source干预轨迹上的贡献场拟合，以及所选源成员的最优cosine指派。对应拟合无target输出标签/梯度，强对照为父run每个目标seed256次监督拟合的组成；信息与已花成本明确保留。512候选pool、64目标成员、512solver步；预计单GPU1200秒driver内，实际计时核对。真实生成代码和原source保留，实际source轨迹拟合直接处理所学操作与拟合状态分布的失配。
+
+新增arithmetic_relation_transfer.py复用既有bounded least-squares solver及实际生成接口，source_cache_run复用父states/codes，不重新训练；语法及源/target身份、panel/训练config一致断言已核对，正式数值/功能以run结果为准。本次是原R32接续，无新完成轮；目标保持。
+
+
+### R32 PROGRESS — correspondence retained partial function; equal-budget recovery underway
+实际写入 UTC：2026-09-14T06:22:11Z。对应run事件2026-09-14T06:11:35.332268Z至2026-09-14T06:15:36.604279Z，PASS及契约PASS，session84688退出0；8015行，wall241.2603677s、processCPU224.703125s、37120padded前向/2041600tokens、peakCUDA8521240576bytes。原始SHA256 fa0ac4feac0867aacc170da4a22896ffd60274243c0af7d910074085cf3f4710，标准分析和全部212单元保留。
+
+clean迁移个位/十位混合答案20.625%/14.0625%，path20.3125%/13.75%，所选源成员的最优cosine指派18.90625%/16.71875%；直接目标256更新43.59375%/21.71875%。path没有实质改善，作用场MSE较低不保证功能保留。保留两功能及保护效果，未称本方法有独特关系优势。
+
+统计说明补记：实际panel核对两模板的受体/供体算式身份及顺序完全相同，是64独立配对的128种提示呈现；此前所称128开发对指呈现数，不能作为128独立配对。既有均值不变，未新做独立样本显著性推断。全部旧数据继续开发。
+
+下一检验为REFORM_R32_qwen_reuse_adaptation_v1_20260914，session20929，实际开始见run状态；此时仍运行。三个起点是clean对应、最优指派、目标Fisher contrast（labels/activations score，并非梯度归因），五目标seed相同fit对序列/Adam/64更新，冻结0/16/64检查点。该预算等于每功能0/8/32更新，原标签所有方法可用；不是监督获取优势。复用原helper和投影，无新SAE训练。GPU1956MiB/1%、free后取得受管租约，1200秒driver预算。数学/阅读/实际实验和稿件共同推进，阅读或运行不计新完成轮。
+
+旧文件逐字归档artifacts/correspondence_reform_20260913/resume_reform_archive_20260914T062211Z/MANIFEST.json。两writing技能用于以选择性效果和跨seed恢复组织新增文稿，完整保留强对照与功能损失；主会与母问题未降级。Markham原PDF AppendixB也已实际读到原子线性独立、concept-diversity及非退化条件，不能将该定理直接用于当前SAE。
+
+
+### R32 PROGRESS — positive functional recovery; confirmation START
+实际写入 UTC：2026-09-14T06:32:56Z。适配run事件2026-09-14T06:20:23.347014Z至run/status.json所存实际结束时间，PASS及契约PASS，session20929退出0。13135行，wall437.0488282s、processCPU400.640625s、67560padded前向/3715800tokens；原始SHA2567faa11f618d051460f2d919adccc50e1d48e0d640689ea35ee04fad7801c5296。372单元及所有源数据保留。
+
+同64updates，clean对应个位/十位混合答案47.03125%/33.59375%，Fisher直接目标42.8125%/19.21875%，assignment31.5625%/19.84375%；两功能相对Fisher及assignment在五目标seed均为正差。clean保留81.25%/77.1875%的初始成员，说明恢复同时涉及成员及权重调整，尚不据此归因。各方法共享fit序列与标签；Fisher前三个记录点loss与原256updates父run在五seed全部差0，实际核对训练前缀一致。
+
+当前选择是发展该正信号：新confirmation配置已在第一次新干预前冻结；128组新配对共256个未用于此前干预开发的算式、两模板，未编辑答案此前已经观察，范围准确记录。全mask冻结，主要终点64updates的完整hybrid均值对Fisher和assignment两个共同主比较，配对cluster bootstrap10000、固定五SAE网络、两下界均>0才确认；16步与保护为完整次要结果。配置reform_r32_qwen_reuse_confirmation_v1.json，run尚未开始，1200秒GPU预算，预计~500秒。无新训练/资产/付款。
+
+统计措辞勘误：06:22:11条的“64独立配对”应读为64不同配对；题目身份不重叠不自动证明抽样独立性。此前结果仅描述性均值，无相应独立显著性主张。新确认推断明确条件于固定模型、任务及五SAE网络。原R32继续，下一步按真实新干预结果发展方法与图，未把局部正数宣称主会闭合。
+
+
+### R32 PROGRESS — frozen confirmation execution and complete development curves
+实际写入 UTC：2026-09-14T06:37:54Z。新确认run实际开始2026-09-14T06:33:02.278824Z，session87158，正在运行；没有根据部分结果选模型。统计实现scripts/analyze_arithmetic_reuse_confirmation.py按run config执行固定cluster resampling，使用所有失败和完整分母。此前适配run实际结束2026-09-14T06:27:40.395496Z（以原status.json核对；如原记录时间不同，以后续勘误为准）。新论文附录已加入全0/16/64updates表、修改/保护/联合成功、先前source成本及依赖单位，核心主张不凭开发数据提升。当前尚未读取新确认干预结果。
+
+
+### R32 CORRECTION — exact adaptation completion timestamp
+实际写入 UTC：2026-09-14T06:38:09Z。紧接上一条勘误：适配run的实际结束时间为2026-09-14T06:27:40.409920+00:00，直接读取原status.json。上一条手写的06:27:40.395496Z不正确，撤回该微秒值；原run数据、状态与耗时未改变。后续事件时间从状态文件直接读取，不手抄或估填。
+
+
+### R32 COMPLETE — functional recovery benefit confirmed and manuscript consolidated
+实际写入 UTC：2026-09-14T06:53:41Z。round_id=R32。本条完成从原R32 START接续的研究工作单元；此前用户硬件暂停不计有效工作，最终主会/FCC项目目标继续推进。恢复期间的读取、实现、计算和稿件整理已完成，非仅轮询或准备；有效人工工作与等待未独立计时，不从跨暂停墙钟倒算。
+
+事件runs/REFORM_R32_qwen_counterfactual_source_v1_20260914：2026-09-14T05:59:03.605091+00:00至2026-09-14T06:05:17.321638+00:00，PASS，wall373.6777163s，rawSHA256a43401a8dd89ce71e858a4b9481c19c36721f2b5fddfc74244c0480b100cbf3a。
+事件runs/REFORM_R32_qwen_operation_context_transfer_v1_20260914：2026-09-14T06:11:35.332268+00:00至2026-09-14T06:15:36.604279+00:00，PASS，wall241.2603677s，rawSHA256fa0ac4feac0867aacc170da4a22896ffd60274243c0af7d910074085cf3f4710。
+事件runs/REFORM_R32_qwen_reuse_adaptation_v1_20260914：2026-09-14T06:20:23.347014+00:00至2026-09-14T06:27:40.409920+00:00，PASS，wall437.0488282s，rawSHA2567faa11f618d051460f2d919adccc50e1d48e0d640689ea35ee04fad7801c5296。
+事件runs/REFORM_R32_qwen_reuse_confirmation_v1_20260914：2026-09-14T06:33:02.278824+00:00至2026-09-14T06:42:19.955186+00:00，PASS，wall557.6300136s，rawSHA256831b6f45165399512d02e1c61e8eb975d00a656177e1c98a15d2ef15da2cd013。
+
+四run总driver墙钟1609.6169258s、processCPU1394.500000s、222960padded前向/12262800tokens；43964条含重复base呈现的原始记录，记录数不是科学进展标准。全部受管session退出0，GPUlease现free，未干预其他项目。原ccad/task已再次实读ACTIVE、5分钟；不暂停研究，不建新loop或委派任务。
+
+核心实际增量为已有功能解释的目标恢复收益。冻结64targetupdates在128组新干预配对上，clean对应完整hybrid均值38.28125%，Fisher27.7734375%、assignment22.5%；两个主差值10.5078125[8.046875,12.96875]和15.78125[13.046875,18.5546875]百分点。统计按原config的10000次配对cluster bootstrap执行，固定五SAE网络，两共同主比较下界均正。新确认不用调参，17359记录和15360主比较结果完整。两种提示不当独立算式，已有未编辑答案曝光明确保留。源path与clean无增量、assignment互有高低、早期失败与保护代价均保留。
+
+从Modular Arithmetic单数字tokenizer、RAVEL实际Cause/Iso源码、CL损失、CLeaR2026方法/形式附录与SemanticOT实际对照得到方法动机，并实装联合source学习和等预算目标恢复。两writing技能落实到具体实验选择及主文/附录：最新确认结果进入正文Discussion，完整方法与三张表集中paper/sections/arithmetic_component_details.tex，去除运行计数式论文叙事。固定投影/二次拟合不称原创，当前收益不称主会闭合。
+
+唯一paper/main.pdf为44页/主文8页，实际查看页8、9、27、28，新增式与表无裁切；finalSHA25619b9e87b97a6e226f32b1960fcfde737f5723bcb41179a594e3d2556321a39f7，build20260914T065051435506Z。EVIDENCE_INDEX.json及data/arithmetic_evidence.json、三个数据导出、统计数组/配置/code/原始hash均更新；R32_RESUMED_RUNS.json是完整定位，研究报告及writing review同步。先前文稿/入口逐字归档manifest与hash保留；本次前tracker归档artifacts/correspondence_reform_20260913/tracker_before_r32_completion_20260914.md SHA2560cea44592ae2ce9061c6719dda26e1c8001f66b7e5a19b5b7c86f1dc23df7392。
+
+下一工作单元沿已确认的功能恢复发展：在实际相同目标梯度预算下加入直接目标梯度选成员，并用源功能身份预测目标成员组干预，检验关系提供的知识。重用现有五SAE与fit数据，暂不增训源素材。已曝光确认不得改名再计独立证据；新改法的确认使用新输入范围/上下文并先冻结。R33尚未START，具体工作卡见tracker；本条完成记录后才更新tracker，未将完成轮数当科学目标达标。

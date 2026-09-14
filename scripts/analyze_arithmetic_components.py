@@ -8,6 +8,7 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument("--run",type=Path,required=True);ap.add_argument("--output",type=Path,required=True);a=ap.parse_args()
     assert json.loads((a.run/"status.json").read_text())["status"]=="PASS"
     raw=a.run/"metrics.raw.jsonl";rows=[json.loads(s) for s in raw.read_text().splitlines()]
+    config=json.loads((a.run/"config.resolved.json").read_text())
     panel=json.loads((a.run/"panel.json").read_text());cells=[];groups=collections.defaultdict(list)
     for r in rows:
         if r["kind"]=="source_patch":groups[r["method"],r["seed"],r["mode"],r["operation"],r["task"]].append(r)
@@ -31,7 +32,8 @@ def main():
         if r["kind"]=="base":base[r["task"],r["split"]].append(r)
     quality=[dict(task=k[0],split=k[1],n=len(rr),exact_accuracy=sum(r["correct"] for r in rr)/len(rr)) for k,rr in base.items()]
     summary=dict(written_at_utc=datetime.now(timezone.utc).isoformat(),run=str(a.run.resolve()),raw_sha256=hashlib.sha256(raw.read_bytes()).hexdigest(),rows=len(rows),base_quality=quality,cells=cells,
-                 scope="All source-development attempts. Same operand pairs reused across source seeds; five initializations and shared prompt pairs are not independent per-record trials. Both-correct subset is displayed beside the full denominator, not substituted for it. Four distinct hybrid outcomes are computed from exact free generation.")
+                 scope=config.get("scope","Same operand pairs are reused across SAE seeds and prompt forms; these are not independent per-record trials."),
+                 denominator="Full denominator is primary; both-correct subset is displayed separately. Four distinct hybrid outcomes are computed from exact free generation.")
     a.output.mkdir(parents=True,exist_ok=True);(a.output/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
     print(json.dumps(dict(base_quality=quality,rows=len(rows),cells=len(cells))))
     aggregate=collections.defaultdict(list)
