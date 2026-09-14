@@ -1,0 +1,89 @@
+{
+  "audit_opened": false,
+  "batch_size": 8,
+  "budget": "250driver seconds to fill missing rows after an unexplained longpause; no method/data changes.",
+  "budget_seconds": 250,
+  "candidate_family_frozen": true,
+  "checkpoint_step": 16384,
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "device": "cuda:0",
+  "evaluation_rules": [
+    "source_part0",
+    "source_part1",
+    "member_part0",
+    "member_part1",
+    "assignment_part0",
+    "assignment_part1",
+    "two_assignment_part0",
+    "two_assignment_part1",
+    "wrong_part0",
+    "wrong_part1"
+  ],
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "hidden_atol": 0.002,
+  "intervention_span": "generated_prefix",
+  "max_length": 72,
+  "max_new_tokens": 5,
+  "member_queries": {
+    "partition_seed": 9381457,
+    "relation_run": "runs/REFORM_R38_qwen_member_fields_five_v1_20260914",
+    "role_schema": true
+  },
+  "members": [
+    64
+  ],
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "operand_range": [
+    10,
+    50
+  ],
+  "pairs_per_template": 64,
+  "purpose": "Unfitted complementary member queries and source-response agreement",
+  "reuse_rules": [
+    "fisher_contrast",
+    "counterfactual_weighted"
+  ],
+  "round_id": "R38",
+  "run_id": "REFORM_R38_qwen_member_queries_resume_v2_20260914",
+  "run_parent": "R38",
+  "scope": "Exposed original development. Two source-only complementary random32member subsets peroperation. Compare source,memberrelation,one-to-oneassignment,two-per-source64targetassignment,andwrongpartidentity. No queryoutputs are used forfitting; source andtarget outputs are compared onthe samequestions with the seedcycle aligned.",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "selection_rules": [
+    "fisher_contrast"
+  ],
+  "source_cache_run": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+  "source_selection_step": {
+    "tens": 0,
+    "unit": 1
+  },
+  "split_salt": "ccad-r32-digit-source-1",
+  "statistics_unit": "64 question clusters,two prompts,two operations,five fixed dependentSAEs; development.",
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "written_at_utc": "2026-09-14T19:26:51Z",
+  "resume_interventions": {
+    "run": "runs/REFORM_R38_qwen_member_queries_v1_20260914",
+    "raw_sha256": "8e9a21cd4328bfbef7bdf1117ce4ea92224cc4635ab188cbccd87cdbbaccd739"
+  }
+}

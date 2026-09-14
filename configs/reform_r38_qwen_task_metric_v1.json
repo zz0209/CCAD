@@ -1,0 +1,107 @@
+{
+  "run_id": "REFORM_R38_qwen_task_metric_v1_20260914",
+  "run_parent": "R38",
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "purpose": "Conditional digit-contrast correspondence: task_metric",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "budget": "250driver seconds; two fixed SAEs and two matchedsource directions,no output fitting.",
+  "budget_seconds": 250,
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "batch_size": 8,
+  "max_new_tokens": 5,
+  "scope": "Exposed original development questions. Same R37 source role gates,64fit pairs and64memberunion. Requested digit-difference contrasts are residualized against protected digit differences and prompt format. task_target purifies the source regression target; task_metric compares only projected sample contrasts. Actual full generation measures modification and preservation.",
+  "written_at_utc": "2026-09-14T18:20:27.929228+00:00",
+  "round_id": "R38",
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "operand_range": [
+    10,
+    50
+  ],
+  "split_salt": "ccad-r32-digit-source-1",
+  "pairs_per_template": 64,
+  "selection_rules": [
+    "fisher_contrast"
+  ],
+  "members": [
+    64
+  ],
+  "max_length": 72,
+  "hidden_atol": 0.002,
+  "statistics_unit": "Unordered operand pairs remain in the same split and prompt-connected recipient-donor pairs; five controlled source SAE initializations with common prompts",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "intervention_span": "generated_prefix",
+  "source_selection_step": {
+    "unit": 1,
+    "tens": 0
+  },
+  "source_cache_run": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+  "reuse_rules": [
+    "fisher_contrast",
+    "counterfactual_weighted"
+  ],
+  "relation_transfer": {
+    "seed_pairs": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        1
+      ]
+    ],
+    "fit_pairs": 64,
+    "pair_seed": 9321402,
+    "pool": 512,
+    "steps": 512,
+    "ridge_fraction": 0.001,
+    "contexts": [
+      "clean"
+    ],
+    "include_equivalent_views": true,
+    "source_mask_runs": {
+      "1": "runs/REFORM_R37_qwen_source_roles_v1_20260914",
+      "2": "runs/REFORM_R37_qwen_source_roles_v1_20260914",
+      "3": "runs/REFORM_R37_qwen_roles_remaining_v1_20260914",
+      "4": "runs/REFORM_R37_qwen_roles_remaining_v1_20260914",
+      "5": "runs/REFORM_R37_qwen_roles_remaining_v1_20260914"
+    },
+    "source_mask_pattern": "counterfactual_seed{seed}_k{members}_gradient_roles.npz",
+    "role_schema": true,
+    "role_objective": "task_metric"
+  },
+  "source_view_augmentation": {
+    "template": 1,
+    "require_base_correct": true
+  },
+  "evaluation_rules": [
+    "counterfactual_weighted",
+    "transfer_s1_clean",
+    "transfer_s1_assignment",
+    "transfer_s2_clean",
+    "transfer_s2_assignment"
+  ]
+}

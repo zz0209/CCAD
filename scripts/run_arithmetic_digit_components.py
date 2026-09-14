@@ -76,6 +76,8 @@ def main():
         sources += ["scripts/arithmetic_response_relation.py", "scripts/fit_component_correspondence.py"]
     if cfg.get("position_relation"):
         sources += ["scripts/arithmetic_position_relation.py", "scripts/fit_component_correspondence.py"]
+    if cfg.get("member_queries"):
+        sources += ["scripts/arithmetic_member_queries.py"]
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -104,7 +106,7 @@ def main():
             assert cfg.get("frozen_adaptation") and not cfg.get("counterfactual_fit")
             prior_panel=json.loads(w.checked(ROOT/cfg["frozen_adaptation"]["development_panel_run"]/"panel.json").read_text())
             assert not {(r["a"],r["b"]) for r in rows}&{(r["a"],r["b"]) for r in prior_panel["rows"]}
-            w.checks["new_operand_questions_disjoint_from_all_source_fit_and_prior_evaluation"]=True
+            w.checks["operand_questions_disjoint_from_designated_development_panel"]=True
         tokenrows=[tok.encode(r["prompt"],add_special_tokens=False) for r in rows]
         batch=cfg["batch_size"];padding=cfg["max_length"]
         physical_length=max(map(len,tokenrows))+cfg["max_new_tokens"]
@@ -350,15 +352,37 @@ def main():
             gates=loaded
             metadata.append(dict(frozen_adaptation=fc,current_fit_updates=0,current_output_gradients=0,
                                  original_source_and_target_fit_labels_shared=True))
-        write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=bool(cfg.get("relation_transfer") or cfg.get("response_relation") or cfg.get("position_relation") or cfg.get("adaptation") or cfg.get("frozen_adaptation")),task_output_gradients="inherited shared two-role response bank; no new gradients; see POSITION_FREEZE.json" if cfg.get("position_relation") else "shared fit-pair requested/preserved margins; see RESPONSE_FREEZE.json" if cfg.get("response_relation") else "fit split hybrid CE" if cfg.get("counterfactual_fit") else "inherited source and target fit only" if cfg.get("frozen_adaptation") else "inherited source fit only" if source_parent else 0,source_functional_outcomes_used_for_selection=bool(cfg.get("counterfactual_fit") or source_parent),development_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
+        if cfg.get('member_queries'):
+            from arithmetic_member_queries import prepare_queries
+            gates,query_meta=prepare_queries(w,cfg,saes)
+            metadata.append(query_meta)
+        write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=bool(cfg.get("relation_transfer") or cfg.get("response_relation") or cfg.get("position_relation") or cfg.get("adaptation") or cfg.get("frozen_adaptation") or cfg.get("member_queries")),task_output_gradients="inherited shared two-role response bank; no new gradients; see POSITION_FREEZE.json" if cfg.get("position_relation") else "shared fit-pair requested/preserved margins; see RESPONSE_FREEZE.json" if cfg.get("response_relation") else "fit split hybrid CE" if cfg.get("counterfactual_fit") else "inherited source and target fit only" if cfg.get("frozen_adaptation") else "inherited source fit only" if source_parent else 0,source_functional_outcomes_used_for_selection=bool(cfg.get("counterfactual_fit") or source_parent),development_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
+        completed_keys=set()
+        if cfg.get('resume_interventions'):
+            previous=ROOT/cfg['resume_interventions']['run']
+            previous_cfg=json.loads(w.checked(previous/'config.resolved.json').read_text())
+            for key in ['model_revision','training_run','checkpoint_step','source_cache_run','seeds','templates','members','member_queries','max_new_tokens','intervention_span']:
+                assert previous_cfg[key]==cfg[key],key
+            assert json.loads(w.checked(previous/'panel.json').read_text())==json.loads((w.run/'panel.json').read_text())
+            rawpath=w.checked(previous/'metrics.raw.jsonl')
+            assert sha256(rawpath)==cfg['resume_interventions']['raw_sha256']
+            for line in rawpath.read_text().splitlines():
+                row=json.loads(line)
+                if row['kind']=='source_patch':
+                    key=(row['seed'],row['method'],row['operation'],row['row_id'])
+                    assert key not in completed_keys
+                    completed_keys.add(key)
+            w.checks['resume_scientific_inputs_and_panel_identical']=True
         def evaluate(seed,method,k,operation,deltas,gate=None,raw_trajectory=False):
             for off in range(0,len(pairs),batch):
                 pp=pairs[off:off+batch];ix=[p["recipient"] for p in pp];donors=[p["donor"] for p in pp]
+                if all((seed,method,operation,off+j) in completed_keys for j in range(len(pp))):
+                    continue
                 patch=None
                 if raw_trajectory:patch=lambda current,step:h[donors,:step+1]-current
                 elif gate is not None:
                     ae=saes[seed]
-                    role_schema=any(cfg.get(key,{}).get('role_schema',False) for key in ['position_relation','relation_transfer','frozen_adaptation','counterfactual_fit'])
+                    role_schema=any(cfg.get(key,{}).get('role_schema',False) for key in ['position_relation','relation_transfer','frozen_adaptation','counterfactual_fit','member_queries'])
                     def patch(current,step):
                         g=gate
                         if gate.ndim==2:
@@ -370,6 +394,8 @@ def main():
                 ans,txt,hh,norm=generate(ix,deltas[off:off+len(pp)] if deltas is not None else None,patch)
                 replay=float(((hh[:,0]-h[ix,0]) if trajectory else (hh-h[ix])).abs().max());assert replay<cfg["hidden_atol"],replay
                 for j,p in enumerate(pp):
+                    if (seed,method,operation,off+j) in completed_keys:
+                        continue
                     expected=p[operation+"_answer"] if operation in ["unit","tens"] else p["donor_answer"]
                     a=ans[j];numeric=a is not None and 10<=a<100
                     target=(a%10==p["donor_answer"]%10 if operation=="unit" else a//10==p["donor_answer"]//10) if numeric else False
@@ -396,7 +422,7 @@ def main():
                     delta=((z[jj]-z[ii])*gate[:,c])@D
                     evaluate(seed,rule,k,operation,delta)
         w.checks.update(source_selection_only_fit_data=True,donor_changes_both_digits=True,real_generation_no_answer_prefix=True,all_failed_base_cases_retained=True)
-        if not any(cfg.get(k) for k in ["relation_transfer","response_relation","position_relation","adaptation","frozen_adaptation"]):
+        if not any(cfg.get(k) for k in ["relation_transfer","response_relation","position_relation","adaptation","frozen_adaptation","member_queries"]):
             w.checks["no_target_used"]=True
         if not cfg.get("counterfactual_fit") and source_parent is None:
             w.checks["source_selection_only_fit_labels_and_activations"]=True
