@@ -8529,3 +8529,33 @@ R60_REPORT、R60_CANDIDATE_ANALYSIS、R60_RUN_INVENTORY、R60_CLOSEOUT以及synt
 当前唯一paper/main.pdf SHA256=d419a4ad7d5267269f8160d363a54f1606172ddb16876a4439d293e10fcc8501，657177bytes；50页，7正文+2引用+41附录，4主图3主表。20主表单元对照原确认一致，R59冻结分析hash不变。初次大patch因上下文不匹配未写入，随后使用断言定位修改；初版出现短尾页，经删重复文字恢复7页，未缩字。全稿联系图及关键页阅读尺寸已检查；最终补全SAE全称仅第1页栅格改变且重看。无undefined/横向溢出，参考页约1.13pt vbox无可见截断。短CPU导出/编译/渲染，无GPU/训练/下载/安装/付费。
 
 交付MANUSCRIPT_ARGUMENT_R60.md、MANUSCRIPT_ARGUMENT_R60_CLOSEOUT.json和manuscript_argument_r60_visual/CHECK.json；改前20份文件逐字归档manuscript_argument_after_r60_20260915T223933Z/MANIFEST.json。README/CLAIM_MAP/EVIDENCE_INDEX/data manifest及plan更新；原报告和raw不重写。该单元提升成稿，未宣布科学跨档或整体strong accept。原ccad当前对话ACTIVE5分钟，无后台计算；下一实质实验须针对当前整稿尚未回答的具体预测，不默认重复排序、candidate/writer或其他局部搜索。此COMPLETE后更新tracker及白名单同步。
+
+## FINAL_WRAP_1_OF_2 START — 最后两轮第一轮：科学论证与证据收尾
+
+实际写入UTC：2026-09-15T22:59:53Z；round_id=FINAL_WRAP_1_OF_2。用户本次明确只余两轮，用于全面wrap up，目标为总体分量超过Reproducible Subspaces并交付人工审阅、准备提交；本两轮结束后原位暂停ccad。最后已完成科学单元为R60，先前两次成稿工作不重计科学结果。本阶段是用户指定的最后两轮收尾，不自动改名R61科研试验或续出第三轮。
+
+本轮理由与动作：读用户完整六论文评审讨论、当前50页稿/证据入口和Subspaces原PDF。发现附录G仍称BiB官方test未用、SHIFT统计仅写早期文档bootstrap，与R59冻结确认不符。先据原始证据修复这些具体矛盾，统一理论对象、主要贡献和功能消费者；比较Subspaces的实际机制、功能检验及稳健字典构建，不把它简化成只做几何。两项指定anti-defensive-writing/defensive-writing-checker继续落实为明确贡献和完整比较，不降目标或隐藏强对照。
+
+第二轮预定完成正式排版、独立重建与可复现投稿包、逐页/引用/数据身份检查及人工审阅入口。已异步询问ACL/ARR、ICLR或arXiv的优先排版；回答前先进行不依赖模板的工作。作者和实际对外提交仍由用户人工审阅后决定；本次未获实际上传授权。内部可逆整理继续，无新付费或默认GPU预算，尚无模型作业。
+
+原文件逐字归档artifacts/final_wrap_20260915/before_20260915T225953Z/MANIFEST.json；本记录为可证实单元起点，前期阅读精确起点/有效思考与等待未分别计时，未知。达到2/2后暂停，不因科学目标未认证自行超轮；结果是否超过近邻依实际贡献/证据判断，不用自评分或录用概率兑现目标。
+
+
+## FINAL_WRAP_1_OF_2 PROGRESS — user format and extra-unit authorization
+
+Actual write UTC: 2026-09-15T23:06:18Z. The user selected a generic arXiv preprint first and separately authorized one additional experimental or necessary work unit to address concrete gaps in the complete argument. The extra unit has not been consumed. The original two final-wrap units remain; actual upload and author metadata await the user's planned human review. Tracker and plan updated. No new model job, experiment outcome, or scientific advancement is claimed by this status update.
+
+
+## FINAL_WRAP_1_OF_2 CORRECTION — reproduction appendix
+
+Actual write UTC: 2026-09-15T23:12:29Z. Corrected the obsolete claim that the official Bias in Bios test remains unused. The appendix now separates the 695-document development stage from the frozen 1,735-document official-test confirmation and describes 4,000 paired profession/gender-stratified document plus new-target-seed (2–5) resamples, with document-only intervals retained separately. Verified against scripts/shift_confirmation_results.py and unchanged R59_CONFIRMATION_ANALYSIS.json. Initial longer wording produced a 51st page; reduced redundant reproduction prose without changing scientific scope, restoring 50 pages. One PDF render attempted unsupported negative indexing and was retried using len(document)-1 successfully. No experiment rerun or scientific-result change. Related-work comparison and explicit zero-recipient code clarification are subsequent manuscript edits in this unit.
+
+
+## FINAL_WRAP_1_OF_2 PROGRESS — actual numerical replay and source-package plan
+
+Actual write UTC: 2026-09-15T23:23:18Z. The original R59 analysis script expected the working run_shift_transfer.py hash, which R60 legitimately changed. Updated analysis to validate the retained frozen confirmation source_snapshot (fallback to hash-matched working files for preparation code), use a relative panel with its original hash, and require a new output. Replay from retained raw rows reproduced every numerical field exactly; original R59_CONFIRMATION_ANALYSIS.json remains SHA256 b9fe413bf3e221a936f8965740581215d1cd8555a1e23be39095311fcb6a84b7. Output: artifacts/final_wrap_20260915/R59_CONFIRMATION_REPLAY.json. Two CPU math threads, no GPU/model rerun; exact total analysis process duration was not captured. New packaging utility produces a current-claim plan: 84 source files,4530 companion files,2296349313 bytes pre-compression,zero missing current-claim paths. No package build or relocation test claimed yet. Further changes to prose are compiled at paper/build/20260915T232150887982Z/latex.log; final PDF SHA2560f0ea652f1be7861ee1cb25ce850b768a1fce4ce72e9dbbd213f86c578dafaf0. Whole-page contacts revealed an intermediate main spill; redundant related-work text was rewritten to retain all substantive comparisons within seven main pages. Mandatory anti-defensive and checker application is concrete in the positive three-result narrative and reader-facing Related work; strong raw and negative comparators remain.
+
+
+## FINAL_WRAP_1_OF_2 COMPLETE
+
+Actual write UTC: 2026-09-15T23:25:06Z. Verifiable unit start2026-09-15T22:59:53Z; completion is this write. Completed the generic preprint revision, original-PDF comparison against Reproducible Subspaces, full mathematical/operation connection review, reproduction-appendix corrections, raw-output R59 numerical replay and current-claim package dependency plan. Evidence and exact source/PDF identities: artifacts/final_wrap_20260915/ROUND1_CLOSEOUT.json; reader report ROUND1_REPORT.md and SCIENTIFIC_ARGUMENT.md. Final PDF50pages,7main+2references+41appendix, SHA2560f0ea652f1be7861ee1cb25ce850b768a1fce4ce72e9dbbd213f86c578dafaf0. Viewed all pages at contact scale and final changed pages1/3/7/50 at readable size; unchanged appendix pages10–49 have identical extracted text to the archived input. No undefined references or horizontal overflows; existing1.13148pt reference balancing vbox has no visible clipping. All frozen R59 numbers exactly reproduced; no new experiment or scientific cross-tier claim. CPU/light IO only, no GPU; exact active/computation/wait decomposition unknown. Preserved original statistics, failed intermediate layouts/render attempt, pre-edit sources and history. First of two final-wrap units complete; optional separate extra unit remains unused. Next: package construction, relocation checks, final manual-review delivery and original-loop pause after second unit.

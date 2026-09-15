@@ -76,16 +76,32 @@ def summarize(values, labels, strata, counts):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output', type=Path, default=ART / 'R59_CONFIRMATION_ANALYSIS.json')
+    parser.add_argument('--output', type=Path, required=True,
+                        help='New replay output; the original confirmation is immutable.')
     args = parser.parse_args()
+    if args.output.exists():
+        parser.error('--output must name a new file; existing results are retained')
     freeze_path = ART / 'R59_CONFIRMATION_FREEZE.json'
     freeze = read(freeze_path)
     # The protocol and the executables/configurations used by this confirmation
     # were fixed before test-document selection and all model responses.
-    for item in [*freeze['code_identities'], *freeze['configs'], freeze['target_training_config']]:
-        p = ROOT / item['path']
-        assert hashlib.sha256(p.read_bytes()).hexdigest() == item['sha256'], item['path']
-    panel_path = Path(freeze['panel_path'])
+    verified_code = []
+    snapshot = ROOT / 'runs/REFORM_R59_shift_confirm_seed2_v1_20260915/source_snapshot'
+    for item in freeze['code_identities']:
+        # Later development may legitimately change the working source. Validate
+        # the frozen executable from the confirmation's retained snapshot.
+        candidates = [snapshot / item['path'], ROOT / item['path']]
+        matches = [p for p in candidates if p.is_file() and
+                   hashlib.sha256(p.read_bytes()).hexdigest() == item['sha256']]
+        assert matches, ('frozen source missing or changed', item['path'])
+        verified_code.append(dict(recorded_path=item['path'], **identity(matches[0])))
+    for item in [*freeze['configs'], freeze['target_training_config']]:
+        assert hashlib.sha256((ROOT / item['path']).read_bytes()).hexdigest() == item['sha256'], item['path']
+    # The panel travels with the evidence bundle; its old Windows absolute path
+    # is provenance, not a requirement to read the original machine.
+    panel_path = ART / Path(freeze['panel_path'].replace('\\', '/')).name
+    panel_identity = read(ART / 'R59_REPLAY_INDEX.json')['panel']
+    assert hashlib.sha256(panel_path.read_bytes()).hexdigest() == panel_identity['sha256']
     panel = read(panel_path)['rows']
     assert panel and all(row['split'] == 'test_confirmation' for row in panel)
     order = {row['document_sha256']: i for i, row in enumerate(panel)}
@@ -152,6 +168,7 @@ def main():
         new_target_seed_cohort=cohort, contrasts=contrasts, per_target_seed=summaries,
         raw_rows_by_run=counts_by_run, source_and_unedited_logits_identical_across_targets=True,
         sources=[identity(freeze_path), identity(panel_path), identity(Path(__file__)), *sources],
+        verified_frozen_code=verified_code,
         scope='Frozen confirmation on new official biographies, fixed source head and public source explanation. '
               'Primary averages the three predefined single parts over new target seeds2-5. '
               'Seed1 is a separate replication of previously developed target material. '
@@ -160,6 +177,7 @@ def main():
               'target-seed resampling. Source seeds, source annotations and query families are fixed, not resampled. '
               'Worst-group family scores average per-query minima; they are not worst overall union scores. '
               'Probability and logit MAE target source intervention outputs, not task labels.')
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(out, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(dict(primary=out['primary'], rows=counts_by_run, output=str(args.output))))
 
