@@ -78,6 +78,8 @@ def main():
     if cfg.get('request_writer_fit',{}).get('select_on_source_fit'):sources+=['scripts/binding_selected_writer.py']
     if cfg.get('deletion_transfer',{}).get('project_current_codes'):sources+=['scripts/adaptive_native_execution.py']
     if cfg.get('deletion_transfer'):sources+=['scripts/binding_deletion_transfer.py']
+    if cfg.get('absolute_relation'):sources+=['scripts/binding_absolute_relation.py']
+    if cfg.get('absolute_relation',{}).get('state_components'):sources+=['scripts/binding_state_components.py','scripts/adaptive_native_execution.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -225,7 +227,10 @@ def main():
                     target=AutoEncoderTopK(model.config.hidden_size,tc['dict_size'],tc['k']).to(w.device)
                     target.load_state_dict(torch.load(cp,map_location=w.device,weights_only=True));target.eval();target.requires_grad_(False)
                     with torch.no_grad():zt=target.encode(hidden[layer].flatten(0,1)).reshape(len(rows),2,-1)
-                    if cfg.get('deletion_transfer'):
+                    if cfg.get('absolute_relation'):
+                        from binding_absolute_relation import build_anchored_transfers
+                        transfers=build_anchored_transfers(w,cfg,rows,hidden[layer],z,sae,conditional,target,zt,seed,target_seed)
+                    elif cfg.get('deletion_transfer'):
                         from binding_deletion_transfer import deletion_transfers
                         transfers=deletion_transfers(w,cfg,rows,z,sae,target,zt,seed,target_seed)
                     else:
@@ -257,12 +262,13 @@ def main():
                             scores=forward(ii,layer,delta);pred=scores.argmax(-1)
                             for j,i in enumerate(ii):
                                 r=rows[i];dr=rows[r['paired_row']];change=r['query'] in sites
-                                expected=dr['answer_id'] if change and not cfg.get('deletion_transfer') else r['answer_id']
+                                deletion=bool(cfg.get('deletion_transfer')) or (cfg.get('absolute_relation') and (method.startswith('delete_') or method=='source_delete'))
+                                expected=dr['answer_id'] if change and not deletion else r['answer_id']
                                 options=[tok.encode(' '+v,add_special_tokens=False)[0] for v in r['all_capitals']]
                                 choice=options[int(scores[j,options].argmax())]
                                 w.record(kind='intervention',task=f"template{r['template']}",row_id=i,component=r['component'],
                                     mode=f'layer{layer}',method=method,seed=0 if cap is None else seed,
-                                    target_seed=target_seed if cap==-3 and method!='source_delete' else None,operation=operation,
+                                    target_seed=target_seed if cap==-3 and method not in ['source_delete','source_replace'] else None,operation=operation,
                                     split=r['split'],query=r['query'],requested=change,answer_id=int(pred[j]),answer=tok.decode([int(pred[j])]),
                                     expected_id=expected,expected=tok.decode([expected]),correct=bool(pred[j]==expected),
                                     four_choice_correct=bool(choice==expected),expected_log_probability=float(scores[j,expected]),
