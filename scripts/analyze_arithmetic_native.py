@@ -9,10 +9,21 @@ def answer(r):
     return ('number',r['answer']) if r['answer'] is not None else ('text',r['generated_text'].strip())
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--run',default='runs/REFORM_R43_arithmetic_native_execution_pilot_v1_20260915');ap.add_argument('--output',default='artifacts/correspondence_reform_20260913/r43_arithmetic_native_pilot.json');args=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--run',default='runs/REFORM_R43_arithmetic_native_execution_pilot_v1_20260915');ap.add_argument('--output',default='artifacts/correspondence_reform_20260913/r43_arithmetic_native_pilot.json');ap.add_argument('--reference-run',action='append',default=[]);args=ap.parse_args()
     run=ROOT/args.run
     status=json.loads((run/'status.json').read_text());assert status['status']=='PASS'
     rows=[json.loads(s) for s in (run/'metrics.raw.jsonl').read_text().splitlines()]
+    inputs=[]
+    panel=json.loads((run/'panel.json').read_text())
+    for name in args.reference_run:
+        previous=ROOT/name
+        assert json.loads((previous/'status.json').read_text())['status']=='PASS'
+        old=json.loads((previous/'panel.json').read_text())
+        assert {k:v for k,v in old.items() if k!='scope'}=={k:v for k,v in panel.items() if k!='scope'}
+        rows += [json.loads(s) for s in (previous/'metrics.raw.jsonl').read_text().splitlines()]
+        inputs.append(dict(run=name,raw_sha256=hashlib.sha256((previous/'metrics.raw.jsonl').read_bytes()).hexdigest()))
+    keys=[(r['seed'],r['method'],r['operation'],r['row_id']) for r in rows if r['kind']=='source_patch']
+    assert len(keys)==len(set(keys)), 'Repeated intervention keys'
     groups=defaultdict(list)
     for r in rows:
         if r['kind']=='source_patch':groups[r['seed'],r['method'],r['operation']].append(r)
@@ -24,8 +35,7 @@ def main():
                    [('H','exact_hybrid'),('T','target_digit_success'),('P','preserve_digit_success')]}))
     lookup={(r['seed'],r['method'],r['operation'],r['row_id']):r for r in rows if r['kind']=='source_patch'}
     fidelity=[]
-    methods=['member','assignment','raw_readout','activation_readout','native_code']
-    if (run/'RESPONSE_EXECUTION.json').exists():methods.append('response_code')
+    methods=sorted({r['method'].removesuffix('_part0_bank0') for r in rows if r['kind']=='source_patch' and r['seed']==2 and r['method'].endswith('_part0_bank0') and not r['method'].startswith('source')})
     row_ids=sorted({r['row_id'] for r in rows if r['kind']=='source_patch' and r['method']=='no_edit'})
     for method in methods:
         counts=np.zeros(4)
@@ -42,9 +52,14 @@ def main():
         cells=cells,fidelity=fidelity,native=dict(calls=len(d),min_edited_code=min(r['min_edited_code'] for r in d),
         max_members=max(r['max_changed_members'] for r in d),solver_seconds=sum(r['wall_seconds'] for r in d)),
         raw_sha256=hashlib.sha256((run/'metrics.raw.jsonl').read_bytes()).hexdigest())
+    out['reference_runs']=inputs
     if (run/'RESPONSE_EXECUTION.json').exists():
         dd=json.loads((run/'RESPONSE_EXECUTION.json').read_text())['records'];flat=[r for d in dd for r in d['records']]
         out['response']=dict(calls=len(flat),initial_kl=float(np.mean([x for r in flat for x in r['initial']['kl']])),final_kl=float(np.mean([x for r in flat for x in r['final_kl']])),solver_seconds=sum(r['solver_seconds'] for r in flat),min_edited_code=min(r['min_edited_code'] for r in flat),max_changed_members=max(r['max_changed_members'] for r in flat),backward_batches=sum(r['backward_batches'] for r in flat))
+        out['response_by_method']=[]
+        for method in sorted({d['method'] for d in dd}):
+            ff=[r for d in dd if d['method']==method for r in d['records']]
+            out['response_by_method'].append(dict(method=method,calls=len(ff),initial_kl=float(np.mean([x for r in ff for x in r['initial']['kl']])),final_kl=float(np.mean([x for r in ff for x in r['final_kl']])),solver_seconds=sum(r['solver_seconds'] for r in ff),min_edited_code=min(r['min_edited_code'] for r in ff),max_changed_members=max(r['max_changed_members'] for r in ff)))
     (ROOT/args.output).write_text(json.dumps(out,indent=2)+'\n')
     print(json.dumps(out['fidelity']))
     if 'response' in out:print(json.dumps(out['response']))

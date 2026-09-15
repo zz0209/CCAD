@@ -83,6 +83,24 @@ def fit_operation(x, h, y, roles, nroles, spec):
         selection='Pool/union screen uses all permitted source-fit states; inner penalty scores are development estimates, not independent performance evidence.')
 
 
+def fit_full_code(x, y, roles, nroles, spec):
+    """Retain all read coordinates; the existing 64-member write bank is separate."""
+    result=np.zeros((nroles,x.shape[1],y.shape[1]),dtype=np.float32);details=[]
+    for role in range(nroles):
+        take=np.where(roles==role)[0]
+        if not len(take) or not y[take].any():continue
+        perm=np.random.default_rng(spec['fold_seed']+role).permutation(len(take))
+        train,valid=take[perm[16:]],take[perm[:16]]
+        trials=[]
+        for fraction in spec['ridge_grid']:
+            coef=ridge(x[train],y[train],fraction)
+            error=float(np.square(x[valid]@coef-y[valid]).sum()/max(np.square(y[valid]).sum(),1e-12))
+            trials.append((error,fraction))
+        _,fraction=min(trials);result[role]=ridge(x[take],y[take],fraction)
+        details.append(dict(role=role,sites=len(take),ridge_fraction=fraction,inner_scores=trials))
+    return result,details
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--config', type=Path, required=True); args = ap.parse_args()
     cfg = json.loads(args.config.read_text())
@@ -137,9 +155,25 @@ def main():
             shift = np.array([1-panel['rows'][int(i)]['template'] for i in ii])
             roles = (np.arange(rawh.shape[1])[None]+shift[:, None]).ravel()
             payload = dict(fit_pairs=pp, source_gate=gate)
+            if spec.get('copy_readouts_from'):
+                prior=ROOT/spec['copy_readouts_from']
+                assert json.loads(w.checked(prior/'status.json').read_text())['status']=='PASS'
+                priorcfg=json.loads(w.checked(prior/'config.resolved.json').read_text())
+                assert all(priorcfg[k]==cfg[k] for k in ['model_revision','training_run','checkpoint_step'])
+                assert priorcfg['readout_fit']['relation_run']==spec['relation_run']
+                with np.load(w.checked(prior/f'readout_s{s}_t{t}.npz')) as z:payload={k:z[k] for k in z.files}
+                assert np.array_equal(payload['fit_pairs'],pp) and np.array_equal(payload['source_gate'],gate)
             for c, op in enumerate(['unit', 'tens']):
                 si = sources[op]
                 y = source[..., si].reshape(-1, len(si))*gate[roles][:, si, c]
+                if spec.get('copy_readouts_from'):
+                    assert np.array_equal(payload[f'{op}_source_indices'],si)
+                    coef,info=fit_full_code(target.reshape(-1,target.shape[-1]).astype(float),y.astype(float),roles,gate.shape[0],spec)
+                    payload[f'{op}_full_activation']=coef
+                    w.record(kind='readout_fit',task='arithmetic_source_fit',row_id=c,component=f'source{s}_target{t}',method='full_code_ridge',mode='read_all_write64',seed=s,source_seed=s,target_seed=t,operation=op,source_encoding_max_error=se,target_encoding_max_error=te,roles=info)
+                    w.progress('READOUT_FIT',source_seed=s,target_seed=t,operation=op)
+                    if time.perf_counter()-w.wall_start>cfg['budget_seconds']:raise TimeoutError('Readout fit budget exceeded')
+                    continue
                 raw, activation, selected, info = fit_operation(target.reshape(-1, target.shape[-1]).astype(float),
                     rawh.reshape(-1, rawh.shape[-1]).astype(float), y.astype(float), roles, gate.shape[0], spec)
                 payload.update({f'{op}_raw': raw, f'{op}_activation': activation, f'{op}_target_indices': selected,

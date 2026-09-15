@@ -7655,3 +7655,40 @@ Next method opportunity in this same source-request line: transfer the binding l
 阅读Braun原文/官方loss实现、Gerasimov干预与幅度处理、HyperTransport/HyperSteer可复用成本、VISTA消费者与RAVEL官方接口；记录在R44_LITERATURE_NOTES/REFERENCE_REGISTRY，未将只读摘要或无许可代码当采用。R44_REPORT、DELIVERY、COST、FOCUSED_CHECK、PAUSE及r44_arithmetic_response_confirmation给定位；原FAIL和历史稿源全部保留。阶段入口归档r44_before_close_20260915T023836Z/MANIFEST.json。
 
 ccad已原位PAUSED，目标仍为当前对话；02:27:40Z核实gpu-0无owner且free，两个执行会话均已结束。仅在用户明确通知后恢复，不自动启动下一实验。此后更新tracker与轮次索引并对白名单代码/配置/master_log成组commit/push；论文与原始资料按既有范围本地保留。
+
+
+## R45 START — actual write UTC 2026-09-15T05:32:47Z
+
+User explicitly resumed the existing loop. First verified recovery/resource reading was 2026-09-15T05:27:07Z; exact user-send time unknown. Existing ccad is ACTIVE in this same thread at five-minute interval; gpu-0 was free at the new check. No delegated execution.
+
+The opportunity is to recover a reusable source-part request without making the read feature budget equal the actual write budget. R44 full units already lost source behavior in the 64-input predictor (77.08% versus source 98.33%); output refinement reached77.50%. R45 will test the existing stronger raw predictor and a full-target-code reconstruction predictor with the same64-member native write bank, source members, dose queries and output objective. This is a development diagnostic before a reusable mapping and confirmation, not an established contribution. Complete the predecided scalar simplification within this unit. Use exposed pilot data first; changes after observed results remain development. Initial affordable budget: up to1200 driver seconds for the combined pilot, then allocate confirmation only from actual throughput and gains. No new training, package, paid resource, or external data is required.
+
+Both anti-defensive-writing and defensive-writing-checker were read and guide the same explanatory question: which correspondence information lets an existing functional explanation survive retraining? Keep strong raw/readout comparators and the full-function endpoint visible. Writer complexity alone will not become the claimed value. Pre-edit bytes and hashes: artifacts/correspondence_reform_20260913/r45_before_20260915T053247Z/MANIFEST.json. Exact active-work/wait separation is not instrumented. Next: implement the minimal decoupling and run actual free-generation comparisons under the shared GPU lease.
+
+
+## R45 CORRECTION — actual write UTC 2026-09-15T05:37:46Z
+
+Pilot v1 ended2026-09-15T05:36:40.557344Z after129.0122445 driver seconds/512 preparation baseline rows. It stopped before new interventions because resume compared the human-readable panel scope string as well as data. Direct JSON comparison establishes that rows and pairs are identical; only the revised scope description differs. The driver now excludes only scope prose from equality, retaining every other panel field and prior raw hash/config checks. Fresh pilot v2 preserves all experimental settings; failed v1 remains intact. No scientific result is inferred from this failure.
+
+
+## R45 PROGRESS — actual write UTC 2026-09-15T05:43:40Z
+
+Pilot v2 completed2026-09-15T05:42:09Z,257.5633015 driver seconds. Exposed8questions/two forms/source1→2: balanced part agreement raw-response82.72, reconstruction-response82.00, oldresponse74.00, member70.72, rawreadout80.72. Scalar72 versus member-parameter response74; no strong scalar-independence claim. Fullunits raw-response100/reconstruction-response93.75/source100. This is promising development evidence for stronger reading with the same64-member bank. Analysis r45_read_write_pilot.json combines hash-identified prior baseline rows without duplicated interventions.
+
+Next actual reform: fit a full-target-code ridge predictor of all64source amplitudes on exactly the existing source-fit states and inner penalty grid. Preserve the old raw/sparse predictor and write bank byte-for-byte; only remove the64-input bottleneck. The reconstruction predictor already gives a positive signal but uses a raw fit on decoded codes; fitting directly can use target code information beyond the reconstruction. Allow450seconds/five mappings and a bounded exposed replay before freezing confirmation. This extends the initial1200-second allocation by the actual justified work if needed, no external cost. No target functional labels enter fitting.
+
+
+## R45 PROGRESS — actual write UTC 2026-09-15T05:49:17Z
+
+Full-code five-relation fit PASS43.0262758driver seconds, no LM forwards. All prior readout arrays and64write banks equal to the original files. Exposed generation pilot PASS109.6471113seconds: full-code readout and full-code response both82.72balanced agreement, fullunits100/fulltens25; oldcoupledresponse74,raw80.72,sourcefullunits100/tens37.5. Fit uses the same source-fit amplitudes andinner ridge grid; target task outcomes are evaluation only. r45_full_code_pilot.json records all methods including weaker native/geometric and scalar.
+
+Frozen next confirmation is R45_READ_WRITE_FREEZE.json, configs/reform_r45_read_write_confirmation_v1.json. Primary is original-part balanced agreement offull-response minus coupledresponse, matched64write bank and12output steps; source/member full-function behavior and raw/full/sparse readouts are necessary accompanying results.24questions×2newexactprompts×5dependentSAE directions, no new-language-phenomenon claim. All comparisons fixed before new generations; original/norm R44 results stay intact. Allocation2400driver seconds from measured9.3sec/16-generation cell, estimated~28minresponsecompute plus preparation/othermethods; operational continuation may be needed if shared-device throughput falls. This remains R45, not a new counted round.
+
+
+## R45 PROGRESS — actual write UTC 2026-09-15T05:58:19Z
+
+Current scientific checkpoint is documented in R45_REPORT.md/R45_STAGE_DELIVERY.json. Full code-to-source-member reading, two actual exposed generation comparisons, predecided scalar comparison and frozen five-direction confirmation are in this same ongoing unit. Four completed development processes cost 539.2489331000106driver seconds; active confirmation excluded. R45 is not COMPLETE.
+
+Current paper/main.pdf SHA256 7ec1fb5ca5f1868030e44d977a23dfd6a8a15fa3f9d0e1b13d88b8983acf2329,67pages/8main. Reading/writing definition and all14development comparators exported to the existing appendix; source arrays/oldcomparisons retained. Pages8/37/38 visually read, final-build pixels identical. Evidence/data index and README updated. Bothwriting skills drive the same explanation-reuse argument; the confirmation has not been promoted to an observed result. AllR44 primary/fidelity/contrasts/full-function metrics rederived identically after analysis generalization.
+
+Originalccad ACTIVE on same thread, temporary10minute interval for stable longcompute; current observedresponsecell~28sec, expectedfinisharound06:24Z. Estimate only; nextwake reestimateandreturn5min onfinish/fault/nearend. No otherproject lease changed. Next: complete frozenconfirmation, analyze with preserved question/seeddependence, reviseexistingmainfigure/story accordingtoactual fullfunctionandpart effects; then closeR45. Preparation/waiting is not counted as a round.

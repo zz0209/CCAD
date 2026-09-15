@@ -172,7 +172,8 @@ def main():
                                     pos[:,None]+torch.arange(step+1,device=w.device)[None,:],pos+step,logits,
                                     response['decoder'],response['initial'],response['lower'],response['field'],w,
                                     steps=response['spec']['response_steps'],lr=response['spec']['response_lr'],
-                                    field_anchor=response['spec'].get('field_anchor',0.))
+                                    field_anchor=response['spec'].get('field_anchor',0.),
+                                    parameterization=response['spec'].get('parameterization','members'))
                                 response['diagnostics'].append(dict(step=step,**diagnostic))
                                 cache['edit_norm']=realized.flatten(1).norm(dim=1)
                             finally:handle=module.register_forward_hook(hook)
@@ -403,7 +404,11 @@ def main():
             previous_cfg=json.loads(w.checked(previous/'config.resolved.json').read_text())
             for key in ['model_revision','training_run','checkpoint_step','source_cache_run','seeds','templates','members','member_queries','max_new_tokens','intervention_span']:
                 assert previous_cfg[key]==cfg[key],key
-            assert json.loads(w.checked(previous/'panel.json').read_text())==json.loads((w.run/'panel.json').read_text())
+            previous_panel=json.loads(w.checked(previous/'panel.json').read_text())
+            current_panel=json.loads((w.run/'panel.json').read_text())
+            # Scope is descriptive prose; rows, pairs and any view identities
+            # must remain byte-equivalent after JSON decoding.
+            assert {k:v for k,v in previous_panel.items() if k!='scope'}=={k:v for k,v in current_panel.items() if k!='scope'}
             rawpath=w.checked(previous/'metrics.raw.jsonl')
             assert sha256(rawpath)==cfg['resume_interventions']['raw_sha256']
             for line in rawpath.read_text().splitlines():
@@ -425,11 +430,17 @@ def main():
                 elif readout is not None:
                     ae=saes[seed]
                     def patch(current,step):
+                        if native is not None or readout['kind']!='raw':
+                            target_current=ae.encode(current.reshape(-1,current.shape[-1])).reshape(*current.shape[:-1],-1)
+                            code_difference=codes[seed][donors,:step+1]-target_current
                         if readout['kind']=='raw':
                             difference=h[donors,:step+1]-current
+                        elif readout['kind']=='reconstruction':
+                            difference=code_difference@ae.decoder.weight.T
+                        elif readout['kind']=='full_activation':
+                            difference=code_difference
                         else:
-                            target_current=ae.encode(current.reshape(-1,current.shape[-1])).reshape(*current.shape[:-1],-1)
-                            difference=(codes[seed][donors,:step+1]-target_current)[...,readout['indices']]
+                            difference=code_difference[...,readout['indices']]
                         shift=torch.tensor([1-rows[i]['template'] for i in ix],device=w.device)
                         roles=torch.arange(step+1,device=w.device)[None]+shift[:,None]
                         predicted=torch.einsum('blj,blji->bli',difference,readout['coef'][roles])
@@ -443,14 +454,13 @@ def main():
                             field=field*scale
                         if native is not None:
                             from adaptive_native_execution import realize
-                            assert readout['kind']=='activation'
                             bank=readout['indices'];decoder=ae.decoder.weight.T[bank]
                             source_field=field
-                            field,coeff,indices,diagnostic=realize(field,difference,decoder,
+                            field,coeff,indices,diagnostic=realize(field,code_difference[...,bank],decoder,
                                 members=k,steps=native['steps'],refine_steps=0,
                                 batch_size=128,candidate_limit=len(bank),
                                 current_codes=target_current[...,bank])
-                            diagnostic.update(seed=seed,method=method,operation=operation,
+                            diagnostic.update(seed=seed,method=method,operation=operation,reader_kind=readout['kind'],
                                 offset=off,step=step,positions=coeff.numel()//len(bank),
                                 min_edited_code=float((target_current[...,bank].gather(-1,indices)+coeff).min()),
                                 max_changed_members=int((coeff!=0).sum(-1).max()))
@@ -546,12 +556,13 @@ def main():
             for (seed,rule,k),operations in readouts.items():
                 if seed not in native['seeds'] or rule not in native['rules']:
                     continue
+                native_rule=native.get('name','native_code')+rule.split('_readout',1)[1]
                 for operation,data in operations.items():
-                    evaluate(seed,rule.replace('activation_readout',native.get('name','native_code')),k,operation,None,readout=data,native=native)
+                    evaluate(seed,native_rule,k,operation,None,readout=data,native=native)
                 for dose in native.get('doses',[]):
                     if rule in dose['rules']:
                         for operation,data in operations.items():
-                            evaluate(seed,rule.replace('activation_readout',native.get('name','native_code'))+'_'+dose['name'],k,operation,None,readout=data,native=native,dose=dose)
+                            evaluate(seed,native_rule+'_'+dose['name'],k,operation,None,readout=data,native=native,dose=dose)
         if native_diagnostics:
             write(w.run/'NATIVE_EXECUTION.json',dict(records=native_diagnostics,
                 scope='Euclidean initial solutions in a fixed target bank, with nonnegative target code updates. For response_code methods these initialize additional output fitting recorded in RESPONSE_EXECUTION.json.'))

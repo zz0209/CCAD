@@ -9,15 +9,19 @@ import time
 
 def refine(model, module, ids, attention, sites, logit_sites, teacher_logits,
            decoder, initial, lower, teacher_field, work, steps=12, lr=.25,
-           field_anchor=0.):
+           field_anchor=0., parameterization="members"):
     import torch
     start=time.perf_counter();batch=initial.shape[0]
     ix=torch.arange(batch,device=ids.device)
     teacher_logp=teacher_logits.detach().float().log_softmax(-1)
     teacher_p=teacher_logp.exp()
-    c=initial.detach().clone().requires_grad_(True)
-    opt=torch.optim.Adam([c],lr=lr)
-    best=c.detach().clone();best_loss=torch.full((batch,),torch.inf,device=c.device)
+    assert parameterization in ["members", "clipped_scalar"]
+    c0=initial.detach().clone()
+    variable=(torch.ones_like(c0[..., :1]) if parameterization=="clipped_scalar" else c0.clone()).requires_grad_(True)
+    opt=torch.optim.Adam([variable],lr=lr)
+    def coefficients():
+        return torch.maximum(c0*variable,lower) if parameterization=="clipped_scalar" else variable
+    best=c0.clone();best_loss=torch.full((batch,),torch.inf,device=c0.device)
     first=None;history=[];best_kl=torch.zeros_like(best_loss)
     energy=teacher_field.square().sum((1,2)).clamp_min(1e-8)
 
@@ -35,6 +39,7 @@ def refine(model, module, ids, attention, sites, logit_sites, teacher_logits,
 
     with torch.enable_grad():
         for it in range(steps+1):
+            c=coefficients()
             field=c@decoder
             logits=forward(field)
             kl=(teacher_p*(teacher_logp-logits.log_softmax(-1))).sum(-1)
@@ -47,13 +52,15 @@ def refine(model, module, ids, attention, sites, logit_sites, teacher_logits,
                 history.append(dict(iteration=it,mean_kl=float(kl.mean()),mean_relative_mse=float(mse.mean())))
             if it==steps:break
             opt.zero_grad(set_to_none=True);loss.sum().backward();opt.step()
-            with torch.no_grad():c.copy_(torch.maximum(c,lower))
+            with torch.no_grad():
+                if parameterization=="clipped_scalar":variable.clamp_min_(0.)
+                else:variable.copy_(torch.maximum(variable,lower))
     with torch.no_grad():
         field=best@decoder;logits=forward(field)
         final_kl=(teacher_p*(teacher_logp-logits.log_softmax(-1))).sum(-1)
         code=best-lower
         assert float(code.min())>=-1e-6
-    diagnostics=dict(steps=steps,lr=lr,field_anchor=field_anchor,
+    diagnostics=dict(steps=steps,lr=lr,field_anchor=field_anchor,parameterization=parameterization,optimized_parameters=variable.numel(),
         additional_forward_batches=steps+2,backward_batches=steps,
         solver_seconds=time.perf_counter()-start,initial=first,
         final_kl=final_kl.cpu().tolist(),min_edited_code=float(code.min()),

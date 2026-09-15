@@ -1,6 +1,6 @@
 """Frozen part-request comparisons, preserving question/form/seed dependence."""
 from pathlib import Path
-import json, hashlib
+import json, hashlib, argparse
 import numpy as np
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -12,15 +12,21 @@ def answer(r):
 
 
 def main():
-    run=ROOT/'runs/REFORM_R44_arithmetic_response_confirmation_v1_20260915'
+    ap=argparse.ArgumentParser()
+    ap.add_argument('--run',default='runs/REFORM_R44_arithmetic_response_confirmation_v1_20260915')
+    ap.add_argument('--freeze',default='R44_RESPONSE_FREEZE.json')
+    ap.add_argument('--output',default='r44_arithmetic_response_confirmation.json')
+    ap.add_argument('--continuation')
+    args=ap.parse_args()
+    run=ROOT/args.run
     status=json.loads((run/'status.json').read_text())
     runs=[run]
     if status['status']!='PASS':
         assert status['status']=='FAIL' and 'TimeoutError' in (run/'traceback.log').read_text()
-        continuation=ROOT/'runs/REFORM_R44_arithmetic_response_confirmation_resume_v1_20260915'
+        continuation=ROOT/(args.continuation or 'runs/REFORM_R44_arithmetic_response_confirmation_resume_v1_20260915')
         assert json.loads((continuation/'status.json').read_text())['status']=='PASS'
         runs.append(continuation)
-    freeze=json.loads((ART/'R44_RESPONSE_FREEZE.json').read_text())
+    freeze=json.loads((ART/args.freeze).read_text())
     snapshots={r['path']:r for r in json.loads((run/'code_hashes.json').read_text())['files']}
     for name,h in freeze['files'].items():
         p=run/snapshots[name]['snapshot_path'] if name in snapshots else ROOT/name
@@ -40,12 +46,14 @@ def main():
     rows=[r for r in raw if r['kind']=='source_patch']
     lookup={(r['seed'],r['method'],r['operation'],r['row_id']):r for r in rows}
     assert len(lookup)==len(rows),'duplicate output rows'
-    methods=['member','assignment','raw_readout','activation_readout','native_code','response_code']
-    rng=np.random.default_rng(944015);weights=rng.multinomial(nq,np.full(nq,1/nq),10000)/nq
+    methods=freeze.get('analysis_methods',['member','assignment','raw_readout','activation_readout','native_code','response_code'])
+    proposed=freeze.get('analysis_proposed','response_code')
+    rng=np.random.default_rng(freeze.get('bootstrap_seed',944015));weights=rng.multinomial(nq,np.full(nq,1/nq),10000)/nq
     def score(c):return .5*(c[...,1]/c[...,0]+c[...,3]/c[...,2])
     def ci(v):return (100*np.quantile(v,[.025,.975])).tolist()
     fidelity=[];store={};seed_scores=[]
-    for dose in ['', '_norm']:
+    doses=freeze.get('analysis_doses',['','_norm'])
+    for dose in doses:
         for method in methods:
             counts=np.zeros((nq,5,4))
             for q in range(nq):
@@ -66,16 +74,17 @@ def main():
                 changed=100*total[3]/total[2],unchanged=100*total[1]/total[0],counts=total.tolist()))
             for s in range(5):seed_scores.append(dict(source=s+1,target=(s+1)%5+1,method=method,dose=dose or 'original',balanced=float(100*score(counts[:,s].sum(0)))))
     contrasts=[]
-    for dose in ['', '_norm','equal_dose_mean']:
+    for dose in doses+(['equal_dose_mean'] if len(doses)>1 else []):
         def get(m):
             if dose!='equal_dose_mean':return store[m,dose]
             a,b=store[m,''],store[m,'_norm'];return (a[0]+b[0])/2,(a[1]+b[1])/2
-        for other in methods[:-1]:
-            a,ar=get('response_code');b,br=get(other)
-            contrasts.append(dict(dose=dose or 'original',contrast='response_code minus '+other,points=float(100*(a-b)),interval=ci(ar-br)))
+        for other in methods:
+            if other==proposed:continue
+            a,ar=get(proposed);b,br=get(other)
+            contrasts.append(dict(dose=dose or 'original',contrast=proposed+' minus '+other,points=float(100*(a-b)),interval=ci(ar-br)))
     cells=[]
     for method in ['source']+methods:
-        for suffix in ['part0_bank0','part1_bank0','full','part0_bank0_norm','part1_bank0_norm']:
+        for suffix in ['full']+[f'part{part}_bank0'+dose for dose in doses for part in [0,1]]:
             for op in ['unit','tens']:
                 rr=[r for r in rows if r['method']==method+'_'+suffix and r['operation']==op]
                 assert len(rr)==nq*2*5,(method,suffix,op,len(rr))
@@ -93,7 +102,7 @@ def main():
         for which in ['recipient','donor']:
             a=panel['rows'][pp[q][which]];b=panel['rows'][pp[q+nq][which]]
             assert (a['a'],a['b'])==(b['a'],b['b'])
-    primary=next(r for r in contrasts if r['dose']=='equal_dose_mean' and r['contrast']=='response_code minus member')
+    primary=next(r for r in contrasts if r['dose']==freeze.get('primary_dose','equal_dose_mean') and r['contrast']==proposed+' minus '+freeze.get('primary_comparator','member'))
     out=dict(run=run.relative_to(ROOT).as_posix(),runs=[r.relative_to(ROOT).as_posix() for r in runs],primary=primary,fidelity=fidelity,contrasts=contrasts,
         by_seed=seed_scores,cells=cells,freeze=freeze,
         response=dict(diagnostic_scope='all confirmation calls' if len(runs)==1 else 'continuation only; original wall-time failure preceded diagnostic export',calls=len(flat),solver_seconds=sum(r['solver_seconds'] for r in flat),backward_batches=sum(r['backward_batches'] for r in flat),
@@ -103,7 +112,26 @@ def main():
             min_edited_code=min(r['min_edited_code'] for r in flat),max_members=max(r['max_changed_members'] for r in flat)),
         checks=dict(frozen_file_hashes=True,unique_complete_rows=True,paired_forms=True,previous_exact_prompt_overlap=0,nonnegative_code_in_saved_diagnostics=True),
         statistics=freeze['statistics'],raw_sha256={r.relative_to(ROOT).as_posix():hashlib.sha256((r/'metrics.raw.jsonl').read_bytes()).hexdigest() for r in runs})
-    (ART/'r44_arithmetic_response_confirmation.json').write_text(json.dumps(out,indent=2)+'\n')
+    out['response_by_method']=[]
+    out['full_function_contrasts']=[]
+    for op in ['unit','tens']:
+        for other in ['source','member']:
+            differences=[]
+            for q in range(nq):
+                values=[]
+                for form in range(2):
+                    for s in range(1,6):
+                        t=s%5+1;rid=form*nq+q
+                        a=lookup[t,proposed+'_full',op,rid]['exact_hybrid']
+                        b=lookup[s if other=='source' else t,other+'_full',op,rid]['exact_hybrid']
+                        values.append(int(a)-int(b))
+                differences.append(np.mean(values))
+            differences=np.array(differences)
+            out['full_function_contrasts'].append(dict(operation=op,contrast=proposed+' minus '+other,points=float(100*differences.mean()),interval=ci(weights@differences)))
+    for method in methods:
+        ff=[r for d in diag if d['method'].startswith(method+'_') for r in d['records']]
+        if ff:out['response_by_method'].append(dict(method=method,calls=len(ff),initial_kl=float(np.mean([x for r in ff for x in r['initial']['kl']])),final_kl=float(np.mean([x for r in ff for x in r['final_kl']])),solver_seconds=sum(r['solver_seconds'] for r in ff),min_edited_code=min(r['min_edited_code'] for r in ff),max_changed_members=max(r['max_changed_members'] for r in ff)))
+    (ART/args.output).write_text(json.dumps(out,indent=2)+'\n')
     print(json.dumps(dict(primary=primary,fidelity=fidelity,contrasts=contrasts,response=out['response'])))
 
 
