@@ -8349,3 +8349,23 @@ R58图表、全部请求/目标比较、素材表已写paper附录F.2；引言�
 交付定位：artifacts/correspondence_reform_20260913/MANUSCRIPT_REBUILD_R58_REPORT.md及MANUSCRIPT_REBUILD_R58_CLOSEOUT.json记录当前文件身份、实际构建与白名单同步。提交前检查仅master_log.md和scripts/reuse_story_figures.py改变；paper和研究文档仍按白名单本地保留，不强制加入Git。实际commit/push结果随后写closeout。
 
 下一步：先评价已完整成稿的贡献、可懂性与最近邻差异，再决定是否有具体核心主张需要新证据。不自动恢复旧R59参与条件搜索。最终strong accept目标仍未由本次写作确认；原loop不以页数/成稿数量宣告科学达标，用户硬件安排优先。
+
+
+## MANUSCRIPT_SYNTHESIS_REVIEW_R58 START — 整稿贡献与最近邻实质比较
+
+实际写入UTC：2026-09-15T19:38:17Z；unit_id=MANUSCRIPT_SYNTHESIS_REVIEW_R58，科学轮数仍停在已完成R58，非R59。事件开始以本条写入为可证实起点；此前本heartbeat阅读未独立计时。按最新工作卡先比较完整稿的中心结论、原始方法与最强用途，不启动新模型实验。目标是辨明保存何种解释知识、实际决策收益和最近邻差异是否足以支撑全文，并把确有价值的科学连接写入当前稿；不同的原文证据若揭示核心缺口，须先给出具体主张/决定，不能自动回到旧局部搜索。已完成稿及可能改动源文件逐字保存于artifacts/correspondence_reform_20260913/manuscript_review_before_20260915T193817Z/MANIFEST.json。复用本对话已读的两项writing skills，沿问题—方案—证据—使用价值检查，不新增敌意评分轮。无GPU/训练/推理，现有论文已交付，更新保持唯一入口。
+
+
+## MANUSCRIPT_SYNTHESIS_REVIEW_R58 COMPLETE — 整稿的数学连接与实质文献比较
+
+实际写入UTC：2026-09-15T19:58:19Z；unit_id=MANUSCRIPT_SYNTHESIS_REVIEW_R58。可证实事件开始为START的2026-09-15T19:38:17Z，本条在原文比较、完整稿修订和最终版核对完成后写入。非新增科学轮；R58仍为最后完成轮，R59未启动。
+
+选择与实际动作：先用现有完整稿回答解释重用的中心问题。实际阅读SemanticOT、SharedSAE、Gerasimov、Leask及Arad原文方法/实验，将功能替换、解释迁移和直接干预评分准确纳入最近邻比较；未把已有方法概括成只有几何。Arad引用更新为核实的EMNLP正式出版条目，并保留所读arXiv v2身份。OpenReview全文仍受浏览器验证限制，仅使用可访问官方摘要；另一次CVPR功能映射检索未取得全文，不算方法吸收或代码采用。来源和版本在REFERENCE_REGISTRY及MANUSCRIPT_SYNTHESIS_REVIEW_R58.md。
+
+实际科学连接：§2.1用V_t A与V_t^T g连接成员变化拟合及响应评分，§2.2/Appendix A.1将同一请求误差恒等式写为q=P alpha时只控制EP。核对run_shift_transfer.py逐列拟合55源成员，而实际run_shift_explanation.py消费者以源注释给出代词/姓名/关联词三部分。这产生按功能部分拟合的可检验假说，尚未证明它造成或能修复R58差距。方法、数据、梯度和预算固定后的消费者比较进入plan；旧参与条件搜索不自动续跑。
+
+稿件：两项指定writing skills落实于共同对象、问题—证据—使用收益及Related Work的正面比较；删去引言/结论重复，不新增假想审稿人段落。唯一当前paper/main.pdf仍47页（7正文+2参考+38附录），42引用，SHA256=2575b79fcc25086b750436b1fdaa9adb6fe5ac9ac62616b26bbad6581cbd2d19，587847bytes。全部页重新渲染并查看联系图，主文/引用/理论改动页按阅读尺寸核对，无截断、未定义引用或横向溢出；参考文献约1.18pt垂直警告有记录。按data与tables文件口径354份旧文件hash相同，此广口径包含元数据，不改写上一轮353份数值导出的记录。EVIDENCE_INDEX、CLAIM_MAP、paper/README和plan已同步；旧稿及编辑前文件逐字归档在manuscript_review_before_20260915T193817Z。
+
+资源及失败：没有GPU、模型调用、训练、拟合、统计重采样或新增外部资产；仅短CPU编译/渲染。净有效工作、等待未独立计时，未知；不从墙钟倒算。改稿中两次精确文字patch匹配失败，无部分写入；重试正确文本后完成。一次编译多出只有结尾的第8正文页，删减重复表达后回到7页，没有缩字体或隐藏证据。原始结果、失败与强raw/assignment/mean对照均保留。
+
+下一步与交付：当前整稿已可独立阅读，数学粒度的假说不是新实验成果，更不是strong accept认证。若推进实验，以同候选/源信息/目标预算下功能部分的干预判断为目的，只先检验这一根本失配；不自动开新的writer/支持/训练搜索。成果定位MANUSCRIPT_SYNTHESIS_REVIEW_R58.md及其CLOSEOUT.json；白名单仅同步本单元master_log，paper/本地研究文件按path/hash保留，不扩白名单。原ccad loop保持既有ACTIVE周期，用户硬件安排优先。
