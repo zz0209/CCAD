@@ -103,11 +103,13 @@ def main():
         sources += ['scripts/arithmetic_native_execution.py','src/ccad/native_operation.py']
     if cfg.get('source_function_refit',{}).get('state_write') or cfg.get('state_write_evaluation'):
         sources += ['scripts/arithmetic_state_write.py']
+    if cfg.get('layer_function'):
+        sources += ['scripts/arithmetic_layer_function.py','scripts/analyze_carry_readouts.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
         import numpy as np, torch, transformers
-        torch.set_num_threads(2);torch.use_deterministic_algorithms(True);torch.set_float32_matmul_precision("high")
+        torch.set_num_threads(2);torch.use_deterministic_algorithms(True);torch.set_float32_matmul_precision(cfg.get('matmul_precision','high'))
         w.torch=torch;w.device=torch.device(cfg["device"])
         tr=w.checked(ROOT/cfg["training_run"] / "config.resolved.json").parent;tc=json.loads((tr/"config.resolved.json").read_text())
         assert json.loads(w.checked(tr/"status.json").read_text())["status"]=="PASS"
@@ -317,10 +319,14 @@ def main():
         if source_parent is None:
             np.savez_compressed(w.run/"states.npz",hidden=h.cpu().numpy(),fit_indices=np.array(fitix))
         if cfg.get('frozen_rule_evaluation'):
-            from arithmetic_frozen_rules import evaluate_frozen_rules
             w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,
                 numpy=np.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),
-                precision='float32 matmul high',hook=cfg.get('hook_override',tc['hook_module_path']),model=tc['model_id'])
+                precision='float32 matmul '+cfg.get('matmul_precision','high'),hook=cfg.get('hook_override',tc['hook_module_path']),model=tc['model_id'])
+            if cfg.get('layer_function'):
+                from arithmetic_layer_function import fit_and_evaluate
+                fit_and_evaluate(w,cfg,model,module,tok,rows,tokenrows,h,generate,budget,base)
+                return w.finish()
+            from arithmetic_frozen_rules import evaluate_frozen_rules
             evaluate_frozen_rules(w,cfg,rows,h,codes,saes,generate,budget,base,model_context=(model,module,tok))
             return w.finish()
         if cfg.get('functional_rule_test'):

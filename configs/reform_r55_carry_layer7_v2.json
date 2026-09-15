@@ -1,0 +1,77 @@
+{
+  "audit_opened": false,
+  "batch_size": 8,
+  "budget": "600 driver-second ceiling per site, four sites sequential. Highest float32 matmul for all capture, fitting and evaluation; source-fit finite differences compare high/highest before training.",
+  "budget_seconds": 600,
+  "candidate_family_frozen": true,
+  "checkpoint_step": 16384,
+  "dataset_revision": "CCAD R55 identical405fit plus exposed512carry requests",
+  "device": "cuda:0",
+  "evidence_level": "source_site_development",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "frozen_rule_evaluation": {
+    "panel": "artifacts/correspondence_reform_20260913/R55_LAYER_PANEL.json",
+    "freeze": "artifacts/correspondence_reform_20260913/R55_LAYER_INPUTS_V2.json",
+    "memberships": {}
+  },
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "hidden_atol": 0.002,
+  "intervention_span": "generated_prefix",
+  "max_length": 96,
+  "max_new_tokens": 5,
+  "members": [],
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "operand_range": [
+    10,
+    80
+  ],
+  "pairs_per_template": 64,
+  "purpose": "Test the functional location of an answer-controlled carry intervention before changing SAE material.",
+  "reuse_rules": [],
+  "round_id": "R55",
+  "run_id": "REFORM_R55_carry_layer7_v2_20260915",
+  "run_parent": "R54",
+  "scope": "Raw carry-function location comparison at Qwen block outputs7/13/18/23 (zero-indexed). Same405fit,256pairbatches, ridge0.1readers and rank1writers perarity. Initial/fitted writers share inferredcarryquery; oracle replacesquery by knowncarrydifference. Exposed source development; noSAEorFCCclaim; seed0 is raw-operator sentinel.",
+  "seeds": [],
+  "selection_rules": [],
+  "source_selection_step": {
+    "tens": 0,
+    "unit": 1
+  },
+  "split_salt": "ccad-r32-digit-source-1",
+  "statistics_unit": "Canonicalquestion pairs with reciprocaldirections andtwoforms. Two/threeoperands separately. Development only.",
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}+{c}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b} plus {c}? A:"
+  ],
+  "tens_sites": [
+    0,
+    1
+  ],
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "written_at_utc": "2026-09-15T14:33:11Z",
+  "hook_override": "model.layers.7",
+  "layer_function": {
+    "layer": 7,
+    "ridge": 0.1,
+    "lr": 0.03,
+    "norm_multiple": 4.0,
+    "schedule": "runs/REFORM_R51_code_range_source_v1_20260915/counterfactual_seed1_k64_carry_function_arity_scalar.npz",
+    "gradient_precisions": [
+      "high",
+      "highest"
+    ]
+  },
+  "matmul_precision": "highest"
+}
