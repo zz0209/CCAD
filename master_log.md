@@ -8510,3 +8510,22 @@ R58图表、全部请求/目标比较、素材表已写paper附录F.2；引言�
 R60_REPORT、R60_CANDIDATE_ANALYSIS、R60_RUN_INVENTORY、R60_CLOSEOUT以及synthetic check在artifacts/correspondence_reform_20260913。论文README/data manifest/evidence index、reference registry、compute ledger及plan均更新；run全部snapshot及12份inventory身份核对，R59冻结分析hash未变。改前PDF/tracker/plan/runner逐字归档r60_before_start_20260915T220536Z；更早完整源稿由现有归档保留。此次遗漏了紧邻改动前reuse_human.tex的单独逐字备份，旧PDF和原身份保留；从旧字节前缀恢复未匹配既有hash，未冒充已恢复。后续修改前继续完整保留所有将改文件。
 
 下一步：从现有跨seed/跨设置原始结果检验源端比较性的解释判断（部分作用顺序、方向、联合关系）是否继续指导请求选择。当前数据上的发现保持探索身份，有共同可预测现象或真实使用收益才安排新计算；不自动新开SAE/candidate/writer搜索。R60已完成但没有强接受层面的科学提升，整体目标未认证，原ccad同归属ACTIVE5分钟、未暂停。此完成记录后更新tracker最后完成科学单元为R60，再按白名单同步。
+
+## MANUSCRIPT_ARGUMENT_R60 START — 按问题、部分预测和决策用途收拢完整稿
+
+实际写入UTC：2026-09-15T22:39:33Z；unit_id=MANUSCRIPT_ARGUMENT_R60，不计R61。当前用户提供不同版本评审讨论，要求审慎吸收并形成最强完整故事。当前已核对R59独立确认、R60开发结果和完整主文；既有R40已有部分对比及响应模式，故不将其重新统计或命名为新结果。此前阅读起点未独立计时，以本记录作为本单元可核实起点；事件时间未知。
+
+本单元处理明确的叙事失配：摘要已突出独立人工部分证据，引言及正文次序仍先讲Binding方法用途，人工证据最后出现。将完整作用/部分判断/任务用途并列到主表，按“为什么完整效果不够—冻结关系能否回答新部分—保存知识如何指导新选择”重排主文。保存多对多FCC对象、全部强对照与科学目标，不以raw不可替代性或统一算法作硬门。两项指定writing skills已实际读取并用于上述研究/成稿选择。
+
+预算：既有结果核对、少量CPU导出/编译/渲染，无新模型评估/GPU/训练/外部付费；不以此次编辑充作科学跨档。将改文件已逐字归档artifacts/correspondence_reform_20260913/manuscript_argument_after_r60_20260915T223933Z/MANIFEST.json，先完成整稿再决定下一科学动作。原loop归属及5分钟间隔保持。
+
+
+## MANUSCRIPT_ARGUMENT_R60 COMPLETE — 完整效果、部分判断和使用价值进入同一论证
+
+实际写入UTC：2026-09-15T22:53:56Z；unit_id=MANUSCRIPT_ARGUMENT_R60，START实际写入2026-09-15T22:39:33Z，不计R61，最后完成科学单元仍R60。此前定向阅读起点未独立计时；有效思考/轻量计算/等待未分别计时，未知。没有新模型事件或科学确认。
+
+实际完成：独立人工部分结果移至第3节，Table2新增原完整预测列，所有方法的完整/部分/职业/最差组并列，全部三注释部分仍在。共同balanced预测定义前移第2节，算术第4节、Binding第5节、Grammar第6节；摘要、引言贡献、结论和证据索引对应。R40已有部分比较及响应模式，不再重算当新结果；原剂量修正/mean竞争力/conditional零差及两种raw边界保留。最近邻SFC/SHIFT第4节、EAP-IG第4.2–4.3节原文复核，使旧知识在字典变化后的用途承担增量，而非把已有归因重新命名。两项指定writing skills按这些具体修改执行。
+
+当前唯一paper/main.pdf SHA256=d419a4ad7d5267269f8160d363a54f1606172ddb16876a4439d293e10fcc8501，657177bytes；50页，7正文+2引用+41附录，4主图3主表。20主表单元对照原确认一致，R59冻结分析hash不变。初次大patch因上下文不匹配未写入，随后使用断言定位修改；初版出现短尾页，经删重复文字恢复7页，未缩字。全稿联系图及关键页阅读尺寸已检查；最终补全SAE全称仅第1页栅格改变且重看。无undefined/横向溢出，参考页约1.13pt vbox无可见截断。短CPU导出/编译/渲染，无GPU/训练/下载/安装/付费。
+
+交付MANUSCRIPT_ARGUMENT_R60.md、MANUSCRIPT_ARGUMENT_R60_CLOSEOUT.json和manuscript_argument_r60_visual/CHECK.json；改前20份文件逐字归档manuscript_argument_after_r60_20260915T223933Z/MANIFEST.json。README/CLAIM_MAP/EVIDENCE_INDEX/data manifest及plan更新；原报告和raw不重写。该单元提升成稿，未宣布科学跨档或整体strong accept。原ccad当前对话ACTIVE5分钟，无后台计算；下一实质实验须针对当前整稿尚未回答的具体预测，不默认重复排序、candidate/writer或其他局部搜索。此COMPLETE后更新tracker及白名单同步。

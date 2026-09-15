@@ -23,19 +23,20 @@ def main():
     d = json.loads(path.read_text())
     (PAPER / 'data/human_part_predictions_confirmation.json').write_text(json.dumps(d, indent=2) + '\n')
     cohort = d['new_target_seed_cohort']
-    # Main table places use and fidelity side by side on the independent panel.
-    main_lines = [r'\begin{tabular}{lrrr}\toprule',
-                  r'\multicolumn{4}{l}{(a) Mean over annotated parts}\\\addlinespace',
-                  r' & Profession & Part & Worst\\',
-                  r'Method & accuracy & prediction & group\\\midrule']
+    # Full prediction, part prediction and task utility answer different questions.
+    main_lines = [r'\begin{tabular}{lrrrr}\toprule',
+                  r'\multicolumn{5}{l}{(a) Prediction fidelity and task utility}\\\addlinespace',
+                  r' & Full & Part & Prof. & Worst\\',
+                  r'Method & predict. & predict. & acc. & group\\\midrule']
     for key, label in METHODS:
-        values = [cohort[key + '/parts'][metric]['value'] * 100
-                  for metric in ['profession', 'balanced_agreement', 'worst_group']]
+        values = [cohort[key + '/full']['balanced_agreement']['value'] * 100]
+        values += [cohort[key + '/parts'][metric]['value'] * 100
+                   for metric in ['balanced_agreement', 'profession', 'worst_group']]
         main_lines.append(label.replace('Source-direction readout', r'Source-dir.\ readout') +
                           ' & ' + ' & '.join(f'{x:.2f}' for x in values) + r'\\')
     main_lines.extend([r'\midrule',
-                       r'\multicolumn{4}{l}{(b) Profession accuracy after deleting each part}\\\addlinespace',
-                       r'Method & Pronouns & Names & Words\\\midrule'])
+                       r'\multicolumn{5}{l}{(b) Profession accuracy after deleting each part}\\\addlinespace',
+                       r'\multicolumn{2}{l}{Method} & Pronouns & Names & Words\\\midrule'])
     part_profiles = {}
     for method, label in METHODS:
         part_profiles[method] = {
@@ -44,7 +45,8 @@ def main():
                 for seed in range(2, 6)]))
             for query in ['pronouns', 'names', 'associated_words']}
         values = [100 * part_profiles[method][q] for q in part_profiles[method]]
-        main_lines.append(label.replace('Source-direction readout', r'Source-dir.\ readout') +
+        display_label = label.replace('Source-direction readout', r'Source-dir.\ readout')
+        main_lines.append(r'\multicolumn{2}{l}{' + display_label + '}' +
                           ' & ' + ' & '.join(f'{x:.2f}' for x in values) + r'\\')
     main_lines.append(r'\bottomrule\end{tabular}')
     profile_export = {
