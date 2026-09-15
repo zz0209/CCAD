@@ -74,6 +74,7 @@ def main():
         'scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']
     if cfg.get('binding_transfer'):sources+=['scripts/binding_correspondence.py','scripts/arithmetic_relation_transfer.py','scripts/fit_component_correspondence.py']
     if cfg.get('binding_transfer',{}).get('adaptive_execution'):sources+=['scripts/adaptive_native_execution.py']
+    if cfg.get('request_writer_fit'):sources+=['scripts/binding_request_writer.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -222,6 +223,9 @@ def main():
                     target.load_state_dict(torch.load(cp,map_location=w.device,weights_only=True));target.eval();target.requires_grad_(False)
                     with torch.no_grad():zt=target.encode(hidden[layer].flatten(0,1)).reshape(len(rows),2,-1)
                     transfers=build_transfers(w,cfg,rows,hidden[layer],z,sae,order,conditional,target,zt,seed,target_seed)
+                    if cfg.get('request_writer_fit'):
+                        from binding_request_writer import fit_binding_writers
+                        transfers.update(fit_binding_writers(w,cfg,rows,hidden[layer],z,sae,target,zt,seed,target_seed,forward,layer))
                     methods += [(name,-3) for name in transfers]
                     del target,zt
                 if cfg.get('evaluate_methods'):methods=[(name,cap) for name,cap in methods if name in cfg['evaluate_methods']]

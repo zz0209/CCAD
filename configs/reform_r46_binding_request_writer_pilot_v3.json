@@ -1,0 +1,234 @@
+{
+  "run_id": "REFORM_R46_binding_request_writer_pilot_v3_20260915",
+  "run_parent": "R46",
+  "generator_script": "scripts/run_binding_components.py",
+  "purpose": "Learn a query-resolved binding relation on singleton source responses, evaluate joint requests",
+  "milestone": "semantic-source-function",
+  "evidence_level": "development",
+  "device": "cuda:0",
+  "seeds": [
+    1
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD binding-factorization adaptation v1",
+  "budget": "600 driver seconds, one SAE direction,128 matched native/raw updates; existing exposed64-context development panel",
+  "budget_seconds": 600,
+  "scope": "Same exposed64-context binding panel,source1 to target2. Fit actual source singleton responses only; both-entity query unfitted. Code and raw receive same KL learning budget. No target answer labels.",
+  "statistics_unit": "context cluster, retaining both queries, prompts and operations",
+  "panel_seed": 9412212,
+  "fit_contexts": 64,
+  "evaluation_contexts": 64,
+  "batch_size": 8,
+  "layers": [
+    13
+  ],
+  "checkpoint_step": 16384,
+  "members": [
+    64,
+    256
+  ],
+  "training_runs": {
+    "13": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+    "23": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914"
+  },
+  "names": [
+    "Alice",
+    "Bob",
+    "Carol",
+    "David",
+    "Emma",
+    "Frank",
+    "Grace",
+    "Henry",
+    "Irene",
+    "Jack",
+    "Karen",
+    "Laura",
+    "Mary",
+    "Nancy",
+    "Oliver",
+    "Paul",
+    "Rachel",
+    "Sarah",
+    "Thomas",
+    "Victor",
+    "William",
+    "Peter",
+    "Anna",
+    "James"
+  ],
+  "country_capitals": [
+    [
+      "France",
+      "Paris"
+    ],
+    [
+      "Japan",
+      "Tokyo"
+    ],
+    [
+      "Italy",
+      "Rome"
+    ],
+    [
+      "Germany",
+      "Berlin"
+    ],
+    [
+      "Spain",
+      "Madrid"
+    ],
+    [
+      "Russia",
+      "Moscow"
+    ],
+    [
+      "China",
+      "Beijing"
+    ],
+    [
+      "Canada",
+      "Ottawa"
+    ],
+    [
+      "Egypt",
+      "Cairo"
+    ],
+    [
+      "Kenya",
+      "Nairobi"
+    ],
+    [
+      "Greece",
+      "Athens"
+    ],
+    [
+      "Portugal",
+      "Lisbon"
+    ],
+    [
+      "Peru",
+      "Lima"
+    ],
+    [
+      "Chile",
+      "Santiago"
+    ],
+    [
+      "Cuba",
+      "Havana"
+    ],
+    [
+      "Austria",
+      "Vienna"
+    ],
+    [
+      "Poland",
+      "Warsaw"
+    ],
+    [
+      "Turkey",
+      "Ankara"
+    ],
+    [
+      "Thailand",
+      "Bangkok"
+    ],
+    [
+      "Norway",
+      "Oslo"
+    ]
+  ],
+  "templates": [
+    {
+      "statement": "{name} lives in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} live?\nAnswer: {name} lives in the city of"
+    },
+    {
+      "statement": "{name} works in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} work?\nAnswer: {name} works in the city of"
+    }
+  ],
+  "written_at_utc": "2026-09-15T07:19:26.018420+00:00",
+  "semantic_queries": {
+    "parent_members": 256,
+    "members": 64
+  },
+  "seed_pairs": {
+    "1": 2,
+    "2": 3,
+    "3": 4,
+    "4": 5,
+    "5": 1
+  },
+  "evaluation_skip": 0,
+  "exclude_evaluation_runs": [],
+  "binding_transfer": {
+    "parent_members": 256,
+    "target_bank": 256,
+    "query_members": 64,
+    "pool": 512,
+    "steps": 256,
+    "ridge_fraction": 0.001,
+    "readout_ridge": [
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "query_fit": {
+      "steps": 256
+    },
+    "union_fit": {
+      "steps": 256,
+      "lr": 0.002
+    },
+    "adaptive_execution": {
+      "candidate_modes": [
+        "bank"
+      ],
+      "fields": [
+        "code"
+      ],
+      "steps": 384,
+      "refine_steps": 128,
+      "batch_size": 64,
+      "candidate_limit": 256,
+      "general_codes": true
+    }
+  },
+  "evaluation_rejection_rule": "Reject a whole evaluation context if any recipient/donor/query/form prompt appeared in designated earlier panels; deterministic continuation of the same RNG until64 accepted contexts.",
+  "evaluate_methods": [
+    "country64",
+    "union_member_country",
+    "code_readout_country",
+    "raw_readout_country",
+    "target_country",
+    "synthesized_code_bank",
+    "assignment_country",
+    "learned_native_u0_country",
+    "learned_native_u64_country",
+    "learned_native_u128_country",
+    "learned_raw_u0_country",
+    "learned_raw_u64_country",
+    "learned_raw_u128_country"
+  ],
+  "round_id": "R46",
+  "request_writer_fit": {
+    "updates": 128,
+    "save_updates": [
+      64,
+      128
+    ],
+    "seed": 946024,
+    "lr": 0.002,
+    "decoder_ridge": 0.001,
+    "gradient_clip": 1.0,
+    "gradient_epsilon": 0.001,
+    "gradient_check_scope": "Hold selected top64 support for coefficient derivative; report actual support crossings separately",
+    "fit_precision": "highest"
+  }
+}

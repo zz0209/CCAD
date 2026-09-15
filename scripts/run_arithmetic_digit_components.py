@@ -80,6 +80,8 @@ def main():
         sources += ["scripts/arithmetic_member_queries.py"]
     if cfg.get('query_readouts'):
         sources += ['scripts/arithmetic_readout_queries.py']
+    if cfg.get('request_writer_fit') or cfg.get('request_writers'):
+        sources += ['scripts/arithmetic_request_writer.py']
     if cfg.get('native_readouts'):
         sources += ['scripts/adaptive_native_execution.py']
         if any(n.get('response_steps') for n in cfg['native_readouts']):
@@ -397,6 +399,14 @@ def main():
             from arithmetic_readout_queries import prepare_readouts
             readouts,readout_meta=prepare_readouts(w,cfg)
             metadata.append(dict(query_readouts=readout_meta))
+        if cfg.get('request_writer_fit'):
+            from arithmetic_request_writer import fit_writers
+            fit_writers(w,cfg,model,module,tok,saes)
+            metadata.append(dict(request_writer_fit=json.loads((w.run/'REQUEST_WRITER_FIT.json').read_text()),
+                                 source_fit_contexts_only=True,output_response_supervision=True))
+        if cfg.get('request_writers'):
+            from arithmetic_request_writer import attach_writers
+            attach_writers(w,cfg,readouts)
         write(w.run/"SOURCE_FREEZE.json",dict(written_at_utc=datetime.now(timezone.utc).isoformat(),metadata=metadata,target_dictionaries_used=bool(cfg.get("relation_transfer") or cfg.get("response_relation") or cfg.get("position_relation") or cfg.get("adaptation") or cfg.get("frozen_adaptation") or cfg.get("member_queries")),task_output_gradients="inherited shared two-role response bank; no new gradients; see POSITION_FREEZE.json" if cfg.get("position_relation") else "shared fit-pair requested/preserved margins; see RESPONSE_FREEZE.json" if cfg.get("response_relation") else "fit split hybrid CE" if cfg.get("counterfactual_fit") else "inherited source and target fit only" if cfg.get("frozen_adaptation") else "inherited source fit only" if source_parent else 0,source_functional_outcomes_used_for_selection=bool(cfg.get("counterfactual_fit") or source_parent),development_functional_outcomes_used_for_selection=False,base_outputs_already_observed=True,files=[dict(path=p.name,sha256=sha256(p)) for p in w.run.glob("source_seed*.npz")]))
         completed_keys=set()
         if cfg.get('resume_interventions'):
@@ -445,6 +455,16 @@ def main():
                         roles=torch.arange(step+1,device=w.device)[None]+shift[:,None]
                         predicted=torch.einsum('blj,blji->bli',difference,readout['coef'][roles])
                         field=(predicted*readout['q'])@readout['decoder']
+                        if readout.get('writer'):
+                            writer=readout['writer']
+                            coeff=torch.einsum('bli,blij->blj',predicted*readout['q'],writer['matrix'][roles])
+                            if writer['kind']=='native':
+                                bank=readout['indices']
+                                coeff=torch.maximum(coeff,-target_current[...,bank])
+                                native_diagnostics.append(dict(seed=seed,method=method,operation=operation,
+                                    offset=off,step=step,min_edited_code=float((target_current[...,bank]+coeff).min()),
+                                    max_changed_members=int((coeff!=0).sum(-1).max()),runtime_output_gradients=0))
+                            field=coeff@writer['decoder']
                         if dose is not None:
                             assert not dose.get('nonnegative',False)
                             if dose['kind']=='norm_match':
