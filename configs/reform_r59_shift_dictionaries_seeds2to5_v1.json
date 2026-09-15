@@ -1,0 +1,53 @@
+{
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "device": "cuda:0",
+  "run_id": "REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915",
+  "run_parent": "R59",
+  "purpose": "Independent target initializations for the same source-part prediction test; preserve all 11 source intervention sites and the exact 8M TopK training recipe.",
+  "generator_script": "scripts/train_shift_dictionaries.py",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "statistics_unit": "Four independently initialized target stacks; sites within a stack are distinct modules, not independent replications.",
+  "threshold_source_split": "Fixed TopK training recipe, no BiB task data",
+  "dataset_revision": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "seeds": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0",
+    "mlp_1",
+    "resid_1",
+    "attn_2",
+    "resid_2",
+    "attn_3",
+    "resid_3",
+    "attn_4",
+    "resid_4"
+  ],
+  "token_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r58_natural_tokens.json",
+  "bulk_output_dir": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915",
+  "dict_size": 8192,
+  "k": 64,
+  "steps": 8192,
+  "batch_sequences": 8,
+  "checkpoint_steps": [
+    8192
+  ],
+  "validation_sequences": 16,
+  "learning_rate": 0.000282842712474619,
+  "warmup_steps": 64,
+  "decay_start": 4096,
+  "threshold_start_step": 64,
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+  "budget_seconds": 3600,
+  "budget": "Four parallel 11-site TopK seed stacks; 8,388,608 identical natural tokens per SAE. Previous one-stack driver633.9sec implies an upper planning estimate2536sec before shared model-forward savings. Guard3600 training-loop seconds, approximately1.48GB final checkpoints; GPU estimated under11GB with13.3GB initially free. Only final checkpoint retained; all32-step loss reports and final quality retained. No installation, payment or new model.",
+  "scope": "Seeds2-5 repeat the seed1 architecture/hook/natural data order/optimizer/steps and schedules. Checkpoint reporting is final-only to avoid duplicate intermediate assets; the unchanged trainer has no stochastic training operations after seed initialization. No biography/task data enter SAE training or selection. Used for a fixed-method independent target confirmation; source public ReLU remains an external anchor, not same-condition source replication."
+}

@@ -25,6 +25,19 @@ def fit_members(k,b,iterations):
     return a
 
 
+def fit_parts(k,b,initial,iterations,total_only=False):
+    """Fit source-defined part fields, or only their sum from the same initial lift."""
+    a=initial.copy();lipschitz=max(np.linalg.eigvalsh(k)[-1],1e-15)
+    if total_only:
+        lipschitz*=b.shape[1]
+        for _ in range(iterations):
+            gradient=(k@a.sum(1)-b.sum(1))[:,None]
+            a=simplex_rows(a-gradient/lipschitz)
+    else:
+        for _ in range(iterations):a=simplex_rows(a+(b-k@a)/lipschitz)
+    return a
+
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--config',required=True,type=Path);a=p.parse_args();c=json.loads(a.config.read_text());w=MultisiteWork(c,a.config,['scripts/run_shift_transfer.py','scripts/run_shift_explanation.py','scripts/train_shift_dictionaries.py','scripts/run_causalgym_multisite.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']);hooks=[];error=None
     try:
@@ -32,7 +45,10 @@ def main():
         torch.set_num_threads(2);torch.use_deterministic_algorithms(True);torch.set_float32_matmul_precision('highest');torch.cuda.set_device(c['device']);torch.cuda.reset_peak_memory_stats();w.torch=torch;w.device=torch.device(c['device'])
         sys.path.extend([c['dictionary_source_dir'],c['dictionary_overlay_dir']]);from dictionary_learning.trainers.top_k import AutoEncoderTopK
         w.environment=dict(python=sys.executable,torch=torch.__version__,transformers=transformers.__version__,numpy=np.__version__,matmul_precision='highest',cpu_threads=2)
-        source=json.loads(w.checked(c['source_manifest'],'Published manual feature decisions','MIT').read_text());groups,annotations=source_groups(c['notebook'],source['members']);sites=list(source['members']);sb=np.load(w.checked(c['source_parameters'],'Published feature parameters','MIT'))
+        source=json.loads(w.checked(c['source_manifest'],'Published manual feature decisions','MIT').read_text());groups,annotations=source_groups(w.checked(c['notebook'],'Published source annotations','MIT'),source['members']);sites=list(source['members']);sb=np.load(w.checked(c['source_parameters'],'Published feature parameters','MIT'))
+        part_names=list(groups)
+        requested_parts={q:part_names if q=='full' else q.split('+') for q in c['queries']}
+        assert all(set(names)<=set(part_names) and len(names)==len(set(names)) for names in requested_parts.values())
         sp={site:{k:torch.tensor(sb[site+'__'+k],device=w.device) for k in ['encoder','encoder_bias','decoder','center']} for site in sites};targets={}
         for site in sites:
             state=torch.load(w.checked(Path(c['target_directory'])/f'{site}_seed{c["target_seed"]}.pt','Independent natural-data target dictionary','MIT trainer'),map_location=w.device,weights_only=True)
@@ -50,11 +66,14 @@ def main():
                 s=sp[site]
                 if mode in ('capture','source'):
                     z=torch.relu((x-s['center'])@s['encoder'].T+s['encoder_bias'])
-                q=torch.tensor([query=='full' or i in groups.get(query,{}).get(site,[]) for i in source['members'][site]],device=w.device,dtype=x.dtype)
+                selected=requested_parts[query]
+                q=torch.tensor([any(i in groups[name].get(site,[]) for name in selected) for i in source['members'][site]],device=w.device,dtype=x.dtype)
                 if mode=='capture':observed[site]=x.detach();x=x-alpha*(z@s['decoder']);responses[site]=x
                 elif mode=='source':x=x-(z*q)@s['decoder']
                 elif mode!='none':
-                    t=targets[site];r=relations[site];zt=t.encode(x);coeff=r[mode]@q
+                    t=targets[site];r=relations[site];zt=t.encode(x)
+                    rq=torch.tensor([name in selected for name in part_names],device=w.device,dtype=x.dtype) if mode in ('native_groups','native_total') else q
+                    coeff=r[mode]@rq
                     if mode=='raw':x=x-(zt[:, :, r['candidates']]@r['raw']*q)@s['decoder']
                     else:x=x-(zt*coeff)@t.decoder.weight.T
                 if site=='resid_4' and mode!='capture':pooled=(x*mask[:,:,None]).sum(1)/mask.sum(1)[:,None]
@@ -96,6 +115,21 @@ def main():
             candidate_fit=fit_members(k,b,c['fit_iterations'])
             allowance=min(len(baseidx),c['members_per_source']*ns);score=candidate_fit.sum(1)*np.sqrt(np.maximum(np.diag(k),0));chosen=np.argsort(-score,kind='stable')[:allowance];refit=fit_members(k[np.ix_(chosen,chosen)],b[chosen],c['fit_iterations'])
             native=np.zeros((nt,ns));native[baseidx.cpu().numpy()[chosen]]=refit
+            part_relations={};part_fits={}
+            if c.get('compare_query_granularity',False):
+                partition=np.array([[int(i in groups[name].get(site,[])) for name in part_names] for i in source['members'][site]],dtype='float64')
+                assert np.all(partition.sum(1)==1)
+                grouped_b=b@partition
+                for name,total_only,use_groups in [('native_groups',False,True),('native_total',True,True),('native_refit',False,False)]:
+                    target_b=grouped_b if use_groups else b
+                    initial=candidate_fit@partition if use_groups else candidate_fit
+                    group_fit=fit_parts(k,target_b,initial,c['fit_iterations'],total_only)
+                    group_score=group_fit.sum(1)*np.sqrt(np.maximum(np.diag(k),0))
+                    group_chosen=np.argsort(-group_score,kind='stable')[:allowance]
+                    group_refit=fit_parts(k[np.ix_(group_chosen,group_chosen)],target_b[group_chosen],group_fit[group_chosen],c['fit_iterations'],total_only)
+                    value=np.zeros((nt,target_b.shape[1]));value[baseidx.cpu().numpy()[group_chosen]]=group_refit
+                    part_relations[name]=value
+                    part_fits[name]=dict(selected=int(np.count_nonzero(value.sum(1)>0)),allowance=allowance,row_capacity=float(value.sum(1).max()),total_only=total_only,columns=part_names if use_groups else source['members'][site],initialization='same source-member candidate fit; collapsed only for grouped fits',common_initial_iterations=c['fit_iterations'],refine_iterations=c['fit_iterations'],support_refit_iterations=c['fit_iterations'])
             # Same member allowance, dictionary-only matching, with source-fit gains.
             geom=np.zeros((nt,ns));used=set()
             for j in range(ns):
@@ -120,30 +154,38 @@ def main():
                         weighted_cov=(1-functional_weight)*cz/sc+functional_weight*functional_cov/sf;weighted_cross=(1-functional_weight)*cross[:,j]/sc+functional_weight*functional_cross/sf
                     raw[:,j]=np.linalg.solve(weighted_cov+c['ridge']*max(np.trace(weighted_cov)/len(cz),1e-12)*np.eye(len(cz)),weighted_cross)
             relations[site]={'native':torch.tensor(native,device=w.device,dtype=torch.float32),'geometry':torch.tensor(geom,device=w.device,dtype=torch.float32),'geometry_gain':torch.tensor(geom_gain,device=w.device,dtype=torch.float32),'raw':torch.tensor(raw,device=w.device,dtype=torch.float32),'candidates':baseidx}
+            for name,value in part_relations.items():
+                relations[site][name]=torch.tensor(value,device=w.device,dtype=torch.float32);export[site+'__'+name]=value
             target_mean=zt.mean(0);source_mean=zs.mean(0)
             for name,value in [('native',native),('geometry',geom),('geometry_gain',geom_gain),('raw',raw),('candidates',baseidx.cpu().numpy()),('target_mean',target_mean),('source_mean',source_mean)]:export[site+'__'+name]=value
             full=np.zeros_like(candidate_fit);full[chosen]=refit;source_energy=np.sum(zs**2,axis=0)/n*np.sum(dsrc**2,axis=1);loss=source_energy-2*(full*be).sum(0)+(full*(ke@full)).sum(0)
             fit_summary[site]=dict(source_members=ns,candidates=len(baseidx),selected=allowance,n_states=n,functional_weight=functional_weight,context_response=c.get('context_response',False),field_relative_error=(loss/np.maximum(source_energy,1e-15)).tolist(),row_capacity=float(native.sum(1).max()),natural_source_active=(zs>0).sum(0).tolist(),solver_iterations=c['fit_iterations'],target_mean_norm=float(np.linalg.norm(target_mean)),source_mean_norm=float(np.linalg.norm(source_mean)))
+            if part_fits:fit_summary[site]['part_fits']=part_fits
             if functional_weight:
                 energy=(ass**2).mean(0);floss=energy-2*(full*bf).sum(0)+(full*(kf@full)).sum(0);fit_summary[site]['response_relative_error']=(floss/np.maximum(energy,1e-15)).tolist()
             w.progress('RELATION_FIT',site=site,result=fit_summary[site]);del x,zt,zs
         np.savez_compressed(w.run/'relation.npz',**export);write(w.run/'RELATION_FIT.json',fit_summary)
-        panel=json.loads(w.checked(source_run/'panel.json','Frozen source-consumer development panel').read_text());dev=[r for r in panel['rows'] if r['split']=='dev']
+        evaluation_split=c.get('evaluation_split','dev')
+        panel_path=Path(c['evaluation_panel']) if c.get('evaluation_panel') else source_run/'panel.json'
+        panel=json.loads(w.checked(panel_path,'Fixed correspondence evaluation panel').read_text());dev=[r for r in panel['rows'] if r['split']==evaluation_split]
+        assert dev and len({r['document_sha256'] for r in dev})==len(dev)
         results={};pad=0
         for mode in c['methods']:
-            for query in c['queries']:
+            for query in (['full'] if mode=='none' else c['queries']):
                 logits=np.empty(len(dev),np.float32);order=sorted(range(len(dev)),key=lambda i:len(dev[i]['tokens']))
                 for start in range(0,len(dev),c['eval_batch_size']):
                     ix=order[start:start+c['eval_batch_size']];length=max(len(dev[i]['tokens']) for i in ix);ids=torch.full((len(ix),length),pad,device=w.device,dtype=torch.long);mask=torch.zeros_like(ids)
                     for j,i in enumerate(ix):v=dev[i]['tokens'];ids[j,:len(v)]=torch.tensor(v,device=w.device);mask[j,:len(v)]=1
                     with torch.no_grad():model.gpt_neox(ids,attention_mask=mask,use_cache=False);values=(pooled@pw.T+pb).squeeze(-1)
                     logits[ix]=values.cpu().numpy();w.sequence_forwards+=len(ix);w.token_forwards+=ids.numel()
-                for r,value in zip(dev,logits):w.record(kind='classification',task='profession',row_id=r['row_id'],component=r['document_sha256'],method=mode,operation=query,seed=1,target_seed=c['target_seed'],split='dev',label=r['label'],gender=r['gender'],prediction=int(value>0),logit=float(value))
+                for r,value in zip(dev,logits):w.record(kind='classification',task='profession',row_id=r['row_id'],component=r['document_sha256'],method=mode,operation=query,seed=c['target_seed'],target_seed=c['target_seed'],split=evaluation_split,label=r['label'],gender=r['gender'],prediction=int(value>0),logit=float(value))
                 acc={f'{y}/{g}':float(np.mean([(v>0)==r['label'] for r,v in zip(dev,logits) if r['label']==y and r['gender']==g])) for y in [0,1] for g in [0,1]};res=dict(profession=float(np.mean([(v>0)==r['label'] for r,v in zip(dev,logits)])),gender=float(np.mean([(v>0)==r['gender'] for r,v in zip(dev,logits)])),worst_group=min(acc.values()),groups=acc)
                 results[f'{mode}/{query}']=res;w.progress('RESULT',method=mode,query=query,result=res)
                 if time.perf_counter()-w.wall_start>c['budget_seconds']:raise TimeoutError('Bounded correspondence consumer')
         write(w.run/'TRANSFER_RESULTS.json',dict(results=results,scope=c['scope'],fit=fit_summary))
-        w.checks.update(all_query_methods=len(results)==len(c['methods'])*len(c['queries']),native_capacity=all(v['row_capacity']<=1.000001 for v in fit_summary.values()))
+        expected_cells=sum(1 if name=='none' else len(c['queries']) for name in c['methods'])
+        w.checks.update(all_query_methods=len(results)==expected_cells,native_capacity=all(v['row_capacity']<=1.000001 for v in fit_summary.values()))
+        w.checks['part_capacity']=all(p['row_capacity']<=1.000001 and p['selected']<=p['allowance'] for v in fit_summary.values() for p in v.get('part_fits',{}).values())
     except Exception:error=traceback.format_exc()
     finally:
         for h in hooks:h.remove()

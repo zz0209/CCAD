@@ -8369,3 +8369,49 @@ R58图表、全部请求/目标比较、素材表已写paper附录F.2；引言�
 资源及失败：没有GPU、模型调用、训练、拟合、统计重采样或新增外部资产；仅短CPU编译/渲染。净有效工作、等待未独立计时，未知；不从墙钟倒算。改稿中两次精确文字patch匹配失败，无部分写入；重试正确文本后完成。一次编译多出只有结尾的第8正文页，删减重复表达后回到7页，没有缩字体或隐藏证据。原始结果、失败与强raw/assignment/mean对照均保留。
 
 下一步与交付：当前整稿已可独立阅读，数学粒度的假说不是新实验成果，更不是strong accept认证。若推进实验，以同候选/源信息/目标预算下功能部分的干预判断为目的，只先检验这一根本失配；不自动开新的writer/支持/训练搜索。成果定位MANUSCRIPT_SYNTHESIS_REVIEW_R58.md及其CLOSEOUT.json；白名单仅同步本单元master_log，paper/本地研究文件按path/hash保留，不扩白名单。原ccad loop保持既有ACTIVE周期，用户硬件安排优先。
+
+
+## R59 START — 以解释的功能部分确定对应粒度
+
+实际写入UTC：2026-09-15T20:07:39Z；round_id=R59。可证实本单元事件开始以本条为准，此前入口/资源阅读未独立计时。完整47页稿已在前两单元交付，先前草拟的参与条件搜索不自动继续。选题来自整稿原文比较与q=P alpha误差连接：逐源feature拟合可能为实际语义部分保留了不必要的区别。正面机会是在同信息、同候选与目标成员预算下，更好保留已有人工解释对单独和联合删除的判断。
+
+计划：复用R58最终8M目标11sites、同128自然序列及clean/full路径、冻结source head、695已暴露开发文档。保留原逐成员/几何/structured raw；比较按源注释三部分拟合与从相同逐成员初始化的完整总和再拟合。后者也得到原部分关系，不能用任意等分弱化对照。全部使用同候选与110总成员上限。评价单独部分、未拟合的两部分联合和完整请求的source效应保真及分类用途；不依据拟合误差宣布成功。强raw保留每个源列并支持同样部分和组合。
+
+实现先做小型数值/分组核对，再用原MultisiteWork与gpu-0 wrapper运行一个开发比较；预算上限1200 driver秒，预期数分钟（此前对应/推理run量级约百秒，增加请求后按总请求量估计），不训练、不下载、不安装。实测RTX5070Ti 2335MiB使用/13661MiB空闲，gpu-0和其他租约free；实际启动时通过manager申请，普通短CPU不附加整盘锁。所有结果留账，若无功能收益则不串接参数搜索；若有信号才决定独立确认。当前稿/代码/入口逐字快照：artifacts/correspondence_reform_20260913/r59_before_20260915T200739Z/MANIFEST.json。两项指定writing skills继续以问题—数学对象—实际使用—证据组织，不把此假说写成发现。
+
+
+### R59 PROGRESS — 相同资源的信息粒度比较已运行
+
+实际写入UTC：2026-09-15T20:12:02Z。run实际开始为status所记2026-09-15T20:10:54.873694Z。同自然路径采样、候选库、source classifier和目标seed，七方法/七请求；其中原逐成员与额外1200步再拟合分开保留。语义部分/总和/逐成员再拟合均从同一候选成员解起步，做相同步数的进一步优化及warm-start支持重拟合。总和方法保留原部分初始化，raw保留源列。
+
+短CPU核对用独立SLSQP数值目标，parts/total解目标差分别约4.3e-13/7.1e-15，分组二次式展开误差约1.4e-14，记录R59_NUMERICAL_CHECK.json；它只核对该小数值问题，不代替真实功能检验。当前没有读到真实结果。分析将报告三单部分及三未拟合pair-union的源回答一致性（按source相对未编辑是否改变分层）、概率保真、分类和最差组用途，document配对且固定此target，开发比较不作独立确认。
+
+
+### R59 PROGRESS — 部分预测形成正信号，转向独立材料确认
+
+实际写入UTC：2026-09-15T20:18:30Z。开发run于2026-09-15T20:12:49.342888Z结束，114.4496 driver秒/87.7031秒以上processCPU、34055原始行，PASS且contract通过实际字段；原source/geometry/native/raw四组共同请求logit与R58逐位一致。R59_QUERY_ANALYSIS.json由保存原行和固定未编辑source分类器生成。
+
+语义部分重拟合相比等求解预算逐成员再拟合，单部分balanced agreement仅+0.29[-0.59,1.18]点，pair-union+0.56[-0.08,1.26]点；概率误差小幅下降，不够单独支持方法升级，不加超参数搜索。更有意义的是以与算术相同的部分干预预测评价旧关系：原native单部分92.90%，geometry84.83%，两者平均职业准确率同83.50%；raw95.60%。这使实际任务分数和解释保真度在同一消费者分开，有正面且与当前主线一致的确认机会。三pair-union原native90.57%、geometry86.77%、raw94.93%。这些仍是旧dev，不能据此宣布跨设置主张确认。
+
+继续同一R59：固定原native方法（非改进不明显的group方法），准备四个新目标seed和完全未用于CCAD方法选择的官方test文档。主要比较同预算native对geometry的单部分balanced agreement；pair-union作为预先保留的推广，任务/最差组准确率及强raw完整呈现。所有query由旧source注释确定；不选择有利target seed，不改变fit自然状态与source head。新增目标只改变seed，沿用8192-step/8M自然token/所有11sites/TopK8192k64既有训练，保存最终checkpoint与过程loss，训练源码不改。预算按已实测633.9秒单stack估算4stack约42分钟上界、3600秒guard，预计1.48GB最终资产、VRAM低于当前可用13.3GB；不会以等待充轮，跨heartbeat同一单元。配置reform_r59_shift_dictionaries_seeds2to5_v1.json。官方test当前仍未读取，确认规则和源身份将在读取前留账。
+
+
+### R59 PROGRESS — 官方新文档读取前冻结确认
+
+实际写入UTC：2026-09-15T20:23:44Z。R59_CONFIRMATION_FREEZE.json在测试行物化与模型输出之前写入，记录source probe/注释、代码/配置及已下载parquet hash。回查R58已有强几何增益对照：三部分balanced agreement87.18%，native92.90%，未校准geometry84.83%；这是既有开发logit的新同口径分析，不新增GPU。确认primary因此采用native减gain-calibrated geometry，4个新target seeds2–5；seed1另报。三原注释部分、三未拟合pair unions、完整操作、raw和未编辑、任务用途及概率误差全部预留。使用全部按原first-min规则选中并去除已用/重复hash的test文档，固定source head，不复训。新结果到来后不调方法。训练正在单独进行，测试尚无模型结果。
+
+
+### R59 PROGRESS — 新文档物化与训练续接
+
+实际写入UTC：2026-09-15T20:37:52Z。round_id=R59，未完成。冻结后实际测试行读取开始2026-09-15T20:23:45Z，面板写入20:23:53Z；1,735篇新文档，0截断，排除1个旧用/重复hash。详细身份和时间见R59_CONFIRMATION_PANEL_RECEIPT.json；现已访问测试文档，尚未计算模型输出。训练进度为3840/8192，实际记录2026-09-15T20:37:46.208334+00:00，预计总训练2428.8秒。原gpu-0 lease/session41241继续；原ccad同归属临时15分钟，下次约20:51Z复查，临近完成恢复5分钟。
+
+开发原R58几何增益logit的同口径部分预测与配对区间已加入R59_QUERY_ANALYSIS.json，未推断原来没有执行的增益几何pair-union。按冻结primary准备shift_confirmation_results.py，使用同文档抽样跨seed/请求/方法配对，种子2–5为确认cohort，1独立报告；代码尚未读确认输出。原冻结runner未改。当前稿继续以旧解释的部分干预预测统领，不把group小幅改进作为新贡献。净有效工作与等待未独立计时，未知；未将本heartbeat计为新轮。
+
+
+### R59 PROGRESS — 同一部分预测终点进入完整稿
+
+实际写入UTC：2026-09-15T20:45:08Z；round_id=R59，独立确认待训练后执行。本次实际新增分析使用既有R58增益几何logit和R59开发raw行；native减增益几何单部分balanced agreement为5.72[3.83,7.61]点。原native/geometry任务均83.50%，但部分预测92.90/84.83%；最差组51.72/58.62，raw部分预测95.60。主文§6及Appendix E/Table48把保真和任务用途分开，与算术§4.2同定义。小幅语义分组再拟合不升级为方法突破，不继续参数搜索。
+
+完整稿当前48页（7主文+2引用+39附录），paper/main.pdf SHA256984d0d612d650ffe73a3f07257acab702044404e5ed8515085d0cd75c64cb621，592583bytes。两项指定writing skills落实为同一核心问题/同一预测终点，不新增主文章节或研发日志。实际阅读Functional Maps原文函数/分组约束与传递方法并核对作者站点书目，信用归于既有函数映射，借鉴只用于拟合粒度检验。原48页联系图及§6和新Table48阅读尺寸已查看，图表清楚；编译发现原算术附录图别名未定义，补回指向原主文Figure2的alias后消除。仍有两个约1.2pt参考页vbox警告，无横向溢出或未定义引用。最终alias改动不改排版，后续确认整稿再核对。
+
+确认分析代码按预先冻结的配对文档/目标seed方案准备，并用旧开发结果及identity resample核对点估计，最大差0；未打开确认模型输出。代码和核对记录R59_CONFIRMATION_ANALYSIS_PREPARED.json，原runner/config冻结hash一致。新数据和表格导出、证据图谱、README已接入；旧数值及归档不改。一次索引更新因历史manifest混合string/dict条目停止，已保留两种旧条目并完成更新，未改原始结果。GPU训练仍由原session41241/manager续接；本阶段计算仅短CPU分析/编译/渲染，不计新轮。工作/等待净时长未独立计时，未知。
