@@ -4,6 +4,9 @@ import time
 
 
 def fit_binding_writers(w,cfg,rows,hidden,zs,sae,target,zt,seed,target_seed,forward,layer):
+    if cfg['request_writer_fit'].get('select_on_source_fit'):
+        from binding_selected_writer import fit_selected_writers
+        return fit_selected_writers(w,cfg,rows,hidden,zs,sae,target,zt,seed,target_seed,forward,layer)
     import numpy as np
     import torch
     from run_causalgym_multisite import write
