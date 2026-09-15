@@ -1,0 +1,86 @@
+{
+  "audit_opened": false,
+  "batch_size": 16,
+  "budget": "180 driver seconds; fixed source-fit inputs, zero language-model forwards",
+  "budget_seconds": 180,
+  "candidate_family_frozen": true,
+  "checkpoint_step": 16384,
+  "dataset_revision": "Frozen R38 source fit pairs",
+  "device": "cuda:0",
+  "encoder_device": "cuda:0",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "generator_script": "scripts/fit_arithmetic_bank_ridge.py",
+  "hidden_atol": 0.002,
+  "intervention_span": "generated_prefix",
+  "max_length": 72,
+  "max_new_tokens": 5,
+  "members": [
+    64
+  ],
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "operand_range": [
+    10,
+    50
+  ],
+  "pairs_per_template": 64,
+  "purpose": "Supplementary fixed-bank ridge control to distinguish input extent from lasso-versus-ridge fitting",
+  "readout_fit": {
+    "fold_seed": 9392043,
+    "lasso_grid": [
+      0.001,
+      0.01,
+      0.1
+    ],
+    "members": 64,
+    "pool": 512,
+    "relation_run": "runs/REFORM_R38_qwen_member_fields_five_v1_20260914",
+    "ridge_grid": [
+      0.001,
+      0.01,
+      0.1,
+      1.0,
+      10.0
+    ],
+    "screen_alpha": 0.01,
+    "solver_max_iter": 30000,
+    "source_cache_identity": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+    "copy_readouts_from": "runs/REFORM_R45_full_code_readouts_v1_20260915"
+  },
+  "reuse_rules": [],
+  "round_id": "R45",
+  "run_id": "REFORM_R45_bank_ridge_control_fit_v1_20260915",
+  "run_parent": "R45",
+  "scope": "Fixed 64-coordinate ridge control selected after R45 confirmation exposure. Uses identical source fit states, ridge grid and folds as full-code ridge. Coefficients outside the existing bank are exactly zero; no functional-panel tuning.",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "selection_rules": [],
+  "source_cache_run": null,
+  "source_selection_step": {
+    "tens": 0,
+    "unit": 1
+  },
+  "split_salt": "ccad-r39-members-confirmation-20260914-1",
+  "statistics_unit": "64 question clusters crossed with four independent partition banks; both complementary parts, operations, prompts, and fixed dependent SAE cycle retained.",
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "written_at_utc": "2026-09-15T06:31:29.807429+00:00"
+}

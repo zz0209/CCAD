@@ -33,6 +33,7 @@ def prepare_readouts(w, cfg):
                 row = next(r for r in bankmeta['records'] if r['source_seed']==s)
                 for part in [0, 1]:
                     for kind in kinds:
+                        label=spec.get('full_activation_name',kind) if kind=='full_activation' else kind
                         operations = {}
                         for item in row['queries']:
                             op = item['operation']; data = shared[op]
@@ -42,9 +43,10 @@ def prepare_readouts(w, cfg):
                                 q = 1-q
                             operations[op] = dict(kind=kind, coef=data['raw' if kind=='reconstruction' else kind], decoder=data['decoder'],
                                 indices=data['indices'], q=torch.tensor(q, device=w.device))
-                        result[t, f'{kind}_readout_part{part}_bank{bank}', cfg['members'][0]] = operations
+                        result[t, f'{label}_readout_part{part}_bank{bank}', cfg['members'][0]] = operations
             for kind in kinds:
-                result[t, f'{kind}_readout_full', cfg['members'][0]] = {
+                label=spec.get('full_activation_name',kind) if kind=='full_activation' else kind
+                result[t, f'{label}_readout_full', cfg['members'][0]] = {
                     op: dict(kind=kind, coef=d['raw' if kind=='reconstruction' else kind], decoder=d['decoder'], indices=d['indices'],
                              q=torch.ones(len(d['source_indices']), device=w.device)) for op, d in shared.items()}
         metadata.append(dict(source_seed=s, target_seed=t, path=path.as_posix(), sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
