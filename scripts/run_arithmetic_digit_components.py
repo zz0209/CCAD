@@ -16,6 +16,9 @@ from ccad.artifacts import sha256
 
 
 def panel(cfg):
+    if cfg.get('frozen_rule_evaluation'):
+        saved=json.loads((ROOT/cfg['frozen_rule_evaluation']['panel']).read_text())
+        return saved['rows'],saved['pairs']
     rows=[]
     operands=cfg.get("evaluation_operand_pairs")
     if operands is None:
@@ -88,6 +91,10 @@ def main():
             sources += ['scripts/native_response_projection.py']
     if cfg.get('functional_rule_test'):
         sources += ['scripts/arithmetic_functional_rules.py']
+    if cfg.get('frozen_rule_evaluation'):
+        sources += ['scripts/arithmetic_frozen_rules.py']
+    if cfg.get('source_function_refit'):
+        sources += ['scripts/arithmetic_carry_source_fit.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -111,6 +118,9 @@ def main():
             path=w.checked(snap["path"]);assert sha256(path)==snap["sha256"]
             ae=AutoEncoderTopK(model.config.hidden_size,tc["dict_size"],tc["k"]).to(w.device)
             ae.load_state_dict(torch.load(path,map_location=w.device,weights_only=True));ae.eval();ae.requires_grad_(False);saes[seed]=ae
+        if cfg.get('frozen_rule_evaluation'):
+            w.checked(ROOT/cfg['frozen_rule_evaluation']['panel'])
+            w.checked(ROOT/cfg['frozen_rule_evaluation']['freeze'])
         rows,pairs=panel(cfg);write(w.run/"panel.json",dict(rows=rows,pairs=pairs,scope=cfg["scope"]))
         if cfg.get("evaluation_operand_pairs") is not None:
             assert (cfg.get("frozen_adaptation") or cfg.get('member_queries')) and not cfg.get("counterfactual_fit")
@@ -253,7 +263,7 @@ def main():
                        changed_fit_rows=sum(i!=v for i,v in view_map.items()),
                        correct=sum(base[i]==rows[i]['total'] for i in view_by_total.values()))
         fitix=[i for i,r in enumerate(rows) if r["split"]=="fit"]
-        for i,r in enumerate(rows):w.record(kind="base",task="template_"+str(r["template"]),row_id=i,component=f"{r['a']}+{r['b']}",method="greedy",split=r["split"],answer=base[i],correct_answer=r["total"],correct=base[i]==r["total"],generated_text=base_text[i])
+        for i,r in enumerate(rows):w.record(kind="base",task="template_"+str(r["template"]),row_id=i,component='+'.join(str(r[k]) for k in ['a','b','c'] if k in r),method="greedy",split=r["split"],answer=base[i],correct_answer=r["total"],correct=base[i]==r["total"],generated_text=base_text[i])
         codes={};gates={};metadata=[]
         for seed,ae in saes.items():
             if source_parent is not None:
@@ -269,7 +279,7 @@ def main():
                 continue
             with torch.no_grad():z=torch.cat([ae.encode(h[i:i+256].reshape(-1,h.shape[-1])).reshape(*h[i:i+256].shape[:-1],-1) for i in range(0,len(h),256)])
             codes[seed]=z
-            if cfg.get("evaluation_operand_pairs") is not None:
+            if cfg.get("evaluation_operand_pairs") is not None or cfg.get('frozen_rule_evaluation'):
                 np.savez_compressed(w.run/f"evaluation_seed{seed}.npz",codes=z.cpu().numpy())
                 continue
             fs=torch.stack([fisher(z[fitix,cfg["source_selection_step"][factor]] if trajectory else z[fitix],[rows[i][factor] for i in fitix]) for factor in ["unit","tens"]],1)
@@ -298,6 +308,13 @@ def main():
             np.savez_compressed(w.run/f"source_seed{seed}.npz",codes=z.cpu().numpy(),fisher=fs.cpu().numpy(),**payload)
         if source_parent is None:
             np.savez_compressed(w.run/"states.npz",hidden=h.cpu().numpy(),fit_indices=np.array(fitix))
+        if cfg.get('frozen_rule_evaluation'):
+            from arithmetic_frozen_rules import evaluate_frozen_rules
+            w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,
+                numpy=np.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),
+                precision='float32 matmul high',hook=cfg.get('hook_override',tc['hook_module_path']),model=tc['model_id'])
+            evaluate_frozen_rules(w,cfg,rows,h,codes,saes,generate,budget,base,model_context=(model,module,tok))
+            return w.finish()
         if cfg.get('functional_rule_test'):
             from arithmetic_functional_rules import evaluate_rules
             w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,
