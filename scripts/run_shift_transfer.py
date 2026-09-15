@@ -38,8 +38,64 @@ def fit_parts(k,b,initial,iterations,total_only=False):
     return a
 
 
+def context_candidates(x, target, source, cosine, geometry, cfg, work, site):
+    """Add activation-context partners at the original unique-candidate budget."""
+    import torch
+    from ccad.semantic_context_matching import top_distributions, retrieve, euclidean_cost
+    settings=cfg['context_candidates'];started=time.perf_counter()
+    # Capture concatenates clean states and full-source-deletion states. Retrieval
+    # uses the clean half; the existing field fit continues to use both halves.
+    reference=x[:len(x)//2].detach().cpu().numpy()
+    source_values=[];target_values=[];target_indices=[]
+    with torch.no_grad():
+        for off in range(0,len(reference),512):
+            xx=x[off:min(off+512,len(reference))]
+            source_values.append(torch.relu((xx-source['center'])@source['encoder'].T+source['encoder_bias']).cpu().numpy())
+            values,indices=target.encode(xx).topk(int(target.k),dim=1)
+            target_values.append(values.cpu().numpy());target_indices.append(indices.cpu().numpy())
+    zs=np.concatenate(source_values);ns=zs.shape[1]
+    source_indices=np.broadcast_to(np.arange(ns),(len(zs),ns))
+    sd,sc,sn=top_distributions(source_indices,zs,ns,settings['top_k'],reference)
+    td,tc,tn=top_distributions(np.concatenate(target_indices),np.concatenate(target_values),
+                             target.encoder.weight.shape[0],settings['top_k'],reference)
+    rng=np.random.default_rng(settings['distance_scale_seed'])
+    sample=rng.choice(len(reference),min(256,len(reference)),replace=False)
+    distances=euclidean_cost(reference[sample].astype(float),reference[sample].astype(float))
+    scale=float(np.median(distances[np.triu_indices(len(sample),1)]))
+    epsilon=scale*settings['sinkhorn_scale_fraction']
+    completed=[]
+    def progress(row):
+        completed.append(row)
+        work.progress('CONTEXT_MEMBER',site=site,completed=len(completed),source_members=ns,
+                      status=row['status'],retrieval_seconds=time.perf_counter()-started)
+        if time.perf_counter()-work.wall_start>cfg['budget_seconds']:
+            raise TimeoutError('Context retrieval exceeded bounded run budget')
+    rows=retrieve(range(ns),sd,td,sc,tc,sn,tn,reference,
+                  candidate_count=settings['centroid_candidates'],minimum_count=settings['minimum_activations'],
+                  regularization=epsilon,tolerance=settings['sinkhorn_tolerance'],
+                  max_iterations=settings['sinkhorn_max_iterations'],dual_fallback=True,progress=progress)
+    # Preserve a geometric core and add context ranks round-robin over source
+    # members. Unique pool size equals the original geometry pool exactly.
+    old=geometry.cpu().tolist();budget=len(old)
+    core=torch.topk(cosine,settings['geometry_core_per_source'],dim=0).indices.flatten().unique().cpu().tolist()
+    chosen=set(core);rankings=[[v['target_member'] for v in row['candidates']] for row in rows]
+    for rank in range(settings['centroid_candidates']):
+        for values in rankings:
+            if rank<len(values) and len(chosen)<budget:chosen.add(values[rank])
+    for value in old:
+        if len(chosen)<budget:chosen.add(value)
+    assert len(chosen)==budget
+    detail=dict(site=site,reference_states=len(reference),source_activities=sn.tolist(),
+                eligible_targets=int((tn>=settings['minimum_activations']).sum()),
+                geometry_candidates=old,candidates=sorted(chosen),geometry_core=core,
+                outside_geometry=sorted(chosen-set(old)),reference_distance_scale=scale,
+                regularization=epsilon,rows=rows,retrieval_seconds=time.perf_counter()-started,
+                scope='Natural clean states; same unique pool size and final member allowance; no evaluation rows or target task gradients.')
+    return torch.tensor(sorted(chosen),device=x.device,dtype=torch.long),detail
+
+
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--config',required=True,type=Path);a=p.parse_args();c=json.loads(a.config.read_text());w=MultisiteWork(c,a.config,['scripts/run_shift_transfer.py','scripts/run_shift_explanation.py','scripts/train_shift_dictionaries.py','scripts/run_causalgym_multisite.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']);hooks=[];error=None
+    p=argparse.ArgumentParser();p.add_argument('--config',required=True,type=Path);a=p.parse_args();c=json.loads(a.config.read_text());w=MultisiteWork(c,a.config,['scripts/run_shift_transfer.py','scripts/run_shift_explanation.py','scripts/train_shift_dictionaries.py','scripts/run_causalgym_multisite.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py','src/ccad/semantic_context_matching.py','src/ccad/nip_baselines.py']);hooks=[];error=None
     try:
         import torch,transformers
         torch.set_num_threads(2);torch.use_deterministic_algorithms(True);torch.set_float32_matmul_precision('highest');torch.cuda.set_device(c['device']);torch.cuda.reset_peak_memory_stats();w.torch=torch;w.device=torch.device(c['device'])
@@ -94,10 +150,13 @@ def main():
                         for site,g in zip(sites,gradients):gradient_cache[site].append(g.detach().flatten(0,1).cpu().numpy().copy())
                 for site in sites:cache[site].append(observed[site].flatten(0,1).cpu().numpy().copy())
                 w.sequence_forwards+=len(ids);w.token_forwards+=ids.numel()
-        fit_summary={};export={}
+        fit_summary={};export={};retrieval={}
         for site in sites:
             x=torch.tensor(np.concatenate(cache.pop(site)),device=w.device);s=sp[site];t=targets[site];ns=len(source['members'][site]);dt=t.decoder.weight.T.detach();ds=s['decoder'];cos=(dt/dt.norm(dim=1)[:,None])@(ds/ds.norm(dim=1)[:,None]).T
             baseidx=torch.topk(cos,c['neighbors_per_source'],dim=0).indices.flatten().unique();nt=len(dt)
+            if c.get('context_candidates'):
+                baseidx,retrieval[site]=context_candidates(x,t,s,cos,baseidx,c,w,site)
+                write(w.run/'CANDIDATE_RETRIEVAL.json',retrieval)
             zz=[];ss=[]
             with torch.no_grad():
                 for off in range(0,len(x),512):
@@ -160,6 +219,9 @@ def main():
             for name,value in [('native',native),('geometry',geom),('geometry_gain',geom_gain),('raw',raw),('candidates',baseidx.cpu().numpy()),('target_mean',target_mean),('source_mean',source_mean)]:export[site+'__'+name]=value
             full=np.zeros_like(candidate_fit);full[chosen]=refit;source_energy=np.sum(zs**2,axis=0)/n*np.sum(dsrc**2,axis=1);loss=source_energy-2*(full*be).sum(0)+(full*(ke@full)).sum(0)
             fit_summary[site]=dict(source_members=ns,candidates=len(baseidx),selected=allowance,n_states=n,functional_weight=functional_weight,context_response=c.get('context_response',False),field_relative_error=(loss/np.maximum(source_energy,1e-15)).tolist(),row_capacity=float(native.sum(1).max()),natural_source_active=(zs>0).sum(0).tolist(),solver_iterations=c['fit_iterations'],target_mean_norm=float(np.linalg.norm(target_mean)),source_mean_norm=float(np.linalg.norm(source_mean)))
+            if site in retrieval:
+                selected_ids=set(np.flatnonzero(native.sum(1)>0).tolist())
+                fit_summary[site]['selected_outside_geometry']=sorted(selected_ids-set(retrieval[site]['geometry_candidates']))
             if part_fits:fit_summary[site]['part_fits']=part_fits
             if functional_weight:
                 energy=(ass**2).mean(0);floss=energy-2*(full*bf).sum(0)+(full*(kf@full)).sum(0);fit_summary[site]['response_relative_error']=(floss/np.maximum(energy,1e-15)).tolist()

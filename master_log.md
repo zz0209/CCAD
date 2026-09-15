@@ -8477,3 +8477,36 @@ R58图表、全部请求/目标比较、素材表已写paper附录F.2；引言�
 交付定位：artifacts/correspondence_reform_20260913/MANUSCRIPT_ASSESSMENT_R59.md与MANUSCRIPT_ASSESSMENT_R59_CLOSEOUT.json记录整稿判断、原文读取及14份最终文件身份；主文/主表、human_part_profiles.json、README、CLAIM_MAP、EVIDENCE_INDEX及data manifest更新。REFERENCE_REGISTRY记录来源和实际借鉴。改前入口逐字归档manuscript_assessment_after_r59_20260915T213724Z/MANIFEST.json；旧R59报告与closeout不重写。
 
 下一科学机会：现有关系先按decoder几何取候选，再拟合源作用。借鉴已有activation-weighted context/Sinkhorn检索，在同源资料、自然状态、最终成员预算及功能拟合下，检验能否找回几何遗漏的组成并改善原部分判断。已查看现有实现，避免32768平方全距离路径；启动时量化活动和成本，先一个已暴露开发目标，有信号再决定新数据确认。没有启动R60，也不把该机会设为当前结论必须跨越的新门。整篇尚未宣布达到strong accept，目标不变，原ccad同对话ACTIVE5分钟。本条完成后更新tracker，随后按白名单同步。
+
+
+## R60 START — 用激活语境找回几何遗漏的功能组成
+
+实际写入UTC：2026-09-15T22:05:36Z；round_id=R60。heartbeat事件2026-09-15T22:03:02.696Z；精确阅读起点未独立计时，以本记录为可核实单元起点。R59及整稿评估已完成，本单元针对当前主Table3的部分预测保持开展方法改进。正面机会：几何候选之外存在可用于恢复旧部分作用的目标组成；使用同样自然状态检索后，应改善目标部分预测及未拟合联合。
+
+保留源55个人工注释成员、固定分类器、11个目标字典seed1、原128自然序列和695开发文档。借鉴已读SemanticOT Algorithm1及项目现成top-context/centroid/Sinkhorn。保留每源前8几何候选，以语境近邻补到每site与原几何池完全相同的候选数，最终目标110成员上限及原功能拟合保持。完整记录补入/最终选中成员、三部分/联合/任务结果；旧几何池原关系由R59开发run给出，核对同输入/source输出。一个开发目标先判别，不以暴露R59测试再调参。
+
+预算：既有RTX5070Ti当前2113/16303MiB、11%利用率，共享manager各资源free；运行前经cpu-heavy/gpu-0管理。预留最多1800driver秒用于检索、拟合和全消费者，2CPU线程，沿用r004+现有SciPy/dictionary overlay，无下载/训练/付费。先用一site吞吐判断剩余成本，可跨heartbeat同一单元，不计轮询。两项指定writing skills已读取：当前实验直接支撑找回哪类组成及原判断的改善；研究历史独立于正文，保留全部对照。旧入口逐字归档artifacts\correspondence_reform_20260913\r60_before_start_20260915T220536Z\MANIFEST.json。具体调用/config/run随就绪写tracker；未启动真实模型计算。
+
+
+### R60 PROGRESS — 候选检索适配完成并进入真实消费者
+
+实际写入UTC：2026-09-15T22:10:52Z；round_id=R60。原manager cpu-heavy→gpu-0管理运行REFORM_R60_shift_context_candidates_dev_v1_20260915，事件开始2026-09-15T22:08:49.985719Z，session53600。代码仅在原runner添加候选选取，snapshot包含SemanticOT现成kernel；同source状态和原功能拟合保留，每site unique候选数/最终成员预算相同。合成同激活分布但几何错误的已知例子检索到正确target；初次短批测试越过clean状态边界，修复slice后通过，未形成真实失败run。R60_RETRIEVAL_CHECK.json保存范围与身份。
+
+前约32秒已到attn_3。Embedding10个源成员的clean自然活动均低于30，记录为无足够分布并保持几何候选；不改阈值或挑掉这些成员。消费者全部三部分与联合请求继续。该实际覆盖结果纠正了此前只有部分成员足够活动的泛化预期。配置、原始进度和结果在唯一run目录；尚无本单元科学结论。
+
+
+## R60 COMPLETE — 同预算语境检索未带来关系方法提升
+
+实际写入UTC：2026-09-15T22:24:38Z；round_id=R60，START记录2026-09-15T22:05:36Z。真实计算2026-09-15T22:08:49.985719Z—22:10:20.329225Z，PASS/contract PASS，session53600 exit0。阅读、方法适配、实际开发、分析与完整成稿已完成；有效推理、计算重叠与等待未分别计时，未知。没有用等待补足研究时长。
+
+本轮检验：几何候选外的激活语境伙伴能否恢复原解释的部分预测。每site unique候选数不变、合计589；语境检索替换232个，最终关系采用8个新成员，最终110成员上限及源资料/128自然序列/原拟合不变。695开发文档的成员关系部分92.90→92.76%，差−0.14[−0.83,0.47]点，联合90.57→90.58%，差0.02[−0.30,0.38]点。源方向读出部分95.60→96.30%，差0.70[−0.06,1.55]点；完整及最差组结果全部保留。没有清楚native收益，结束该候选替换假说，不续搜邻居数、阈值或writer。源33/55成员有足够clean活动，其他源继续使用几何核心；覆盖限制与结果均如实保存，不泛化成所有语境方法无效。
+
+方法和科学判断：复用已读SemanticOT Algorithm1及项目原kernel，使用按对cost而非全状态距离矩阵；同大小候选替换不保证单调改善。模型拟合前一次短合成检查发现尾批跨clean半段，修复后通过，真实run前已完成。全部source请求logits与原R59开发逐位相同，配对统计沿既有balanced endpoint。重新读Bhalla等§§3–6和Song等原PDF第2/3/6/7页；群体几何、频率与容量效应属于已有知识，下一工作应检验旧比较性干预判断及其使用决定，不再把普通相似性当贡献。网上ACL PDF读取失败后用了既有本地原文，未记失败访问为已读。
+
+资源：90.328driver秒、88.625processCPU秒，其中检索30.378秒；24,581sequenceforwards、2,224,013paddedtokens、24,325raw行、CUDA峰值1,149,577,728bytes；run约11.18MB。既有r004及overlay、模型/源/11site target全复用；cpu-heavy→gpu-0经原manager申请释放，完成后状态free。无新训练/安装/下载/付费。分析仅既有单目标开发，不消费R59test来调参，不新增独立确认。
+
+交付：当前paper/main.pdf SHA256=6d79856e560dd7806a9835fd9a06c74377c2d25d56a425d84271f356b753256f，657067bytes，仍50页（7正文+2引用+41附录）、4主图3主表。附录E增加一段必要的方法/结果，完整六行表和所有方法/请求数据留在data与原run；详细小节初稿曾多出短尾页，精简后恢复，不让无收益分支挤占主线。最近邻补充群体manifold文献、修正两位漏列作者。两项指定writing skills落实为明确结果责任、保留强对照、退出研发经过式正文。全稿联系图与最终改动页按阅读尺寸查看；无未定义引用/横向溢出，原参考页轻微vbox警告无可见截断。
+
+R60_REPORT、R60_CANDIDATE_ANALYSIS、R60_RUN_INVENTORY、R60_CLOSEOUT以及synthetic check在artifacts/correspondence_reform_20260913。论文README/data manifest/evidence index、reference registry、compute ledger及plan均更新；run全部snapshot及12份inventory身份核对，R59冻结分析hash未变。改前PDF/tracker/plan/runner逐字归档r60_before_start_20260915T220536Z；更早完整源稿由现有归档保留。此次遗漏了紧邻改动前reuse_human.tex的单独逐字备份，旧PDF和原身份保留；从旧字节前缀恢复未匹配既有hash，未冒充已恢复。后续修改前继续完整保留所有将改文件。
+
+下一步：从现有跨seed/跨设置原始结果检验源端比较性的解释判断（部分作用顺序、方向、联合关系）是否继续指导请求选择。当前数据上的发现保持探索身份，有共同可预测现象或真实使用收益才安排新计算；不自动新开SAE/candidate/writer搜索。R60已完成但没有强接受层面的科学提升，整体目标未认证，原ccad同归属ACTIVE5分钟、未暂停。此完成记录后更新tracker最后完成科学单元为R60，再按白名单同步。
