@@ -8314,3 +8314,38 @@ R58图表、全部请求/目标比较、素材表已写paper附录F.2；引言�
 资源/失败：10run=9PASS+1初始化FAIL（2.8499秒、0行）；总992.8668062driver/822.15625CPU秒，186437sequenceforwards/19646343tokens、86930原始行、130680612runbytes，peak CUDA2877873152bytes。55新目标checkpoint共1847578655bytes。复用现有runtime、pyarrow overlay、模型/语料和官方TopKTrainer，无安装/购买/重复权重下载。工作、GPU计算和等待有交叠，净工作/等待未单独计时，未知不倒算。所有本项目GPU作业完成且共享lease已核对free。scope中frozen coefficients文字失误已追加勘误，原run不改。
 
 下一步：让对应保留源成员的输入参与条件，并在原语义部分和新联合请求上检验能否保住作用差异与实际选择收益；固定阅读信息/候选/写入预算和强raw，先形成可信正信号再冻结新数据及受控seed扩展。主会strong accept目标NOT_MET，原ccad automation ACTIVE5min，不整体暂停。白名单代码/config/master_log按本单元同步，实际HEAD与本地交付hash写R58_CLOSEOUT.json。
+
+
+## MANUSCRIPT_REBUILD_R58 START — 用现有证据重建完整论文
+
+实际写入UTC：2026-09-15T18:51:04Z；unit_id=MANUSCRIPT_REBUILD_R58，属于用户新授权的完整写作整理，不计作R59或新增实质研究轮。事件开始取本条实际写入时刻；更早阅读工作未单独计时。用户要求现有实验可收尾，先交付完整合理故事；R58作业均已结束，不新增实验。
+
+选择理由：原稿80页累积了多套开发叙事，现有结果尚未按一个解释重用问题组织。计划围绕旧解释对部分干预的预测如何支持新字典中的成员选择，重写摘要、引言、方法连接、结果和结论；R57作为决策收益，算术作为部分结构证据，语法/SHIFT承担组合与既有解释用途。核实两种raw执行含义、强对照和统计边界；整理附录、主图、证据索引与阅读/重建入口。两项指定writing skills已读，落实到全篇结构，而非新增免责声明。
+
+原稿及全部paper文件、plan/tracker逐字归档：artifacts/correspondence_reform_20260913/manuscript_before_20260915T185104Z/MANIFEST.json。当前无新计算/训练/推理，使用既有统计作图与编译；不把写作改善称科学突破。先完成整稿，再判断具体核心缺口是否需要新增实验；旧R59参与条件计划退出默认队列，原文保留于归档。
+
+
+### MANUSCRIPT_REBUILD_R58 PROGRESS — 主线与完整附录已重建
+
+实际写入UTC：2026-09-15T19:10:15Z。主文从原来的源学习→各类writer→语法顺序，改为解释的部分请求→源响应成员选择→参与和部分忠实度→共享/联合→已有人工决定。新题目Reusing SAE Explanations through Intervention Predictions；R57选择收益置于主要结果，R57 raw路径与R58 raw执行的区别在正文/方法中明示。完成两项writing skills实际结构重写，保留raw/assignment/mean/剂量/原primary和开发身份。
+
+理论补齐请求二阶矩、成员Gram与可行性、read/write分离，以及池化源梯度相比逐context路径多出的近似项；后者是代数连接，不当新实证。已读取最近邻SharedSAE/SemanticOT/SHIFT原文入口并实际查看本地SemanticOT PDF图版8页；图4按同样全部两机制/两关系/七区域数据横向重排，Times/STIX，生成scripts/reuse_story_figures.py与84行CSV，没有新增实验或统计。
+
+当前编译47页=7正文+2参考+38附录，暂定hash1191dd0843540c245d6b721bdb4ed2a9a4c373a099d2ea050bd096ef49052809。全部首版48页已渲染，正文逐页和附录contact sheets已检查；修复公式/表格横向溢出，正在核对最终版、引用定位和复现入口。暂不标COMPLETE；无GPU任务，作图/编译为短CPU工作。旧稿80页和所有源码/结果保存在归档，未删除原文件。
+
+
+## MANUSCRIPT_REBUILD_R58 COMPLETE — 解释重用的完整成稿
+
+实际写入UTC：2026-09-15T19:28:58Z；unit_id=MANUSCRIPT_REBUILD_R58。事件开始以START记录2026-09-15T18:51:04Z为准，本条在整稿、完整附录、最终版面核对和证据/复现入口整理后写入。属于用户要求的写作整合单元，不计R59；R58已完成实验不重开。
+
+产出与论证：题目改为Reusing SAE Explanations through Intervention Predictions；唯一当前paper/main.pdf。中心是源干预知识怎样帮助重训后的目标成员选择及部分判断。§2给请求误差、读写连接；§3 R57承担主要选择收益；§4算术承担参与和冻结部分预测；§5/§6语法与人工解释承担组合与实际用途。两种对应实现的共同接口与不同拟合目标明示，R57 raw路径和R58 raw执行分开。强raw/assignment/mean、剂量、原primary及开发身份完整保留。理论补入池化梯度的额外近似项，未当成新实证。
+
+正文7页+参考2页+附录38页，共47页；4主图/3主表，42引用。PDF SHA256=b358954f063db6dc2eb3f3fcacd05ceba47c8f9a973d20969378659755442005，586405bytes。附录A–G按数学、Binding、Arithmetic、Grammar、人工决定、支持执行和复现组织；完整可编辑源、图和CSV、CLAIM_MAP/EVIDENCE_INDEX、paper/README和delivery/README组成当前阅读/重建入口。原80页稿及658文件按原hash归档，353原有数值导出/表格逐一hash相同。新图仅重排84个既有区域均值；没有新实验、训练、拟合、模型调用或bootstrap。
+
+技能落实：anti-defensive-writing重建摘要/引言/结论的正面主张，defensive-writing-checker使问题、保存对象、最强证据和使用价值对应，具体改动见MANUSCRIPT_REBUILD_R58_REPORT.md。最近邻原文入口及SemanticOT实际PDF图版复查记录到REFERENCE_REGISTRY。当前47页全部渲染，主文/参考/证明和关键协议/密集表格实际逐页查看，其余附录联系图检查。最终构建相对已检查页像素无差异；无未定义引用/横向溢出，参考文献约1.8pt垂直警告无实际截断。
+
+保留勘误与故障：改稿中曾由已四舍五入的89.27和7.13反算82.14，核对原表后改为82.13，原统计不变。首次附录公式多label、已有字体选择及历史清单混合类型造成的局部构建/清单错误均修复，失败日志保留；未影响冻结数据。短CPU作图/编译，无GPU或长期资源租约，无安装/外购。净有效工作与等待未独立计时，未知不倒算。
+
+交付定位：artifacts/correspondence_reform_20260913/MANUSCRIPT_REBUILD_R58_REPORT.md及MANUSCRIPT_REBUILD_R58_CLOSEOUT.json记录当前文件身份、实际构建与白名单同步。提交前检查仅master_log.md和scripts/reuse_story_figures.py改变；paper和研究文档仍按白名单本地保留，不强制加入Git。实际commit/push结果随后写closeout。
+
+下一步：先评价已完整成稿的贡献、可懂性与最近邻差异，再决定是否有具体核心主张需要新证据。不自动恢复旧R59参与条件搜索。最终strong accept目标仍未由本次写作确认；原loop不以页数/成稿数量宣告科学达标，用户硬件安排优先。
