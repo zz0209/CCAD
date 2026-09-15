@@ -1,0 +1,50 @@
+{
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "device": "cuda:0",
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "run_id": "REFORM_R58_shift_functional_transfer_dev_v1_20260915",
+  "run_parent": "R58",
+  "purpose": "Match each human source member by its contribution to the frozen classifier, using per-state Jacobian Gram plus Euclidean regularization on natural source paths.",
+  "generator_script": "scripts/run_shift_transfer.py",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "threshold_source_split": "16 geometry candidates/source member;2 retained/source member; ordinary constrained quadratic fit, no biography labels or outputs in fitting",
+  "statistics_unit": "Biographies clustered by document; development one target dictionary stack",
+  "seeds": [
+    1
+  ],
+  "target_seed": 1,
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R58_shift_dictionaries_dev_v1_20260915/step_1024",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "fit_sequences": 128,
+  "fit_batch_sequences": 8,
+  "neighbors_per_source": 16,
+  "members_per_source": 2,
+  "fit_iterations": 1200,
+  "ridge": 0.001,
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "eval_batch_size": 16,
+  "methods": [
+    "source",
+    "geometry",
+    "geometry_gain",
+    "native",
+    "raw"
+  ],
+  "queries": [
+    "full",
+    "pronouns",
+    "names",
+    "associated_words"
+  ],
+  "budget_seconds": 1200,
+  "budget": "Natural-state correspondence plus fixed source-head dev evaluation;1200driver seconds, under1GB transient state, gpu-0 lease.",
+  "scope": "Development on the already-exposed695 source dev documents with fixed source probe. Entire11-site target stack is independently learned from1M natural tokens/site. Relation receives16384 clean plus16384 source-full-deletion natural states, no biography outputs or labels. Every source column retained for later semantic unions. Native fractional deletion has row capacity<=1 and at most2 target members/source per site; geometry same pool/budget with optional per-source fitted gains. Raw source-member readout receives the whole16-neighbor candidate pool. Source is an external published anchor, not a matched controlled training replicate. Development reform:99% normalized per-state frozen-source-classifier Jacobian Gram,1% Euclidean field term. No disambiguating biography labels in correspondence. Raw weighted ridge and geometric gains receive the identical source functional information. Gradient states sampled along clean and complete source-deletion natural programs; source test remains untouched.",
+  "functional_weight": 0.99
+}

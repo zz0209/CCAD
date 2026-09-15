@@ -1,0 +1,40 @@
+{
+  "run_id": "REFORM_R58_shift_source_development_v1_20260915",
+  "run_parent": "R58",
+  "purpose": "Execute the published human member deletion and semantic parts on original BiB development data; retain a fixed occupation probe.",
+  "milestone": "human-explanation-consumer",
+  "evidence_level": "public_source_development",
+  "generator_script": "scripts/run_shift_explanation.py",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "threshold_source_split": "Published55 manual members; groups deterministically parsed from original annotations; no target or dev selection.",
+  "statistics_unit": "biography documents and profession/gender groups",
+  "device": "cuda:0",
+  "seeds": [
+    42
+  ],
+  "budget": "Initial1200driver seconds; source operation reuse; shared gpu-0 lease",
+  "budget_seconds": 1200,
+  "cpu_threads": 2,
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "train_data": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\bios\\052f01de644dba841176e0449528b41f27d94a61\\data\\train-00000-of-00001-0ab65b32c47407e8.parquet",
+  "dev_data": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\bios\\052f01de644dba841176e0449528b41f27d94a61\\data\\dev-00000-of-00001-e6551072fff26949.parquet",
+  "max_length": 2048,
+  "inference_batch_size": 16,
+  "probe_batch_size": 128,
+  "probe_lr": 0.01,
+  "probe_seed": 42,
+  "methods": [
+    "none",
+    "full",
+    "pronouns",
+    "names",
+    "associated_words"
+  ],
+  "scope": "Public source-consumer development; source reproduction/adaptation and parts, not yet CCAD correspondence. Original ambiguous train; balanced dev in place of paper test, which remains untouched. Original55 manual members; fixed layer4 masked pooled probe. Contexts capped at model max2048 and counts reported."
+}

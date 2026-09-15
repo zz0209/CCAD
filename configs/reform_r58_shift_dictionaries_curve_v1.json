@@ -1,0 +1,52 @@
+{
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "device": "cuda:0",
+  "run_id": "REFORM_R58_shift_dictionaries_curve_v1_20260915",
+  "run_parent": "R58",
+  "purpose": "Develop actual source-explanation-compatible material:1M/4M/8M natural-token checkpoints within the same11-site target training curve.",
+  "generator_script": "scripts/train_shift_dictionaries.py",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "statistics_unit": "Natural validation tokens; one development seed at11 distinct module sites",
+  "threshold_source_split": "Fixed TopK training recipe, no BiB task data",
+  "dataset_revision": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "seeds": [
+    1
+  ],
+  "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0",
+    "mlp_1",
+    "resid_1",
+    "attn_2",
+    "resid_2",
+    "attn_3",
+    "resid_3",
+    "attn_4",
+    "resid_4"
+  ],
+  "token_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r58_natural_tokens.json",
+  "bulk_output_dir": "D:/CCAD_Storage/training_curves/REFORM_R58_shift_dictionaries_curve_v1_20260915",
+  "dict_size": 8192,
+  "k": 64,
+  "steps": 8192,
+  "batch_sequences": 8,
+  "checkpoint_steps": [
+    1024,
+    4096,
+    8192
+  ],
+  "validation_sequences": 16,
+  "learning_rate": 0.000282842712474619,
+  "warmup_steps": 64,
+  "decay_start": 4096,
+  "threshold_start_step": 64,
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+  "budget_seconds": 1200,
+  "budget": "Measured previous1024-step11-site run91.7sec including quality/save.8192steps projected about12min,1200training-loop-second guard;3 checkpoints approximately1.11GB, no full activation cache.",
+  "scope": "One development target stack, all11sites, TopK8192k64;8,388,608natural tokens each with1M/4M/8M checkpoints in a single fixed-schedule run. Same seed and natural order within this learning curve. Prior1M pilot has a different decay schedule and is retained separately. Public2B-token ReLU source remains external anchor. Original classifier/dev set frozen for downstream explanatory-use comparisons."
+}

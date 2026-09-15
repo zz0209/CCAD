@@ -8245,3 +8245,72 @@ Pilot event2026-09-15T16:30:57.164292Z–2026-09-15T16:36:45.358129Z,348.1796dri
 资源与工作：5run 1877.5620driver秒、1509.125CPU秒、85,624,431bytes新run数据、122112原始行、peak allocated7,823,891,456bytes。源参数提取17.5344秒CPU/磁盘作业，无GPU。阅读/下载/写作与GPU运行交叠，净工作和等待分量未单独计时，未知不倒算。GPU/CPU/disk leases均free。当前原ccad automation ACTIVE5分钟，strong accept目标NOT_MET，继续下一有实质意义的科学单元。
 
 证据/恢复：artifacts/correspondence_reform_20260913/R57_REPORT.md、R57_RUN_INVENTORY.json、R57_REPLAY_INDEX.json、r57_member_confirmation_analysis.json、R57_CONFIRMATION_FREEZE.json及r57_shift_consumer/CONSUMER_NOTE.md。Git同单元白名单同步身份写R57_CLOSEOUT.json；没有删除旧失败/原始记录。
+
+
+## R58 START — 复用既有人工成员决策
+
+实际写入UTC：2026-09-15T17:27:19Z；round_id=R58。heartbeat事件2026-09-15T17:25:57.579Z，实际研究读取开始介于该事件和本写入之间，精确起点未知。上一轮R57 COMPLETE且Git2d643fe已同步。
+
+正结果机会：恢复Sparse Feature Circuits原Pythia55-member删除的真实职业使用效果，并在同单元推进目标字典与部分解释对应。原官方notebook的分类头为layer4 attention-mask平均、AdamW lr1e-2一epoch、seed42；原结果用test，本开发先用dev且保留test。候选/表示改革围绕人的已验证成员选择，而非继续完整writer优化。初始真实计算上限1200driver秒、2GB新缓存，先测吞吐再分配target训练。
+
+已读AGENTS/tracker/plan、原notebook方法代码及两项指定writing skills；未开始新的GPU实验。r58_before归档保存当前入口原字节/hash。源/target素材、结果、失败、实际资源与论文明细随本单元更新，尚不记完成。
+
+
+### R58 CORRECTION — CUDA初始化
+
+实际写入UTC：2026-09-15T17:33:17Z。v1在torch.cuda.reset_peak_memory_stats之前未set_device而失败，2.8499driver秒、0原始行，尚未读入实验数据或模型；原run保留且contract验证通过。修复为先set_device，与既有研究环境初始化一致，v2使用新run ID。资源租约首次因workspace沙箱对共享目录写权限失败，已按持续授权正常提权运行，无自动审批拒绝。数据读取复用了既有pyarrow25.0.1/r008_data_overlay，未安装包；元数据列统计已读train/dev，正式test未读入。
+
+
+### R58 PROGRESS — 人工解释的实际收益成立，接入完整目标字典
+
+实际写入UTC：2026-09-15T17:39:59Z。源v2事件17:33:43.678Z左右至17:34:12.617Z左右（精确值见status.json），28.9397driver秒、3475原始行、2253951paddedtokens，PASS。按原22,378条ambiguous train拟合固定分类头；696条平衡dev剔除1条与train逐字重复的文本后695条，所有文本均未截断。职业准确率67.34%→88.06%，最差组33.91%→77.01%；代词子集89.50%/78.16%。此为原作者source解释的开发复现与部分查询，尚无CCAD目标结果，不替代对应贡献。
+
+现按相同tokenizer的实际SHA256确认复用原FineWeb自然tokenbytes，不下载/重编码。新目标覆盖所有11个原source module，单个开发seed、TopK8192/k64、1,048,576训练tokens/位置；使用原未改TopKTrainer。先获得一个完整目标操作，再决定受控seed扩展，避免仅换一处字典冒称全解释迁移。上限1200training-loop秒、两checkpoint小于1GB；首32step实测吞吐后重估。原source ReLU32768/2Btokens是外部锚点，target训练条件单列。新run REFORM_R58_shift_dictionaries_dev_v1_20260915。
+
+
+### R58 PROGRESS — 从向量重构改为功能对应
+
+实际写入UTC：2026-09-15T17:50:26Z。11sites新target训练91.7016driver秒PASS，1Mtokens，FVE范围约0.69–0.945。首个对应开发37.2656秒PASS：source88.06/77.01(职业/最差组)，geometry85.32/60.34，native向量场拟合82.30/51.15，raw80.00/40.23。方法确实已连接整套新target，但向量误差的最优系数没有保留更多职业作用，geometry标量拟合反而削弱收益。保留全部结果，具体问题是拟合目标与功能消费者不一致。
+
+下一可逆改革直接用冻结分类器在自然source路径上的逐状态Jacobian Gram度量每个source-member贡献，99%归一化功能项+1%向量正则，原候选/成员预算/row capacity不变。raw weighted ridge和geometry gains拿同一源功能信息。梯度在每个状态分别进入Gram，不能以平均梯度外积替代。仍不使用任务dev标签拟合。仅一次有依据的功能metric改法，之后以实际消费者决定素材/方法投入，不先铺参数网格。
+
+
+### R58 PROGRESS — 功能对应结果与素材学习曲线
+
+实际写入UTC：2026-09-15T18:06:09Z。R58继续，17:58:28与18:04:28 heartbeat不新计轮次。功能metric开发run PASS，source88.06/77.01、geometry85.32/60.34、functional native84.17/55.17、functional raw84.03/63.22(职业/最差组)。功能目标相对向量native82.30/51.15改善，但完整解释仍未达到source。已看原SFC Table2，当前source开发88.06/77.01与原test88.5/76.0为不同样本/分类头，不宣称精确复制。
+
+一次集中素材改进：11-site TopK8192k64同一8M-token训练轨迹保存1M、4M、8M三点，开发seed1，固定原自然语料/顺序；首1M92秒实测支持约12分钟预算，上限1200training-loop秒，3checkpoint约1.11GB。后续用同一拟合和实际人类解释请求检查训练是否解决部分参与不稳，避免继续metric网格。前1M pilot decay日程不同，分开保留，不称精确单变量比较。
+
+
+### R58 PROGRESS — 使响应度量对应完整操作
+
+实际写入UTC：2026-09-15T18:10:51Z。推导复核发现当前功能Gram按token计算平方误差，实际消费者删除整段所有相关激活后由masked pooling分类。新增context_response：先对同一128-token自然context中的 z_j g_t^T d_j 求和，再计算context Gram；raw按同样整段响应拟合源成员读出，geometry gain同样处理。保留旧token级结果作为方法比较；同一1M开发target先比较，随后同样方法用于训练轨迹检查点。固定源head与原dev、无新消歧标签拟合。数学说明将追加R58_METHOD_NOTES。当前8M材料训练仍在同一run继续，不启动另一研究轮。
+
+
+### R58 PROGRESS — 人工解释的跨字典用途与部分语义
+
+实际写入UTC：2026-09-15T18:30:48Z。全部10个R58 run已结束，9PASS和1启动失败保留。8M训练633.9218driver秒，全部11sites/33checkpoint质量行；四个context comparison均PASS，最后事件结束18:20:01.692386Z。最终8M目标的完整native职业85.61%、最差组66.67%，geometry86.76/68.39，raw88.49/75.29；source88.06/77.01。代词部分native86.04%，geometry82.73%，开发差3.31[.86,5.90]；所有请求均使用同一已拟合关系。各run source logits逐位相等，去除target执行中的无用source encoder计算后geometry logits仍逐位相等。
+
+更关键的实用诊断：source名字删除73.24、代词89.50；geometry对应后83.60/82.73，完整edit有效却颠倒了部分功能顺序。该现象来自开发数据，尚非普遍规律；它使下一方法围绕保存成员何时参与和部分请求含义，而非继续增加训练量。完整8M native最差组未高于4M，不安排无依据的训练扩展。
+
+R58图表、全部请求/目标比较、素材表已写paper附录F.2；引言和结论将其接回解释重用，未增加并列主文章节或摘要胜利。当前编译82页、8页主文；图和新增29–31页已实际查看，仍在收尾，不记R58完成。
+
+
+### R58 CORRECTION — 训练曲线说明
+
+实际写入UTC：2026-09-15T18:37:08Z。三个curve配置scope中的“Frozen ... coefficients”是文字误写：各目标checkpoint均重新拟合对应系数，固定的是目标/超参数/候选预算/源资料和消费者。代码与relation.npz表明各自拟合已实际执行，运行结果不受影响。原run内resolved config逐字保留，当前replay配置改为fitting objective/hyperparameters；不改写原始运行身份。
+
+
+## R58 COMPLETE — 人工解释的跨字典使用链
+
+实际写入UTC：2026-09-15T18:42:58Z；round_id=R58。START实际写入17:27:19Z；首个实际source计算v2始17:33:43.678563Z，末context-curve结束18:20:01.692386Z；本条完成记录在结果、分析、稿件及报告整理之后。期间重复heartbeat继续同一工作单元，不另计轮。
+
+选择理由与实际动作：把母问题落实为复用原作者55个性别相关成员的人工决定，覆盖Pythia-70M所有11个相关module。恢复原分类头定义/公开source，训练独立TopK目标，再以自然状态拟合完整与可查询部分。数学从向量场/逐token响应改为整段响应Gram，保留source每个成员列、target非负代码和strong raw的同源信息。读Marks2025原§4/源码、Chanin吸收理论与ablation、最新SharedSAE方法/适配/因果检验、集合参与文献，具体改变了真实消费者和下一参与条件假说。不是闭门继续源writer调参。
+
+科学结果：source职业88.06/最差组77.01，未编辑67.34/33.91；最终8M新目标native85.61/66.67，geometry86.76/68.39，raw88.49/75.29。代词部分native86.04、geometry82.73，开发差3.31[.86,5.90]；full superiority未建立。source名字/代词73.24/89.50在geometry后变83.60/82.73，完整edit有用而部分顺序可改变。单目标轨迹、695unique开发document、原test未打开，所有原数据/失败保留。4M到8M质量提升没有继续提高native最差组。旧source logits和无用编码移除前后geometry logits逐位相等；artifact检查不当成独立科学确认。
+
+论文与交付：paper/main.pdf唯一入口，80页=8main+2refs+70appendix，SHA256=9b742ac40e65058dcbe75f1f0d6c054c23e4bb64c606afc885b0fed727520824。引言/结论接回统一解释重用，附录F.2、Figure11/Tables25–27给完整方法/实际用途/部分请求/材料。anti-defensive-writing用于先讲人的使用价值，defensive-writing-checker用于使原source与target用途形成同链，不把source复现或开发差包装成摘要突破。最终主文7/8、refs及28–30实际查看；新图用Times/STIX、全组/强对照/真实配对不确定性。R58_REPORT.md、RUN_INVENTORY、REPLAY_INDEX、METHOD_NOTES、r58_shift_reuse_analysis.json及paper/EVIDENCE_INDEX.json完整定位；旧稿/工作卡在r58_before_20260915T172719Z逐字hash归档。
+
+资源/失败：10run=9PASS+1初始化FAIL（2.8499秒、0行）；总992.8668062driver/822.15625CPU秒，186437sequenceforwards/19646343tokens、86930原始行、130680612runbytes，peak CUDA2877873152bytes。55新目标checkpoint共1847578655bytes。复用现有runtime、pyarrow overlay、模型/语料和官方TopKTrainer，无安装/购买/重复权重下载。工作、GPU计算和等待有交叠，净工作/等待未单独计时，未知不倒算。所有本项目GPU作业完成且共享lease已核对free。scope中frozen coefficients文字失误已追加勘误，原run不改。
+
+下一步：让对应保留源成员的输入参与条件，并在原语义部分和新联合请求上检验能否保住作用差异与实际选择收益；固定阅读信息/候选/写入预算和强raw，先形成可信正信号再冻结新数据及受控seed扩展。主会strong accept目标NOT_MET，原ccad automation ACTIVE5min，不整体暂停。白名单代码/config/master_log按本单元同步，实际HEAD与本地交付hash写R58_CLOSEOUT.json。
