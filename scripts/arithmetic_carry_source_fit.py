@@ -45,6 +45,13 @@ def fit_source(w, cfg, model, module, tok, ae, stored, budget, current=None):
         write(w.run/'MIXED_RAW_REFERENCE.json',dict(strata=strata,definition='Mean within-answer/arity hidden-state carry slopes on the identical405source questions. Unit direction used for donor projection replacement.'))
         write(w.run/'SOURCE_FIT_PANEL.json',dict(rows=rows,original_indices=old_indices,new_indices=new_indices))
     tokenrows = [tok.encode(row['prompt'], add_special_tokens=False) for row in rows]
+    if cfg['source_function_refit'].get('state_write'):
+        from arithmetic_state_write import fit_state_write
+        payload=fit_state_write(w,cfg,model,module,tok,ae,rows,tokenrows,codes,hidden,stored,budget)
+        payload['raw_mixed_direction']=raw_mixed.cpu().numpy()
+        np.savez_compressed(w.run/'rule_members_seed1.npz',**payload)
+        write(w.run/'SOURCE_REFIT.json',dict(fit_rows=405,source_seed=1,state_write=cfg['source_function_refit']['state_write'],source_fit_only=True))
+        return payload
     if cfg['source_function_refit'].get('read_write'):
         from arithmetic_carry_readwrite import fit_readwrite
         payload=fit_readwrite(w,cfg,model,module,tok,ae,rows,tokenrows,codes,hidden,stored,budget)

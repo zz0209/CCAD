@@ -1,0 +1,84 @@
+{
+  "audit_opened": false,
+  "batch_size": 8,
+  "budget": "600 driver seconds;512 fresh requests,nine frozen source controls,no fitting.",
+  "budget_seconds": 600,
+  "candidate_family_frozen": true,
+  "checkpoint_step": 16384,
+  "dataset_revision": "CCAD R51 mixedcarry metadata9511501/2/3",
+  "device": "cuda:0",
+  "evidence_level": "frozen_new_question_confirmation",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "frozen_rule_evaluation": {
+    "panel": "artifacts/correspondence_reform_20260913/R54_STATE_CONFIRMATION_PANEL.json",
+    "freeze": "artifacts/correspondence_reform_20260913/R54_STATE_CONFIRMATION_INPUTS.json",
+    "memberships": {
+      "1": {
+        "run": "runs/REFORM_R54_state_write_source_v1_20260915",
+        "methods": [
+          "noop",
+          "readwrite_code_64",
+          "code_read_raw_write",
+          "state_constant_code",
+          "state_scalar_code",
+          "state_direction_code",
+          "state_constant_raw",
+          "state_scalar_raw",
+          "state_direction_raw"
+        ]
+      }
+    }
+  },
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "hidden_atol": 0.002,
+  "intervention_span": "generated_prefix",
+  "max_length": 96,
+  "max_new_tokens": 5,
+  "members": [
+    64
+  ],
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "operand_range": [
+    10,
+    80
+  ],
+  "pairs_per_template": 64,
+  "purpose": "Confirm whether state-dependent write direction preserves its benefit over matched constant/scalar controls.",
+  "reuse_rules": [],
+  "round_id": "R54",
+  "run_id": "REFORM_R54_state_write_confirmation_v1_20260915",
+  "run_parent": "R54",
+  "scope": "Frozen source1 state-writer comparison on512 new prompts/requests;256 different triples excluded from every prior run panel. Two-digit operands including repetition, totalbelow100 (enumeration10..79); new questions and expanded operand/multiplicity range, not unseen language phenomenon. Distinct-operand metadata-only greedy allocations failed at10..49(1/16) and10..79(4/16) in a carry0-2 stratum, before any new outputs. Repeated operands admitted before freezing; source parameters/comparators unchanged.",
+  "seeds": [
+    1
+  ],
+  "selection_rules": [],
+  "source_selection_step": {
+    "tens": 0,
+    "unit": 1
+  },
+  "split_salt": "ccad-r32-digit-source-1",
+  "statistics_unit": "Canonicalquestion pairs with reciprocaldirections andtwoforms. Two/threeoperands separately. Development only.",
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}+{c}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b} plus {c}? A:"
+  ],
+  "tens_sites": [
+    0,
+    1
+  ],
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "written_at_utc": "2026-09-15T13:51:10Z",
+  "state_write_evaluation": true
+}

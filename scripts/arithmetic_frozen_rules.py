@@ -59,6 +59,13 @@ def evaluate_frozen_rules(w, cfg, rows, hidden, codes, saes, generate, budget, b
             reader=torch.tensor(stored[name+'_readout'],device=w.device) if operator else None
             writer=torch.tensor(stored[name+'_writer'],device=w.device) if operator else None
             read_indices=torch.tensor(stored[name+'_read_indices'],device=w.device) if name+'_read_indices' in stored else indices
+            if operator in ['state_code','state_raw']:
+                from arithmetic_state_write import context_coordinates, state_direction
+                context_mean=torch.tensor(stored[name+'_context_mean'],device=w.device)
+                context_projection=torch.tensor(stored[name+'_context_projection'],device=w.device)
+                modulation=torch.tensor(stored[name+'_modulation'],device=w.device) if name+'_modulation' in stored else None
+                write_scale=torch.tensor(stored[name+'_write_scale'],device=w.device);write_cap=torch.tensor(stored[name+'_write_cap'],device=w.device)
+                context_clip=float(stored[name+'_context_clip']);context_mode=str(stored[name+'_context_mode'])
             records=[]
             native_records=[]
             decoder_numpy=decoder.detach().cpu().numpy() if operator and operator.startswith('adaptive_') else None
@@ -97,7 +104,13 @@ def evaluate_frozen_rules(w, cfg, rows, hidden, codes, saes, generate, budget, b
                             current_z=full_z[...,indices]
                             diff=z[di,:step+1][...,read_indices]-full_z[...,read_indices]
                             query=(diff*reader[arities,None,:]).sum(-1,keepdim=True)
-                            if operator=='code_to_raw':
+                            if operator in ['state_code','state_raw']:
+                                aa=arities[:,None].expand(-1,step+1)
+                                context=context_coordinates(full_z[...,read_indices],aa,context_mean,context_projection,context_clip)
+                                direction=state_direction(writer,modulation,context,aa,context_mode,write_scale,write_cap)
+                                coeff=query*direction
+                                change=coeff if operator=='state_raw' else ((current_z+coeff).clamp_min(0)-current_z)@decoder[indices]
+                            elif operator=='code_to_raw':
                                 change=query*writer[arities,None,:]
                             elif operator=='cone':
                                 branch=2*arities[:,None]+(query[...,0]<0).long()

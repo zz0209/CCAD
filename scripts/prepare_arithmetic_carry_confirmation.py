@@ -9,9 +9,10 @@ ROOT=Path(__file__).resolve().parents[1]
 ART=ROOT/'artifacts/correspondence_reform_20260913'
 
 
-def select_canonical(seed=9501501, excluded=(), operand_stop=40):
+def select_canonical(seed=9501501, excluded=(), operand_stop=40, allow_repetition=False):
     key=lambda x:hashlib.sha256(f'{seed}:{x}'.encode()).hexdigest()
-    triples=[x for x in itertools.combinations(range(10,operand_stop),3) if sum(x)<100]
+    combinations=itertools.combinations_with_replacement if allow_repetition else itertools.combinations
+    triples=[x for x in combinations(range(10,operand_stop),3) if sum(x)<100]
     meta={x:(sum(x),sum(a%10 for a in x)//10) for x in triples}
     used=set(excluded);canonical=[]
     # Allocate the rare carry0/carry2 matches before the abundant adjacent classes.

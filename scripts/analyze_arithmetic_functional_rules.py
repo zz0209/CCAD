@@ -65,7 +65,9 @@ def main(run,output,seeds_filter=None,arity_filter=None):
     native_diagnostics=[(m,ref) for m in methods
                         if m.startswith(('teacher_','adaptive_native_','reencode_native'))
                         for ref in ['code_read_raw_write','readwrite_code_64'] if ref in methods]
-    for method,reference in native_diagnostics+[('field_fitted_weighted_64','conditional_carry_64'),
+    state_diagnostics=[(f'state_{mode}_{space}',f'state_{ref}_{space}')
+                       for space in ['code','raw'] for mode,ref in [('direction','constant'),('direction','scalar'),('scalar','constant')]]
+    for method,reference in native_diagnostics+state_diagnostics+[('field_fitted_weighted_64','conditional_carry_64'),
                              ('readwrite_code_64','diagonal_refit_64'),
                              ('code_read_raw_write','readwrite_code_64'),
                              ('code_read_raw_write','readwrite_raw'),

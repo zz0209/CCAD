@@ -101,6 +101,8 @@ def main():
         sources += ['scripts/arithmetic_carry_relation_fit.py','scripts/arithmetic_counterfactual_fit.py']
     if cfg.get('native_projection_steps'):
         sources += ['scripts/arithmetic_native_execution.py','src/ccad/native_operation.py']
+    if cfg.get('source_function_refit',{}).get('state_write') or cfg.get('state_write_evaluation'):
+        sources += ['scripts/arithmetic_state_write.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
