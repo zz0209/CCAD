@@ -80,6 +80,8 @@ def main():
         sources += ["scripts/arithmetic_member_queries.py"]
     if cfg.get('query_readouts'):
         sources += ['scripts/arithmetic_readout_queries.py']
+    if cfg.get('native_readouts'):
+        sources += ['scripts/adaptive_native_execution.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -395,7 +397,8 @@ def main():
                     assert key not in completed_keys
                     completed_keys.add(key)
             w.checks['resume_scientific_inputs_and_panel_identical']=True
-        def evaluate(seed,method,k,operation,deltas,gate=None,raw_trajectory=False,readout=None):
+        native_diagnostics=[]
+        def evaluate(seed,method,k,operation,deltas,gate=None,raw_trajectory=False,readout=None,dose=None,full_gate=None,native=None):
             for off in range(0,len(pairs),batch):
                 pp=pairs[off:off+batch];ix=[p["recipient"] for p in pp];donors=[p["donor"] for p in pp]
                 if all((seed,method,operation,off+j) in completed_keys for j in range(len(pp))):
@@ -413,7 +416,28 @@ def main():
                         shift=torch.tensor([1-rows[i]['template'] for i in ix],device=w.device)
                         roles=torch.arange(step+1,device=w.device)[None]+shift[:,None]
                         predicted=torch.einsum('blj,blji->bli',difference,readout['coef'][roles])
-                        return (predicted*readout['q'])@readout['decoder']
+                        field=(predicted*readout['q'])@readout['decoder']
+                        if dose is not None:
+                            assert not dose.get('nonnegative',False)
+                            if dose['kind']=='norm_match':
+                                full_field=predicted@readout['decoder']
+                                scale=full_field.norm(dim=-1,keepdim=True)/field.norm(dim=-1,keepdim=True).clamp_min(1e-8)
+                            else:scale=float(dose['scale'])
+                            field=field*scale
+                        if native is not None:
+                            from adaptive_native_execution import realize
+                            assert readout['kind']=='activation'
+                            bank=readout['indices'];decoder=ae.decoder.weight.T[bank]
+                            field,coeff,indices,diagnostic=realize(field,difference,decoder,
+                                members=k,steps=native['steps'],refine_steps=0,
+                                batch_size=128,candidate_limit=len(bank),
+                                current_codes=target_current[...,bank])
+                            diagnostic.update(seed=seed,method=method,operation=operation,
+                                offset=off,step=step,positions=coeff.numel()//len(bank),
+                                min_edited_code=float((target_current[...,bank].gather(-1,indices)+coeff).min()),
+                                max_changed_members=int((coeff!=0).sum(-1).max()))
+                            native_diagnostics.append(diagnostic)
+                        return field
                 elif gate is not None:
                     ae=saes[seed]
                     role_schema=any(cfg.get(key,{}).get('role_schema',False) for key in ['position_relation','relation_transfer','frozen_adaptation','counterfactual_fit','member_queries'])
@@ -424,7 +448,23 @@ def main():
                                 shift=torch.tensor([1-rows[i]['template'] for i in ix],device=w.device)
                                 g=gate[torch.arange(step+1,device=w.device)[None]+shift[:,None]]
                             else:g=gate[:step+1]
-                        return ((codes[seed][donors,:step+1]-ae.encode(current.reshape(-1,current.shape[-1])).reshape(*current.shape[:-1],-1))*g)@ae.decoder.weight.T
+                        current_code=ae.encode(current.reshape(-1,current.shape[-1])).reshape(*current.shape[:-1],-1)
+                        difference=codes[seed][donors,:step+1]-current_code
+                        change=difference*g
+                        if dose is not None:
+                            if dose['kind']=='norm_match':
+                                fg=full_gate
+                                if full_gate.ndim==2:
+                                    fg=full_gate[torch.arange(step+1,device=w.device)[None]+shift[:,None]] if role_schema else full_gate[:step+1]
+                                full_field=(difference*fg)@ae.decoder.weight.T
+                                part_field=change@ae.decoder.weight.T
+                                scale=full_field.norm(dim=-1,keepdim=True)/part_field.norm(dim=-1,keepdim=True).clamp_min(1e-8)
+                            else:
+                                scale=float(dose['scale'])
+                            change=change*scale
+                            if dose.get('nonnegative',False):
+                                change=torch.maximum(change,-current_code)
+                        return change@ae.decoder.weight.T
                 ans,txt,hh,norm=generate(ix,deltas[off:off+len(pp)] if deltas is not None else None,patch)
                 replay=float(((hh[:,0]-h[ix,0]) if trajectory else (hh-h[ix])).abs().max());assert replay<cfg["hidden_atol"],replay
                 for j,p in enumerate(pp):
@@ -447,6 +487,8 @@ def main():
             evaluate(0,"raw_generated_prefix_patch",model.config.hidden_size,"unit",None,raw_trajectory=True)
         else:evaluate(0,"raw_full_patch",model.config.hidden_size,"unit",h[jj]-h[ii])
         for (seed,rule,k),gate in gates.items():
+            if cfg.get('evaluation_seeds') and seed not in cfg['evaluation_seeds']:
+                continue
             if cfg.get('evaluation_rules') and rule not in cfg['evaluation_rules']:
                 continue
             z=codes[seed];D=saes[seed].decoder.weight.T
@@ -455,11 +497,34 @@ def main():
                 else:
                     delta=((z[jj]-z[ii])*gate[:,c])@D
                     evaluate(seed,rule,k,operation,delta)
+        for dose in cfg.get('part_doses',[]):
+            assert trajectory
+            for (seed,rule,k),gate in gates.items():
+                if rule not in dose['rules'] or (cfg.get('evaluation_seeds') and seed not in cfg['evaluation_seeds']):
+                    continue
+                full_gate=gates[seed,dose.get('full_rule','source_full'),k]
+                for c,operation in enumerate(['unit','tens']):
+                    evaluate(seed,rule+'_'+dose['name'],k,operation,None,gate=gate[...,c],dose=dose,full_gate=full_gate[...,c])
         for (seed,rule,k),operations in readouts.items():
+            if cfg.get('evaluation_seeds') and seed not in cfg['evaluation_seeds']:
+                continue
             if cfg.get('evaluation_rules') and rule not in cfg['evaluation_rules']:
                 continue
             for operation,data in operations.items():
                 evaluate(seed,rule,k,operation,None,readout=data)
+            for dose in cfg.get('readout_doses',[]):
+                if rule in dose['rules']:
+                    for operation,data in operations.items():
+                        evaluate(seed,rule+'_'+dose['name'],k,operation,None,readout=data,dose=dose)
+        for native in cfg.get('native_readouts',[]):
+            for (seed,rule,k),operations in readouts.items():
+                if seed not in native['seeds'] or rule not in native['rules']:
+                    continue
+                for operation,data in operations.items():
+                    evaluate(seed,rule.replace('activation_readout','native_code'),k,operation,None,readout=data,native=native)
+        if native_diagnostics:
+            write(w.run/'NATIVE_EXECUTION.json',dict(records=native_diagnostics,
+                scope='Fixed target bank, source-amplitude request prediction, nonnegative target code updates at every generated prefix. No output fitting.'))
         w.checks.update(source_selection_only_fit_data=True,donor_changes_both_digits=True,real_generation_no_answer_prefix=True,all_failed_base_cases_retained=True)
         if not any(cfg.get(k) for k in ["relation_transfer","response_relation","position_relation","adaptation","frozen_adaptation","member_queries"]):
             w.checks["no_target_used"]=True

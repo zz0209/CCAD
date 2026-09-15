@@ -7548,3 +7548,53 @@ round_id：R42。实际写入UTC：2026-09-15T00:06:27Z。本轮START实际写�
 4run全部PASS，794.8855874driver秒、107520序列/3548160token forward；另有6.4235742秒保存系数GPU重放，无新生成。初次CPU编码与保存GPU系数差-0.001992，恢复原GPU精度与完整batch后全五方向/两方法最小目标代码均0、最多64改变系数；原始失败及核对范围留账。无新训练、模型、环境、付费和活动GPU任务。旧源码/稿件在r42_before_20260914T232441Z，旧图数据在r42_binding_figure_before，当前tracker前身归档artifacts/correspondence_reform_20260913/r42_tracker_before_complete_20260915T000627Z.md，SHA256 7d05b50c44bd63fd0aa502fdc4754df52029d1e62ee69f9dfb804f85dddb8e1c。
 
 整体strong accept目标尚未达成；原ccad ACTIVE/5分钟、当前对话执行不变。下一工作把源关系用于可检验的新部分干预判断，与强raw/code/direct在相同目标验证预算下比较，并让已有算术和binding共同回答该问题。R43尚未START；本COMPLETE之后才更新tracker完成状态。白名单代码和日志随后成组同步，稿件与原始artifact仍本地保留。
+
+
+## R43 START — 源解释如何指导新请求的执行判断
+
+实际写入UTC：2026-09-15T00:17:28Z；round_id=R43。实际本单元登记从本块开始；先行入口/代码/文献阅读起点未单独测量，不倒填。正结果机会：源功能本身的可信程度和对应执行残差可能共同预测哪些请求值得复用。先在已暴露binding与算术资料上区分源能力与翻译损失，开发一个具有明确使用预算的判断任务；不给raw/code/direct对照撤去其真实可用源信息。便宜探索先复用保存的原始输出/状态/系数，不先新增大模型或SAE训练。
+
+研究消费者是新部分请求的成功/干扰预测及其选择收益，不能仅报告训练相关性。结合因果抽象及选择性预测原始方法，推导主张需要的条件和可测试量；出现正信号后固定决策、目标验证预算及新问题确认。初始GPU/driver预算1800秒，短抽取与开发优先，按实际吞吐和机会分配后续。每项实测会决定同一主图或方法使用判断；算术与binding共同评价优先，不扩展无关任务。两指定writing skills沿本对话已读原则继续，核心意义和strong accept目标不变。改写前入口/稿件归档artifacts/correspondence_reform_20260913/r43_before_20260915T001728Z/MANIFEST.json。
+
+
+## R43 PROGRESS — 2026-09-15T00:29:47Z
+
+Actual write UTC: 2026-09-15T00:29:47Z. R43 diagnostic run occurred 2026-09-15T00:20:28.994323Z–00:20:47.034552Z and passed in18.0097622driver seconds with0LM forwards. Saved-field residuals improve forecasting for weak writers, but do not improve the current code-bank writer over source confidence: source-only AUC .9636 / top-half success100%; source+code+residual AUC .9640 / top-half99.88%. These are exposed-development simulated holdouts, not new confirmation. Raw evidence: runs/REFORM_R43_binding_judgment_diagnostics_v1_20260915 and artifacts/correspondence_reform_20260913/r43_binding_judgment_probe.json. We stop expanding this classifier.
+
+The next substantive test concerns the source definition: whether complementary arithmetic parts retain distinct causal contributions after a single part is strengthened. The exposed R40 one-seed pilot compares original halves, scale2/4, full-field norm matching, and nonnegative-code norm matching against the same full component. The last comparison joins arithmetic to the execution-class issue exposed in binding. Configuration: configs/reform_r43_arithmetic_part_dose_pilot_v1.json. No method selection on fresh data; budget300driver seconds, shared GPU lease. Source-role partitions and relation assets remain frozen. Actual code implementation and analysis will be retained; outcome pending.
+
+
+## R43 PROGRESS — 2026-09-15T00:34:58Z
+
+Actual write UTC: 2026-09-15T00:34:58Z. Pilot occurred2026-09-15T00:29:54.608049Z–00:31:13.705032Z, PASS79.0756371driver seconds,6560sequence/341120token forwards. In exposed16clusters/oneSAE, units full100%, strongest fixed single-half variant46.875%; oracle across all tested half variants87.5%. The full-success/both-halves-fail rate falls62.5%→12.5% after allowing strength changes; tens falls9.375%→0%. This shows dose affects the interpretation, with remaining positive complementarity. It motivates one focused frozen new-context test, not another classifier.
+
+R43_PART_DOSE_FREEZE.json fixes the primary prediction before new generations. Configuration configs/reform_r43_arithmetic_part_dose_confirmation_v1.json evaluates five frozen SAEs, unchanged role parts and correspondence/readout parameters,64paired clusters in two new exact demonstration contexts. All methods receive the same source query;4x and norm-matched field controls plus explicit nonnegative variants distinguish procedure effects. Full-vocabulary autoregressive5-token generations; old operands stay labelled exposed. Budget1750driver seconds, bringing the practical R43 allowance to2000seconds including earlier pilots; estimate uses actual pilot throughput. No new resource purchase.
+
+
+## R43 PROGRESS — 2026-09-15T00:44:07Z
+
+Actual write UTC: 2026-09-15T00:44:07Z. While the frozen dose confirmation continues, primary literature reading covered Rischel/WeichwaldUAI2021 intervention maps/compositional error, Choetal2607.20596v2 causal ablations and matched controls, and Cho/HockenmaierEMNLP2025 FDPV/SISTER method and experiments. Exact PDFs/hashes and actual sections are inr43_literature/SOURCES.json. Their prior art is now cited in main related work; no claim of inventing position-specific steering, magnitude controls or compositional abstraction is made. Luo2607.10226v1 deliveredPDF differs from abstractmetadata, so its reading is recorded without a bibliography entry. The first normal-network PDF download was blocked by sandbox socket policy; explicit scoped public-download escalation succeeded. No external code installed/copied.
+
+Next method opportunity in this same source-request line: transfer the binding legal-code realization to arithmetic generated-prefix requests, using the existing frozen source-amplitude code readout and target64-member bank. This would directly test one execution method across both settings. It is prepared conceptually; no such arithmetic result exists yet. The current frozen driver remains unchanged until its confirmation finishes.
+
+
+### R43 PROGRESS — 2026-09-15T01:07:33Z
+
+实际写入UTC：2026-09-15T01:07:33Z。冻结确认事件00:35:05.087099Z–00:56:53.742182Z，PASS，1308.6497039 driver秒，254080 sequence/13212160 token forwards。原始50816条含512基线；source单位完整成功而两原半组失败50.46875%，全部固定剂量版本仍失败5.625%[2.8125,8.75]；十位3.125%[1.875,4.53125]；两功能差2.5[-0.46875,5.78125]，原预测差异未明确支持。原成员关系balanced源答案一致80.95%，4x66.92%，norm65.45%；raw89.90/80.06/88.40，sparse79.02/77.03/80.71。实际源响应与目标成员权重的执行失配是当前方法改进对象，不把旧合作描述当一般组织规律。冻结代码通过原run快照hash核验，分析为r43_arithmetic_part_dose_confirmation.json及r43_arithmetic_dose_transfer.json。
+
+保存状态CPU可行性检查事件00:48:24.171958Z–00:48:24.678147Z，0.5062202秒，8个开发状态全部降低field误差且代码非负，见R43_NATIVE_FEASIBILITY.json；不当功能结果。接下来实际生成pilot采用同64目标bank/source-amplitude readout，复用R42非负代码求解256步，暴露16cluster/SAE1→2，预算350driver秒。当前累计1405.7351032driver秒，追加仍在本单元2000秒预算内。配置configs/reform_r43_arithmetic_native_execution_pilot_v1.json，旧冻结driver快照保留；无新训练/下载/环境/购买。主文改为功能部分与执行方式共同决定可复用响应，保持强对照可见。
+
+
+## R43 COMPLETE — 成员请求与其功能执行
+
+实际写入UTC：2026-09-15T01:22:58Z；round_id=R43。本轮START实际写入2026-09-15T00:17:28Z，完成登记为当前时间；登记前阅读起点及精确有效思考/等待时长未测量，不倒填。实质动作包括原文方法/实验/图版阅读、保存状态判断诊断、source组成/剂量开发及五SAE新exact上下文冻结确认、复用binding求解器的算术真实生成改法、数学操作连接、主文/图/证据与完整入口整理。
+
+冻结确认事件00:35:05.087099Z–00:56:53.742182Z：单位原强度full成功且两半失败50.46875%，所有冻结半组剂量版本仍失败5.625%[2.8125,8.75]；十位3.125%[1.875,4.53125]，差2.5[-0.46875,5.78125]，未确认两功能的剩余依赖差异。源实际功能是成员和执行共同决定的响应；旧原强度合作描述不再承担一般规律主张。member预测原/4x/norm为80.95/66.92/65.45%，sparse79.02/77.03/80.71，raw89.90/80.06/88.40，assignment68.81/47.83/61.56。R43_PART_DOSE_FREEZE、r43_arithmetic_part_dose_confirmation及r43_arithmetic_dose_transfer保留全部结果和统计单位。
+
+统一方法开发事件01:07:56.426526Z–01:10:18.026324Z：同64bank source-amplitude预测加非负代码求解的算术pilot，balanced一致65.03%，member74.60%、sparse73.33%、raw84.26%，没有成功。目标代码最小0、最多55改变成员，契约PASS不代表科学成功。之前8状态CPUfield误差改善不推及真实功能；两个结果都保留。binding残差判断诊断也无强writer增益，未继续扩建。下一步改革使目标求解保留源请求的功能响应，复用已有source路径/强readout资料，在算术与binding共同检验；不以Euclidean误差或新术语替代真实功能证据。
+
+4run全部PASS，1547.3072699driver秒、1350.859375process CPU秒、274240sequence/14260480token forwards；另CPU可行性0.5062202秒，无新训练/模型/环境/购买。所有本轮driver及resource-manager会话已结束。Driver时间包含加载和CPU工作，不是active GPU小时。新上下文确认50304请求操作评估含128no-edit和256raw controls，加512baseline；配置预算中的49920指其余实验干预，实际计数以raw为准，未漏算预算成本。
+
+唯一当前稿paper/main.pdf：65页/主文8/参考2，SHA256 c3086e3d44ace9bff61c710ada1122987f05691080296a7f5c25559cf93b07fc；57bib条目、41实际引用。R43_REPORT、R43_RUNS/COST、R43_FOCUSED_CHECK/FINAL_CHECK、R43_LITERATURE_NOTES、R43_WRITING_VISUAL_REVIEW及R43_DELIVERY给完整定位。两writing skills落实到摘要/Introduction/4.2/Figure3/4.3/Discussion/Conclusion及README；当前主张阅读列表收拢为13项，所有历史claim保留。所有65页contact及修改页实际查看，图例重叠已修；已有参考balance1.35298pt警告实际无裁切。旧图/文/README在r43_role_figure_before，旧入口/plan在r43_before_20260915T001728Z。当前tracker此前逐字归档artifacts/correspondence_reform_20260913/r43_tracker_before_complete_20260915T012258Z.md，SHA256 be1167cc2aa8e12edae4844c44c0b13991d920861ddc27884f679efd9661e05c。
+
+整篇strong accept目标仍未达成，本COMPLETE仅指实际研究单元完成。原ccad ACTIVE/5分钟、当前对话直接执行继续；未转交agent，R44尚未START。先写本COMPLETE再推进tracker，随后对已核对的白名单代码/配置/master_log成组同步；被忽略论文与原始资料本地保留。

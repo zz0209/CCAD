@@ -102,6 +102,9 @@ def main():
         paper='Source-role parts and their functional cooperation in new contexts',scope=primary['scope'],
         result=primary['contrasts']+readouts['contrasts'],descriptive_patterns=profiles['coalition_scope'],evidence=evidence),indent=2)+'\n')
     print(json.dumps(dict(example=example,balanced={n:100*r['balanced_agreement'] for n,r in cells.items()})))
+    if (ART/'r43_arithmetic_dose_transfer.json').exists():
+        import arithmetic_dose_paper
+        arithmetic_dose_paper.main()
 
 
 if __name__=='__main__':main()
