@@ -1,0 +1,357 @@
+{
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "names": [
+    "Alice",
+    "Bob",
+    "Carol",
+    "David",
+    "Emma",
+    "Frank",
+    "Grace",
+    "Henry",
+    "Irene",
+    "Jack",
+    "Karen",
+    "Laura",
+    "Mary",
+    "Nancy",
+    "Oliver",
+    "Paul",
+    "Rachel",
+    "Sarah",
+    "Thomas",
+    "Victor",
+    "William",
+    "Peter",
+    "Anna",
+    "James"
+  ],
+  "country_capitals": [
+    [
+      "France",
+      "Paris"
+    ],
+    [
+      "Japan",
+      "Tokyo"
+    ],
+    [
+      "Italy",
+      "Rome"
+    ],
+    [
+      "Germany",
+      "Berlin"
+    ],
+    [
+      "Spain",
+      "Madrid"
+    ],
+    [
+      "Russia",
+      "Moscow"
+    ],
+    [
+      "China",
+      "Beijing"
+    ],
+    [
+      "Canada",
+      "Ottawa"
+    ],
+    [
+      "Egypt",
+      "Cairo"
+    ],
+    [
+      "Kenya",
+      "Nairobi"
+    ],
+    [
+      "Greece",
+      "Athens"
+    ],
+    [
+      "Portugal",
+      "Lisbon"
+    ],
+    [
+      "Peru",
+      "Lima"
+    ],
+    [
+      "Chile",
+      "Santiago"
+    ],
+    [
+      "Cuba",
+      "Havana"
+    ],
+    [
+      "Austria",
+      "Vienna"
+    ],
+    [
+      "Poland",
+      "Warsaw"
+    ],
+    [
+      "Turkey",
+      "Ankara"
+    ],
+    [
+      "Thailand",
+      "Bangkok"
+    ],
+    [
+      "Norway",
+      "Oslo"
+    ]
+  ],
+  "templates": [
+    {
+      "statement": "{name} lives in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} live?\nAnswer: {name} lives in the city of"
+    },
+    {
+      "statement": "{name} works in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} work?\nAnswer: {name} works in the city of"
+    }
+  ],
+  "checkpoint_step": 16384,
+  "run_id": "REFORM_R56_binding_roles_confirm_s2_v1_20260915",
+  "run_parent": "R56",
+  "generator_script": "scripts/run_binding_context_roles.py",
+  "purpose": "Realize the two causally relevant context positions in source and target SAEs and test unfit role restoration",
+  "milestone": "causal-role-recovery",
+  "evidence_level": "controlled_frozen_confirmation",
+  "device": "cuda:0",
+  "seeds": [
+    2,
+    3
+  ],
+  "source_seed": 2,
+  "target_seed": 3,
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "dataset_revision": "CCAD counterbalanced binding-role panel v1",
+  "budget": "Measured development70.5seconds for256rows and6methods; confirmation512rows/5methods,180seconds cap per direction. Five directions total900seconds cap; actualR56 driver budget1200seconds.",
+  "budget_seconds": 180,
+  "statistics_unit": "world cluster preserving both orderings, templates, queries and operations; one SAE direction development",
+  "panel_seed": 9561501,
+  "fit_seed": 9561502,
+  "fit_contexts": 64,
+  "evaluation_contexts": 32,
+  "batch_size": 8,
+  "layer": 13,
+  "training_run": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+  "members": 64,
+  "candidate_pool": 256,
+  "field_steps": 128,
+  "field_lr": 0.03,
+  "response_steps": 64,
+  "response_lr": 0.01,
+  "written_at_utc": "2026-09-15T15:54:12.944823+00:00",
+  "primary_endpoint": "World-clustered mean over five dependent SAE-cycle directions of complete all-three-rule agreement, target64 versus nearest64; source and raw/direct controls retained. New forms separate from known forms.",
+  "scope": "Fresh worlds after32 exposed pilot worlds; two known and two previously unused forms. Frozen raw mean protocol from fit only. Source/target SAE recoding at pre14/pre24 within common raw context program. Direct receives raw mean; target64 source recoding is a nonlinear baseline requiring source encoder at runtime. This confirms role-preserving dictionary realization, not learned source-free FCC or method superiority to direct.",
+  "layer_sets": [
+    {
+      "name": "all_context",
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ]
+    },
+    {
+      "name": "source64",
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "codec": "source64"
+    },
+    {
+      "name": "target64",
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "codec": "target64"
+    },
+    {
+      "name": "nearest64",
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "codec": "nearest64"
+    },
+    {
+      "name": "direct64",
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "codec": "direct64"
+    }
+  ],
+  "sae_runtime": {
+    "members": 64,
+    "training_runs": {
+      "14": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+      "24": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914"
+    }
+  },
+  "evaluation_skip": 32,
+  "frozen_means": "runs/REFORM_R56_binding_context_roles_v1_20260915/context_role_means.npz",
+  "frozen_means_sha256": "8a9d888117c84508b23346a86271284c99abb566832b45ecda1fb5831d7ba6f1",
+  "evaluation_templates": [
+    {
+      "statement": "{name} lives in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} live?\nAnswer: {name} lives in the city of"
+    },
+    {
+      "statement": "{name} works in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} work?\nAnswer: {name} works in the city of"
+    },
+    {
+      "statement": "{name} is staying in the capital of {country}. ",
+      "question": "\nQuestion: Where is {name} staying?\nAnswer: {name} is staying in the city of"
+    },
+    {
+      "statement": "Yesterday, {name} visited the capital of {country}. ",
+      "question": "\nQuestion: Which city did {name} visit?\nAnswer: {name} visited the city of"
+    }
+  ]
+}

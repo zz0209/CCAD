@@ -1,0 +1,158 @@
+{
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "names": [
+    "Alice",
+    "Bob",
+    "Carol",
+    "David",
+    "Emma",
+    "Frank",
+    "Grace",
+    "Henry",
+    "Irene",
+    "Jack",
+    "Karen",
+    "Laura",
+    "Mary",
+    "Nancy",
+    "Oliver",
+    "Paul",
+    "Rachel",
+    "Sarah",
+    "Thomas",
+    "Victor",
+    "William",
+    "Peter",
+    "Anna",
+    "James"
+  ],
+  "country_capitals": [
+    [
+      "France",
+      "Paris"
+    ],
+    [
+      "Japan",
+      "Tokyo"
+    ],
+    [
+      "Italy",
+      "Rome"
+    ],
+    [
+      "Germany",
+      "Berlin"
+    ],
+    [
+      "Spain",
+      "Madrid"
+    ],
+    [
+      "Russia",
+      "Moscow"
+    ],
+    [
+      "China",
+      "Beijing"
+    ],
+    [
+      "Canada",
+      "Ottawa"
+    ],
+    [
+      "Egypt",
+      "Cairo"
+    ],
+    [
+      "Kenya",
+      "Nairobi"
+    ],
+    [
+      "Greece",
+      "Athens"
+    ],
+    [
+      "Portugal",
+      "Lisbon"
+    ],
+    [
+      "Peru",
+      "Lima"
+    ],
+    [
+      "Chile",
+      "Santiago"
+    ],
+    [
+      "Cuba",
+      "Havana"
+    ],
+    [
+      "Austria",
+      "Vienna"
+    ],
+    [
+      "Poland",
+      "Warsaw"
+    ],
+    [
+      "Turkey",
+      "Ankara"
+    ],
+    [
+      "Thailand",
+      "Bangkok"
+    ],
+    [
+      "Norway",
+      "Oslo"
+    ]
+  ],
+  "templates": [
+    {
+      "statement": "{name} lives in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} live?\nAnswer: {name} lives in the city of"
+    },
+    {
+      "statement": "{name} works in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} work?\nAnswer: {name} works in the city of"
+    }
+  ],
+  "checkpoint_step": 16384,
+  "run_id": "REFORM_R56_binding_role_rules_v1_20260915",
+  "run_parent": "R56",
+  "generator_script": "scripts/run_binding_role_rules.py",
+  "purpose": "Recover entity and attribute roles and predict held-out joint restoration across SAE seeds",
+  "milestone": "causal-role-recovery",
+  "evidence_level": "controlled_development",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2
+  ],
+  "source_seed": 1,
+  "target_seed": 2,
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "dataset_revision": "CCAD counterbalanced binding-role panel v1",
+  "budget": "1200 driver seconds maximum and less than 2 GB artifacts for the initial joint pilot",
+  "budget_seconds": 1200,
+  "statistics_unit": "world cluster preserving both orderings, templates, queries and operations; one SAE direction development",
+  "panel_seed": 9561501,
+  "fit_seed": 9561502,
+  "fit_contexts": 64,
+  "evaluation_contexts": 32,
+  "batch_size": 8,
+  "layer": 13,
+  "training_run": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+  "members": 64,
+  "candidate_pool": 256,
+  "field_steps": 128,
+  "field_lr": 0.03,
+  "response_steps": 64,
+  "response_lr": 0.01,
+  "written_at_utc": "2026-09-15T15:41:05.464055+00:00",
+  "primary_endpoint": "Both queried answers correct for entity swap, attribute swap and unfitted joint restoration in the same context; retain separate operation rates",
+  "scope": "Known vocabulary and forms; new counterbalanced worlds. Development, not confirmation. Native support64 per token role, union up to192. Direct mean fitting is a simple supervised role baseline, not direct gradient feature attribution."
+}
