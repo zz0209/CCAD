@@ -87,6 +87,10 @@ def plan():
                 refs(v)
 
     refs(claims)
+    refs(index.get('current_source_version_note', {}))
+    for p in (ROOT / 'artifacts/final_wrap_20260915').iterdir():
+        if p.is_file() and p.suffix in {'.md', '.json'}:
+            add(p)
     # Companion material preserves run inputs and original source versions, even
     # when a claim index records only its derived result table.
     for c in claims:
