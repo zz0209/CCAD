@@ -8213,3 +8213,35 @@ Scientific change: replaced the failed single-hook mean-role operation with the 
 Deliveries: R56_REPORT.md, R56_REPLAY_INDEX.json, r56_role_confirmation_analysis.json, R56_FOCUSED_CHECK.json, originalrawruns/configs/source snapshots, Figure21 source/CSV/JSON, Tables64–65, main4.3 and AppendixI.2. Both requestedwriting skills applied to the actual research object and abstract/introduction/conclusion/main4.3 restructuring. Paper remains8main+2reference pages;81total pages. Currentpaper/main.pdf sha256=0c1a7cfec969ce3847646161fb5330e9fc37be346eea54a2adc49b5b75362e44. Actualnewfigure and PDFpages5/8/61/62 inspected; clippedlegend corrected; no undefinedreferences/horizontaloverflow, two existingtinyverticalwarnings retained. Priorpaper/source/documentbytes archived under r56_before_20260915T153139Z/.
 
 Overall strong-accept criterion remainsNOT_MET. This establishes usable causal-role material and its dictionary realization, not yet an independently valuable learned correspondence. Next checkpoint uses that established role program to predict and choose target member interventions with matched candidate/information/validation budgets, retaining direct and source-gradient controls; no further ranking of writer parameterizations merely to squeeze the samewhole-rule score. Tracker completion/count advances only after this COMPLETE. Authorized groupedsource/config/masterlog sync follows; ignoredpaper/artifacts staylocalwithhashes.
+
+
+## R57 START — written_at_utc: 2026-09-15T16:24:52Z
+
+round_id=R57. Heartbeat event2026-09-15T16:22:26.665Z. Positive opportunity: a validated source role program can identify a small target member set that preserves both role exchange and role restoration on unobserved partial interventions. R56 establishes executable source and target material; now test which target members are needed, not another writer optimization. Use the source functional response along its deletion/retention path to score target members; compare geometric contribution, clean/full source gradients, shared raw-path gradients and direct target-path attribution with explicit fitting/gradient budgets. Same target code candidate bank and writable-member budgets. The consumer chooses16/32 target coefficients per modified state, and evaluates actual city pairs on partial requests, with role composition providing the preservation requirement. Path-gradient estimation is standard integrated attribution, not claimed novel. Primary scientific decision is whether source explanation changes target choice and predicts unseen partial behavior.
+
+One source1→target2 pilot, currentQwen twoexistingSAE locations and shared contextprogram,1200driver seconds/1GBstate budget; actual resource check before launch. Keep source/target/strongdirect controls in one unit. Already exposedworlds remain development; any confirmation must use new worlds and frozen methods. Two required writing skills remain applied to choice and manuscript; no delegation/newtask/payment/training. Original bytes archived at artifacts/correspondence_reform_20260913/r57_before_20260915T162452Z/MANIFEST.json. Exact active work versus waiting unmeasured.
+
+
+## R57 PROGRESS — written_at_utc: 2026-09-15T16:39:56Z
+
+Pilot event2026-09-15T16:30:57.164292Z–2026-09-15T16:36:45.358129Z,348.1796driver秒。固定16目标成员，source_path完整两操作96.09%，geometry87.50%，cached90.63%；paired世界区间差+8.59[3.13,14.08]和+5.47[1.56,10.94]点。raw/pooled/direct-target同为96.09%，不支持条件化或native独有优势。学习方向：把已验证功能的有限响应直接用于目标组成选择；确认零新增目标梯度的复用收益，而非再优化完整writer。四target确认冻结：R57_CONFIRMATION_FREEZE.json，source1响应bank复用，target2–5。新32世界跳过64旧评估世界；4形式中2种未用于响应fit。目标直接梯度比较使用同fit样本/路径点，其他selector不计算新梯度。预算和代码/hash在freeze及configs，预计每目标约6分钟，单run硬限1200秒。R57仍ACTIVE，准备/开发不计完成。
+
+
+## R57 PROGRESS — written_at_utc: 2026-09-15T17:02:15Z
+
+前3个冻结目标run已PASS，最后target5按原冻结队列接续；未改方法/主要操作点。并行阅读找回官方旧Pythia SHIFT notebook的55个原作者性别相关成员，已按公开MIT权重原坐标提取，未运行外部notebook。下载2.4697GB公开素材哈希全部通过；D盘下载无独占锁，CPU/磁盘短提取按顺序申请并自动释放租约，耗时17.5344秒、0GPU。已有Pythia70M可直接承接，下一核心消费者从自定义小任务推进到复用人的实际编辑决策。材料准备、源验证和新FCC结果分别记账；当前只有准备，未声称bias收益。源码、许可、checkpoint/index/hash与执行路径在r57_shift_consumer/CONSUMER_NOTE.md和各receipt。主文摘要/引言已将目标组成选择接到解释重用，进位source学习移出主线，其原始结果仍保留在附录/历史；两项writing skills落实在实际结构调整。R57尚未COMPLETE，当前paper PDF等待全确认统计后重编。
+
+
+## R57 COMPLETE — 源功能响应改善实际成员选择
+
+实际写入UTC：2026-09-15T17:18:36Z。round_id=R57；START实际记录2026-09-15T16:24:52Z。科学计算事件16:30:57.164292Z至17:06:16.354807Z，随后完成结果分析、论文及复核；此处写入时完成该单元收尾。
+
+理由与动作：R56源角色程序已有可执行信号，因此将知识用于同候选/原系数下的目标成员选择，而非继续完整writer搜索。开发后冻结k16、source1库、32个新世界及target2–5；全部5run PASS。source路径完整成功85.84%，geometry78.61%、cached79.88%；paired世界区间差7.23[4.88,9.67]和5.96[3.71,8.50]点。未用于response fitting的两表达相对两基线各+6.45点。raw/pooled同85.84%，direct86.13%；不将本轮写为native独特优势或整个strong accept达标。源/raw响应零新梯度复用，direct每目标额外256梯度batch；保留全部预算、对照和目标异质性。
+
+改法与阅读：实际复读Marks、Gerasimov、Cao原文方法与功能实验；恢复官方Sparse Feature Circuits历史Pythia55个人工feature和11个module，以及固定版本字典/BiB资产。下载2,469,702,967bytes并核对LFS SHA，提取成员与完整ReLU编码等价；这仅是下一真实消费者准备，不是CCAD新应用结果。source验证与target对应作为下一共同单元，目标是复用人的成员决策、改善职业判断和最差组效应。
+
+稿件：main.pdf及可编辑源为唯一入口，77页=8main+2references+67appendix；PDF SHA256=8795e3b641bcf65360690126203be1fde87e51c367bad4ced6efd0f674658c93。摘要、主文4.3、附录I.3、Figure19/Tables61–62加入选择收益。进位正文/附录退出研发历程，保留关键冻结结果和raw/native/control表；旧PDF/源在r57_paper_before_20260915T165141Z按hash保留。两项指定writing skills具体落实见R57_REPORT.md。查看全部8页主文及改动附录，改正表格位置用语，编译成功且无未定义引用。
+
+资源与工作：5run 1877.5620driver秒、1509.125CPU秒、85,624,431bytes新run数据、122112原始行、peak allocated7,823,891,456bytes。源参数提取17.5344秒CPU/磁盘作业，无GPU。阅读/下载/写作与GPU运行交叠，净工作和等待分量未单独计时，未知不倒算。GPU/CPU/disk leases均free。当前原ccad automation ACTIVE5分钟，strong accept目标NOT_MET，继续下一有实质意义的科学单元。
+
+证据/恢复：artifacts/correspondence_reform_20260913/R57_REPORT.md、R57_RUN_INVENTORY.json、R57_REPLAY_INDEX.json、r57_member_confirmation_analysis.json、R57_CONFIRMATION_FREEZE.json及r57_shift_consumer/CONSUMER_NOTE.md。Git同单元白名单同步身份写R57_CLOSEOUT.json；没有删除旧失败/原始记录。

@@ -1,0 +1,188 @@
+{
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "names": [
+    "Alice",
+    "Bob",
+    "Carol",
+    "David",
+    "Emma",
+    "Frank",
+    "Grace",
+    "Henry",
+    "Irene",
+    "Jack",
+    "Karen",
+    "Laura",
+    "Mary",
+    "Nancy",
+    "Oliver",
+    "Paul",
+    "Rachel",
+    "Sarah",
+    "Thomas",
+    "Victor",
+    "William",
+    "Peter",
+    "Anna",
+    "James"
+  ],
+  "country_capitals": [
+    [
+      "France",
+      "Paris"
+    ],
+    [
+      "Japan",
+      "Tokyo"
+    ],
+    [
+      "Italy",
+      "Rome"
+    ],
+    [
+      "Germany",
+      "Berlin"
+    ],
+    [
+      "Spain",
+      "Madrid"
+    ],
+    [
+      "Russia",
+      "Moscow"
+    ],
+    [
+      "China",
+      "Beijing"
+    ],
+    [
+      "Canada",
+      "Ottawa"
+    ],
+    [
+      "Egypt",
+      "Cairo"
+    ],
+    [
+      "Kenya",
+      "Nairobi"
+    ],
+    [
+      "Greece",
+      "Athens"
+    ],
+    [
+      "Portugal",
+      "Lisbon"
+    ],
+    [
+      "Peru",
+      "Lima"
+    ],
+    [
+      "Chile",
+      "Santiago"
+    ],
+    [
+      "Cuba",
+      "Havana"
+    ],
+    [
+      "Austria",
+      "Vienna"
+    ],
+    [
+      "Poland",
+      "Warsaw"
+    ],
+    [
+      "Turkey",
+      "Ankara"
+    ],
+    [
+      "Thailand",
+      "Bangkok"
+    ],
+    [
+      "Norway",
+      "Oslo"
+    ]
+  ],
+  "templates": [
+    {
+      "statement": "{name} lives in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} live?\nAnswer: {name} lives in the city of"
+    },
+    {
+      "statement": "{name} works in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} work?\nAnswer: {name} works in the city of"
+    }
+  ],
+  "checkpoint_step": 16384,
+  "run_id": "REFORM_R57_binding_member_selection_v1_20260915",
+  "run_parent": "R57",
+  "generator_script": "scripts/run_binding_context_roles.py",
+  "purpose": "Reuse verified role responses to choose target members for unseen sparse interventions",
+  "milestone": "causal-role-recovery",
+  "evidence_level": "controlled_development",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2
+  ],
+  "source_seed": 1,
+  "target_seed": 2,
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "dataset_revision": "CCAD counterbalanced binding-role panel v1",
+  "budget": "Joint source1-target2 member-choice pilot, at most1200driver seconds and1GBstate; source/raw/target path banks matched at five points per role context.",
+  "budget_seconds": 1200,
+  "statistics_unit": "world cluster preserving both orderings, templates, queries and operations; one SAE direction development",
+  "panel_seed": 9561501,
+  "fit_seed": 9561502,
+  "fit_contexts": 64,
+  "evaluation_contexts": 32,
+  "batch_size": 8,
+  "layer": 13,
+  "training_run": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+  "members": 64,
+  "candidate_pool": 256,
+  "field_steps": 128,
+  "field_lr": 0.03,
+  "response_steps": 64,
+  "response_lr": 0.01,
+  "written_at_utc": "2026-09-15T16:30:25.357357+00:00",
+  "primary_endpoint": "At16members, both city answers correct for entity exchange AND entity-plus-attribute restoration in same context; source-path selection versus geometry, pooled-source, raw-path and direct-target-path controls. Predict margin gain separately from behavioral utility.",
+  "scope": "Existing exposed worlds are development. Source and target code response banks fixed64per changed entity state in shared context program. Select8/16/32; primary16. All methods share target candidates; source/raw banks reusable, target path bank same fit contexts and path points. Both entity and entity-plus-attribute full paths observed in fit; new sparse member requests are evaluated on different worlds.",
+  "layer_sets": [],
+  "sae_runtime": {
+    "members": 64,
+    "training_runs": {
+      "14": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+      "24": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914"
+    }
+  },
+  "member_selection": {
+    "fit_worlds": 32,
+    "alphas": [
+      0,
+      0.25,
+      0.5,
+      0.75,
+      1
+    ],
+    "weights": [
+      0.125,
+      0.25,
+      0.25,
+      0.25,
+      0.125
+    ],
+    "budgets": [
+      8,
+      16,
+      32
+    ]
+  }
+}

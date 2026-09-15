@@ -17,7 +17,8 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--config',required=True,type=Path);args=p.parse_args()
     c=json.loads(args.config.read_text());w=MultisiteWork(c,args.config,[
         'scripts/run_binding_context_roles.py','scripts/run_binding_role_rules.py',
-        'scripts/run_causalgym_multisite.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py'])
+        'scripts/run_causalgym_multisite.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']+
+        (['scripts/binding_member_selection.py'] if c.get('member_selection') else []))
     error=None
     try:
         import torch,numpy as np,transformers
@@ -79,6 +80,9 @@ def main():
                 if use:
                     delta=means[l,roles]*sgn[:,None]*masks[op][:,None]
                     delta=delta[None].expand(len(ii),-1,-1)
+                    if l in method.get('entity_fields',{}):
+                        delta=delta.clone()
+                        delta[:,[0,1,3,4]]=method['entity_fields'][l][:,[0,1,3,4]]
                     codec=method.get('codec')
                     if codec and l in codecs:
                         assets=codecs[l];s,t=assets['s'],assets['t'];ds,dt=assets['ds'],assets['dt']
@@ -117,8 +121,8 @@ def main():
             positions=torch.tensor([rows[i]['positions'] for i in ii],device=w.device)
             contextmask=torch.arange(length,device=w.device)[None]<torch.tensor([rows[i]['context_end'] for i in ii],device=w.device)[:,None]
             return ids,attn,torch.tensor(last,device=w.device)
-        def forward(b):
-            with torch.no_grad():out=model(input_ids=b[0],attention_mask=b[1]).logits[torch.arange(len(ii),device=w.device),b[2]].float().log_softmax(-1)
+        def forward(b,gradient=False):
+            with torch.set_grad_enabled(gradient):out=model(input_ids=b[0],attention_mask=b[1]).logits[torch.arange(len(ii),device=w.device),b[2]].float().log_softmax(-1)
             w.sequence_forwards+=len(ii);w.token_forwards+=len(ii)*length
             if time.perf_counter()-w.wall_start>c['budget_seconds']:raise TimeoutError('Context-role bounded adaptation budget')
             return out
@@ -136,6 +140,14 @@ def main():
             context_protocol='Restore clean context residual states before every block, add mean contrasts at selected sites and layers, recompute query states. Pre14 and pre24 equal existing SAE post13 and post23.',
             layers=c['layer_sets']))
         np.savez_compressed(w.run/'context_role_means.npz',means=means.cpu().numpy())
+        if c.get('member_selection'):
+            from binding_member_selection import run_selection
+            def control(method=None,op=None,capture_states=False):
+                nonlocal capture,capture_mean,active
+                capture=capture_states;capture_mean=False;active=(method,op) if method is not None else None
+            run_selection(c,w,torch,model,rows,codecs,means,cache,batch,forward,control)
+            for h in hooks:h.remove()
+            return w.finish()
         ev=[r['row_id'] for r in rows if r['split']=='development'];noop_error=0.
         for j in range(0,len(ev),bs):
             capture=True;active=None;b=batch(ev[j:j+bs]);clean=forward(b);capture=False
