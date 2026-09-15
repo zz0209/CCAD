@@ -106,6 +106,9 @@ def main():
         evidence['evidence'] += [z['run']+'/'+p for p in ['metrics.raw.jsonl','config.resolved.json','code_hashes.json','status.json']]
     (P/'data/binding_components_evidence.json').write_text(json.dumps(evidence,indent=2)+'\n')
     print(json.dumps(dict(example=example,contrasts=chosen)))
+    if (ART/'r42_binding_native_confirmation.json').exists():
+        from binding_execution_paper import main as execution_paper
+        execution_paper()
 
 
 if __name__=='__main__':main()

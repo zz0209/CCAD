@@ -171,6 +171,56 @@ def build_transfers(w,cfg,rows,hidden,zs,sae,order,conditional,target,zt,seed,ta
         torch.set_float32_matmul_precision(old_precision)
         w.progress('UNION_RELATION_READY',source_seed=seed,target_seed=target_seed,**union_info)
     for name,(pred,_) in readouts.items():outputs[name+'_country']=(pred*q)@d[si]
+    adaptive_info={}
+    if rc.get('adaptive_execution'):
+        from adaptive_native_execution import realize
+        acfg=rc['adaptive_execution'];modes=acfg.get('candidate_modes',['bank','active'])
+        if acfg.get('scalar_control'):
+            field=outputs['code_readout_country'];base=outputs['union_member_country']
+            alpha=((field*base).sum(-1)/base.square().sum(-1).clamp_min(1e-12)).clamp_min(0)
+            old_coef=dx[:,:,ti]*masks['union_member_country']
+            limit=torch.where(old_coef<0,zt[:,:,ti]/(-old_coef).clamp_min(1e-12),torch.inf).amin(-1)
+            alpha=torch.minimum(alpha,limit)
+            outputs['native_scalar_country']=alpha[...,None]*base;masks['native_scalar_alpha']=alpha
+        for origin in acfg.get('fields',['code','source']):
+            field=((yy if origin=='source' else readouts[origin+'_readout'][0])*q)@d[si]
+            if acfg.get('reencode'):
+                edited=target.encode((hidden+field).flatten(0,1)).reshape_as(zt)
+                recoded=edited-zt
+                score=recoded.abs()*dt.norm(dim=1)
+                ix=torch.argsort(score,dim=-1,descending=True,stable=True)[...,:rc['query_members']]
+                coef=recoded.gather(-1,ix)
+                sparse_delta=(coef[...,None]*dt[ix]).sum(-2)
+                for suffix,pred in [('sparse',sparse_delta),('full',recoded@dt)]:
+                    name=f'reencoded_{origin}_{suffix}';outputs[name]=pred
+                    ev=torch.tensor([r['row_id'] for r in rows if r['split']!='fit' and not r['donor']],device=device)
+                    truth=(yy*q)@d[si]
+                    adaptive_info[name]=dict(operation='nonnegative target code difference after encoding predicted edited state',
+                        source_relative_mse_evaluation=float((pred[ev]-truth[ev]).square().sum()/truth[ev].square().sum()),
+                        max_changes=int((coef!=0).sum(-1).max()) if suffix=='sparse' else int((recoded!=0).sum(-1).max()),
+                        field_information='exact source codes at execution' if origin=='source' else 'frozen source-code readout from target changes')
+                masks[f'reencoded_{origin}_sparse_indices']=ix
+                masks[f'reencoded_{origin}_sparse_coefficients']=coef
+                masks[f'reencoded_{origin}_full_coefficients']=recoded
+            for mode in modes:
+                bank_mode=mode in ['bank','shared_support']
+                xx,dd=(dx[:,:,ti],dt[ti]) if bank_mode else (dx,dt)
+                general=acfg.get('general_codes',False)
+                name=f"{'synthesized' if general else 'adaptive'}_{origin}_{mode}"
+                pred,coef,ix,ainfo=realize(field,xx,dd,members=rc['query_members'],
+                    current_codes=(zt[:,:,ti] if bank_mode else zt) if general else None,
+                    support_mask=(dx[:,:,ti]*masks['union_member_country']!=0) if mode=='shared_support' else None,
+                    **{k:v for k,v in acfg.items() if k not in ['candidate_modes','fields','reencode','general_codes','scalar_control']})
+                outputs[name]=pred
+                absolute=ti[ix] if bank_mode else ix
+                masks[name+'_coefficients']=coef;masks[name+'_indices']=absolute
+                truth=(yy*q)@d[si]
+                ainfo['source_relative_mse_fit']=float((pred[fits]-truth[fits]).square().sum()/truth[fits].square().sum())
+                ev=torch.tensor([r['row_id'] for r in rows if r['split']!='fit' and not r['donor']],device=device)
+                ainfo['source_relative_mse_evaluation']=float((pred[ev]-truth[ev]).square().sum()/truth[ev].square().sum())
+                ainfo['field_information']='exact source codes at execution' if origin=='source' else 'frozen source-code readout from target changes'
+                adaptive_info[name]=ainfo
+                w.progress('ADAPTIVE_NATIVE_READY',source_seed=seed,target_seed=target_seed,method=name,**ainfo)
     # A target-only competitor can use the same country metadata and fit contexts.
     countries=sorted({v for r in rows for v in r['countries']});means=[]
     for country in countries:
@@ -192,6 +242,6 @@ def build_transfers(w,cfg,rows,hidden,zs,sae,order,conditional,target,zt,seed,ta
         source_query=q.cpu().numpy(),**{k:v.cpu().numpy() for k,v in masks.items()})
     with (w.run/'binding_relations.jsonl').open('a',encoding='utf-8') as f:
         f.write(json.dumps(dict(source_seed=seed,target_seed=target_seed,field_fit=info,readouts=readout_info,
-            fit_contexts=len(set(contexts.tolist())),query_fit=query_info,union_fit=union_info,target_output_labels=0,target_output_gradients=0,
+            fit_contexts=len(set(contexts.tolist())),query_fit=query_info,union_fit=union_info,adaptive_execution=adaptive_info,target_output_labels=0,target_output_gradients=0,
             budget='256 stored members; 64 per edited token for subset requests; member_parent uses256'))+'\n')
     return {name:delta.detach() for name,delta in outputs.items()}

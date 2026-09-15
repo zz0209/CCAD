@@ -73,6 +73,7 @@ def main():
         'scripts/run_binding_components.py','scripts/run_causalgym_multisite.py',
         'scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']
     if cfg.get('binding_transfer'):sources+=['scripts/binding_correspondence.py','scripts/arithmetic_relation_transfer.py','scripts/fit_component_correspondence.py']
+    if cfg.get('binding_transfer',{}).get('adaptive_execution'):sources+=['scripts/adaptive_native_execution.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:

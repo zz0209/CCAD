@@ -1,0 +1,215 @@
+{
+  "run_id": "REFORM_R42_binding_adaptive_dev_v1_20260914",
+  "run_parent": "R42",
+  "generator_script": "scripts/run_binding_components.py",
+  "purpose": "Separate static participation and candidate-bank losses using bounded request-conditioned execution",
+  "milestone": "semantic-source-function",
+  "evidence_level": "development",
+  "device": "cuda:0",
+  "seeds": [
+    1
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD binding-factorization adaptation v1",
+  "budget": "Initial R42 budget1800driver seconds; this development run capped300seconds",
+  "budget_seconds": 300,
+  "scope": "Same64 source-pilot development contexts and64 fit contexts; only seed1->2; old frozen confirmation is not used to tune this query objective.",
+  "statistics_unit": "context cluster, retaining both queries, prompts and operations",
+  "panel_seed": 9412212,
+  "fit_contexts": 64,
+  "evaluation_contexts": 64,
+  "batch_size": 8,
+  "layers": [
+    13
+  ],
+  "checkpoint_step": 16384,
+  "members": [
+    64,
+    256
+  ],
+  "training_runs": {
+    "13": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+    "23": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914"
+  },
+  "names": [
+    "Alice",
+    "Bob",
+    "Carol",
+    "David",
+    "Emma",
+    "Frank",
+    "Grace",
+    "Henry",
+    "Irene",
+    "Jack",
+    "Karen",
+    "Laura",
+    "Mary",
+    "Nancy",
+    "Oliver",
+    "Paul",
+    "Rachel",
+    "Sarah",
+    "Thomas",
+    "Victor",
+    "William",
+    "Peter",
+    "Anna",
+    "James"
+  ],
+  "country_capitals": [
+    [
+      "France",
+      "Paris"
+    ],
+    [
+      "Japan",
+      "Tokyo"
+    ],
+    [
+      "Italy",
+      "Rome"
+    ],
+    [
+      "Germany",
+      "Berlin"
+    ],
+    [
+      "Spain",
+      "Madrid"
+    ],
+    [
+      "Russia",
+      "Moscow"
+    ],
+    [
+      "China",
+      "Beijing"
+    ],
+    [
+      "Canada",
+      "Ottawa"
+    ],
+    [
+      "Egypt",
+      "Cairo"
+    ],
+    [
+      "Kenya",
+      "Nairobi"
+    ],
+    [
+      "Greece",
+      "Athens"
+    ],
+    [
+      "Portugal",
+      "Lisbon"
+    ],
+    [
+      "Peru",
+      "Lima"
+    ],
+    [
+      "Chile",
+      "Santiago"
+    ],
+    [
+      "Cuba",
+      "Havana"
+    ],
+    [
+      "Austria",
+      "Vienna"
+    ],
+    [
+      "Poland",
+      "Warsaw"
+    ],
+    [
+      "Turkey",
+      "Ankara"
+    ],
+    [
+      "Thailand",
+      "Bangkok"
+    ],
+    [
+      "Norway",
+      "Oslo"
+    ]
+  ],
+  "templates": [
+    {
+      "statement": "{name} lives in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} live?\nAnswer: {name} lives in the city of"
+    },
+    {
+      "statement": "{name} works in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} work?\nAnswer: {name} works in the city of"
+    }
+  ],
+  "written_at_utc": "2026-09-14T23:26:34.725472+00:00",
+  "semantic_queries": {
+    "parent_members": 256,
+    "members": 64
+  },
+  "seed_pairs": {
+    "1": 2,
+    "2": 3,
+    "3": 4,
+    "4": 5,
+    "5": 1
+  },
+  "evaluation_skip": 0,
+  "exclude_evaluation_runs": [],
+  "binding_transfer": {
+    "parent_members": 256,
+    "target_bank": 256,
+    "query_members": 64,
+    "pool": 512,
+    "steps": 256,
+    "ridge_fraction": 0.001,
+    "readout_ridge": [
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "query_fit": {
+      "steps": 256
+    },
+    "union_fit": {
+      "steps": 256,
+      "lr": 0.002
+    },
+    "adaptive_execution": {
+      "candidate_modes": [
+        "bank",
+        "active"
+      ],
+      "fields": [
+        "code",
+        "source"
+      ],
+      "steps": 256,
+      "refine_steps": 128,
+      "batch_size": 128,
+      "candidate_limit": 128
+    }
+  },
+  "evaluation_rejection_rule": "Reject a whole evaluation context if any recipient/donor/query/form prompt appeared in designated earlier panels; deterministic continuation of the same RNG until64 accepted contexts.",
+  "evaluate_methods": [
+    "country64",
+    "union_member_country",
+    "code_readout_country",
+    "target_country",
+    "adaptive_code_bank",
+    "adaptive_code_active",
+    "adaptive_source_bank",
+    "adaptive_source_active"
+  ]
+}

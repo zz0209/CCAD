@@ -1,0 +1,227 @@
+{
+  "run_id": "REFORM_R42_binding_native_confirmation_v1_20260914",
+  "run_parent": "R42",
+  "generator_script": "scripts/run_binding_components.py",
+  "purpose": "Frozen five-SAE test of source-request decoding into nonnegative target updates",
+  "milestone": "semantic-source-function",
+  "evidence_level": "controlled_frozen_confirmation",
+  "device": "cuda:0",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD binding-factorization adaptation v1",
+  "budget": "1000driver seconds maximum; expected350seconds from measured developer throughput; R42 total1800seconds",
+  "budget_seconds": 1000,
+  "scope": "128 new complete prompt contexts, known country/name vocabulary and two forms. Same64fit contexts; five dependent SAE cycle;256stored source/target members;64nonzero edits per requested token. General target code updates vs donor interpolation are distinct operation classes. Zero target output labels/gradients. Primary complete-binding paired gain vs shared participation; planned scalar and fixed-support controls; source fidelity secondary.",
+  "statistics_unit": "context cluster, retaining both queries, prompts and operations",
+  "panel_seed": 9412212,
+  "fit_contexts": 64,
+  "evaluation_contexts": 128,
+  "batch_size": 8,
+  "layers": [
+    13
+  ],
+  "checkpoint_step": 16384,
+  "members": [
+    64,
+    256
+  ],
+  "training_runs": {
+    "13": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+    "23": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914"
+  },
+  "names": [
+    "Alice",
+    "Bob",
+    "Carol",
+    "David",
+    "Emma",
+    "Frank",
+    "Grace",
+    "Henry",
+    "Irene",
+    "Jack",
+    "Karen",
+    "Laura",
+    "Mary",
+    "Nancy",
+    "Oliver",
+    "Paul",
+    "Rachel",
+    "Sarah",
+    "Thomas",
+    "Victor",
+    "William",
+    "Peter",
+    "Anna",
+    "James"
+  ],
+  "country_capitals": [
+    [
+      "France",
+      "Paris"
+    ],
+    [
+      "Japan",
+      "Tokyo"
+    ],
+    [
+      "Italy",
+      "Rome"
+    ],
+    [
+      "Germany",
+      "Berlin"
+    ],
+    [
+      "Spain",
+      "Madrid"
+    ],
+    [
+      "Russia",
+      "Moscow"
+    ],
+    [
+      "China",
+      "Beijing"
+    ],
+    [
+      "Canada",
+      "Ottawa"
+    ],
+    [
+      "Egypt",
+      "Cairo"
+    ],
+    [
+      "Kenya",
+      "Nairobi"
+    ],
+    [
+      "Greece",
+      "Athens"
+    ],
+    [
+      "Portugal",
+      "Lisbon"
+    ],
+    [
+      "Peru",
+      "Lima"
+    ],
+    [
+      "Chile",
+      "Santiago"
+    ],
+    [
+      "Cuba",
+      "Havana"
+    ],
+    [
+      "Austria",
+      "Vienna"
+    ],
+    [
+      "Poland",
+      "Warsaw"
+    ],
+    [
+      "Turkey",
+      "Ankara"
+    ],
+    [
+      "Thailand",
+      "Bangkok"
+    ],
+    [
+      "Norway",
+      "Oslo"
+    ]
+  ],
+  "templates": [
+    {
+      "statement": "{name} lives in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} live?\nAnswer: {name} lives in the city of"
+    },
+    {
+      "statement": "{name} works in the capital of {country}. ",
+      "question": "\nQuestion: Where does {name} work?\nAnswer: {name} works in the city of"
+    }
+  ],
+  "written_at_utc": "2026-09-14T23:38:03.321110+00:00",
+  "semantic_queries": {
+    "parent_members": 256,
+    "members": 64
+  },
+  "seed_pairs": {
+    "1": 2,
+    "2": 3,
+    "3": 4,
+    "4": 5,
+    "5": 1
+  },
+  "evaluation_skip": 256,
+  "exclude_evaluation_runs": [
+    "runs/REFORM_R41_qwen_binding_sources_v4_20260914",
+    "runs/REFORM_R41_qwen_binding_transfer_v3_20260914",
+    "runs/REFORM_R41_qwen_binding_query_confirmation_v1_20260914"
+  ],
+  "binding_transfer": {
+    "parent_members": 256,
+    "target_bank": 256,
+    "query_members": 64,
+    "pool": 512,
+    "steps": 256,
+    "ridge_fraction": 0.001,
+    "readout_ridge": [
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "query_fit": {
+      "steps": 256
+    },
+    "union_fit": {
+      "steps": 256,
+      "lr": 0.002
+    },
+    "adaptive_execution": {
+      "candidate_modes": [
+        "bank",
+        "shared_support"
+      ],
+      "fields": [
+        "code"
+      ],
+      "steps": 384,
+      "refine_steps": 128,
+      "batch_size": 64,
+      "candidate_limit": 256,
+      "general_codes": true,
+      "scalar_control": true
+    }
+  },
+  "evaluation_rejection_rule": "Reject a whole evaluation context if any recipient/donor/query/form prompt appeared in designated earlier panels; deterministic continuation of the same RNG until64 accepted contexts.",
+  "evaluate_methods": [
+    "sae64",
+    "country64",
+    "sae256",
+    "union_member_country",
+    "native_scalar_country",
+    "code_readout_country",
+    "raw_readout_country",
+    "target_country",
+    "synthesized_code_bank",
+    "synthesized_code_shared_support",
+    "assignment_country"
+  ]
+}
