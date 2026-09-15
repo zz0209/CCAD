@@ -95,6 +95,8 @@ def main():
         sources += ['scripts/arithmetic_frozen_rules.py']
     if cfg.get('source_function_refit'):
         sources += ['scripts/arithmetic_carry_source_fit.py']
+        if cfg['source_function_refit'].get('read_write'):
+            sources += ['scripts/arithmetic_carry_readwrite.py','scripts/analyze_carry_readouts.py']
     if cfg.get('carry_relation_fit'):
         sources += ['scripts/arithmetic_carry_relation_fit.py','scripts/arithmetic_counterfactual_fit.py']
     w=MultisiteWork(cfg,args.config,sources)

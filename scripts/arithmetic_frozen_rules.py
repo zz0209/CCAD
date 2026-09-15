@@ -33,6 +33,16 @@ def evaluate_frozen_rules(w, cfg, rows, hidden, codes, saes, generate, budget, b
             from arithmetic_carry_source_fit import fit_source
             stored=fit_source(w,cfg,*model_context,ae,stored,budget,current=(rows,codes[seed],hidden))
         v=torch.tensor(stored['raw_direction'],device=w.device)
+        if spec.get('cross_read_write'):
+            for name,read_method,write_method,operator in [
+                    ('code_read_raw_write','readwrite_code_64','readwrite_raw','code_to_raw'),
+                    ('raw_read_code_write','readwrite_raw','readwrite_code_64','raw_to_code')]:
+                stored[name]=stored['readwrite_code_64']
+                stored[name+'_readout']=stored[read_method+'_readout']
+                stored[name+'_writer']=stored[write_method+'_writer']
+                stored[name+'_operator']=np.array(operator)
+                stored[name+'_nonnegative_update']=np.array(operator=='raw_to_code')
+            np.savez_compressed(w.run/f'rule_members_seed{seed}.npz',**stored)
         assert abs(float(v.norm())-1)<1e-5
         decoder=ae.decoder.weight.T;z=codes[seed]
         for name in definition['methods']:
@@ -45,13 +55,41 @@ def evaluate_frozen_rules(w, cfg, rows, hidden, codes, saes, generate, budget, b
             nonnegative_update=bool(stored.get(name+'_nonnegative_update',False))
             gain_bound=float(stored.get(name+'_gain_bound',1.))
             if weights is not None:assert bool(((weights>=0)&(weights<=gain_bound)).all())
+            operator=str(stored[name+'_operator']) if name+'_operator' in stored else None
+            reader=torch.tensor(stored[name+'_readout'],device=w.device) if operator else None
+            writer=torch.tensor(stored[name+'_writer'],device=w.device) if operator else None
+            read_indices=torch.tensor(stored[name+'_read_indices'],device=w.device) if name+'_read_indices' in stored else indices
             records=[]
             for off in range(0,len(pairs),cfg['batch_size']):
                 pp=pairs[off:off+cfg['batch_size']];ii=[p['recipient'] for p in pp];di=[p['donor'] for p in pp]
                 tens_site=torch.tensor([cfg['tens_sites'][p['template']] for p in pp],device=w.device)
                 def patch(current,step):
                     mask=(torch.arange(step+1,device=w.device)[None,:]==tens_site[:,None])
-                    if name=='whole_state':change=hidden[di,:step+1]-current
+                    if operator:
+                        arities=torch.tensor([int('c' in rows[i]) for i in ii],device=w.device)
+                        if operator=='raw_to_code':
+                            query=((hidden[di,:step+1]-current)*reader[arities,None,:]).sum(-1,keepdim=True)
+                            current_z=ae.encode(current.flatten(0,1)).reshape(len(ii),step+1,-1)[...,indices]
+                            coeff=query*writer[arities,None,:]
+                            change=((current_z+coeff).clamp_min(0)-current_z)@decoder[indices]
+                        elif operator=='raw':
+                            diff=hidden[di,:step+1]-current
+                            change=(diff*reader[arities,None,:]).sum(-1,keepdim=True)*writer[arities,None,:]
+                        else:
+                            full_z=ae.encode(current.flatten(0,1)).reshape(len(ii),step+1,-1)
+                            current_z=full_z[...,indices]
+                            diff=z[di,:step+1][...,read_indices]-full_z[...,read_indices]
+                            query=(diff*reader[arities,None,:]).sum(-1,keepdim=True)
+                            if operator=='code_to_raw':
+                                change=query*writer[arities,None,:]
+                            elif operator=='cone':
+                                branch=2*arities[:,None]+(query[...,0]<0).long()
+                                coeff=query.abs()*writer[branch]
+                                change=coeff@decoder[indices]
+                            else:
+                                coeff=query*writer[arities,None,:]
+                                change=(coeff if operator=='linear_code' else (current_z+coeff).clamp_min(0)-current_z)@decoder[indices]
+                    elif name=='whole_state':change=hidden[di,:step+1]-current
                     elif raw_method:
                         delta=hidden[di,:step+1]-current;change=(delta@method_v)[...,None]*method_v
                     else:

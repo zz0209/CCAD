@@ -1,0 +1,80 @@
+{
+  "audit_opened": false,
+  "batch_size": 8,
+  "budget": "450driverseconds,512exposedrequests,fourfrozenoperators,nooptimization.",
+  "budget_seconds": 450,
+  "candidate_family_frozen": true,
+  "checkpoint_step": 16384,
+  "dataset_revision": "CCAD R51 mixedcarry metadata9511501/2/3",
+  "device": "cuda:0",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "hidden_atol": 0.002,
+  "intervention_span": "generated_prefix",
+  "max_length": 96,
+  "max_new_tokens": 5,
+  "members": [
+    64
+  ],
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "operand_range": [
+    10,
+    50
+  ],
+  "pairs_per_template": 64,
+  "purpose": "Cross frozen readers andwriters tolocate the remaining source discrepancy.",
+  "round_id": "R52",
+  "run_id": "REFORM_R52_cross_read_write_v1_20260915",
+  "run_parent": "R52",
+  "scope": "Exposed R51 source development requests; fixed operator crossing without fitting.",
+  "seeds": [
+    1
+  ],
+  "selection_rules": [],
+  "source_selection_step": {
+    "tens": 0,
+    "unit": 1
+  },
+  "split_salt": "ccad-r32-digit-source-1",
+  "statistics_unit": "Canonicalquestion pairs with reciprocaldirections andtwoforms. Two/threeoperands separately. Development only.",
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}+{c}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b} plus {c}? A:"
+  ],
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "written_at_utc": "2026-09-15T12:22:40Z",
+  "reuse_rules": [],
+  "evidence_level": "exposed_source_participation_development",
+  "tens_sites": [
+    0,
+    1
+  ],
+  "frozen_rule_evaluation": {
+    "panel": "artifacts/correspondence_reform_20260913/R52_CROSSED_PANEL.json",
+    "freeze": "artifacts/correspondence_reform_20260913/R52_CROSSED_INPUTS.json",
+    "memberships": {
+      "1": {
+        "run": "runs/REFORM_R52_carry_readwrite_source_v1_20260915",
+        "methods": [
+          "readwrite_code_64",
+          "readwrite_raw",
+          "code_read_raw_write",
+          "raw_read_code_write"
+        ]
+      }
+    },
+    "cross_read_write": true
+  },
+  "evaluation_split": "development"
+}
