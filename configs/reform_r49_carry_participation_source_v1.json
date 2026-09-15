@@ -1,0 +1,73 @@
+{
+  "audit_opened": false,
+  "batch_size": 8,
+  "budget": "At most450driverseconds; one GPU, same frozen source/material. Fit512candidate coefficients to256source-fit contrast fields,256Adamupdates,64positive weights; no new task output gradients.",
+  "budget_seconds": 450,
+  "candidate_family_frozen": true,
+  "checkpoint_step": 16384,
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "device": "cuda:0",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "hidden_atol": 0.002,
+  "intervention_span": "generated_prefix",
+  "max_length": 72,
+  "max_new_tokens": 5,
+  "members": [
+    64
+  ],
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "operand_range": [
+    10,
+    50
+  ],
+  "pairs_per_template": 64,
+  "purpose": "Turn a functional raw carry reference into a bounded weighted source SAE component.",
+  "round_id": "R49",
+  "run_id": "REFORM_R49_carry_participation_source_v1_20260915",
+  "run_parent": "R49",
+  "scope": "New source interventions on exposed original development operand questions; no independent confirmation or cross-seed claim. Same-answer/opposite-carry and same-carry/different-answer pairs, freely generated outputs. Source-only selection using original405fit rows. Adaptive weighted participation experiment after first source test; raw teacher and all original controls retained.",
+  "seeds": [
+    1
+  ],
+  "selection_rules": [],
+  "source_selection_step": {
+    "tens": 0,
+    "unit": 1
+  },
+  "split_salt": "ccad-r32-digit-source-1",
+  "statistics_unit": "Unordered operand pairs remain in the same split and prompt-connected recipient-donor pairs; five controlled source SAE initializations with common prompts",
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "written_at_utc": "2026-09-15T09:13:56Z",
+  "reuse_rules": [],
+  "source_cache_run": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+  "functional_rule_test": {
+    "seed": 9491501,
+    "pairs_per_condition": 32,
+    "member_counts": [
+      64,
+      256
+    ],
+    "fit_participation": {
+      "pairs": 256,
+      "pool": 512,
+      "steps": 256,
+      "lr": 0.05
+    }
+  }
+}

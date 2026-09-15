@@ -1,0 +1,97 @@
+{
+  "audit_opened": false,
+  "batch_size": 8,
+  "budget": "At most600driverseconds for fourtarget SAEs, two matched field fits pertarget; reuse source1 functional64member group, model and state caches. No new model/SAE training or output-gradient fitting.",
+  "budget_seconds": 600,
+  "candidate_family_frozen": true,
+  "checkpoint_step": 16384,
+  "dataset_revision": "CCAD original deterministic paired addition development panel v1",
+  "device": "cuda:0",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "hidden_atol": 0.002,
+  "intervention_span": "generated_prefix",
+  "max_length": 72,
+  "max_new_tokens": 5,
+  "members": [
+    64
+  ],
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "operand_range": [
+    10,
+    50
+  ],
+  "pairs_per_template": 64,
+  "purpose": "Transfer a validated source carry group into four independently retrained SAE dictionaries and compare same-information re-identification.",
+  "round_id": "R49",
+  "run_id": "REFORM_R49_carry_source_relation_four_targets_v1_20260915",
+  "run_parent": "R49",
+  "scope": "Adaptive development on the same64canonical pairs/twoforms; source1 group frozen before fourtarget evaluation. Five controlled SAE seeds, fourdependent directions; original source-fit states only. Native transfer and direct raw-function reidentification receive same field-fit budget. All new outputs remain development.",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "selection_rules": [],
+  "source_selection_step": {
+    "tens": 0,
+    "unit": 1
+  },
+  "split_salt": "ccad-r32-digit-source-1",
+  "statistics_unit": "Unordered operand pairs remain in the same split and prompt-connected recipient-donor pairs; five controlled source SAE initializations with common prompts",
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b}? A:"
+  ],
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "written_at_utc": "2026-09-15T09:18:46Z",
+  "reuse_rules": [],
+  "source_cache_run": "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914",
+  "functional_rule_test": {
+    "seed": 9491501,
+    "pairs_per_condition": 32,
+    "member_counts": [
+      64,
+      256
+    ],
+    "fit_participation": {
+      "pairs": 256,
+      "pool": 512,
+      "steps": 256,
+      "lr": 0.05
+    },
+    "source_relation": {
+      "from_run": "runs/REFORM_R49_carry_participation_source_v1_20260915",
+      "seed": 1,
+      "method": "field_fitted_binary_64"
+    },
+    "evaluation_seeds": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "evaluation_methods": [
+      "noop",
+      "raw_carry_direction",
+      "conditional_carry_64",
+      "field_fitted_binary_64",
+      "transferred_fitted_weighted_64",
+      "transferred_fitted_binary_64",
+      "assignment_64"
+    ]
+  }
+}

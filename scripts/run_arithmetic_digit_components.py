@@ -86,6 +86,8 @@ def main():
         sources += ['scripts/adaptive_native_execution.py']
         if any(n.get('response_steps') for n in cfg['native_readouts']):
             sources += ['scripts/native_response_projection.py']
+    if cfg.get('functional_rule_test'):
+        sources += ['scripts/arithmetic_functional_rules.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -296,6 +298,13 @@ def main():
             np.savez_compressed(w.run/f"source_seed{seed}.npz",codes=z.cpu().numpy(),fisher=fs.cpu().numpy(),**payload)
         if source_parent is None:
             np.savez_compressed(w.run/"states.npz",hidden=h.cpu().numpy(),fit_indices=np.array(fitix))
+        if cfg.get('functional_rule_test'):
+            from arithmetic_functional_rules import evaluate_rules
+            w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,
+                numpy=np.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),
+                precision='float32 matmul high',hook=cfg.get('hook_override',tc['hook_module_path']),model=tc['model_id'])
+            evaluate_rules(w,cfg,rows,h,codes,saes,generate,budget,base)
+            return w.finish()
         if cfg.get("source_refit"):
             from arithmetic_counterfactual_fit import fit_gates, natural_latent_reference
             sc=cfg["source_refit"]
