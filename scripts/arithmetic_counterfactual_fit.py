@@ -93,13 +93,15 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
     fit = [i for i, row in enumerate(rows) if row['split'] == 'fit' and not row.get('source_view')]
     rng = random.Random(cfg['counterfactual_fit']['seed'])
     carry_rule = cfg['counterfactual_fit'].get('carry_rule', False)
+    operands = lambda row: {row[k] for k in ['a','b','c'] if k in row}
     carry_pairs = [[], []]
     training_pairs = []
     for i in fit:
         if carry_rule:
             for condition in range(2):
                 candidates = [j for j in fit
-                    if not {rows[i]['a'], rows[i]['b']} & {rows[j]['a'], rows[j]['b']}
+                    if ('c' in rows[i]) == ('c' in rows[j])
+                    and not operands(rows[i]) & operands(rows[j])
                     and ((rows[i]['total'] == rows[j]['total'] and rows[i]['carry'] != rows[j]['carry'])
                          if condition == 0 else
                          (rows[i]['carry'] == rows[j]['carry'] and rows[i]['unit'] == rows[j]['unit']
@@ -116,20 +118,31 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
         training_pairs = carry_pairs[0] + carry_pairs[1]
     assert all(rows[i]['template'] == 0 for pair in training_pairs for i in pair)
     role_schema = cfg['counterfactual_fit'].get('role_schema', False)
+    arity_mode = cfg['counterfactual_fit'].get('arity_participation')
+    assert arity_mode in [None, 'scalar', 'members']
+    contextual_members = arity_mode == 'members'
+    gain_bound = float(cfg['counterfactual_fit'].get('gain_bound', 1.))
+    nonnegative_update = bool(cfg['counterfactual_fit'].get('nonnegative_update', False))
+    assert gain_bound >= 1 and (gain_bound == 1 or nonnegative_update)
+    if arity_mode:
+        assert carry_rule and not role_schema
     if carry_rule:
         assert not role_schema and source_context is None and latent_context is None and view_map is None
         assert integrated_steps == 1
     start = initial_gate.detach().clone()
+    if contextual_members:
+        start = start[None].repeat(2, 1, 1)
     if role_schema and start.ndim == 2:
         start = start[None].repeat(cfg['max_new_tokens'] + 1, 1, 1)
         # No training target follows the newline; those later roles remain zero.
         start[4:] = 0
-    assert start.ndim == (3 if role_schema else 2)
+    assert start.ndim == (3 if role_schema or contextual_members else 2)
     param = torch.nn.Parameter(start * initial_scale)
+    scales = torch.nn.Parameter(torch.ones(2, device=w.device)) if arity_mode == 'scalar' else None
     support = start > 0 if fixed_support else None
     saved = ({0: param.detach().clone()} if 0 in checkpoints else {}) if checkpoints is not None else None
     stem = f'counterfactual_seed{seed}_k{members}' + (f'_{tag}' if tag else '')
-    optimizer = torch.optim.Adam([param], lr=cfg['counterfactual_fit']['lr'])
+    optimizer = torch.optim.Adam([param] + ([scales] if scales is not None else []), lr=cfg['counterfactual_fit']['lr'])
     batch = cfg['batch_size']
     ix = torch.arange(batch, device=w.device)
     newline = tokenizer.encode('\n', add_special_tokens=False)
@@ -176,11 +189,20 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
             current = h[ix[:, None], sites]
             z = ae.encode(current.reshape(-1, current.shape[-1])).reshape(batch, nsites, -1)
             applied_gate = gate
+            if arity_mode:
+                arities = torch.tensor([int('c' in rows[i]) for i, j in pairs], device=w.device)
+                if contextual_members:
+                    applied_gate = gate[arities, None, :]
+                else:
+                    applied_gate = gate * scales[arities, None, None]
             if role_schema:
                 shift = torch.tensor([1 - rows[i]['template'] for i, j in pairs], device=w.device)
                 roles = torch.arange(nsites, device=w.device)[None] + shift[:, None]
                 applied_gate = gate[roles]
-            delta = ((donor - z) * applied_gate) @ ae.decoder.weight.T
+            code_delta = (donor - z) * applied_gate
+            if nonnegative_update:
+                code_delta = (z + code_delta).clamp_min(0) - z
+            delta = code_delta @ ae.decoder.weight.T
             if source_alpha:
                 source_ae, source_codes, source_gate = source_context
                 source_z = source_ae.encode(current.reshape(-1,current.shape[-1])).reshape(batch,nsites,-1)
@@ -266,6 +288,22 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
     schedule = [rng.sample(training_pairs, batch) for _ in range(steps)]
     if carry_rule:
         schedule = [rng.sample(carry_pairs[step % 2], batch) for step in range(steps)]
+    schedule_groups = None
+    if cfg['counterfactual_fit'].get('balance_arity_carry'):
+        assert carry_rule
+        schedule_groups = [{}, {}]
+        for condition, pp in enumerate(carry_pairs):
+            for i,j in pp:
+                arity = 3 if 'c' in rows[i] else 2
+                key = (arity, *sorted([int(rows[i]['carry']), int(rows[j]['carry'])])) if condition == 0 else (arity,)
+                schedule_groups[condition].setdefault(key, []).append((i,j))
+        schedule = []
+        for step in range(steps):
+            groups = schedule_groups[step % 2]
+            key = sorted(groups)[(step // 2) % len(groups)]
+            pp = groups[key]
+            assert len(pp) >= batch, (key, len(pp))
+            schedule.append(rng.sample(pp, batch))
     original_schedule = [list(pairs) for pairs in schedule]
     if view_map is not None:
         # Each request sees equal numbers of original and answer-equivalent
@@ -306,10 +344,10 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
                     param.zero_()
                     for c in range(2):
                         score = selection_scores[..., c]
-                        ranking = score.clamp_min(0).square().sum(0) if role_schema else score
+                        ranking = score.clamp_min(0).square().sum(0) if role_schema or contextual_members else score
                         chosen = torch.argsort(ranking, descending=True, stable=True)[:members]
                         chosen = chosen[ranking[chosen] > 0]
-                        if role_schema:
+                        if role_schema or contextual_members:
                             param[:, chosen, c] = .5 * (score[:, chosen] > 0)
                         else:
                             param[chosen, c] = .5
@@ -325,21 +363,26 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
         assert torch.isfinite(loss)
         loss.backward()
         optimizer.step()
+        if scales is not None:
+            with torch.no_grad():
+                scales.clamp_(0, gain_bound)
         for c in range(2):
             # This projects a possibly noncontiguous column; the helper preserves
             # storage by copying its result back, with a separate per-request budget.
             column = param[..., c].detach().clone()
             if support is not None:
                 column *= support[..., c]
-            if role_schema:
+            if role_schema or contextual_members:
+                column /= gain_bound
                 project_role_members(column, members)
+                column *= gain_bound
             else:
                 project_sparse_gates(column, members)
             with torch.no_grad():
                 param[..., c].copy_(column)
         if saved is not None and step + 1 in checkpoints:
             saved[step + 1] = param.detach().clone()
-        if step == 0 or (step + 1) % 32 == 0 or step + 1 == steps:
+        if step == 0 or (step + 1) % 32 in [0, 31] or step + 1 == steps:
             item = dict(step=step + 1, operation=operation, loss=float(loss.detach()),
                         objective_components=dict(objective_components),
                         fit_elapsed_seconds=time.perf_counter() - train_start,
@@ -348,7 +391,9 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
             w.progress('COUNTERFACTUAL_SOURCE_FIT', seed=seed, members=members, initialization=tag, **item)
         budget()
     fitted = param.detach()
-    assert bool(((fitted >= 0) & (fitted <= 1)).all())
+    if scales is not None:
+        fitted = fitted[None] * scales.detach()[:, None, None]
+    assert bool(((fitted >= 0) & (fitted <= gain_bound)).all())
     assert bool((member_counts(fitted) <= members).all())
     if support is not None:
         assert not bool((fitted[~support] > 0).any())
@@ -372,10 +417,14 @@ def fit_gates(w, cfg, model, module, tokenizer, ae, rows, tokenrows, codes,
         latent_weight=latent_weight, natural_latent_objective=latent_context is not None,
         answer_equivalent_views=view_map is not None,
         carry_rule=carry_rule,
+        arity_participation=arity_mode,
+        arity_scalars=scales.detach().cpu().tolist() if scales is not None else None,
+        gain_bound=gain_bound, nonnegative_update=nonnegative_update,
         carry_pair_counts=[len(group) for group in carry_pairs] if carry_rule else None,
+        schedule_groups=[{str(k):len(v) for k,v in g.items()} for g in schedule_groups] if schedule_groups else None,
         role_schema=role_schema, role_order=['leading_space','tens','units','following_token','later_1','later_2'] if role_schema else None,
         selection_trace=selection_trace,
-        supervision=('Full-answer CE for recipient total +10*(donor carry - recipient carry); balanced change/preserve batches, one shared gate, original fit split only.' if carry_rule else 'Hybrid full-answer CE: donor target digit, recipient preserved digit, newline. Fit split only.'),
-        evaluation=('One shared bounded gate at the tens role only; no answer prefix at evaluation.' if carry_rule else ('Bounded gates at each generated prefix; answer-role weights with a shared member union.' if role_schema else 'A single bounded gate is applied at every generated position; no answer prefix at evaluation.')),
+        supervision=('Full-answer CE for recipient total +10*(donor carry - recipient carry); balanced change/preserve batches on designated source fit rows. Arity participation and gain bound are recorded separately.' if carry_rule else 'Hybrid full-answer CE: donor target digit, recipient preserved digit, newline. Fit split only.'),
+        evaluation=('Carry gate at the tens role only; observed input arity selects weights when enabled. Optional nonnegative code update clips the final codes, not the donor difference. No answer prefix or carry label at evaluation.' if carry_rule else ('Bounded gates at each generated prefix; answer-role weights with a shared member union.' if role_schema else 'A single bounded gate is applied at every generated position; no answer prefix at evaluation.')),
         final_active=member_counts(fitted).cpu().tolist()), indent=2) + '\n')
     return (fitted, saved) if checkpoints is not None else fitted

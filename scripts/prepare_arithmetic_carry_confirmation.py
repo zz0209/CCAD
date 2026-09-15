@@ -9,12 +9,11 @@ ROOT=Path(__file__).resolve().parents[1]
 ART=ROOT/'artifacts/correspondence_reform_20260913'
 
 
-def main():
-    seed=9501501
+def select_canonical(seed=9501501, excluded=(), operand_stop=40):
     key=lambda x:hashlib.sha256(f'{seed}:{x}'.encode()).hexdigest()
-    triples=[x for x in itertools.combinations(range(10,40),3) if sum(x)<100]
+    triples=[x for x in itertools.combinations(range(10,operand_stop),3) if sum(x)<100]
     meta={x:(sum(x),sum(a%10 for a in x)//10) for x in triples}
-    used=set();canonical=[]
+    used=set(excluded);canonical=[]
     # Allocate the rare carry0/carry2 matches before the abundant adjacent classes.
     strata=[('carry_0_2',0,2,16),('carry_1_2',1,2,16),('carry_0_1',0,1,16),
             ('preserve_c0',0,0,6),('preserve_c1',1,1,5),('preserve_c2',2,2,5)]
@@ -45,6 +44,12 @@ def main():
             count+=1
             if count==n:break
         assert count==n,(label,count)
+    return canonical,used-set(excluded),meta
+
+
+def main():
+    seed=9501501
+    canonical,used,meta=select_canonical(seed)
     templates=['12+23=35\n34+12=46\n{a}+{b}+{c}=',
         'Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b} plus {c}? A:']
     rows=[];lookup={}

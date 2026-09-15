@@ -7,12 +7,19 @@ from datetime import datetime, timezone
 import numpy as np
 
 
-def main(run,output,seeds_filter=None):
+def main(run,output,seeds_filter=None,arity_filter=None):
     status=json.loads((run/'status.json').read_text());assert status['status']=='PASS'
     raw=run/'metrics.raw.jsonl';rows=[json.loads(s) for s in raw.read_text().splitlines()]
     baseline=[r for r in rows if r['kind']=='base']
     rows=[r for r in rows if r['kind']=='rule_intervention' and (seeds_filter is None or r['seed'] in seeds_filter)]
-    panel=json.loads((run/'RULE_PANEL.json').read_text());expected={(p['recipient'],p['condition']):p for p in panel['pairs']}
+    panel=json.loads((run/'RULE_PANEL.json').read_text())
+    if arity_filter is not None:
+        assert arity_filter in [2,3]
+        rows=[r for r in rows if len(r['recipient_question'])==arity_filter]
+        ids={r['row_id'] for r in rows}
+        panel['pairs']=[p for p in panel['pairs'] if p['recipient'] in ids]
+        baseline=[r for r in baseline if r['row_id'] in ids]
+    expected={(p['recipient'],p['condition']):p for p in panel['pairs']}
     pair_metadata={p['component']:p for p in panel['canonical_pairs']}
     def bootstrap_weights(ids):
         labels=[pair_metadata[i].get('carry_group',pair_metadata[i].get('stratum','all')) for i in ids]
@@ -69,6 +76,26 @@ def main(run,output,seeds_filter=None):
                              ('function_ce_binary_64','field_fitted_binary_64'),
                              ('function_ce_binary_64','raw_carry_direction'),
                              ('function_ce_binary_64','function_ce_weighted_64'),
+                             ('mixed_ce_binary_64','function_ce_binary_64'),
+                             ('mixed_ce_weighted_64','function_ce_weighted_64'),
+                             ('mixed_ce_binary_64','mixed_ce_weighted_64'),
+                             ('mixed_ce_binary_64','raw_mixed_direction'),
+                             ('mixed_ce_binary_64','raw_carry_direction'),
+                             ('mixed_ce_weighted_64','raw_mixed_direction'),
+                             ('raw_mixed_direction','raw_carry_direction'),
+                             ('arity_members_64','arity_scalar_64'),
+                             ('arity_members_64','mixed_ce_weighted_64'),
+                             ('arity_members_64','function_ce_binary_64'),
+                             ('arity_members_64','raw_carry_direction'),
+                             ('arity_scalar_64','mixed_ce_weighted_64'),
+                             ('code_scalar_64','arity_scalar_64'),
+                             ('code_members_64','arity_members_64'),
+                             ('code_members_64','code_scalar_64'),
+                             ('code_scalar_64','function_ce_binary_64'),
+                             ('code_scalar_64','raw_carry_direction'),
+                             ('translated_code_64','assignment_64'),
+                             ('translated_code_64','direct_code_64'),
+                             ('translated_code_64','raw_mixed_direction'),
                              ('transferred_fitted_binary_64','assignment_64'),
                              ('transferred_fitted_binary_64','field_fitted_binary_64'),
                              ('transferred_fitted_binary_64','transferred_fitted_weighted_64'),
@@ -83,7 +110,7 @@ def main(run,output,seeds_filter=None):
     result=dict(written_at_utc=datetime.now(timezone.utc).isoformat(),run=run.as_posix(),status=status,
                 raw_sha256=hashlib.sha256(raw.read_bytes()).hexdigest(),cells=cells,per_seed=per_seed,per_stratum=per_stratum,contrasts=contrasts,
                 baseline_accuracy=float(np.mean([r['correct'] for r in baseline])),baseline_prompts=len(baseline),
-                selected_seeds=seeds,
+                selected_seeds=seeds,analysis_arity=arity_filter,
                 statistics='10,000 paired canonical-question-pair resamples within each condition and predeclared carry stratum, seed9491502; both orientations, prompt forms and dependent fixed SAE cohort remain together.',
                 scope=panel.get('scope','Exposed development; changing-carry success and same-carry preservation are separate endpoints.'))
     output.write_text(json.dumps(result,indent=2)+'\n');np.savez_compressed(output.with_suffix('.npz'),**arrays)
@@ -93,4 +120,5 @@ def main(run,output,seeds_filter=None):
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--run',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--seeds',type=int,nargs='+')
-    a=p.parse_args();main(a.run,a.output,a.seeds)
+    p.add_argument('--arity',type=int,choices=[2,3])
+    a=p.parse_args();main(a.run,a.output,a.seeds,a.arity)

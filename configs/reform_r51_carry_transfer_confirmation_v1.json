@@ -1,0 +1,129 @@
+{
+  "audit_opened": false,
+  "batch_size": 8,
+  "budget": "900driver seconds.256new prompts; source6methods plusfourtargets4methods. Two256-step field fits pertarget with256source-only pairs,512candidates,64union members,zero targetoutput gradients.",
+  "budget_seconds": 900,
+  "candidate_family_frozen": true,
+  "checkpoint_step": 16384,
+  "dataset_revision": "CCAD R51 mixedcarry metadata9511501/2/3",
+  "device": "cuda:0",
+  "evidence_level": "frozen_new_question_confirmation",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "frozen_rule_evaluation": {
+    "freeze": "artifacts/correspondence_reform_20260913/R51_TRANSFER_INPUTS.json",
+    "memberships": {
+      "1": {
+        "run": "runs/REFORM_R51_code_range_source_v1_20260915",
+        "methods": [
+          "noop",
+          "raw_carry_direction",
+          "raw_mixed_direction",
+          "function_ce_binary_64",
+          "arity_scalar_64",
+          "code_scalar_64"
+        ]
+      },
+      "2": {
+        "run": "runs/REFORM_R51_code_range_source_v1_20260915",
+        "methods": [
+          "raw_mixed_direction",
+          "assignment_64",
+          "direct_code_64",
+          "translated_code_64"
+        ]
+      },
+      "3": {
+        "run": "runs/REFORM_R51_code_range_source_v1_20260915",
+        "methods": [
+          "raw_mixed_direction",
+          "assignment_64",
+          "direct_code_64",
+          "translated_code_64"
+        ]
+      },
+      "4": {
+        "run": "runs/REFORM_R51_code_range_source_v1_20260915",
+        "methods": [
+          "raw_mixed_direction",
+          "assignment_64",
+          "direct_code_64",
+          "translated_code_64"
+        ]
+      },
+      "5": {
+        "run": "runs/REFORM_R51_code_range_source_v1_20260915",
+        "methods": [
+          "raw_mixed_direction",
+          "assignment_64",
+          "direct_code_64",
+          "translated_code_64"
+        ]
+      }
+    },
+    "panel": "artifacts/correspondence_reform_20260913/R51_TRANSFER_PANEL.json"
+  },
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "hidden_atol": 0.002,
+  "intervention_span": "generated_prefix",
+  "max_length": 96,
+  "max_new_tokens": 5,
+  "members": [
+    64
+  ],
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "operand_range": [
+    10,
+    50
+  ],
+  "pairs_per_template": 64,
+  "purpose": "Confirm the improved source rule and translate it into four independent SAE dictionaries.",
+  "reuse_rules": [],
+  "round_id": "R51",
+  "run_id": "REFORM_R51_carry_transfer_confirmation_v1_20260915",
+  "run_parent": "R51",
+  "scope": "Fresh threeoperand questions withdistinct operands10..49 andtotalbelow100, disjoint from all prior triples andsource fitting. The original10..39pool has onlyfour unused0-2canonical matches; the wider operandrange was chosen before anynewoutputs. Mixedsource coverage includes the same arity/carry classes; this tests newquestions andoperandrange, not an unseen computation. Source operation selected using sourceonly development before fourtarget fits ornewoutputs.",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "selection_rules": [],
+  "source_selection_step": {
+    "tens": 0,
+    "unit": 1
+  },
+  "split_salt": "ccad-r32-digit-source-1",
+  "statistics_unit": "Newthree48change and16preserve canonicalpairs; oldtwo32percondition; reciprocal orientations andtwoforms kept together. Report arities separately.",
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}+{c}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b} plus {c}? A:"
+  ],
+  "tens_sites": [
+    0,
+    1
+  ],
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "written_at_utc": "2026-09-15T11:13:57Z",
+  "carry_relation_fit": {
+    "source_run": "runs/REFORM_R51_code_range_source_v1_20260915",
+    "source_method": "code_scalar_64",
+    "seed": 9511504,
+    "pairs": 256,
+    "pool": 512,
+    "steps": 256,
+    "lr": 0.05
+  }
+}
