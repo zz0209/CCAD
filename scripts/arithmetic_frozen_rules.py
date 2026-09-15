@@ -51,7 +51,7 @@ def evaluate_frozen_rules(w, cfg, rows, hidden, codes, saes, generate, budget, b
             indices=None if name in ['noop','whole_state'] or raw_method else torch.tensor(stored[name],device=w.device)
             weights=torch.tensor(stored[name+'_weights'],device=w.device) if name+'_weights' in stored else None
             if indices is not None:
-                assert len(indices)<=64 and len(indices.unique())==len(indices)
+                assert len(indices)<=cfg.get('max_write_members',64) and len(indices.unique())==len(indices)
             nonnegative_update=bool(stored.get(name+'_nonnegative_update',False))
             gain_bound=float(stored.get(name+'_gain_bound',1.))
             if weights is not None:assert bool(((weights>=0)&(weights<=gain_bound)).all())
@@ -60,14 +60,31 @@ def evaluate_frozen_rules(w, cfg, rows, hidden, codes, saes, generate, budget, b
             writer=torch.tensor(stored[name+'_writer'],device=w.device) if operator else None
             read_indices=torch.tensor(stored[name+'_read_indices'],device=w.device) if name+'_read_indices' in stored else indices
             records=[]
+            native_records=[]
+            decoder_numpy=decoder.detach().cpu().numpy() if operator and operator.startswith('adaptive_') else None
             for off in range(0,len(pairs),cfg['batch_size']):
                 pp=pairs[off:off+cfg['batch_size']];ii=[p['recipient'] for p in pp];di=[p['donor'] for p in pp]
                 tens_site=torch.tensor([cfg['tens_sites'][p['template']] for p in pp],device=w.device)
+                native_cache={}
                 def patch(current,step):
                     mask=(torch.arange(step+1,device=w.device)[None,:]==tens_site[:,None])
                     if operator:
                         arities=torch.tensor([int('c' in rows[i]) for i in ii],device=w.device)
-                        if operator=='raw_to_code':
+                        if operator.startswith('adaptive_') or operator=='reencode':
+                            ready=[b for b in range(len(ii)) if step>=int(tens_site[b]) and b not in native_cache]
+                            if ready:
+                                from arithmetic_native_execution import native_rule_write
+                                bi=torch.tensor(ready,device=w.device);site=tens_site[bi]
+                                h=current[bi,site];full_z=ae.encode(h)
+                                difference=z[torch.tensor(di,device=w.device)[bi],site][:,read_indices]-full_z[:,read_indices]
+                                query=(difference*reader[arities[bi]]).sum(-1,keepdim=True)
+                                desired=query*writer[arities[bi]]
+                                realized,details=native_rule_write(ae,h,full_z,desired,decoder,decoder_numpy,operator,cfg)
+                                for b,delta,detail in zip(ready,realized,details):
+                                    native_cache[b]=(delta,detail)
+                            change=torch.zeros_like(current)
+                            for b,(delta,_detail) in native_cache.items():change[b,tens_site[b]]=delta
+                        elif operator=='raw_to_code':
                             query=((hidden[di,:step+1]-current)*reader[arities,None,:]).sum(-1,keepdim=True)
                             current_z=ae.encode(current.flatten(0,1)).reshape(len(ii),step+1,-1)[...,indices]
                             coeff=query*writer[arities,None,:]
@@ -120,8 +137,11 @@ def evaluate_frozen_rules(w, cfg, rows, hidden, codes, saes, generate, budget, b
                         unit_preserved=bool(numeric and ans[j]%10==r['unit']),
                         signed_tens_change=((ans[j]//10-r['tens'])*(d['carry']-r['carry']) if numeric else None),
                         edit_norm=float(editnorm[j]), nonnegative_update=nonnegative_update, gain_bound=gain_bound)
+                    if native_cache:
+                        native_records.append(dict(pair_offset=off+j,recipient_row=p['recipient'],donor_row=p['donor'],**native_cache[j][1]))
                     w.record(**record);records.append(record)
                 budget()
+            if native_records:write(w.run/f'{name}_native_execution.json',dict(rows=native_records,scope='Current-state native realization of a frozen source request; no output gradients or labels. Adaptive support and numeric solver costs are additional runtime work.'))
             profile={condition:dict(success=float(np.mean([r['correct'] for r in records if r['operation']==condition])),
                         unit_preserved=float(np.mean([r['unit_preserved'] for r in records if r['operation']==condition])))
                      for condition in ['same_answer_opposite_carry','same_carry_different_answer']}

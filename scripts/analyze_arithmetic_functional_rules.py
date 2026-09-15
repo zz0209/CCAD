@@ -62,7 +62,10 @@ def main(run,output,seeds_filter=None,arity_filter=None):
                     success=float(np.mean([r['correct'] for r in rr])),
                     unit_preserved=float(np.mean([r['unit_preserved'] for r in rr]))))
     contrasts=[]
-    for method,reference in [('field_fitted_weighted_64','conditional_carry_64'),
+    native_diagnostics=[(m,ref) for m in methods
+                        if m.startswith(('teacher_','adaptive_native_','reencode_native'))
+                        for ref in ['code_read_raw_write','readwrite_code_64'] if ref in methods]
+    for method,reference in native_diagnostics+[('field_fitted_weighted_64','conditional_carry_64'),
                              ('readwrite_code_64','diagonal_refit_64'),
                              ('code_read_raw_write','readwrite_code_64'),
                              ('code_read_raw_write','readwrite_raw'),

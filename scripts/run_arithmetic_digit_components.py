@@ -99,6 +99,8 @@ def main():
             sources += ['scripts/arithmetic_carry_readwrite.py','scripts/analyze_carry_readouts.py']
     if cfg.get('carry_relation_fit'):
         sources += ['scripts/arithmetic_carry_relation_fit.py','scripts/arithmetic_counterfactual_fit.py']
+    if cfg.get('native_projection_steps'):
+        sources += ['scripts/arithmetic_native_execution.py','src/ccad/native_operation.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:

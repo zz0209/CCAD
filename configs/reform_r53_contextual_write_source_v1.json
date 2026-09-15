@@ -1,0 +1,84 @@
+{
+  "audit_opened": false,
+  "batch_size": 8,
+  "budget": "At most900 driver seconds;512 exposed requests; cached current-role native solve once per pair; no model optimization.",
+  "budget_seconds": 900,
+  "candidate_family_frozen": true,
+  "checkpoint_step": 16384,
+  "dataset_revision": "CCAD R51 mixedcarry metadata9511501/2/3",
+  "device": "cuda:0",
+  "excluded_pairs": [
+    [
+      12,
+      23
+    ],
+    [
+      12,
+      34
+    ]
+  ],
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "hidden_atol": 0.002,
+  "intervention_span": "generated_prefix",
+  "max_length": 96,
+  "max_new_tokens": 5,
+  "members": [
+    64
+  ],
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "operand_range": [
+    10,
+    50
+  ],
+  "pairs_per_template": 64,
+  "purpose": "Distinguish state-constrained native realization from fixed-vector clipping and true encoder re-encoding.",
+  "round_id": "R53",
+  "run_id": "REFORM_R53_contextual_write_source_v1_20260915",
+  "run_parent": "R53",
+  "scope": "Source development with frozen64 code reader and learned raw source writer. Adaptive64/128 changed-code budgets; current full-code/dictionary access and solve time counted. No correspondence improvement claim.",
+  "seeds": [
+    1
+  ],
+  "selection_rules": [],
+  "source_selection_step": {
+    "tens": 0,
+    "unit": 1
+  },
+  "split_salt": "ccad-r32-digit-source-1",
+  "statistics_unit": "Canonicalquestion pairs with reciprocaldirections andtwoforms. Two/threeoperands separately. Development only.",
+  "templates": [
+    "12+23=35\n34+12=46\n{a}+{b}+{c}=",
+    "Q: What is 12 plus 23? A: 35\nQ: What is 34 plus 12? A: 46\nQ: What is {a} plus {b} plus {c}? A:"
+  ],
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "written_at_utc": "2026-09-15T13:02:00Z",
+  "reuse_rules": [],
+  "evidence_level": "exposed_source_participation_development",
+  "tens_sites": [
+    0,
+    1
+  ],
+  "frozen_rule_evaluation": {
+    "panel": "artifacts/correspondence_reform_20260913/R52_CROSSED_PANEL.json",
+    "freeze": "artifacts/correspondence_reform_20260913/R53_CONTEXTUAL_INPUTS.json",
+    "memberships": {
+      "1": {
+        "run": "artifacts/correspondence_reform_20260913/r53_contextual_writers_v1",
+        "methods": [
+          "readwrite_code_64",
+          "code_read_raw_write",
+          "teacher_unclipped_64",
+          "adaptive_native_64",
+          "adaptive_native_128",
+          "reencode_native"
+        ]
+      }
+    }
+  },
+  "evaluation_split": "development",
+  "max_write_members": 128,
+  "native_projection_steps": 1200,
+  "native_projection_tolerance": 1e-05
+}
