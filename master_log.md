@@ -8453,3 +8453,27 @@ R58图表、全部请求/目标比较、素材表已写paper附录F.2；引言�
 交付：R59_REPORT.md、R59_CLOSEOUT.json、R59_RUN_INVENTORY.json、R59_REPLAY_INDEX.json与R59_CONFIRMATION_ANALYSIS.json均在artifacts/correspondence_reform_20260913/。paper/README、CLAIM_MAP、EVIDENCE_INDEX及data/figure manifest已更新。原稿和入口逐字归档，新结果前快照r59_story_before_confirmation_results/MANIFEST.json、本次入口归档r59_metadata_before_closeout_20260915T212440Z/MANIFEST.json；旧数据和主张保留。
 
 下一步：先基于当前完整稿与最近邻原文评估整条科学贡献和可懂性，优先实现现有证据的完整价值。新计算须回答具体核心主张缺口，不默认再开writer/支持/raw胜负搜索。本轮是科学确认和成稿完成，不是整篇strong accept认证；主会目标、FCC母问题和原loop保持。此COMPLETE之后才更新tracker完成计数及清除运行状态。
+
+
+## MANUSCRIPT_ASSESSMENT_R59 START — 让独立部分证据回答具体解释判断
+
+实际写入UTC：2026-09-15T21:37:24Z；unit_id=MANUSCRIPT_ASSESSMENT_R59，不计R60。heartbeat事件2026-09-15T21:35:02.247Z；阅读已开始于触发之后，精确研究起点未独立计时，以本条作为可核实工作单元起点。当前完整50页稿已交付且R59全部计算完成，本单元先比较整篇贡献与最近邻原文，再决定是否需要实验，不默认新GPU工作。
+
+实际动作：读当前主文/理论及先前近邻方法记录，两项指定writing skills；定向查看R59全部三个注释部分的原始分析单元，未再计算模型输出或统计区间。机会是把93.35%的保真指标接回人能理解的旧判断：代词、姓名、关联词分别被删除后，源解释预期怎样改变职业分类。所有部分/方法/目标保留，不挑单一好例子。阅读侧核查因果抽象与原有feature/circuit功能评价已经支持哪些主张，避免把通用faithfulness重新命名。新版本若改善呈现，仍作为现有证据重述；无新增科学轮计数。
+
+预算与归档：短CPU阅读/已有结果导出/编译/渲染，无GPU、训练、下载大型模型或新付费。原稿与关键入口逐字归档artifacts/correspondence_reform_20260913/manuscript_assessment_after_r59_20260915T213724Z/MANIFEST.json。当前loop保持5分钟；工作卡接续整稿评估，完整有效工作和等待未知，不以短写作更新冒充实质研究轮。
+
+
+## MANUSCRIPT_ASSESSMENT_R59 COMPLETE — 将部分保真接回旧解释的具体判断
+
+实际写入UTC：2026-09-15T21:55:47Z；unit_id=MANUSCRIPT_ASSESSMENT_R59，START记录2026-09-15T21:37:24Z。本单元为现有证据分析、最近邻原文比较和完整成稿，不计R60；最后完成科学单元仍为R59。各项工作、计算重叠和等待未分别计时，未知，无新模型事件。
+
+主Table3并列全部三注释部分、五种方法的固定职业准确率，使部分预测指标对应人可理解的旧判断。源代词/姓名删除的差17.52点，几何0.26点，成员关系9.86点；这是原确认单元的描述性对比，没有新增主要终点、检验、选择或显著性主张。原冻结主要结果与强对照不改。五种方法三部分均值与原aggregate逐项一致，原R59_CONFIRMATION_ANALYSIS.json SHA256=b9fe413bf3e221a936f8965740581215d1cd8555a1e23be39095311fcb6a84b7保持。
+
+实际核对Geiger JMLR因果抽象定义41/48、Hanna EAP-IG方法与faithfulness实验、SemanticOT替换测试/语义分组/Algorithm1及SharedSAE功能注入实验。引言与Related Work据此明确既有干预保真和积分响应基础，将本稿增量落在字典改变后继续使用旧部分预测与选择。两项指定writing skills落实为具体正面判断、主表与结论，去掉重复范围句和研究经历，不把通用方法重新命名。未要求单算法或raw不可替代性。读取Hanna v3返回404后改读官方v2；PDF skill旧缓存路径失败后使用实际可用版本。
+
+当前唯一paper/main.pdf SHA256=f7337097ac8812bf9459351fd42142b39514591201f9aa3db41ef644ab7ad402，655125bytes，50页（7正文+2引用+41附录），4主图3主表。新增面板一度产生短尾页，删除重复表述恢复7页正文，未缩字或隐去证据。全稿联系图及改动主文/引用页阅读尺寸已查看，无可见截断；编译无未定义引用或横向溢出，参考页约1.18/1.26pt vbox警告保留。代码仅修改scripts/shift_confirmation_paper.py已有结果导出，短语法与聚焦身份检查PASS。一次收尾inline Python整体解析失败、无文件写入，拆成短调用后完成。没有新GPU工作、训练、模型评估、安装、大型下载或付费。
+
+交付定位：artifacts/correspondence_reform_20260913/MANUSCRIPT_ASSESSMENT_R59.md与MANUSCRIPT_ASSESSMENT_R59_CLOSEOUT.json记录整稿判断、原文读取及14份最终文件身份；主文/主表、human_part_profiles.json、README、CLAIM_MAP、EVIDENCE_INDEX及data manifest更新。REFERENCE_REGISTRY记录来源和实际借鉴。改前入口逐字归档manuscript_assessment_after_r59_20260915T213724Z/MANIFEST.json；旧R59报告与closeout不重写。
+
+下一科学机会：现有关系先按decoder几何取候选，再拟合源作用。借鉴已有activation-weighted context/Sinkhorn检索，在同源资料、自然状态、最终成员预算及功能拟合下，检验能否找回几何遗漏的组成并改善原部分判断。已查看现有实现，避免32768平方全距离路径；启动时量化活动和成本，先一个已暴露开发目标，有信号再决定新数据确认。没有启动R60，也不把该机会设为当前结论必须跨越的新门。整篇尚未宣布达到strong accept，目标不变，原ccad同对话ACTIVE5分钟。本条完成后更新tracker，随后按白名单同步。

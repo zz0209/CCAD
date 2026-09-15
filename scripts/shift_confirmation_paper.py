@@ -24,14 +24,37 @@ def main():
     (PAPER / 'data/human_part_predictions_confirmation.json').write_text(json.dumps(d, indent=2) + '\n')
     cohort = d['new_target_seed_cohort']
     # Main table places use and fidelity side by side on the independent panel.
-    main_lines = [r'\begin{tabular}{lrrr}\toprule', r' & Profession & Part & Worst\\',
+    main_lines = [r'\begin{tabular}{lrrr}\toprule',
+                  r'\multicolumn{4}{l}{(a) Mean over annotated parts}\\\addlinespace',
+                  r' & Profession & Part & Worst\\',
                   r'Method & accuracy & prediction & group\\\midrule']
     for key, label in METHODS:
         values = [cohort[key + '/parts'][metric]['value'] * 100
                   for metric in ['profession', 'balanced_agreement', 'worst_group']]
         main_lines.append(label.replace('Source-direction readout', r'Source-dir.\ readout') +
                           ' & ' + ' & '.join(f'{x:.2f}' for x in values) + r'\\')
+    main_lines.extend([r'\midrule',
+                       r'\multicolumn{4}{l}{(b) Profession accuracy after deleting each part}\\\addlinespace',
+                       r'Method & Pronouns & Names & Words\\\midrule'])
+    part_profiles = {}
+    for method, label in METHODS:
+        part_profiles[method] = {
+            query: float(np.mean([
+                d['per_target_seed'][str(seed)]['cells'][method + '/' + query]['profession']['value']
+                for seed in range(2, 6)]))
+            for query in ['pronouns', 'names', 'associated_words']}
+        values = [100 * part_profiles[method][q] for q in part_profiles[method]]
+        main_lines.append(label.replace('Source-direction readout', r'Source-dir.\ readout') +
+                          ' & ' + ' & '.join(f'{x:.2f}' for x in values) + r'\\')
     main_lines.append(r'\bottomrule\end{tabular}')
+    profile_export = {
+        'source': str(path.relative_to(ROOT)),
+        'source_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+        'target_seeds': [2, 3, 4, 5],
+        'profession_accuracy': part_profiles,
+        'scope': 'Descriptive means of all three predefined parts and all methods from the frozen R59 results; no new model calls, statistical test, selection or confirmation claim.'}
+    (PAPER / 'data/human_part_profiles.json').write_text(
+        json.dumps(profile_export, indent=2) + '\n', encoding='utf-8')
     write_table('human_part_confirmation_main', main_lines)
     # Every individual target, query and method is retained, including seed1.
     lines = [r'\begin{longtable}{llrrrrr}', r'\toprule',
