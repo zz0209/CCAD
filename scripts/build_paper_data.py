@@ -477,7 +477,7 @@ def main():
         claims.append(dict(id='task_free_source_profile_fidelity',paper='Source-profile fidelity appendix',
             result='Development on exposed grammar pairs: target encoder-response memberships and contribution/decoder baselines preserve frozen source intervention profiles without task gradients; the new coefficient has no established advantage over those correspondence controls. Raw regression and dynamic reencoding remain separate execution references.',
             evidence=[crun+f for f in ['config.resolved.json','status.json','inputs.json','code_hashes.json','metrics.raw.jsonl','code_response_results.json','RELATION_FREEZE.json','fit_rows.npz']]+[str(code_response_summary.relative_to(root)).replace(chr(92),'/'),'scripts/code_response_correspondence.py','scripts/code_response_analysis.py','paper/sections/code_response_details.tex']))
-    for name in ['arithmetic_evidence.json','arithmetic_identity_evidence.json','arithmetic_source_learning_evidence.json','arithmetic_response_evidence.json','arithmetic_positions_evidence.json','arithmetic_source_roles_evidence.json','arithmetic_objectives_evidence.json','arithmetic_member_queries_evidence.json','arithmetic_query_confirmation_evidence.json','arithmetic_role_queries_evidence.json','arithmetic_part_doses_evidence.json','binding_components_evidence.json','binding_execution_evidence.json']:
+    for name in ['arithmetic_evidence.json','arithmetic_identity_evidence.json','arithmetic_source_learning_evidence.json','arithmetic_response_evidence.json','arithmetic_positions_evidence.json','arithmetic_source_roles_evidence.json','arithmetic_objectives_evidence.json','arithmetic_member_queries_evidence.json','arithmetic_query_confirmation_evidence.json','arithmetic_role_queries_evidence.json','arithmetic_part_doses_evidence.json','arithmetic_response_execution_evidence.json','binding_components_evidence.json','binding_execution_evidence.json']:
         arithmetic_evidence=out/'data'/name
         if arithmetic_evidence.is_file():
             claims.append(json.loads(arithmetic_evidence.read_text()))
@@ -493,7 +493,7 @@ def main():
     # Main-text reading order. All earlier claims remain in the complete index.
     current_ids=['arithmetic_equivalent_source_transfer','role_conditioned_source_functions',
         'member_resolved_query_prediction','independent_member_query_confirmation',
-        'functional_part_execution_dependence','semantic_binding_member_requests',
+        'functional_part_execution_dependence','response_based_part_execution','semantic_binding_member_requests',
         'semantic_request_native_execution','source_conditioned_finite_response_correspondence',
         'independent_functional_structure_and_union_use','external_functional_queries',
         'functional_response_queries','task_free_source_profile_fidelity','operation_and_native_equivalence']

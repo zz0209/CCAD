@@ -7598,3 +7598,60 @@ Next method opportunity in this same source-request line: transfer the binding l
 唯一当前稿paper/main.pdf：65页/主文8/参考2，SHA256 c3086e3d44ace9bff61c710ada1122987f05691080296a7f5c25559cf93b07fc；57bib条目、41实际引用。R43_REPORT、R43_RUNS/COST、R43_FOCUSED_CHECK/FINAL_CHECK、R43_LITERATURE_NOTES、R43_WRITING_VISUAL_REVIEW及R43_DELIVERY给完整定位。两writing skills落实到摘要/Introduction/4.2/Figure3/4.3/Discussion/Conclusion及README；当前主张阅读列表收拢为13项，所有历史claim保留。所有65页contact及修改页实际查看，图例重叠已修；已有参考balance1.35298pt警告实际无裁切。旧图/文/README在r43_role_figure_before，旧入口/plan在r43_before_20260915T001728Z。当前tracker此前逐字归档artifacts/correspondence_reform_20260913/r43_tracker_before_complete_20260915T012258Z.md，SHA256 be1167cc2aa8e12edae4844c44c0b13991d920861ddc27884f679efd9661e05c。
 
 整篇strong accept目标仍未达成，本COMPLETE仅指实际研究单元完成。原ccad ACTIVE/5分钟、当前对话直接执行继续；未转交agent，R44尚未START。先写本COMPLETE再推进tracker，随后对已核对的白名单代码/配置/master_log成组同步；被忽略论文与原始资料本地保留。
+
+
+## R44 START — 保存源请求的输出响应
+
+实际写入UTC：2026-09-15T01:32:04Z；round_id=R44。入口读取最早可证实事件2026-09-15T01:30:03.2129879Z，正式工作登记为本块。R43表明直接成员系数在新剂量下丢失源响应、Euclidean非负投影在算术中失去功能，而source-amplitude readout更稳定。本轮正结果机会：以该readout执行后的完整词表响应为目标，在固定target bank/成员预算内求解代码，并保留请求的源成员索引。每个实际生成prefix更新执行，不重新学习SAE或使用正确答案前缀。
+
+先对现有原始bank和新方法做小型真实生成，比较原member、sparse/raw readout、Euclidean及response projection。初始预算2400driver秒，先300秒pilot，用实测决定确认规模；无购买/下载大型资产/新训练。已有R35固定教师强制prefix梯度拟合不替代本轮当前自由生成prefix的完整响应匹配，e2e SAE输出KL是明确先例，不能声称新发明该损失。原文、官方源码与机制/路径变化一并阅读和比较。真正未见请求的确认在方法有信号后冻结；原R43结果不重置成独立。
+
+本轮继续两指定writing skills，数学/实现/文献/真实结果/稿图共同推进；统一方法是否成立需由算术和binding的实际结果支持，不先扩展新任务。主线母问题与strong accept目标不变。旧入口/稿源逐字归档artifacts/correspondence_reform_20260913/r44_before_20260915T013204Z/MANIFEST.json。当前无活动CCAD计算，GPU约1.3GB显示占用；正式GPU计算走共享lease。有效研究/等待精确时长未单独测量。
+
+
+## R44 PROGRESS — 2026-09-15T01:41:50Z
+
+实际写入UTC：2026-09-15T01:41:50Z。pilot事件2026-09-15T01:35:35.019208Z至01:38:47.724510Z，192.6794012 driver秒、118.765625 process CPU秒、15280 sequence/794560 token forwards。8暴露question clusters、两form、source1→target2；部分balanced一致率native66.00、response74.00、member70.72、sparse76.00、raw80.72%。完整units native81.25→response100，source100；tens6.25→12.5，source37.5。平均当前prefix KL .024739→.001732，60次求解/720 backward batches/53.0675 solver秒。结果是开发信号。
+
+已读Braun et al.原文2.2–2.5/3节与官方losses.py：输出KL属于成熟目标，当前改动是将同一源部分请求在自由生成当前prefix的响应投影进固定目标bank，不能把KL本身称首创。下一步冻结24clusters、两新exact上下文/旧operands、五依赖SAE方向，同时测试原/norm请求；主检验为相对member的跨剂量balanced一致率，native/sparse/raw全部保留。R44_RESPONSE_FREEZE.json记文件hash、主终点与统计单位；预算2100driver秒。
+
+
+## R44 PROGRESS — 2026-09-15T01:59:20Z
+
+实际写入UTC：2026-09-15T01:59:20Z。确认run实际START以status.json为准，当前仍在原冻结方法上执行。独立完成输出KL/当前prefix求解推导、源答案统计分析器和源响应—目标执行共图代码，尚未读取确认的科学结果或生成新结果图。阅读Braun/Gerasimov/HyperTransport/HyperSteer/VISTA原始方法及RAVEL公开数据接口，转为成本可复用与相关属性功能判断的后续机会；详见R44_LITERATURE_NOTES。
+
+发现新图脚本误复用了已存在的R35 arithmetic_response_paper.py文件名；运行或提交前已按HEAD恢复原文件，将新脚本命名arithmetic_response_execution_paper.py。R44_EXPORTER_RESTORE.json记录，无实验或已有图表受影响。下一项小型简化检验事先记在R44_SCALAR_DECISION.json：仅重放8个已暴露pilot问题，以每位置单幅度/非负裁剪比较逐成员优化，预算190driver秒；当前确认结束之前不编辑其driver/module。主检验与统计口径保持冻结。
+
+
+## R44 PROGRESS — 运行等待与稿件组装
+
+实际写入UTC：2026-09-15T02:08:06Z；round_id=R44。确认run仍RUNNING，事件进度以其progress.json为准：{"elapsed": 1552.2519702999998, "members": 64, "method": "response_code_part0_bank0_norm", "operation": "unit", "process_cpu_seconds": 1325.609375, "seed": 5, "sequence_forwards": 194080, "stage": "SOURCE_PATCH", "token_forwards": 10092160, "written_at_utc": "2026-09-15T02:08:00.123364+00:00"}。未读取确认科学结果。已完成冻结分析器、源部分执行与目标响应共同主图导出器、证据索引接入及附录算法/信息预算说明；未生成结果图或宣称确认成功。新scalar pilot配置仅重放暴露开发面板并复用同输入原始基线，代码切换必须等当前确认结束。配置准备时一次KeyError来自旧native条目无name字段，写文件前改用get；未影响任何计算或数据。
+
+继续核对RAVEL原始metric和instance生成接口，已确认cause/isolate平均方式、entity/context独立split及源上下文类型，现有MIT适配可复用；本轮不新增RAVEL实验证据。后续改革机会是把源响应保留学成可复用的请求映射，并在有实质保护难度的语义消费者检验，而非持续追加算术模板或用运行时求解的局部收益冒充完整对应贡献。先完成当前确认、简化检验与唯一稿件后再进入下一单元。
+
+原tracker逐字保留于artifacts/correspondence_reform_20260913/r44_tracker_progress_20260915T020806Z.md，SHA256 ee9d5b44b3ab5bbf75469f4c68eef020585dd9e789f1fbb7df69bc808fd0d672。本阶段没有新模型/训练/付费资源，GPU只由当前确认lease持有；有效工作与等待时间未分别计时。本条为阶段进度，不能替代R44 COMPLETE。
+
+
+## R44 PROGRESS — 确认运行的吞吐变化
+
+实际写入UTC：2026-09-15T02:15:52Z；round_id=R44。运行后段每response单元由约30秒变为约69秒；02:15:13Z已1985.18driver秒，最后target1仍未完成，冻结预算2100秒。科学结果尚未读取。事先决定如触及时间限制，保留原FAIL与已写raw，以相同driver/solver/数据/统计只接续未完成请求；本单元本地预算调整为3400driver秒，接续最多650、scalar最多350，无新付费/模型/训练。R44_EXECUTION_CONTINUATION_DECISION.json保存决策。若原超时未导出求解诊断，明确报告缺失，不从未记录值推断KL或伪造完整诊断。
+
+
+## R44 PROGRESS — 用户要求本步骤完成后暂停
+
+实际写入UTC：2026-09-15T02:23:15Z；round_id=R44。用户明确要求当前步骤完成后暂停loop并让出硬件，待其通知恢复。接续确认run仍在执行；将完成已冻结剩余请求后释放GPU并原位暂停ccad，随后只做结果和现有稿件的轻量整理。不启动预记的scalar pilot或下一GPU实验；该简化检验保留为未运行待办，不计作成果。暂停是用户资源安排，非科学达标或项目终止。
+
+
+## R44 COMPLETE — 输出响应确认与用户硬件暂停
+
+实际写入UTC：2026-09-15T02:43:10Z；round_id=R44。最早可证实工作事件2026-09-15T01:30:03.2129879Z，START写入01:32:04Z；最后计算于2026-09-15T02:26:55.752617Z结束，当前块在结果、稿件和检查整理完成后写入。有效研究/计算外等待时间未单独测量。本COMPLETE是已完成确认与稿件checkpoint；用户要求暂停后，预记scalar简化检验明确延期、没有执行或计作成果。
+
+冻结24question clusters、两新exact上下文/已暴露operands、五依赖SAE方向：原/norm请求等权主比较response-member +5.5580[1.9207,9.2454]points，相对同bank Euclidean +4.2842[2.8897,5.7285]。原强度76.38对member79.12；norm78.51对64.65。raw86.38/88.59、sparse76.16/77.90全部保留。完整units source236/240、raw235/240、member238/240、sparse185/240、response186/240；损失主要已出现在当前64输入readout。恢复后优先检验读取信息范围与实际写入预算解耦，并完成已预记简化检验；没有宣称新KL算法、普遍替代member或整篇strong accept达标。
+
+原确认因2100秒预算在2102.65秒FAIL；在看结果前登记原方法接续，538.26秒PASS，304缺失干预补齐。16944唯一干预加1024重复准备baseline完整；原迭代诊断未在超时前导出，缺失原样保留。3进程（含pilot）总2833.5952driver秒、2393.015625process CPU秒、273120sequence/14202240token forwards。无新训练/模型/环境/付费资源。分析器兼容历史grammar panel字段后完成统计，未改主终点。
+
+两writing skills落实到摘要、引言、4.2/Figure3、binding桥接及合并后的Discussion and conclusion。新响应结果与上游损失一同入主文，完整H/T/P、求解及计算在附录。paper-compile复用现有Tectonic，当前67页/主文8/参考2/附录57，57bib/42引用；PDF SHA256 cd9df6174e3afbe7c8c0673ee4c80b753dc57b30e26d1cc5b7f44d9f23ac87ff。全67页contact与修改页实际查看，后续编译归一化文本和抽查像素一致；参考balance0.775pt无可见裁切，无缺图/未定义引用。当前研究模板未被表述为正式会议格式验收。
+
+阅读Braun原文/官方loss实现、Gerasimov干预与幅度处理、HyperTransport/HyperSteer可复用成本、VISTA消费者与RAVEL官方接口；记录在R44_LITERATURE_NOTES/REFERENCE_REGISTRY，未将只读摘要或无许可代码当采用。R44_REPORT、DELIVERY、COST、FOCUSED_CHECK、PAUSE及r44_arithmetic_response_confirmation给定位；原FAIL和历史稿源全部保留。阶段入口归档r44_before_close_20260915T023836Z/MANIFEST.json。
+
+ccad已原位PAUSED，目标仍为当前对话；02:27:40Z核实gpu-0无owner且free，两个执行会话均已结束。仅在用户明确通知后恢复，不自动启动下一实验。此后更新tracker与轮次索引并对白名单代码/配置/master_log成组commit/push；论文与原始资料按既有范围本地保留。

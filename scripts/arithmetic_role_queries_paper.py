@@ -105,6 +105,9 @@ def main():
     if (ART/'r43_arithmetic_dose_transfer.json').exists():
         import arithmetic_dose_paper
         arithmetic_dose_paper.main()
+    if (ART/'r44_arithmetic_response_confirmation.json').exists():
+        import arithmetic_response_execution_paper
+        arithmetic_response_execution_paper.main()
 
 
 if __name__=='__main__':main()

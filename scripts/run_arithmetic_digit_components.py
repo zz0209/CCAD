@@ -82,6 +82,8 @@ def main():
         sources += ['scripts/arithmetic_readout_queries.py']
     if cfg.get('native_readouts'):
         sources += ['scripts/adaptive_native_execution.py']
+        if any(n.get('response_steps') for n in cfg['native_readouts']):
+            sources += ['scripts/native_response_projection.py']
     w=MultisiteWork(cfg,args.config,sources)
     error=None
     try:
@@ -133,7 +135,7 @@ def main():
         def budget():
             if time.perf_counter()-w.wall_start>cfg["budget_seconds"]:raise TimeoutError("Arithmetic source development budget")
         trajectory=cfg.get("intervention_span")=="generated_prefix"
-        def generate(indices,delta=None,patch=None):
+        def generate(indices,delta=None,patch=None,response=None):
             padded=indices+[indices[0]]*(batch-len(indices));ids=torch.full((batch,padding),tok.eos_token_id,device=w.device,dtype=torch.long)
             mask=torch.zeros_like(ids);pos=[]
             for j,i in enumerate(padded):
@@ -160,7 +162,21 @@ def main():
                     for step in range(cfg["max_new_tokens"]):
                         length=physical_length
                         output=model(ids[:,:length],attention_mask=mask[:,:length],use_cache=False)
-                        logits=output.logits[ix,pos+step];nxt=logits.argmax(-1)
+                        logits=output.logits[ix,pos+step]
+                        if response is not None:
+                            from native_response_projection import refine
+                            assert len(indices)==batch
+                            handle.remove()
+                            try:
+                                logits,realized,diagnostic=refine(model,module,ids[:,:length],mask[:,:length],
+                                    pos[:,None]+torch.arange(step+1,device=w.device)[None,:],pos+step,logits,
+                                    response['decoder'],response['initial'],response['lower'],response['field'],w,
+                                    steps=response['spec']['response_steps'],lr=response['spec']['response_lr'],
+                                    field_anchor=response['spec'].get('field_anchor',0.))
+                                response['diagnostics'].append(dict(step=step,**diagnostic))
+                                cache['edit_norm']=realized.flatten(1).norm(dim=1)
+                            finally:handle=module.register_forward_hook(hook)
+                        nxt=logits.argmax(-1)
                         nxt=torch.where(finished,torch.full_like(nxt,tok.eos_token_id),nxt);finished|=nxt==tok.eos_token_id;generated.append(nxt)
                         ids[ix,pos+step+1]=nxt;mask[ix,pos+step+1]=1
                         w.sequence_forwards+=batch;w.token_forwards+=batch*length
@@ -404,6 +420,7 @@ def main():
                 if all((seed,method,operation,off+j) in completed_keys for j in range(len(pp))):
                     continue
                 patch=None
+                response=dict(spec=native,diagnostics=[]) if native and native.get('response_steps') else None
                 if raw_trajectory:patch=lambda current,step:h[donors,:step+1]-current
                 elif readout is not None:
                     ae=saes[seed]
@@ -428,6 +445,7 @@ def main():
                             from adaptive_native_execution import realize
                             assert readout['kind']=='activation'
                             bank=readout['indices'];decoder=ae.decoder.weight.T[bank]
+                            source_field=field
                             field,coeff,indices,diagnostic=realize(field,difference,decoder,
                                 members=k,steps=native['steps'],refine_steps=0,
                                 batch_size=128,candidate_limit=len(bank),
@@ -437,6 +455,11 @@ def main():
                                 min_edited_code=float((target_current[...,bank].gather(-1,indices)+coeff).min()),
                                 max_changed_members=int((coeff!=0).sum(-1).max()))
                             native_diagnostics.append(diagnostic)
+                            if response is not None:
+                                initial=torch.zeros_like(target_current[...,bank]).scatter(-1,indices,coeff)
+                                response.update(initial=initial,lower=-target_current[...,bank],
+                                                field=source_field,decoder=decoder)
+                                return source_field
                         return field
                 elif gate is not None:
                     ae=saes[seed]
@@ -465,7 +488,9 @@ def main():
                             if dose.get('nonnegative',False):
                                 change=torch.maximum(change,-current_code)
                         return change@ae.decoder.weight.T
-                ans,txt,hh,norm=generate(ix,deltas[off:off+len(pp)] if deltas is not None else None,patch)
+                ans,txt,hh,norm=generate(ix,deltas[off:off+len(pp)] if deltas is not None else None,patch,response=response)
+                if response is not None:
+                    response_diagnostics.append(dict(seed=seed,method=method,operation=operation,offset=off,records=response['diagnostics']))
                 replay=float(((hh[:,0]-h[ix,0]) if trajectory else (hh-h[ix])).abs().max());assert replay<cfg["hidden_atol"],replay
                 for j,p in enumerate(pp):
                     if (seed,method,operation,off+j) in completed_keys:
@@ -480,6 +505,7 @@ def main():
                              recipient_carry=p["recipient_carry"],donor_carry=p["donor_carry"],generated_text=txt[j],hidden_replay_error=replay,edit_norm=float(norm[j]))
                 budget()
             w.progress("SOURCE_PATCH",seed=seed,method=method,members=k,operation=operation)
+        response_diagnostics=[]
         ii=[p["recipient"] for p in pairs];jj=[p["donor"] for p in pairs]
         evaluate(0,"no_edit",0,"unit",None)
         if trajectory:
@@ -521,10 +547,17 @@ def main():
                 if seed not in native['seeds'] or rule not in native['rules']:
                     continue
                 for operation,data in operations.items():
-                    evaluate(seed,rule.replace('activation_readout','native_code'),k,operation,None,readout=data,native=native)
+                    evaluate(seed,rule.replace('activation_readout',native.get('name','native_code')),k,operation,None,readout=data,native=native)
+                for dose in native.get('doses',[]):
+                    if rule in dose['rules']:
+                        for operation,data in operations.items():
+                            evaluate(seed,rule.replace('activation_readout',native.get('name','native_code'))+'_'+dose['name'],k,operation,None,readout=data,native=native,dose=dose)
         if native_diagnostics:
             write(w.run/'NATIVE_EXECUTION.json',dict(records=native_diagnostics,
-                scope='Fixed target bank, source-amplitude request prediction, nonnegative target code updates at every generated prefix. No output fitting.'))
+                scope='Euclidean initial solutions in a fixed target bank, with nonnegative target code updates. For response_code methods these initialize additional output fitting recorded in RESPONSE_EXECUTION.json.'))
+        if response_diagnostics:
+            write(w.run/'RESPONSE_EXECUTION.json',dict(records=response_diagnostics,
+                scope='Current-prefix source-readout output distillation into target codes. Runtime model outputs and gradients are used; no correct task answers are supplied.'))
         w.checks.update(source_selection_only_fit_data=True,donor_changes_both_digits=True,real_generation_no_answer_prefix=True,all_failed_base_cases_retained=True)
         if not any(cfg.get(k) for k in ["relation_transfer","response_relation","position_relation","adaptation","frozen_adaptation","member_queries"]):
             w.checks["no_target_used"]=True
