@@ -1,0 +1,40 @@
+{
+  "device": "cuda:0",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "run_id": "IR01_infinitive_covered_dev_v1_20260916",
+  "run_parent": "INDEPENDENT_REUSE_01",
+  "generator_script": "scripts/run_published_parts.py",
+  "purpose": "Separate context coverage from geometric-candidate readout bottleneck in a fixed published functional explanation.",
+  "panel": "artifacts/independent_reuse_20260916/IR01_evaluation_panel.json",
+  "source_parameters": "artifacts/morning_reform_20260916/independent_circuit_reading/source_parts.npz",
+  "methods": [
+    "none",
+    "source",
+    "native",
+    "geometry_gain",
+    "geometry",
+    "raw",
+    "raw_full",
+    "raw_reconstruction"
+  ],
+  "target_seed": 2,
+  "seeds": [
+    2
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "evidence_level": "controlled_development",
+  "budget": "One target, <=600driver seconds, same existing model; no training/download.",
+  "budget_seconds": 600,
+  "dataset_revision": "researcher-controlled-development-v1",
+  "statistics_unit": "Paired verb/noun context families, development only",
+  "threshold_source_split": "Four fixed published SFC Figure18 source features, selected before outputs",
+  "scope": "Development diagnostic. Four fixed source members, old8-target execution, candidate/full-code readouts and reconstruction readout; no new confirmation or output fitting.",
+  "functional_weight": 0.0,
+  "fit_panel": "artifacts/independent_reuse_20260916/IR01_fit_panel.json"
+}

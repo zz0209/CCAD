@@ -46,15 +46,21 @@ def main():
     cmap={c['comparator']:c for c in contrasts}
     font_manager.fontManager.addfont('C:/Windows/Fonts/times.ttf')
     with plt.rc_context({'font.family':'Times New Roman','font.size':9,'mathtext.fontset':'stix','axes.linewidth':.6,'pdf.fonttype':42,'svg.fonttype':'none'}):
-        fig,ax=plt.subplots(figsize=(6.8,2.7 if extra else 2.25))
-        fig.subplots_adjust(left=.29,right=.975,top=.91,bottom=.22)
-        for i,name in enumerate(selected):
-            c=cmap[name];v=c['difference_points'];lo,hi=c['interval_points']
-            color='#286956' if name in ['assignment','two_assignment','raw','activation'] else '#755882'
-            ax.errorbar(v,i,xerr=[[v-lo],[hi-v]],fmt='o',color=color,markersize=4,capsize=2,linewidth=1)
-        ax.axvline(0,color='#888888',linewidth=.7)
-        ax.set(yticks=range(len(selected)),yticklabels=[labels[n] for n in selected],xlabel='Member-field gain in balanced answer agreement (points)')
-        ax.invert_yaxis();ax.spines[['top','right','left']].set_visible(False);ax.tick_params(axis='y',length=0)
+        fig=plt.figure(figsize=(6.8,2.25))
+        axes=[fig.add_axes([.255,.24,.315,.62]),fig.add_axes([.79,.24,.19,.62])]
+        groups=[selected[:-2],selected[-2:]]
+        for ax,names,title,color in zip(axes,groups,
+                ['(a) Correspondence and readout','(b) Query checks'],['#286956','#755882']):
+            for i,name in enumerate(names):
+                c=cmap[name];v=c['difference_points'];lo,hi=c['interval_points']
+                ax.errorbar(v,i,xerr=[[v-lo],[hi-v]],fmt='o',color=color,markersize=4,capsize=2,linewidth=1)
+            ax.set(yticks=range(len(names)),yticklabels=[labels[n] for n in names],ylim=(len(names)-.6,-.4))
+            ax.set_title(title,fontsize=9,pad=9,loc='left')
+            ax.spines[['top','right','left']].set_visible(False);ax.tick_params(axis='y',length=0)
+        axes[0].axvline(0,color='#888888',linewidth=.7)
+        axes[0].set_xlim(-8,19);axes[0].set_xticks([-5,0,5,10,15])
+        axes[1].set_xlim(24,36);axes[1].set_xticks([25,30,35])
+        fig.supxlabel('Member-field gain in balanced answer agreement (points)',fontsize=9,y=.04)
         for ext in ['pdf','svg','png']:
             fig.savefig(PAPER/f'figures/arithmetic_query_confirmation.{ext}',dpi=220,facecolor='white')
         plt.close(fig)

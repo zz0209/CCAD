@@ -29,18 +29,20 @@ def main():
                   analysis_sha256=hashlib.sha256(a.analysis.read_bytes()).hexdigest(),
                   **data)
     (exports/'human_new_tasks.json').write_text(json.dumps(export, indent=2)+'\n')
-    head = r'''\begin{tabular}{lrrrr}\toprule
-& \multicolumn{2}{c}{Full program} & \multicolumn{2}{c}{Parts}\\
-& Acc. & Worst group & Acc. & Agreement\\\midrule
+    head = r'''\begin{tabular}{lrrrrr}\toprule
+& \multicolumn{2}{c}{Full program} & \multicolumn{3}{c}{Parts}\\
+& Acc. & WG & Acc. & WG & Agreement\\\midrule
 '''
     rows = []
     for m in METHODS:
         r = results[m]
         acc = [100*r['full']['profession']['mean'],
                100*r['full']['worst_group']['mean'],
-               100*r['parts_mean']['profession']['mean']]
+               100*r['parts_mean']['profession']['mean'],
+               100*r['parts_mean']['worst_group']['mean']]
         b = '--' if m == 'none' else f"{100*r['parts_mean']['balanced_source_agreement']['mean']:.2f}"
-        rows.append(f'{LABELS[m]} & {acc[0]:.2f} & {acc[1]:.2f} & {acc[2]:.2f} & {b}'+r'\\')
+        label = 'Source-dir. readout' if m == 'raw' else LABELS[m]
+        rows.append(f'{label} & {acc[0]:.2f} & {acc[1]:.2f} & {acc[2]:.2f} & {acc[3]:.2f} & {b}'+r'\\')
     (tables/'human_new_task_main.tex').write_text(head+'\n'.join(rows)+'\n'+r'\bottomrule\end{tabular}'+'\n')
     lines = [r'\begin{tabular}{llrrrrrrrr}\toprule',
              r'& & \multicolumn{2}{c}{Full program} & \multicolumn{3}{c}{Part accuracy} & \multicolumn{3}{c}{Part mean}\\',

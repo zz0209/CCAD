@@ -1,0 +1,36 @@
+{
+  "device": "cuda:0",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "run_id": "IR01_infinitive_confirm_t5_v2_20260916",
+  "run_parent": "ir01_infinitive_confirm_t5_v1",
+  "generator_script": "scripts/run_published_parts.py",
+  "purpose": "Confirm the published predicate/object explanation on new contexts and 12 previously unused member requests. Numerical zero-column correction replay.",
+  "panel": "artifacts/independent_reuse_20260916/IR01_CONFIRMATION_PANEL.json",
+  "source_parameters": "artifacts/morning_reform_20260916/independent_circuit_reading/source_parts.npz",
+  "methods": [
+    "none",
+    "source",
+    "native_response_relation",
+    "native_response_relation_8"
+  ],
+  "target_seed": 5,
+  "seeds": [
+    5
+  ],
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "evidence_level": "frozen_new_context_and_request_confirmation",
+  "budget": "Four target dictionaries sequentially; <=900 total driver seconds, <=8GB extra VRAM. Existing assets, no training/download. Scale based on measured six development runs.",
+  "budget_seconds": 300,
+  "dataset_revision": "ir01-authored-context-confirmation-v1",
+  "statistics_unit": "Crossed verb and noun clusters, target seeds; all templates and query repeats paired; fixed source explanation.",
+  "threshold_source_split": "Four fixed published SFC Figure18 source features, selected before outputs",
+  "scope": "Four fixed public source coordinates; fixed natural fit for old baselines, no target continuation fit. Full signed finite relation and tangent relation share exact source access and target-native execution. Eight-member variants choose input-dependent support before q; global and dynamic sparsity kept distinct.",
+  "functional_weight": 0.0,
+  "relation_run": "runs/IR01_infinitive_confirm_t5_v1_20260916"
+}
