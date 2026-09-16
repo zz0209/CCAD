@@ -99,7 +99,7 @@ def plan():
         for p in morning.iterdir():
             if p.is_file() and p.suffix in {'.md', '.json', '.py'}:
                 add(p)
-        for folder in ['before', 'before_restructure', 'before_figure', 'before_r05_paper', 'before_final_entries']:
+        for folder in ['before', 'before_restructure', 'before_figure', 'before_r05_paper', 'before_final_entries', 'before_final_package_entries']:
             if (morning / folder).is_dir():
                 for p in (morning / folder).rglob('*'):
                     if p.is_file() and p.suffix in {'.md', '.json', '.tex', '.pdf', '.py', '.bib', '.bbl', '.svg', '.csv', '.png'}:
