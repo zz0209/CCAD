@@ -8585,3 +8585,43 @@ Report and identities: artifacts/final_wrap_20260915/ROUND2_REPORT.md, ROUND2_CL
 ## FINAL_WRAP_2_OF_2 POST_DELIVERY — original loop paused
 
 Actual write UTC: 2026-09-15T23:56:55Z. Official automation_update updated existing ccad to PAUSED; verified persisted status, original target thread and unchanged5-minute schedule. Configuration/prompt/history retained, no duplicate loop. Record: artifacts/final_wrap_20260915/AUTOMATION_PAUSE.json. Tracker now2/2 complete and paused for user manual review. ROUND2_CLOSEOUT identities refreshed after the final manual-review link was added; immutable ZIP identities remain unchanged. Supplemental verification/closing notes are explicitly outside the construction snapshots. No upload or additional experiment. Final whitelist Git sync follows this record.
+
+
+## PREPRINT_UPLIFT_1_OF_1 START
+
+Actual write UTC: 2026-09-16T01:27:58Z. User authorized one additional bounded unit after final wrap to read the shared comparison, address omissions, strengthen the whole paper against Reproducible Subspaces and PW-MCC, and self-review text/figures for defensive framing. The earlier unconsumed extra-unit permission is used by this unit, not banked as another automatic future round. Current50-page manuscript and editable/data/figure/entry files archived byte-for-byte at artifacts/preprint_uplift_20260916/before_20260916T012758Z/MANIFEST.json. BasePDF SHA2560f0ea652f1be7861ee1cb25ce850b768a1fce4ce72e9dbbd213f86c578dafaf0.
+
+Read supplied chat https://chatgpt.com/s/cx_6aa9ef9bb96c8191959c6bc1a90d1746 through the in-app browser after web fetch failed; full visible conversation includes the reviewer correcting asymmetric method-necessity standards. Shared discussion is an input, not experimental evidence. Browser export unsupported; reading succeeded. Actual reading began earlier this turn; exact start before this log unknown.
+
+Positive opportunity: make the demonstrated preservation of intervention judgments a portable, coherent scientific object and show concretely what whole-edit validation misses. Read nearest original theory/experiments/figures and current argument before selecting any supplementary analysis. No repeated writer/candidate search. Existing test results remain frozen; any supplementary analysis on them is explicitly post hoc. This unit includes mathematical connection, useful analysis if justified, full text/visual revision and updated deliverable. No GPU/model run selected yet; short CPU/read/plot budget first, no paid resources. Original automation remains PAUSED while this foreground unit executes; finish once and retain pause for manual review.
+
+
+## PREPRINT_UPLIFT_1_OF_1 PROGRESS — a shared full/part check across two studies
+
+Actual write UTC: 2026-09-16T01:45:10Z. New analysis directly pairs full and part answers on the same frozen cases. Human common set:1446/1503/1484/1497 documents across targets2–5, all four methods' full answers equal source. At-least-one-part-error: geometry27.36%, calibrated12.99%, relation10.65%, source-direction readout9.89%; relation versus calibrated reduction2.34[0.65,3.99]points. Arithmetic common set:711of1280 full cases,2844case/partition pairs; assignment errors1319(46.38%), relation1003(35.27%), reduction11.11[8.04,14.39]points. Original raw-row scalar joins independently reproduce every acceptance and error count; output FULL_PART_CHECKS.json, RAW_JOIN_CHECK.json, SOURCE_INPUTS.json. This is post-hoc joint-outcome analysis, not a new independent confirmation or changed primary endpoint.
+
+Rebuilt the main argument around preserving the source's intervention distinctions. Figure1 now explains a real full/part divergence and both paired checks; Binding retains its actual example and full comparison table beside its use. Removed duplicate Binding chart from the main text and moved the intact source-role plot to the arithmetic appendix. Abstract/intro/method purposes/conclusion form one positive argument; all raw, calibrated, mean and conditional controls remain. New AppendixH records accepted populations, comparisons and uncertainty. Current51-page PDF,7main+2references+42appendix, SHA256b90f2dac55a8502e9abb9937df4dea2187649d723775d1d532cf2b30656fe964. Intermediate52-page spill retained in build records; condensed repeated text and duplicate display without font reduction.
+
+Timestamp correction: the START block's01:27:58Z value was captured before archiving687files; exact append time after that copy was not separately captured and is unknown. Treat01:27:58Z as verified operation-start time, not exact master-log write time. This correction preserves the earlier text. Initial visual example mapping was checked against original select_rows before rendering: label1 is nurse; the generated figure uses this verified mapping. No model/GPU/new download, two-thread CPU analysis. Source-copy bytes and individual activity/wait split were not separately measured.
+
+## PREPRINT_UPLIFT_1_OF_1 PROGRESS — 2026-09-16T01:58:13Z
+
+实际写入UTC：2026-09-16T01:58:13Z。已完成同案例完整/部分分析、原始行核对及51页新稿。新结果见artifacts/preprint_uplift_20260916/FULL_PART_CHECKS.json；计数原始核对见RAW_JOIN_CHECK.json；输入hash见SOURCE_INPUTS.json。所有比较使用同一接受案例，人工联合文档/target bootstrap、算术问题/分区bootstrap；事后身份明确，不修改R59/R39原确认与主终点。
+
+主文重构、首图和Binding实例图已完成；PDF SHA256 b90f2dac55a8502e9abb9937df4dea2187649d723775d1d532cf2b30656fe964，51页（7主文/2参考/42附录）。实际查看了全51页contact版及第一页、第五页、第七页和附录H的阅读尺寸图；无遮挡/截断，参考文献保留既有1.13148pt vbox提示。按用户提醒检查了文字、图注和图中表达，正面叙述核心判断并保留raw/mean/conditional结果。
+
+报告、同行比较、主张索引、当前数据/图manifest、plan及reference registry已更新。旧DATA_MANIFEST含4个字符串条目，初次维护脚本按字典读取而中止；改用兼容读取后完成，仅添加本轮身份，原记录保留。一次apply_patch因对同一路径同时delete/add而在验证期拒绝，随后直接更新现有文件；无数据损失。上述维护错误未影响实验或分析结果。下一步是新包迁址编译/分析复算与成组同步，无GPU/新模型作业。事件结束时间尚未到达；有效工作与工具计算/等待不能从墙钟精确分解，最终记录将如实区分。
+
+## PREPRINT_UPLIFT_1_OF_1 COMPLETE — 2026-09-16T02:05:18Z
+
+实际写入UTC：2026-09-16T02:05:18Z。可证实工作开始2026-09-16T01:27:58Z，实质工作完成2026-09-16T02:05:18Z；墙钟约37.34分钟，有效工作与等待未精确分离，不把墙钟全记作研究或计算。已完成用户追加的一轮，先前收尾2/2保持完成，此单轮完成后计数1/1，不自动新增轮次。
+
+选择理由与科学结果：完整和部分平均分尚不能直观说明同案例分离。本轮比较PW-MCC/Subspaces原文及用户共享讨论后，对已有冻结输出实施共同完整答案匹配条件下的部分检查。人工几何/校准/关系/readout部分错误27.36/12.99/10.65/9.89%；算术assignment/关系46.38/35.27%，配对减少11.11[8.04,14.39]点。原始行计数独立复核一致。该联合分析为已暴露数据的post-hoc结果，原独立确认和冻结主终点不变。没有新增模型运行或独立确认。
+
+稿件：摘要、引言、首图、§3.1及结论按共同检查与知识复用收拢；真实人类案例和Binding请求图已审阅，source角色图完整移至附录。两项指定写作skills落实到实际文本和图文，删除不必要否定转折，强raw/mean/conditional比较保留。当前唯一paper/main.pdf共51页，SHA256 b90f2dac55a8502e9abb9937df4dea2187649d723775d1d532cf2b30656fe964。整篇贡献按问题、真实干预判断及使用收益呈现；录用概率和自评分未作为达标证据。
+
+交付：delivery/preprint_20260916/包含源包86文件和伴随包4560文件；4646项迁址解压hash全匹配，原20260915包及改前687文件归档保留。新源包离开原paper目录编译成功，51页逐页文字/72dpi像素均一致；新分析在解压伴随包重算，人类与算术对象及172数值字段完全一致。报告、输入/结果/图manifest、CLAIM_MAP、EVIDENCE_INDEX、plan、registry与人工审阅入口已同步。最终科学/包身份见artifacts/preprint_uplift_20260916/CLOSEOUT.json；打包后关闭记录保留在包外，包内日志为打包时快照。
+
+资源：无GPU/推理/训练，无付费/下载/安装；新分析两BLAS线程。打包与2.3GB解压经disk-e-io租约，租约已释放；解压hash24.19秒，迁址编译2.53秒，迁址分析工具墙钟1.87秒。其余阅读、分析设计、原始计数、文字图版和维护耗时不伪造精确拆分。保留本轮过程错误及时间勘误于此前PROGRESS。
+
+下一步：本轮白名单代码/日志成组commit/push，完成身份记录到SYNC_RECEIPT.json；用户人工审阅当前稿与完整包。原ccad automation继续PAUSED，无硬件作业，无实际公开提交。论文及历史研究材料本地保留，不扩大Git白名单。
