@@ -8711,3 +8711,52 @@ Full result/selection/report: artifacts/morning_reform_20260916/R01_REPORT.md, N
 ## MORNING_REFORM_02 START — written_at_utc 2026-09-16T07:36:17Z
 
 This unit starts now after R01 COMPLETE. Rationale: confirm the same human explanation→new-dictionary parts→new classifier use chain on four unused profession pairs and target dictionaries2–5. Freeze and all configurations already written before any test outputs. Allocate four sequential gpu-0 jobs,2400s cap each, expected~80min from actual development throughput; concurrent local manuscript/statistical work stays in this conversation. No model/SAE/method selection on test. Deliver a coherent result and replace the interim development main-table, retaining all controls and failed refinements. Deadline13:30Z; final integration window begins12:20Z at latest.
+
+## MORNING_REFORM_02 PROGRESS — 整理证据与论文层级
+实际写入UTC：2026-09-16T07:53:54Z。事件：当前四目标确认仍顺序运行，seed2处于COLLECT，未读取新test数值；无新增模型选择。将旧country-conditioned binding执行器、在线算术读写求解细节及重复开发图退出当前PDF；原52页稿和三份改动源逐字归档于artifacts/morning_reform_20260916/before_restructure/MANIFEST.json。新编译42页，SHA2566f7672a919ed71bfc16a63d49edddf73035aa7bb8144424b3e30a8d479832d20；仍有1.85pt竖向溢出待最终排版。决定结论的raw、剂量、role-scalar和group-fit对照保留。此为组织改善，不记新增科学结果。
+统计代码加入跨target重复source/none一致性断言，防止共享基准时掩盖差异；不改变07:30冻结终点或模型运行。新增代码/配置与此前完整R01记录已成组同步828bab635146788cecaa04b20a8067ce1e80bc48，核对当时HEAD=origin/main。MIB官方大学存档可读，正在核对其功能效用/行为保真区分，避免把已有概念重新命名为新贡献。有效工作与GPU计算并行，独占工作时长未知；继续确认及统一主文和图表。
+
+MORNING_REFORM_02 PROGRESS；实际写入UTC：2026-09-16T07:57:30Z。一次读取progress.json恰逢RESULT阶段，显示seed2/native/associated_words/painter_poet_orientation0单格结果，事件输出时间07:55:08.613557Z。冻结未变、无模型选择；后续进度读取只提取stage/计数/时间，完成后统一分析四目标。新任务31820份train/test文本均无token长度等于2048，故当前面板未截断；确认数据与原始文字保留。新任务论文protocol草稿reuse_new_tasks.tex已写，数值待完整确认，尚未插入主稿。
+
+MORNING_REFORM_02 PROGRESS；实际写入UTC：2026-09-16T08:17:13Z。分析实现补齐07:30冻结的secondary：pronouns-minus-names的总体/各职业对配对区间，并保留两个混杂方向的准确率。未读取四目标完整比较，未新增最优请求选择。主图展示旧固定头确认中的同一传记例子，包含真实原文的明确省略、四个part/full输出与全样本所有对照；图源data/full_part_display_example.json，旧图保留before_figure。HEAD_SENSITIVITY_PLAN.json冻结的是设计；脚本增加既有artifact helper所需component标识后再保存执行快照，不改变头配方。新增来源阅读与主文重组继续，资源仍优先供原四目标确认。
+
+## MORNING_REFORM_02 PROGRESS — scientific consumer and manuscript organization
+
+Actual write UTC: 2026-09-16T08:36:04Z. Observable work since the 08:15 progress entry: audited the new-task driver, frozen head recipe and paired analysis; implemented paper exports for all four task pairs and all comparison methods in scripts/shift_new_tasks_paper.py (syntax check passed). Its figure displays the predeclared pronoun-minus-name judgment with paired intervals, without selecting tasks from their outcomes. Confirmation aggregate outcomes have not yet been read; target4 is still running and target5 remains queued in the same process. No additional language-model experiment was launched.
+
+Manuscript: a fresh 42-page compilation succeeded, SHA256 3e63f77fb2461cf95abcbb50131cfbe2277a5169d4fe4803da77dbff90252433. Viewed its eight-page contact sheet at artifacts/morning_reform_20260916/layout/current/contact.png; the first figure still appeared on page4. Moved its source to the opening so the wide illustration can appear on page2, and grouped grammar response/union evidence with binding response reuse. Exact prior main text is archived in before_restructure/reuse_main_before_response_reorder.tex, SHA256 5b3dd21a676c951c4d7b3330d767dee3603e259679f4a906490685f15b5bcd72. These edits improve the explanatory order and are not new scientific results. The new-task main subsection still labels the current numbers as development; it will be replaced only after all four frozen confirmations and their aggregate analysis complete.
+
+Resource use: one existing gpu-0 sequence, small CPU document rendering and syntax checks; no new installation or external resource. Useful reading/writing overlapped inference; exclusive work versus waiting duration is not independently measured. Next: finish four-target confirmation, perform the already fixed cached-head sensitivity check, and use the resulting complete evidence to rewrite the abstract, introduction and conclusion together.
+
+## MORNING_REFORM_02 PROGRESS — focused paper and complete comparisons
+
+Actual write UTC: 2026-09-16T08:51:44Z. Inspected all 41 currently rendered pages through full-manuscript contact sheets and the main-page renders in artifacts/morning_reform_20260916/layout/reordered/. The opening empirical example now appears on page2. Moved the source-role figure beside its source-function protocol. The carry source-learning/writer-search appendix has exited the current PDF; its exact source and the prior main.tex are preserved with hashes in before_restructure/support_history_manifest.json, and the underlying runs remain untouched. The exact read/write counterexample and the strong source-direction controls remain in the main paper. Historical negative results have not been reclassified as successes.
+
+Rechecked actual R59 fitting code: geometry assigns two unused nearest-decoder members per source, calibrated geometry fits one gain per assigned pair from the same source responses, and structured readout uses all candidates and source decoder directions. The main manuscript now states these operations and the public ReLU-source/controlled-TopK-target distinction directly. This clarifies what the new-task comparison tests.
+
+A transient compile failure at08:41 was caused by CRLF duplication in an editorial text move; restored the archived source and reapplied the same logical edit with normalized newlines. Build at08:42 succeeded (PDF SHA256 8c058b3c4aad6a22bfa0e1f3efece655ee9355e4f2c1126dec3423c2ad84913f); no experimental file or outcome changed. Two small balance-layout warnings remain for the final layout pass.
+
+The paper exporter is prepared to show all six methods, full accuracy/worst group, mean-part accuracy/agreement, and every part's accuracy in all four task pairs. It uses the frozen confirmation analysis once all four runs finish. Source-reference equality, request masks, data ordering and classifier training were checked against the actual driver. No new target output has been used for selection. Target4 passed at08:35:32.182361Z; target5 is completing associated-word interventions. CPU-heavy and disk-e-io are free for the subsequent analysis and previously fixed head check. Current raw files are about178MB per completed target; analysis will take a cpu-heavy lease. No substantive new round is counted from this progress update.
+
+
+## MORNING_REFORM_02 COMPLETE — written_at_utc 2026-09-16T09:22:08Z
+
+实际开始07:36:17Z；四目标模型运行结束08:55:14.180954Z；缓存头复核结束09:02:18.609004Z；本轮最终稿编译09:20:31Z。本轮确认同一旧人工解释与冻结关系在4个新职业对/两个混杂方向/4,096篇test上的用途。完整准确率relation88.44与calibrated geometry88.56；部分准确率优势4.53[3.91,5.29]pp，最差组12.33[10.28,14.51]pp，部分保真5.60[4.95,6.26]pp。预声明的部分减完整准确率contrast4.66[4.01,5.45]pp。所有方法、原固定头负差、R01失败和raw强结果保留。源码、阶段身份、数据排除与联合文档/seed统计见R02_REPORT.md和R02_RUN_INVENTORY.json。
+
+四GPU确认共4727.00driver秒；同数据固定6初始化×1/4epoch缓存复核367.04秒、0新模型前向，原552cells logits精确重现。资源正常释放；阅读/计算/稿件并行，独占工作与等待时长未知。当前44页paper/main.pdf SHA256 a17f0341baa9ac07d8b423f02db9e70a04b30a906c20b8ba4def18a22196d3d8，8页主文，主图/§3.2与摘要结论统一，历史52页稿和移出支线有逐字归档。主文及两页新协议不是新增参数搜索。
+
+数字勘误：此前聊天/临时稿4.54pp源于对4.534912109375pp二次舍入；按原始值应为4.53pp，当前文本/图已统一，原统计与区间未变。原历史不改写。下一工作单元从完整论文和可采用性出发完成客观同行比较、证据索引与交付；这次实际结果不自动证明达到Strong Accept或整体超过SFC。先记本COMPLETE，再更新tracker。
+
+
+## MORNING_REFORM_03 START — written_at_utc 2026-09-16T09:23:20Z
+
+R02 COMPLETE已先写入。此单元围绕整篇科学论证和实际采用开展：复核同一人工解释→跨字典完整/部分预测→新任务用途是否在数学、方法、统计、图文中自足，按SFC/Subspaces/PW-MCC实际贡献链比较；更新当前证据索引与复现说明，构建并迁址检查通用预印本与研究伴随包。新方法/实验须解决具体核心缺口，不能因剩余时间自动追加局部搜索。所有现有模型作业已结束，本单元目前无GPU队列。5分钟原heartbeat继续，13:30Z交付截止不变。
+
+当前PDF a17f0341baa9ac07d8b423f02db9e70a04b30a906c20b8ba4def18a22196d3d8，共44页，8页主文。旧tracker逐字留于artifacts/morning_reform_20260916/tracker_after_r02.md，hash e97c4f2b37928b22d9eae95319f89c8392549f1d44e8d6ec320556f556a8dd4b。工作与后续审阅记录实际时间；不把文档维护当科学结果，也不以主观评分宣称达标。
+
+
+## MORNING_REFORM_03 PROGRESS — written_at_utc 2026-09-16T09:34:16Z
+
+阅读全文数学/方法/新任务消费者与同行论证后形成R03_ARGUMENT_REVIEW.md。当前中心由同一人工解释贯穿原分类器、新字典和新任务，另两类研究承担后来请求与成员选择；原比较强项按原文保留，不将SFC/PW-MCC/Subspaces描述成稻草人。新任务统计及所有头配方已重新读取保存结果复算，除实际写入时间外全字段精确相同，证据R03_REPLAY_CHECK.json；无新模型推理。只给分析器新增防覆盖输出保护，原估计器与冻结源码保留。
+
+主文图2现为主要用途差与源功能判断并排，位于第5页，全部方法/各任务数值在主表及E.2。逐页查看44页contact及主要新页面，未见遮挡或裁切。纸面两处轻微vbox警告没有对应可见溢出。当前PDF ddcf9b91cb8156461f74fa95dc047d395c32423c2240f6c9bc97b04cc733a2e4。CLAIM_MAP与README已更新，旧文件逐字归档。接着同步证据清单及实际复现包。

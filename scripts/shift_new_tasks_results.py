@@ -15,6 +15,8 @@ def main():
     p.add_argument('--seed', type=int, default=20260916)
     p.add_argument('--classifier', default='retrained', choices=['retrained', 'frozen'])
     a = p.parse_args()
+    if a.output.exists():
+        raise FileExistsError(f'Keep retained results unchanged; choose a new output: {a.output}')
     rows, identities, specs = {}, [], {}
     for run in a.runs:
         raw = run/'metrics.raw.jsonl'
@@ -37,6 +39,17 @@ def main():
     pairs = sorted({n.rsplit('_orientation', 1)[0] for n in specs})
     source_seed = min(k[3] for k in rows if k[1] == 'source')
     clean_seed = min(k[3] for k in rows if k[1] == 'none')
+    # The source program and unedited model do not depend on the target SAE.
+    # Verify repeated evaluations before sharing them across target comparisons.
+    for key, row in rows.items():
+        task, method, operation, target, probe, document = key
+        if method not in ['source', 'none']:
+            continue
+        reference_seed = source_seed if method == 'source' else clean_seed
+        reference = rows[task, method, operation, reference_seed, probe, document]
+        assert row['prediction'] == reference['prediction'], (key, 'target-dependent reference')
+        assert abs(row['logit']-reference['logit']) < 2e-5, (key, 'reference logit mismatch')
+        assert (row['label'], row['gender']) == (reference['label'], reference['gender'])
     arrays, strata, counts, changed_counts = {}, {}, {}, {}
     for pair in pairs:
         tasks = [pair+f'_orientation{o}' for o in [0, 1]]
@@ -88,11 +101,14 @@ def main():
 
     observed, by_pair = measure()
     rng = np.random.default_rng(a.seed)
-    samples = []
+    samples, pair_samples = [], []
     for _ in range(a.bootstrap):
         draws = {pair: [rng.choice(ix, len(ix), replace=True) for ix in strata[pair]] for pair in pairs}
-        samples.append(measure(rng.integers(len(seeds), size=len(seeds)), draws)[0])
+        mean, per_pair = measure(rng.integers(len(seeds), size=len(seeds)), draws)
+        samples.append(mean)
+        pair_samples.append(per_pair)
     samples = np.array(samples)
+    pair_samples = np.array(pair_samples)
     names = ['profession', 'worst_group', 'balanced_source_agreement']
     result = {}
     for mi, method in enumerate(methods):
@@ -120,10 +136,28 @@ def main():
             value = (observed[mi, 1:]-observed[ci, 1:]).mean(0)-(observed[mi, 0]-observed[ci, 0])
             sample = (samples[:, mi, 1:]-samples[:, ci, 1:]).mean(1)-(samples[:, mi, 0]-samples[:, ci, 0])
             interactions[key] = {n: dict(mean=float(value[j]), ci95=np.quantile(sample[:, j], [.025, .975]).tolist()) for j,n in enumerate(names)}
+    # The old explanation's pronoun-versus-name judgment is a predeclared
+    # secondary endpoint. Retain its complete task profiles, not selected cases.
+    request_contrasts, direction_accuracy = {}, {}
+    pr, na = queries.index('pronouns'), queries.index('names')
+    for mi, method in enumerate(methods):
+        delta = observed[mi, pr]-observed[mi, na]
+        draw_delta = samples[:, mi, pr]-samples[:, mi, na]
+        request_contrasts[method] = dict(
+            mean={n: dict(mean=float(delta[j]),ci95=np.quantile(draw_delta[:,j],[.025,.975]).tolist())
+                  for j,n in enumerate(names)},
+            by_pair={pair: {n: dict(mean=float(by_pair[pi,mi,pr,j]-by_pair[pi,mi,na,j]),
+                                   ci95=np.quantile(pair_samples[:,pi,mi,pr,j]-pair_samples[:,pi,mi,na,j],
+                                                    [.025,.975]).tolist())
+                            for j,n in enumerate(names)} for pi,pair in enumerate(pairs)})
+    for pair, (pred, labels) in arrays.items():
+        accuracy = (pred == labels).mean(axis=(2,3,5))
+        direction_accuracy[pair] = {method: accuracy[mi].tolist() for mi,method in enumerate(methods)}
     output = dict(written_at_utc=datetime.now(timezone.utc).isoformat(), classifier=a.classifier,
                   source_paths=identities, methods=methods, target_seeds=seeds, probe_seeds=probes,
                   task_pairs=pairs, profession_gender_counts=counts, source_changed_counts=changed_counts,
                   results=result, contrasts=contrasts, part_minus_full_interactions=interactions,
+                  pronouns_minus_names=request_contrasts, by_direction_accuracy=direction_accuracy,
                   by_pair={pair: {m: by_pair[i,j].tolist() for j,m in enumerate(methods)} for i,pair in enumerate(pairs)},
                   bootstrap=a.bootstrap, bootstrap_seed=a.seed,
                   inference='Fixed task-pair cohort and source explanation; jointly resample target seeds and documents within each profession/gender stratum, sharing draws across methods, requests, orientations and classifier seeds. Average classifier seeds; task pairs are not treated as independent directions. A one-target development interval contains document uncertainty only.',

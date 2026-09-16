@@ -1,0 +1,133 @@
+{
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "device": "cuda:0",
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "run_id": "MORNING_R02_cached_head_sensitivity_v1_20260916",
+  "run_parent": "MORNING_REFORM_02",
+  "purpose": "Test whether the frozen explanation reuse remains useful under classifier initialization and longer optimization.",
+  "generator_script": "scripts/shift_cached_head_check.py",
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "threshold_source_split": "Original head learning rate.01/batch128; seeds0-4 plus original42 and1/4epochs fixed before aggregate new-task outcomes. No test-dependent choice.",
+  "statistics_unit": "Fixed task/target/head cohorts; show every epoch and head seed. Paired documents and target seeds for primary remain unchanged.",
+  "seeds": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "target_seed": 2,
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "fit_sequences": 128,
+  "fit_batch_sequences": 8,
+  "neighbors_per_source": 16,
+  "members_per_source": 2,
+  "fit_iterations": 1200,
+  "ridge": 0.001,
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "eval_batch_size": 16,
+  "methods": [
+    "none",
+    "source",
+    "geometry",
+    "geometry_gain",
+    "native",
+    "raw"
+  ],
+  "queries": [
+    "full",
+    "pronouns",
+    "names",
+    "associated_words"
+  ],
+  "budget_seconds": 900,
+  "budget": "At most900driver seconds after primary inference; cached-state read under disk-e-io and gpu-0. No model inference or relation fitting; under1GB working memory.",
+  "scope": "Supplementary robustness on the same four-task confirmation cohort. Frozen old source and relations; six head initializations and1/4epochs. Original seed42 one-epoch endpoint remains primary. No recipe selected by these outcomes.",
+  "functional_weight": 0.99,
+  "context_response": true,
+  "relation_run": "runs/REFORM_R59_shift_confirm_seed2_v1_20260915",
+  "evaluation_panel": "artifacts\\morning_reform_20260916\\NEW_TASKS_CONFIRMATION.json",
+  "evaluation_split": "test",
+  "probe_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    42
+  ],
+  "probe_lr": 0.01,
+  "probe_batch_size": 128,
+  "evidence_level": "supplementary_fixed_recipe_sensitivity",
+  "training_panel": "artifacts\\morning_reform_20260916\\NEW_TASKS_CONFIRMATION.json",
+  "tasks": [
+    {
+      "name": "accountant_architect_orientation0",
+      "negative": 0,
+      "positive": 1,
+      "orientation": 0
+    },
+    {
+      "name": "accountant_architect_orientation1",
+      "negative": 0,
+      "positive": 1,
+      "orientation": 1
+    },
+    {
+      "name": "dentist_physician_orientation0",
+      "negative": 6,
+      "positive": 19,
+      "orientation": 0
+    },
+    {
+      "name": "dentist_physician_orientation1",
+      "negative": 6,
+      "positive": 19,
+      "orientation": 1
+    },
+    {
+      "name": "filmmaker_photographer_orientation0",
+      "negative": 9,
+      "positive": 18,
+      "orientation": 0
+    },
+    {
+      "name": "filmmaker_photographer_orientation1",
+      "negative": 9,
+      "positive": 18,
+      "orientation": 1
+    },
+    {
+      "name": "painter_poet_orientation0",
+      "negative": 14,
+      "positive": 20,
+      "orientation": 0
+    },
+    {
+      "name": "painter_poet_orientation1",
+      "negative": 14,
+      "positive": 20,
+      "orientation": 1
+    }
+  ],
+  "confirmation_freeze": "artifacts/morning_reform_20260916/NEW_TASK_CONFIRMATION_FREEZE.json",
+  "input_runs": [
+    "runs/MORNING_R02_new_tasks_seed2_v1_20260916",
+    "runs/MORNING_R02_new_tasks_seed3_v1_20260916",
+    "runs/MORNING_R02_new_tasks_seed4_v1_20260916",
+    "runs/MORNING_R02_new_tasks_seed5_v1_20260916"
+  ],
+  "panel": "artifacts/morning_reform_20260916/NEW_TASKS_CONFIRMATION.json",
+  "epochs": [
+    1,
+    4
+  ],
+  "sensitivity_plan": "artifacts/morning_reform_20260916/HEAD_SENSITIVITY_PLAN.json"
+}

@@ -91,6 +91,19 @@ def plan():
     for p in (ROOT / 'artifacts/final_wrap_20260915').iterdir():
         if p.is_file() and p.suffix in {'.md', '.json'}:
             add(p)
+    # The morning confirmation has its own pre-data freezes, consumer panel,
+    # recipe checks and retained editorial versions. Include those records,
+    # while keeping page-render previews and third-party PDFs outside the pack.
+    morning = ROOT / 'artifacts/morning_reform_20260916'
+    if morning.is_dir():
+        for p in morning.iterdir():
+            if p.is_file() and p.suffix in {'.md', '.json', '.py'}:
+                add(p)
+        for folder in ['before', 'before_restructure', 'before_figure']:
+            if (morning / folder).is_dir():
+                for p in (morning / folder).rglob('*'):
+                    if p.is_file() and p.suffix in {'.md', '.json', '.tex', '.pdf', '.py'}:
+                        add(p)
     # Companion material preserves run inputs and original source versions, even
     # when a claim index records only its derived result table.
     for c in claims:
