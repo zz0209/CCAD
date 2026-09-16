@@ -15,6 +15,7 @@ import traceback
 from run_causalgym_multisite import MultisiteWork, write
 from run_shift_explanation import source_groups
 from train_shift_dictionaries import site_module
+from run_shift_transfer import input_member_delta
 import numpy as np
 
 
@@ -25,7 +26,8 @@ def main():
     cfg = json.loads(args.config.read_text())
     sources = ['scripts/run_shift_retraining.py', 'scripts/run_shift_explanation.py',
                'scripts/train_shift_dictionaries.py', 'scripts/run_causalgym_multisite.py',
-               'scripts/run_r011s1_raw_hook_asset.py', 'src/ccad/artifacts.py']
+               'scripts/run_r011s1_raw_hook_asset.py', 'src/ccad/artifacts.py',
+               'scripts/run_shift_transfer.py']
     work = MultisiteWork(cfg, args.config, sources)
     hooks, error = [], None
     try:
@@ -59,10 +61,14 @@ def main():
             sae.requires_grad_(False)
             targets[site] = sae
             relation_names = list(dict.fromkeys(['native', 'geometry', 'geometry_gain', 'raw', 'candidates']+
-                                               [m for m in cfg['methods'] if m not in ['source', 'none']]))
+                                               [m for m in cfg['methods'] if m not in ['source', 'none','raw_reconstruction'] and not m.startswith('input_')]))
             relations[site] = {name: torch.tensor(frozen[site+'__'+name], device=work.device,
                                                   dtype=torch.long if name == 'candidates' else torch.float32)
                                for name in relation_names}
+        if cfg.get('fixed_basis_run'):
+            basis=np.load(work.checked(Path(cfg['fixed_basis_run'])/'fixed_response_basis.npz'))
+            for site in source['members']:
+                params[site]['fixed_response_basis']=torch.tensor(basis[site],device=work.device)
         source_run = Path(cfg['frozen_source_run'])
         panel = json.loads(work.checked(cfg.get('training_panel', str(source_run/'panel.json'))).read_text())
         train = [r for r in panel['rows'] if r['split'] == 'train']
@@ -96,6 +102,11 @@ def main():
                 if method == 'source':
                     z = torch.relu((h-s['center']) @ s['encoder'].T+s['encoder_bias'])
                     h = h-(z*q) @ s['decoder']
+                elif method.startswith('input_') or method=='raw_reconstruction':
+                    if bool(q.any()):
+                        delta,_=input_member_delta(h,targets[site],s,q,method,
+                                                   cfg['members_per_source']*len(q),mask)
+                        h=h+delta
                 elif method != 'none':
                     t, r = targets[site], relations[site]
                     z = t.encode(h)
@@ -158,18 +169,38 @@ def main():
                                                 for name,x in task_indices.items()})
         clean_heads = {}
         summary = {}
+        cache_paths = [Path(p) for p in cfg.get('feature_cache_runs', [])]
+        if cfg.get('feature_cache_run'):
+            cache_paths.append(Path(cfg['feature_cache_run']))
         for query in cfg['queries']:
             for method in cfg['methods']:
                 if method == 'none' and query != 'full':
                     continue
                 key = method+'__'+query
-                if method == 'none' and not multi_task:
+                cache=next((p for p in cache_paths if (p/(key+'__train.npy')).exists()
+                            and (p/(key+'__evaluation.npy')).exists()),None)
+                cached=cache is not None
+                if cached:
+                    previous=json.loads(work.checked(cache/'config.resolved.json').read_text())
+                    for field in ['source_parameters','target_directory','target_seed','relation_run','evaluation_split']:
+                        assert str(previous[field]).replace('\\','/')==str(cfg[field]).replace('\\','/'),field
+                    membership=json.loads(work.checked(cache/'panel.json').read_text())
+                    assert membership['train_documents']==[r['document_sha256'] for r in train]
+                    assert membership['rows']==evaluation
+                    if method.startswith('input_'):
+                        assert previous['members_per_source']==cfg['members_per_source']
+                        assert previous['fixed_basis_run']==cfg['fixed_basis_run']
+                    x=np.load(work.checked(cache/(key+'__train.npy')))
+                    y=np.load(work.checked(cache/(key+'__evaluation.npy')))
+                    assert x.shape==(len(train),512) and y.shape==(len(evaluation),512)
+                elif method == 'none' and not multi_task:
                     x = np.load(work.checked(source_run/'train_pooled.npz'))['hidden']
                 else:
                     x = collect(train, 'train')
-                y = collect(evaluation, cfg['evaluation_split'])
-                np.save(work.run/(key+'__train.npy'), x)
-                np.save(work.run/(key+'__evaluation.npy'), y)
+                if not cached:
+                    y = collect(evaluation, cfg['evaluation_split'])
+                    np.save(work.run/(key+'__train.npy'), x)
+                    np.save(work.run/(key+'__evaluation.npy'), y)
                 for task in tasks:
                     task_name = task['name']
                     ti, ei, labels, erows = task_indices[task_name]
