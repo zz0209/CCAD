@@ -8655,3 +8655,59 @@ Timestamp correction: the START block's01:27:58Z value was captured before archi
 规划：HISTORY_TO_DECISIONS覆盖R22–60的源定义、幅度、ridge/gain、有限响应、成员选择、人类解释与候选失配结果。NEXT_SCIENTIFIC_STAGE选择一个正面目标：用少量源端关键检验，在同目标验证预算下预测并改善未见干预/成员选择；含最近邻学习、开发/确认分离、实际使用终点、扩大和改道条件及有界资源投入。此目标仍待新实验证据。
 
 资源：无GPU、付费、下载、安装；CPU轻量分析/作图/编译。ZIP和约2.3GB解压使用disk-e-io租约并正常释放；迁址解压hash37.73秒，完整迁址验证42.71秒。原ccad automation本地配置核实PAUSED。下一步白名单脚本/日志成组commit/push并记录SYNC_RECEIPT；用户可直接审阅当前稿，新科学阶段按已完成计划接续。
+
+
+## MORNING_REFORM_01 START
+
+实际写入UTC：2026-09-16T06:43:45Z。本次可证实执行开始于2026-09-16T06:37:57Z（当前工作恢复后的时钟读取），更早本轮事件时间未知。用户授权继续同对话loop，每5分钟接续，以2026-09-16T13:30:00Z（美东09:30）交付整体提升的完整作品。目标为总体超越SFC及最近邻强稿，至少超越Subspaces/PW-MCC；科学达标由真实证据判断。
+
+本单元选题：核对新评议与原论文，定位解释保真、目标组成和真实使用之间的关键失配，发展同一解释中未拟合请求与研究决定的正结果。现已读取最新52页稿身份、历史决策、当前计划及新共享评议全文。重点核对原SHIFT删除后重训及CCAD冻结分类头的关系，再决定实验；不预先把既有小测试集方案当唯一出口。实际尚无新模型结果、无GPU作业。读取和轻量规划不计科学突破。
+
+基线稿、当前入口逐字归档及hash：artifacts/morning_reform_20260916/before/MANIFEST.json；完整此前源/伴随包仍在delivery/preprint_focus_20260916。来源评议：https://chatgpt.com/s/cx_6aaa37686234819195259393b7e1e872 。两项指定写作skills已实际重读。后续先比较方法、原用途、理论/图版，再运行最有依据的改革；最终预留整稿与交付时间。实际阅读/工作时长目前未单独计量，等待时间不计研究成果。
+
+
+### MORNING_REFORM_01 PROGRESS
+
+实际写入UTC：2026-09-16T06:48:18Z。原ccad heartbeat已原位恢复ACTIVE/5分钟，目标任务不变，已核对TOML。原论文§4/Table2/AppendixE.1及MIT notebook cell34确认：SHIFT+retrain使用干预后表示从头训练一层分类头，AdamW0.01/1epoch，仅原混杂训练数据。当前CCAD固定分类头确认缺少此消费环节，属于需检验的用途失配，不先认定其会改善FCC。
+
+已实现scripts/run_shift_retraining.py，复用冻结关系与原hook，不重新拟合目标成员。开发配置configs/morning_r01_shift_retraining_dev_v1.json；22378原混杂train、695已暴露dev、source及geometry/gain/native/raw，同一新分类头种子。完整删除和三个原注释部分预先列定，所有结果保存。实际资源检查四资源free，GPU已有2369MiB/8%系统使用，不停止他人进程。申请最多1800秒GPU开发，约1GB顺序小批状态输出；吞吐由首个cell估计。AST语法检查通过，尚无模型结果。
+
+
+### MORNING_REFORM_01 PROGRESS
+
+实际写入UTC：2026-09-16T07:01:45Z。原SHIFT删除后重训开发已完成full及部分cell，源full职业93.96%/worst88.51%，geometry87.91/78.74，gain91.22/84.48，native90.07/82.18，raw92.23/83.33，均为既有target1/695dev。它补齐原用途并显示native相对gain仍无full优势，不能记为科学跨档。部分cell待完成。
+
+据同一解释的新使用问题预设下一开发：原55性别相关注释及原关系冻结，训练律师/记者、心理学家/教师的新职业头，每对两种相反混杂方向，只见混杂train。新任务开发面板16384train/1024dev，hash bf8bb328548a54429bde28346d95d631f3834bf17627224334ac01c6782536a1；由原split、稳定hash采样并去掉原任务及跨split重复。其余四对会计/建筑师、牙医/内科医师、电影制作/摄影师、画家/诗人预留确认；此时未读取其模型结果。已查看所有职业/性别计数（metadata），不是结果筛选。代码/配置scripts/prepare_shift_new_tasks.py、scripts/run_shift_retraining.py、configs/morning_r01_new_tasks_dev_v1.json。没有新包安装，首次Arrow导入因未配置已有r008_data_overlay失败，恢复正确旧overlay后准备成功。
+
+本次核实同时纠正阅读草稿中的覆盖假设：原R58自然拟合记录54/55源成员至少激活一次，其中一些极稀有；不能把旧摘要的33/55当该run事实。原始RELATION_FIT.json优先，未据错误摘要改方法或主张。实验设计skill用于成对/文档/seed依赖、保留任务和逆混杂安排，不升级模板gate；两项写作skills继续约束科学故事。
+
+
+## MORNING_REFORM_01 CORRECTION — written_at_utc 2026-09-16T07:09:27Z
+
+Original-task model execution completed 2026-09-16T07:04:09Z,943.82s,29190 document/classifier rows. Shared recorder reported FAIL because inherited uniqueness keys omitted consumer document/classifier identifiers; exception is null and artifact contract passes. Actual six-field keys are all unique. Original status and raw results preserved; correction evidence in artifacts/morning_reform_20260916/R01_RETRAINING_STATUS_CORRECTION.json. Next run supplies row_id/mode/seed; no scientific data regenerated. Source full retrained93.96/88.51 profession/worst-group; native90.07/82.18; gain91.22/84.48; raw92.23/83.33. These are exposed development results, not independent confirmation.
+
+
+## MORNING_REFORM_01 PROGRESS — written_at_utc 2026-09-16T07:18:18Z
+
+New-task development run started2026-09-16T07:09:44Z under shared gpu-0 lease,session24824. Four task directions across two fixed disjoint profession pairs share documents within each pair. Completed full-edit means: unedited63.09,source90.87,native90.77,geometry87.84,gain91.21,raw91.16 percent. Pronoun-only means: source90.62,native89.06,gain81.45,raw90.82. No held-out task outcomes inspected. Remaining semantic requests still running. These support developing the old-explanation→new-task consumer, not unique superiority over every baseline.
+
+A bounded method opportunity is being prepared: fit executed multi-site partial programs on the same natural contexts, comparing group allocation to gain-only refinement using the same teacher responses. Existing fit uses local linear responses around source clean/full states; true target partial trajectories can diverge. This is a concrete execution/objective mismatch, not a new independent application. R46–47 response-matrix/gain failure and R59 grouped-fit tie remain relevant; no algorithm-complexity claim. Candidate only until actual development results; independent confirmation will freeze the selected recipe first.
+
+
+## MORNING_REFORM_01 PROGRESS — written_at_utc 2026-09-16T07:30:08Z
+
+New-task development completed2026-09-16T07:20:20Z,636.20s,86016rows,PASS. Source-only executed-program refinement completed07:22:50Z,63.91s,PASS; its natural loss falls.4674→.2544, but exposed new-task full/pronoun utility falls90.77→90.23 and89.06→85.40. Gain-only refinement is similarly weaker in use. No further geometry-support refinement is launched; prepared configs are unexecuted candidates. These are not independent results or a claimed breakthrough.
+
+The positive opportunity is frozen explanation reuse across new consumers, including how complete versus partial requests change the appropriate correspondence. Four disjoint profession pairs, opposite confounding directions, old controlled target seeds2–5, original head recipe and primary comparisons frozen before any new-task test outputs. Exact pre-data freeze: artifacts/morning_reform_20260916/NEW_TASK_CONFIRMATION_FREEZE.json. Next independent unit uses this unchanged recipe; same four target dictionaries are new to these tasks, not newly trained seeds.
+
+
+## MORNING_REFORM_01 COMPLETE — written_at_utc 2026-09-16T07:35:18Z
+
+Execution began2026-09-16T06:37:57Z; experimental endpoint ended07:28:18Z, final manuscript build ended07:33:30Z; this completion records the actual present write time. Four actual GPU jobs total1946.47driver seconds; source reading/code/manuscript work overlapped computation, exclusive work/wait times unknown. Scientific outcome: frozen human explanation and relation have substantial new-classifier value in two development profession pairs; complete/part method ranking separates in actual use. Executed-program optimization failed to improve consumer utility despite reduced natural loss and is not pursued. Original negatives and row-key reporting correction retained.
+
+Full result/selection/report: artifacts/morning_reform_20260916/R01_REPORT.md, NEW_TASKS_ALL_DEVELOPMENT.json, R01_RETRAINING_STATUS_CORRECTION.json. Current52-page paper/main.pdf SHA25659c030410779d16c0d51c32bfbeb1a39e078c8ae13303f879159c62de1d361e9, editable reuse_main and human_new_task_main table. Development is explicitly labeled; no new appendix pages. New confirmation freeze07:30:08Z and panel hash aa0fb08b70c9e3adf77120012e4aaa50357776e4e7269d4020568ad452648c33. Same shared ccad automation continues; no claim of overall Strong Accept or superiority from this local checkpoint.
+
+
+## MORNING_REFORM_02 START — written_at_utc 2026-09-16T07:36:17Z
+
+This unit starts now after R01 COMPLETE. Rationale: confirm the same human explanation→new-dictionary parts→new classifier use chain on four unused profession pairs and target dictionaries2–5. Freeze and all configurations already written before any test outputs. Allocate four sequential gpu-0 jobs,2400s cap each, expected~80min from actual development throughput; concurrent local manuscript/statistical work stays in this conversation. No model/SAE/method selection on test. Deliver a coherent result and replace the interim development main-table, retaining all controls and failed refinements. Deadline13:30Z; final integration window begins12:20Z at latest.

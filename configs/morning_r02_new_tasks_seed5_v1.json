@@ -1,0 +1,113 @@
+{
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "device": "cuda:0",
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "run_id": "MORNING_R02_new_tasks_seed5_v1_20260916",
+  "run_parent": "MORNING_REFORM_02",
+  "purpose": "Frozen confirmation: reuse the published explanation and prior relation on four unseen profession pairs and both confounding directions.",
+  "generator_script": "scripts/run_shift_retraining.py",
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "threshold_source_split": "Frozen original mapping:16 geometric candidates and2 retained target members per source member;128 natural-text contexts, clean/source-deleted states, original professor-nurse classifier gradients. No new-task labels or outputs fit the mapping.",
+  "statistics_unit": "Four fixed profession pairs; paired documents within profession/gender cells and four target seeds; opposite confounding directions share documents.",
+  "seeds": [
+    5
+  ],
+  "target_seed": 5,
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "fit_sequences": 128,
+  "fit_batch_sequences": 8,
+  "neighbors_per_source": 16,
+  "members_per_source": 2,
+  "fit_iterations": 1200,
+  "ridge": 0.001,
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "eval_batch_size": 16,
+  "methods": [
+    "none",
+    "source",
+    "geometry",
+    "geometry_gain",
+    "native",
+    "raw"
+  ],
+  "queries": [
+    "full",
+    "pronouns",
+    "names",
+    "associated_words"
+  ],
+  "budget_seconds": 2400,
+  "budget": "At most2400driver seconds per target,gpu-0;27724 train and4096 test biographies,21 intervention settings; approximately1.4GB pooled states. Four targets sequentially, no new SAE or relation training.",
+  "scope": "Four disjoint new profession pairs, two confounding orientations each, original seed42 head recipe. Original55 human annotations and existing target relation frozen. No outcomes of these tasks fit or select the correspondence. Same target seeds2-5 from old R59 used on new tasks; not newly trained seeds.",
+  "functional_weight": 0.99,
+  "context_response": true,
+  "relation_run": "runs/REFORM_R59_shift_confirm_seed5_v1_20260915",
+  "evaluation_panel": "artifacts\\morning_reform_20260916\\NEW_TASKS_CONFIRMATION.json",
+  "evaluation_split": "test",
+  "probe_seeds": [
+    42
+  ],
+  "probe_lr": 0.01,
+  "probe_batch_size": 128,
+  "evidence_level": "frozen_new_task_confirmation",
+  "training_panel": "artifacts\\morning_reform_20260916\\NEW_TASKS_CONFIRMATION.json",
+  "tasks": [
+    {
+      "name": "accountant_architect_orientation0",
+      "negative": 0,
+      "positive": 1,
+      "orientation": 0
+    },
+    {
+      "name": "accountant_architect_orientation1",
+      "negative": 0,
+      "positive": 1,
+      "orientation": 1
+    },
+    {
+      "name": "dentist_physician_orientation0",
+      "negative": 6,
+      "positive": 19,
+      "orientation": 0
+    },
+    {
+      "name": "dentist_physician_orientation1",
+      "negative": 6,
+      "positive": 19,
+      "orientation": 1
+    },
+    {
+      "name": "filmmaker_photographer_orientation0",
+      "negative": 9,
+      "positive": 18,
+      "orientation": 0
+    },
+    {
+      "name": "filmmaker_photographer_orientation1",
+      "negative": 9,
+      "positive": 18,
+      "orientation": 1
+    },
+    {
+      "name": "painter_poet_orientation0",
+      "negative": 14,
+      "positive": 20,
+      "orientation": 0
+    },
+    {
+      "name": "painter_poet_orientation1",
+      "negative": 14,
+      "positive": 20,
+      "orientation": 1
+    }
+  ],
+  "confirmation_freeze": "artifacts/morning_reform_20260916/NEW_TASK_CONFIRMATION_FREEZE.json"
+}
