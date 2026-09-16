@@ -47,7 +47,7 @@ def main():
             seen.add(identity)
             y, g = int(row['profession'] == 13), row['gender']
             candidates[y, g].append(dict(text=text, document_sha256=identity,
-                label=y, gender=g, original_split=split, split='restoration_confirmation'))
+                label=y, gender=g, original_split=split, split=spec.get('evaluation_split','restoration_confirmation')))
         counts[split] = dict(path=str(path), sha256=sha(path), excluded_or_duplicate=duplicate)
     rows, too_long = [], []
     priority = {split: i for i, split in enumerate(spec['split_priority'])}
@@ -75,20 +75,22 @@ def main():
         cell_split_counts={str(k): v for k, v in Counter(
             (r['label'], r['gender'], r['original_split']) for r in rows).items()})
     output.write_text(json.dumps(result, indent=2)+'\n')
-    request = json.loads(Path(spec['development_request_spec']).read_text())
-    request.update(written_at_utc=datetime.now(timezone.utc).isoformat(),
-        evidence_level='frozen_new_document_confirmation',
-        documents=[r['document_sha256'] for r in rows],
-        context_split=['confirmation']*len(rows), selection=spec['selection'])
-    request_path = Path(spec['confirmation_request_spec'])
-    with request_path.open('x') as f:
-        json.dump(request, f, indent=2)
+    request_path=None
+    if spec.get('development_request_spec'):
+        request = json.loads(Path(spec['development_request_spec']).read_text())
+        request.update(written_at_utc=datetime.now(timezone.utc).isoformat(),
+            evidence_level='frozen_new_document_confirmation',
+            documents=[r['document_sha256'] for r in rows],
+            context_split=['confirmation']*len(rows), selection=spec['selection'])
+        request_path = Path(spec['confirmation_request_spec'])
+        with request_path.open('x') as f:
+            json.dump(request, f, indent=2)
     receipt = dict(written_at_utc=datetime.now(timezone.utc).isoformat(),
         panel=str(output), panel_sha256=sha(output), rows=len(rows),
-        request_spec=str(request_path), request_sha256=sha(request_path),
+        request_spec=str(request_path) if request_path else None, request_sha256=sha(request_path) if request_path else None,
         cell_split_counts=result['cell_split_counts'], overlength=len(too_long),
         prior_document_overlap=0, model_outputs_computed=False)
-    with output.with_name('R05_CONFIRMATION_DATA_RECEIPT.json').open('x') as f:
+    with output.with_name(spec.get('receipt_name','R05_CONFIRMATION_DATA_RECEIPT.json')).open('x') as f:
         json.dump(receipt, f, indent=2)
     print(json.dumps(receipt, indent=2))
 

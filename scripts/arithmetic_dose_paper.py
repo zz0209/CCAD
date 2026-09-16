@@ -43,7 +43,7 @@ def main():
         fig.text(.72,.035,'Triangle: all tested doses',fontsize=7.5)
         for ext in ['pdf','svg','png']:fig.savefig(P/f'figures/arithmetic_role_queries.{ext}',dpi=220,facecolor='white')
         plt.close(fig)
-    table=[r'\begin{anchoredtable}\centering\small',r'\begin{tabular}{llrrrrrr}',r'\toprule',r'Part & Execution & Units: H & T & P & Tens: H & T & P \\',r'\midrule']
+    table=[r'\begin{anchoredtable}\centering\small',r'\begin{tabular}{llrrrrrr}',r'\toprule',r'Part & Execution & Units H & T & P & Tens H & T & P \\',r'\midrule']
     for part in [0,1]:
         for suffix,name in zip(suffixes,names):
             values=[cells[f'source_part{part}_bank0'+suffix,op][metric] for op in ['unit','tens'] for metric in ['H','T','P']]

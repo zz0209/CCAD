@@ -9,13 +9,16 @@ from datetime import datetime, timezone
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--stage', choices=['development', 'confirmation'], required=True)
+    parser.add_argument('--stage', choices=['development', 'confirmation', 'final_confirmation'], required=True)
+    parser.add_argument('--exclude-panel', type=Path, action='append', default=[])
     args = parser.parse_args()
     import pyarrow.parquet as pq
     from transformers import AutoTokenizer
     root = Path(__file__).resolve().parents[1]
     original = json.loads((root/'configs/reform_r58_shift_source_development_v2.json').read_text())
-    pairs = ([(2, 11, 'attorney_journalist'), (22, 26, 'psychologist_teacher')]
+    pairs = ([(5, 25, 'comedian_surgeon'), (12, 24, 'model_software_engineer')]
+             if args.stage == 'final_confirmation' else
+             [(2, 11, 'attorney_journalist'), (22, 26, 'psychologist_teacher')]
              if args.stage == 'development' else
              [(0, 1, 'accountant_architect'), (6, 19, 'dentist_physician'),
               (9, 18, 'filmmaker_photographer'), (14, 20, 'painter_poet')])
@@ -25,6 +28,12 @@ def main():
     data_dir = Path(original['train_data']).parent
     old_panel = json.loads((root/'runs'/original['run_id']/'panel.json').read_text())
     excluded = {r['document_sha256'] for r in old_panel['rows']}
+    exclusion_sources = []
+    for path in args.exclude_panel:
+        content = path.read_bytes()
+        prior = json.loads(content)
+        excluded.update(r['document_sha256'] for r in prior['rows'])
+        exclusion_sources.append(dict(path=str(path), sha256=hashlib.sha256(content).hexdigest()))
     tokenizer = AutoTokenizer.from_pretrained(original['model_local_dir'], local_files_only=True)
     rows, counts, selected = [], {}, {}
     # Original split identities and document hashes are retained. Later model
@@ -67,7 +76,8 @@ def main():
     value = dict(written_at_utc=datetime.now(timezone.utc).isoformat(), stage=args.stage,
                  rows=rows, tasks=tasks, cell_counts=counts, selected_per_cell=selected,
                  pair_source='Fixed disjoint profession pairs, selected before any model outcomes.',
-                 dataset_revision=original['dataset_revision'], tokenizer=original['model_local_dir'])
+                 dataset_revision=original['dataset_revision'], tokenizer=original['model_local_dir'],
+                 exclusion_sources=exclusion_sources)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     assert not args.output.exists()
     args.output.write_text(json.dumps(value, ensure_ascii=False), encoding='utf8')

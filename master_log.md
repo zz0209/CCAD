@@ -9000,3 +9000,46 @@ On695exposed biographies, old relation versus input tangent-budget fixed-head nR
 Current44-page manuscript SHA937068887b4182d048296c328a610428b725d504461f54fb32c1c595122bc2ce. Section2 unifies target-code columns and query-independent capacity; AppendixA supplies the common feasibility argument. Section4.2 reports the cross-setting development comparison and existing reproduction section locates all methods. JSAE citation added from officialPMLR metadata, and exact loss formulations of E2E/shortfinetuning/SharedSAE/weightregularization/JSAE read for the next method decision. No new experimental appendix. Actual pages3/7/43 visually reviewed after final build, with earlier page4/table and proof reviews retained; no clipping or overlap. No missing references/glyphs;1.538pt bibliography vbox warning retained. Both required writing skills applied to the unified positive argument and precise empirical comparison, without hiding strong controls or narrowing the overall goal.
 
 IR02_REPORT.md, IR02_FULL_FROZEN_ANALYSIS.json, IR02_FULL_RETRAINED_ANALYSIS.json, IR02_RUN_INVENTORY.json and IR02_CLOSEOUT.json hold outputs/provenance. Original files preserved underir02_before,ir02_before_paper,ir02_before_outcome_writeup. Plan changes to source-program-preserving dictionary adaptation, informed by actual source/target effects and originalR58 quality curves, with a bounded site-repair diagnostic and matched continued-MSE/clean-E2E controls. No new unit or training has started during closeout. OverallStrongAccept/superiority remainsNOT_ESTABLISHED; originalACTIVE five-minute loop continues. No delegation, paid resources, submission or public-scope change. Whitelist git synchronization follows this completion block.
+
+
+## INDEPENDENT_REUSE_03 START
+
+实际写入UTC 2026-09-16T18:16:22Z。可证实本轮恢复阅读开始2026-09-16T18:15:21Z；此前当前用户回合准备时间未精确计量。用户授权最后两轮，本轮为第一轮，已完成0/2。选题依据是IR02输入相关列在多站消费者的用途损失，改变实际字典/程序拟合目标，检验源部分干预区别能否在共同适配后保存。先300秒小型站点修复定位，随后短适配并依吞吐分配可承受资源。继续自然MSE/输出保持与源部分程序拟合采用相同起点和资料；强raw/几何对照保留。同步阅读两篇最近邻原稿并整理论证、移除解释性冒号。主稿基准SHA937068887b4182d048296c328a610428b725d504461f54fb32c1c595122bc2ce，Git14047978；逐字归档ir03_before/MANIFEST。原IR02失败和负结果保留。当前未启动计算，无新增科学结果；总投入与等待尚未计量。第二轮完成最终验证和完整交付后暂停原loop，不增加轮次。
+
+
+### INDEPENDENT_REUSE_03 PROGRESS
+实际写入UTC 2026-09-16T18:20:21Z。站点修复run IR03_shift_site_repair_v1_20260916于18:17:06.620847Z开始，20.796354driver秒完成6784条记录，PASS。128暴露开发文档的全/部分响应NRMSE原关系.25775，逐站source修复embed为.16731、resid0为.22585、mlp0为.23657。其余站点未出现同量级改善。结果支持把适配资源集中于前三站，不能解释为可加中介份额。拟定目标字典前三站和全11站对应共同更新，三类训练共用天然资料/步数/原支持与信息来源。初始各128步、batch4×128、累计不超过1200driver秒，早期实测再调整。随机成员请求训练后评价未拟合人类语义分组；原source/raw/geometry保留。诊断只作为本轮选题证据，不计独立完成。结果IR03_SITE_REPAIR.json。
+
+
+### INDEPENDENT_REUSE_03 CORRECTION / PROGRESS
+实际写入UTC 2026-09-16T18:24:28Z。v1四臂计算完成，通用收尾缺少非分类行component字段失败，保留全部原始行/权重并将运行从滞留RUNNING更正为FAIL，实际结束时刻未知，最后模型进度18:21:53.992889Z。训练曲线揭示逐batch作用能量归一化在近零源效应资料上产生过大权重；改成独立64自然序列的固定、全臂共用源尺度。为对应已验证功能，加入与原关系相同的旧source-head响应信息，.9响应+.1状态，target新标签仍不参与。实测四臂128步约49秒且<2GB；v2扩为匹配1024步/4096自然序列，含同信息关系单独适配，预算仍1200driver秒。此为有具体误差证据的修正和规模适配，不新开研究轮。
+
+
+### INDEPENDENT_REUSE_03 PROGRESS
+实际写入UTC 2026-09-16T18:33:07Z。v2在检查自然序列数时FAIL，零模型评估行。v3固定892自然序列循环、明确4096次呈现，353.392147driver秒PASS，18:31:06.442505Z结束。完整程序误差改善，但部分B从93.02%降至parts87.80%，字典适配未解决自然上下文到解释使用上下文的失配。既有MORNING_R01已尝试七语义组合的固定字典程序拟合且新任务效用下降，现已逐行复读refine_shift_program.py及原freeze。当前新增变量是目标字典适配与随机成员请求，仍须解决真实输入支持。下一步使用原源解释已有的503开发传记拟合、64校准，严格排除128评估传记；不读标签，新任务完全留后。自然重构仍来自独立天然资料。所有五臂保持512步骤。该开发域调整有确切输入/用途失配依据，保留自然失败，不扩大无目标参数网格。
+
+
+### INDEPENDENT_REUSE_03 PROGRESS
+实际写入UTC 2026-09-16T18:37:39Z。源上下文适配完成18:36:28.795Z附近（准确时间见status），200.668633driver秒PASS。parts响应NRMSE.1944相对原关系.2577改善；原头部分准确率84.64%相对82.03%提高，部分B90.89%仍低于93.02%。随机成员请求并未充分保存整个人类语义分组的预测。下一项沿已有query-family数学选择源解释本身规定的三个语义单部件，保留同一对应列与新pair/full组合检验；两臂字典共同/关系单独适配各512步，现有whole/MSE/clean同预算对照保留。此改变针对完整多站程序的非线性与请求分布失配，不把固定状态线性二阶矩当全局保证。原随机成员与自然上下文数据全部保留。
+
+
+### INDEPENDENT_REUSE_03 CORRECTION / PROGRESS
+实际写入UTC 2026-09-16T18:54:54.214223+00:00. 三个适配完整请求已完成。消费者v1的32篇长文本批次使WDDM显存接近16GB，首个完整请求105秒、后续分别269/387秒。核对PID71744及完整命令后仅停止本项目worker，保留原始结果及缓存，状态INTERRUPTED。v2将推理批次限制16篇且4096 padded tokens，并在收集结束释放缓存；权重、文档、分类器配方和已完成表示不变。已完成full三组及原对照逐行身份核对复用，不重跑。当前无新增科学判断。
+
+
+## INDEPENDENT_REUSE_03 COMPLETE
+实际写入UTC 2026-09-16T19:12:34Z。
+本轮改变了目标字典和对应的训练对象。原方法在独立站点拟合源成员场，新的方法沿真实十一站干预程序传播，目标早期三个字典与十一站对应共同学习旧解释区分的三类作用。语言模型、源注释与原分类器固定，503源上下文拟合、64校准、128评估分开；新任务标签不参与。
+
+七请求响应NRMSE原关系.25448，新共同适配.1289。未用于拟合的完整删除/三组两两组合原关系.24500，新方法.13205，完整程序适配.16252，关系单独适配.16437，原源方向读出.17813。新方法相对原关系的组合误差差值-.11295[-.14108,-.08654]，相对同信息关系单独适配-.03232[-.05098,-.01386]。以程序本身的语义部分训练优于本轮自然域或随机成员拟合。全部为开发结果。
+
+实际原消费者另行训练分类头。平均部分准确率共同适配83.59、完整程序81.77、关系单独83.33、旧关系85.42、原源方向85.68、源程序83.85%。新方法保留响应更准确，原消费者的总体准确率未超过旧关系。两种结果共同写入正文，不能把误差下降当去偏收益。
+
+相同支持/步数/源上下文控制把改变分别落实到请求族与字典适配。自然上下文、随机成员、继续MSE、干净下游状态保持结果保留。v1收尾异常与v2输入数不足保留FAIL，消费者v1因WDDM显存拥塞在完成full三组后记录INTERRUPTED；v2复用4096既有记录，logit完全一致，9个剩余收集单元在523.43driver秒结束。共同有界批次执行器核对4224旧记录，1个完整程序控制答案因接近零而变化，最大logit差.01862，无semantic适配答案变化，细节见IR03_NUMERICAL_REPLAY。
+
+主文新增执行程序训练与实证、新Figure3；条件恢复压缩，关键负结果与强对照保留。主稿46页，SHA8625c45346a5ff38d07dce510a5988f3335593c4b8dd06a9c7ff4e3f60db0d5f。已看真实尺寸新图和第6、7、42页，排版无裁切重叠。全部解释性冒号改写，图表标签分隔也改为句点。技术公式、提示Q/A、时间、原文献标题保留。两项指定写作skill落实在由正面主张组织方法/结果、退出研发过程和集中准确报告比较。
+
+重读Subspaces方法/稳定池与低秩机制、PW-MCC真值/容量/频率、Braun端到端SAE和Geiger IIT的原始损失及对照。标准端到端/干预监督均明确引用，贡献落在旧解释的可检验部分及后来使用，来源和实际借鉴在REFERENCE_REGISTRY。未复制新外部代码、未采购或投稿。
+
+第二轮固定此方法和全部关键比较，检验四套目标字典、新传记以及喜剧演员/外科医生、模特/软件工程师两个未用任务。新职业仅按原数据样本量选取，未看模型结果。优先确认响应改进及实际用途，再把结果整合为最终全文与可复现包。不得再新增第三轮。
+

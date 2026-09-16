@@ -77,7 +77,7 @@ def main():
                 for op in ['unit','tens'] for m in ['exact_hybrid','target_digit_success','preserve_digit_success']]
         lines.append(label+' & '+' & '.join(f'{v:.2f}' for v in values)+r' \\')
     lines += [r'\bottomrule',r'\end{tabular}',
-              r'\caption{\textbf{Functional response objectives and actual digit replacement.} H: complete hybrid answer; T: requested digit; P: preserved digit. All methods allow 64 members. Each cell includes 640 interventions, sharing 64 question-pair clusters across the two prompt forms and five fixed SAEs. The two-margin bank uses 32 shared backward batches; the all-digit bank uses 320. The source and direct-320 references retain their earlier fitting budgets. This is a development comparison.}',
+              r'\caption{\textbf{Functional response objectives and actual digit replacement.} H denotes the complete hybrid answer, T the requested digit and P the preserved digit. All methods allow 64 members. Each cell includes 640 interventions, sharing 64 question-pair clusters across the two prompt forms and five fixed SAEs. The two-margin bank uses 32 shared backward batches; the all-digit bank uses 320. The source and direct-320 references retain their earlier fitting budgets. This is a development comparison.}',
               r'\label{tab:arithmetic_response}',r'\end{anchoredtable}']
     (PAPER/'tables/arithmetic_response_results.tex').write_text('\n'.join(lines)+'\n')
     inventory,evidence=[],[]

@@ -51,7 +51,8 @@ def main():
                       for k in ['encoder', 'encoder_bias', 'decoder', 'center']}
                   for s in source['members']}
         frozen = np.load(work.checked(Path(cfg['relation_run'])/'relation.npz'))
-        targets, relations = {}, {}
+        targets, relations, adapted_targets = {}, {}, {}
+        adapted_programs=cfg.get('adapted_programs',{})
         for site in source['members']:
             state = torch.load(work.checked(Path(cfg['target_directory']) /
                               f'{site}_seed{cfg["target_seed"]}.pt'),
@@ -61,10 +62,21 @@ def main():
             sae.requires_grad_(False)
             targets[site] = sae
             relation_names = list(dict.fromkeys(['native', 'geometry', 'geometry_gain', 'raw', 'candidates']+
-                                               [m for m in cfg['methods'] if m not in ['source', 'none','raw_reconstruction'] and not m.startswith('input_')]))
+                                               [m for m in cfg['methods'] if m not in ['source', 'none','raw_reconstruction'] and not m.startswith('input_') and m not in adapted_programs]))
             relations[site] = {name: torch.tensor(frozen[site+'__'+name], device=work.device,
                                                   dtype=torch.long if name == 'candidates' else torch.float32)
                                for name in relation_names}
+        for name,spec in adapted_programs.items():
+            folder=Path(spec['directory'])
+            bank_new=np.load(work.checked(folder/'relation.npz','Frozen adapted program relation'))
+            adapted_targets[name]={}
+            for site in source['members']:
+                relations[site][name]=torch.tensor(bank_new[site+'__native'],device=work.device,dtype=torch.float32)
+                if site in spec['sites']:
+                    state=torch.load(work.checked(folder/f'{site}_seed{cfg["target_seed"]}.pt','Frozen adapted target dictionary'),map_location=work.device,weights_only=True)
+                    sae=AutoEncoderTopK(512,state['encoder.weight'].shape[0],int(state['k'])).to(work.device)
+                    sae.load_state_dict(state);sae.requires_grad_(False)
+                    adapted_targets[name][site]=sae
         if cfg.get('fixed_basis_run'):
             basis=np.load(work.checked(Path(cfg['fixed_basis_run'])/'fixed_response_basis.npz'))
             for site in source['members']:
@@ -108,7 +120,7 @@ def main():
                                                    cfg['members_per_source']*len(q),mask)
                         h=h+delta
                 elif method != 'none':
-                    t, r = targets[site], relations[site]
+                    t, r = adapted_targets.get(method,{}).get(site,targets[site]), relations[site]
                     z = t.encode(h)
                     if method == 'raw':
                         h = h-(z[..., r['candidates']] @ r['raw']*q) @ s['decoder']
@@ -125,8 +137,13 @@ def main():
             nonlocal mask
             output = np.empty((len(rows), 512), np.float32)
             order = sorted(range(len(rows)), key=lambda i: len(rows[i]['tokens']))
-            for start in range(0, len(order), cfg['eval_batch_size']):
+            start=0
+            last_report=-4096
+            while start < len(order):
                 ix = order[start:start+cfg['eval_batch_size']]
+                if cfg.get('eval_token_budget'):
+                    while len(ix)>1 and len(ix)*max(len(rows[i]['tokens']) for i in ix)>cfg['eval_token_budget']:
+                        ix=ix[:-1]
                 length = max(len(rows[i]['tokens']) for i in ix)
                 ids = torch.zeros((len(ix), length), device=work.device, dtype=torch.long)
                 mask = torch.zeros_like(ids)
@@ -139,11 +156,15 @@ def main():
                 output[ix] = pooled.cpu().numpy()
                 work.sequence_forwards += len(ix)
                 work.token_forwards += ids.numel()
-                if start % 4096 == 0:
+                if start-last_report>=4096:
                     work.progress('COLLECT', method=method, query=query, split=split,
                                   done=start+len(ix), total=len(rows))
+                    last_report=start
+                start+=len(ix)
                 if time.perf_counter()-work.wall_start > cfg['budget_seconds']:
                     raise TimeoutError('Bounded SHIFT consumer experiment')
+            if cfg.get('eval_token_budget'):
+                torch.cuda.empty_cache()
             return output
 
         old_probe = np.load(work.checked(source_run/'probe.npz'))
@@ -186,12 +207,17 @@ def main():
                         assert str(previous[field]).replace('\\','/')==str(cfg[field]).replace('\\','/'),field
                     membership=json.loads(work.checked(cache/'panel.json').read_text())
                     assert membership['train_documents']==[r['document_sha256'] for r in train]
-                    assert membership['rows']==evaluation
+                    old_rows=membership['rows'];old_index={r['document_sha256']:i for i,r in enumerate(old_rows)}
+                    assert len(old_index)==len(old_rows)
+                    assert all(r==old_rows[old_index[r['document_sha256']]] for r in evaluation)
                     if method.startswith('input_'):
                         assert previous['members_per_source']==cfg['members_per_source']
                         assert previous['fixed_basis_run']==cfg['fixed_basis_run']
+                    if method in adapted_programs:
+                        assert previous.get('adapted_programs',{}).get(method)==adapted_programs[method]
                     x=np.load(work.checked(cache/(key+'__train.npy')))
                     y=np.load(work.checked(cache/(key+'__evaluation.npy')))
+                    y=y[[old_index[r['document_sha256']] for r in evaluation]]
                     assert x.shape==(len(train),512) and y.shape==(len(evaluation),512)
                 elif method == 'none' and not multi_task:
                     x = np.load(work.checked(source_run/'train_pooled.npz'))['hidden']
@@ -209,13 +235,14 @@ def main():
                         torch.manual_seed(probe_seed)
                         head = torch.nn.Linear(512, 1, device=work.device)
                         optimizer = torch.optim.AdamW(head.parameters(), lr=cfg['probe_lr'])
-                        for start in range(0, len(ti), cfg['probe_batch_size']):
-                            values = head(xx[start:start+cfg['probe_batch_size']]).squeeze(-1)
-                            loss = torch.nn.functional.binary_cross_entropy_with_logits(
-                                values, labels[start:start+cfg['probe_batch_size']])
-                            optimizer.zero_grad()
-                            loss.backward()
-                            optimizer.step()
+                        for epoch in range(cfg.get('probe_epochs',1)):
+                            for start in range(0, len(ti), cfg['probe_batch_size']):
+                                values = head(xx[start:start+cfg['probe_batch_size']]).squeeze(-1)
+                                loss = torch.nn.functional.binary_cross_entropy_with_logits(
+                                    values, labels[start:start+cfg['probe_batch_size']])
+                                optimizer.zero_grad()
+                                loss.backward()
+                                optimizer.step()
                         weight, bias = head.weight.detach().cpu().numpy(), head.bias.detach().cpu().numpy()
                         if method == 'none':
                             clean_heads[task_name, probe_seed] = (weight, bias)

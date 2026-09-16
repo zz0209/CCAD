@@ -14,7 +14,8 @@ font_manager.fontManager.addfont('C:/Windows/Fonts/times.ttf')
 plt.rcParams.update({'font.family':'Times New Roman','font.size':8,
                     'mathtext.fontset':'stix','pdf.fonttype':42,'svg.fonttype':'none'})
 fig=plt.figure(figsize=(3.375,2.10))
-fig.text(.02,.95,'Henry: Poland (Warsaw)     Emma: Chile (Santiago)',va='top')
+fig.text(.02,.97,'Henry is in Poland (Warsaw).',va='top')
+fig.text(.02,.89,'Emma is in Chile (Santiago).',va='top')
 for x,label in [(.02,'Member selection'),(.63,'Henry'),(.89,'Emma')]:
     fig.text(x,.80,label,ha='left' if x<.1 else 'center')
 fig.add_artist(plt.Line2D([.02,.99],[.755,.755],transform=fig.transFigure,color='.4',lw=.5))

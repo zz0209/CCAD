@@ -1,0 +1,99 @@
+{
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "device": "cuda:0",
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "run_id": "IR03_shift_adapted_consumer_dev_v2_20260916",
+  "run_parent": "INDEPENDENT_REUSE_03",
+  "purpose": "Test adapted semantic-part program in original fresh-head consumer, on128 excluded development biographies",
+  "generator_script": "scripts/run_shift_retraining.py",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "threshold_source_split": "Original controls unchanged. Adaptation uses503 source-use contexts,64 source calibration documents,512 matched steps,original source-head responses. Evaluation128 disjoint from adaptation. No target labels fit correspondence.",
+  "statistics_unit": "Biographies clustered by document; development one target dictionary stack",
+  "seeds": [
+    1
+  ],
+  "target_seed": 1,
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R58_shift_dictionaries_curve_v1_20260915/step_8192",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "fit_sequences": 128,
+  "fit_batch_sequences": 8,
+  "neighbors_per_source": 16,
+  "members_per_source": 2,
+  "fit_iterations": 1200,
+  "ridge": 0.001,
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "eval_batch_size": 16,
+  "methods": [
+    "none",
+    "source",
+    "geometry",
+    "geometry_gain",
+    "native",
+    "raw",
+    "raw_reconstruction",
+    "parts",
+    "whole",
+    "parts_relation"
+  ],
+  "queries": [
+    "full",
+    "pronouns",
+    "names",
+    "associated_words"
+  ],
+  "budget_seconds": 1800,
+  "budget": "1800driver seconds. Long inference batches capped at4096 padded tokens, at most16documents; original training and full completed representations reused.",
+  "scope": "128 exposed evaluation biographies excluded from503 program-fit and64 source-calibration documents. All22378 original ambiguous training biographies fit fresh heads only,one epoch AdamW. Frozen original controls reuse complete cached pooled states with exact subset identity checks. Adapted models use512 steps and same contexts; partial methods fit semantic singleton requests, whole fits complete program. Source/raw/geometry retained. Development, one target.",
+  "functional_weight": 0.99,
+  "context_response": true,
+  "relation_run": "runs/REFORM_R58_shift_context_curve_s8192_v1_20260915",
+  "evaluation_panel": "runs/IR03_shift_semantic_program_dev_v1_20260916/evaluation_membership.json",
+  "evaluation_split": "dev",
+  "probe_seeds": [
+    42
+  ],
+  "probe_lr": 0.01,
+  "probe_batch_size": 128,
+  "evidence_level": "controlled_consumer_development",
+  "fixed_basis_run": "runs/IR02_shift_input_dev_v1_20260916",
+  "feature_cache_run": "runs/MORNING_R01_shift_retraining_dev_v1_20260916",
+  "feature_cache_runs": [
+    "runs\\IR03_shift_adapted_consumer_dev_v1_20260916",
+    "runs/IR02_shift_retraining_dev_v2_20260916",
+    "runs/IR02_shift_retraining_dev_v1_20260916"
+  ],
+  "adapted_programs": {
+    "parts": {
+      "directory": "D:/CCAD_Storage/training_curves/IR03_shift_semantic_program_dev_v1_20260916/parts",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    },
+    "parts_relation": {
+      "directory": "D:/CCAD_Storage/training_curves/IR03_shift_semantic_program_dev_v1_20260916/parts_relation",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    },
+    "whole": {
+      "directory": "D:/CCAD_Storage/training_curves/IR03_shift_program_context_dev_v1_20260916/whole",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    }
+  },
+  "eval_token_budget": 4096
+}

@@ -121,7 +121,7 @@ def main():
     for method in methods:
         if method in ['none', 'source']:
             continue
-        for control in ['none', 'geometry', 'geometry_gain', 'native', 'raw']:
+        for control in ['none', 'geometry', 'geometry_gain', 'native', 'raw', 'whole', 'random_parts', 'parts_relation']:
             if control not in methods or method == control:
                 continue
             mi, ci = methods.index(method), methods.index(control)

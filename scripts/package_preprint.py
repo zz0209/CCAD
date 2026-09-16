@@ -111,6 +111,13 @@ def plan():
                     add(p)
             for p in (circuit / 'annotations').glob('*.jsonl'):
                 add(p)
+    independent = ROOT / 'artifacts/independent_reuse_20260916'
+    if independent.is_dir():
+        for p in independent.iterdir():
+            if p.is_file() and p.suffix in {'.md', '.json', '.npz'}:
+                add(p)
+        # Retain failed/development runs as well as the selected confirmation.
+        runs.update(p.name for p in (ROOT/'runs').glob('IR0*_*') if p.is_dir())
     # Companion material preserves run inputs and original source versions, even
     # when a claim index records only its derived result table.
     for c in claims:

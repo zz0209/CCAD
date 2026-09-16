@@ -39,7 +39,7 @@ def main():
     for m,label in zip(methods,labels):
         v=r['results']['all_forms'][m];vals=[v[op]['percent'] for op in ['entity','attribute','both']]+[r['results'][g][m]['all_three']['percent'] for g in ['known_forms','new_forms','all_forms']]
         t.append(label+' & '+' & '.join(f'{x:.2f}' for x in vals)+r' \\')
-    t += [r'\bottomrule\end{tabular}',r'\caption{Frozen role-composition confirmation: 32 new worlds, two orderings, four forms and five dependent SAE directions. Every single-rule score requires both city answers; all-three requires all six answers within the same context. Updates at the two SAE locations use at most 64 coefficients per changed state. Other layers retain the common raw program.}',r'\label{tab:binding_roles}',r'\end{anchoredtable}']
+    t += [r'\bottomrule\end{tabular}',r'\caption{Frozen role-composition confirmation on 32 new worlds, two orderings, four forms and five dependent SAE directions. Every single-rule score requires both city answers; all-three requires all six answers within the same context. Updates at the two SAE locations use at most 64 coefficients per changed state. Other layers retain the common raw program.}',r'\label{tab:binding_roles}',r'\end{anchoredtable}']
     (P/'tables/binding_roles.tex').write_text('\n'.join(t)+'\n')
     data=P/'data/binding_roles.json';data.write_text(json.dumps(dict(confirmation=r,localization=loc),indent=2)+'\n')
     with (P/'data/binding_roles.csv').open('w',newline='') as f:

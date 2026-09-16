@@ -181,7 +181,7 @@ def main():
             sae=AutoEncoderTopK(512,state['encoder.weight'].shape[0],int(state['k'])).to(w.device);sae.load_state_dict(state);sae.requires_grad_(False);targets[site]=sae
         for f in ['config.json','tokenizer.json','model.safetensors']:w.checked(Path(c['model_local_dir'])/f,'Pinned Pythia70M','Apache-2.0')
         model=transformers.AutoModelForCausalLM.from_pretrained(c['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to(w.device);model.requires_grad_(False);model.config.use_cache=False
-        mode='capture';alpha=0.;query='full';observed={};responses={};relations={};mask=None;pooled=None;write_counts={}
+        mode='capture';alpha=0.;query='full';observed={};responses={};relations={};mask=None;pooled=None;write_counts={};adapted_targets={}
         functional_weight=c.get('functional_weight',0.)
         source_run=Path(c['frozen_source_run']);probe=np.load(w.checked(source_run/'probe.npz','Fixed original source classifier'));pw=torch.tensor(probe['weight'],device=w.device);pb=torch.tensor(probe['bias'],device=w.device)
         def hook(site):
@@ -190,12 +190,13 @@ def main():
                 x=out[0] if isinstance(out,tuple) else out
                 if mode=='capture' and functional_weight and site=='embed':x=x.detach().requires_grad_(True)
                 s=sp[site]
-                if mode in ('capture','source'):
+                operation=('source' if site==mode.split('__')[1] else 'native') if mode.startswith('repair__') else mode
+                if operation in ('capture','source'):
                     z=torch.relu((x-s['center'])@s['encoder'].T+s['encoder_bias'])
                 selected=requested_parts[query]
                 q=torch.tensor([any(i in groups[name].get(site,[]) for name in selected) for i in source['members'][site]],device=w.device,dtype=x.dtype)
                 if mode=='capture':observed[site]=x.detach();x=x-alpha*(z@s['decoder']);responses[site]=x
-                elif mode=='source':x=x-(z*q)@s['decoder']
+                elif operation=='source':x=x-(z*q)@s['decoder']
                 elif mode.startswith('input_') or mode=='raw_reconstruction':
                     delta,counts=input_member_delta(x,targets[site],s,q,mode,c['members_per_source']*len(q),mask)
                     x=x+delta
@@ -206,9 +207,9 @@ def main():
                             if name=='minimum_final_code':write_counts[key][name]=min(write_counts[key][name],value)
                             else:write_counts[key][name]+=value
                 elif mode!='none':
-                    t=targets[site];r=relations[site];zt=t.encode(x)
+                    t=adapted_targets.get(mode,{}).get(site,targets[site]);r=relations[site];zt=t.encode(x)
                     rq=torch.tensor([name in selected for name in part_names],device=w.device,dtype=x.dtype) if mode in ('native_groups','native_total') else q
-                    coeff=r[mode]@rq
+                    coeff=r[operation]@rq
                     if mode=='raw':x=x-(zt[:, :, r['candidates']]@r['raw']*q)@s['decoder']
                     else:x=x-(zt*coeff)@t.decoder.weight.T
                 if site=='resid_4' and mode!='capture':pooled=(x*mask[:,:,None]).sum(1)/mask.sum(1)[:,None]
@@ -223,6 +224,15 @@ def main():
                     dtype=torch.long if name=='candidates' else torch.float32)
                     for name in ['native','geometry','geometry_gain','raw','candidates']}
             fit_summary=json.loads(w.checked(Path(c['relation_run'])/'RELATION_FIT.json').read_text())
+            for name,spec in c.get('adapted_programs',{}).items():
+                folder=Path(spec['directory']);adapted_targets[name]={}
+                fitted=np.load(w.checked(folder/'relation.npz','Frozen adapted program relation'))
+                for site in sites:
+                    relations[site][name]=torch.tensor(fitted[site+'__native'],device=w.device,dtype=torch.float32)
+                    if site in spec['sites']:
+                        state=torch.load(w.checked(folder/f'{site}_seed{c["target_seed"]}.pt','Frozen adapted dictionary'),map_location=w.device,weights_only=True)
+                        sae=AutoEncoderTopK(512,state['encoder.weight'].shape[0],int(state['k'])).to(w.device)
+                        sae.load_state_dict(state);sae.requires_grad_(False);adapted_targets[name][site]=sae
             if c.get('fixed_basis_run'):
                 basis=np.load(w.checked(Path(c['fixed_basis_run'])/'fixed_response_basis.npz'))
                 for site in sites:sp[site]['fixed_response_basis']=torch.tensor(basis[site],device=w.device)
@@ -357,19 +367,25 @@ def main():
         for mode in c['methods']:
             for query in (['full'] if mode=='none' else c['queries']):
                 logits=np.empty(len(dev),np.float32);order=sorted(range(len(dev)),key=lambda i:len(dev[i]['tokens']))
-                for start in range(0,len(dev),c['eval_batch_size']):
-                    ix=order[start:start+c['eval_batch_size']];length=max(len(dev[i]['tokens']) for i in ix);ids=torch.full((len(ix),length),pad,device=w.device,dtype=torch.long);mask=torch.zeros_like(ids)
+                start=0
+                while start<len(dev):
+                    ix=order[start:start+c['eval_batch_size']]
+                    if c.get('eval_token_budget'):
+                        while len(ix)>1 and len(ix)*max(len(dev[i]['tokens']) for i in ix)>c['eval_token_budget']:ix=ix[:-1]
+                    length=max(len(dev[i]['tokens']) for i in ix);ids=torch.full((len(ix),length),pad,device=w.device,dtype=torch.long);mask=torch.zeros_like(ids)
                     for j,i in enumerate(ix):v=dev[i]['tokens'];ids[j,:len(v)]=torch.tensor(v,device=w.device);mask[j,:len(v)]=1
                     with torch.no_grad():model.gpt_neox(ids,attention_mask=mask,use_cache=False);values=(pooled@pw.T+pb).squeeze(-1)
-                    logits[ix]=values.cpu().numpy();w.sequence_forwards+=len(ix);w.token_forwards+=ids.numel()
+                    logits[ix]=values.cpu().numpy();w.sequence_forwards+=len(ix);w.token_forwards+=ids.numel();start+=len(ix)
                 for r,value in zip(dev,logits):w.record(kind='classification',task='profession',row_id=r['row_id'],component=r['document_sha256'],method=mode,operation=query,seed=c['target_seed'],target_seed=c['target_seed'],split=evaluation_split,label=r['label'],gender=r['gender'],prediction=int(value>0),logit=float(value))
                 acc={f'{y}/{g}':float(np.mean([(v>0)==r['label'] for r,v in zip(dev,logits) if r['label']==y and r['gender']==g])) for y in [0,1] for g in [0,1]};res=dict(profession=float(np.mean([(v>0)==r['label'] for r,v in zip(dev,logits)])),gender=float(np.mean([(v>0)==r['gender'] for r,v in zip(dev,logits)])),worst_group=min(acc.values()),groups=acc)
                 results[f'{mode}/{query}']=res;w.progress('RESULT',method=mode,query=query,result=res)
+                if c.get('eval_token_budget'):torch.cuda.empty_cache()
                 if time.perf_counter()-w.wall_start>c['budget_seconds']:raise TimeoutError('Bounded correspondence consumer')
         write(w.run/'TRANSFER_RESULTS.json',dict(results=results,scope=c['scope'],fit=fit_summary,write_counts=write_counts))
         expected_cells=sum(1 if name=='none' else len(c['queries']) for name in c['methods'])
         w.checks.update(all_query_methods=len(results)==expected_cells,native_capacity=all(v['row_capacity']<=1.000001 for v in fit_summary.values()))
         w.checks['part_capacity']=all(p['row_capacity']<=1.000001 and p['selected']<=p['allowance'] for v in fit_summary.values() for p in v.get('part_fits',{}).values())
+        w.checks['adapted_capacity']=all(bool((relations[s][m]>=0).all()) and float(relations[s][m].sum(1).max())<=1.00001 for m in adapted_targets for s in sites)
     except Exception:error=traceback.format_exc()
     finally:
         for h in hooks:h.remove()

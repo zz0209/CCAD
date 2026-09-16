@@ -13,6 +13,7 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--bootstrap',type=int,default=2000)
     p.add_argument('--classifier',choices=['frozen','retrained'])
+    p.add_argument('--queries',nargs='+')
     a=p.parse_args()
     if a.output.exists():raise FileExistsError(a.output)
     status=json.loads((a.run/'status.json').read_text())
@@ -20,6 +21,8 @@ def main():
     cfg=json.loads((a.run/'config.resolved.json').read_text())
     raw=a.run/'metrics.raw.jsonl'
     rows=[json.loads(x) for x in raw.read_text().splitlines()]
+    rows=[r for r in rows if 'operation' in r and 'logit' in r]
+    if a.queries:rows=[r for r in rows if r['operation'] in a.queries]
     if a.classifier:rows=[r for r in rows if r.get('classifier')==a.classifier]
     docs=sorted({r['component'] for r in rows})
     cells={(r['method'],r['operation'],r['component']):r for r in rows}
@@ -27,7 +30,7 @@ def main():
     ref=[cells['none','full',d] for d in docs]
     y=np.array([r['label'] for r in ref]);g=np.array([r['gender'] for r in ref])
     strata=[np.flatnonzero((y==yy)&(g==gg)) for yy in [0,1] for gg in [0,1]]
-    methods=[m for m in cfg['methods'] if m!='none'];queries=cfg['queries']
+    methods=list(dict.fromkeys(r['method'] for r in rows if r['method']!='none'));queries=a.queries or cfg['queries']
     logits=np.array([[[cells[m,q,d]['logit'] for d in docs] for q in queries] for m in methods])
     clean=np.array([r['logit'] for r in ref])
     source=logits[methods.index('source')]
@@ -69,7 +72,10 @@ def main():
                        ('input_tangent_budget','input_fixed_budget'),('input_finite','input_fixed'),
                        ('input_finite','raw'),('input_finite','raw_reconstruction'),
                        ('input_tangent_budget','geometry'),('input_tangent_budget','geometry_gain'),
-                       ('input_tangent_budget','raw'),('input_tangent_budget','raw_reconstruction')]:
+                       ('input_tangent_budget','raw'),('input_tangent_budget','raw_reconstruction'),
+                       ('parts','initial'),('parts','native'),('parts','whole'),
+                       ('parts','parts_relation'),('parts','mse'),('parts','clean_e2e'),
+                       ('parts','raw'),('parts','raw_reconstruction')]:
         if left not in methods or right not in methods:continue
         li,ri=methods.index(left),methods.index(right)
         differences[left+' - '+right]={}

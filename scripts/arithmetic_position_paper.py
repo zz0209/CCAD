@@ -13,7 +13,7 @@ def main():
         if method=='source_views':lines.append(r'\midrule')
         vals=[100*next(x for x in c['cells'] if x['initialization']==method and x['operation']==op)[m] for op in ['unit','tens'] for m in ['exact_hybrid','target_digit_success','preserve_digit_success']]
         lines.append(label+' & '+' & '.join(f'{v:.2f}' for v in vals)+r' \\')
-    lines.extend([r'\bottomrule',r'\end{tabular}',r'\caption{\textbf{Source-profile reuse on new arithmetic questions.} H: complete hybrid answer; T: requested digit; P: preserved digit. Each cell contains 640 interventions sharing 64 question-pair clusters across two prompt forms and five fixed SAEs. The first four methods use the same 64 directly ranked candidates and response bank. Source learning and the 320-batch direct reference retain their original fitting recipes.}',r'\label{tab:arithmetic_positions}',r'\end{anchoredtable}'])
+    lines.extend([r'\bottomrule',r'\end{tabular}',r'\caption{\textbf{Source-profile reuse on new arithmetic questions.} H denotes the complete hybrid answer, T the requested digit and P the preserved digit. Each cell contains 640 interventions sharing 64 question-pair clusters across two prompt forms and five fixed SAEs. The first four methods use the same 64 directly ranked candidates and response bank. Source learning and the 320-batch direct reference retain their original fitting recipes.}',r'\label{tab:arithmetic_positions}',r'\end{anchoredtable}'])
     (PAPER/'tables/arithmetic_positions.tex').write_text('\n'.join(lines)+'\n')
     inventory,evidence=[],[]
     for run in sorted((ROOT/'runs').glob('REFORM_R36_*')):
