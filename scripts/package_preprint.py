@@ -99,10 +99,10 @@ def plan():
         for p in morning.iterdir():
             if p.is_file() and p.suffix in {'.md', '.json', '.py'}:
                 add(p)
-        for folder in ['before', 'before_restructure', 'before_figure']:
+        for folder in ['before', 'before_restructure', 'before_figure', 'before_r05_paper', 'before_final_entries']:
             if (morning / folder).is_dir():
                 for p in (morning / folder).rglob('*'):
-                    if p.is_file() and p.suffix in {'.md', '.json', '.tex', '.pdf', '.py'}:
+                    if p.is_file() and p.suffix in {'.md', '.json', '.tex', '.pdf', '.py', '.bib', '.bbl', '.svg', '.csv', '.png'}:
                         add(p)
     # Companion material preserves run inputs and original source versions, even
     # when a claim index records only its derived result table.
@@ -115,6 +115,13 @@ def plan():
                  'REFORM_R39_qwen_member_confirmation_v1_20260914'])
     runs.update(f'REFORM_R57_binding_member_confirm_t{s}_v1_20260915' for s in range(2, 6))
     runs.update(f'REFORM_R59_shift_confirm_seed{s}_v1_20260915' for s in range(1, 6))
+    runs.update(['MORNING_R04_query_bank_dev_v1_20260916',
+                 'MORNING_R04_query_bank_primarymaterial_dev_v1_20260916',
+                 'MORNING_R05_restore_source_dev_v1_20260916',
+                 'MORNING_R05_restore_target_dev_v1_20260916',
+                 'MORNING_R06_standalone_seed2_v1_20260916'])
+    runs.update(f'MORNING_R05_restore_confirm_seed{s}_v1_20260916' for s in range(2, 6))
+    runs.update(f'MORNING_R06_standalone_seed{s}_v2_20260916' for s in range(2, 6))
     for run in sorted(runs):
         folder = ROOT / 'runs' / run
         if not folder.is_dir():

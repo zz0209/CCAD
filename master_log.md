@@ -8760,3 +8760,91 @@ R02 COMPLETE已先写入。此单元围绕整篇科学论证和实际采用开�
 阅读全文数学/方法/新任务消费者与同行论证后形成R03_ARGUMENT_REVIEW.md。当前中心由同一人工解释贯穿原分类器、新字典和新任务，另两类研究承担后来请求与成员选择；原比较强项按原文保留，不将SFC/PW-MCC/Subspaces描述成稻草人。新任务统计及所有头配方已重新读取保存结果复算，除实际写入时间外全字段精确相同，证据R03_REPLAY_CHECK.json；无新模型推理。只给分析器新增防覆盖输出保护，原估计器与冻结源码保留。
 
 主文图2现为主要用途差与源功能判断并排，位于第5页，全部方法/各任务数值在主表及E.2。逐页查看44页contact及主要新页面，未见遮挡或裁切。纸面两处轻微vbox警告没有对应可见溢出。当前PDF ddcf9b91cb8156461f74fa95dc047d395c32423c2240f6c9bc97b04cc733a2e4。CLAIM_MAP与README已更新，旧文件逐字归档。接着同步证据清单及实际复现包。
+
+
+## MORNING_REFORM_03 PROGRESS — written_at_utc 2026-09-16T09:42:57Z
+
+Current manuscript now43 pages: removed a final-page duplicate reproduction paragraph already covered by the guide, preserving its exact prior source. Current PDF SHA25675718aee2ec2261fdb94ce11674a584af723749d12f63da521fa3ea6acb34bd8. Claim map, data/figure manifests, current evidence flags and read/replay guides now describe the same manuscript; original manifest bytes remain archived. All six Python files parse, three new configs load, narrow credential-pattern check finds no matches, and git diff checks pass. Code/log commit7a4f156b91b621539daf3697eb84de5cb03d6f06 pushed; HEAD=origin/main verified. Manuscript/artifacts remain local under the unchanged whitelist.
+
+Packaging plan:72 source dependencies,5040 companion files,about2.40GB uncompressed,zero missing references. It includes current frozen outcomes, cached-head predictions, exact snapshots/configs, full source/figure data and preserved editorial versions. No model inference is queued. Next allocate disk-e-io then cpu-heavy for ZIP creation, verify archive entries and compile the extracted source. Package-time master log is a snapshot; post-package validation/completion is recorded outside the ZIP in the same delivery directory.
+
+
+## MORNING_REFORM_03 COMPLETE — written_at_utc 2026-09-16T09:51:04Z
+
+Work began09:23:20Z; relocated validation ran09:46:02.821268Z–09:47:06.508352Z. The current43-page manuscript and editable source have a single explanation→new-dictionary predictions→new-task use chain. R03_ARGUMENT_REVIEW.md records original-paper comparisons; R03_REPORT.md records the completed integration. No new model results are counted in this unit. Two numerical analyzers gained overwrite protection and reproduce all retained values exactly. Current PDF SHA25675718aee2ec2261fdb94ce11674a584af723749d12f63da521fa3ea6acb34bd8.
+
+Local source ZIP473170bytes SHA2561ec6783394d8994ec68549f7422b3dde803df4ab90b7c27701894eb183637e1f; companion568329825bytes SHA2567e013a38f339d18913a3c2d65f0273549823bfc2384352da49377a0f30b5c33e. All72/5040 file hashes, extracted-source compile43pages with identical text, relocated new-task analysis and1,735-case scoring example passed. Full validation and actual logs are underdelivery/morning_reform_20260916/. GPU remained unused; disk-e-io→cpu-heavy leases released. Exclusive reading/work versus wait time unknown. Current claims/files and historical recovery identities are synchronized; no public submission, paid resource or authorship action.
+
+R02's positive new-task result is the scientific advance; this unit makes the complete paper/evidence usable. Original failures, source-direction readout strength and former fixed-head negatives remain. This COMPLETE precedes tracker advancement. Deadline13:30Z and same-conversation5min loop remain active; Strong Accept/overall peer superiority is not certified by this closeout. Next authorized work must address a concrete core opportunity while preserving this finished baseline.
+
+## MORNING_REFORM_04 START — written_at_utc 2026-09-16T09:56:34Z
+
+R03 COMPLETE已先写入，当前43页完整基线及可迁址复现包保留。新单元围绕源知识选择少量关键干预、预测未测部分及改进实际决定的具体机会；先核对既有接口、源信息和目标访问预算、历史失败及最近邻原文。此时无新实验、无GPU队列。可行性与科学信号决定是否开展开发，不默认增加方法搜索或附录。截止13:30Z，方法选择12:20Z结束。旧tracker原字节artifacts/morning_reform_20260916/tracker_after_r03_previous.md，SHA256 7356ac831a9b1793e91b0784611869183769a15024a6dfcac619ad9f907cd2c0。实际工作与等待分开记录，耗时未测不推算。
+
+
+## MORNING_REFORM_04 PROGRESS — written_at_utc 2026-09-16T10:04:42Z
+
+在新目标请求输出前写定R04_DEVELOPMENT_PLAN.json与R04_QUERY_SPEC_DEV.json：44候选检验、32未用于选择的半成员请求，原695开发文档中按职业/性别及hash固定128拟合上下文和128评价上下文。全部属于开发。源响应主元选择、幅度选择、mask选择与32固定随机抽样使用同资料和1/2/4/8目标检验；预测目标减源残差，比较零目标访问的source copy并评价后续执行器选择。无参数搜索。单一run MORNING_R04_query_bank_dev_v1_20260916已在共享gpu-0租约执行；预计97536sequence forwards，初段实测约450seq/sec，1200秒上限。请求规格SHA256c07d92625f021c8f70eb54487556fa88cb9116324c5644309cf25bc75ec0d08d。新脚本仅复用冻结模型/关系并执行指定mask，不重训。线性恢复及balanced评分小见证通过。CIF和FEGA原文的实际方法差异已写REFERENCE_REGISTRY；未引入额外认证或附录。
+
+
+## MORNING_REFORM_04 CORRECTION — written_at_utc 2026-09-16T10:06:28Z
+
+查询bank运行PASS，97536sequence forwards、237.72秒。初次分析在部分随机单检验没有源改变案例时停止：balanced分数缺一层，尚无汇总文件或结果数值用于选择。主RMSE不受影响。固定执行器对照在存在两层的检验上用balanced分数；若全部所选检验均缺层，则以实际可得的普通源答案一致率作明确标注的fallback。此举保留每个随机抽样及其信息不足状态，不伪造balanced值或删掉不利抽样。原分析器逐字保留artifacts/morning_reform_20260916/shift_query_bank_results_before_empty_stratum.py。
+
+
+## MORNING_REFORM_04 COMPLETE — written_at_utc 2026-09-16T10:21:09Z
+
+该单元09:56:34Z开始；两个实际开发bank均PASS，总计195072sequence forwards、427.1735driver秒，未训练。源响应降低未测连续预测误差，但单方向占95.63%能量、幅度控制有竞争力，执行器选择和复核分配未形成充分增益。完整结果及后加分析身份见R04_REPORT.md和R04_QUERY_*文件。正文8M素材复核保持同结论，源输出跨两run逐值相同。原5操作分类1280/1280一致，浮点logit差最大.001137；初始过严绝对差见证失败保留，不误称bitwise复现。当前paper/main.pdf及已完成交付包未变，不新增附录。两次GPU租约均正常释放。有效工作/等待分项未知。此COMPLETE先于tracker前移；后续工作仍受13:30Z交付截止约束。
+
+
+## MORNING_REFORM_05 START — written_at_utc 2026-09-16T10:22:16Z
+
+R04 COMPLETE先行。新的集中问题：早期注释部分被删除以后，恢复后续哪一部分能够恢复原有作用；这个源解释内部的条件化干预判断能否随字典变更保留？SFC/path patching与近期多中介分析提供具体操作参照。先执行一个小源端面板，函数意义及依赖效应先由实际结果决定；此时未给目标拟合新关系，无新模型、没有承诺新机制发现。采用原残差、真实有限操作，恢复码取同一文本未干预轨迹。预算上限先给1800GPU秒；如果源功能弱或结构无区别，停止这个支线，不做writer或剂量搜索。当前43页完整稿及已验证包仍可使用。截止13:30Z不变。
+
+
+
+## MORNING_REFORM_05 PROGRESS — confirmation frozen
+
+Written at UTC: 2026-09-16T10:40:56Z. Event: source development 10:24:34Z–10:24:46Z and target development10:26:26Z–10:27:35Z completed PASS. Source later-word restoration after early-name deletion coefficient0.777 versus later-name0.067; native0.745/0.029. All15 requests retained; native normalized restoration error0.420, gain0.754, geometry0.614, raw0.310. Three clean restoration identities exact zero for every method. These are development outputs.
+
+At the stated write time, froze all24 existing requests, four existing targets, all controls,1024 new balanced documents, primary normalized restoration discrepancy and joint seed/document bootstrap before new cohort model outputs. Data counts alone inspected: old official test/dev exhausted the rare male-nurse cell. Prespecified test/dev/train priority supplies fresh disjoint documents with explicit split provenance; no source-head refit. Freeze: artifacts\morning_reform_20260916\R05_CONFIRMATION_FREEZE.json, SHA256 f1ce9a0ccbdf27431cf746a48793f82dbf4e02a6f1e2d5a01378d57c24dce7f6. Source12.5166s and target68.4198s driver work under gpu-0; no waiting counted as science. Next execute frozen confirmation, then decide its central manuscript role.
+
+
+## MORNING_REFORM_05 PROGRESS — coherent manuscript preparation
+
+Written at UTC: 2026-09-16T10:54:12Z. The confirmed R02 human explanation chain now leads a shorter abstract/introduction. Old human-development tables and candidate-search details exit the active PDF, with the decisive contrasts retained in concise text and full original sources/results preserved. Grammar is a supporting union paragraph. The current source revision is archived before edits under artifacts/morning_reform_20260916/before_r05_paper/MANIFEST.json, including the completed43-page baseline PDF. No R05 confirmation values have yet entered the manuscript.
+
+Path-patching and multiple-mediator original methods were read and recorded in REFERENCE_REGISTRY; the later-restoration study evaluates specified composite programs with live background computations. The confirmation analysis code was materialized and hashed before aggregate reading (R05_ANALYSIS_IDENTITY.json); it implements the frozen primary and fixed12-query secondary, with all15 continuous profiles retained. GPU confirmation proceeds unchanged. This is within the same substantive round; no preparation counted as another completed research round.
+
+
+## MORNING_REFORM_05 PROGRESS — first three confirmation targets
+
+Written at UTC: 2026-09-16T10:56:26Z. First target run ended10:45:40Z, second10:49:58Z, third10:54:14Z; all PASS. Their individual response files have now been analyzed while target5 continues. Native normalized restoration RMSE0.4363/0.4584/0.4505 versus gain0.7672/0.7535/0.6988; raw0.3249/0.2249/0.3426. The original generic per-run analyzer reports14 empirically eligible balanced queries in the new cohort, whereas the frozen confirmation secondary uses12 queries selected before any new-cohort output (exclude early names through0); the final joint analyzer retains that fixed12-query family. All15 continuous profiles remain primary and are retained. No selection, fitting or query changes follow these reads. On the1024 new texts the source later-word/later-name restoration coefficients after early-name deletion are0.7760/0.0746, agreeing with the predeclared direction. All identity controls are exactly0.
+
+## MORNING_REFORM_05 COMPLETE
+Written at UTC: 2026-09-16T11:20:24Z
+Verified event start: 2026-09-16T10:22:16Z. Final confirmed model end: 2026-09-16T10:58:30.573882Z. Manuscript build: 2026-09-16T11:08:48Z. Report/evidence and reader synchronization completed at this writing.
+
+The same published55-member explanation and frozen correspondence now predict early deletion followed by later clean-value restoration. All15 programs on1024 new documents/four target stacks give normalized response RMSE relation0.4309/calibrated geometry0.7298; primary difference−0.2989[−0.3280,−0.2649]. Fixed12-program balanced agreement gain4.07[2.19,5.89]points. Source-direction readout remains stronger in aggregate; all controls/profile signs retained. New cohort768 previously unused official-test and256 original-head-unused official-train, explicit provenance/exclusions. Source and relations remain fixed; all other computation live. No isolated mediation/path claim.
+
+Report artifacts/morning_reform_20260916/R05_REPORT.md; freeze R05_CONFIRMATION_FREEZE.json at10:40:56Z; formal analysis R05_CONFIRMATION_ANALYSIS.json SHA83245edce554e3ae4b2420a4f51faa4c845c6e2cdce26494148b5be6d957b9b0; point witness R05_ANALYSIS_WITNESS.json. Six PASS runs, total driver1100.217s, sequence forwards929280; identities/times/resources inR05_RUN_INVENTORY.json. Sequentialgpu-0 leases released; no active experiment. Reading/editing/computation overlap; isolated effective-work and wait time unknown.
+
+Literature: path patching and multiple-mediator primary methods changed the operation definition; SFC/Subspaces/PW-MCC figures reviewed. New result enters abstract/introduction/Section3.2/Figure2/conclusion; new-task consumerSection3.3/Figure3. Current42-page PDF SHA74b9296b87916c5ce243a5ccc22db6ca6f01a28a6fd3636a3fab8ca872d71e2d (8main+2refs+32appendix). Redundant historical tables/figures removed from active PDF with originals preserved inbefore_r05_paper and R03 source package. Current evidence/claim/reader documents synchronized. Two mandated writing skills applied to a direct same-explanation argument; negative/strong controls retained.
+
+Next: assess the complete current argument against the primary peer papers, resolve a concrete central gap if feasible, then finalize figure/text review and refreshed source/companion package before13:30Z. R04 budget/rank search remains closed. Completion records precede tracker advancement; no overall Strong Accept or peer-superiority certification.
+
+## MORNING_REFORM_06 START
+Written at UTC: 2026-09-16T11:23:10Z
+Verified event start: 2026-09-16T11:23:10Z. Complete unchanged R05 cohort and frozen relations with six standalone late-deletion requests. Question: does agreement on both standalone deletions determine their conditional restoration? Methods/query/data and common all-method acceptance rule are fixed inR06_ANALYSIS_PLAN.json before new standalone outputs. This is supplementary on already exposed R05 data, not a new independent confirmation. Four existing target stacks, no training; measured budget under60s/target, hard600s each. GPU free(display~2.2GB); acquiregpu-0 sequentially. Existing conditional results and all controls remain unchanged. The comparison will enter the current story only if it resolves the meaning of conditional reuse; no parameter continuation.
+
+## MORNING_REFORM_06 CORRECTION
+Written at UTC: 2026-09-16T11:23:55Z
+First seed2v1 run failed after only the none/unedited1024-document pass: request specification omitted the generic recorder's context_split field. Original FAIL and partial bank retained; no source or target intervention outputs computed. V2 adds an explicit supplementary_exposed_R05 context tag, preserving queries, weights, cohort, method and analysis plan. All planned targets use V2 IDs; no driver/method changes. Lost driver5.8534445s; GPU lease released normally.
+
+## MORNING_REFORM_06 PROGRESS
+Written at UTC: 2026-09-16T11:45:48Z
+All four V2 standalone banks PASS; last model end 2026-09-16T11:26:31.825253+00:00. Conditional same-case analysis written2026-09-16T11:27:09.555255Z; frozen common acceptance retains44273/61440cases. Relation/calibrated errors1.42/1.27%, difference+.15[-.19,.52]pp; no additional composition advantage in this subset. Main text andAppendixE.2 disclose it. Source/unedited replays exact. Total model driver including retained failing recorder run154.425s; no active GPU work.
+
+42-page current PDF SHA516db97df406931f7874047ae2f7c46e0f4b45126fa742d22a738a33d6d950c3. Main page7 float placement and two titles improved at normal sizes; contact views cover all42pages and main/new tables checked at readable resolution. All current R05 statistics reproduce after portability-only path normalization, witnessR05_PORTABILITY_REPLAY_CHECK.json; original frozen analysis retained. Original R05 interim PDF lacked a separate checkpoint before next compile;70source/figure files match its receipt, two editedTeX reconstructed, reading copy explicitly marked inbefore_r05_paper/r05_completed_sources/RECOVERY.json. No scientific raw data lost/changed; byte-identical originalPDF not claimed.
+
+Complete whole-paper/peer judgment FINAL_SCIENTIFIC_REVIEW.md and updated concise EXPERIMENT_PLAN.md preserve the strongest claim and factual limits. Previous plan/reader entries byte-archived before_final_entries/MANIFEST.json. No new parameters or models opened. Finish final publication package and relocated numerical replay next.
