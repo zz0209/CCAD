@@ -88,6 +88,17 @@ def plan():
 
     refs(claims)
     refs(index.get('current_source_version_note', {}))
+    # Preserve the prior manuscript and the explicit appendix restoration map.
+    # Page previews and third-party paper renders stay local review aids.
+    story = ROOT / 'artifacts/story_focus_20260916'
+    if story.is_dir():
+        for p in story.iterdir():
+            if p.is_file() and p.suffix in {'.md', '.json', '.py'}:
+                add(p)
+        if (story / 'before').is_dir():
+            for p in (story / 'before').rglob('*'):
+                if p.is_file():
+                    add(p)
     for p in (ROOT / 'artifacts/final_wrap_20260915').iterdir():
         if p.is_file() and p.suffix in {'.md', '.json'}:
             add(p)
