@@ -99,11 +99,18 @@ def plan():
         for p in morning.iterdir():
             if p.is_file() and p.suffix in {'.md', '.json', '.py'}:
                 add(p)
-        for folder in ['before', 'before_restructure', 'before_figure', 'before_r05_paper', 'before_final_entries', 'before_final_package_entries']:
+        for folder in ['before', 'before_restructure', 'before_figure', 'before_r05_paper', 'before_final_entries', 'before_final_package_entries', 'before_r07_closeout']:
             if (morning / folder).is_dir():
                 for p in (morning / folder).rglob('*'):
                     if p.is_file() and p.suffix in {'.md', '.json', '.tex', '.pdf', '.py', '.bib', '.bbl', '.svg', '.csv', '.png'}:
                         add(p)
+        circuit = morning / 'independent_circuit_reading'
+        if circuit.is_dir():
+            for p in circuit.iterdir():
+                if p.is_file() and (p.suffix in {'.md', '.json', '.py', '.npz'} or p.name == 'LICENSE'):
+                    add(p)
+            for p in (circuit / 'annotations').glob('*.jsonl'):
+                add(p)
     # Companion material preserves run inputs and original source versions, even
     # when a claim index records only its derived result table.
     for c in claims:
@@ -119,7 +126,11 @@ def plan():
                  'MORNING_R04_query_bank_primarymaterial_dev_v1_20260916',
                  'MORNING_R05_restore_source_dev_v1_20260916',
                  'MORNING_R05_restore_target_dev_v1_20260916',
-                 'MORNING_R06_standalone_seed2_v1_20260916'])
+                 'MORNING_R06_standalone_seed2_v1_20260916',
+                 'MORNING_R07_infinitive_source_dev_v1_20260916',
+                 'MORNING_R07_infinitive_source_dev_v2_20260916',
+                 'MORNING_R07_infinitive_target_dev_v1_20260916',
+                 'MORNING_R07_infinitive_response_dev_v1_20260916'])
     runs.update(f'MORNING_R05_restore_confirm_seed{s}_v1_20260916' for s in range(2, 6))
     runs.update(f'MORNING_R06_standalone_seed{s}_v2_20260916' for s in range(2, 6))
     for run in sorted(runs):
