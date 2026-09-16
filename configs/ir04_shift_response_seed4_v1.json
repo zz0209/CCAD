@@ -1,0 +1,105 @@
+{
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "device": "cuda:0",
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "run_id": "IR04_shift_response_seed4_v1_20260916",
+  "run_parent": "INDEPENDENT_REUSE_04",
+  "purpose": "Frozen source-response confirmation on1024unused biographies and7 requests",
+  "generator_script": "scripts/run_shift_transfer.py",
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "threshold_source_split": "All adaptation arms share the old source classifier and503source-use contexts. Original geometry/native/raw retain natural-text fits. Relation-only andwhole controls match source information,steps andparameters except the stated dictionary/request change. Reconstruction readout uses original source activation rule on target reconstruction.",
+  "statistics_unit": "Biographies clustered by document; development one target dictionary stack",
+  "seeds": [
+    4
+  ],
+  "target_seed": 4,
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "fit_sequences": 128,
+  "fit_batch_sequences": 8,
+  "neighbors_per_source": 16,
+  "members_per_source": 2,
+  "fit_iterations": 1200,
+  "ridge": 0.001,
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "eval_batch_size": 16,
+  "methods": [
+    "none",
+    "source",
+    "native",
+    "geometry",
+    "geometry_gain",
+    "raw",
+    "raw_reconstruction",
+    "whole",
+    "random_parts",
+    "parts_relation",
+    "parts"
+  ],
+  "queries": [
+    "full",
+    "pronouns",
+    "names",
+    "associated_words",
+    "pronouns+names",
+    "pronouns+associated_words",
+    "names+associated_words"
+  ],
+  "budget_seconds": 600,
+  "budget": "600driver seconds,at most16documents and4096padded tokens perbatch. No fitting in this evaluator.",
+  "scope": "Normalized response RMS error on full plus3pair unions, averaged over target seeds. Joint semantic adaptation minus relation-only and minus complete-program adaptation; paired4000 joint target/document bootstrap. Also report original relation,random-member,geometry,calibrated geometry and both source-direction controls with identical new documents.",
+  "functional_weight": 0.99,
+  "context_response": true,
+  "relation_run": "runs/REFORM_R59_shift_confirm_seed4_v1_20260915",
+  "evaluation_panel": "artifacts\\independent_reuse_20260916\\IR04_RESPONSE_PANEL.json",
+  "evaluation_split": "program_confirmation",
+  "probe_seeds": [
+    42
+  ],
+  "probe_lr": 0.01,
+  "probe_batch_size": 128,
+  "evidence_level": "independent_response_confirmation",
+  "adapted_programs": {
+    "whole": {
+      "directory": "D:/CCAD_Storage/training_curves/IR04_shift_program_seed4_v1_20260916/whole",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    },
+    "random_parts": {
+      "directory": "D:/CCAD_Storage/training_curves/IR04_shift_program_seed4_v1_20260916/random_parts",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    },
+    "parts_relation": {
+      "directory": "D:/CCAD_Storage/training_curves/IR04_shift_program_seed4_v1_20260916/parts_relation",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    },
+    "parts": {
+      "directory": "D:/CCAD_Storage/training_curves/IR04_shift_program_seed4_v1_20260916/parts",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    }
+  },
+  "eval_token_budget": 4096,
+  "confirmation_freeze": "artifacts\\independent_reuse_20260916\\IR04_CONFIRMATION_FREEZE.json"
+}

@@ -116,6 +116,12 @@ def plan():
         for p in independent.iterdir():
             if p.is_file() and p.suffix in {'.md', '.json', '.npz'}:
                 add(p)
+        for name in ['ir03_before','ir04_before','ir04_execution']:
+            folder=independent/name
+            if folder.is_dir():
+                for p in folder.rglob('*'):
+                    if p.is_file() and p.suffix in {'.md','.json','.tex','.pdf','.bib','.bbl','.py','.csv','.svg','.log'}:
+                        add(p)
         # Retain failed/development runs as well as the selected confirmation.
         runs.update(p.name for p in (ROOT/'runs').glob('IR0*_*') if p.is_dir())
     # Companion material preserves run inputs and original source versions, even

@@ -16,7 +16,7 @@ def main():
     from transformers import AutoTokenizer
     root = Path(__file__).resolve().parents[1]
     original = json.loads((root/'configs/reform_r58_shift_source_development_v2.json').read_text())
-    pairs = ([(5, 25, 'comedian_surgeon'), (12, 24, 'model_software_engineer')]
+    pairs = ([(5, 25, 'composer_surgeon'), (12, 24, 'model_software_engineer')]
              if args.stage == 'final_confirmation' else
              [(2, 11, 'attorney_journalist'), (22, 26, 'psychologist_teacher')]
              if args.stage == 'development' else
