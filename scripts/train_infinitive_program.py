@@ -73,10 +73,11 @@ def main():
                     else:
                         cf=h.unsqueeze(-2)-zs.unsqueeze(-1)*sp['decoder']
                         columns=(target.encode(cf)-z.unsqueeze(-2)).transpose(-1,-2)*(zs!=0).unsqueeze(-2)
+                    if mode=='tangent_gain' and c.get('gain_before_selection',False): columns=columns*gain
                     score=columns.abs().sum(-1)*target.decoder.weight.norm(dim=0)
                     keep=torch.zeros_like(score).scatter(-1,score.topk(8,dim=-1).indices,1)
                     columns=columns*keep.unsqueeze(-1)
-                    if mode=='tangent_gain': columns=columns*gain
+                    if mode=='tangent_gain' and not c.get('gain_before_selection',False): columns=columns*gain
                     positive,negative=columns.clamp_min(0),(-columns).clamp_min(0)
                     scale=(z/negative.sum(-1).clamp_min(1e-20)).clamp_max(1)
                     h=h+((positive-negative*scale.unsqueeze(-1))@q)@target.decoder.weight.T
@@ -124,7 +125,7 @@ def main():
             mode=execution or name
             lp=np.empty((len(queries),len(rows)),dtype='float32')
             for qi,(nameq,v) in enumerate(queries.items()):
-                q=torch.tensor(v,device=w.device)
+                q=torch.tensor(v,device=w.device,dtype=torch.float32)
                 for off in range(0,len(rows),c['eval_batch_size']):
                     _,_,l=forward(rows[off:off+c['eval_batch_size']]); lp[qi,off:off+len(l)]=l.cpu().numpy()
                 if (qi+1)%9==0: w.progress('EVALUATION',method=name,query=qi+1,total_queries=len(queries))

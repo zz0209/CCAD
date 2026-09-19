@@ -124,14 +124,14 @@ def main():
             assert len(program_rows)>64
             write(w.run/'program_context_membership.json',dict(documents=[r['document_sha256'] for r in program_rows],calibration_documents=[r['document_sha256'] for r in program_rows[:64]],fit_documents=[r['document_sha256'] for r in program_rows[64:]],labels_used=False,evaluation_disjoint=True))
         if c.get('evaluation_panel'):
-            external=json.loads(w.checked(c['evaluation_panel'],'Previously exposed independent-task panel, now development').read_text())
+            external=json.loads(w.checked(c['evaluation_panel'],c.get('evaluation_description','Previously exposed independent-task panel, now development')).read_text())
             dev=[]
             for profession in sorted({r['profession'] for r in external['rows']}):
                 for gender in [0,1]:
-                    cell=[r for r in external['rows'] if r['split']=='test' and r['profession']==profession and r['gender']==gender]
+                    cell=[r for r in external['rows'] if r['split']==c.get('evaluation_split','test') and r['profession']==profession and r['gender']==gender]
                     dev.extend(sorted(cell,key=lambda r:r['document_sha256'])[:c['evaluation_per_cell']])
             assert not {r['document_sha256'] for r in dev}&{r['document_sha256'] for r in program_rows}
-        write(w.run/'evaluation_membership.json',dict(split='exposed_development',rows=dev))
+        write(w.run/'evaluation_membership.json',dict(split=c.get('evaluation_evidence','exposed_development'),rows=dev))
         probe=np.load(w.checked(Path(c['frozen_source_run'])/'probe.npz','Original source head defining reusable responses and evaluation'))
         pw=torch.tensor(probe['weight'],device=w.device);pb=torch.tensor(probe['bias'],device=w.device)
         def forward(ids):
@@ -150,7 +150,9 @@ def main():
             return (delta.square()*mask[...,None]).sum()/(mask.sum()*delta.shape[-1])
         def set_query(name):
             for s in sites:
-                if name in c.get('dose_queries', {}):
+                if name in c.get('member_queries', {}):
+                    q[s]=torch.tensor(c['member_queries'][name][s],device=w.device,dtype=torch.float32)
+                elif name in c.get('dose_queries', {}):
                     weights=c['dose_queries'][name]
                     q[s]=torch.tensor([sum(weights[g] for g in groups if i in groups[g].get(s,[])) for i in source['members'][s]],device=w.device,dtype=torch.float32)
                 else:
@@ -162,8 +164,12 @@ def main():
             for query in (['full'] if name=='none' else c['queries']):
                 set_query(query);values=np.empty(len(dev),dtype='float32');pooled_values=np.empty((len(dev),512),dtype='float32')
                 order=sorted(range(len(dev)),key=lambda i:len(dev[i]['tokens']))
-                for off in range(0,len(order),c['eval_batch_size']):
-                    ix=order[off:off+c['eval_batch_size']];length=max(len(dev[i]['tokens']) for i in ix)
+                off=0
+                while off<len(order):
+                    count=min(c['eval_batch_size'],len(order)-off)
+                    if c.get('eval_token_budget'):
+                        while count>1 and count*len(dev[order[off+count-1]]['tokens'])>c['eval_token_budget']:count-=1
+                    ix=order[off:off+count];off+=count;length=max(len(dev[i]['tokens']) for i in ix)
                     ids=torch.zeros((len(ix),length),device=w.device,dtype=torch.long);mask=torch.zeros_like(ids)
                     for j,i in enumerate(ix):
                         v=dev[i]['tokens'];ids[j,:len(v)]=torch.tensor(v,device=w.device);mask[j,:len(v)]=1
