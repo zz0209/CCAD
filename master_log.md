@@ -9133,3 +9133,38 @@ Written at UTC 2026-09-16T21:47:53Z.
 原文学习覆盖PW-MCC方法/理论与容量频率实验、Subspaces低秩机制/频率匹配/稳定池，以及端到端SAE响应损失。公开Gemma notebook已有43人工成员但模型受许可访问要求，当前没有人工标注需求。ROUND01_REPORT.md、SCIENTIFIC_DESIGN.md记录实质比较和下一步取舍。下一轮围绕请求覆盖预测及少量验证的真实选择价值，用冻结未见请求检验；停止单独扩大响应度量的局部搜索。
 稿件准备为request_response_coverage.pdf/png、WITHIN_TASK_ANALYSIS.csv和SCIENTIFIC_RESULT_DRAFT.md，按实际论文宽度查看，强读出同屏，11方法及分层配对区间完整保留。唯一paper/main.pdf保持原48页确认稿及原hash，未添加开发附录或改写既有结论。初次绘图环境不兼容已改用既有文档解释器；数值未重算或覆盖。全部55成员分组无重叠，跨run源响应一致。两项写作skill用于保留一个正面问题和清楚强对照，不以技巧名称或完成实验量充当贡献。
 本轮成果已整理，下一步tracker记1/5，原ccad继续ACTIVE及30分钟周期；后四轮依证据调整，最终轮完成完整交付后原位暂停。原2/2与1/1历史计数不变。白名单同步作为本单元收尾，不新增研究轮。
+
+
+## SCIENCE_UPGRADE user steering
+实际写入UTC 2026-09-19T15:43:54Z。用户允许必要时审慎使用研究/设计类skills，强调活动代码留E、大文件留D，可适当调整旧内容，并确认已清理E盘部分空间。本次核对当前路径及实际容量，更新AGENTS、tracker与compute ledger；不启动整盘扫描或无必要迁移。当前布局已符合分盘策略，历史run冻结副本伴随D盘数据保留。原五轮计数1/5与ACTIVE/30分钟调度不变，这次规则维护不计研究轮。后续继续SCIENCE_UPGRADE_02。
+
+
+## SCIENCE_UPGRADE_02 START
+实际写入UTC 2026-09-19T16:16:14Z。可证实事件开始2026-09-19T16:14:26Z。沿首轮校准请求选择信号，本轮检验同预算的验证位置是否可以预测未见干预的对应可靠性。先冻结覆盖端点/内部/边界组合的请求和候选，再评价已有适配器；使用成熟响应曲面/空间覆盖方法，源响应只用于选择校准位置，剩余请求独立评分。首轮只有中间一点附近的事后信号，本轮扩大请求范围并保留旧标量、完整响应、均匀/随机校准及强读出比较。实际开始读取AGENTS/tracker/plan、两项指定写作skill和experimental-design；选用后者的配对/空间覆盖原则，不安装其无必要依赖。现有GPU空闲且环境不变，模型运行前登记实际预算。代码/配置/文稿留E，大数组及run在D。人工工作需求为零，原1/5计数保持，第二轮完成后再更新。
+
+
+### SCIENCE_UPGRADE_02 CORRECTION
+实际写入UTC 2026-09-19T16:24:36Z。cal_v1启动于16:18:04.367287Z，首个结果实际于16:21:39.862015Z完成，随后推进至raw_reconstruction的boundary_06。先前通过未刷新的stdout.log/metrics空文件把状态误判为停滞，核对命令行后终止唯一实验PID153344；工具返回显示已有正常推进，纠正该判断。终止准确时刻未单独取得，观察时刻为本条写入。保留v1部分结果并标记INTERRUPTED_BY_OPERATOR，不纳入科学分析；v2同批量、同数据、同检查点全量重跑，使用python -u实时输出。没有显存耗尽证据，无其他任务被停止。此恢复工作不计科学成果。
+
+
+## SCIENCE_UPGRADE_02 PROGRESS — 2026-09-19T16:38:20Z
+
+Actual log write UTC 2026-09-19T16:38:20Z. Event interval observed16:24:48.350084Z–16:32:43.185429Z. Recovery calibration run SCIENCE02_coverage_cal_v2_20260919 passed in474.423driver seconds with21,952 evaluated sequences. The same frozen candidate/request configuration is used after the recorded operator interruption; target task evaluation is currently running. Independent infinitive-function evaluation is queued under the shared GPU manager with600driver-second bound. No new weights, package installation, paid resource or human annotation.
+
+Source-only analysis of the completed calibration arrays finds that executed pooled responses deviate from multilinear vertex interpolation by mean relative norm.6853 on12interior requests and.3680 on12boundary requests. This is a mechanism diagnostic on development contexts, not the primary target selection outcome. Earlier spectrum inspection of interruptedv1 used only source arrays; its target arrays remain excluded. The broader24request evaluation is still unread.
+
+Read NISTresponse-surface design, IITtraining, soft-abstraction support conditions and CIFmethods. CIFalready formalizes intervention-distribution sensitivity and uncertainty, so our positive opportunity must be selection/prediction value under a fixed target validation budget. The prespecified analyzer also reports a single globally selected adapter, because per-request switching among jointly adapted dictionaries has a different deployment meaning. Analysis scripts are syntax-checked; paired query/context inference and raw reference retained. Sources/actual sections inREFERENCE_REGISTRY.
+
+
+## SCIENCE_UPGRADE_02 PROGRESS — 2026-09-19T16:44:27Z
+Actual log write UTC 2026-09-19T16:44:27Z. The first frozen24request evaluation has completed. At3calibration requests, full-response coordinate/source coverage select nRMSE.17050/.16845 versus endpoint.22610. Paired document/query intervals for differences are[−.09446,−.01570]/[−.09090,−.01622]. Best fixed candidate is.16989 and reconstruction readout.09425. Source-guided selection therefore offers little additional mean value over the best fixed candidate. Old-scalar paired differences cross zero. Exact outputs inROUND02_COVERAGE_ANALYSIS.json.
+
+Decision follows the remaining boundary/interior training tradeoff. A single additional paired development comparison alternates nonzero semantic vertices with uniform continuous requests, using the same512updates and reconstruction budget for old-head and full-response objectives. All later heads/labels remain excluded from fitting. The now-exposed38request panel is development, not reused as independent confirmation. No selector tuning, new data source or expanded supports. Training configscience02_mixed_training_v1.json and existing driver minor variant extension. Independent infinitive run has also passed; its analysis is pending.
+
+
+## SCIENCE_UPGRADE_02 COMPLETE
+实际写入UTC 2026-09-19T16:57:54Z。可证实事件开始2026-09-19T16:14:26Z，结束为本条写入时刻。本轮完成固定24请求的同预算校准比较、独立公开不定式功能检验，以及两种各512更新的混合请求训练。四个成功模型run的driver时间合计1,374.07秒，包含初始化与记录；最高分配显存2,002,844,160字节。编辑、阅读、计算及等待未全程分离计时，不把经过时间等同有效算力。gpu-0及相关租约核对为空闲；无付费、人工标注、新权重或依赖安装。
+科学结果为请求覆盖可以改变后来验证决定，并能指导一个固定对应的训练。职业三请求完整响应校准，源覆盖.16845、坐标覆盖.17050、端点.22610；最佳固定候选.16989。不定式固定导数.41740接近oracle.41122，源覆盖选择.43680与端点.45051的差异区间跨零。因此selector路线收口。混合训练相对连续训练的旧头方案，删除端点nRMSE.26998降至.19526，差异区间[−.08106,−.06775]；内部.13550/.13433，边界.20427/.17852，后二者区间跨零。单部分训练端点.17294仍更准确，源方向重构参考三类误差.12265/.08988/.09862。原负结果与完整响应另一臂全部保留。
+新的24请求先冻结再评价，文本均保留既有开发身份；混合训练在这些结果之后提出，明确标自适应开发。后来四头及标签未参与训练，源数组与训练/评价文档跨run相同。随机布局不算独立研究，配对推断固定source及target seed。首个校准run误判停滞后被本agent中断，同配置v2恢复，错误与部分数组均保留；v1目标数组未入分析。源码/配置/输入/环境/失败及实际时间见ROUND02_RUN_INVENTORY.json。
+原文阅读涵盖NIST设计、IIT、soft abstraction及CIF实际方法，复查PW-MCC与Subspaces原图。实验据此检验真实选择和训练收益，未把成熟混合采样或干预分布敏感性称为首创。anti-defensive-writing和defensive-writing-checker落实于SCIENTIFIC_RESULT_DRAFT的正面训练命题和单处证据范围；scientific-visualization用于同尺度比较、强参考、配对区间及实际查看，修复了图例遮挡/边缘裁切。request_calibration_decisions.pdf、mixed_request_training.pdf和报告均已整理。当前48页主稿保留原确认结论，没有新增论文附录。
+交付定位artifacts/science_upgrade_20260919/ROUND02_REPORT.md及ROUND02_CLOSEOUT.json，后者记录当前文件hash。下一步在独立公开语言功能上实施同一固定程序训练原则，比较已有动态关系与强读出；不继续校准位置和损失权重续扫。当前轮已完成后才将tracker推进2/5。原ccad配置已核对ACTIVE、30分钟、原线程不变。阶段性白名单同步作为收尾，不增加研究轮。

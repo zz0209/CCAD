@@ -41,6 +41,9 @@ def main():
         for file in ['dictionary_learning/trainers/top_k.py','LICENSE']:
             w.checked(Path(c['dictionary_source_dir'])/file,'Unchanged TopK implementation','MIT')
         source=json.loads(w.checked(c['source_manifest'],'Original human source decisions','MIT').read_text())
+        if c.get('request_panel'):
+            import hashlib
+            assert hashlib.sha256(w.checked(c['request_panel'],'Request coordinates frozen before execution').read_bytes()).hexdigest()==c['request_panel_sha256']
         groups,_=source_groups(w.checked(c['notebook'],'Original source annotations','MIT'),source['members'])
         sites=list(source['members']);sb=np.load(w.checked(c['source_parameters'],'Published source parameters','MIT'))
         sp={s:{k:torch.tensor(sb[s+'__'+k],device=w.device) for k in ['encoder','encoder_bias','decoder','center']} for s in sites}
@@ -105,6 +108,12 @@ def main():
         program_rows=[]
         if c.get('program_contexts')=='source_development':
             excluded={r['document_sha256'] for r in dev}
+            if c.get('program_evaluation_exclude_per_group'):
+                # Preserve original training membership when evaluating fewer
+                # of the already excluded development documents.
+                for y in [0,1]:
+                    for g in [0,1]:
+                        excluded.update(r['document_sha256'] for r in sorted([r for r in panel['rows'] if r['split']=='dev' and r['label']==y and r['gender']==g],key=lambda r:r['document_sha256'])[:c['program_evaluation_exclude_per_group']])
             program_rows=sorted([r for r in panel['rows'] if r['split']=='dev' and r['document_sha256'] not in excluded],key=lambda r:r['document_sha256'])
             assert len(program_rows)>64
             write(w.run/'program_context_membership.json',dict(documents=[r['document_sha256'] for r in program_rows],calibration_documents=[r['document_sha256'] for r in program_rows[:64]],fit_documents=[r['document_sha256'] for r in program_rows[64:]],labels_used=False,evaluation_disjoint=True))
@@ -213,13 +222,19 @@ def main():
                 ids=torch.tensor(nat[step*c['batch_sequences']:(step+1)*c['batch_sequences']],device=w.device)
                 mask=torch.ones_like(ids);mode='clean'
                 with torch.no_grad():clean_h,clean_pool=forward(ids);clean={s:observed[s].clone() for s in c['adapt_sites']}
-                if variant in ('head_parts','pooled_parts','white_parts','pooled_whole','parts_relation','head_continuous','pooled_continuous'):
+                if variant in ('head_parts','pooled_parts','white_parts','pooled_whole','parts_relation','head_continuous','pooled_continuous','head_mixed','pooled_mixed'):
                     if program_rows:
                         fit=program_rows[64:];take=[fit[(step*c['batch_sequences']+j)%len(fit)] for j in range(c['batch_sequences'])]
                         ids=program_batch(take);mode='clean'
                         with torch.no_grad():clean_h,clean_pool=forward(ids)
-                    if variant.endswith('_continuous'):
-                        group_weights=torch.rand(len(groups),generator=generator,device=w.device)
+                    if variant.endswith(('_continuous','_mixed')):
+                        if variant.endswith('_mixed') and step%2==0:
+                            # Balance interior participation against exact
+                            # deletion corners at the same total update count.
+                            bits=1+(step//2)%((1<<len(groups))-1)
+                            group_weights=torch.tensor([(bits>>i)&1 for i in range(len(groups))],device=w.device,dtype=torch.float32)
+                        else:
+                            group_weights=torch.rand(len(groups),generator=generator,device=w.device)
                         for s in sites:
                             membership=torch.tensor([[i in groups[g].get(s,[]) for g in groups] for i in source['members'][s]],device=w.device,dtype=torch.float32)
                             q[s]=membership@group_weights
@@ -235,7 +250,7 @@ def main():
                     response_energy=scales[2]
                     response_loss=((student_pool-teacher_pool)@pw.T).square().mean()/response_energy
                     weight=c.get('source_response_weight',0.)
-                    if variant in ('head_parts','head_continuous'):
+                    if variant in ('head_parts','head_continuous','head_mixed'):
                         program=(1-weight)*state_loss+weight*response_loss
                     elif variant=='white_parts':
                         error_pool=student_pool-teacher_pool

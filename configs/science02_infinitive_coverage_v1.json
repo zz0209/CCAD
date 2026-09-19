@@ -1,0 +1,41 @@
+{
+  "device": "cuda:0",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "run_id": "SCIENCE02_infinitive_coverage_v1_20260919",
+  "run_parent": "SCIENCE_UPGRADE_02",
+  "generator_script": "scripts/run_published_parts.py",
+  "purpose": "Independent language function for fixed-request coverage and adapter selection",
+  "panel": "artifacts\\science_upgrade_20260919\\ROUND02_INFINITIVE_PANEL.json",
+  "source_parameters": "artifacts/morning_reform_20260916/independent_circuit_reading/source_parts.npz",
+  "methods": [
+    "none",
+    "source",
+    "native",
+    "geometry",
+    "geometry_gain",
+    "native_response_relation_8",
+    "native_tangent_relation_8",
+    "raw_reconstruction"
+  ],
+  "target_seed": 2,
+  "seeds": [
+    2
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "evidence_level": "controlled_development",
+  "budget": "One target, <=600driver seconds, same existing model; no training/download.",
+  "budget_seconds": 600,
+  "dataset_revision": "researcher-controlled-development-v1",
+  "statistics_unit": "Paired verb/noun context families, development only",
+  "threshold_source_split": "Four fixed published SFC Figure18 source features, selected before outputs",
+  "scope": "Same32 continuous/endpoint requests for all existing executors,32 calibration32 evaluation contexts split by paired verb/noun identifier; source explanation and dictionaries unchanged; exposed development.",
+  "functional_weight": 0.0,
+  "relation_run": "runs/IR01_infinitive_natural_dev_v1_20260916",
+  "run_storage_root": "D:/CCAD_Storage/runs/science_upgrade_20260919"
+}
