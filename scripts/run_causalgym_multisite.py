@@ -65,7 +65,7 @@ def aligned_positions(row, donor, mode):
 class MultisiteWork:
     def __init__(self, cfg, config_path, source_files=None):
         self.cfg, self.config_path = cfg, Path(config_path)
-        self.run = ROOT/'runs'/cfg['run_id']
+        self.run = Path(cfg.get('run_storage_root', ROOT/'runs'))/cfg['run_id']
         self.run.mkdir(exist_ok=False)
         self.started = datetime.now(timezone.utc)
         self.wall_start, self.cpu_start = time.perf_counter(), time.process_time()
