@@ -111,8 +111,15 @@ def infinitive():
     return summarize(methods,nums,den,dw,ff,rng,np.sqrt(den.mean(-1)).tolist(),seeds,dict(setting='infinitive',contexts=len(rows),verbs=verbs,nouns=nouns,queries=names,statistics='2000 paired target-seed and crossed verb/noun draws; paired roles/forms; interior/boundary coordinates resampled separately; exhaustive12 finer masks and3 endpoints fixed; source fixed.',functional_effects=effects,runs=list(map(str,runs))))
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('setting',choices=['human','infinitive']);args=p.parse_args()
-    dest=OUT/f'ROUND04_{args.setting.upper()}_ANALYSIS.json';assert not dest.exists()
+    global BULK
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('setting',choices=['human','infinitive'])
+    p.add_argument('--bulk-root',type=Path,default=BULK,help='Retained science run directory, or runs/science_upgrade_20260919 in the extracted companion.')
+    p.add_argument('--output',type=Path,help='New analysis file; retained results are never overwritten.')
+    args=p.parse_args();BULK=args.bulk_root.resolve()
+    dest=args.output or OUT/f'ROUND04_{args.setting.upper()}_ANALYSIS.json'
+    if dest.exists():raise FileExistsError(dest)
+    dest.parent.mkdir(parents=True,exist_ok=True)
     result=human() if args.setting=='human' else infinitive()
     result['freeze_sha256']=hashlib.sha256((OUT/'ROUND04_FREEZE.json').read_bytes()).hexdigest()
     result['analysis_code_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()

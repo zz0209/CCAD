@@ -15,12 +15,22 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPER = ROOT / 'paper'
+SCIENCE_BULK = Path('D:/CCAD_Storage/runs/science_upgrade_20260919')
+
+
+def archive_name(path):
+    if path.is_relative_to(ROOT):
+        return path.relative_to(ROOT).as_posix()
+    if path.is_relative_to(SCIENCE_BULK):
+        return 'runs/science_upgrade_20260919/' + path.relative_to(SCIENCE_BULK).as_posix()
+    raise ValueError(f'Unregistered package input: {path}')
 
 
 def identity(path):
     with path.open('rb') as f:
         digest = hashlib.file_digest(f, 'sha256').hexdigest()
-    return dict(path=path.relative_to(ROOT).as_posix(), bytes=path.stat().st_size, sha256=digest)
+    name=path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else str(path)
+    return dict(path=name, bytes=path.stat().st_size, sha256=digest)
 
 
 def paper_closure():
@@ -187,6 +197,27 @@ def plan():
     for p in (ROOT / 'delivery').iterdir():
         if p.is_file() and p.suffix in {'.md', '.json', '.jsonl'}:
             add(p)
+    for name in ['README.md','FINAL_REVIEW.md']:
+        add(ROOT/'delivery/science_upgrade_20260919'/name)
+    # Current science stages are kept alongside the previous evidence. The
+    # confirmed pooled outputs are small enough for direct numerical replay;
+    # training weights and development activation caches remain on bulk storage.
+    science=ROOT/'artifacts/science_upgrade_20260919'
+    for p in science.iterdir():
+        if p.is_file() and p.suffix in {'.md','.json','.csv','.npz'}:
+            add(p)
+    for run in sorted(SCIENCE_BULK.glob('SCIENCE*')):
+        if not run.is_dir():continue
+        runs.add('science_upgrade_20260919/'+run.name)
+        for p in run.rglob('*'):
+            if not p.is_file() or '__pycache__' in p.parts or p.suffix in {'.pyc','.pyo'}:continue
+            keep=p.suffix in {'.md','.json','.jsonl','.py','.csv','.txt','.log','.yaml','.yml','.toml'}
+            keep=keep or (p.suffix=='.npz' and p.stat().st_size<=32_000_000)
+            keep=keep or (run.name.startswith('SCIENCE04_shift_t') and p.name.endswith('__pooled.npy'))
+            if keep:files.add(p)
+            else:
+                omitted[archive_name(p)]=dict(original_path=str(p),bytes=p.stat().st_size,
+                    recovery='Retain original bulk input or rerun the recorded producer with pinned inputs and source_snapshot. Confirmation response arrays are included; trained weights and development pooled activations are acquired or regenerated separately.')
     return source, files, omitted, missing, runs
 
 
@@ -194,6 +225,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output-dir', type=Path, required=True)
     parser.add_argument('--build', action='store_true')
+    parser.add_argument('--archives',nargs='+',choices=['source','companion'],default=['source','companion'])
     args = parser.parse_args()
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -213,13 +245,17 @@ def main():
         raise ValueError('Resolve the listed missing current-evidence references before packaging')
     receipts = []
     for name, paths, base in [('arxiv_source.zip', source, PAPER), ('research_companion.zip', files, ROOT)]:
+        if ('source' if name=='arxiv_source.zip' else 'companion') not in args.archives:
+            continue
         target = output / name
         entries = []
         with zipfile.ZipFile(target, 'x', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as z:
             for p in sorted(paths):
                 before = p.stat()
                 item = identity(p)
-                z.write(p, p.relative_to(base).as_posix())
+                name_in_zip=p.relative_to(base).as_posix() if name=='arxiv_source.zip' else archive_name(p)
+                item['archive_path']=name_in_zip
+                z.write(p, name_in_zip)
                 after = p.stat()
                 if (before.st_size, before.st_mtime_ns) != (after.st_size, after.st_mtime_ns):
                     raise RuntimeError(f'Input changed during packaging: {p}')
