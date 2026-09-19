@@ -49,7 +49,7 @@ def main():
         sp={s:{k:torch.tensor(sb[s+'__'+k],device=w.device) for k in ['encoder','encoder_bias','decoder','center']} for s in sites}
         old=np.load(w.checked(Path(c['relation_run'])/'relation.npz','Frozen source-member relation'))
         baselines={}
-        initial={};targets={};indices={};coefficients={};q={}
+        initial={};targets={};indices={};coefficients={};q={};source_gains={}
         for s in sites:
             path=w.checked(Path(c['target_directory'])/f'{s}_seed{c["target_seed"]}.pt','Initial natural-data target dictionary')
             initial[s]=torch.load(path,map_location='cpu',weights_only=True)
@@ -60,6 +60,7 @@ def main():
             indices[s]=(a.sum(1)>0).nonzero().flatten()
             coefficients[s]=torch.nn.Parameter(a[indices[s]].clone())
             q[s]=torch.ones(a.shape[1],device=w.device)
+            source_gains[s]=torch.nn.Parameter(torch.ones(a.shape[1],device=w.device),requires_grad=False)
         for f in ['config.json','tokenizer.json','model.safetensors']:
             w.checked(Path(c['model_local_dir'])/f,'Pinned Pythia70M','Apache-2.0')
         model=transformers.AutoModelForCausalLM.from_pretrained(c['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to(w.device)
@@ -76,6 +77,11 @@ def main():
                 elif mode=='student':
                     t=targets[site];ix=indices[site]
                     x=x-(t.encode(x)[...,ix]*(coefficients[site]@q[site]))@t.decoder.weight[:,ix].T
+                elif mode in ('input_initial','tangent_gain','tangent_mixed'):
+                    ss=sp[site]
+                    if mode=='tangent_gain': ss={**ss,'decoder':ss['decoder']*source_gains[site][:,None]}
+                    delta,_=input_member_delta(x,targets[site],ss,q[site],'input_tangent_budget',c['members_per_source']*len(q[site]),mask)
+                    x=x+delta
                 elif mode in ('geometry','geometry_gain','raw'):
                     t=targets[site];z=t.encode(x);b=baselines[site]
                     if mode=='raw':
@@ -152,7 +158,7 @@ def main():
         @torch.no_grad()
         def evaluate(name):
             nonlocal mode,mask
-            mode=name if name in ('source','geometry','geometry_gain','raw','raw_reconstruction') else ('clean' if name=='none' else 'student')
+            mode=name if name in ('source','geometry','geometry_gain','raw','raw_reconstruction','input_initial','tangent_gain','tangent_mixed') else ('clean' if name=='none' else 'student')
             for query in (['full'] if name=='none' else c['queries']):
                 set_query(query);values=np.empty(len(dev),dtype='float32');pooled_values=np.empty((len(dev),512),dtype='float32')
                 order=sorted(range(len(dev)),key=lambda i:len(dev[i]['tokens']))
@@ -178,6 +184,9 @@ def main():
                 for s in sites:
                     a=torch.tensor(relation[s+'__native'],device=w.device,dtype=torch.float32)
                     coefficients[s].data.copy_(a[indices[s]])
+                if variant=='tangent_gain':
+                    loaded=np.load(w.checked(folder/'source_gains.npz'))
+                    for s in sites:source_gains[s].data.copy_(torch.tensor(loaded[s],device=w.device))
                 evaluate(variant)
             w.checks['completed_fixed_checkpoints']=True
             return w.finish(None)
@@ -212,23 +221,24 @@ def main():
         for variant in c['variants']:
             for s in sites:
                 targets[s].load_state_dict(initial[s]);coefficients[s].data.copy_(base_coeff[s])
-                coefficients[s].requires_grad_(True)
-            for s in c['adapt_sites']:targets[s].requires_grad_(variant!='parts_relation')
+                coefficients[s].requires_grad_(not variant.startswith('tangent_'))
+                source_gains[s].data.fill_(1.);source_gains[s].requires_grad_(variant=='tangent_gain')
+            for s in c['adapt_sites']:targets[s].requires_grad_(variant not in ('parts_relation','tangent_gain'))
             groups_opt=[dict(params=[p for p in params if p.requires_grad],lr=c['dictionary_lr'])]
-            groups_opt.append(dict(params=list(coefficients.values()),lr=c['relation_lr']))
+            groups_opt.append(dict(params=[a for a in coefficients.values() if a.requires_grad]+[g for g in source_gains.values() if g.requires_grad],lr=c['relation_lr']))
             optim=torch.optim.AdamW(groups_opt,weight_decay=0.)
             generator=torch.Generator(device=w.device).manual_seed(c['training_seed'])
             for step in range(c['steps']):
                 ids=torch.tensor(nat[step*c['batch_sequences']:(step+1)*c['batch_sequences']],device=w.device)
                 mask=torch.ones_like(ids);mode='clean'
                 with torch.no_grad():clean_h,clean_pool=forward(ids);clean={s:observed[s].clone() for s in c['adapt_sites']}
-                if variant in ('head_parts','pooled_parts','white_parts','pooled_whole','parts_relation','head_continuous','pooled_continuous','head_mixed','pooled_mixed'):
+                if variant in ('head_parts','pooled_parts','white_parts','pooled_whole','parts_relation','head_continuous','pooled_continuous','head_mixed','pooled_mixed','tangent_gain','tangent_mixed'):
                     if program_rows:
                         fit=program_rows[64:];take=[fit[(step*c['batch_sequences']+j)%len(fit)] for j in range(c['batch_sequences'])]
                         ids=program_batch(take);mode='clean'
                         with torch.no_grad():clean_h,clean_pool=forward(ids)
-                    if variant.endswith(('_continuous','_mixed')):
-                        if variant.endswith('_mixed') and step%2==0:
+                    if variant.endswith(('_continuous','_mixed')) or variant=='tangent_gain':
+                        if (variant.endswith('_mixed') or variant=='tangent_gain') and step%2==0:
                             # Balance interior participation against exact
                             # deletion corners at the same total update count.
                             bits=1+(step//2)%((1<<len(groups))-1)
@@ -244,13 +254,13 @@ def main():
                         for s in sites:q[s]=torch.ones_like(q[s])
                     mode='source'
                     with torch.no_grad():teacher_h,teacher_pool=forward(ids)
-                    mode='student';student_h,student_pool=forward(ids)
+                    mode=variant if variant.startswith('tangent_') else 'student';student_h,student_pool=forward(ids)
                     energy,pe=scales[:2]
                     state_loss=(token_mse(student_h-teacher_h)/energy+(student_pool-teacher_pool).square().mean()/pe)/2
                     response_energy=scales[2]
                     response_loss=((student_pool-teacher_pool)@pw.T).square().mean()/response_energy
                     weight=c.get('source_response_weight',0.)
-                    if variant in ('head_parts','head_continuous','head_mixed'):
+                    if variant in ('head_parts','head_continuous','head_mixed','tangent_gain','tangent_mixed'):
                         program=(1-weight)*state_loss+weight*response_loss
                     elif variant=='white_parts':
                         error_pool=student_pool-teacher_pool
@@ -268,8 +278,9 @@ def main():
                 optim.step()
                 with torch.no_grad():
                     for s in c['adapt_sites']:
-                        if variant!='parts_relation':targets[s].decoder.weight.div_(targets[s].decoder.weight.norm(dim=0).clamp_min(1e-10))
+                        if targets[s].decoder.weight.requires_grad:targets[s].decoder.weight.div_(targets[s].decoder.weight.norm(dim=0).clamp_min(1e-10))
                     for a in coefficients.values():project_rows(a)
+                    for g in source_gains.values():g.clamp_(min=0)
                 assert torch.isfinite(loss)
                 if (step+1)%16==0:
                     w.record(kind='training',task='natural_program',component=variant,row_id=step+1,method=variant,step=step+1,loss=float(loss.detach()),program=float(program.detach()),reconstruction=float(recon.detach()))
@@ -282,6 +293,7 @@ def main():
                 for key in ['native','geometry','geometry_gain','raw','candidates']:export[s+'__'+key]=old[s+'__'+key].copy()
                 export[s+'__native'][indices[s].cpu().numpy()]=coefficients[s].detach().cpu().numpy()
             np.savez_compressed(dest/'relation.npz',**export)
+            if variant=='tangent_gain':np.savez_compressed(dest/'source_gains.npz',**{s:g.detach().cpu().numpy() for s,g in source_gains.items()})
             checkpoints.append(dict(method=variant,directory=str(dest),adapt_sites=c['adapt_sites'],steps=c['steps']))
             write(w.run/'checkpoints.json',dict(checkpoints=checkpoints))
             evaluate(variant)

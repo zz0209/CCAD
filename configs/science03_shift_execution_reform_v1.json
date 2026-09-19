@@ -1,0 +1,320 @@
+{
+  "adapt_sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+  ],
+  "audit_opened": false,
+  "basis_fit_sequences": 16,
+  "batch_sequences": 4,
+  "budget": "Two512-update matched adaptation arms plus existing256text38query evaluation; <=1200driver seconds, based on prior297second two-arm run",
+  "budget_seconds": 1200,
+  "bulk_output_dir": "D:/CCAD_Storage/training_curves/SCIENCE03_shift_execution_reform_v1_20260919",
+  "candidate_family_frozen": true,
+  "context_response": true,
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "development_per_group": 32,
+  "device": "cuda:0",
+  "dictionary_lr": 0.0001,
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "eval_batch_size": 16,
+  "fit_batch_sequences": 8,
+  "fit_iterations": 1200,
+  "fit_sequences": 128,
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "functional_weight": 0,
+  "generator_script": "scripts/train_shift_response_space.py",
+  "members_per_source": 2,
+  "methods": [
+    "none",
+    "source",
+    "native",
+    "repair__embed",
+    "repair__mlp_0",
+    "repair__resid_0",
+    "repair__mlp_1",
+    "repair__resid_1",
+    "repair__attn_2",
+    "repair__resid_2",
+    "repair__attn_3",
+    "repair__resid_3",
+    "repair__attn_4",
+    "repair__resid_4"
+  ],
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "neighbors_per_source": 16,
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "program_contexts": "source_development",
+  "purpose": "Apply the same input-dependent program calibration and dictionary adaptation to the main55-member human explanation",
+  "queries": [
+    "pronouns",
+    "names",
+    "pronouns+names",
+    "associated_words",
+    "pronouns+associated_words",
+    "names+associated_words",
+    "full",
+    "center",
+    "face_pronouns_0",
+    "face_pronouns_1",
+    "face_names_0",
+    "face_names_1",
+    "face_associated_words_0",
+    "face_associated_words_1",
+    "interior_00",
+    "interior_01",
+    "interior_02",
+    "interior_03",
+    "interior_04",
+    "interior_05",
+    "interior_06",
+    "interior_07",
+    "interior_08",
+    "interior_09",
+    "interior_10",
+    "interior_11",
+    "boundary_00",
+    "boundary_01",
+    "boundary_02",
+    "boundary_03",
+    "boundary_04",
+    "boundary_05",
+    "boundary_06",
+    "boundary_07",
+    "boundary_08",
+    "boundary_09",
+    "boundary_10",
+    "boundary_11"
+  ],
+  "reconstruction_weight": 1.0,
+  "relation_lr": 0.005,
+  "relation_run": "E:/Projects/SAE_Lab/CCAD/runs/REFORM_R58_shift_context_curve_s8192_v1_20260915",
+  "request_training": "semantic_singletons",
+  "ridge": 0.001,
+  "run_id": "SCIENCE03_shift_execution_reform_v1_20260919",
+  "run_parent": "SCIENCE_UPGRADE_03",
+  "scope": "Adaptive development after frozen coverage evaluation. Same512updates,503fit64normalization contexts, target support and reconstruction regularizer. Alternate seven nonzero semantic vertices and uniform continuous participation. No later task heads or labels enter fitting. All38evaluation requests are now exposed development; no confirmation claim.",
+  "seeds": [
+    1
+  ],
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "source_response_weight": 0.9,
+  "statistics_unit": "Biographies clustered by document; development one target dictionary stack",
+  "steps": 512,
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R58_shift_dictionaries_curve_v1_20260915/step_8192",
+  "target_seed": 1,
+  "threshold_source_split": "Fixed source explanation,503sourcefit64sourcecal; original128excludeddev remains development. Same source responses for all variants; normalization and covariance use source calibration only.",
+  "token_offset_sequences": 128,
+  "training_seed": 42,
+  "variants": [
+    "tangent_gain",
+    "tangent_mixed"
+  ],
+  "response_covariance_ridge": 0.05,
+  "evidence_level": "frozen_request_development",
+  "dose_queries": {
+    "pronouns": {
+      "pronouns": 1.0,
+      "names": 0.0,
+      "associated_words": 0.0
+    },
+    "names": {
+      "pronouns": 0.0,
+      "names": 1.0,
+      "associated_words": 0.0
+    },
+    "pronouns+names": {
+      "pronouns": 1.0,
+      "names": 1.0,
+      "associated_words": 0.0
+    },
+    "associated_words": {
+      "pronouns": 0.0,
+      "names": 0.0,
+      "associated_words": 1.0
+    },
+    "pronouns+associated_words": {
+      "pronouns": 1.0,
+      "names": 0.0,
+      "associated_words": 1.0
+    },
+    "names+associated_words": {
+      "pronouns": 0.0,
+      "names": 1.0,
+      "associated_words": 1.0
+    },
+    "full": {
+      "pronouns": 1.0,
+      "names": 1.0,
+      "associated_words": 1.0
+    },
+    "center": {
+      "pronouns": 0.5,
+      "names": 0.5,
+      "associated_words": 0.5
+    },
+    "face_pronouns_0": {
+      "pronouns": 0.0,
+      "names": 0.5,
+      "associated_words": 0.5
+    },
+    "face_pronouns_1": {
+      "pronouns": 1.0,
+      "names": 0.5,
+      "associated_words": 0.5
+    },
+    "face_names_0": {
+      "pronouns": 0.5,
+      "names": 0.0,
+      "associated_words": 0.5
+    },
+    "face_names_1": {
+      "pronouns": 0.5,
+      "names": 1.0,
+      "associated_words": 0.5
+    },
+    "face_associated_words_0": {
+      "pronouns": 0.5,
+      "names": 0.5,
+      "associated_words": 0.0
+    },
+    "face_associated_words_1": {
+      "pronouns": 0.5,
+      "names": 0.5,
+      "associated_words": 1.0
+    },
+    "interior_00": {
+      "pronouns": 0.7763143541605676,
+      "names": 0.06913373837624463,
+      "associated_words": 0.6510408544516246
+    },
+    "interior_01": {
+      "pronouns": 0.6865784626260037,
+      "names": 0.41359368181879624,
+      "associated_words": 0.9051135593433223
+    },
+    "interior_02": {
+      "pronouns": 0.8780312270364857,
+      "names": 0.21758305359970032,
+      "associated_words": 0.44186696663997665
+    },
+    "interior_03": {
+      "pronouns": 0.18068074591723474,
+      "names": 0.6567124416299869,
+      "associated_words": 0.9278642616146442
+    },
+    "interior_04": {
+      "pronouns": 0.5481173380556513,
+      "names": 0.8122653915103859,
+      "associated_words": 0.38133923351033444
+    },
+    "interior_05": {
+      "pronouns": 0.9254325202451955,
+      "names": 0.31997105673189496,
+      "associated_words": 0.677068707005026
+    },
+    "interior_06": {
+      "pronouns": 0.2850500287474096,
+      "names": 0.10388038946992113,
+      "associated_words": 0.27972195763332297
+    },
+    "interior_07": {
+      "pronouns": 0.10917341646112055,
+      "names": 0.8901629354865507,
+      "associated_words": 0.17783529814467325
+    },
+    "interior_08": {
+      "pronouns": 0.5997834707459698,
+      "names": 0.46394848816077644,
+      "associated_words": 0.8041221716088444
+    },
+    "interior_09": {
+      "pronouns": 0.4216698100076488,
+      "names": 0.5648733729847597,
+      "associated_words": 0.10252393810687188
+    },
+    "interior_10": {
+      "pronouns": 0.33431180409726213,
+      "names": 0.6740278288672452,
+      "associated_words": 0.5126822368236684
+    },
+    "interior_11": {
+      "pronouns": 0.03759519132366506,
+      "names": 0.9531826644750586,
+      "associated_words": 0.03164551843098364
+    },
+    "boundary_00": {
+      "pronouns": 0.0,
+      "names": 0.10034483154459523,
+      "associated_words": 0.8875294091570249
+    },
+    "boundary_01": {
+      "pronouns": 0.6950212048241714,
+      "names": 0.0,
+      "associated_words": 0.11030144795442218
+    },
+    "boundary_02": {
+      "pronouns": 0.22096263770885594,
+      "names": 0.7702262489500934,
+      "associated_words": 0.0
+    },
+    "boundary_03": {
+      "pronouns": 1.0,
+      "names": 0.5833419965021197,
+      "associated_words": 0.12847710143224622
+    },
+    "boundary_04": {
+      "pronouns": 0.8087360783939804,
+      "names": 1.0,
+      "associated_words": 0.6454869023163664
+    },
+    "boundary_05": {
+      "pronouns": 0.10093221311618122,
+      "names": 0.7788427985661037,
+      "associated_words": 1.0
+    },
+    "boundary_06": {
+      "pronouns": 0.0,
+      "names": 0.0,
+      "associated_words": 0.7209103148988439
+    },
+    "boundary_07": {
+      "pronouns": 0.5180517953709234,
+      "names": 0.0,
+      "associated_words": 1.0
+    },
+    "boundary_08": {
+      "pronouns": 0.0,
+      "names": 0.694094096120152,
+      "associated_words": 0.0
+    },
+    "boundary_09": {
+      "pronouns": 1.0,
+      "names": 1.0,
+      "associated_words": 0.5064695612273254
+    },
+    "boundary_10": {
+      "pronouns": 0.12319847020139837,
+      "names": 1.0,
+      "associated_words": 0.0
+    },
+    "boundary_11": {
+      "pronouns": 1.0,
+      "names": 0.5549048077314154,
+      "associated_words": 1.0
+    }
+  },
+  "evaluation_panel": "artifacts/independent_reuse_20260916/IR04_NEW_TASKS_PANEL.json",
+  "evaluation_per_cell": 32,
+  "evaluate_baselines": [
+    "input_initial",
+    "raw_reconstruction"
+  ],
+  "run_storage_root": "D:/CCAD_Storage/runs/science_upgrade_20260919",
+  "request_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\science_upgrade_20260919\\ROUND02_REQUESTS.json",
+  "request_panel_sha256": "3196c5b069ce1acc61617fab8557c6fe072ee38033c1710d2c1d25ccc9f2ea8f"
+}

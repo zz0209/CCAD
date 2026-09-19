@@ -9168,3 +9168,44 @@ Decision follows the remaining boundary/interior training tradeoff. A single add
 新的24请求先冻结再评价，文本均保留既有开发身份；混合训练在这些结果之后提出，明确标自适应开发。后来四头及标签未参与训练，源数组与训练/评价文档跨run相同。随机布局不算独立研究，配对推断固定source及target seed。首个校准run误判停滞后被本agent中断，同配置v2恢复，错误与部分数组均保留；v1目标数组未入分析。源码/配置/输入/环境/失败及实际时间见ROUND02_RUN_INVENTORY.json。
 原文阅读涵盖NIST设计、IIT、soft abstraction及CIF实际方法，复查PW-MCC与Subspaces原图。实验据此检验真实选择和训练收益，未把成熟混合采样或干预分布敏感性称为首创。anti-defensive-writing和defensive-writing-checker落实于SCIENTIFIC_RESULT_DRAFT的正面训练命题和单处证据范围；scientific-visualization用于同尺度比较、强参考、配对区间及实际查看，修复了图例遮挡/边缘裁切。request_calibration_decisions.pdf、mixed_request_training.pdf和报告均已整理。当前48页主稿保留原确认结论，没有新增论文附录。
 交付定位artifacts/science_upgrade_20260919/ROUND02_REPORT.md及ROUND02_CLOSEOUT.json，后者记录当前文件hash。下一步在独立公开语言功能上实施同一固定程序训练原则，比较已有动态关系与强读出；不继续校准位置和损失权重续扫。当前轮已完成后才将tracker推进2/5。原ccad配置已核对ACTIVE、30分钟、原线程不变。阶段性白名单同步作为收尾，不增加研究轮。
+
+## SCIENCE_UPGRADE_03 START
+Written at UTC 2026-09-19T17:35:04Z. Observable event start 2026-09-19T17:31:04Z.
+
+The independent public infinitive explanation tests whether training an executable correspondence over endpoints and continuous requests improves the range of old functional predictions that a fixed target relation preserves. Round02's selector continuation is closed. This round will adapt the existing four-source/eight-target operation using the same program-training principle, maintain derivative, finite-response, geometry and source-direction references, and split functional contexts by lexical families. Existing data remain development. No human annotation or paid resources are needed.
+
+Read AGENTS, tracker, plan and local environment ledger. GPU lease registry is free at 17:35 UTC; RTX5070Ti shows 1819MiB occupied and2% utilization, without a registered research owner. Experiment runtime remains r004; large runs/checkpoints go to D:/CCAD_Storage/runs/science_upgrade_20260919. Initial budget is three512-update training conditions plus matched evaluation, capped at1800driver seconds, based on round02 two-condition297second runtime; no scale increase before actual throughput. Current files preserved in artifacts/science_upgrade_20260919/round03_before with hashes. Round count remains2/5. Scientific outcome and manuscript changes pending.
+
+
+## SCIENCE_UPGRADE_03 CORRECTION
+Written at UTC 2026-09-19T17:39:10Z. SCIENCE03_infinitive_program_v1 failed after4.767driver seconds before any training/evaluation. Installed Transformers5.15 exposes the output layer through get_output_embeddings(), not model.embed_out. Changed this access to the supported model API; old run preserved as FAIL. Configv2 retains all scientific settings, data and budget. This is an implementation recovery, no scientific result.
+
+
+
+## SCIENCE_UPGRADE_03 PROGRESS / CORRECTION
+Written at UTC 2026-09-19T17:42:39Z. The three512-update arms completed17:40:34Z, with all finite arrays and saved checkpoints. Existing MultisiteWork assigned FAIL because the new driver wrote arrays but no metric rows (error=null, actual checks true). Added27 per-query response-error rows per method. v3 replays the exact saved dictionaries without retraining; v2 remains immutable and its training provenance retained. An attempted read during NPZ final write returned BadZipFile, no array consumed from that attempt; completed array loads succeeded. Preliminary continuous/boundary error native~.729, derivative~.352, mixed~.579. Mixed improves the old fixed execution but the dynamic comparator remains much better. Next inspect functional distinction and whether fixed support imposes an avoidable activation mismatch; no claim of method superiority.
+
+
+
+## SCIENCE_UPGRADE_03 PROGRESS
+Written at UTC 2026-09-19T17:47:04Z. Strongest input-dependent relation with mixed program training reduces held-requestnRMSE .35193 to.16867 on128 disjoint-fit lexical/structural contexts. Natural-only adaptation yields.40982, fixed mixed relation.57882, relation-only.91154. Both role-part ordering and magnitudes measured; naturalFVE .92365 initially and.91791 afterprogramtraining. Difference versusinitialderivative -.18326 withcrossedverb/noun andpairedquery95%interval[-.25757,-.14686], fixedone targetseed. Development signal selectedfornextconfirmation. One bounded gain-only comparator is necessary because initialderivative underpredicts sourceeffects, a known alternativeexplanation; use same512updates/64fitcontexts,4source-column gains, originaltargetdictionary andoriginaltop8selection. No new lossweight/support scan.
+
+
+
+## SCIENCE_UPGRADE_03 PROGRESS
+Written at UTC 2026-09-19T17:49:55Z. Four scalar source-member gains on the original infinitive target reduce held-request error to~.180, close to dictionary program adaptation .169. Thus the immediate useful construct may be calibrated input-dependent correspondence; most improvement must not be attributed to dictionary training. Extend exactly these two512-update candidates to the existing55-member/11-site human explanation and its four later heads, with the same old-source-only supervision, queries and previously excluded contexts. This tests the same proposed construct in the main consumer, not a new application or hyperparameter search. Bound1200driver seconds using prior297seconds/twoarms; overallallocatedcompute1800seconds remains ample given actual runtimes. Allcontextsremain development.
+
+
+
+## SCIENCE_UPGRADE_03 PROGRESS / CORRECTION
+Written at UTC 2026-09-19T18:05:36Z. Both functional runs are complete and all leases free. Human55-member program on four later readouts improves.15642 to.08375 against same-budget fixed training, paired difference interval[-.08692,-.05965]; source-gain.16814; source-direction readout.09425 with paired contrast crossing zero. New run completed18:00:17Z. Infinitive comparison and strong gain control retained. Frozen panel prose incorrectly stated8nouns/2forms; actual arrays contain8verbs/4nouns/4forms, bootstrap used actual row-derived groups from the beginning. Scope erratum in ROUND03_PANEL_CORRECTION.json; frozen panel/configs unchanged. Source/target prediction arrays fromv2 andv3 replay agree exactly. Last-token versus full-token output GEMM rounding witness reproduced legacy first16 clean outputs exactly. Main numerical comparisons use a common projection. Inspected program_transfer_comparison.png at full paper width; readable Times typography, all intervals visible. Report and evidence-led manuscript draft updated; confirmed paper/main.pdf unchanged until planned confirmation integration.
+
+
+
+## SCIENCE_UPGRADE_03 COMPLETE
+实际写入 UTC 2026-09-19T18:11:09Z。可证实事件开始 2026-09-19T17:31:04Z，研究与结果整理结束为本条写入时刻。六个 driver 合计 824.9772384 秒，含初始化、记录、失败和冻结检查点重放；最高分配显存 3,164,391,936 字节。工作、计算和等待未分别完整计时。模型计算于 18:00:17Z 结束，18:01:02Z 核对共享租约均已释放。无新增付费算力、权重下载、依赖安装或人工标注。
+本轮将输入相关成员对应放入源干预程序中训练，保持原成员额度和每条件 512 次更新。55 成员人工解释在四个后来读出上的连续/边界请求 nRMSE 从上轮固定训练的 .15642 降至 .08375，配对差异 −.07267，95% 区间 [−.08692, −.05965]；同预算增益校准为 .16814。独立公开不定式解释从原导数对应的 .35193 降至 .16867，差异 −.18326，区间 [−.25757, −.14686]；四参数增益已经达到 .17983。前者体现了输入相关程序适配的实际增益，后者说明简单校准足以实现大部分改进。源方向读出、固定训练和自然重构控制保持可见。
+两处均为单目标初始化的开发证据，后来职业头和标签未参与源程序训练。不定式词汇与拟合分开，但评价文本在此前研究中已暴露。统计分别采用配对文档/请求及交叉动词/名词/请求重采样，各 2000 次，固定源和目标。增益进入支持分配的时机在两处控制中不同，已记录并计划在确认前统一；主要字典训练无此差异。冻结面板中的名词/句式数量文字错误保留原件并有勘误，实际分组统计未受影响。
+六个 run 的两次实现故障保留。v1 模型 API 失败发生在训练前；v2 完成训练但未登记公共接口要求的指标行，v3 重放冻结检查点补齐登记，数组逐项差异为零。原投影方式与最后 token 投影的浮点差异已通过同 hidden/权重见证定位。本轮方法共用计算路径。运行身份、时刻、资源、配置与代码 hash 见 ROUND03_RUN_INVENTORY.json。
+实际阅读 SFC 方法与不定式图18、JSAE 损失和局部线性实验，以及已锁定 TopK 与模型输出层源码。anti-defensive-writing 与 defensive-writing-checker 落实在共同预测收益、简单方案的适用差别及单处证据范围。已生成并实际查看 program_transfer_comparison.pdf/png，保留全部区间和强参考，SCIENTIFIC_RESULT_DRAFT.md 与计划已更新。当前 48 页 paper/main.pdf 保持原确认稿，拟在下一轮确认后替换现有训练与独立解释段落；本轮未扩充附录。
+完整结果见 artifacts/science_upgrade_20260919/ROUND03_REPORT.md，图、统计、来源、故障与交付身份见 ROUND03_CLOSEOUT.json。此 COMPLETE 后 tracker 才推进 3/5。第四轮冻结主要方法与强控制，在未参与方法设计的文本、请求和其他目标初始化上确认，并检验更细成员请求；第五轮整体稿件与项目交付，总轮数不增加。白名单分组同步为本轮收尾。
