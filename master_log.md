@@ -9471,3 +9471,7 @@ The single manuscript paper/main.pdf has51pages, with8mainpages,738052bytes andS
 
 EXPERIMENT_PLAN, CLAIM_MAP, evidence/data/figure indices, source registry and round report are maintained. No important prior paper result was removed. Completion advances the authorized count to1/5 after this entry. The original ccad heartbeat remainsACTIVE at5minutes and resumes the next work card, with no active experiment to duplicate. Next priority is a bounded inference/member/decoder comparison at the dominant early execution position, immediately followed by the most promising shared-method change on complete and held-out functions. This round's local gain is not a conference rating or a peer-ranking claim. Whitelisted code/config/log synchronization follows as authorized.
 
+## FINAL_SCIENCE_01 SYNCHRONIZATION
+
+Actual write UTC 2026-09-20T18:51:42Z. Whitelisted implementation, configurations and research log committed and pushed as180cba6189eb7e2569d368676bf623d8259824a1. HEAD and origin/main were verified identical, with a clean tracked worktree. Paper, plots, analysis records, tracker and plan remain local under the existing explicit upload allowlist. Their identities and the final metadata synchronization receipt are recorded in artifacts/final_science_20260920/CLOSEOUT.json. Scientific completion and count remain1/5; this synchronization does not add a round.
+
