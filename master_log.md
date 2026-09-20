@@ -9356,3 +9356,13 @@ Actual write UTC 2026-09-20T07:08:29Z. Completed the authorized local restart pr
 Updated the persistent prompt, durable AGENTS working rule, scientific plan and current tracker. Actions are selected by expected whole-paper scientific improvement; candidate mechanisms can change with evidence. Primary and relevant cross-field reading must produce concrete predictions or implementations. Develop useful signals fully within the current round and advance dependent work as soon as feasible. Full-program and entire-function holdout remain the first scientific opportunity, with existing failure and prior-art identities preserved. Planning and scheduler work count as zero scientific rounds; count remains0/5 with FINAL_SCIENCE_01 READY and no model run launched.
 
 Archives preserve all pre-edit files and automation identity. Current paper and research data unchanged. NoGPU, bulk write, model download, new human work or paid resource. Scheduling failure does not pause any active scientific process, because none was active at entry. Local closeout records exact desired versus observed state and file hashes. Whitelisted prompt and masterlog synchronization follows.
+
+
+## LOOP_RESTART_20260920 PROGRESS
+
+Actual write UTC 2026-09-20T15:50:04Z. User asked what failed and whether restart is now possible. Retried the existing automation update with the current prepared prompt, ACTIVE state and five-minute interval. The Codex app MCP tool again returned Transport closed. Read-only verification still shows PAUSED, original30-minute interval and the same target thread. The observable failure is the automation control connection; its backend root cause is not established. No scientific round, scheduler mutation or model execution is counted. Existing resume authorization remains valid.
+
+
+## LOOP_RESTART_20260920 RECOVERY COMPLETE
+
+Actual write UTC 2026-09-20T15:51:58Z. After the user restarted Codex and requested another attempt, the existing automation_update call succeeded. Independently read the saved automation configuration and verified id ccad, heartbeat kind, ACTIVE status, five-minute interval, unchanged thread01a06e15-b222-7b21-a8cd-eb058a3159e5 and original creation identity. The saved prompt exactly matches configs/CCAD_AUTOMATION_PROMPT.md after outer whitespace normalization. No duplicate automation. Current tracker replaces the obsolete connection-blocked entry with the verified active state; its prior bytes and hash are preserved in archive/loop_restart_20260920/recovery. Scientific count remains0/5; FINAL_SCIENCE_01 is READY for the next heartbeat. This recovery step launches no model job and consumes no scientific round.
