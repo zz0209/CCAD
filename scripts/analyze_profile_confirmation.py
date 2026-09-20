@@ -38,7 +38,7 @@ def families(names, human):
     return result
 
 
-def infer(nums, den, doc_draws, requests, seeds, rng):
+def infer(nums, den, doc_draws, requests, seeds, rng, profile=PROFILE):
     # 每个方法共用seed、文本和请求的抽样，保留配对。
     sw = draws(rng, len(seeds)) / len(seeds)
     qw = {f: np.tile(ix, (REPS, 1)) if f in ['endpoints', 'center']
@@ -71,14 +71,14 @@ def infer(nums, den, doc_draws, requests, seeds, rng):
                 by_head=pq[:, :, indices].mean((0, 2)).tolist())
     contrasts = []
     for method in nums:
-        if method == PROFILE:
+        if method == profile:
             continue
         for family in requests:
-            difference = samples[method, family] - samples[PROFILE, family]
-            assert np.array_equal(np.isfinite(samples[method, family]), np.isfinite(samples[PROFILE, family]))
+            difference = samples[method, family] - samples[profile, family]
+            assert np.array_equal(np.isfinite(samples[method, family]), np.isfinite(samples[profile, family]))
             valid = np.isfinite(difference)
-            contrasts.append(dict(reference=method, method=PROFILE, family=family,
-                reduction=summaries[method][family]['nrmse'] - summaries[PROFILE][family]['nrmse'],
+            contrasts.append(dict(reference=method, method=profile, family=family,
+                reduction=summaries[method][family]['nrmse'] - summaries[profile][family]['nrmse'],
                 interval=np.quantile(difference[valid], [.025, .975]).tolist(),
                 valid_bootstrap_draws=int(valid.sum())))
     return dict(seeds=seeds, summary=summaries, contrasts=contrasts,

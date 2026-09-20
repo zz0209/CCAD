@@ -10,6 +10,9 @@ def main():
     parser.add_argument('run',type=Path)
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
+    if json.loads((args.run/'status.json').read_text())['status']!='PASS':
+        raise ValueError('Analysis requires a completed run')
+    if args.output.exists(): raise FileExistsError(args.output)
     root=Path(__file__).resolve().parents[1]
     arrays=np.load(args.run/'pooled.npz')
     membership=json.loads((args.run/'membership.json').read_text())

@@ -1,6 +1,81 @@
 import torch
 
 
+def project_capacity(values, capacity):
+    negative = (-values).clamp_min(0)
+    ordered = negative.sort(dim=-1, descending=True).values
+    divisor = torch.arange(1, values.shape[-1] + 1, device=values.device, dtype=values.dtype)
+    threshold = (ordered.cumsum(-1) - capacity[..., None]) / divisor
+    rank = (ordered > threshold).sum(-1).clamp_min(1) - 1
+    tau = threshold.gather(-1, rank[..., None]).clamp_min(0)
+    return values.clamp_min(0) - (negative - tau).clamp_min(0)
+
+
+def pursuit_columns(h, target, source, allowance, metric_root=None, steps=128,
+                    candidate_limit=128, batch_size=128):
+    # 同一功能目标决定共同成员及其系数，所有部分请求共享返回的列。
+    shape = h.shape[:-1]
+    x = h.reshape(-1, h.shape[-1])
+    z = target.encode(x)
+    zs = torch.relu((x - source['center']) @ source['encoder'].T + source['encoder_bias'])
+    decoder = target.decoder.weight.T
+    source_decoder = source['decoder']
+    if metric_root is not None:
+        decoder = decoder @ metric_root
+        source_decoder = source_decoder @ metric_root
+    norm = decoder.square().sum(-1).clamp_min(1e-12)
+    cross = -decoder @ source_decoder.T
+    count = min(candidate_limit, len(decoder))
+    if not 0 < allowance <= count:
+        raise ValueError('Member allowance must fit the candidate set')
+    result = torch.zeros((len(x), len(decoder), zs.shape[-1]), device=h.device, dtype=h.dtype)
+    active = (zs.abs().sum(-1) > 0).nonzero().flatten()
+    for start in range(0, len(active), batch_size):
+        rows = active[start:start + batch_size]
+        rhs_all = cross[None] * zs[rows, None, :]
+        trial = project_capacity(rhs_all / norm[None, :, None], z[rows])
+        gain = (rhs_all * trial).sum(-1) - .5 * norm[None] * trial.square().sum(-1)
+        candidates = gain.topk(count, dim=-1).indices
+        del trial, rhs_all, gain
+        d = decoder[candidates]
+        gram = d @ d.transpose(-1, -2)
+        rhs = cross[candidates] * zs[rows, None, :]
+        cap = z[rows].gather(1, candidates)
+        residual_rhs = rhs.clone()
+        used = torch.zeros_like(cap, dtype=torch.bool)
+        selected = []
+        coefficients = []
+        batch = torch.arange(len(rows), device=h.device)
+        for _ in range(allowance):
+            trial = project_capacity(residual_rhs / norm[candidates, None], cap)
+            gain = (residual_rhs * trial).sum(-1) - .5 * norm[candidates] * trial.square().sum(-1)
+            choice = gain.masked_fill(used, -torch.inf).argmax(-1)
+            coefficient = trial[batch, choice]
+            selected.append(choice)
+            coefficients.append(coefficient)
+            residual_rhs -= gram[batch, :, choice][..., None] * coefficient[:, None, :]
+            used[batch, choice] = True
+        local_ids = torch.stack(selected, dim=1)
+        ids = candidates.gather(1, local_ids)
+        a = torch.stack(coefficients, dim=1)
+        d = decoder[ids]
+        gram = d @ d.transpose(-1, -2)
+        rhs = cross[ids] * zs[rows, None, :]
+        cap = z[rows].gather(1, ids)
+        lipschitz = gram.abs().sum(-1).amax(-1).clamp_min(1e-8)
+        current = a
+        momentum = 1.
+        for _ in range(steps):
+            proposal = current - (gram @ current - rhs) / lipschitz[:, None, None]
+            updated = project_capacity(proposal, cap)
+            next_momentum = (1 + (1 + 4 * momentum ** 2) ** .5) / 2
+            current = updated + (momentum - 1) / next_momentum * (updated - a)
+            a = updated
+            momentum = next_momentum
+        result[rows[:, None], ids] = a
+    return result.reshape(*shape, len(decoder), zs.shape[-1])
+
+
 def allocate_columns(z, columns, decoder, allowance, active_only=True, capacity_first=False):
     """Select a common support and allocate feasible negative capacity."""
     if active_only:

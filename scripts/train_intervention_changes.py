@@ -6,7 +6,7 @@ import transformers
 from run_causalgym_multisite import MultisiteWork, write
 from run_shift_explanation import source_groups
 from train_shift_dictionaries import site_module
-from ccad.intervention_transport import transport_delta, refine_columns
+from ccad.intervention_transport import transport_delta, refine_columns, pursuit_columns
 from adaptive_native_execution import realize
 
 
@@ -50,7 +50,15 @@ def main():
                 cell=[r for r in external if r['split']==c.get('human_split','test') and r['profession']==prof and r['gender']==gender]
                 hr.extend(sorted(cell,key=lambda r:r['document_sha256'])[:c['human_per_cell']])
         gp=json.loads(w.checked(c['grammar_panel']).read_text()); gr=gp['rows'][:c['grammar_rows']]
-        for r in gr: r['tokens']=tok.encode(r['text'],add_special_tokens=False)
+        def tokenize_grammar(rows):
+            for row in rows:
+                row['tokens']=tok.encode(row['text'],add_special_tokens=False)
+                if c.get('grammar_endpoint')=='answer_difference':
+                    for key in ['clean_answer','patch_answer']:
+                        value=tok.encode(row[key],add_special_tokens=False)
+                        if len(value)!=1: raise ValueError('Agreement answer must be one token')
+                        row[key+'_id']=value[0]
+        tokenize_grammar(gr)
         hq={}
         for name,weights in c['human_queries'].items():
             hq[name]={s:[sum(weights[g] for g in groups if member in groups[g].get(s,[])) for member in source['members'][s]] for s in sites}
@@ -58,7 +66,8 @@ def main():
         hq.update(c.get('human_member_queries',{}))
         gq=gp['queries']; dataset='human'; mode='clean'; q={}; mask=None; pool=None; observed={}; diagnostics={}
         train_site=None; train_sp=None; train_reconstruction=None; train_local_loss=None
-        train_sources={}; train_queries={}; train_terms=[]; metric_roots={}; source_roots={}
+        train_sources={}; train_queries={}; train_terms=[]; metric_roots={}; source_roots={}; other_roots={}
+        token_grams={}; token_counts={}; token_roots={}; embedding_cache={}; current_tokens=None
         hybrid_prefix=None; datasets=c.get('datasets',['human','grammar'])
         assert datasets and set(datasets)<= {'human','grammar'}
         def hook(site):
@@ -116,9 +125,35 @@ def main():
                         d['changed']+=int((dz[real]!=0).sum()); d['newly_active']+=int(((z[real]==0)&(dz[real]>0)).sum())
                         d['states']+=int(real.sum()); d['min_code']=min(d['min_code'],float((z+dz)[real].min()))
                         h=h+delta
-                    elif mode in ['refined_common','refined_fisher','refined_source_metric']:
+                    elif mode in ['pursuit_common','pursuit_source_metric']:
+                        root=source_roots[dataset][site] if mode=='pursuit_source_metric' else None
+                        columns=pursuit_columns(h,t,sp,allowance,root,c['inverse_steps'],c['inverse_candidates'])
+                        dz=columns@query; z=t.encode(h)
+                        if float((z+dz)[mask.bool()].min()) < -2e-5: raise ValueError('Negative pursuit target code')
+                        if int((dz[mask.bool()]!=0).sum(-1).max()) > allowance: raise ValueError('Pursuit member allowance exceeded')
+                        h=h+dz@t.decoder.weight.T
+                    elif mode in ['refined_conditional_source_metric','refined_cached_source_metric'] and site=='embed':
+                        flat=h.reshape(-1,h.shape[-1]); token_ids=current_tokens.flatten()
+                        delta=torch.zeros_like(flat)
+                        active=zs.reshape(len(flat),-1).sum(-1)>0
+                        for token in torch.unique(token_ids[active]).tolist():
+                            take=(token_ids==token).nonzero().flatten()
+                            if token not in embedding_cache:
+                                state=flat[take[:1]]
+                                if not torch.allclose(flat[take],state.expand(len(take),-1),atol=1e-6,rtol=0):
+                                    raise ValueError('Token-conditioned embedding requires identical states')
+                                _,_,cc=transport_delta(state,t,sp,query,t.encoder.weight,allowance,False)
+                                root=token_roots[token] if mode=='refined_conditional_source_metric' and token in token_roots else source_roots[dataset][site]
+                                cc=refine_columns(state,t,sp,cc,allowance,c['inverse_steps'],metric_root=root,accelerate=c.get('accelerate_refinement',False))
+                                embedding_cache[token]=(cc[0],t.encode(state)[0])
+                            cc,zz=embedding_cache[token]
+                            dz=cc@query
+                            if float((zz+dz).min()) < -2e-5: raise ValueError('Negative conditional target code')
+                            delta[take]=(dz@t.decoder.weight.T).expand(len(take),-1)
+                        h=h+delta.reshape_as(h)
+                    elif mode in ['refined_common','refined_fisher','refined_source_metric','refined_other_metric','refined_conditional_source_metric','refined_cached_source_metric']:
                         _,_,columns=transport_delta(h,t,sp,query,t.encoder.weight,allowance,False)
-                        root=source_roots[dataset][site] if mode=='refined_source_metric' else metric_roots[site] if mode=='refined_fisher' else None
+                        root=source_roots[dataset][site] if mode in ['refined_source_metric','refined_conditional_source_metric','refined_cached_source_metric'] else other_roots[dataset][site] if mode=='refined_other_metric' else metric_roots[site] if mode=='refined_fisher' else None
                         refined=refine_columns(h,t,sp,columns,allowance,c['inverse_steps'],metric_root=root,accelerate=c.get('accelerate_refinement',False))
                         dz=refined@query; z=t.encode(h)
                         if float((z+dz)[mask.bool()].min()) < -2e-5: raise ValueError('Negative refined target code')
@@ -146,21 +181,29 @@ def main():
             return f
         for s in sites: handles.append(site_module(model,s).register_forward_hook(hook(s)))
         def forward(rows):
-            nonlocal mask
+            nonlocal mask,current_tokens
             size=max(len(r['tokens']) for r in rows)
             ids=torch.zeros((len(rows),size),device=w.device,dtype=torch.long); mask=torch.zeros_like(ids)
             for j,r in enumerate(rows):
                 ids[j,:len(r['tokens'])]=torch.tensor(r['tokens'],device=w.device); mask[j,:len(r['tokens'])]=1
+            current_tokens=ids
             hidden=model.gpt_neox(ids,attention_mask=mask,use_cache=False).last_hidden_state
             w.sequence_forwards+=len(rows); w.token_forwards+=int(mask.sum())
             if dataset=='training': return hidden
             if dataset=='human': return (pool@pw.T+pb).squeeze(-1)
             last=hidden[torch.arange(len(rows),device=w.device),mask.sum(1)-1]
-            return torch.log_softmax(model.get_output_embeddings()(last),dim=-1)[:,answer[0]]
+            logits=model.get_output_embeddings()(last)
+            if c.get('grammar_endpoint')=='answer_difference':
+                clean_ids=torch.tensor([r['clean_answer_id'] for r in rows],device=w.device)
+                patch_ids=torch.tensor([r['patch_answer_id'] for r in rows],device=w.device)
+                batch=torch.arange(len(rows),device=w.device)
+                return logits[batch,clean_ids]-logits[batch,patch_ids]
+            return torch.log_softmax(logits,dim=-1)[:,answer[0]]
         responses={}; representations={}; diagnostic_rows=[]; quality=[]
         @torch.no_grad()
         def evaluate(label,execution):
-            nonlocal mode,dataset,q,diagnostics
+            nonlocal mode,dataset,q,diagnostics,embedding_cache
+            embedding_cache={}
             mode=execution; output_label=label if hybrid_prefix is None else f'{label}_prefix{hybrid_prefix}'
             for ds,rows,queries in [('human',hr,hq),('grammar',gr,gq)]:
                 if ds not in datasets: continue
@@ -243,20 +286,43 @@ def main():
                     for g in [0,1]:
                         source_rows+=sorted([r for r in hp if r['split']=='train' and r['label']==y and r['gender']==g],key=lambda r:r['document_sha256'])[:c['source_metric_rows']//4]
             fit_grammar=json.loads(w.checked(c['grammar_fit_panel']).read_text())['rows'][:c['source_metric_rows']]
-            for r in fit_grammar: r['tokens']=tok.encode(r['text'],add_special_tokens=False)
+            tokenize_grammar(fit_grammar)
             if {r['document_sha256'] for r in source_rows}&{r['document_sha256'] for r in hr}: raise ValueError('Source metric and human evaluation overlap')
             if {r['text'] for r in fit_grammar}&{r['text'] for r in gr}: raise ValueError('Source metric and grammar evaluation overlap')
             write(w.run/'source_metric_membership.json',dict(human=source_rows,grammar=fit_grammar,path_fractions=c['source_metric_fractions'],target_responses_used=False))
             for ds,rr,ss in [('human',source_rows,sites),('grammar',fit_grammar,['resid_4'])]:
+                if ds not in datasets: continue
                 grams={s:torch.zeros((512,512),device=w.device) for s in ss}
                 dataset=ds; mode='source_metric'
+                metric_generator=torch.Generator(device=w.device).manual_seed(c['training_seed']+101)
                 for fraction in c['source_metric_fractions']:
-                    q={s:torch.full((len(human[s]['encoder']) if ds=='human' else 4,),fraction,device=w.device) for s in ss}
+                    q={s:torch.full((len(human[s]['encoder']) if ds=='human' else len(grammar['encoder']),),fraction,device=w.device) for s in ss}
                     for off in range(0,len(rr),4):
                         response=forward(rr[off:off+4])
-                        gradients=torch.autograd.grad(response.sum(),[observed[s] for s in ss])
-                        for s,g in zip(ss,gradients):
-                            flat=g.detach()[mask.bool()]; grams[s]+=flat.T@flat
+                        representation_metric=ds=='human' and c.get('human_profile_endpoint')=='pooled_representation'
+                        projections=c.get('profile_projections',8) if representation_metric else 1
+                        for draw in range(projections):
+                            if representation_metric:
+                                direction=torch.randn(pool.shape[-1],device=w.device,generator=metric_generator)
+                                objective=(pool@direction).sum()
+                            else: objective=response.sum()
+                            gradients=torch.autograd.grad(objective,[observed[s] for s in ss],retain_graph=draw+1<projections)
+                            for s,g in zip(ss,gradients):
+                                flat=g.detach()[mask.bool()]; grams[s]+=flat.T@flat/projections
+                                if s=='embed' and ds=='human' and c.get('conditional_profile',False):
+                                    tokens_here=current_tokens[mask.bool()]
+                                    clean_embed=torch.nn.functional.embedding(current_tokens,model.gpt_neox.embed_in.weight)[mask.bool()]
+                                    sp=human['embed']
+                                    active=torch.relu((clean_embed-sp['center'])@sp['encoder'].T+sp['encoder_bias']).sum(-1)>0
+                                    for token in torch.unique(tokens_here[active]).tolist():
+                                        selected=(tokens_here==token)&active
+                                        gg=flat[selected]
+                                        addition=(gg.T@gg/projections).cpu()
+                                        if token not in token_grams:
+                                            token_grams[token]=torch.zeros_like(addition)
+                                            token_counts[token]=0
+                                        token_grams[token]+=addition
+                                        token_counts[token]+=int(selected.sum())/projections
                     w.progress('SOURCE_METRIC',dataset=ds,fraction=fraction,rows=len(rr))
                 source_roots[ds]={}
                 for s,gram in grams.items():
@@ -264,11 +330,27 @@ def main():
                     metric=gram/(torch.trace(gram)/512)
                     metric=(1-c['fisher_shrinkage'])*metric+c['fisher_shrinkage']*torch.eye(512,device=w.device)
                     source_roots[ds][s]=torch.linalg.cholesky(metric)
+                    if ds=='human' and s=='embed' and c.get('conditional_profile',False):
+                        count=sum(len(r['tokens']) for r in rr)*len(c['source_metric_fractions'])
+                        global_mean=gram/count
+                        prior=len(c['source_metric_fractions'])
+                        for token,accumulated in token_grams.items():
+                            conditional=(accumulated.to(w.device)+prior*global_mean)/(token_counts[token]+prior)
+                            conditional=conditional/(torch.trace(conditional)/512).clamp_min(1e-12)
+                            conditional=(1-c['fisher_shrinkage'])*conditional+c['fisher_shrinkage']*torch.eye(512,device=w.device)
+                            token_roots[token]=torch.linalg.cholesky(conditional)
             torch.save({ds:{s:v.cpu() for s,v in vv.items()} for ds,vv in source_roots.items()},w.run/'source_metric_roots.pt')
+            if token_roots:
+                torch.save({token:v.cpu() for token,v in token_roots.items()},w.run/'source_metric_tokens.pt')
+                write(w.run/'source_metric_token_counts.json',dict(counts=token_counts,prior_observations=len(c['source_metric_fractions']),unobserved='global mean through the same prior estimator',endpoint=c.get('human_profile_endpoint','original_classifier')))
             del grams,gradients,response
             observed={}
         if c.get('source_metric_cache'):
             source_roots=torch.load(w.checked(c['source_metric_cache']),map_location=w.device,weights_only=True)
+        if c.get('other_source_metric_cache'):
+            other_roots=torch.load(w.checked(c['other_source_metric_cache']),map_location=w.device,weights_only=True)
+        if c.get('conditional_profile_cache'):
+            token_roots=torch.load(w.checked(c['conditional_profile_cache']),map_location=w.device,weights_only=True)
         evaluate('none','clean'); evaluate('source','source')
         for prefix in c.get('hybrid_prefixes',[None]):
             hybrid_prefix=prefix

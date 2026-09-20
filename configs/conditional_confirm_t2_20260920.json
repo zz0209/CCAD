@@ -1,0 +1,507 @@
+{
+  "device": "cuda:0",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "run_id": "CONDITIONAL_CONFIRM_T2_20260920",
+  "run_parent": "FINAL_SCIENCE_02",
+  "run_storage_root": "D:/CCAD_Storage/runs/final_science_20260920_round02",
+  "generator_script": "scripts/train_intervention_changes.py",
+  "purpose": "Test input-conditioned source sensitivity across five unchanged target dictionaries",
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "evidence_level": "frozen_new_document_and_request_confirmation",
+  "dataset_revision": "existing_natural_discovery_and_exposed_IR04_SCIENCE03_development",
+  "statistics_unit": "Paired target seeds, profession/gender-stratified documents and new participation requests; fixed source explanation and later heads",
+  "scope": "One fixed published55-member eleven-site source explanation;128 unused biographies; eight new participation requests; four fixed later heads excluded from profiling",
+  "budget": "Five drivers of at most1000seconds; original2p support and128 solver steps, with shared frozen source profiles",
+  "budget_seconds": 1000,
+  "target_seed": 2,
+  "seeds": [
+    2
+  ],
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "grammar_source_parameters": "artifacts/morning_reform_20260916/independent_circuit_reading/source_parts.npz",
+  "grammar_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_science_20260920\\PROFILE_CONFIRMATION_GRAMMAR.json",
+  "grammar_members": [
+    1620,
+    6798,
+    25089,
+    10570
+  ],
+  "human_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_science_20260920_round02\\CONDITIONAL_CONFIRMATION_HUMAN.json",
+  "human_per_cell": 16,
+  "grammar_rows": 96,
+  "eval_batch_size": 16,
+  "natural_offset": 256,
+  "natural_sequences": 96,
+  "quality_states": 1024,
+  "train_sites": [
+    "embed",
+    "mlp_0",
+    "resid_0",
+    "mlp_1",
+    "resid_1",
+    "attn_2",
+    "resid_2",
+    "attn_3",
+    "resid_3",
+    "attn_4",
+    "resid_4"
+  ],
+  "steps": 256,
+  "state_batch": 128,
+  "variants": [],
+  "executions": [
+    "refined_cached_source_metric",
+    "refined_conditional_source_metric"
+  ],
+  "fisher_sequences": 0,
+  "source_metric_rows": 0,
+  "save_pooled": true,
+  "source_metric_cache": "D:/CCAD_Storage/runs/final_science_20260920_round02/CONDITIONAL_SOURCE_PROFILE_SMOKE_R2_20260920/source_metric_roots.pt",
+  "source_metric_membership": "D:/CCAD_Storage/runs/science_upgrade_20260919/SCIENCE04_shift_t2_v1_20260919/program_context_membership.json",
+  "source_metric_fractions": [
+    0.0,
+    0.3333333333333333,
+    0.6666666666666666,
+    1.0
+  ],
+  "grammar_fit_panel": "artifacts/independent_reuse_20260916/IR01_fit_panel.json",
+  "natural_cache": "D:/CCAD_Storage/runs/final_science_20260920/FINAL01_changes_development_v1_20260920/natural_states.pt",
+  "fisher_draws": 2,
+  "fisher_shrinkage": 0.05,
+  "accelerate_refinement": true,
+  "query_progress": true,
+  "inverse_steps": 128,
+  "inverse_candidates": 128,
+  "task_adapted_reference": {
+    "human": {
+      "embed": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t2_v1_20260919/tangent_mixed/embed_seed2.pt",
+      "mlp_0": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t2_v1_20260919/tangent_mixed/mlp_0_seed2.pt",
+      "resid_0": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t2_v1_20260919/tangent_mixed/resid_0_seed2.pt"
+    },
+    "grammar": "D:/CCAD_Storage/runs/science_upgrade_20260919/SCIENCE03_infinitive_execution_reform_v1_20260919/tangent_mixed/dictionary.pt"
+  },
+  "learning_rate": 0.0001,
+  "training_seed": 921,
+  "train_decoder": false,
+  "action_bank_size": 2048,
+  "actions_per_state": 4,
+  "change_weight": 1.0,
+  "log_every": 64,
+  "source_archive": "D:/CCAD_Storage/references/feature_circuits_shift/saes/50a434461d36ed78d1b0b901944e6edc829f1dce/dictionaries_pythia-70m-deduped_10.zip",
+  "human_queries": {
+    "pronouns": {
+      "pronouns": 1,
+      "names": 0,
+      "associated_words": 0
+    },
+    "names": {
+      "pronouns": 0,
+      "names": 1,
+      "associated_words": 0
+    },
+    "associated_words": {
+      "pronouns": 0,
+      "names": 0,
+      "associated_words": 1
+    },
+    "pronouns+names": {
+      "pronouns": 1,
+      "names": 1,
+      "associated_words": 0
+    },
+    "pronouns+associated_words": {
+      "pronouns": 1,
+      "names": 0,
+      "associated_words": 1
+    },
+    "names+associated_words": {
+      "pronouns": 0,
+      "names": 1,
+      "associated_words": 1
+    },
+    "full": {
+      "pronouns": 1,
+      "names": 1,
+      "associated_words": 1
+    },
+    "center": {
+      "pronouns": 0.5,
+      "names": 0.5,
+      "associated_words": 0.5
+    },
+    "participation_00": {
+      "pronouns": 0.8724073090244664,
+      "names": 0.23333713074747361,
+      "associated_words": 0.2919704984546672
+    },
+    "participation_01": {
+      "pronouns": 0.5511645093406129,
+      "names": 0.5113615162820863,
+      "associated_words": 0.8044912696762657
+    },
+    "participation_02": {
+      "pronouns": 0.47237247108041747,
+      "names": 0.24766214687547575,
+      "associated_words": 0.5067207561141561
+    },
+    "participation_03": {
+      "pronouns": 0.5922288606588413,
+      "names": 0.23281993595986716,
+      "associated_words": 0.3388805835697289
+    },
+    "participation_04": {
+      "pronouns": 0.37549379203167765,
+      "names": 0.0,
+      "associated_words": 0.29663075906548486
+    },
+    "participation_05": {
+      "pronouns": 0.5040378578181071,
+      "names": 0.7171737738623778,
+      "associated_words": 1.0
+    },
+    "participation_06": {
+      "pronouns": 0.0,
+      "names": 0.8490406991581132,
+      "associated_words": 0.6082028690272532
+    },
+    "participation_07": {
+      "pronouns": 0.5983880324049593,
+      "names": 1.0,
+      "associated_words": 0.722385007102797
+    }
+  },
+  "human_split": "confirm",
+  "human_member_queries": {
+    "member_subset_00": {
+      "embed": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "mlp_0": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "resid_0": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "mlp_1": [
+        0,
+        1
+      ],
+      "resid_1": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "attn_2": [
+        0,
+        0
+      ],
+      "resid_2": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "attn_3": [
+        0,
+        0,
+        1
+      ],
+      "resid_3": [
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "attn_4": [
+        1
+      ],
+      "resid_4": [
+        0,
+        1,
+        0
+      ]
+    },
+    "member_subset_01": {
+      "embed": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "mlp_0": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "resid_0": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "attn_2": [
+        1,
+        1
+      ],
+      "resid_2": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "attn_3": [
+        1,
+        1,
+        1
+      ],
+      "resid_3": [
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        0,
+        0,
+        1
+      ]
+    },
+    "member_subset_02": {
+      "embed": [
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "mlp_0": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "resid_0": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "mlp_1": [
+        0,
+        0
+      ],
+      "resid_1": [
+        1,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "attn_2": [
+        0,
+        1
+      ],
+      "resid_2": [
+        0,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "attn_3": [
+        1,
+        0,
+        0
+      ],
+      "resid_3": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "attn_4": [
+        1
+      ],
+      "resid_4": [
+        0,
+        0,
+        0
+      ]
+    },
+    "member_subset_03": {
+      "embed": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "mlp_0": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "resid_0": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "attn_2": [
+        1,
+        1
+      ],
+      "resid_2": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "attn_3": [
+        1,
+        1,
+        1
+      ],
+      "resid_3": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        0,
+        1,
+        0
+      ]
+    }
+  },
+  "request_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_science_20260920_round02\\CONDITIONAL_CONFIRMATION_REQUESTS.json",
+  "eval_token_budget": 2048,
+  "conditional_profile_cache": "D:/CCAD_Storage/runs/final_science_20260920_round02/CONDITIONAL_SOURCE_PROFILE_SMOKE_R2_20260920/source_metric_tokens.pt",
+  "datasets": [
+    "human"
+  ]
+}

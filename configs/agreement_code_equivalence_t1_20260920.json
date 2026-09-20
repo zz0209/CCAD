@@ -1,0 +1,129 @@
+{
+  "device": "cuda:0",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "run_id": "AGREEMENT_CODE_EQUIVALENCE_T1_20260920",
+  "run_parent": "FINAL_SCIENCE_02",
+  "run_storage_root": "D:/CCAD_Storage/runs/final_science_20260920_round02",
+  "generator_script": "scripts/train_intervention_changes.py",
+  "purpose": "Verify unchanged agreement predictions after disabled conditional-profile code addition",
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "evidence_level": "frozen_prediction_equivalence_check",
+  "dataset_revision": "existing_natural_discovery_and_exposed_IR04_SCIENCE03_development",
+  "statistics_unit": "Fixed source explanations, shared target seed and query/document dependence; mechanism development",
+  "scope": "Source profile acquired from48 source-only fit contexts; no target response fitting; same members and solver steps for metric comparison",
+  "budget": "152 unused clean-prefix units and eight fresh participation queries; ten frozen public source members; five unchanged target dictionaries",
+  "budget_seconds": 1200,
+  "target_seed": 1,
+  "seeds": [
+    1
+  ],
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R58_shift_dictionaries_curve_v1_20260915/step_8192",
+  "grammar_source_parameters": "artifacts/final_science_20260920_round02/agreement_source_parts.npz",
+  "grammar_panel": "artifacts\\final_science_20260920_round02\\AGREEMENT_FROZEN_PANEL.json",
+  "grammar_members": [
+    8913,
+    13081,
+    11586,
+    14719,
+    16089,
+    26914,
+    5798,
+    15313,
+    22614,
+    31158
+  ],
+  "human_panel": "artifacts/independent_reuse_20260916/IR04_NEW_TASKS_PANEL.json",
+  "human_per_cell": 1,
+  "grammar_rows": 152,
+  "eval_batch_size": 16,
+  "natural_offset": 256,
+  "natural_sequences": 96,
+  "quality_states": 1024,
+  "train_sites": [
+    "embed",
+    "mlp_0",
+    "resid_0",
+    "mlp_1",
+    "resid_1",
+    "attn_2",
+    "resid_2",
+    "attn_3",
+    "resid_3",
+    "attn_4",
+    "resid_4"
+  ],
+  "steps": 256,
+  "state_batch": 128,
+  "variants": [],
+  "executions": [
+    "tangent",
+    "raw_readout",
+    "refined_common",
+    "refined_source_metric",
+    "refined_other_metric"
+  ],
+  "fisher_sequences": 0,
+  "source_metric_rows": 0,
+  "save_pooled": true,
+  "source_metric_membership": "D:/CCAD_Storage/runs/science_upgrade_20260919/SCIENCE04_shift_t2_v1_20260919/program_context_membership.json",
+  "source_metric_fractions": [
+    0.0,
+    0.3333333333333333,
+    0.6666666666666666,
+    1.0
+  ],
+  "grammar_fit_panel": "artifacts/final_science_20260920_round02/AGREEMENT_FIT.json",
+  "natural_cache": "D:/CCAD_Storage/runs/final_science_20260920/FINAL01_changes_development_v1_20260920/natural_states.pt",
+  "fisher_draws": 2,
+  "fisher_shrinkage": 0.05,
+  "accelerate_refinement": true,
+  "query_progress": true,
+  "inverse_steps": 128,
+  "inverse_candidates": 128,
+  "task_adapted_reference": null,
+  "learning_rate": 0.0001,
+  "training_seed": 921,
+  "train_decoder": false,
+  "action_bank_size": 2048,
+  "actions_per_state": 4,
+  "change_weight": 1.0,
+  "log_every": 64,
+  "source_archive": "D:/CCAD_Storage/references/feature_circuits_shift/saes/50a434461d36ed78d1b0b901944e6edc829f1dce/dictionaries_pythia-70m-deduped_10.zip",
+  "human_queries": {
+    "pronouns": {
+      "associated_words": 0,
+      "pronouns": 1,
+      "names": 0
+    },
+    "names": {
+      "associated_words": 0,
+      "pronouns": 0,
+      "names": 1
+    },
+    "associated_words": {
+      "associated_words": 1,
+      "pronouns": 0,
+      "names": 0
+    },
+    "full": {
+      "associated_words": 1,
+      "pronouns": 1,
+      "names": 1
+    }
+  },
+  "source_metric_cache": "D:/CCAD_Storage/runs/final_science_20260920_round02/AGREEMENT_REUSE_DEVELOPMENT_R2_20260920/source_metric_roots.pt",
+  "datasets": [
+    "grammar"
+  ],
+  "grammar_endpoint": "answer_difference",
+  "other_source_metric_cache": "D:/CCAD_Storage/runs/final_science_20260920/INTERVENTION_SOURCE_METRIC_DEVELOPMENT_20260920/source_metric_roots.pt"
+}
