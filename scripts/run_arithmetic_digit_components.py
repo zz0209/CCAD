@@ -16,6 +16,17 @@ from ccad.artifacts import sha256
 
 
 def panel(cfg):
+    if cfg.get('source_field_evaluation'):
+        saved=json.loads((ROOT/cfg['source_field_evaluation']['panel']).read_text())
+        spec=cfg['source_field_evaluation']
+        pairs=saved['pairs'][:spec['evaluation_pairs']]
+        if spec.get('balanced_forms'):
+            templates=sorted({p['template'] for p in saved['pairs']})
+            count=spec['evaluation_pairs']//len(templates)
+            assert count*len(templates)==spec['evaluation_pairs']
+            pairs=[p for t in templates for p in [p for p in saved['pairs'] if p['template']==t][:count]]
+            assert len(pairs)==spec['evaluation_pairs']
+        return saved['rows'],pairs
     if cfg.get('frozen_rule_evaluation'):
         saved=json.loads((ROOT/cfg['frozen_rule_evaluation']['panel']).read_text())
         return saved['rows'],saved['pairs']
@@ -71,6 +82,9 @@ def main():
     parser=argparse.ArgumentParser();parser.add_argument("--config",type=Path,required=True);args=parser.parse_args()
     cfg=json.loads(args.config.read_text())
     sources=["scripts/run_arithmetic_digit_components.py","scripts/run_causalgym_multisite.py","scripts/run_r011s1_raw_hook_asset.py","src/ccad/artifacts.py"]
+    if cfg.get('source_field_evaluation'):
+        sources += ['scripts/arithmetic_source_fields.py','src/ccad/source_field_inference.py',
+                    'src/ccad/request_inference.py','src/ccad/intervention_transport.py']
     if cfg.get("counterfactual_fit"):
         sources += ["scripts/arithmetic_counterfactual_fit.py", "src/ccad/semantic_participation.py"]
     if cfg.get("relation_transfer"):
@@ -211,6 +225,13 @@ def main():
             for s in text[:len(indices)]:
                 match=re.match(r"\s*(\d+)",s);answers.append(int(match[1]) if match else None)
             return answers,text[:len(indices)],(torch.stack(cache["trajectory"],1) if trajectory else cache["hidden"])[:len(indices)],cache.get("edit_norm",torch.zeros(len(indices),device=w.device))
+        if cfg.get('source_field_evaluation'):
+            from arithmetic_source_fields import evaluate_source_fields
+            w.environment=dict(python=sys.executable,python_version=platform.python_version(),torch=torch.__version__,
+                numpy=np.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),
+                precision='float32 matmul '+cfg.get('matmul_precision','high'),hook=tc['hook_module_path'],model=tc['model_id'])
+            evaluate_source_fields(w,cfg,model,module,tok,saes,rows,pairs,generate,budget)
+            return w.finish()
         all_h=[];base=[];base_text=[];source_parent=None
         if cfg.get("source_cache_run"):
             source_parent=ROOT/cfg["source_cache_run"]

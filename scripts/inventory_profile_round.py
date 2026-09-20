@@ -38,8 +38,10 @@ def main():
             peak_allocated_bytes=summary.get('peak_allocated_bytes'),
             sequence_forwards=summary.get('sequence_forwards'), token_forwards=summary.get('token_forwards'),
             bytes=sum(p.stat().st_size for p in run.rglob('*') if p.is_file()),
-            seed=c['target_seed'], member_allowance=c.get('member_budget', '2p per site'),
-            inverse_steps=c.get('inverse_steps'), source_metric=bool(c.get('source_metric_rows') or c.get('source_metric_cache')),
+            seed=c.get('target_seed', c.get('source_field_evaluation', {}).get('target_seeds')),
+            member_allowance=c.get('member_budget', c.get('source_field_evaluation', {}).get('members', '2p per site')),
+            inverse_steps=c.get('inverse_steps', c.get('source_field_evaluation', {}).get('inverse_steps')),
+            source_metric=bool(c.get('source_metric_rows') or c.get('source_metric_cache') or c.get('source_field_evaluation')),
             confirm=c.get('evidence_level','').startswith('frozen'), smoke='SMOKE' in run.name.upper(),
             config_sha256=hashlib.sha256((run / 'config.resolved.json').read_bytes()).hexdigest(), note=note)
         if path.exists():
@@ -72,6 +74,17 @@ def main():
             'Cached and direct embedding execution differ slightly through numerical batching; completed global-control arrays and measured differences remain available.',
             'Known driver totals exclude the interrupted development duration; the stop-time bounds and last completed progress are in the master log. No active run is inferred from its retained RUNNING file.',
             'The configured budget is a planning bound. Evaluation reports actual duration; the per-update timeout applies to training.'
+        ]
+    if args.round_id=='FINAL_SCIENCE_03':
+        result['metadata_clarifications']=[
+            'The frozen primary compares source-profile and Euclidean inference using the same exact source-amplitude computation, member selection rule, capacity constraint and128steps.',
+            'Qwen cycle directions use different source functions and their own source profiles; the dependent five-dictionary pool remains fixed in the uncertainty calculation.',
+            'Original readout predictions omit fitted inputs and are invalid controls. READOUT_CORRECT runs restore the full inherited64-input bank without refitting.',
+            'CONFIRMATION_ANALYSIS_V2 and its arrays replace only the original readout predictions. The primary and other methods remain exactly unchanged.',
+            'Two-term question identities were already used and receive new contexts. Three-term operand multisets and all192complete prompts were absent from retained panels.',
+            'Both symbolic and English formats were present in source fitting. New contexts are not claimed as new format families.',
+            'Semantic hybrid success and agreement with source intervention answers are distinct endpoints. Invalid source answers remain failures under the frozen scoring convention.',
+            'Failed smoke output and the original incomplete readout are retained with their original source snapshots.'
         ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))

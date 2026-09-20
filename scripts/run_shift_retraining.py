@@ -53,6 +53,8 @@ def main():
         frozen = np.load(work.checked(Path(cfg['relation_run'])/'relation.npz'))
         targets, relations, adapted_targets = {}, {}, {}
         adapted_programs=cfg.get('adapted_programs',{})
+        adapted_inputs=cfg.get('adapted_input_programs',{})
+        input_gains={}
         for site in source['members']:
             state = torch.load(work.checked(Path(cfg['target_directory']) /
                               f'{site}_seed{cfg["target_seed"]}.pt'),
@@ -77,6 +79,18 @@ def main():
                     sae=AutoEncoderTopK(512,state['encoder.weight'].shape[0],int(state['k'])).to(work.device)
                     sae.load_state_dict(state);sae.requires_grad_(False)
                     adapted_targets[name][site]=sae
+        for name,spec in adapted_inputs.items():
+            assert name.startswith('input_')
+            adapted_targets[name]={}
+            folder=Path(spec['directory'])
+            for site in spec['sites']:
+                state=torch.load(work.checked(folder/f'{site}_seed{cfg["target_seed"]}.pt'),map_location=work.device,weights_only=True)
+                sae=AutoEncoderTopK(512,state['encoder.weight'].shape[0],int(state['k'])).to(work.device)
+                sae.load_state_dict(state);sae.requires_grad_(False)
+                adapted_targets[name][site]=sae
+            if spec.get('source_gains'):
+                with np.load(work.checked(folder/'source_gains.npz')) as values:
+                    input_gains[name]={site:torch.tensor(values[site],device=work.device) for site in source['members']}
         if cfg.get('fixed_basis_run'):
             basis=np.load(work.checked(Path(cfg['fixed_basis_run'])/'fixed_response_basis.npz'))
             for site in source['members']:
@@ -116,7 +130,10 @@ def main():
                     h = h-(z*q) @ s['decoder']
                 elif method.startswith('input_') or method=='raw_reconstruction':
                     if bool(q.any()):
-                        delta,_=input_member_delta(h,targets[site],s,q,method,
+                        target=adapted_targets.get(method,{}).get(site,targets[site])
+                        execution='input_tangent_budget' if method in adapted_inputs else method
+                        current_source={**s,'decoder':s['decoder']*input_gains[method][site][:,None]} if method in input_gains else s
+                        delta,_=input_member_delta(h,target,current_source,q,execution,
                                                    cfg['members_per_source']*len(q),mask)
                         h=h+delta
                 elif method != 'none':
@@ -212,7 +229,8 @@ def main():
                     assert all(r==old_rows[old_index[r['document_sha256']]] for r in evaluation)
                     if method.startswith('input_'):
                         assert previous['members_per_source']==cfg['members_per_source']
-                        assert previous['fixed_basis_run']==cfg['fixed_basis_run']
+                        assert previous.get('fixed_basis_run')==cfg.get('fixed_basis_run')
+                        assert previous.get('adapted_input_programs',{}).get(method)==adapted_inputs.get(method)
                     if method in adapted_programs:
                         assert previous.get('adapted_programs',{}).get(method)==adapted_programs[method]
                     x=np.load(work.checked(cache/(key+'__train.npy')))

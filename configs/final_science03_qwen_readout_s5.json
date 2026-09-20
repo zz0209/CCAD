@@ -1,0 +1,59 @@
+{
+  "run_id": "FS03_QWEN_READOUT_CORRECT_S5_T1_20260920",
+  "run_parent": "FINAL_SCIENCE_03",
+  "run_storage_root": "D:/CCAD_Storage/runs/final_science_20260920_round03",
+  "generator_script": "scripts/run_arithmetic_digit_components.py",
+  "purpose": "Execute the complete inherited source-direction readout on the unchanged frozen panel",
+  "scope": "Frozen inference, new contexts and unseen three-term questions; dependent five-seed cycle",
+  "budget": "GPU lease, empirical generation throughput and13GBallocated bound",
+  "budget_seconds": 400,
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "evidence_level": "frozen_confirmation",
+  "device": "cuda:0",
+  "seeds": [
+    5,
+    1
+  ],
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "retained R38 source-fit and development arithmetic panels",
+  "training_run": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914",
+  "checkpoint_step": 16384,
+  "matmul_precision": "highest",
+  "batch_size": 8,
+  "max_new_tokens": 5,
+  "max_length": 96,
+  "intervention_span": "generated_prefix",
+  "source_field_evaluation": {
+    "source_seed": 5,
+    "target_seeds": [
+      1
+    ],
+    "panel": "artifacts/final_science_20260920_round03/CONFIRMATION_PANEL.json",
+    "cache_panel": "runs/REFORM_R38_qwen_member_fields_five_v1_20260914/panel.json",
+    "hidden_caches": [
+      "runs/REFORM_R32_qwen_counterfactual_source_v1_20260914/states.npz",
+      "runs/REFORM_R38_qwen_member_fields_five_v1_20260914/source_view_states.npz"
+    ],
+    "readout_run": "runs/REFORM_R45_bank_ridge_control_fit_v1_20260915",
+    "relation_run": "runs/REFORM_R38_qwen_member_fields_five_v1_20260914",
+    "profile_pairs": 64,
+    "profile_fractions": [
+      0,
+      0.3333333333333333,
+      0.6666666666666666,
+      1
+    ],
+    "identity_fraction": 0.05,
+    "evaluation_pairs": 96,
+    "balanced_forms": false,
+    "query_seed": 209202603,
+    "partitions": 4,
+    "members": 64,
+    "inverse_steps": 128,
+    "methods": [
+      "readout"
+    ],
+    "profile_cache": "D:/CCAD_Storage/runs/final_science_20260920_round03/FS03_QWEN_FIELDS_CONFIRM_S5_T1_20260920/source_profile.pt"
+  }
+}
