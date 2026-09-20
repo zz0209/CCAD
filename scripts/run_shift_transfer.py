@@ -54,7 +54,7 @@ def input_member_delta(x, target, source, q, mode, allowance, attention):
     norms=target.decoder.weight.norm(dim=0)
     indices=keep.nonzero().flatten()
     if mode.startswith(('input_tangent','input_fixed')):
-        basis=directions if mode.startswith('input_tangent') else source['fixed_response_basis']
+        basis=source.get('transport_basis',directions) if mode.startswith('input_tangent') else source['fixed_response_basis']
         bp,bn=basis.clamp_min(0),(-basis).clamp_min(0)
         for ix in indices.split(512):
             h=flat[ix];z=target.encode(h)

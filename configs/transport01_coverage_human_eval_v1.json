@@ -1,0 +1,78 @@
+{
+  "device": "cuda:0",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "run_id": "TRANSPORT01_coverage_human_eval_v1_20260919",
+  "run_parent": "TRANSPORT_EXPLORATION_01",
+  "generator_script": "scripts/evaluate_transport_heldout.py",
+  "purpose": "Test grammar-trained shared transport on the three held-out human resid4 members",
+  "panel": "artifacts\\science_upgrade_20260919\\ROUND03_INFINITIVE_PANEL.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "methods": [
+    "none",
+    "source",
+    "native",
+    "geometry",
+    "geometry_gain",
+    "native_response_relation_8",
+    "native_tangent_relation_8",
+    "raw_reconstruction"
+  ],
+  "target_seed": 2,
+  "seeds": [
+    2
+  ],
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "evidence_level": "controlled_development",
+  "budget": "Standalone exploration; at most700driver seconds for two512-update independent transport arms; existing GPU/environment/data",
+  "budget_seconds": 700,
+  "dataset_revision": "ir01-existing-texts-science03-requests",
+  "statistics_unit": "Crossed verb and noun clusters withpairedroles/forms, queryfamily; fixedsource andone target seed. Development.",
+  "threshold_source_split": "Four fixed published SFC Figure18 source features, selected before outputs",
+  "scope": "Existing128human development biographies. Entire human source directions excluded from this transport fit; common hook only. All7subsets reported. Development exploration, not full55explanation confirmation.",
+  "functional_weight": 0.0,
+  "relation_run": "runs/IR01_infinitive_natural_dev_v1_20260916",
+  "run_storage_root": "D:/CCAD_Storage/runs/transport_exploration_20260919",
+  "fit_panel": "artifacts/independent_reuse_20260916/IR01_fit_panel.json",
+  "natural_states": "runs/IR01_infinitive_natural_dev_v1_20260916/fit_states.npz",
+  "steps": 512,
+  "variants": [
+    "tangent_gain",
+    "transport_active_mixed",
+    "transport_open_mixed"
+  ],
+  "baselines": [
+    "native_tangent_relation_8",
+    "raw_reconstruction"
+  ],
+  "batch_sequences": 4,
+  "eval_batch_size": 4,
+  "natural_batch_states": 512,
+  "dictionary_lr": 0.0001,
+  "relation_lr": 0.005,
+  "reconstruction_weight": 1.0,
+  "source_response_weight": 0.9,
+  "training_seed": 913,
+  "request_panel_sha256": "431d406d049b88ac99137f7cb17c54ef7a4cf8862b1815ad4e442733dfe913e7",
+  "gain_before_selection": true,
+  "evaluate_checkpoints": {
+    "tangent_mixed": "D:/CCAD_Storage/runs/science_upgrade_20260919/SCIENCE03_infinitive_execution_reform_v1_20260919/tangent_mixed"
+  },
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "development_per_group": 32,
+  "allowance": 6,
+  "grammar_source": "artifacts/morning_reform_20260916/independent_circuit_reading/source_parts.npz",
+  "write_checkpoints": {
+    "grammar_open": "D:/CCAD_Storage/runs/transport_exploration_20260919/TRANSPORT01_infinitive_development_v1_20260919/transport_open_mixed/write_matrix.pt",
+    "grammar_active": "D:/CCAD_Storage/runs/transport_exploration_20260919/TRANSPORT01_infinitive_development_v1_20260919/transport_active_mixed/write_matrix.pt",
+    "natural_narrow_open": "D:/CCAD_Storage/runs/transport_exploration_20260919/TRANSPORT01_coverage_training_v2_20260919/transport_narrow_open/write_matrix.pt",
+    "natural_broad_open": "D:/CCAD_Storage/runs/transport_exploration_20260919/TRANSPORT01_coverage_training_v2_20260919/transport_broad_open/write_matrix.pt"
+  }
+}

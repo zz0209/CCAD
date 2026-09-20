@@ -1,8 +1,8 @@
 """Adapt a fixed public functional explanation through its actual programs.
 
-The source and base LM stay frozen. A single target dictionary and nonnegative
-eight-by-four relation execute all later requests. Natural reconstruction and
-the source functional response use the existing joint-training objective.
+The source and base LM stay frozen. Configurations compare a fixed nonnegative
+relation, encoder-derived columns and independent intervention maps. Source
+program responses supervise the target execution while requests remain callable.
 """
 from pathlib import Path
 import argparse, json, sys, time, traceback
@@ -10,6 +10,7 @@ import numpy as np
 from run_causalgym_multisite import MultisiteWork, write
 from train_shift_dictionaries import site_module
 from train_shift_response_space import project_rows
+from ccad.intervention_transport import transport_delta,refine_columns
 
 
 def main():
@@ -17,7 +18,8 @@ def main():
     args=p.parse_args(); c=json.loads(args.config.read_text())
     files=['scripts/train_infinitive_program.py','scripts/train_shift_response_space.py',
            'scripts/run_published_parts.py','scripts/train_shift_dictionaries.py',
-           'scripts/run_causalgym_multisite.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']
+           'scripts/run_causalgym_multisite.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py',
+           'src/ccad/intervention_transport.py']
     w=MultisiteWork(c,args.config,files); handle=None; error=None
     try:
         import torch, transformers
@@ -50,6 +52,7 @@ def main():
         ix=(relations['native'].sum(1)>0).nonzero().flatten(); assert len(ix)==8
         base=relations['native'][ix].clone(); a=torch.nn.Parameter(base.clone())
         gain=torch.nn.Parameter(torch.ones(4,device=w.device),requires_grad=False)
+        write_matrix=torch.nn.Parameter(initial['encoder.weight'].clone(),requires_grad=False)
         states=np.load(w.checked(c['natural_states'],'Existing natural discovery states'))['h']
         assert len(states)>=4096
         natural=torch.tensor(states,device=w.device)
@@ -60,7 +63,13 @@ def main():
             if mode=='source': h=h-(source_codes(h)*q)@sp['decoder']
             elif mode!='none':
                 z=target.encode(h)
-                if mode=='student': h=h-(z[...,ix]*(a@q))@target.decoder.weight[:,ix].T
+                if mode.startswith('transport_'):
+                    delta,_,columns=transport_delta(h,target,sp,q,write_matrix,8,active_only='active' in mode)
+                    if mode=='transport_refined_open':
+                        columns=refine_columns(h,target,sp,columns,8,c.get('refine_steps',64),write_matrix)
+                        delta=(columns@q)@target.decoder.weight.T
+                    h=h+delta
+                elif mode=='student': h=h-(z[...,ix]*(a@q))@target.decoder.weight[:,ix].T
                 elif mode in ['native','geometry','geometry_gain']:
                     h=h-(z*(relations[mode]@q))@target.decoder.weight.T
                 elif mode=='raw_reconstruction':
@@ -147,15 +156,19 @@ def main():
             relation=np.load(w.checked(folder/'relation.npz'))['native']
             a.data.copy_(torch.tensor(relation,device=w.device)[ix])
             if variant=='tangent_gain': gain.data.copy_(torch.tensor(np.load(w.checked(folder/'source_gains.npy')),device=w.device))
-            evaluate(variant,'tangent_gain' if variant=='tangent_gain' else 'native_tangent_relation_8' if variant.startswith('tangent_') else 'student'); material_quality(variant)
+            if variant.startswith('transport_'):
+                write_matrix.data.copy_(torch.load(w.checked(folder/'write_matrix.pt'),map_location=w.device,weights_only=True))
+            evaluate(variant,variant if variant.startswith('transport_') else 'tangent_gain' if variant=='tangent_gain' else 'native_tangent_relation_8' if variant.startswith('tangent_') else 'student'); material_quality(variant)
         trace=[]
         for variant in c['variants']:
             target.load_state_dict(initial); a.data.copy_(base)
-            target.requires_grad_(variant not in ['mixed_relation','tangent_gain'])
-            a.requires_grad_(variant not in ['natural_only','tangent_natural','tangent_mixed'])
+            independent=variant.startswith('transport_')
+            target.requires_grad_(not independent and variant not in ['mixed_relation','tangent_gain'])
+            a.requires_grad_(not independent and variant not in ['natural_only','tangent_natural','tangent_mixed'])
             if variant=='tangent_gain': a.requires_grad_(False)
             gain.data.fill_(1.); gain.requires_grad_(variant=='tangent_gain')
-            optimizer=torch.optim.AdamW([dict(params=[p for p in target.parameters() if p.requires_grad],lr=c['dictionary_lr']),dict(params=([a] if a.requires_grad else [])+([gain] if gain.requires_grad else []),lr=c['relation_lr'])],weight_decay=0.)
+            write_matrix.data.copy_(initial['encoder.weight']); write_matrix.requires_grad_(independent)
+            optimizer=torch.optim.AdamW([dict(params=[p for p in target.parameters() if p.requires_grad]+([write_matrix] if independent else []),lr=c['dictionary_lr']),dict(params=([a] if a.requires_grad else [])+([gain] if gain.requires_grad else []),lr=c['relation_lr'])],weight_decay=0.)
             gen=torch.Generator(device=w.device).manual_seed(c['training_seed'])
             natural_gen=torch.Generator(device=w.device).manual_seed(c['training_seed']+1)
             for step in range(c['steps']):
@@ -169,7 +182,7 @@ def main():
                 else:
                     mode='source'
                     with torch.no_grad(): th,mask,tl=forward(rr)
-                    mode='tangent_gain' if variant=='tangent_gain' else 'native_tangent_relation_8' if variant.startswith('tangent_') else 'student'
+                    mode=variant if independent else 'tangent_gain' if variant=='tangent_gain' else 'native_tangent_relation_8' if variant.startswith('tangent_') else 'student'
                     sh,_,sl=forward(rr)
                     state_loss=token_mse(sh-th,mask)/energy[0]
                     response_loss=(sl-tl).square().mean()/energy[1]
@@ -191,10 +204,21 @@ def main():
                 if time.perf_counter()-w.wall_start>c['budget_seconds']: raise TimeoutError('Allocated driver budget reached')
             folder=w.run/variant; folder.mkdir()
             torch.save(target.state_dict(),folder/'dictionary.pt')
+            if independent:
+                torch.save(write_matrix.detach().cpu(),folder/'write_matrix.pt')
+                unchanged=all(torch.equal(target.state_dict()[key],value) for key,value in initial.items())
+                w.checks['dictionary_unchanged_'+variant]=unchanged
+                with torch.no_grad():
+                    probe=natural[-64:]
+                    _,dz,columns=transport_delta(probe,target,sp,torch.ones(4,device=w.device),write_matrix,8,active_only='active' in variant)
+                    zero,_,_=transport_delta(probe,target,sp,torch.zeros(4,device=w.device),write_matrix,8,active_only='active' in variant)
+                    w.checks['feasible_'+variant]=float((target.encode(probe)+dz).min())>=-1e-5
+                    w.checks['zero_query_'+variant]=bool((zero==0).all())
+                    w.checks['member_budget_'+variant]=int((columns!=0).any(-1).sum(-1).max())<=8
             export=relations['native'].cpu().numpy().copy(); export[ix.cpu().numpy()]=a.detach().cpu().numpy()
             np.savez_compressed(folder/'relation.npz',native=export)
             if variant=='tangent_gain': np.save(folder/'source_gains.npy',gain.detach().cpu().numpy())
-            evaluate(variant,'tangent_gain' if variant=='tangent_gain' else 'native_tangent_relation_8' if variant.startswith('tangent_') else 'student'); material_quality(variant)
+            evaluate(variant,variant if independent else 'tangent_gain' if variant=='tangent_gain' else 'native_tangent_relation_8' if variant.startswith('tangent_') else 'student'); material_quality(variant)
             if variant.startswith('tangent_'): evaluate('raw_reconstruction_after_'+variant,'raw_reconstruction')
             del optimizer
         write(w.run/'INDEX.json',dict(methods=list(values),queries=list(queries),query_masks=queries,rows=rows,fit_rows=fit,source_answer_id=answer[0],target_indices=ix.cpu().tolist()))
