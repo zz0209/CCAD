@@ -8,6 +8,7 @@ from run_shift_explanation import source_groups
 from train_shift_dictionaries import site_module
 from ccad.intervention_transport import transport_delta, transport_field, refine_columns, pursuit_columns
 from adaptive_native_execution import realize
+from ccad.request_realization import refine_request
 
 
 def main():
@@ -18,7 +19,7 @@ def main():
     files=['scripts/train_intervention_changes.py','scripts/run_causalgym_multisite.py',
            'scripts/run_r011s1_raw_hook_asset.py','scripts/run_shift_explanation.py',
            'scripts/train_shift_dictionaries.py','src/ccad/intervention_transport.py','src/ccad/artifacts.py',
-           'scripts/adaptive_native_execution.py']
+           'scripts/adaptive_native_execution.py','src/ccad/request_realization.py']
     w=MultisiteWork(c,args.config,files); handles=[]; error=None
     try:
         torch.set_num_threads(2); torch.use_deterministic_algorithms(True)
@@ -69,7 +70,7 @@ def main():
         train_sources={}; train_queries={}; train_terms=[]; metric_roots={}; source_roots={}; other_roots={}
         token_grams={}; token_counts={}; token_roots={}; embedding_cache={}; current_tokens=None
         hybrid_prefix=None; datasets=c.get('datasets',['human','grammar'])
-        execution_writers={}
+        execution_writers={}; trajectory={}; trajectory_changes={}
         assert datasets and set(datasets)<= {'human','grammar'}
         def hook(site):
             def f(module,inputs,out):
@@ -87,6 +88,14 @@ def main():
                         zs=torch.relu((h-sp['center'])@sp['encoder'].T+sp['encoder_bias'])
                         h=h-(zs*query)@sp['decoder']
                     observed[site]=h
+                elif mode=='trajectory_teacher' and (dataset=='human' or site=='resid_4'):
+                    sp=human[site] if dataset=='human' else grammar
+                    query=q[site] if dataset=='human' else q['resid_4']
+                    zs=torch.relu((h-sp['center'])@sp['encoder'].T+sp['encoder_bias'])
+                    change=-(zs*query)@sp['decoder']
+                    h=h+change
+                    trajectory[site]=h.detach().clone()
+                    trajectory_changes[site]=change.detach().clone()
                 elif dataset=='training' and site in train_sources:
                     train_sp=train_sources[site]; train_q=train_queries[site]
                     if mode=='source':
@@ -127,6 +136,32 @@ def main():
                     elif mode=='raw_readout':
                         rec=t.decode(t.encode(h)); zsr=torch.relu((rec-sp['center'])@sp['encoder'].T+sp['encoder_bias'])
                         h=h-(zsr*query)@sp['decoder']
+                    elif mode in ['trajectory_action','trajectory_feedback','trajectory_requested_sites','trajectory_active_tokens']:
+                        desired=trajectory_changes[site] if mode=='trajectory_action' else trajectory[site]-h
+                        allowed=torch.ones(h.shape[:-1],dtype=torch.bool,device=h.device)
+                        if mode=='trajectory_requested_sites':
+                            allowed.fill_(bool(query.any()))
+                            desired=torch.where(allowed.unsqueeze(-1),desired,torch.zeros_like(desired))
+                        elif mode=='trajectory_active_tokens':
+                            allowed=(trajectory_changes[site]!=0).any(-1)
+                            desired=torch.where(allowed.unsqueeze(-1),desired,torch.zeros_like(desired))
+                        z=t.encode(h); candidate=t.encode(h+desired)-z
+                        delta,coeff,ix,detail=realize(desired,candidate,t.decoder.weight.T,members=allowance,
+                            steps=c['inverse_steps'],refine_steps=c['inverse_steps'],batch_size=128,
+                            candidate_limit=c['inverse_candidates'],current_codes=z)
+                        real=mask.bool();residual=trajectory[site]-(h+delta)
+                        d=diagnostics.setdefault(site,dict(states=0,desired_energy=0.,realization_error=0.,trajectory_error=0.,changed=0.))
+                        d['states']+=int(real.sum());d['desired_energy']+=float(desired[real].square().sum())
+                        d['realization_error']+=float((delta-desired)[real].square().sum())
+                        d['trajectory_error']+=float(residual[real].square().sum())
+                        d['changed']+=int((coeff[real]!=0).sum())
+                        excluded=real&~allowed
+                        excluded_changes=int((coeff[excluded]!=0).sum())
+                        if excluded_changes or torch.count_nonzero(delta[excluded]):
+                            raise ValueError('Excluded source locations were changed')
+                        d['excluded_states']=d.get('excluded_states',0)+int(excluded.sum())
+                        d['excluded_changes']=d.get('excluded_changes',0)+excluded_changes
+                        h=h+delta
                     elif mode=='tangent':
                         delta,_,_=transport_delta(h,t,sp,query,execution_writers.get(site,t.encoder.weight),allowance,True); h=h+delta
                     elif mode=='feasible_tangent':
@@ -146,6 +181,19 @@ def main():
                         if float((z+dz)[mask.bool()].min()) < -2e-5: raise ValueError('Negative pursuit target code')
                         if int((dz[mask.bool()]!=0).sum(-1).max()) > allowance: raise ValueError('Pursuit member allowance exceeded')
                         h=h+dz@t.decoder.weight.T
+                    elif mode in ['request_fixed','request_unbounded']:
+                        _,_,columns=transport_delta(h,t,sp,query,t.encoder.weight,allowance,False)
+                        columns=refine_columns(h,t,sp,columns,allowance,c['inverse_steps'],accelerate=True)
+                        delta,detail=refine_request(h,t,sp,query,columns,allowance,c['inverse_steps'],mode=='request_fixed')
+                        real=mask.bool().reshape(-1)
+                        d=diagnostics.setdefault(site,dict(source_energy=0.,common_error=0.,request_error=0.,kkt_mapping=0.,active_constraints=0.,states=0,min_code=0.))
+                        for key in ['source_energy','common_error','request_error','kkt_mapping','active_constraints']:
+                            d[key]+=float(detail[key][real].sum())
+                        d['states']+=int(real.sum())
+                        d['min_code']=min(d['min_code'],float(detail['minimum_code'][real].min()))
+                        if mode=='request_fixed' and d['min_code'] < -2e-5:raise ValueError('Negative request-conditioned target code')
+                        if d['request_error'] > d['common_error']+1e-5:raise ValueError('Request objective increased')
+                        h=h+delta
                     elif mode in ['refined_conditional_source_metric','refined_cached_source_metric'] and site=='embed':
                         flat=h.reshape(-1,h.shape[-1]); token_ids=current_tokens.flatten()
                         delta=torch.zeros_like(flat)
@@ -237,6 +285,8 @@ def main():
                         count=min(c['eval_batch_size'],len(rows)-off)
                         if c.get('eval_token_budget'):
                             while count>1 and count*max(len(r['tokens']) for r in rows[off:off+count])>c['eval_token_budget']: count-=1
+                        if execution in ['trajectory_action','trajectory_feedback','trajectory_requested_sites','trajectory_active_tokens']:
+                            mode='trajectory_teacher';forward(rows[off:off+count]);mode=execution
                         chunks.append(forward(rows[off:off+count]).cpu().numpy()); off+=count
                         if ds=='human' and c.get('save_pooled',False): pooled_chunks.append(pool.detach().cpu().numpy())
                     if pooled_chunks: pooled_queries.append(np.concatenate(pooled_chunks))

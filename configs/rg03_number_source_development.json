@@ -1,0 +1,13 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG03_NUMBER_SOURCE_DEVELOPMENT_20260921",
+  "device": "cpu",
+  "generator_script": "scripts/check_number_program.py",
+  "purpose": "Measure named number-part effects across the original three grammar structures before target translation.",
+  "scope": "Source-only development of published number annotations on48previously exposed prefixes across three original grammar structures.",
+  "annotations": "artifacts/morning_reform_20260916/independent_circuit_reading/annotations/10_32768.jsonl",
+  "number_panel": "artifacts/final_science_20260920_round02/AGREEMENT_DEVELOPMENT.json",
+  "per_structure": 0,
+  "budget_seconds": 300,
+  "statistics_unit": "48 previously exposed prefixes, one fixed source program. Source-development feasibility."
+}

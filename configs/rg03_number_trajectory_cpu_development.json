@@ -1,0 +1,14 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG03_NUMBER_TRAJECTORY_CPU_DEVELOPMENT_T2_20260921",
+  "device": "cpu",
+  "generator_script": "scripts/check_number_program.py",
+  "purpose": "Develop the same native state-feedback rule on an independent annotated multisite program.",
+  "scope": "48exposed grammar prefixes,58annotated source members at10available sites, natural target2, CPU float32. All source cases and requests retained.",
+  "annotations": "artifacts/morning_reform_20260916/independent_circuit_reading/annotations/10_32768.jsonl",
+  "number_panel": "artifacts/final_science_20260920_round02/AGREEMENT_DEVELOPMENT.json",
+  "per_structure": 0,
+  "target_methods": ["local_action", "recorded_action", "state_feedback"],
+  "budget_seconds": 480,
+  "statistics_unit": "48source-defined prefixes, fixed target2, development."
+}

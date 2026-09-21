@@ -1,0 +1,14 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG03_NUMBER_TRAJECTORY_SMOKE_T2_20260921",
+  "device": "cuda:0",
+  "generator_script": "scripts/check_number_program.py",
+  "purpose": "Check identical state-feedback execution on a second public multisite program.",
+  "scope": "Six exposed grammar prefixes,58annotated source members at10available sites, fixed natural target2.",
+  "annotations": "artifacts/morning_reform_20260916/independent_circuit_reading/annotations/10_32768.jsonl",
+  "number_panel": "artifacts/final_science_20260920_round02/AGREEMENT_DEVELOPMENT.json",
+  "per_structure": 2,
+  "target_methods": ["local_action", "recorded_action", "state_feedback", "raw_readout"],
+  "budget_seconds": 240,
+  "statistics_unit": "Source-defined request and prefix, fixed target2, development feasibility."
+}

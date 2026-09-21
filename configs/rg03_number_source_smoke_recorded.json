@@ -1,0 +1,13 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG03_NUMBER_SOURCE_SMOKE_RECORDED_20260921",
+  "device": "cpu",
+  "generator_script": "scripts/check_number_program.py",
+  "purpose": "Validate a public annotated multisite number program and its recorded evaluation outputs.",
+  "scope": "Source-only validation of published number annotations on six previously exposed grammar prefixes.",
+  "annotations": "artifacts/morning_reform_20260916/independent_circuit_reading/annotations/10_32768.jsonl",
+  "number_panel": "artifacts/final_science_20260920_round02/AGREEMENT_DEVELOPMENT.json",
+  "per_structure": 2,
+  "budget_seconds": 300,
+  "statistics_unit": "Six previously exposed prefixes, one fixed source program. Source-development feasibility."
+}

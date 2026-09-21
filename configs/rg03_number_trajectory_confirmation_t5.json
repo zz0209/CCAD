@@ -1,0 +1,25 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG03_NUMBER_TRAJECTORY_CONFIRMATION_T5_20260921",
+  "device": "cuda:0",
+  "generator_script": "scripts/check_number_program.py",
+  "target_seed": 5,
+  "seeds": [
+    5
+  ],
+  "purpose": "Confirm the same state-feedback rule on a second annotated multi-site program.",
+  "scope": "64fresh prefixes from the official within-RC and across-RC test splits,58fixed annotated members, three fixed target dictionaries and three named requests. Source remains available.",
+  "evidence_level": "frozen_new_context_confirmation",
+  "candidate_family_frozen": true,
+  "annotations": "artifacts/morning_reform_20260916/independent_circuit_reading/annotations/10_32768.jsonl",
+  "number_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\reuse_generalization_20260921_round03\\NUMBER_CONFIRMATION_PANEL.json",
+  "per_structure": 0,
+  "target_methods": [
+    "local_action",
+    "recorded_action",
+    "state_feedback",
+    "raw_readout"
+  ],
+  "budget_seconds": 650,
+  "statistics_unit": "Paired prefix pairs, clustered by original clean/patch pair and grammar structure; source, request family and targets fixed."
+}

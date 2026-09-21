@@ -38,6 +38,11 @@ def main():
         if run.name == 'INTERVENTION_PROGRAM_SMOKE_20260920':
             state = 'ARTIFACT_FINALIZATION_FAILURE'
             note = 'Completed predictions retained. Final summary raised KeyError for missing component; original RUNNING status retained. Corrected smoke has independent R2 identity. Master log records the failure.'
+        if run.name == 'RG03_NUMBER_SOURCE_SMOKE_20260921':
+            state = 'INVALID_ARTIFACT_FINALIZATION'
+            note = 'Source predictions completed; summary creation raised KeyError for missing component. Original RUNNING record retained. NUMBER_SOURCE_SMOKE_FAILURE.json records the invalid status; the recorded smoke repeats the corrected path.'
+        if run.name == 'RG03_NUMBER_TRAJECTORY_CONFIRMATION_T3_20260921':
+            note = 'All64 prediction cases completed. An unobserved simple-sentence category produced NaN summaries and finite_results=False. R2 enumerates observed categories; original predictions and FAIL status remain available for exact replay.'
         if run.name == 'CONDITIONAL_PROFILE_DEVELOPMENT_T2_20260920':
             state = 'INTERRUPTED_AFTER_COMPLETED_GLOBAL_CONTROL'
             note = 'All20 ordinary-profile requests completed; owned worker stopped during redundant inactive-token inference. Original status and predictions retained; R2 completes the two cached methods. Stop-time interval is in master_log.'
@@ -141,6 +146,17 @@ def main():
             'The first smoke retained predictions but failed in summary generation. Its full duration is unknown. The first support smoke failed on a missing reference path.',
             'The source-only normalization diagnostic uses original fit tokens and does not enter confirmation method selection.',
             'Checkpoint exports are included in their parent run sizes. Panel preparation and summary scripts have separate logs and are excluded from measured model-driver duration.'
+        ]
+    if args.round_id == 'REUSE_GENERALIZATION_03':
+        result['metadata_clarifications'] = [
+            'Human confirmation uses64 new biographies,12 new participation requests,7 semantic requests and fixed targets3,4,5. The four later heads and source explanation are fixed.',
+            'Number confirmation uses64 new prefixes in the original within-RC and across-RC test files, three named requests and fixed targets3,4,5. Original pair identities are bootstrap clusters.',
+            'The58-member number program follows published annotations at10 existing sites. It is a separately defined annotated-member intervention, with all source members and identities retained.',
+            'Recorded-action and state-feedback execution retain the source model and source encoders for an additional source pass. All natural target dictionaries remain unchanged.',
+            'Native comparisons share the upper allowance of twice the source-member count. Actual changed-member counts differ and are retained in execution diagnostics.',
+            'The two location controls use the original development biographies. Frozen confirmation data are excluded from selecting these controls.',
+            'The first number-source smoke failed during finalization and has unknown complete driver duration. The last progress is retained without treating it as completion.',
+            'Some inherited budget and scope strings retain earlier configurations. Actual source panels, original freeze files, run settings and the current9000-second unit allocation are recorded separately.'
         ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))

@@ -1,0 +1,171 @@
+{
+  "device": "cuda:0",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "run_id": "RG03_REQUEST_REALIZATION_DEVELOPMENT_T2_20260921",
+  "inverse_steps": 128,
+  "inverse_candidates": 128,
+  "accelerate_refinement": true,
+  "run_parent": "REUSE_GENERALIZATION_03",
+  "run_storage_root": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round03",
+  "generator_script": "scripts/train_intervention_changes.py",
+  "purpose": "Isolate request-conditioned coefficient feasibility in complete human and grammatical programs.",
+  "audit_opened": false,
+  "candidate_family_frozen": false,
+  "evidence_level": "development",
+  "dataset_revision": "existing_natural_discovery_and_exposed_IR04_SCIENCE03_development",
+  "statistics_unit": "Fixed source explanations, shared target seed and query/document dependence; mechanism development",
+  "scope": "Exposed development contexts. Same source information, support and dictionary; request-unbounded is a physical diagnostic.",
+  "budget": "7200driver seconds for this scientific unit,13GB allocated GPU and8GB bulk.",
+  "budget_seconds": 2400,
+  "target_seed": 2,
+  "seeds": [
+    2
+  ],
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "grammar_source_parameters": "artifacts/morning_reform_20260916/independent_circuit_reading/source_parts.npz",
+  "grammar_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_science_20260921_round05\\INFINITIVE_DEVELOPMENT_PANEL.json",
+  "grammar_members": [
+    1620,
+    6798,
+    25089,
+    10570
+  ],
+  "human_panel": "artifacts/independent_reuse_20260916/IR04_NEW_TASKS_PANEL.json",
+  "human_per_cell": 4,
+  "grammar_rows": 32,
+  "eval_batch_size": 2,
+  "natural_offset": 256,
+  "natural_sequences": 96,
+  "quality_states": 1024,
+  "train_sites": [
+    "embed",
+    "mlp_0",
+    "resid_0",
+    "mlp_1",
+    "resid_1",
+    "attn_2",
+    "resid_2",
+    "attn_3",
+    "resid_3",
+    "attn_4",
+    "resid_4"
+  ],
+  "steps": 256,
+  "state_batch": 128,
+  "variants": [],
+  "executions": [
+    "tangent",
+    "refined_common",
+    "request_fixed",
+    "request_unbounded",
+    "inverse_budget",
+    "raw_readout"
+  ],
+  "generic_program_steps": 0,
+  "program_objective": "local_parts",
+  "program_batch_sequences": 2,
+  "program_length": 64,
+  "program_checkpoints": [
+    512,
+    4096
+  ],
+  "reconstruction_weight": 1.0,
+  "learning_rate": 0.0001,
+  "training_seed": 921,
+  "train_decoder": true,
+  "action_bank_size": 32768,
+  "actions_per_state": 4,
+  "change_weight": 1.0,
+  "log_every": 256,
+  "source_archive": "D:/CCAD_Storage/references/feature_circuits_shift/saes/50a434461d36ed78d1b0b901944e6edc829f1dce/dictionaries_pythia-70m-deduped_10.zip",
+  "human_queries": {
+    "pronouns": {
+      "pronouns": 1,
+      "names": 0,
+      "associated_words": 0
+    },
+    "names": {
+      "pronouns": 0,
+      "names": 1,
+      "associated_words": 0
+    },
+    "associated_words": {
+      "pronouns": 0,
+      "names": 0,
+      "associated_words": 1
+    },
+    "pronouns+names": {
+      "pronouns": 1,
+      "names": 1,
+      "associated_words": 0
+    },
+    "pronouns+associated_words": {
+      "pronouns": 1,
+      "names": 0,
+      "associated_words": 1
+    },
+    "names+associated_words": {
+      "pronouns": 0,
+      "names": 1,
+      "associated_words": 1
+    },
+    "full": {
+      "pronouns": 1,
+      "names": 1,
+      "associated_words": 1
+    },
+    "center": {
+      "pronouns": 0.5,
+      "names": 0.5,
+      "associated_words": 0.5
+    }
+  },
+  "program_sites": [
+    "resid_4"
+  ],
+  "datasets": [
+    "human",
+    "grammar"
+  ],
+  "excluded_source_members": {
+    "resid_4": [
+      8913,
+      13081,
+      11586,
+      14719,
+      16089,
+      26914,
+      5798,
+      15313,
+      22614,
+      31158
+    ]
+  },
+  "natural_cache": "D:/CCAD_Storage/runs/final_science_20260920/FINAL01_changes_development_v1_20260920/natural_states.pt",
+  "source_metric_rows": 0,
+  "fisher_sequences": 0,
+  "program_audit_steps": 0,
+  "program_audit_alternate_parts": true,
+  "program_action_sampling": "state",
+  "program_parameters": "joint",
+  "query_progress": true,
+  "save_pooled": true,
+  "source_metric_cache": null,
+  "other_source_metric_cache": null,
+  "task_adapted_reference": {
+    "human": {
+      "embed": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t2_v1_20260919/tangent_mixed/embed_seed2.pt",
+      "mlp_0": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t2_v1_20260919/tangent_mixed/mlp_0_seed2.pt",
+      "resid_0": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t2_v1_20260919/tangent_mixed/resid_0_seed2.pt"
+    },
+    "grammar": "D:/CCAD_Storage/runs/science_upgrade_20260919/SCIENCE03_infinitive_execution_reform_v1_20260919/tangent_mixed/dictionary.pt"
+  }
+}
