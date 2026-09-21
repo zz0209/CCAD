@@ -46,6 +46,10 @@ def input_member_delta(x, target, source, q, mode, allowance, attention):
     source coefficients and query-independent target support/capacity rule.
     """
     import torch
+    def source_codes(h):
+        if 'sae' in source:
+            return source['sae'].encode(h)[..., source['member_ids']]
+        return torch.relu((h-source['center'])@source['encoder'].T+source['encoder_bias'])
     shape=x.shape
     flat=x.reshape(-1,shape[-1]); keep=attention.reshape(-1).bool()
     result=torch.zeros_like(flat)
@@ -58,7 +62,7 @@ def input_member_delta(x, target, source, q, mode, allowance, attention):
         bp,bn=basis.clamp_min(0),(-basis).clamp_min(0)
         for ix in indices.split(512):
             h=flat[ix];z=target.encode(h)
-            zs=torch.relu((h-source['center'])@source['encoder'].T+source['encoder_bias'])
+            zs=source_codes(h)
             active=(z>0) if mode.startswith('input_tangent') else torch.ones_like(z)
             selected=active
             if mode.endswith('_budget'):
@@ -76,10 +80,10 @@ def input_member_delta(x, target, source, q, mode, allowance, attention):
         return result.reshape(shape),count
     for ix in indices.split(512 if mode=='raw_reconstruction' else 128):
         h=flat[ix];z=target.encode(h)
-        zs=torch.relu((h-source['center'])@source['encoder'].T+source['encoder_bias'])
+        zs=source_codes(h)
         if mode=='raw_reconstruction':
             rec=z@target.decoder.weight.T+target.b_dec
-            zr=torch.relu((rec-source['center'])@source['encoder'].T+source['encoder_bias'])
+            zr=source_codes(rec)
             result[ix]=-(zr*q)@source['decoder']
             continue
         if mode.startswith('input_tangent'):
