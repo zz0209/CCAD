@@ -20,16 +20,27 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True, type=Path)
     parser.add_argument('--target-seed', type=int)
+    parser.add_argument('--source-seed', type=int)
     args = parser.parse_args()
     c = json.loads(args.config.read_text())
+    if args.source_seed is not None:
+        assert args.source_seed in c['source_seeds']
+        c['source_seed'] = args.source_seed
+    source_seed = c.get('source_seed', 1)
+    if 'source_checkpoint_template' in c:
+        c['source_checkpoint'] = c['source_checkpoint_template'].format(seed=source_seed)
     if args.target_seed is not None:
         assert args.target_seed in c['target_seeds']
         c['target_seed'] = args.target_seed
-        c['seeds'] = [1, args.target_seed]
-        c['run_id'] = c['run_id_template'].format(seed=args.target_seed)
+        c['seeds'] = [source_seed, args.target_seed]
+        c['run_id'] = c['run_id_template'].format(seed=args.target_seed, source_seed=source_seed)
         c['target_checkpoint'] = c['target_checkpoint_template'].format(seed=args.target_seed)
         if str(args.target_seed) in c.get('resume_by_seed', {}):
             c['resume_checkpoints'] = c['resume_by_seed'][str(args.target_seed)]
+    if c.get('exclude_self_transfer'):
+        assert source_seed != c['target_seed']
+    if 'evaluation_by_target' in c:
+        c['evaluation_checkpoints'] = c['evaluation_by_target'][str(c['target_seed'])]
     w = MultisiteWork(c, args.config, [
         'scripts/train_grammar_member_program.py', 'scripts/run_shift_transfer.py',
         'scripts/run_shift_explanation.py', 'scripts/train_shift_dictionaries.py',
@@ -67,13 +78,13 @@ def main():
         target = AutoEncoderTopK(dim, initial['encoder.weight'].shape[0], int(initial['k'])).to(w.device)
         target.load_state_dict(initial)
         parent = Path(c['source_run'])
-        gate = torch.tensor(np.load(w.checked(parent/'topk_s1_source.npz'))['gate'], device=w.device)
+        gate = torch.tensor(np.load(w.checked(parent/f'topk_s{source_seed}_source.npz'))['gate'], device=w.device)
         members = gate.sum(1).nonzero().flatten()
         part_ids = gate[members].argmax(1)
         assert len(members) == 192 and bool((gate.sum(1) <= 1).all())
         source = dict(sae=source_ae, member_ids=members,
                       decoder=source_ae.decoder.weight[:, members].T)
-        old = np.load(w.checked(parent/f'topk_s1_t{c["target_seed"]}_map.npz')) if c.get('fixed_control') else None
+        old = np.load(w.checked(parent/f'topk_s{source_seed}_t{c["target_seed"]}_map.npz')) if c.get('fixed_control') else None
         fixed_ids = torch.tensor(old['target_members'], device=w.device) if old is not None else None
         fixed_gate = torch.tensor(old['partition64'], device=w.device) if old is not None else None
         natural = torch.tensor(np.load(w.checked(c['natural_states']))['hidden'], device=w.device)
@@ -164,7 +175,7 @@ def main():
                     for row, value in zip(rr, margins.cpu().tolist()):
                         w.record(kind='grammar_program', task=row['task'], row_id=row['row_id'],
                             component=row['task']+':'+str(row['row_id']), mode=query, operation=query,
-                            method=name, seed=1, target_seed=c['target_seed'], split=evaluation_split,
+                            method=name, seed=source_seed, target_seed=c['target_seed'], split=evaluation_split,
                             margin=value, accuracy=value > 0)
                 w.progress('EVALUATION', method=name, query=query)
             values[name] = result
@@ -181,6 +192,16 @@ def main():
         evaluate('readout_initial', 'readout')
         if c.get('fixed_control'):
             evaluate('fixed', 'fixed')
+        for name, item in c.get('evaluation_checkpoints', {}).items():
+            saved = torch.load(w.checked(item['path'].format(target_seed=c['target_seed'],
+                               training_run=c.get('checkpoint_run_by_target', {}).get(str(c['target_seed']), ''))),
+                               map_location=w.device, weights_only=True)
+            target.load_state_dict(saved['dictionary'])
+            target.requires_grad_(False)
+            evaluate(name, item['execution'])
+            assert all(torch.equal(target.state_dict()[key], value)
+                       for key, value in saved['dictionary'].items())
+        target.load_state_dict(initial)
         endpoints = torch.cat([torch.eye(3, device=w.device), torch.ones(1, 3, device=w.device)])
         energy = []
         calibration = [fit[int(i)] for i in np.linspace(0, len(fit)-1, min(24, len(fit)), dtype=int)]
@@ -254,7 +275,10 @@ def main():
         w.checks['source_frozen'] = all(torch.equal(source_ae.state_dict()[key], value) for key, value in source_state.items())
         w.checks['base_model_frozen'] = all(not p.requires_grad for p in model.parameters())
         write(w.run/'method_summary.json', dict(quality=quality, source_members=members.cpu().tolist(),
-            source_parts=part_ids.cpu().tolist(), same_rule='run_shift_transfer.input_member_delta'))
+            source_parts=part_ids.cpu().tolist(), same_rule='run_shift_transfer.input_member_delta',
+            source_seed=source_seed, target_seed=c['target_seed'],
+            training_variants=c['variants'], requested_steps=c['steps'],
+            frozen_evaluation_methods=list(c.get('evaluation_checkpoints', {}))))
     except Exception:
         error = traceback.format_exc()
     finally:

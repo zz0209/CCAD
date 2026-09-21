@@ -50,6 +50,7 @@ def main():
             wall_seconds=summary.get('wall_seconds'), cpu_seconds=summary.get('process_cpu_seconds'),
             peak_allocated_bytes=summary.get('peak_allocated_bytes'),
             sequence_forwards=summary.get('sequence_forwards'), token_forwards=summary.get('token_forwards'),
+            prediction_rows=summary.get('rows'), source_seed=c.get('source_seed'),
             bytes=sum(p.stat().st_size for p in run.rglob('*') if p.is_file()),
             seed=c.get('target_seed', c.get('source_field_evaluation', {}).get('target_seeds')),
             member_allowance=c.get('member_budget', c.get('source_field_evaluation', {}).get('members', '2p per site')),
@@ -170,6 +171,17 @@ def main():
             'The original source-bank exporter failed before output because CUDA initialization had not preceded peak-memory reset. R2completed the export.',
             'The initial development swap exchanged empty and nonempty sets at some sites. Formal confirmation matches the site-specific pool cardinalities.',
             'The initial smoke command ended before run creation when the new storage parent did not exist. Its driver duration is unknown.'
+        ]
+    if args.round_id == 'REUSE_GENERALIZATION_09':
+        result['metadata_clarifications'] = [
+            'Target whole/program checkpoints were trained against source1 in the preceding study. Additional source definitions2–5 supply their own complete TopK encoders and original192selected members.',
+            'All twelve nonself source-target directions among2–5 are retained. Evaluation performs zero optimization updates and checks unchanged source, base-model and loaded target parameters.',
+            'The primary comparison is saved part-program minus initial execution on seven requests. Saved complete-request training and both source-direction readouts are retained.',
+            'The384confirmation sentence pairs are new draws from three fixed original grammar generators, excluding earlier retained sentences including the preceding384-pair confirmation.',
+            'Inference resamples paired sentences within grammar, holding the four shared seed nodes fixed. Deleting one node removes every direction incident on that node.',
+            'The first smoke launches failed before a model run due to resource-lease access and then a missing storage parent. Valid smoke, development and confirmation outputs retain separate identities.',
+            'The initial grammar generation stopped after16saved examples. The local adapter rejects missing opposite-number verb forms according to the original accepted-pair logic; regenerated data have a separate version and pre-evaluation freeze.',
+            'Each evaluation driver computes source-only normalization on old fitting examples. Target response fitting is absent. Run duration includes loading and all five methods plus source and unedited references.'
         ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))

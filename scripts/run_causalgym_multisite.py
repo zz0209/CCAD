@@ -90,7 +90,7 @@ class MultisiteWork:
               config_hash=sha256(self.run/'config.resolved.json'), code_snapshot_hash=aggregate(code), source_snapshot_required=True,
               git_head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
               audit_opened=cfg['audit_opened'], candidate_family_frozen=cfg['candidate_family_frozen'],
-              mean_constants_source_split='Same dictionary donor differences cancel a fixed mean and decoder bias',
+              mean_constants_source_split=cfg.get('mean_constants_source_split', 'Same dictionary donor differences cancel a fixed mean and decoder bias'),
               threshold_source_split=cfg.get('threshold_source_split','Configuration before this experiment; original exposed train components remain development'),
               statistics_unit=cfg.get('statistics_unit','prompt-connected components, reciprocal directions and shared SAE seeds'),
               device=cfg['device'], seeds=cfg['seeds'], resource_lease='gpu-0' if cfg['device'].startswith('cuda') else 'cpu-heavy',

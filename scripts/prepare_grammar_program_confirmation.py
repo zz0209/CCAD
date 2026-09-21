@@ -42,6 +42,12 @@ def main():
                 for line in stream:
                     row = json.loads(line)
                     seen.update([row['sentence_good'], row['sentence_bad']])
+    for record in c.get('exclusion_panels', []):
+        path = Path(record['path']).resolve()
+        assert digest(path) == record['sha256'], path
+        files[str(path)] = record['sha256']
+        for row in json.loads(path.read_text())['rows']:
+            seen.update([row['sentence_good'], row['sentence_bad']])
     rows, counts = [], {}
     checkpoint = output.parent/'generation_checkpoint.pkl'
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -63,7 +69,7 @@ def main():
         for attempt in range(c['eval_pairs_per_task']*100):
             data, reason = generator.sample()
             if data is None:
-                assert reason in ['empty_noun_candidates', 'empty_reflexive_candidates']
+                assert reason in ['empty_noun_candidates', 'empty_reflexive_candidates', 'empty_mismatch_verb_candidates']
                 rejected[reason] += 1
                 continue
             for field in generator.data_fields:
