@@ -10150,3 +10150,56 @@ The manuscript decision preserves the current formal evidence and62-page PDF wit
 报告、方法判断与复算定位在artifacts/reuse_generalization_20260921_round06/REPORT.md、METHOD_AND_DECISION.md、RUN_INVENTORY.json及CLOSEOUT.json。配对统计、共享文档／源／干净输出、自然质量和强对照已核验。表格数据与正式分析SHA一致，脚本语法及git diff检查通过。论文build20260921T175518365653Z通过，无overfull、undefined-reference或missing-character，保留既有字体请求及underfull提示；45、46页实际渲染查看，8页正文终点核验。唯一paper/main.pdf为62页、908006bytes、SHA2560b06966517dc26c9e9a6002cc1c48c7fdc08f6c64f3717133429094a771745e8。主线、原确认与重要附录全部保留，新增证据进入原program_adaptation章节。
 
 数学和实际判断已更新。同一请求二阶矩区别同时解释局部监督和原端到端训练中的部分保留；局部监督新增收益延续到四个后来固定头，重训准确率分别报告。状态重构没有产生对应的功能收益，原端到端程序仍提供更准确的后来响应参照。下一候选研究共同作用规则在目标自身执行状态上的泛化，并用两份现有程序的新组合检验同一机制。文献、对照和完整结果决定是否继续该候选；算法名称、局部数值和完成计数不替代整体同行比较。两项写作skill落实于同一正面问题、完整控制与简洁章节表达。完成记录后tracker更新为后续6/15，原automation保持ACTIVE与5分钟周期。
+
+## REUSE_GENERALIZATION_06 SYNC 2026-09-21T18:03:28Z
+
+实际写入UTC为2026-09-21T18:03:28Z。白名单11个代码／日志文件已经成组commit并推送，HEAD=origin/main=da1121d70a5d1231623276a96969314717d66d53，推送后核验一致，未扩大上传白名单。稿件与完整结果按原规则本地保留。当前同步回执随下一研究单元成组保存。REFERENCE_REGISTRY中本轮标记17:22:00Z的记录沿用了提前时钟，其实际写入秒未知，已追加时间说明；阅读内容和来源不受影响，原记录保留。完成计数6/15，当前无活动研究计算。
+
+## REUSE_GENERALIZATION_07 START 2026-09-21T18:16:27Z
+
+实际写入UTC为2026-09-21T18:16:27Z。用户要求方法论文围绕同一构造组织，当前单元检验已有input-dependent program training能否同时承担两份公开解释、新部分请求和后来使用。SCIENCE04已有两份解释的冻结确认；其后来消费者只有目标2。本轮复用原checkpoint、四个任务及全部公平对照，追加目标3至5。方法、标签、请求与分类头配方均保持，当前数据继续标为已暴露开发消费者。新结果将决定同一方法的使用主张，不能用正文整理代替科学提升。
+
+现有源轨迹局部训练候选退出本轮执行。选用保存源列、按当前状态构造C(h)、在完整程序中训练的现有规则作为主方法，state feedback及其他有价值执行结果在同篇附录完整保留。两项指定写作skill落实于这个方法取舍与读者负担的实际减少。开始前plan、tracker和稿件逐字副本在artifacts/reuse_generalization_20260921_round07。已有环境、checkpoint、分类器代码与统计脚本直接复用。
+
+启动检查显示GPU空闲14002MiB，共享资源全部free，D/E可用约3.46TB/420GB。预算为三个正式消费者至多4500driver秒，smoke180秒，分析600秒，13GB VRAM，新增bulk4GB。实际吞吐与结果决定接续；已完成部分保留。当前后续计数6/15，原automation保持。研究准备始于本次heartbeat，确切有效工作与等待时间未知，不以触发时间充作写入时间。
+
+## REUSE_GENERALIZATION_07 PROGRESS 2026-09-21T18:20:03Z
+
+实际写入UTC为2026-09-21T18:20:03Z。smoke已PASS，34.284667秒、4352条预测、2176sequence forwards，涵盖原规则、增益和完整程序及全部四请求。首次启动因运行父目录尚未创建而在生成run前退出；目录创建后相同配置执行成功，未形成覆盖。正式目标3至5按原配方接续，实际进度见D盘本轮目录。当前SCIENCE04的same-program证据连接承担主文组织，不启动额外训练。
+
+
+## REUSE_GENERALIZATION_07 PROGRESS 2026-09-21T18:35:45Z
+
+实际写入UTC为2026-09-21T18:35:45Z。主文明确采用同一输入相关关系，增加实际代码对应的共享容量公式、程序损失与重构导数误差连接。全部是既有实现及数学事实的可读表达，未计为新算法。两份公开解释组成主图，state feedback、固定集合和原新任务图完整保留在对应附录。RETENTION逐项记录来源及位置；附录按理论、人工、语法、算术、binding、复现排列。首次排版为61页，查看前6页并发现一处表格宽度和未完成消费者引用，继续修订。两次不匹配patch均未改变文件，后续依据当前内容编辑。正式目标3仍在运行，目标4/5等待同一顺序队列。
+
+
+## REUSE_GENERALIZATION_07 PROGRESS 2026-09-21T18:58:27Z
+
+实际写入UTC为2026-09-21T18:58:27Z。目标3正式运行PASS，1213.348619秒，256608条逐例结果，85872序列与6724224tokens。目标4正在同一队列处理，目标5尚未开始；session99307接续三个目标，当前完成计数保持6/15。全部方法、任务与保存程序仍按DESIGN执行。
+
+主文的成员矩阵、请求和完整训练目标已经与实际源码逐项核对。固定membership矩阵也具有输入变化的激活幅度；新增表述准确说明当前构造还根据源贡献改变目标参与与容量分配。主图只呈现人工解释的同案例结果，算术完整比较保留在同篇附录与原图文件。重新安排后的附录将公开语法源定义放在人工解释之后。CLAIM_MAP与阅读说明已按同一主方法重写，原件在pre_integration保留。新响应分析的真实目标2数据检查通过，完整新增目标统计在计算结束后进行。
+
+图形首次使用实验解释器时缺少matplotlib，在输出生成前退出。随后依据compute ledger使用既有文档Python和plot_runtime_v1，图形生成并实际查看通过，环境未安装或修改。一项README patch的文本匹配失败没有改变该文件，随后按已读取内容编辑。当前PDF可以编译且没有未定义引用；消费者全目标结果、最终排版及正式完成记录继续属于本轮。
+
+## 2026-09-21T19:21:28Z — REUSE_GENERALIZATION_07 PROGRESS
+
+Actual write UTC 2026-09-21T19:21:28Z. T4 completed PASS at2026-09-21T19:05:06.885814Z with1498.548862 driver seconds and256608 rows. T5 remains active in session99307; its19:21:01.477788Z record reports61360 sequences and953.073756 elapsed seconds. T3/T4 and all original checkpoints remain unchanged. Main-method review checked input_member_delta against the derivative/support/capacity equations and clarified that the two-member allowance applies to target-member executors. Main text now follows the same trained relation through its two explanations and later use. Fixed-membership task outcomes and state-feedback quantitative results remain in their complete same-paper appendix locations; the former main paragraphs are preserved in pre_integration. Delivery reading guide now identifies the same primary method and figure; its original bytes are retained in pre_integration/DELIVERY_GUIDE.md. Braun et al. reading and explicit prior-art credit are recorded in REFERENCE_REGISTRY. The export script will retain a concise current manuscript pointer and original evidence records, with the old complete index archived. No new scientific result is claimed from this writing or metadata work. Formal additional-target and pooled analyses remain pending T5. Working and waiting time were not separately measured; round count remains6/15.
+
+
+## 2026-09-21T19:24:10Z — REUSE_GENERALIZATION_07 CORRECTION
+
+Actual write UTC 2026-09-21T19:24:10Z. An attempted analysis launch exited at the required PASS check because T5 was still RUNNING. The CPU resource manager permitted that process to start; resource availability does not establish experiment completion. No analysis JSON or statistical result was generated. The original output is retained in artifacts/reuse_generalization_20260921_round07/ADDITIONAL_RESPONSE.log. Recovery will wait for the actual T5 PASS status before invoking the unchanged analyzers, using separate attempt logs. Raw experiment outputs and the active T5 queue are unaffected. The attempt consumed2.338186 seconds of shell wall time; no formal resampling occurred.
+
+## REUSE_GENERALIZATION_07 COMPLETE 2026-09-21T19:44:09Z
+
+实际写入UTC及本研究单元完成时间为2026-09-21T19:44:09Z，START为2026-09-21T18:16:27Z。三个新增目标3、4、5和代表性smoke全部PASS，最后实验于2026-09-21T19:26:16.284342Z结束。四项正式统计在实验完成后执行，各2000次配对重采样。正式driver合计3979.680420秒，smoke34.284667秒，bulk946627691bytes，正式逐例结果769824条、257616序列、20172672词元。有效研究与等待时间没有分别计量，runner未记录峰值allocated显存。session99307与分析session55729均退出0，本轮没有活动计算。
+
+同一保存的input-dependent program在三个新增目标上的部分准确率由87.83%提高到90.57%，提升2.75个百分点，[2.15,3.27]；相对源列增益提高1.09个百分点，[.56,1.72]。三个目标均改善。最差组相对初始规则提高7.52个百分点，[6.34,8.44]。固定后来分类头的部分响应误差由.41247变为.14768。源代词与姓名作用差异为11.66个百分点，训练程序为11.75。原固定关系和reconstruction readout的部分准确率更高，readout响应误差为.12085，完整比较进入主表。合并原目标2后，程序相对增益的准确率差值为.74个百分点，[−.05,1.48]。新增结果保持既有消费者数据上的目标复现身份，源解释、职业对及头初始化固定。
+
+本轮使用同一SCIENCE04 checkpoint与既有分类器配方，21项checkpoint和事前主要比较见artifacts/reuse_generalization_20260921_round07/DESIGN.json。ADDITIONAL_UTILITY、ADDITIONAL_RESPONSE、POOLED_UTILITY及POOLED_RESPONSE保存正式分析；RUN_INVENTORY与RESULT_CHECK保存运行和复算核验。独立run汇总与逐例准确率均值相符，差异至多2e-16，源输出和原始数据身份检查通过。提前启动分析在目标5的PASS检查处退出，没有生成统计结果；失败原日志及独立成功尝试日志均保留。未增加人工、付费、数据下载或外部提交。
+
+主文围绕同一成员列构造、完整程序训练、两份公开解释和后来使用组织为六页。State feedback、固定成员池、原固定关系的新任务图及其他重要结果保留在同篇附录，RETENTION记录原位置、当前标签及来源。数学连接和既有实现逐项核验，经典构造按实际来源引用。两项写作skill落实于主方法取舍、主表保留强对照、正文退出研究过程叙述；写作调整不记作额外科学成果。
+
+唯一paper/main.pdf为61页、889711bytes、SHA256 5e562f0e747bb4d9871f114dfc1c2184896728d7dea9e473ea63522a01a70477。最终build于2026-09-21T19:38:21.925607Z完成，主文1至6页和附录25至26页已实际查看，最后完整准确率列重新生成后再次查看。无overfull、undefined-reference或missing-character。代码编译及实际运行通过，最终数据、图形、表格、证据记录和17项交付身份已核对。报告与完整定位在本轮REPORT.md及CLOSEOUT.json，论文阅读入口、CLAIM_MAP及EVIDENCE_INDEX同步。
+
+下一单元优先候选是同一C(h)q及程序训练在另一模型家族中已验证解释和新部分请求上的使用，按实际源功能、公开资产与资源确定具体实现。目标继续为共同方法的一般性和可检验作用，当前不启动新单元。完成记录后tracker计数更新为后续7/15；原ccad automation保持ACTIVE及5分钟周期。成果评价继续依据实际证据与同行原文，计数和章节调整不代替科学判断。

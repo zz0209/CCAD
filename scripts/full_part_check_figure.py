@@ -1,5 +1,6 @@
 """Draw the same-case full/part result and its retained illustrative example."""
 from pathlib import Path
+import argparse
 import csv
 import json
 import hashlib
@@ -13,6 +14,9 @@ PAPER=ROOT/'paper'
 
 
 def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--human-only',action='store_true')
+    args=parser.parse_args()
     path=PAPER/'data/full_part_checks.json'
     data=json.loads(path.read_text())
     font_manager.fontManager.addfont('C:/Windows/Fonts/times.ttf')
@@ -43,6 +47,8 @@ def main():
     rows=[('human','geometry','Geometry',6),('human','geometry_gain','Geometry + gains',5),
           ('human','native','Member relation',4),('human','raw','Source-dir. readout',3),
           ('arithmetic','assignment','Assignment',1),('arithmetic','member','Member relation',0)]
+    if args.human_only:
+        rows=[(study,method,label,3-i) for i,(study,method,label,_) in enumerate(rows[:4])]
     records=[]
     for study,method,label,y in rows:
         result=data[study]['methods'][method]
@@ -55,18 +61,39 @@ def main():
     ax.set_yticks([r[3] for r in rows],[r[2] for r in rows],fontsize=8)
     ax.tick_params(axis='y',length=0,pad=4)
     ax.tick_params(axis='x',labelsize=8,length=3)
-    ax.set_xlim(0,60);ax.set_xticks([0,20,40,60]);ax.set_ylim(-.6,6.65)
+    ax.set_xlim(0,35 if args.human_only else 60)
+    ax.set_xticks([0,10,20,30] if args.human_only else [0,20,40,60])
+    ax.set_ylim(-.6,3.65 if args.human_only else 6.65)
     ax.set_xlabel('At least one part wrong (%)',fontsize=8,labelpad=3)
     ax.spines[['top','right','left']].set_visible(False)
-    ax.axhline(2,color='.8',lw=.5,xmin=0,xmax=1)
+    if not args.human_only:
+        ax.axhline(2,color='.8',lw=.5,xmin=0,xmax=1)
     fig.text(.52,.84,'Human annotation',fontsize=8,style='italic')
-    fig.text(.52,.393,'Arithmetic',fontsize=8,style='italic')
-    fig.text(.52,.035,'Same cases within each study; paired 95% intervals.',fontsize=8)
-    target=PAPER/'figures/full_part_checks'
+    if not args.human_only:
+        fig.text(.52,.393,'Arithmetic',fontsize=8,style='italic')
+    fig.text(.52,.035,'Identical accepted cases; paired 95% intervals.' if args.human_only else
+             'Same cases within each study; paired 95% intervals.',fontsize=8)
+    stem='human_part_check' if args.human_only else 'full_part_checks'
+    target=PAPER/'figures'/stem
     for ext in ['pdf','svg','png']:fig.savefig(target.with_suffix('.'+ext),dpi=220)
     plt.close(fig)
-    with (PAPER/'data/full_part_checks_plot.csv').open('w',newline='',encoding='utf-8') as f:
+    with (PAPER/'data'/f'{stem}_plot.csv').open('w',newline='',encoding='utf-8') as f:
         writer=csv.DictWriter(f,fieldnames=list(records[0]));writer.writeheader();writer.writerows(records)
+    if args.human_only:
+        def identity(p):
+            return dict(path=p.relative_to(PAPER).as_posix(),bytes=p.stat().st_size,
+                        sha256=hashlib.sha256(p.read_bytes()).hexdigest())
+        manifest_path=PAPER/'figures/FIGURE_MANIFEST.json'
+        manifest=json.loads(manifest_path.read_text())
+        outputs=[identity(target.with_suffix('.'+ext)) for ext in ['pdf','svg','png']]
+        names={r['path'] for r in outputs}
+        manifest['outputs']=[r for r in manifest['outputs'] if r['path'] not in names]+outputs
+        manifest['human_part_check']=dict(
+            sources=[identity(path),identity(PAPER/'data/full_part_display_example.json')],
+            generator=dict(path='scripts/full_part_check_figure.py',
+                           sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()),
+            arguments=['--human-only'],outputs=outputs+[identity(PAPER/'data'/f'{stem}_plot.csv')])
+        manifest_path.write_text(json.dumps(manifest,indent=2)+'\n')
     print(json.dumps(dict(source_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),outputs=[str(target.with_suffix('.'+s)) for s in ['pdf','svg','png']])))
 
 
