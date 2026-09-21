@@ -409,13 +409,18 @@ def main():
                     t.requires_grad_(False); del optimizer,xall,xfit,xval,enc,bias,dec,center; torch.cuda.empty_cache()
                 for execution in c['executions']: evaluate(variant+'_'+execution,execution)
             if c.get('generic_program_steps',0):
-                for s in sites: targets[s].load_state_dict(initial[s]); targets[s].requires_grad_(True)
-                action_banks={}
+                program_sites=c.get('program_sites',sites)
+                assert program_sites and set(program_sites)<=set(sites)
+                objective=c.get('program_objective','downstream')
+                assert objective in ['local','downstream','distribution']
                 for s in sites:
+                    targets[s].load_state_dict(initial[s]); targets[s].requires_grad_(s in program_sites)
+                action_banks={}
+                for s in program_sites:
                     folder='embed' if s=='embed' else s.split('_')[0]+'_out_layer'+s.split('_')[1]
                     member=f'dictionaries/pythia-70m-deduped/{folder}/10_32768/ae.pt'
                     raw=archive.read(member); sd=torch.load(io.BytesIO(raw),map_location='cpu',weights_only=True)
-                    excluded=set(source['members'][s]) | (set(c['grammar_members']) if s=='resid_4' else set())
+                    excluded=set(source['members'][s]) | (set(c['grammar_members']) if s=='resid_4' else set()) | set(c.get('excluded_source_members',{}).get(s,[]))
                     available=np.array([i for i in range(len(sd['encoder.weight'])) if i not in excluded])
                     rng=np.random.default_rng(c['training_seed']+sites.index(s)); members=rng.choice(available,min(c['action_bank_size'],len(available)),replace=False)
                     action_banks[s]=dict(encoder=sd['encoder.weight'][members].to(w.device),encoder_bias=sd['encoder.bias'][members].to(w.device),decoder=sd['decoder.weight'][:,members].T.to(w.device),center=sd['bias'].to(w.device))
@@ -426,12 +431,12 @@ def main():
                 gen=torch.Generator(device=w.device).manual_seed(c['training_seed'])
                 fit_sequences=used[:-max(1,c['quality_states']//128)]
                 for step in range(c['generic_program_steps']):
-                    dataset='training'; mode='clean'; train_site=sites[step%len(sites)]
+                    dataset='training'; mode='clean'; train_site=program_sites[step%len(program_sites)]
                     sample=torch.randint(len(fit_sequences),(c['program_batch_sequences'],),generator=gen,device=w.device).cpu().tolist()
                     rr=[{'tokens':tokens[fit_sequences[i],:c['program_length']].astype('int64').tolist()} for i in sample]
                     with torch.no_grad():
                         clean_hidden=forward(rr); train_sources={}; train_queries={}
-                        selected_sites=sites if c.get('program_scope','single')=='joint' else [train_site]
+                        selected_sites=program_sites if c.get('program_scope','single')=='joint' else [train_site]
                         for s in selected_sites:
                             sb=action_banks[s]; hh=observed[s]
                             activity=torch.relu((hh-sb['center'])@sb['encoder'].T+sb['encoder_bias']).sum((0,1))
@@ -442,11 +447,22 @@ def main():
                             train_queries[s]=.5+.5*torch.rand(c['actions_per_state'],generator=gen,device=w.device)
                         mode='source'; teacher=forward(rr); energy=(teacher-clean_hidden).square().mean()
                         if energy<1e-10: raise ValueError('Source program has insufficient effect')
+                        if objective=='distribution':
+                            # 完整词表的源概率变化直接监督可复用执行。
+                            teacher_logp=torch.log_softmax(model.get_output_embeddings()(teacher),dim=-1)
+                            clean_logp=torch.log_softmax(model.get_output_embeddings()(clean_hidden),dim=-1)
+                            teacher_p=teacher_logp.exp()
+                            distribution_energy=(teacher_p.double()*(teacher_logp-clean_logp).double()).sum(-1).mean()
+                            if distribution_energy<=1e-10: raise ValueError('Source probability change is insufficient')
                     mode='tangent'; train_terms=[]; student=forward(rr)
                     train_reconstruction=torch.stack([v[0] for v in train_terms]).mean()
                     train_local_loss=torch.stack([v[1] for v in train_terms]).mean()
                     downstream=(student-teacher).square().mean()/energy
-                    program=train_local_loss if c.get('program_objective','downstream')=='local' else downstream
+                    if objective=='distribution':
+                        student_logp=torch.log_softmax(model.get_output_embeddings()(student),dim=-1)
+                        program=(teacher_p.double()*(teacher_logp-student_logp).double()).sum(-1).mean()/distribution_energy
+                    else:
+                        program=train_local_loss if objective=='local' else downstream
                     loss=program+c['reconstruction_weight']*train_reconstruction
                     optimizer.zero_grad(set_to_none=True); loss.backward()
                     torch.nn.utils.clip_grad_norm_(parameters,1.); optimizer.step()
@@ -467,6 +483,49 @@ def main():
                                 quality.append(dict(method=label,site=s,fve=float(1-(rec-xx).square().sum()/(xx-xx.mean(0)).square().sum()),l0=float((zz>0).sum(-1).float().mean())))
                         write(w.run/'quality.json',quality)
                     if time.perf_counter()-w.wall_start>c['budget_seconds']: raise TimeoutError('Allocated driver budget reached')
+                if c.get('program_audit_steps',0):
+                    assert len(program_sites)==1
+                    s=program_sites[0]; train_site=s
+                    fitted={k:v.detach().clone() for k,v in targets[s].state_dict().items()}
+                    audits=[]
+                    for context,indices in [('fit',fit_sequences),('held_context',used[len(fit_sequences):])]:
+                        assert len(indices)>0
+                        for label,state in [('initial',initial[s]),('trained',fitted)]:
+                            targets[s].load_state_dict(state)
+                            audit_gen=torch.Generator(device=w.device).manual_seed(c['training_seed']+100003)
+                            with torch.no_grad():
+                                for item in range(c['program_audit_steps']):
+                                    dataset='training'; mode='clean'; train_sources={}; train_queries={}
+                                    sample=torch.randint(len(indices),(c['program_batch_sequences'],),generator=audit_gen,device=w.device).cpu().tolist()
+                                    rr=[{'tokens':tokens[indices[i],:c['program_length']].astype('int64').tolist()} for i in sample]
+                                    clean_hidden=forward(rr); hh=observed[s]; sb=action_banks[s]
+                                    activation=torch.relu((hh-sb['center'])@sb['encoder'].T+sb['encoder_bias'])
+                                    eligible=(activation.sum((0,1))>0).nonzero().flatten()
+                                    assert len(eligible)>=c['actions_per_state']
+                                    selected=eligible[torch.randperm(len(eligible),generator=audit_gen,device=w.device)[:c['actions_per_state']]]
+                                    train_sources[s]={k:(v if k=='center' else v[selected]) for k,v in sb.items()}
+                                    train_queries[s]=.5+.5*torch.rand(c['actions_per_state'],generator=audit_gen,device=w.device)
+                                    requested=-(activation[...,selected]*train_queries[s])@sb['decoder'][selected]
+                                    mode='source'; teacher=forward(rr)
+                                    teacher_logp=torch.log_softmax(model.get_output_embeddings()(teacher),dim=-1)
+                                    clean_logp=torch.log_softmax(model.get_output_embeddings()(clean_hidden),dim=-1)
+                                    teacher_p=teacher_logp.exp()
+                                    mode='tangent'; train_terms=[]; student=forward(rr)
+                                    student_logp=torch.log_softmax(model.get_output_embeddings()(student),dim=-1)
+                                    energy=(teacher-clean_hidden).square().mean()
+                                    kl_energy=(teacher_p.double()*(teacher_logp-clean_logp).double()).sum(-1).mean()
+                                    assert energy>1e-10 and kl_energy>1e-10
+                                    audits.append(dict(context=context,method=label,item=item,
+                                        sequences=[int(indices[i]) for i in sample],bank_indices=selected.cpu().tolist(),q=train_queries[s].cpu().tolist(),
+                                        affected_token_fraction=float((requested.square().sum(-1)>1e-12).float().mean()),
+                                        local_relative_mse=float(torch.stack([v[1] for v in train_terms]).mean()),
+                                        downstream_relative_mse=float((student-teacher).square().mean()/energy),
+                                        distribution_relative_kl=float((teacher_p.double()*(teacher_logp-student_logp).double()).sum(-1).mean()/kl_energy),
+                                        source_hidden_energy=float(energy),source_distribution_energy=float(kl_energy)))
+                                    if (item+1)%8==0:
+                                        w.progress('FIXED_PROGRAM_AUDIT',context=context,method=label,completed=item+1,total=c['program_audit_steps'])
+                    targets[s].load_state_dict(fitted)
+                    write(w.run/'program_audit.json',dict(rows=audits,scope='Paired fixed natural-text source actions. Held contexts are excluded from program updates. Exposed functional panels remain development.'))
         write(w.run/'quality.json',quality); write(w.run/'execution_diagnostics.json',diagnostic_rows)
         summary=[]
         for ds in datasets:

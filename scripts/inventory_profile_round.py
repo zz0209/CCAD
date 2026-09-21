@@ -22,7 +22,7 @@ def main():
     for run in sorted(args.bulk_root.iterdir()):
         if not run.is_dir():
             continue
-        if args.round_id == 'FINAL_SCIENCE_04' and run.name.endswith('_checkpoints'):
+        if args.round_id in ['FINAL_SCIENCE_04', 'FINAL_SCIENCE_05'] and run.name.endswith('_checkpoints'):
             assert not (run/'config.resolved.json').exists()
             auxiliary.append(dict(path=str(run), bytes=sum(p.stat().st_size for p in run.rglob('*') if p.is_file())))
             continue
@@ -32,6 +32,9 @@ def main():
         summary = json.loads(path.read_text()) if path.exists() else {}
         state = status['status']
         note = None
+        if run.name == 'FS05_HUMAN_BALANCED_SMOKE_20260921':
+            state = 'INVALID_EMPTY_EVALUATION'
+            note = 'Training completed, but the original panel filter selected no evaluation documents. Original PASS status is retained. V2 uses the actual development split and a nonempty-evaluation assertion.'
         if run.name == 'INTERVENTION_PROGRAM_SMOKE_20260920':
             state = 'ARTIFACT_FINALIZATION_FAILURE'
             note = 'Completed predictions retained. Final summary raised KeyError for missing component; original RUNNING status retained. Corrected smoke has independent R2 identity. Master log records the failure.'
@@ -104,6 +107,17 @@ def main():
             'Per-target gain and program references retain512source-supervised updates and are evaluated on the identical fresh panels. Raw source-direction readout is retained.',
             'The initial missing-parent smoke attempt exited before run creation and model loading. Import and lexical-panel preparation failures are recorded inmaster_log and created no evaluated model outcomes.',
             'The configured time limit is checked during training. Evaluation reports measured wall time. Auxiliary checkpoint directories are included inbulk storage totals.'
+        ]
+    if args.round_id == 'FINAL_SCIENCE_05':
+        result['metadata_clarifications'] = [
+            'All new results are development. Human uses32exposed biographies and one target; infinitive uses32exposed contexts and one target; subject-number uses48exposed prefixes and the same grammatical target.',
+            'The request comparison retains512updates and the same endpoint schedule. Balanced requests preserve nominal group mass; independent requests preserve it in expectation.',
+            'Task-adapted labels in cross-explanation runs refer to the infinitive-trained checkpoint. No subject-number response fitting occurs in those runs.',
+            'Generic objectives use the same natural-text source actions, excluding the evaluated member IDs. Only resid4 encoder and decoder are trained. All other loaded dictionaries remain frozen.',
+            'Local state, final state and vocabulary distribution are distinct training targets. Their training losses are not comparable numerical endpoints.',
+            'The source-coordinate covariance check is mathematical validation. It is not a Transformer generalization result.',
+            'The first human smoke has empty evaluation and scientific status INVALID. Its original runtime metadata is preserved.',
+            'Grammar member-mask bootstrap intervals are unavailable when fewer than90percent of resamples retain source-effect support. All point estimates and valid-draw counts remain available.'
         ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))

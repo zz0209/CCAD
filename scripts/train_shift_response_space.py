@@ -46,6 +46,13 @@ def main():
             assert hashlib.sha256(w.checked(c['request_panel'],'Request coordinates frozen before execution').read_bytes()).hexdigest()==c['request_panel_sha256']
         groups,_=source_groups(w.checked(c['notebook'],'Original source annotations','MIT'),source['members'])
         sites=list(source['members']);sb=np.load(w.checked(c['source_parameters'],'Published source parameters','MIT'))
+        training_requests=None
+        if c.get('training_request_panel'):
+            request_data=json.loads(w.checked(c['training_request_panel'],'Source-only training request design').read_text())
+            assert request_data['members']==source['members']
+            training_requests={s:torch.tensor(request_data['requests'][s],device=w.device,dtype=torch.float32) for s in sites}
+            assert all(v.shape==(c['steps'],len(source['members'][s])) and bool(torch.isfinite(v).all()) and bool(((v>=0)&(v<=1)).all()) for s,v in training_requests.items())
+            write(w.run/'training_request_design.json',request_data)
         sp={s:{k:torch.tensor(sb[s+'__'+k],device=w.device) for k in ['encoder','encoder_bias','decoder','center']} for s in sites}
         old=np.load(w.checked(Path(c['relation_run'])/'relation.npz','Frozen source-member relation'))
         baselines={}
@@ -159,6 +166,7 @@ def main():
                     cell=[r for r in external['rows'] if r['split']==c.get('evaluation_split','test') and r['profession']==profession and r['gender']==gender]
                     dev.extend(sorted(cell,key=lambda r:r['document_sha256'])[:c['evaluation_per_cell']])
             assert not {r['document_sha256'] for r in dev}&{r['document_sha256'] for r in program_rows}
+        assert len(dev)>0, 'Evaluation selection contains no documents'
         write(w.run/'evaluation_membership.json',dict(split=c.get('evaluation_evidence','exposed_development'),rows=dev))
         probe=np.load(w.checked(Path(c['frozen_source_run'])/'probe.npz','Original source head defining reusable responses and evaluation'))
         pw=torch.tensor(probe['weight'],device=w.device);pb=torch.tensor(probe['bias'],device=w.device)
@@ -307,6 +315,8 @@ def main():
                         set_query(list(groups)[step%len(groups)])
                     else:
                         for s in sites:q[s]=torch.ones_like(q[s])
+                    if training_requests is not None:
+                        for s in sites:q[s]=training_requests[s][step]
                     mode='source'
                     with torch.no_grad():teacher_h,teacher_pool=forward(ids)
                     mode=variant if independent or shared_columns or variant.startswith('tangent_') else 'student';student_h,student_pool=forward(ids)

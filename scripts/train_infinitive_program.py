@@ -33,6 +33,13 @@ def main():
         w.checked(Path(c['dictionary_source_dir'])/'dictionary_learning/trainers/top_k.py','Pinned TopK implementation','MIT')
         sb=np.load(w.checked(c['source_parameters'],'Four public Figure18 features','MIT'))
         sp={k:torch.tensor(sb[k],device=w.device) for k in ['encoder','encoder_bias','decoder','center']}
+        training_requests=None
+        if c.get('training_request_panel'):
+            request_data=json.loads(w.checked(c['training_request_panel'],'Source-only training request design').read_text())
+            assert request_data['members']=={'resid_4':[0,1,2,3]}
+            training_requests=torch.tensor(request_data['requests']['resid_4'],device=w.device,dtype=torch.float32)
+            assert training_requests.shape==(c['steps'],4) and bool(torch.isfinite(training_requests).all()) and bool(((training_requests>=0)&(training_requests<=1)).all())
+            write(w.run/'training_request_design.json',request_data)
         for f in ['model.safetensors','config.json','tokenizer.json']: w.checked(Path(c['model_local_dir'])/f)
         model=transformers.AutoModelForCausalLM.from_pretrained(c['model_local_dir'],local_files_only=True,
             dtype=torch.float32,attn_implementation='eager').eval().to(w.device)
@@ -201,6 +208,7 @@ def main():
                    endpoints[(step//2)%3] if ('mixed' in variant or variant=='tangent_gain') and step%2==0 else
                    torch.rand(2,generator=gen,device=w.device))
                 q=expand(v)
+                if training_requests is not None:q=training_requests[step]
                 rr=[fit[(step*c['batch_sequences']+j)%len(fit)] for j in range(c['batch_sequences'])]
                 if variant in ['natural_only','tangent_natural']:
                     program=torch.zeros((),device=w.device)
