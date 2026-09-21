@@ -1,0 +1,70 @@
+{
+  "device": "cuda:0",
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R58_shift_dictionaries_curve_v1_20260915/step_8192",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "run_id": "FS04_INFINITIVE_SHARED_CONFIRM_T1_20260921",
+  "run_parent": "FINAL_SCIENCE_04",
+  "generator_script": "scripts/train_infinitive_program.py",
+  "purpose": "Evaluate a frozen shared source correction on dictionaries excluded from its fit, using new contexts and continuous requests.",
+  "panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_science_20260921_round04\\SHARED_COLUMN_INFINITIVE_CONFIRMATION_PANEL.json",
+  "source_parameters": "artifacts/morning_reform_20260916/independent_circuit_reading/source_parts.npz",
+  "methods": [
+    "none",
+    "source",
+    "native",
+    "geometry",
+    "geometry_gain",
+    "native_response_relation_8",
+    "native_tangent_relation_8",
+    "raw_reconstruction"
+  ],
+  "target_seed": 1,
+  "seeds": [
+    1
+  ],
+  "audit_opened": true,
+  "candidate_family_frozen": true,
+  "evidence_level": "frozen_new_context_request_confirmation",
+  "budget": "At most900driver seconds per target including any required512-update reference arms;13GB allocated VRAM ceiling.",
+  "budget_seconds": 900,
+  "dataset_revision": "science04-new-infinitive-contexts-v1",
+  "statistics_unit": "Paired held-target seeds, documents or crossed lexical items, and requests. Source explanations and fit dictionaries remain fixed.",
+  "threshold_source_split": "Four fixed published SFC Figure18 source features, selected before outputs",
+  "scope": "Fixed source and two fit dictionaries; three held target seeds. Shared corrections use zero target fitting. Target-specific controls retain512source-supervised updates.",
+  "functional_weight": 0.0,
+  "relation_run": "D:/CCAD_Storage/runs/science_upgrade_20260919/SCIENCE04_infinitive_seed1_material_v1_20260919",
+  "run_storage_root": "D:\\CCAD_Storage\\runs\\final_science_20260921_round04",
+  "fit_panel": "artifacts/independent_reuse_20260916/IR01_fit_panel.json",
+  "natural_states": "runs/IR01_infinitive_natural_dev_v1_20260916/fit_states.npz",
+  "steps": 512,
+  "variants": [],
+  "baselines": [
+    "native",
+    "native_tangent_relation_8",
+    "raw_reconstruction"
+  ],
+  "batch_sequences": 4,
+  "eval_batch_size": 64,
+  "natural_batch_states": 512,
+  "dictionary_lr": 0.0001,
+  "relation_lr": 0.005,
+  "reconstruction_weight": 1.0,
+  "source_response_weight": 0.9,
+  "training_seed": 913,
+  "request_panel_sha256": "246149628ddf5011c4c159a37065b8010bea7693d04084b2802e6ae536c1a0ca",
+  "gain_before_selection": true,
+  "bulk_output_dir": "D:\\CCAD_Storage\\runs\\final_science_20260921_round04\\FS04_INFINITIVE_SHARED_CONFIRM_T1_20260921_checkpoints",
+  "evaluate_source_columns": {
+    "source_columns_shared": "D:\\CCAD_Storage\\runs\\final_science_20260921_round04\\FS04_INFINITIVE_SHARED_COLUMNS_FIT_20260921\\source_columns_mixed\\source_columns.npz",
+    "source_columns_shared_gain": "D:\\CCAD_Storage\\runs\\final_science_20260921_round04\\FS04_INFINITIVE_SHARED_COLUMNS_FIT_20260921\\source_columns_scalar_mixed\\source_columns.npz"
+  },
+  "source_columns_evaluation_only": false,
+  "evaluate_checkpoints": {
+    "tangent_gain": "D:/CCAD_Storage/runs/science_upgrade_20260919/SCIENCE04_infinitive_t1_v2_20260919/tangent_gain",
+    "tangent_mixed": "D:/CCAD_Storage/runs/science_upgrade_20260919/SCIENCE04_infinitive_t1_v2_20260919/tangent_mixed"
+  }
+}

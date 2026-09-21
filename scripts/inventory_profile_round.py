@@ -18,8 +18,13 @@ def main():
     if args.output.exists():
         raise FileExistsError(args.output)
     rows = []
+    auxiliary = []
     for run in sorted(args.bulk_root.iterdir()):
         if not run.is_dir():
+            continue
+        if args.round_id == 'FINAL_SCIENCE_04' and run.name.endswith('_checkpoints'):
+            assert not (run/'config.resolved.json').exists()
+            auxiliary.append(dict(path=str(run), bytes=sum(p.stat().st_size for p in run.rglob('*') if p.is_file())))
             continue
         c = json.loads((run / 'config.resolved.json').read_text())
         status = json.loads((run / 'status.json').read_text())
@@ -49,7 +54,8 @@ def main():
         rows.append(row)
     result = dict(written_at_utc=datetime.now(timezone.utc).isoformat(), round_id=args.round_id, runs=rows,
         known_driver_seconds=sum(r['wall_seconds'] for r in rows if r['wall_seconds'] is not None),
-        bulk_bytes=sum(r['bytes'] for r in rows),
+        bulk_bytes=sum(r['bytes'] for r in rows)+sum(r['bytes'] for r in auxiliary),
+        auxiliary=auxiliary,
         max_peak_allocated_bytes=max(r['peak_allocated_bytes'] or 0 for r in rows),
         scope='Driver duration includes loading, computation and export. Effective reasoning time, queue time and missing failed-run duration are not inferred. Wakeups and smokes are not scientific rounds.',
         metadata_clarifications=[
@@ -85,6 +91,19 @@ def main():
             'Both symbolic and English formats were present in source fitting. New contexts are not claimed as new format families.',
             'Semantic hybrid success and agreement with source intervention answers are distinct endpoints. Invalid source answers remain failures under the frozen scoring convention.',
             'Failed smoke output and the original incomplete readout are retained with their original source snapshots.'
+        ]
+    if args.round_id == 'FINAL_SCIENCE_04':
+        result['metadata_clarifications'] = [
+            'Source-column identity smokes verify equality with the existing input-dependent rule. Shared-fit checks verify unchanged dictionaries and fixed relations.',
+            'Human single-target fitting trains27early-site columns. Shared fitting trains all55columns across11sites and two dictionaries; these changes are not independently attributed.',
+            'Shared scalar and full-column corrections receive the same512updates and balanced random two-step dictionary schedule. Each training dictionary receives256updates.',
+            'Human shared fitting uses targets2/3 and confirms1/4/5. Grammar uses3/4 and confirms1/2/5. Target response fitting is absent when applying these corrections.',
+            'Original source encoders and the base model remain required. New target members depend on the current code and dictionary; member allowance is matched, exact selected members can differ.',
+            'Human confirmation has128fresh original-development biographies and new requests. Grammar has96fresh lexical contexts, new continuous coordinates and previously used binary mask families.',
+            'Legacy evaluation split fields can readdev. The frozen panel, exact membership and checkpoint identities determine confirmation provenance.',
+            'Per-target gain and program references retain512source-supervised updates and are evaluated on the identical fresh panels. Raw source-direction readout is retained.',
+            'The initial missing-parent smoke attempt exited before run creation and model loading. Import and lexical-panel preparation failures are recorded inmaster_log and created no evaluated model outcomes.',
+            'The configured time limit is checked during training. Evaluation reports measured wall time. Auxiliary checkpoint directories are included inbulk storage totals.'
         ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))

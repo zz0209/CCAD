@@ -49,7 +49,7 @@ def main():
         sp={s:{k:torch.tensor(sb[s+'__'+k],device=w.device) for k in ['encoder','encoder_bias','decoder','center']} for s in sites}
         old=np.load(w.checked(Path(c['relation_run'])/'relation.npz','Frozen source-member relation'))
         baselines={}
-        initial={};targets={};indices={};coefficients={};q={};source_gains={};write_matrices={}
+        initial={};targets={};indices={};coefficients={};q={};source_gains={};write_matrices={};source_columns={}
         for s in sites:
             path=w.checked(Path(c['target_directory'])/f'{s}_seed{c["target_seed"]}.pt','Initial natural-data target dictionary')
             initial[s]=torch.load(path,map_location='cpu',weights_only=True)
@@ -62,6 +62,23 @@ def main():
             q[s]=torch.ones(a.shape[1],device=w.device)
             source_gains[s]=torch.nn.Parameter(torch.ones(a.shape[1],device=w.device),requires_grad=False)
             write_matrices[s]=torch.nn.Parameter(sae.encoder.weight.detach().clone(),requires_grad=False)
+            source_columns[s]=torch.nn.Parameter(sp[s]['decoder'].clone(),requires_grad=False)
+        column_sites=c.get('source_column_sites',c['adapt_sites'])
+        assert set(column_sites)<=set(sites)
+        training_targets=[]
+        for entry in c.get('source_column_training_targets',[]):
+            state={}
+            for s in sites:
+                path=w.checked(Path(entry['directory'])/f'{s}_seed{entry["seed"]}.pt')
+                state[s]=torch.load(path,map_location='cpu',weights_only=True)
+                assert state[s]['encoder.weight'].shape==initial[s]['encoder.weight'].shape
+                assert int(state[s]['k'])==int(initial[s]['k'])
+            training_targets.append(state)
+        training_schedule=[]
+        if training_targets:
+            assert c['steps']%(2*len(training_targets))==0
+            training_schedule=np.random.default_rng(c['training_seed']+17).permutation(np.arange(c['steps']//2)%len(training_targets)).tolist()
+            write(w.run/'training_dictionary_schedule.json',dict(block_length=2,indices=training_schedule,targets=c['source_column_training_targets']))
         for f in ['config.json','tokenizer.json','model.safetensors']:
             w.checked(Path(c['model_local_dir'])/f,'Pinned Pythia70M','Apache-2.0')
         model=transformers.AutoModelForCausalLM.from_pretrained(c['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to(w.device)
@@ -85,9 +102,12 @@ def main():
                     operation='input_tangent_budget' if 'active' in mode else 'input_fixed_budget'
                     delta,_=input_member_delta(x,targets[site],ss,q[site],operation,c['members_per_source']*len(q[site]),mask)
                     x=x+delta
-                elif mode in ('input_initial','tangent_gain','tangent_mixed'):
+                elif mode in ('input_initial','tangent_gain','tangent_mixed') or mode.startswith('source_columns_'):
                     ss=sp[site]
                     if mode=='tangent_gain': ss={**ss,'decoder':ss['decoder']*source_gains[site][:,None]}
+                    if mode.startswith('source_columns_'):
+                        decoder=(sp[site]['decoder']*source_gains[site][:,None] if mode=='source_columns_scalar_mixed' else source_columns[site])
+                        ss={**ss,'decoder':decoder}
                     delta,_=input_member_delta(x,targets[site],ss,q[site],'input_tangent_budget',c['members_per_source']*len(q[site]),mask)
                     x=x+delta
                 elif mode in ('geometry','geometry_gain','raw'):
@@ -168,7 +188,7 @@ def main():
         @torch.no_grad()
         def evaluate(name):
             nonlocal mode,mask
-            mode=name if name.startswith('transport_') or name in ('source','geometry','geometry_gain','raw','raw_reconstruction','input_initial','tangent_gain','tangent_mixed') else ('clean' if name=='none' else 'student')
+            mode=name if name.startswith(('transport_','source_columns_')) or name in ('source','geometry','geometry_gain','raw','raw_reconstruction','input_initial','tangent_gain','tangent_mixed') else ('clean' if name=='none' else 'student')
             for query in (['full'] if name=='none' else c['queries']):
                 set_query(query);values=np.empty(len(dev),dtype='float32');pooled_values=np.empty((len(dev),512),dtype='float32')
                 order=sorted(range(len(dev)),key=lambda i:len(dev[i]['tokens']))
@@ -189,6 +209,14 @@ def main():
         evaluate('none');evaluate('source');evaluate('initial')
         for baseline in c.get('evaluate_baselines',[]):
             evaluate(baseline)
+        for variant,path in c.get('evaluate_source_columns',{}).items():
+            assert variant.startswith('source_columns_')
+            loaded=np.load(w.checked(path,'Source-column correction learned before this target evaluation'))
+            for s in sites:source_columns[s].data.copy_(torch.tensor(loaded[s],device=w.device))
+            evaluate(variant)
+        if c.get('source_columns_evaluation_only'):
+            w.checks['fixed_source_columns_evaluated']=True
+            return w.finish(None)
         if c.get('evaluate_checkpoints'):
             for variant,folder in c['evaluate_checkpoints'].items():
                 folder=Path(folder)
@@ -237,21 +265,29 @@ def main():
         checkpoints=[]
         for variant in c['variants']:
             independent=variant.startswith('transport_')
+            shared_columns=variant.startswith('source_columns_')
+            scalar_columns=variant=='source_columns_scalar_mixed'
+            assert not training_targets or shared_columns
             for s in sites:
                 targets[s].load_state_dict(initial[s]);coefficients[s].data.copy_(base_coeff[s])
-                coefficients[s].requires_grad_(not independent and not variant.startswith('tangent_'))
-                source_gains[s].data.fill_(1.);source_gains[s].requires_grad_(variant=='tangent_gain')
+                coefficients[s].requires_grad_(not independent and not shared_columns and not variant.startswith('tangent_'))
+                source_gains[s].data.fill_(1.);source_gains[s].requires_grad_(variant=='tangent_gain' or (scalar_columns and s in column_sites))
                 write_matrices[s].data.copy_(targets[s].encoder.weight);write_matrices[s].requires_grad_(independent and s in c['adapt_sites'])
-            for s in c['adapt_sites']:targets[s].requires_grad_(not independent and variant not in ('parts_relation','tangent_gain'))
+                source_columns[s].data.copy_(sp[s]['decoder']);source_columns[s].requires_grad_(shared_columns and not scalar_columns and s in column_sites)
+            for s in c['adapt_sites']:targets[s].requires_grad_(not independent and not shared_columns and variant not in ('parts_relation','tangent_gain'))
             groups_opt=[dict(params=[p for p in params if p.requires_grad]+[v for v in write_matrices.values() if v.requires_grad],lr=c['dictionary_lr'])]
             groups_opt.append(dict(params=[a for a in coefficients.values() if a.requires_grad]+[g for g in source_gains.values() if g.requires_grad],lr=c['relation_lr']))
+            groups_opt.append(dict(params=[v for v in source_columns.values() if v.requires_grad],lr=c.get('source_column_lr',.001)))
             optim=torch.optim.AdamW(groups_opt,weight_decay=0.)
             generator=torch.Generator(device=w.device).manual_seed(c['training_seed'])
             for step in range(c['steps']):
+                if training_targets:
+                    state=training_targets[training_schedule[step//2]]
+                    for s in sites:targets[s].load_state_dict(state[s])
                 ids=torch.tensor(nat[step*c['batch_sequences']:(step+1)*c['batch_sequences']],device=w.device)
                 mask=torch.ones_like(ids);mode='clean'
                 with torch.no_grad():clean_h,clean_pool=forward(ids);clean={s:observed[s].clone() for s in c['adapt_sites']}
-                if independent or variant in ('head_parts','pooled_parts','white_parts','pooled_whole','parts_relation','head_continuous','pooled_continuous','head_mixed','pooled_mixed','tangent_gain','tangent_mixed'):
+                if independent or shared_columns or variant in ('head_parts','pooled_parts','white_parts','pooled_whole','parts_relation','head_continuous','pooled_continuous','head_mixed','pooled_mixed','tangent_gain','tangent_mixed'):
                     if program_rows:
                         fit=program_rows[64:];take=[fit[(step*c['batch_sequences']+j)%len(fit)] for j in range(c['batch_sequences'])]
                         ids=program_batch(take);mode='clean'
@@ -273,13 +309,13 @@ def main():
                         for s in sites:q[s]=torch.ones_like(q[s])
                     mode='source'
                     with torch.no_grad():teacher_h,teacher_pool=forward(ids)
-                    mode=variant if independent or variant.startswith('tangent_') else 'student';student_h,student_pool=forward(ids)
+                    mode=variant if independent or shared_columns or variant.startswith('tangent_') else 'student';student_h,student_pool=forward(ids)
                     energy,pe=scales[:2]
                     state_loss=(token_mse(student_h-teacher_h)/energy+(student_pool-teacher_pool).square().mean()/pe)/2
                     response_energy=scales[2]
                     response_loss=((student_pool-teacher_pool)@pw.T).square().mean()/response_energy
                     weight=c.get('source_response_weight',0.)
-                    if independent or variant in ('head_parts','head_continuous','head_mixed','tangent_gain','tangent_mixed'):
+                    if independent or shared_columns or variant in ('head_parts','head_continuous','head_mixed','tangent_gain','tangent_mixed'):
                         program=(1-weight)*state_loss+weight*response_loss
                     elif variant=='white_parts':
                         error_pool=student_pool-teacher_pool
@@ -305,11 +341,18 @@ def main():
                     w.record(kind='training',task='natural_program',component=variant,row_id=step+1,method=variant,step=step+1,loss=float(loss.detach()),program=float(program.detach()),reconstruction=float(recon.detach()))
                     w.progress('TRAINING',method=variant,step=step+1,total_steps=c['steps'],loss=float(loss.detach()),program=float(program.detach()),reconstruction=float(recon.detach()),peak_cuda_bytes=torch.cuda.max_memory_allocated())
                 if time.perf_counter()-w.wall_start>c['budget_seconds']:raise TimeoutError('Program adaptation reached allocated wall budget')
+            if training_targets:
+                for s in sites:targets[s].load_state_dict(initial[s])
             dest=bulk/variant;dest.mkdir()
             for s in c['adapt_sites']:torch.save(targets[s].state_dict(),dest/f'{s}_seed{c["target_seed"]}.pt')
             if independent:
                 torch.save({s:v.detach().cpu() for s,v in write_matrices.items()},dest/'write_matrices.pt')
                 w.checks['all_dictionaries_unchanged_'+variant]=all(torch.equal(targets[s].state_dict()[k].cpu(),v) for s in sites for k,v in initial[s].items())
+            if shared_columns:
+                exported_columns={s:sp[s]['decoder']*source_gains[s][:,None] if scalar_columns else v for s,v in source_columns.items()}
+                np.savez_compressed(dest/'source_columns.npz',**{s:v.detach().cpu().numpy() for s,v in exported_columns.items()})
+                w.checks['all_dictionaries_unchanged_'+variant]=all(torch.equal(targets[s].state_dict()[k].cpu(),v) for s in sites for k,v in initial[s].items())
+                w.checks['all_relations_unchanged_'+variant]=all(torch.equal(coefficients[s],base_coeff[s]) for s in sites)
             export={}
             for s in sites:
                 for key in ['native','geometry','geometry_gain','raw','candidates']:export[s+'__'+key]=old[s+'__'+key].copy()

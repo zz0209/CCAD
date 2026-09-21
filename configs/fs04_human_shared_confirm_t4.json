@@ -1,0 +1,823 @@
+{
+  "adapt_sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+  ],
+  "audit_opened": true,
+  "basis_fit_sequences": 16,
+  "batch_sequences": 4,
+  "budget": "At most900driver seconds per target including any required512-update reference arms;13GB allocated VRAM ceiling.",
+  "budget_seconds": 900,
+  "bulk_output_dir": "D:\\CCAD_Storage\\runs\\final_science_20260921_round04\\FS04_HUMAN_SHARED_CONFIRM_T4_20260921_checkpoints",
+  "candidate_family_frozen": true,
+  "context_response": true,
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "development_per_group": 32,
+  "device": "cuda:0",
+  "dictionary_lr": 0.0001,
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "eval_batch_size": 64,
+  "fit_batch_sequences": 8,
+  "fit_iterations": 1200,
+  "fit_sequences": 128,
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "functional_weight": 0,
+  "generator_script": "scripts/train_shift_response_space.py",
+  "members_per_source": 2,
+  "methods": [
+    "none",
+    "source",
+    "native",
+    "repair__embed",
+    "repair__mlp_0",
+    "repair__resid_0",
+    "repair__mlp_1",
+    "repair__resid_1",
+    "repair__attn_2",
+    "repair__resid_2",
+    "repair__attn_3",
+    "repair__resid_3",
+    "repair__attn_4",
+    "repair__resid_4"
+  ],
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "neighbors_per_source": 16,
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "program_contexts": "source_development",
+  "purpose": "Evaluate a frozen shared source correction on dictionaries excluded from its fit, using new contexts and continuous requests.",
+  "queries": [
+    "pronouns",
+    "names",
+    "pronouns+names",
+    "associated_words",
+    "pronouns+associated_words",
+    "names+associated_words",
+    "full",
+    "interior_00",
+    "interior_01",
+    "interior_02",
+    "interior_03",
+    "interior_04",
+    "interior_05",
+    "boundary_00",
+    "boundary_01",
+    "boundary_02",
+    "boundary_03",
+    "boundary_04",
+    "boundary_05",
+    "member_subset_00",
+    "member_subset_01",
+    "member_subset_02",
+    "member_subset_03",
+    "member_subset_04",
+    "member_subset_05",
+    "member_subset_06",
+    "member_subset_07"
+  ],
+  "reconstruction_weight": 1.0,
+  "relation_lr": 0.005,
+  "relation_run": "runs/REFORM_R59_shift_confirm_seed4_v1_20260915",
+  "request_training": "semantic_singletons",
+  "ridge": 0.001,
+  "run_id": "FS04_HUMAN_SHARED_CONFIRM_T4_20260921",
+  "run_parent": "FINAL_SCIENCE_04",
+  "scope": "Fixed source and two fit dictionaries; three held target seeds. Shared corrections use zero target fitting. Target-specific controls retain512source-supervised updates.",
+  "seeds": [
+    4
+  ],
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "source_response_weight": 0.9,
+  "statistics_unit": "Paired held-target seeds, documents or crossed lexical items, and requests. Source explanations and fit dictionaries remain fixed.",
+  "steps": 512,
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "target_seed": 4,
+  "threshold_source_split": "Fixed source explanation,503sourcefit64sourcecal; original128excludeddev remains development. Same source responses for all variants; normalization and covariance use source calibration only.",
+  "token_offset_sequences": 128,
+  "training_seed": 42,
+  "variants": [],
+  "response_covariance_ridge": 0.05,
+  "evidence_level": "frozen_new_context_request_confirmation",
+  "dose_queries": {
+    "interior_00": {
+      "pronouns": 0.27505645886385727,
+      "names": 0.21878078918307098,
+      "associated_words": 0.11442601606153001
+    },
+    "interior_01": {
+      "pronouns": 0.35291990280418245,
+      "names": 0.8708773209897794,
+      "associated_words": 0.5872982498021334
+    },
+    "interior_02": {
+      "pronouns": 0.6905107606091732,
+      "names": 0.2893461116429356,
+      "associated_words": 0.555401975453879
+    },
+    "interior_03": {
+      "pronouns": 0.9242886930237875,
+      "names": 0.08226635214145464,
+      "associated_words": 0.5032314402753607
+    },
+    "interior_04": {
+      "pronouns": 0.6515476071386233,
+      "names": 0.775953770617157,
+      "associated_words": 0.2978021150209105
+    },
+    "interior_05": {
+      "pronouns": 0.8433005149106,
+      "names": 0.15382369423443654,
+      "associated_words": 0.09941111759627139
+    },
+    "boundary_00": {
+      "pronouns": 0.0,
+      "names": 0.39625284883369727,
+      "associated_words": 0.056493789858022364
+    },
+    "boundary_01": {
+      "pronouns": 0.532348711879668,
+      "names": 0.0,
+      "associated_words": 0.4903918988633278
+    },
+    "boundary_02": {
+      "pronouns": 0.1910851777790365,
+      "names": 0.8905061594291284,
+      "associated_words": 0.0
+    },
+    "boundary_03": {
+      "pronouns": 1.0,
+      "names": 0.1869327676812647,
+      "associated_words": 0.9139081289428292
+    },
+    "boundary_04": {
+      "pronouns": 0.6489225641209077,
+      "names": 1.0,
+      "associated_words": 0.41206849199555073
+    },
+    "boundary_05": {
+      "pronouns": 0.5518203159885312,
+      "names": 0.1821338041640046,
+      "associated_words": 1.0
+    }
+  },
+  "evaluation_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_science_20260921_round04\\SHARED_COLUMN_HUMAN_CONFIRMATION_PANEL.json",
+  "evaluation_per_cell": 32,
+  "evaluate_baselines": [
+    "input_initial",
+    "raw_reconstruction"
+  ],
+  "run_storage_root": "D:\\CCAD_Storage\\runs\\final_science_20260921_round04",
+  "request_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_science_20260921_round04\\SHARED_COLUMN_HUMAN_CONFIRMATION_REQUESTS.json",
+  "request_panel_sha256": "c48a344fd0bd368adf05a930501bb276d351bd62bbd38cf546037fa82e870ee7",
+  "member_queries": {
+    "member_subset_00": {
+      "embed": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "mlp_0": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      "resid_0": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "mlp_1": [
+        0,
+        1
+      ],
+      "resid_1": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "attn_2": [
+        1,
+        1
+      ],
+      "resid_2": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "attn_3": [
+        1,
+        1,
+        1
+      ],
+      "resid_3": [
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "attn_4": [
+        1
+      ],
+      "resid_4": [
+        0,
+        0,
+        0
+      ]
+    },
+    "member_subset_01": {
+      "embed": [
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "mlp_0": [
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "resid_0": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "attn_2": [
+        1,
+        1
+      ],
+      "resid_2": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "attn_3": [
+        0,
+        1,
+        0
+      ],
+      "resid_3": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        1,
+        1,
+        0
+      ]
+    },
+    "member_subset_02": {
+      "embed": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mlp_0": [
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "resid_0": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "mlp_1": [
+        0,
+        0
+      ],
+      "resid_1": [
+        0,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "attn_2": [
+        1,
+        1
+      ],
+      "resid_2": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "attn_3": [
+        1,
+        0,
+        1
+      ],
+      "resid_3": [
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        0,
+        0,
+        1
+      ]
+    },
+    "member_subset_03": {
+      "embed": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "mlp_0": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "resid_0": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "mlp_1": [
+        0,
+        0
+      ],
+      "resid_1": [
+        0,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "attn_2": [
+        0,
+        1
+      ],
+      "resid_2": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "attn_3": [
+        0,
+        1,
+        1
+      ],
+      "resid_3": [
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        0,
+        0,
+        1
+      ]
+    },
+    "member_subset_04": {
+      "embed": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "mlp_0": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "resid_0": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "mlp_1": [
+        1,
+        1
+      ],
+      "resid_1": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "attn_2": [
+        0,
+        0
+      ],
+      "resid_2": [
+        0,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "attn_3": [
+        1,
+        1,
+        1
+      ],
+      "resid_3": [
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "attn_4": [
+        1
+      ],
+      "resid_4": [
+        1,
+        0,
+        0
+      ]
+    },
+    "member_subset_05": {
+      "embed": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "mlp_0": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "resid_0": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "mlp_1": [
+        0,
+        0
+      ],
+      "resid_1": [
+        0,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "attn_2": [
+        1,
+        0
+      ],
+      "resid_2": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "attn_3": [
+        1,
+        1,
+        0
+      ],
+      "resid_3": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        0,
+        0,
+        1
+      ]
+    },
+    "member_subset_06": {
+      "embed": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "mlp_0": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "resid_0": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "attn_2": [
+        0,
+        1
+      ],
+      "resid_2": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "attn_3": [
+        1,
+        1,
+        0
+      ],
+      "resid_3": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        0,
+        1,
+        0
+      ]
+    },
+    "member_subset_07": {
+      "embed": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "mlp_0": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "resid_0": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "attn_2": [
+        0,
+        0
+      ],
+      "resid_2": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "attn_3": [
+        1,
+        0,
+        1
+      ],
+      "resid_3": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "attn_4": [
+        1
+      ],
+      "resid_4": [
+        1,
+        1,
+        0
+      ]
+    }
+  },
+  "evaluation_split": "dev",
+  "evaluation_evidence": "frozen_fresh_contexts",
+  "evaluation_description": "128 unused original-dev biographies, excluded from prior panel metadata.",
+  "eval_token_budget": 8192,
+  "evaluate_source_columns": {
+    "source_columns_shared": "D:\\CCAD_Storage\\runs\\final_science_20260921_round04\\FS04_HUMAN_SHARED_COLUMNS_FIT_20260921_checkpoints\\source_columns_mixed\\source_columns.npz",
+    "source_columns_shared_gain": "D:\\CCAD_Storage\\runs\\final_science_20260921_round04\\FS04_HUMAN_SHARED_COLUMNS_FIT_20260921_checkpoints\\source_columns_scalar_mixed\\source_columns.npz"
+  },
+  "source_columns_evaluation_only": false,
+  "evaluate_checkpoints": {
+    "tangent_gain": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t4_v1_20260919/tangent_gain",
+    "tangent_mixed": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t4_v1_20260919/tangent_mixed"
+  }
+}

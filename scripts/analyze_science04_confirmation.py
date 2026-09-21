@@ -16,7 +16,7 @@ def families(index,names):
 
 def weights(rng,n):return rng.multinomial(n,[1/n]*n,size=REPS)
 
-def summarize(methods,nums,den,docweights,ff,rng,source_effect,seeds,extra):
+def summarize(methods,nums,den,docweights,ff,rng,source_effect,seeds,extra,contrast_methods=('tangent_gain','tangent_mixed')):
     # Shapes S,H,Q,N and H,Q,N. Each head is evaluated on its own paired cohort.
     sw=weights(rng,len(seeds))/len(seeds)
     qdraw={f:np.tile(ix,(REPS,1)) if f=='endpoints' or (f=='member_subsets' and extra['setting']=='infinitive') else rng.choice(ix,(REPS,len(ix))) for f,ix in ff.items() if f!='held_requests'}
@@ -39,7 +39,7 @@ def summarize(methods,nums,den,docweights,ff,rng,source_effect,seeds,extra):
             samples[method,f]=(bv*sw).sum(1)
             summary[method][f]=dict(nrmse=float(pq[:,:,ix].mean()),interval=np.quantile(samples[method,f],[.025,.975]).tolist(),by_seed=pq[:,:,ix].mean((1,2)).tolist(),by_head=pq[:,:,ix].mean((0,2)).tolist())
     contrasts=[]
-    for m in ['tangent_gain','tangent_mixed']:
+    for m in contrast_methods:
         for ref in methods:
             if m==ref:continue
             for f in ff:
