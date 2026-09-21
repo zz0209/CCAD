@@ -13,6 +13,7 @@ import transformers
 from run_causalgym_multisite import MultisiteWork, write
 from train_shift_dictionaries import site_module
 from adaptive_native_execution import realize
+from ccad.program_counterparts import ProgramCounterparts, SourceActionBank
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,7 +27,8 @@ def main():
     config = json.loads((ROOT/settings['base_config']).read_text()) | settings
     work = MultisiteWork(config, args.config, ['scripts/check_number_program.py',
         'scripts/train_shift_dictionaries.py', 'scripts/run_causalgym_multisite.py',
-        'scripts/run_r011s1_raw_hook_asset.py', 'scripts/adaptive_native_execution.py', 'src/ccad/artifacts.py'])
+        'scripts/run_r011s1_raw_hook_asset.py', 'scripts/adaptive_native_execution.py',
+        'src/ccad/program_counterparts.py', 'src/ccad/artifacts.py'])
     error = None
     handles = []
     try:
@@ -61,6 +63,8 @@ def main():
         selection = {site: sorted(selection[site].values(), key=lambda r:r['member'])
                      for site in config['train_sites'] if site in selection}
         rows = json.loads(work.checked(ROOT/config['number_panel']).read_text())['rows']
+        if config.get('row_indices') is not None:
+            rows = [rows[i] for i in config['row_indices']]
         if config['per_structure']:
             rows = [r for structure in ['simple', 'within_rc', 'rc']
                     for r in [x for x in rows if x['structure'] == structure][:config['per_structure']]]
@@ -123,6 +127,29 @@ def main():
         execution = 'source'
         trajectory = {}
         source_actions = {}
+        source_action_bank = SourceActionBank(['singular', 'plural']) if config.get('collect_source_actions') else None
+        counterpart_bank = None
+        counterpart_masks = {}
+        if config.get('counterpart_path'):
+            counterpart_bank = json.loads(work.checked(Path(config['counterpart_path'])).read_text())
+            if counterpart_bank['target_seed'] != config['target_seed'] or counterpart_bank['source_identity'] != identities:
+                raise ValueError('Counterpart identity mismatch')
+            for method in target_methods:
+                if method.startswith('counterpart_'):
+                    scheme = method.removeprefix('counterpart_').removeprefix('swapped_')
+                    members = counterpart_bank['supports'][scheme]
+                    counterpart_masks[method] = {}
+                    for name in ['singular', 'plural', 'full']:
+                        counterpart_masks[method][name] = {}
+                        for site in selection:
+                            allowed = torch.zeros(len(targets[site].encoder.weight), dtype=torch.bool, device=work.device)
+                            for part in ['singular', 'plural'] if name == 'full' else [name]:
+                                other = 'plural' if part == 'singular' else 'singular'
+                                exchange = method.startswith('counterpart_swapped_') and len(members[part][site]) == len(members[other][site])
+                                selected_part = other if exchange else part
+                                allowed[members[selected_part][site]] = True
+                            counterpart_masks[method][name][site] = allowed
+        collector = ProgramCounterparts(targets, ['singular', 'plural']) if config.get('collect_counterparts') else None
         execution_counts = {name:dict(states=0, changed=0, min_code=0., max_members=0)
                             for name in target_methods if name != 'raw_readout'}
         queries = {name:{site:torch.tensor([float(name == 'full' or r['group'] == name)
@@ -137,6 +164,8 @@ def main():
                 code = torch.relu((value-source['center'])@source['encoder'].T+source['encoder_bias'])
                 action = -(code*queries[current][site])@source['decoder']
                 if execution == 'source':
+                    if source_action_bank is not None:
+                        source_action_bank.observe(site, current, action)
                     value = value+action
                     trajectory[site] = value.detach().clone()
                     source_actions[site] = action.detach().clone()
@@ -149,7 +178,7 @@ def main():
                         desired = action
                     elif execution == 'recorded_action':
                         desired = source_actions[site]
-                    elif execution == 'state_feedback':
+                    elif execution == 'state_feedback' or execution.startswith('counterpart_'):
                         desired = trajectory[site]-value
                     else:
                         raise ValueError(execution)
@@ -157,10 +186,17 @@ def main():
                     codes = target.encode(value)
                     candidate = target.encode(value+desired)-codes
                     allowance = 2*len(selection[site])
+                    support_mask = None
+                    if execution.startswith('counterpart_'):
+                        support_mask = counterpart_masks[execution][current][site].expand_as(codes)
                     delta, coefficients, indices, detail = realize(desired, candidate,
                         target.decoder.weight.T, members=allowance, steps=config['inverse_steps'],
                         refine_steps=config['inverse_steps'], batch_size=128,
-                        candidate_limit=config['inverse_candidates'], current_codes=codes)
+                        candidate_limit=config['inverse_candidates'], current_codes=codes, support_mask=support_mask)
+                    if collector is not None and execution == 'state_feedback':
+                        collector.observe(site, current, desired, source_actions[site], coefficients, indices)
+                    if support_mask is not None and bool((coefficients.masked_select(~support_mask.gather(-1, indices)) != 0).any()):
+                        raise ValueError('Execution left the shared counterpart')
                     remaining = torch.gather(codes, -1, indices)+coefficients
                     count = execution_counts[execution]
                     count['states'] += codes.numel()//codes.shape[-1]
@@ -197,6 +233,18 @@ def main():
                             work.token_forwards += encoded['input_ids'].numel()
                 np.savez(work.run/'responses.npz', **{k:np.asarray(v) for k,v in predictions.items()})
                 work.progress('SOURCE_EVALUATION', completed=index+1, total=len(rows))
+        if collector is not None:
+            supports, statistics = collector.export(config['counterpart_sizes'])
+            write(work.run/'counterparts.json', dict(supports=supports, target_seed=config['target_seed'],
+                source_identity=identities, contexts=rows, selected_requests=['singular', 'plural'],
+                selection='Document-normalized coefficient energy or simultaneous squared-correlation pursuit.',
+                target_responses_used=False))
+            np.savez(work.run/'counterpart_statistics.npz', **statistics)
+            work.progress('COUNTERPARTS_EXPORTED', schemes=len(supports))
+        if source_action_bank is not None:
+            np.savez(work.run/'source_action_bank.npz', **source_action_bank.arrays())
+            write(work.run/'source_action_bank.json', dict(parts=['singular','plural'], sites=list(selection),
+                source_identity=identities, rows=rows, target_dictionary_used=False, target_responses_used=False))
         clean = np.asarray(predictions['none'])
         statistics = {}
         for structure in [*sorted({row['structure'] for row in rows}), 'all']:

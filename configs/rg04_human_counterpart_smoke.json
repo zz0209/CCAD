@@ -1,0 +1,16 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG04_HUMAN_COUNTERPART_SMOKE_T2_20260921",
+  "run_parent": "REUSE_GENERALIZATION_04",
+  "run_storage_root": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round04",
+  "generator_script": "scripts/train_intervention_changes.py",
+  "purpose": "Check the same shared64-member construction on a complete published human explanation.",
+  "datasets": ["human"],
+  "human_per_cell": 1,
+  "executions": ["trajectory_feedback","counterpart_action_span_64"],
+  "counterpart_path": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round04/RG04_HUMAN_SOURCE_COUNTERPARTS_T2TO5_20260921/counterparts_t2.json",
+  "task_adapted_reference": null,
+  "query_progress": true,
+  "budget_seconds": 600,
+  "budget": "7200driver seconds for the unit,13GB allocated GPU,8GB bulk."
+}

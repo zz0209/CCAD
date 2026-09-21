@@ -1,0 +1,17 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG04_NUMBER_COUNTERPART_REPLAY_SMOKE_T2_20260921",
+  "run_parent": "REUSE_GENERALIZATION_04",
+  "run_storage_root": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round04",
+  "generator_script": "scripts/check_number_program.py",
+  "purpose": "Check fixed-support masks, source replay and response persistence on actual inputs.",
+  "scope": "Four prior smoke contexts and target2, no confirmation claim.",
+  "annotations": "artifacts/morning_reform_20260916/independent_circuit_reading/annotations/10_32768.jsonl",
+  "number_panel": "artifacts/final_science_20260920_round02/AGREEMENT_DEVELOPMENT.json",
+  "row_indices": [0,1,16,17],
+  "per_structure": 0,
+  "target_methods": ["state_feedback","counterpart_participation_64","counterpart_action_span_64","counterpart_state_span_64"],
+  "counterpart_path": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round04/RG04_NUMBER_COUNTERPART_SMOKE_T2_20260921/counterparts.json",
+  "budget_seconds": 300,
+  "budget": "7200driver seconds for the unit,13GB allocated GPU,8GB bulk."
+}

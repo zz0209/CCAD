@@ -1,0 +1,13 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG04_NUMBER_SOURCE_COUNTERPARTS_R2_T2TO5_20260921",
+  "run_parent": "REUSE_GENERALIZATION_04",
+  "run_storage_root": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round04",
+  "generator_script": "scripts/export_source_counterparts.py",
+  "purpose": "Construct named target counterparts from one source-only action bank without model or target-response calls.",
+  "source_action_bank": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round04/RG04_NUMBER_SOURCE_BANK_20260921",
+  "export_target_seeds": [2,3,4,5],
+  "counterpart_size": 64,
+  "budget_seconds": 360,
+  "budget": "7200driver seconds for the unit,13GB allocated GPU,8GB bulk."
+}

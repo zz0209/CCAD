@@ -158,6 +158,19 @@ def main():
             'The first number-source smoke failed during finalization and has unknown complete driver duration. The last progress is retained without treating it as completion.',
             'Some inherited budget and scope strings retain earlier configurations. Actual source panels, original freeze files, run settings and the current9000-second unit allocation are recorded separately.'
         ]
+    if args.round_id == 'REUSE_GENERALIZATION_04':
+        result['metadata_clarifications'] = [
+            'Number development splits24source-bank contexts and24evaluation contexts within the previously exposed panel.',
+            'Number confirmation fixes64fresh official prefixes, three requests and target seeds3/4/5. The primary contrast exchanges equal-cardinality part sets within sites.',
+            'The source-action bank requires no target dictionary. Per-target construction uses decoder weights and no target model responses.',
+            'Fixed pools contain64candidate identities per nonzero part/site; the original per-state allowance remains twice the source-member count.',
+            'Human local-action and propagated-effect bank comparisons use exposed development biographies and retain their distinct source representations.',
+            'Human confirmation fixes32new biographies, eight semantic requests, four later heads and target seeds3/4/5 before evaluation. Paired bootstrap resamples profession/gender-stratified documents.',
+            'The filled-action control matches propagated-pool cardinality at each singleton part/site. Union candidate counts can differ because selected sets overlap differently.',
+            'The original source-bank exporter failed before output because CUDA initialization had not preceded peak-memory reset. R2completed the export.',
+            'The initial development swap exchanged empty and nonempty sets at some sites. Formal confirmation matches the site-specific pool cardinalities.',
+            'The initial smoke command ended before run creation when the new storage parent did not exist. Its driver duration is unknown.'
+        ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))
 

@@ -1,0 +1,21 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG04_NUMBER_COUNTERPART_CONFIRM_T3_20260921",
+  "run_parent": "REUSE_GENERALIZATION_04",
+  "run_storage_root": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round04",
+  "generator_script": "scripts/check_number_program.py",
+  "target_seed": 3,
+  "seeds": [3],
+  "purpose": "Confirm reusable target counterparts, named-part specificity and an unselected union on fresh original prefixes.",
+  "scope": "64fresh official grammar prefixes, three named requests, unchanged source and target3. Swapping preserves support counts at each site.",
+  "annotations": "artifacts/morning_reform_20260916/independent_circuit_reading/annotations/10_32768.jsonl",
+  "number_panel": "artifacts/reuse_generalization_20260921_round04/NUMBER_CONFIRMATION_PANEL.json",
+  "per_structure": 0,
+  "target_methods": ["local_action","state_feedback","raw_readout","counterpart_action_span_64","counterpart_swapped_action_span_64"],
+  "counterpart_path": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round04/RG04_NUMBER_SOURCE_COUNTERPARTS_R2_T2TO5_20260921/counterparts_t3.json",
+  "evidence_level": "frozen_new_context_confirmation",
+  "candidate_family_frozen": true,
+  "statistics_unit": "Paired clean/patch context cluster bootstrap within structure; fixed source, target set and requests.",
+  "budget_seconds": 650,
+  "budget": "7200driver seconds for the unit,13GB allocated GPU,8GB bulk."
+}

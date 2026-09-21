@@ -122,7 +122,7 @@ def main():
         freeze=str((out/'TRAJECTORY_CONFIRMATION_FREEZE.json').relative_to(ROOT)),
         human_replay_freeze=str((out/'TRAJECTORY_REPLAY_FREEZE.json').relative_to(ROOT)),
         number_analysis=str(number_path.relative_to(ROOT)),number_sha256=hashlib.sha256(number_path.read_bytes()).hexdigest(),
-        number_freeze=str((out/'NUMBER_CONFIRMATION_REPORTING_FREEZE.json').relative_to(ROOT)),
+        number_freeze=str((out/'NUMBER_REPORTING_REPLAY_FREEZE.json').relative_to(ROOT)),
         number_original_freeze=str((out/'NUMBER_CONFIRMATION_FREEZE.json').relative_to(ROOT)),
         data=str(data.relative_to(ROOT)),table=str(table.relative_to(ROOT)),figure='paper/figures/trajectory_confirmation.pdf',
         evidence='64 new biographies,12 new participation vectors,7 semantic endpoints;64 official-test number prefixes,3 named requests. Three fixed target dictionaries per program. Source remains available at inference.')

@@ -1,0 +1,17 @@
+{
+  "base_config": "configs/rg03_trajectory_development.json",
+  "run_id": "RG04_NUMBER_SOURCE_BANK_20260921",
+  "run_parent": "REUSE_GENERALIZATION_04",
+  "run_storage_root": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round04",
+  "generator_script": "scripts/check_number_program.py",
+  "purpose": "Acquire a reusable source-only action bank for later target dictionaries.",
+  "scope": "24exposed source contexts and singleton requests; no target dictionaries or target evaluation loaded.",
+  "annotations": "artifacts/morning_reform_20260916/independent_circuit_reading/annotations/10_32768.jsonl",
+  "number_panel": "artifacts/final_science_20260920_round02/AGREEMENT_DEVELOPMENT.json",
+  "row_indices": [0,1,2,3,4,5,6,7,16,17,18,19,20,21,22,23,32,33,34,35,36,37,38,39],
+  "per_structure": 0,
+  "target_methods": [],
+  "collect_source_actions": true,
+  "budget_seconds": 180,
+  "budget": "7200driver seconds for the unit,13GB allocated GPU,8GB bulk."
+}

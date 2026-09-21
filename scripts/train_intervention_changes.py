@@ -9,17 +9,20 @@ from train_shift_dictionaries import site_module
 from ccad.intervention_transport import transport_delta, transport_field, refine_columns, pursuit_columns
 from adaptive_native_execution import realize
 from ccad.request_realization import refine_request
+from ccad.program_counterparts import SourceActionBank
 
 
 def main():
     parser=argparse.ArgumentParser(); parser.add_argument('--config',type=Path,required=True)
     args=parser.parse_args(); c=json.loads(args.config.read_text())
+    if c.get('base_config'):
+        c=json.loads(Path(c['base_config']).read_text())|c
     sys.path.extend([c['dictionary_source_dir'],c['dictionary_overlay_dir']])
     from dictionary_learning.trainers.top_k import AutoEncoderTopK
     files=['scripts/train_intervention_changes.py','scripts/run_causalgym_multisite.py',
            'scripts/run_r011s1_raw_hook_asset.py','scripts/run_shift_explanation.py',
            'scripts/train_shift_dictionaries.py','src/ccad/intervention_transport.py','src/ccad/artifacts.py',
-           'scripts/adaptive_native_execution.py','src/ccad/request_realization.py']
+           'scripts/adaptive_native_execution.py','src/ccad/request_realization.py','src/ccad/program_counterparts.py']
     w=MultisiteWork(c,args.config,files); handles=[]; error=None
     try:
         torch.set_num_threads(2); torch.use_deterministic_algorithms(True)
@@ -34,7 +37,7 @@ def main():
         gb=np.load(w.checked(c['grammar_source_parameters']))
         grammar={k:torch.tensor(gb[k],device=w.device) for k in ['encoder','encoder_bias','decoder','center']}
         initial={}; targets={}
-        for s in sites:
+        for s in ([] if c.get('source_only') else sites):
             initial[s]=torch.load(w.checked(Path(c['target_directory'])/f'{s}_seed{c["target_seed"]}.pt'),map_location='cpu',weights_only=True)
             t=AutoEncoderTopK(512,len(initial[s]['encoder.weight']),int(initial[s]['k'])).to(w.device)
             t.load_state_dict(initial[s]); t.requires_grad_(False); targets[s]=t
@@ -71,6 +74,24 @@ def main():
         token_grams={}; token_counts={}; token_roots={}; embedding_cache={}; current_tokens=None
         hybrid_prefix=None; datasets=c.get('datasets',['human','grammar'])
         execution_writers={}; trajectory={}; trajectory_changes={}
+        current_query=None
+        source_action_bank=SourceActionBank(list(groups)) if c.get('collect_source_actions') else None
+        counterpart_masks={}
+        if c.get('counterpart_path'):
+            counterpart_bank=json.loads(w.checked(c['counterpart_path']).read_text())
+            if counterpart_bank['target_seed']!=c['target_seed'] or counterpart_bank['source_identity']!=hashlib.sha256(Path(c['source_parameters']).read_bytes()).hexdigest():
+                raise ValueError('Human counterpart identity mismatch')
+            for execution in c['executions']:
+                if not execution.startswith('counterpart_'): continue
+                members=counterpart_bank['supports'][execution.removeprefix('counterpart_')]
+                counterpart_masks[execution]={}
+                for name,weights in c['human_queries'].items():
+                    counterpart_masks[execution][name]={}
+                    for site in sites:
+                        allowed=torch.zeros(len(targets[site].encoder.weight),dtype=torch.bool,device=w.device)
+                        for part,value in weights.items():
+                            if value>0: allowed[members[part][site]]=True
+                        counterpart_masks[execution][name][site]=allowed
         assert datasets and set(datasets)<= {'human','grammar'}
         def hook(site):
             def f(module,inputs,out):
@@ -130,13 +151,18 @@ def main():
                     sp=human[site] if dataset=='human' else grammar
                     query=q[site] if dataset=='human' else q['resid_4']
                     zs=torch.relu((h-sp['center'])@sp['encoder'].T+sp['encoder_bias'])
-                    u=-(zs*query)@sp['decoder']; t=targets[site]
+                    u=-(zs*query)@sp['decoder']; t=targets.get(site)
                     allowance=c.get('member_budget',2*len(query))
-                    if mode=='source' or (dataset=='human' and hybrid_prefix is not None and sites.index(site)>=hybrid_prefix): h=h+u
+                    if mode=='source' or (dataset=='human' and hybrid_prefix is not None and sites.index(site)>=hybrid_prefix):
+                        if mode=='source' and source_action_bank is not None and dataset=='human':
+                            effect=h+u-observed[site] if c.get('source_effect_kind')=='propagated' else u
+                            for bi in range(len(u)):
+                                source_action_bank.observe(site,current_query,effect[bi,mask[bi].bool()])
+                        h=h+u
                     elif mode=='raw_readout':
                         rec=t.decode(t.encode(h)); zsr=torch.relu((rec-sp['center'])@sp['encoder'].T+sp['encoder_bias'])
                         h=h-(zsr*query)@sp['decoder']
-                    elif mode in ['trajectory_action','trajectory_feedback','trajectory_requested_sites','trajectory_active_tokens']:
+                    elif mode in ['trajectory_action','trajectory_feedback','trajectory_requested_sites','trajectory_active_tokens'] or mode.startswith('counterpart_'):
                         desired=trajectory_changes[site] if mode=='trajectory_action' else trajectory[site]-h
                         allowed=torch.ones(h.shape[:-1],dtype=torch.bool,device=h.device)
                         if mode=='trajectory_requested_sites':
@@ -146,9 +172,12 @@ def main():
                             allowed=(trajectory_changes[site]!=0).any(-1)
                             desired=torch.where(allowed.unsqueeze(-1),desired,torch.zeros_like(desired))
                         z=t.encode(h); candidate=t.encode(h+desired)-z
+                        support_mask=counterpart_masks[mode][current_query][site].expand_as(z) if mode.startswith('counterpart_') else None
                         delta,coeff,ix,detail=realize(desired,candidate,t.decoder.weight.T,members=allowance,
                             steps=c['inverse_steps'],refine_steps=c['inverse_steps'],batch_size=128,
-                            candidate_limit=c['inverse_candidates'],current_codes=z)
+                            candidate_limit=c['inverse_candidates'],current_codes=z,support_mask=support_mask)
+                        if support_mask is not None and bool((coeff.masked_select(~support_mask.gather(-1,ix))!=0).any()):
+                            raise ValueError('Execution left the human counterpart')
                         real=mask.bool();residual=trajectory[site]-(h+delta)
                         d=diagnostics.setdefault(site,dict(states=0,desired_energy=0.,realization_error=0.,trajectory_error=0.,changed=0.))
                         d['states']+=int(real.sum());d['desired_energy']+=float(desired[real].square().sum())
@@ -264,7 +293,7 @@ def main():
         responses={}; representations={}; diagnostic_rows=[]; quality=[]
         @torch.no_grad()
         def evaluate(label,execution):
-            nonlocal mode,dataset,q,diagnostics,embedding_cache
+            nonlocal mode,dataset,q,diagnostics,embedding_cache,current_query
             embedding_cache={}
             mode=execution; output_label=label if hybrid_prefix is None else f'{label}_prefix{hybrid_prefix}'
             for ds,rows,queries in [('human',hr,hq),('grammar',gr,gq)]:
@@ -278,6 +307,7 @@ def main():
                         execution_writers.update(torch.load(w.checked(c['program_writer_reference']),map_location=w.device,weights_only=True))
                 dataset=ds; values=[]; pooled_queries=[]
                 for name,v in queries.items():
+                    current_query=name
                     q={s:torch.tensor(x,device=w.device,dtype=torch.float32) for s,x in (v.items() if ds=='human' else [('resid_4',v)])}
                     diagnostics={}; chunks=[]; pooled_chunks=[]
                     off=0
@@ -285,8 +315,10 @@ def main():
                         count=min(c['eval_batch_size'],len(rows)-off)
                         if c.get('eval_token_budget'):
                             while count>1 and count*max(len(r['tokens']) for r in rows[off:off+count])>c['eval_token_budget']: count-=1
-                        if execution in ['trajectory_action','trajectory_feedback','trajectory_requested_sites','trajectory_active_tokens']:
+                        if execution in ['trajectory_action','trajectory_feedback','trajectory_requested_sites','trajectory_active_tokens'] or execution.startswith('counterpart_'):
                             mode='trajectory_teacher';forward(rows[off:off+count]);mode=execution
+                        if execution=='source' and c.get('source_effect_kind')=='propagated':
+                            mode='clean';forward(rows[off:off+count]);mode=execution
                         chunks.append(forward(rows[off:off+count]).cpu().numpy()); off+=count
                         if ds=='human' and c.get('save_pooled',False): pooled_chunks.append(pool.detach().cpu().numpy())
                     if pooled_chunks: pooled_queries.append(np.concatenate(pooled_chunks))
@@ -312,7 +344,7 @@ def main():
             natural={s:torch.cat(v) for s,v in collected.items()}; del collected
             torch.save(natural,w.run/'natural_states.pt')
         with torch.no_grad():
-            for s in sites:
+            for s in targets:
                 xx=natural[s][-c['quality_states']:].to(w.device); zz=targets[s].encode(xx); rr=targets[s].decode(zz)
                 quality.append(dict(method='initial',site=s,fve=float(1-(rr-xx).square().sum()/(xx-xx.mean(0)).square().sum()),l0=float((zz>0).sum(-1).float().mean())))
         write(w.run/'membership.json',dict(natural_sequences=used.tolist(),human_rows=hr,grammar_rows=gr,
@@ -418,6 +450,14 @@ def main():
         if c.get('conditional_profile_cache'):
             token_roots=torch.load(w.checked(c['conditional_profile_cache']),map_location=w.device,weights_only=True)
         evaluate('none','clean'); evaluate('source','source')
+        if source_action_bank is not None:
+            np.savez(w.run/'source_action_bank.npz',**source_action_bank.arrays())
+            write(w.run/'source_action_bank.json',dict(parts=list(groups),sites=sites,rows=hr,
+                source_effect_kind=c.get('source_effect_kind','local_action'),
+                source_identity=hashlib.sha256(Path(c['source_parameters']).read_bytes()).hexdigest(),
+                target_dictionary_used=False,target_responses_used=False))
+            for key,covariance in source_action_bank.statistics.items():
+                w.record(kind='source_action_bank',task='human',row_id=key,component=key,energy=float(covariance.trace()))
         for prefix in c.get('hybrid_prefixes',[None]):
             hybrid_prefix=prefix
             for execution in c['executions']: evaluate('initial_'+execution,execution)
