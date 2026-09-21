@@ -54,7 +54,12 @@ def main():
     if checkpoint.exists():
         with checkpoint.open('rb') as stream:
             saved = pickle.load(stream)
-        assert saved['config_sha256'] == digest(args.config)
+        if saved['config_sha256'] != digest(args.config):
+            previous_config = Path(c['generation_resume_config'])
+            assert saved['config_sha256'] == digest(previous_config)
+            previous = json.loads(previous_config.read_text())
+            changed = {key for key in set(c) | set(previous) if c.get(key) != previous.get(key)}
+            assert changed <= {'evaluation_panel', 'generator_adapter', 'generation_resume_config'}, changed
         rows, counts, seen = saved['rows'], saved['counts'], saved['seen']
         random.setstate(saved['random_state'])
         np.random.set_state(saved['numpy_state'])

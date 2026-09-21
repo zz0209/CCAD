@@ -10319,3 +10319,41 @@ CONFIRMATION_FREEZE.json于新句子生成前保存配置与源码身份，固�
 正式driver2519.670813秒，全部有效driver2592.883988秒，712512序列、6184284词元，bulk162137786bytes，最大CUDA allocated2159024128bytes。有效研究与等待未单独计时，保持未知。原队列exit0；共享cpu-heavy和gpu-0均free。Win32_Process查询被本地权限拒绝，队列完成及租约释放均有直接依据。LaTeX有非致命Fontconfig提示，实际字体与数学渲染正常，未发现undefined或Overfull。smoke启动与generator拒绝修正的原记录继续保留。
 
 当前单元结果、稿件与复算入口完成，可将后续阶段计数从8/15推进至9/15。下一候选用同一构造检验整项留出功能，研究训练请求覆盖怎样决定新增功能执行。其设计依据与全量比较要求写入EXPERIMENT_PLAN，下一轮据源作用与已有数据修订。原automation保持ACTIVE与5分钟周期，同一对话执行。
+
+## REUSE_GENERALIZATION_09 SYNC 2026-09-21T22:37:44Z
+
+实际写入UTC为2026-09-21T22:37:44Z。本轮十一项白名单代码、配置和COMPLETE日志提交1f1e8fad913330d16edcfa9a682ff59003f46f43，已推送原origin/main并核实HEAD=origin/main。提交前git diff --check通过，文件均在既有白名单，未上传原第三方generator、论文或原始数据。同步后本条留在本地append-only日志，tracker已更新。当前后续阶段9/15，原automation仍ACTIVE与5分钟周期。
+
+## REUSE_GENERALIZATION_10 START 2026-09-21T22:44:32Z
+
+实际写入UTC为2026-09-21T22:44:32Z，本条同时记录研究单元开始。当前计数9/15，原automation ACTIVE与5分钟周期。上一轮固定目标参数跨新源成员保持部分训练优势，选择本轮整项留出功能研究，检验共同参数是否获得可复用的功能执行能力。保持C(h)q及程序训练，对三项语法逐项留出，训练排除该功能的成员、请求响应和专用句子；确认依据实际开发信号及公平比较选择。准备复用GPT2模型、五seed字典、原开发数据和共享资源管理器。当前GPU占用2054MiB、使用率6%，cpu-heavy与gpu-0均free；D/E分别约3454/420GB可用。可承受预算拟为开发及必要确认10000driver秒、14GBVRAM、6GB新增bulk，smoke180秒。实际预算和恢复点只在tracker，所有原失败与已暴露确认身份保持。
+
+两项指定writing skills重新读取，应用于同一方法的科学作用与结果组织。母目标和投稿目标保持，本轮不新增平行方法身份。原状态与计划已逐字保留本轮目录。
+
+## REUSE_GENERALIZATION_10 PROGRESS 2026-09-21T22:53:20Z
+
+实际写入UTC为2026-09-21T22:53:20Z。真实smoke于2026-09-21T22:51:44.088611Z完成，19.01445driver秒，928序列forward，336条原始记录。训练128成员、留出请求为零及专用句子排除检查通过，评价恢复192成员。初始执行在每轮评价不读取留出结果进行参数选择。三项target2开发队列session10877已启动，每项512更新、whole/program两组；预算与原构造保持。源码增加训练成员隔离，避免零权重列仍进入容量分配。新分析选项直接报告留出功能在对应grammar上的响应误差。当前计数9/15，文献方法比较更新REFERENCE_REGISTRY。
+
+## REUSE_GENERALIZATION_10 PROGRESS 2026-09-21T23:02:27Z
+
+实际写入UTC为2026-09-21T23:02:27Z。三项开发均PASS，留出verb/number/gender的initial误差.17398/.25085/.25152，program为.16319/.30517/.28796。新增成员请求覆盖比较保持同一128训练成员、512更新、语义端点、数据和损失尺度，仅将连续参与步骤的组内共同Uniform改为独立Uniform。边际参与分布相同，检验请求二阶矩对新功能执行的影响。新比较在观察其结果前写入METHOD_AND_DECISION，正式确认尚未开始。
+
+生成新确认文本时，anaphor_number的空reflexive候选导致显式异常。原输出与240个已保存句对、R9原adapter完整保留。R10副本按原generator拒绝候选方式返回计数原因，恢复仅允许adapter和输出路径变化，沿用原随机状态继续生成。原异常不影响已完成模型实验。
+
+## REUSE_GENERALIZATION_10 PROGRESS 2026-09-21T23:16:59Z
+
+实际写入UTC为2026-09-21T23:16:59Z。成员请求的实际训练rank从2提高到128，三项留出误差均未改善；原始结果存于DEV_*_MEMBER_ANALYSIS。单独提供新解释64成员后，number与gender仍未改善，容量菜单不足以解释训练影响。有限编码列的冻结比较正在运行，verb初始为.16301、原导数训练参数为.18541，提示执行方式与训练参数具有共同依赖。接续验证同一有限编码构造的实际反向传播，随后按相同配方匹配训练；源功能、数据和方法目标保持。本轮已生成的新确认句子尚未打开模型结果，正式九项队列继续等待科学选择。
+
+## REUSE_GENERALIZATION_10 COMPLETE 2026-09-21T23:41:19Z
+
+实际写入UTC为2026-09-21T23:41:19Z。START为2026-09-21T22:44:32Z，最后有限编码训练于2026-09-21T23:32:19.133080Z结束，原session12534已exit0。共19项模型运行PASS，包含四项smoke；109008条原始记录、344608序列forward、2850388词元forward均保留。正式比较均属于source1、target2的开发，尚未读取384个新确认句对的模型结果，原九项确认队列未启动。
+
+整项留出verb/number/gender时，initial到program的误差分别.17398→.16319、.25085→.30517、.25152→.28796；六项训练内功能评价全部改善。独立成员参与的请求rank为128，组参与为2，三项新增功能均未改善；单独64成员解释保持相同趋势。有限编码与训练匹配后为.28086/.39774/.41745，高于其对应初始值。该开发菜单结束，同一功能跨新源定义的既有确认继续成立。下一候选检验少量新功能源上下文是否降低学习成本并保持旧功能，同一执行构造和公平信息预算保持。
+
+数值和复现核验通过。EXPORT_V1保留十五项分析、全部请求、训练内功能和来源；修改后的分析器复算R9确认，移除写入时间后与原文件完全相同。第一次导出在2e-5的源响应容差处失败，实际不同batch及列数的最大数值差为7.4193e-5，主要子集最大6.0976e-5、相对源效应RMS最大1.1010e-5。导出明确记录1e-4容差和实际差值，各运行仍使用各自原始源响应，没有覆盖预测或统计。此前23:16:59的rank表述由后续实际矩阵计算和本次导出核验；早期写入时间不代表独立核验完成时间。
+
+REPORT、RUN_INVENTORY、METHOD_AND_DECISION、RETENTION、EXPORT_V1与R9_ANALYSIS_REPLAY位于artifacts/reuse_generalization_20260921_round10。实际driver共1739.2840025秒，最大CUDA allocated2427246592bytes，bulk7104600836bytes。bulk超过原6GB估算，原始预测、模型与optimizer checkpoint全部保留D盘；计算及显存保持预算内，有效研究和等待未单独计时。共享cpu-heavy与gpu-0已核实free。生成器首次空reflexive异常及240句对checkpoint、恢复后的v2数据和未运行确认配置完整保留。
+
+唯一稿件paper/main.pdf为主文7页、全稿66页，911266bytes，SHA256为8bd97f5062345766ac7679c775dd03a77da2d36ce6f8c9b53d8e62325992e8e8，构建完成2026-09-21T23:35:42.050890Z。主文保持一种方法，Discussion一处交代整项功能留出，Appendix D.3与Table37集中保留比较。已实际查看修改的主文7、附录39至40、复现65页；字号与数学可读，未见裁切，编译保留既有balance提示。全部旧结果仍在同篇附录。两项writing skills用于方法层级、最终科学表达及集中范围说明。CLAIM_MAP、EVIDENCE_INDEX、README、EXPLANATION_REUSE和plan已维护。
+
+整理前tracker逐字原件SHA256为ff51d5caaad68f8bace6623c4c868b00df912b728802c7931e071ce7b5c1896d，plan原件为19f25a872278a5825cf7a8b64430f0fef9d46857f91b3f79770dba727e78e9d5，均保存在本轮目录。结果与稿件整理完成，可将后续阶段计数9/15推进至10/15。原ccad automation保持ACTIVE与5分钟周期，同一对话继续。该轮没有新增经独立确认的性能优势，不据此改变同行整体比较或宣告投稿目标完成。

@@ -183,6 +183,16 @@ def main():
             'The initial grammar generation stopped after16saved examples. The local adapter rejects missing opposite-number verb forms according to the original accepted-pair logic; regenerated data have a separate version and pre-evaluation freeze.',
             'Each evaluation driver computes source-only normalization on old fitting examples. Target response fitting is absent. Run duration includes loading and all five methods plus source and unedited references.'
         ]
+    if args.round_id == 'REUSE_GENERALIZATION_10':
+        result['metadata_clarifications'] = [
+            'Every model run is development with source1 and target2. Each fit excludes one grammar, its64source columns and its response normalization measurements.',
+            'Group and member requests share the128training members, sentence schedule, natural-state schedule and512updates. Continuous-step coefficient marginals are uniform; within-group dependence changes.',
+            'Isolated and finite REPLAY runs load the original group-trained checkpoints with zero updates. Isolated evaluation supplies only the64omitted source members.',
+            'Finite FIT runs train whole/program variants using the same finite encoder columns as evaluation. Their evaluation batch is4rather than16for memory use.',
+            'The384newly generated confirmation pairs have no model predictions in this round. The confirmation queue remains unexecuted.',
+            'The first text-generation attempt stopped on an empty reflexive candidate. Its240accepted pairs and RNG checkpoint are retained; v2resumes after an explicitly recorded candidate rejection fix.',
+            'Generator wall time and active research time were not measured separately. Driver duration includes loading, fitting and evaluation; it is not exclusive GPU compute time.'
+        ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))
 

@@ -21,8 +21,20 @@ def main():
     parser.add_argument('--config', required=True, type=Path)
     parser.add_argument('--target-seed', type=int)
     parser.add_argument('--source-seed', type=int)
+    parser.add_argument('--heldout-part', choices=['verb', 'number', 'gender'])
+    parser.add_argument('--member-requests', action='store_true')
+    parser.add_argument('--evaluate-from', type=Path)
+    parser.add_argument('--isolated-evaluation', action='store_true')
+    parser.add_argument('--finite-columns', action='store_true')
     args = parser.parse_args()
     c = json.loads(args.config.read_text())
+    if args.member_requests:
+        c['member_requests'] = True
+    if args.heldout_part is not None:
+        c['heldout_part'] = args.heldout_part
+    part_names = ['verb', 'number', 'gender']
+    heldout = part_names.index(c['heldout_part']) if c.get('heldout_part') else None
+    training_parts = [i for i in range(3) if i != heldout]
     if args.source_seed is not None:
         assert args.source_seed in c['source_seeds']
         c['source_seed'] = args.source_seed
@@ -33,7 +45,8 @@ def main():
         assert args.target_seed in c['target_seeds']
         c['target_seed'] = args.target_seed
         c['seeds'] = [source_seed, args.target_seed]
-        c['run_id'] = c['run_id_template'].format(seed=args.target_seed, source_seed=source_seed)
+        c['run_id'] = c['run_id_template'].format(seed=args.target_seed, source_seed=source_seed,
+                                                heldout=c.get('heldout_part', 'none'))
         c['target_checkpoint'] = c['target_checkpoint_template'].format(seed=args.target_seed)
         if str(args.target_seed) in c.get('resume_by_seed', {}):
             c['resume_checkpoints'] = c['resume_by_seed'][str(args.target_seed)]
@@ -41,6 +54,29 @@ def main():
         assert source_seed != c['target_seed']
     if 'evaluation_by_target' in c:
         c['evaluation_checkpoints'] = c['evaluation_by_target'][str(c['target_seed'])]
+    if c.get('member_requests'):
+        c['run_id'] += '_MEMBER'
+        c['variants'] = ['program']
+    if args.evaluate_from is not None:
+        saved_config = json.loads((args.evaluate_from/'config.resolved.json').read_text())
+        assert saved_config['target_seed'] == c['target_seed']
+        assert saved_config.get('source_seed', 1) == source_seed
+        assert saved_config.get('heldout_part') == c.get('heldout_part')
+        c['evaluation_parent'] = args.evaluate_from.as_posix()
+        c['evaluation_checkpoints'] = {name: dict(path=(args.evaluate_from/f'{name}_step512.pt').as_posix(), execution='tangent')
+                                       for name in saved_config['variants']}
+        c['evaluation_checkpoints']['readout_program'] = dict(
+            path=(args.evaluate_from/'program_step512.pt').as_posix(), execution='readout')
+        c['variants'], c['steps'] = [], 0
+        c['run_id'] += '_REPLAY'
+    if args.isolated_evaluation:
+        assert heldout is not None and args.evaluate_from is not None
+        c['isolated_evaluation'] = True
+        c['run_id'] += '_ISOLATED'
+    if args.finite_columns:
+        c['native_operation'] = 'input_finite_budget'
+        c['eval_batch_pairs'] = min(c['eval_batch_pairs'], 4)
+        c['run_id'] += '_FINITE'
     w = MultisiteWork(c, args.config, [
         'scripts/train_grammar_member_program.py', 'scripts/run_shift_transfer.py',
         'scripts/run_shift_explanation.py', 'scripts/train_shift_dictionaries.py',
@@ -84,22 +120,33 @@ def main():
         assert len(members) == 192 and bool((gate.sum(1) <= 1).all())
         source = dict(sae=source_ae, member_ids=members,
                       decoder=source_ae.decoder.weight[:, members].T)
+        training_indices = torch.tensor([i for i, part in enumerate(part_ids.tolist())
+                                         if part in training_parts], device=w.device)
+        training_members = members[training_indices]
+        training_source = dict(sae=source_ae, member_ids=training_members,
+                               decoder=source_ae.decoder.weight[:, training_members].T)
+        assert len(training_members) == 64*len(training_parts)
+        evaluation_indices = (part_ids == heldout).nonzero().flatten() if c.get('isolated_evaluation') else torch.arange(len(members), device=w.device)
+        evaluation_source = dict(sae=source_ae, member_ids=members[evaluation_indices],
+                                 decoder=source['decoder'][evaluation_indices])
         old = np.load(w.checked(parent/f'topk_s{source_seed}_t{c["target_seed"]}_map.npz')) if c.get('fixed_control') else None
         fixed_ids = torch.tensor(old['target_members'], device=w.device) if old is not None else None
         fixed_gate = torch.tensor(old['partition64'], device=w.device) if old is not None else None
         natural = torch.tensor(np.load(w.checked(c['natural_states']))['hidden'], device=w.device)
         natural_fit, natural_eval = natural[:-1024], natural[-1024:]
         panel = json.loads(w.checked(c['panel']).read_text())
-        fit = [r for task in c['tasks'] for r in [r for r in panel['rows'] if r['task'] == task and r['split'] == 'fit'][:c['fit_pairs_per_task']]]
+        fit_tasks = [c['tasks'][i] for i in training_parts]
+        fit = [r for task in fit_tasks for r in [r for r in panel['rows'] if r['task'] == task and r['split'] == 'fit'][:c['fit_pairs_per_task']]]
         evaluation = json.loads(w.checked(c['evaluation_panel']).read_text()) if c.get('evaluation_panel') else panel
         evaluation_split = c.get('evaluation_split', 'development')
         rows = [r for task in c['tasks'] for r in [r for r in evaluation['rows'] if r['task'] == task and r['split'] == evaluation_split][:c['eval_pairs_per_task']]]
-        assert len(fit) == len(c['tasks'])*c['fit_pairs_per_task']
+        assert len(fit) == len(fit_tasks)*c['fit_pairs_per_task']
         assert len(rows) == len(c['tasks'])*c['eval_pairs_per_task']
         assert not {r[key] for r in fit for key in ['sentence_good', 'sentence_bad']} & {r[key] for r in rows for key in ['sentence_good', 'sentence_bad']}
         queries = c['queries']
         write(w.run/'panel.json', dict(fit=fit, rows=rows, queries=queries,
             query_order=list(queries), scope=c['scope']))
+        fitting = False
         mode, q = 'none', torch.ones(len(members), device=w.device)
         request = torch.ones(3, device=w.device)
         gain = torch.nn.Parameter(torch.ones(len(members), device=w.device))
@@ -112,17 +159,21 @@ def main():
             cache['input'] = x.detach()
             if mode == 'none':
                 return output
+            active_source = training_source if fitting else evaluation_source
+            active_members = active_source['member_ids']
+            active_indices = training_indices if fitting else evaluation_indices
+            active_q = q[active_indices]
             if mode == 'source':
-                delta = -(source_ae.encode(x)[:, members]*q)@source['decoder']
+                delta = -(source_ae.encode(x)[:, active_members]*active_q)@active_source['decoder']
             elif mode == 'fixed':
                 delta = -(target.encode(x)[:, fixed_ids]*(fixed_gate@request))@target.decoder.weight[:, fixed_ids].T
             else:
-                sp = source
+                sp = active_source
                 if mode == 'gain':
-                    sp = dict(source, transport_basis=-(target.encoder.weight@source['decoder'].T)*gain)
-                operation = 'raw_reconstruction' if mode == 'readout' else 'input_tangent_budget'
-                delta, counts = input_member_delta(x, target, sp, q, operation,
-                    c['members_per_source']*len(members), torch.ones(len(x), device=w.device))
+                    sp = dict(active_source, transport_basis=-(target.encoder.weight@active_source['decoder'].T)*gain[active_indices])
+                operation = 'raw_reconstruction' if mode == 'readout' else c.get('native_operation', 'input_tangent_budget')
+                delta, counts = input_member_delta(x, target, sp, active_q, operation,
+                    c['members_per_source']*len(active_members), torch.ones(len(x), device=w.device))
                 if operation != 'raw_reconstruction':
                     assert counts['minimum_final_code'] >= -1e-5
             hh = h.clone()
@@ -162,7 +213,8 @@ def main():
 
         @torch.no_grad()
         def evaluate(name, execution):
-            nonlocal mode, q, request
+            nonlocal mode, q, request, fitting
+            fitting = False
             mode = execution
             result = np.empty((len(queries), len(rows)), dtype=np.float64)
             for qi, (query, vector) in enumerate(queries.items()):
@@ -202,7 +254,9 @@ def main():
             assert all(torch.equal(target.state_dict()[key], value)
                        for key, value in saved['dictionary'].items())
         target.load_state_dict(initial)
-        endpoints = torch.cat([torch.eye(3, device=w.device), torch.ones(1, 3, device=w.device)])
+        endpoint_parts = torch.eye(3, device=w.device)[training_parts]
+        endpoints = torch.cat([endpoint_parts, endpoint_parts.sum(0, keepdim=True)])
+        fitting = True
         energy = []
         calibration = [fit[int(i)] for i in np.linspace(0, len(fit)-1, min(24, len(fit)), dtype=int)]
         with torch.no_grad():
@@ -219,12 +273,23 @@ def main():
         write(w.run/'loss_scales.json', dict(hidden=float(scales[0]), response=float(scales[1])))
         rng = np.random.default_rng(c['training_seed'])
         requests = rng.random((c['steps'], 3)).astype('float32')
+        if heldout is not None:
+            requests[:, heldout] = 0
         for step in range(0, c['steps'], 2):
-            requests[step] = endpoints[(step//2) % 4].cpu().numpy()
+            requests[step] = endpoints[(step//2) % len(endpoints)].cpu().numpy()
         order = rng.permutation(len(fit))
         natural_indices = rng.integers(len(natural_fit), size=(c['steps'], c['natural_batch_states']))
-        np.savez_compressed(w.run/'training_schedule.npz', requests=requests, rows=order, natural=natural_indices)
+        member_requests = np.array([vector[part_ids.cpu().numpy()] for vector in requests])
+        if c.get('member_requests'):
+            member_rng = np.random.default_rng(c['training_seed']+10000)
+            member_requests[1::2] = 0
+            member_requests[np.ix_(np.arange(1, c['steps'], 2), training_indices.cpu().numpy())] = member_rng.random(
+                (c['steps']//2, len(training_indices)))
+        np.savez_compressed(w.run/'training_schedule.npz', requests=requests, rows=order, natural=natural_indices,
+                            source_members=training_members.cpu().numpy(), source_parts=part_ids[training_indices].cpu().numpy(),
+                            member_requests=member_requests)
         for variant in c['variants']:
+            fitting = True
             target.load_state_dict(initial)
             target.requires_grad_(variant in ['program', 'whole'])
             gain.data.fill_(1.)
@@ -241,8 +306,14 @@ def main():
             for step in range(first_step, c['steps']):
                 request = torch.tensor(requests[step], device=w.device)
                 if variant == 'whole':
-                    request = torch.ones_like(request)
+                    request = endpoints[-1]
+                if heldout is not None:
+                    assert request[heldout] == 0 and bool((part_ids[training_indices] != heldout).all())
                 q = request[part_ids]
+                if c.get('member_requests') and variant == 'program':
+                    q = torch.tensor(member_requests[step], device=w.device, dtype=torch.float32)
+                    if heldout is not None:
+                        assert bool((q[part_ids == heldout] == 0).all())
                 rr = [fit[order[(step*c['batch_pairs']+j) % len(fit)]] for j in range(c['batch_pairs'])]
                 mode = 'source'
                 with torch.no_grad():
@@ -276,6 +347,9 @@ def main():
         w.checks['base_model_frozen'] = all(not p.requires_grad for p in model.parameters())
         write(w.run/'method_summary.json', dict(quality=quality, source_members=members.cpu().tolist(),
             source_parts=part_ids.cpu().tolist(), same_rule='run_shift_transfer.input_member_delta',
+            heldout_part=c.get('heldout_part'), training_tasks=fit_tasks,
+            training_source_members=training_members.cpu().tolist(),
+            evaluation_source_members=members[evaluation_indices].cpu().tolist(),
             source_seed=source_seed, target_seed=c['target_seed'],
             training_variants=c['variants'], requested_steps=c['steps'],
             frozen_evaluation_methods=list(c.get('evaluation_checkpoints', {}))))

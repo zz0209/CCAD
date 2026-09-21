@@ -13,6 +13,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--bootstrap', type=int, default=2000)
     parser.add_argument('--source-reuse', action='store_true')
+    parser.add_argument('--heldout-function', choices=['verb', 'number', 'gender'])
     args = parser.parse_args()
     assert not args.output.exists(), args.output
     arrays, configs, panels, inputs, query_orders = [], [], [], [], []
@@ -20,6 +21,18 @@ def main():
         assert json.loads((run/'status.json').read_text())['status'] == 'PASS', run
         panel = json.loads((run/'panel.json').read_text())
         config = json.loads((run/'config.resolved.json').read_text())
+        if config.get('heldout_part'):
+            omitted = ['verb', 'number', 'gender'].index(config['heldout_part'])
+            with np.load(run/'training_schedule.npz') as schedule:
+                assert (schedule['requests'][:, omitted] == 0).all()
+                assert (schedule['source_parts'] != omitted).all()
+                assert len(schedule['source_members']) == 128
+                if config.get('member_requests'):
+                    parts = np.array(json.loads((run/'method_summary.json').read_text())['source_parts'])
+                    assert (schedule['member_requests'][:, parts == omitted] == 0).all()
+            assert all(row['task'] != config['tasks'][omitted] for row in panel['fit'])
+        if args.heldout_function:
+            assert config['heldout_part'] == args.heldout_function
         with np.load(run/'responses.npz') as raw:
             arrays.append({key: raw[key].copy() for key in raw.files})
         with (run/'metrics.raw.jsonl').open() as stream:
@@ -56,9 +69,13 @@ def main():
     assert all(order == query_orders[0] for order in query_orders)
     rows, queries = panels[0]['rows'], query_orders[0]
     tasks = configs[0]['tasks']
+    if args.heldout_function:
+        tasks = [tasks[['verb', 'number', 'gender'].index(args.heldout_function)]]
     groups = {task: np.array([i for i, r in enumerate(rows) if r['task'] == task]) for task in tasks}
     families = dict(full=['full'], parts=['verb', 'number', 'gender'],
         primary=configs[0]['primary_requests'])
+    if args.heldout_function:
+        families['heldout'] = [args.heldout_function]
     query_ids = {name: np.array([queries.index(q) for q in qs]) for name, qs in families.items()}
     source = np.array([a['source'] for a in arrays])
     clean = np.array([a['none'] for a in arrays])
