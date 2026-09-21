@@ -1,0 +1,926 @@
+{
+  "adapt_sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+  ],
+  "audit_opened": false,
+  "basis_fit_sequences": 16,
+  "batch_sequences": 2,
+  "budget": "Two256-update arms, fixed20embeddingmembers and unchanged natural dictionaries; paired contexts and requests.",
+  "budget_seconds": 450,
+  "bulk_output_dir": "D:/CCAD_Storage/runs/final_science_20260921_round05/FS05_HUMAN_SEMANTIC_DEV_V2_20260921_checkpoints",
+  "candidate_family_frozen": true,
+  "context_response": true,
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "development_per_group": 32,
+  "device": "cuda:0",
+  "dictionary_lr": 0.0001,
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "eval_batch_size": 2,
+  "fit_batch_sequences": 8,
+  "fit_iterations": 1200,
+  "fit_sequences": 128,
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "functional_weight": 0,
+  "generator_script": "scripts/fit_finite_embedding_transport.py",
+  "members_per_source": 2,
+  "methods": [
+    "none",
+    "source",
+    "native",
+    "repair__embed",
+    "repair__mlp_0",
+    "repair__resid_0",
+    "repair__mlp_1",
+    "repair__resid_1",
+    "repair__attn_2",
+    "repair__resid_2",
+    "repair__attn_3",
+    "repair__resid_3",
+    "repair__attn_4",
+    "repair__resid_4"
+  ],
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "neighbors_per_source": 16,
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "program_contexts": "source_development",
+  "purpose": "Let finite response optimization select the same20target members and their common contribution columns.",
+  "queries": [
+    "pronouns",
+    "names",
+    "pronouns+names",
+    "associated_words",
+    "pronouns+associated_words",
+    "names+associated_words",
+    "full",
+    "interior_00",
+    "interior_01",
+    "interior_02",
+    "interior_03",
+    "interior_04",
+    "interior_05",
+    "interior_06",
+    "interior_07",
+    "boundary_00",
+    "boundary_01",
+    "boundary_02",
+    "boundary_03",
+    "boundary_04",
+    "boundary_05",
+    "boundary_06",
+    "boundary_07",
+    "boundary_08",
+    "boundary_09",
+    "boundary_10",
+    "boundary_11",
+    "member_subset_00",
+    "member_subset_01",
+    "member_subset_02",
+    "member_subset_03",
+    "member_subset_04",
+    "member_subset_05",
+    "member_subset_06",
+    "member_subset_07"
+  ],
+  "reconstruction_weight": 1.0,
+  "relation_lr": 0.005,
+  "relation_run": "runs/REFORM_R59_shift_confirm_seed2_v1_20260915",
+  "request_training": "semantic_singletons",
+  "ridge": 0.001,
+  "run_id": "RG02_FINITE_SUPPORT_SMOKE_R2_T2_20260921",
+  "run_parent": "REUSE_GENERALIZATION_02",
+  "scope": "Matched source context and query stream; source zero columns, code capacity, frozen SAE and20member allowance preserved.",
+  "seeds": [
+    2
+  ],
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "source_response_weight": 0.9,
+  "statistics_unit": "Target initialization, paired profession/gender documents and request family; four fixed later readouts and fixed source explanation.",
+  "steps": 4,
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "target_seed": 2,
+  "threshold_source_split": "Fixed source explanation,503sourcefit64sourcecal; original128excludeddev remains development. Same source responses for all variants; normalization and covariance use source calibration only.",
+  "token_offset_sequences": 128,
+  "training_seed": 92102,
+  "variants": [
+    "tangent_mixed"
+  ],
+  "response_covariance_ridge": 0.05,
+  "evidence_level": "development",
+  "dose_queries": {
+    "interior_00": {
+      "pronouns": 0.5547003301937922,
+      "names": 0.840757971637939,
+      "associated_words": 0.7496878108253003
+    },
+    "interior_01": {
+      "pronouns": 0.2700834191696532,
+      "names": 0.3893301979871997,
+      "associated_words": 0.08557897099510278
+    },
+    "interior_02": {
+      "pronouns": 0.43159157201065257,
+      "names": 0.2707464010554773,
+      "associated_words": 0.2774091549951108
+    },
+    "interior_03": {
+      "pronouns": 0.16509201252944716,
+      "names": 0.8635171803372552,
+      "associated_words": 0.5168075579998533
+    },
+    "interior_04": {
+      "pronouns": 0.7801527343725223,
+      "names": 0.48543176416053746,
+      "associated_words": 0.4052298858418034
+    },
+    "interior_05": {
+      "pronouns": 0.4363814586642276,
+      "names": 0.2877992749322299,
+      "associated_words": 0.6812467616218888
+    },
+    "interior_06": {
+      "pronouns": 0.8999030664705566,
+      "names": 0.6715129030700547,
+      "associated_words": 0.6714370499711542
+    },
+    "interior_07": {
+      "pronouns": 0.15726616227523704,
+      "names": 0.546230004432181,
+      "associated_words": 0.06558557419996217
+    },
+    "interior_08": {
+      "pronouns": 0.8446563568352508,
+      "names": 0.8750451363659731,
+      "associated_words": 0.9250289492630281
+    },
+    "interior_09": {
+      "pronouns": 0.4522720915852195,
+      "names": 0.5143070041050045,
+      "associated_words": 0.2197282135358704
+    },
+    "interior_10": {
+      "pronouns": 0.5594539646348526,
+      "names": 0.40820794255132303,
+      "associated_words": 0.824556688691295
+    },
+    "interior_11": {
+      "pronouns": 0.8609967735101469,
+      "names": 0.5985017082732841,
+      "associated_words": 0.5072522022970959
+    },
+    "boundary_00": {
+      "pronouns": 0.0,
+      "names": 0.9233520276915151,
+      "associated_words": 0.32429995071945183
+    },
+    "boundary_01": {
+      "pronouns": 0.25960995002145265,
+      "names": 0.0,
+      "associated_words": 0.5168982395093129
+    },
+    "boundary_02": {
+      "pronouns": 0.33404510363818113,
+      "names": 0.4644843809583168,
+      "associated_words": 0.0
+    },
+    "boundary_03": {
+      "pronouns": 1.0,
+      "names": 0.3852676292489937,
+      "associated_words": 0.09967279765971446
+    },
+    "boundary_04": {
+      "pronouns": 0.8840192231686671,
+      "names": 1.0,
+      "associated_words": 0.9226487426248027
+    },
+    "boundary_05": {
+      "pronouns": 0.37287410685418365,
+      "names": 0.6282429065472721,
+      "associated_words": 1.0
+    },
+    "boundary_06": {
+      "pronouns": 0.0,
+      "names": 0.6228842176302908,
+      "associated_words": 0.2588478338022654
+    },
+    "boundary_07": {
+      "pronouns": 0.5099289118212017,
+      "names": 0.0,
+      "associated_words": 0.18440351033413854
+    },
+    "boundary_08": {
+      "pronouns": 0.3908569046438682,
+      "names": 0.7106202654163999,
+      "associated_words": 0.0
+    },
+    "boundary_09": {
+      "pronouns": 1.0,
+      "names": 0.22333399968167456,
+      "associated_words": 0.44761448757967054
+    },
+    "boundary_10": {
+      "pronouns": 0.17226938830755026,
+      "names": 1.0,
+      "associated_words": 0.4025263926627638
+    },
+    "boundary_11": {
+      "pronouns": 0.8368119110555173,
+      "names": 0.846683411265689,
+      "associated_words": 1.0
+    }
+  },
+  "evaluation_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_science_20260921_round05\\HUMAN_DEVELOPMENT_PANEL.json",
+  "evaluation_per_cell": 1,
+  "evaluate_baselines": [
+    "input_initial",
+    "raw_reconstruction"
+  ],
+  "run_storage_root": "D:\\CCAD_Storage\\runs\\reuse_generalization_20260921_round02",
+  "request_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\science_upgrade_20260919\\ROUND04_REQUESTS.json",
+  "request_panel_sha256": "2e9504cde6d07b9c9b19497b8608f01233e7b82263af53da6bfeb6a6daf6df99",
+  "member_queries": {
+    "member_subset_00": {
+      "embed": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "mlp_0": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "resid_0": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "attn_2": [
+        0,
+        1
+      ],
+      "resid_2": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "attn_3": [
+        1,
+        1,
+        0
+      ],
+      "resid_3": [
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        1,
+        0,
+        0
+      ]
+    },
+    "member_subset_01": {
+      "embed": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "mlp_0": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "resid_0": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "attn_2": [
+        1,
+        0
+      ],
+      "resid_2": [
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "attn_3": [
+        0,
+        0,
+        1
+      ],
+      "resid_3": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "attn_4": [
+        1
+      ],
+      "resid_4": [
+        0,
+        1,
+        1
+      ]
+    },
+    "member_subset_02": {
+      "embed": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "mlp_0": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "resid_0": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "mlp_1": [
+        0,
+        1
+      ],
+      "resid_1": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "attn_2": [
+        0,
+        0
+      ],
+      "resid_2": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "attn_3": [
+        1,
+        1,
+        0
+      ],
+      "resid_3": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        1,
+        1,
+        1
+      ]
+    },
+    "member_subset_03": {
+      "embed": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "mlp_0": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "resid_0": [
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "attn_2": [
+        1,
+        0
+      ],
+      "resid_2": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "attn_3": [
+        1,
+        1,
+        1
+      ],
+      "resid_3": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ],
+      "attn_4": [
+        1
+      ],
+      "resid_4": [
+        1,
+        1,
+        0
+      ]
+    },
+    "member_subset_04": {
+      "embed": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "mlp_0": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "resid_0": [
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "mlp_1": [
+        0,
+        1
+      ],
+      "resid_1": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "attn_2": [
+        1,
+        1
+      ],
+      "resid_2": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "attn_3": [
+        0,
+        1,
+        1
+      ],
+      "resid_3": [
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "attn_4": [
+        1
+      ],
+      "resid_4": [
+        0,
+        1,
+        0
+      ]
+    },
+    "member_subset_05": {
+      "embed": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "mlp_0": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "resid_0": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        0,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "attn_2": [
+        1,
+        1
+      ],
+      "resid_2": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "attn_3": [
+        1,
+        1,
+        1
+      ],
+      "resid_3": [
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        1,
+        1,
+        1
+      ]
+    },
+    "member_subset_06": {
+      "embed": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "mlp_0": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "resid_0": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "mlp_1": [
+        1,
+        0
+      ],
+      "resid_1": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "attn_2": [
+        1,
+        0
+      ],
+      "resid_2": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "attn_3": [
+        0,
+        1,
+        1
+      ],
+      "resid_3": [
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        1,
+        1,
+        1
+      ]
+    },
+    "member_subset_07": {
+      "embed": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "mlp_0": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "resid_0": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "mlp_1": [
+        0,
+        1
+      ],
+      "resid_1": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "attn_2": [
+        1,
+        0
+      ],
+      "resid_2": [
+        1,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "attn_3": [
+        0,
+        0,
+        1
+      ],
+      "resid_3": [
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "attn_4": [
+        0
+      ],
+      "resid_4": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "evaluation_split": "dev",
+  "evaluation_evidence": "exposed_development",
+  "evaluation_description": "Fresh original-dev documents excluded from prior source and later-consumer panels",
+  "eval_token_budget": 4096,
+  "source_column_lr": 0.001,
+  "evaluate_source_columns": {},
+  "source_column_training_targets": [],
+  "source_column_sites": [
+    "embed",
+    "mlp_0",
+    "resid_0",
+    "mlp_1",
+    "resid_1",
+    "attn_2",
+    "resid_2",
+    "attn_3",
+    "resid_3",
+    "attn_4",
+    "resid_4"
+  ],
+  "program_evaluation_exclude_per_group": 32,
+  "training_request_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_science_20260921_round05\\HUMAN_SEMANTIC_DEV_REQUESTS.json",
+  "request_design": "semantic",
+  "source_context_membership": "D:/CCAD_Storage/runs/science_upgrade_20260919/SCIENCE04_shift_t2_v1_20260919/program_context_membership.json",
+  "baseline_methods": [
+    "program"
+  ],
+  "arms": [
+    "sparse"
+  ],
+  "fit_documents": 16,
+  "calibration_documents": 4,
+  "gain_lr": 0.01,
+  "coefficient_lr": 0.003,
+  "inverse_steps": 128,
+  "log_every": 1,
+  "checkpoints": [
+    4
+  ],
+  "sparse_lr": 0.003,
+  "reference_program_directory": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t2_v1_20260919/tangent_mixed",
+  "evaluation_queries": [
+    "full",
+    "pronouns",
+    "names"
+  ]
+}

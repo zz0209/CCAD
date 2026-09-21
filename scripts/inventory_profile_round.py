@@ -130,6 +130,18 @@ def main():
             'Decoder pursuit and fixed-support refinement are standard inference references. The active-only variant restricts candidates without changing final member allowance.',
             'First smoke startup failed before creation of a run directory; no driver duration is inferred for that attempt.'
         ]
+    if args.round_id == 'REUSE_GENERALIZATION_02':
+        result['metadata_clarifications'] = [
+            'Finite fitting changes embedding execution coefficients for the complete55-member explanation. All11natural SAE dictionaries and the language model remain fixed.',
+            'The embedding has10source columns,119source-active vocabulary tokens and a20-member shared allowance. Other sites retain the original tangent rule.',
+            'Fixed-direct and sparse fitting share parameter coordinates, requests, updates and learning rate. Their64-step outputs agree bitwise; support changes occur later.',
+            'Development uses32previously exposed biographies. Frozen confirmation uses128new biographies and27requests, with12new participation requests as primary.',
+            'Target2 supplies the fitted physical fields. Targets4/5 receive these fields through constrained geometric realization and use no response fitting.',
+            'The bootstrap resamples biographies and participation requests, holding the source, target dictionaries and four later classifier heads fixed.',
+            'The first smoke retained predictions but failed in summary generation. Its full duration is unknown. The first support smoke failed on a missing reference path.',
+            'The source-only normalization diagnostic uses original fit tokens and does not enter confirmation method selection.',
+            'Checkpoint exports are included in their parent run sizes. Panel preparation and summary scripts have separate logs and are excluded from measured model-driver duration.'
+        ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))
 
