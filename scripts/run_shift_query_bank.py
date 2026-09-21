@@ -52,7 +52,8 @@ def main():
         frozen = np.load(work.checked(Path(cfg['relation_run'])/'relation.npz'))
         targets, relations = {}, {}
         for site in sites:
-            state = torch.load(work.checked(Path(cfg['target_directory']) /
+            directory = cfg.get('target_site_directories', {}).get(site, cfg['target_directory'])
+            state = torch.load(work.checked(Path(directory) /
                               f'{site}_seed{cfg["target_seed"]}.pt'),
                                map_location=work.device, weights_only=True)
             sae = AutoEncoderTopK(512, state['encoder.weight'].shape[0], int(state['k'])).to(work.device)
