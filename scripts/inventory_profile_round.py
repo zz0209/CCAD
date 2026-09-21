@@ -119,6 +119,17 @@ def main():
             'The first human smoke has empty evaluation and scientific status INVALID. Its original runtime metadata is preserved.',
             'Grammar member-mask bootstrap intervals are unavailable when fewer than90percent of resamples retain source-effect support. All point estimates and valid-draw counts remain available.'
         ]
+    if args.round_id == 'REUSE_GENERALIZATION_01':
+        result['metadata_clarifications'] = [
+            'All runs are development, with one shared target and exposed function contexts. Evaluation members are excluded from ordinary-action fitting.',
+            'Batch-global aggregate and column objectives share actions, text schedule and update budget. State-local sampling changes source action identities and energy.',
+            'Writer-only training freezes every natural dictionary parameter. Its action matrix starts from the target encoder and is saved separately.',
+            'The fixed-action audit uses paired batch-global aggregate and singleton requests on fit and held contexts for every trained rule.',
+            'Checkpoint labels task_adapted_tangent in agreement evaluation denote generic-action training. Agreement responses never enter fitting.',
+            'The first active-execution smoke lacks inverse_steps and has FAIL status. Its source snapshot and traceback are retained; SMOKE_R2 completes the path.',
+            'Decoder pursuit and fixed-support refinement are standard inference references. The active-only variant restricts candidates without changing final member allowance.',
+            'First smoke startup failed before creation of a run directory; no driver duration is inferred for that attempt.'
+        ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))
 

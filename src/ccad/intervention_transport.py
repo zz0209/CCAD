@@ -12,7 +12,7 @@ def project_capacity(values, capacity):
 
 
 def pursuit_columns(h, target, source, allowance, metric_root=None, steps=128,
-                    candidate_limit=128, batch_size=128):
+                    candidate_limit=128, batch_size=128, active_only=False):
     # 同一功能目标决定共同成员及其系数，所有部分请求共享返回的列。
     shape = h.shape[:-1]
     x = h.reshape(-1, h.shape[-1])
@@ -30,11 +30,17 @@ def pursuit_columns(h, target, source, allowance, metric_root=None, steps=128,
         raise ValueError('Member allowance must fit the candidate set')
     result = torch.zeros((len(x), len(decoder), zs.shape[-1]), device=h.device, dtype=h.dtype)
     active = (zs.abs().sum(-1) > 0).nonzero().flatten()
+    if active_only and len(active):
+        count = min(count, int((z[active] > 0).sum(-1).min()))
+        if count < allowance:
+            raise ValueError('Active target members cannot satisfy the requested allowance')
     for start in range(0, len(active), batch_size):
         rows = active[start:start + batch_size]
         rhs_all = cross[None] * zs[rows, None, :]
         trial = project_capacity(rhs_all / norm[None, :, None], z[rows])
         gain = (rhs_all * trial).sum(-1) - .5 * norm[None] * trial.square().sum(-1)
+        if active_only:
+            gain = gain.masked_fill(z[rows] <= 0, -torch.inf)
         candidates = gain.topk(count, dim=-1).indices
         del trial, rhs_all, gain
         d = decoder[candidates]
@@ -101,6 +107,16 @@ def transport_delta(h, target, source, q, write_matrix, allowance, active_only=T
     allocated = allocate_columns(z, columns, target.decoder.weight, allowance, active_only, capacity_first)
     dz = allocated @ q
     return dz @ target.decoder.weight.T, dz, allocated
+
+
+def transport_field(h, target, field, q, allowance, active_only=True, capacity_first=False, write_matrix=None):
+    # 显式贡献列允许每个状态拥有自己的训练成员，执行接口保持共同列形式。
+    if field.shape[:-2] != h.shape[:-1] or field.shape[-2] != h.shape[-1]:
+        raise ValueError('Source field and hidden states have incompatible shapes')
+    columns=(target.encoder.weight if write_matrix is None else write_matrix)@field
+    allocated=allocate_columns(target.encode(h),columns,target.decoder.weight,allowance,active_only,capacity_first)
+    dz=allocated@q
+    return dz@target.decoder.weight.T,dz,allocated
 
 
 def refine_columns(h, target, source, columns, allowance, steps=64, write_matrix=None, metric_root=None, accelerate=False):

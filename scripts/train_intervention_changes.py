@@ -6,7 +6,7 @@ import transformers
 from run_causalgym_multisite import MultisiteWork, write
 from run_shift_explanation import source_groups
 from train_shift_dictionaries import site_module
-from ccad.intervention_transport import transport_delta, refine_columns, pursuit_columns
+from ccad.intervention_transport import transport_delta, transport_field, refine_columns, pursuit_columns
 from adaptive_native_execution import realize
 
 
@@ -69,6 +69,7 @@ def main():
         train_sources={}; train_queries={}; train_terms=[]; metric_roots={}; source_roots={}; other_roots={}
         token_grams={}; token_counts={}; token_roots={}; embedding_cache={}; current_tokens=None
         hybrid_prefix=None; datasets=c.get('datasets',['human','grammar'])
+        execution_writers={}
         assert datasets and set(datasets)<= {'human','grammar'}
         def hook(site):
             def f(module,inputs,out):
@@ -89,17 +90,30 @@ def main():
                 elif dataset=='training' and site in train_sources:
                     train_sp=train_sources[site]; train_q=train_queries[site]
                     if mode=='source':
-                        zs=torch.relu((h-train_sp['center'])@train_sp['encoder'].T+train_sp['encoder_bias'])
-                        h=h-(zs*train_q)@train_sp['decoder']
+                        if 'field' in train_sp:
+                            h=h+train_sp['field']@train_q
+                        else:
+                            zs=torch.relu((h-train_sp['center'])@train_sp['encoder'].T+train_sp['encoder_bias'])
+                            h=h-(zs*train_q)@train_sp['decoder']
                     elif mode=='tangent':
                         t=targets[site]
                         train_reconstruction=(t(h)-h).square().mean()/h.square().mean().clamp_min(1e-8)
                         capacity_first=c.get('capacity_first',False)
-                        delta,_,_=transport_delta(h,t,train_sp,train_q,t.encoder.weight,2*len(train_q),not capacity_first,capacity_first)
-                        zs=torch.relu((h-train_sp['center'])@train_sp['encoder'].T+train_sp['encoder_bias'])
-                        requested=-(zs*train_q)@train_sp['decoder']
+                        writer=execution_writers.get(site,t.encoder.weight)
+                        if 'field' in train_sp:
+                            requested_columns=train_sp['field']
+                            delta,_,columns=transport_field(h,t,requested_columns,train_q,2*len(train_q),not capacity_first,capacity_first,writer)
+                            requested=requested_columns@train_q
+                        else:
+                            delta,_,columns=transport_delta(h,t,train_sp,train_q,writer,2*len(train_q),not capacity_first,capacity_first)
+                            zs=torch.relu((h-train_sp['center'])@train_sp['encoder'].T+train_sp['encoder_bias'])
+                            requested=-(zs*train_q)@train_sp['decoder']
+                            requested_columns=-zs.unsqueeze(-2)*train_sp['decoder'].T
                         train_local_loss=(delta-requested).square().sum()/requested.square().sum().clamp_min(1e-10)
-                        train_terms.append((train_reconstruction,train_local_loss))
+                        # 贡献列直接给出所有singleton请求的平方误差。
+                        column_error=t.decoder.weight@columns-requested_columns
+                        column_loss=column_error.square().sum()/requested_columns.square().sum().clamp_min(1e-10)
+                        train_terms.append((train_reconstruction,train_local_loss,column_loss))
                         h=h+delta
                     else: raise ValueError(mode)
                 elif dataset=='human' or site=='resid_4':
@@ -114,7 +128,7 @@ def main():
                         rec=t.decode(t.encode(h)); zsr=torch.relu((rec-sp['center'])@sp['encoder'].T+sp['encoder_bias'])
                         h=h-(zsr*query)@sp['decoder']
                     elif mode=='tangent':
-                        delta,_,_=transport_delta(h,t,sp,query,t.encoder.weight,allowance,True); h=h+delta
+                        delta,_,_=transport_delta(h,t,sp,query,execution_writers.get(site,t.encoder.weight),allowance,True); h=h+delta
                     elif mode=='feasible_tangent':
                         delta,dz,columns=transport_delta(h,t,sp,query,t.encoder.weight,allowance,False,True)
                         z=t.encode(h); real=mask.bool()
@@ -125,9 +139,9 @@ def main():
                         d['changed']+=int((dz[real]!=0).sum()); d['newly_active']+=int(((z[real]==0)&(dz[real]>0)).sum())
                         d['states']+=int(real.sum()); d['min_code']=min(d['min_code'],float((z+dz)[real].min()))
                         h=h+delta
-                    elif mode in ['pursuit_common','pursuit_source_metric']:
+                    elif mode in ['pursuit_common','pursuit_source_metric','active_pursuit_common']:
                         root=source_roots[dataset][site] if mode=='pursuit_source_metric' else None
-                        columns=pursuit_columns(h,t,sp,allowance,root,c['inverse_steps'],c['inverse_candidates'])
+                        columns=pursuit_columns(h,t,sp,allowance,root,c['inverse_steps'],c['inverse_candidates'],active_only=mode=='active_pursuit_common')
                         dz=columns@query; z=t.encode(h)
                         if float((z+dz)[mask.bool()].min()) < -2e-5: raise ValueError('Negative pursuit target code')
                         if int((dz[mask.bool()]!=0).sum(-1).max()) > allowance: raise ValueError('Pursuit member allowance exceeded')
@@ -212,6 +226,8 @@ def main():
                     paths=c['task_adapted_reference']['human'] if ds=='human' else {'resid_4':c['task_adapted_reference']['grammar']}
                     for s,path in paths.items():
                         targets[s].load_state_dict(torch.load(w.checked(path),map_location=w.device,weights_only=True))
+                    if c.get('program_writer_reference'):
+                        execution_writers.update(torch.load(w.checked(c['program_writer_reference']),map_location=w.device,weights_only=True))
                 dataset=ds; values=[]; pooled_queries=[]
                 for name,v in queries.items():
                     q={s:torch.tensor(x,device=w.device,dtype=torch.float32) for s,x in (v.items() if ds=='human' else [('resid_4',v)])}
@@ -412,9 +428,13 @@ def main():
                 program_sites=c.get('program_sites',sites)
                 assert program_sites and set(program_sites)<=set(sites)
                 objective=c.get('program_objective','downstream')
-                assert objective in ['local','downstream','distribution']
+                assert objective in ['local','local_parts','downstream','distribution']
                 for s in sites:
                     targets[s].load_state_dict(initial[s]); targets[s].requires_grad_(s in program_sites)
+                if c.get('program_parameters','dictionary')=='writer':
+                    for s in sites: targets[s].requires_grad_(False)
+                    for s in program_sites:
+                        execution_writers[s]=torch.nn.Parameter(targets[s].encoder.weight.detach().clone())
                 action_banks={}
                 for s in program_sites:
                     folder='embed' if s=='embed' else s.split('_')[0]+'_out_layer'+s.split('_')[1]
@@ -426,9 +446,10 @@ def main():
                     action_banks[s]=dict(encoder=sd['encoder.weight'][members].to(w.device),encoder_bias=sd['encoder.bias'][members].to(w.device),decoder=sd['decoder.weight'][:,members].T.to(w.device),center=sd['bias'].to(w.device))
                     write(w.run/f'bank_{s}.json',dict(members=members.tolist(),excluded=sorted(excluded),archive_member=member,archive_member_sha256=hashlib.sha256(raw).hexdigest()))
                     del sd,raw
-                parameters=[p for t in targets.values() for p in t.parameters() if p.requires_grad]
+                parameters=list(execution_writers.values()) if c.get('program_parameters','dictionary')=='writer' else [p for t in targets.values() for p in t.parameters() if p.requires_grad]
                 optimizer=torch.optim.AdamW(parameters,lr=c['learning_rate'],weight_decay=0.)
                 gen=torch.Generator(device=w.device).manual_seed(c['training_seed'])
+                state_gen=torch.Generator(device=w.device).manual_seed(c['training_seed']+200003)
                 fit_sequences=used[:-max(1,c['quality_states']//128)]
                 for step in range(c['generic_program_steps']):
                     dataset='training'; mode='clean'; train_site=program_sites[step%len(program_sites)]
@@ -439,7 +460,22 @@ def main():
                         selected_sites=program_sites if c.get('program_scope','single')=='joint' else [train_site]
                         for s in selected_sites:
                             sb=action_banks[s]; hh=observed[s]
-                            activity=torch.relu((hh-sb['center'])@sb['encoder'].T+sb['encoder_bias']).sum((0,1))
+                            activation=torch.relu((hh-sb['center'])@sb['encoder'].T+sb['encoder_bias'])
+                            if c.get('program_action_sampling','batch')=='state':
+                                assert len(selected_sites)==1
+                                if (activation>0).sum(-1).min()<c['actions_per_state']:
+                                    raise ValueError('Insufficient active members in a training state')
+                                eligible=(activation.sum((0,1))>0).nonzero().flatten()
+                                # 保留原序列抽样的随机数消耗，使两种覆盖方式使用相同文本。
+                                torch.randperm(len(eligible),generator=gen,device=w.device)
+                                train_queries[s]=.5+.5*torch.rand(c['actions_per_state'],generator=gen,device=w.device)
+                                scores=torch.rand(activation.shape,device=w.device,generator=state_gen).masked_fill(activation<=0,-1)
+                                selected=scores.topk(c['actions_per_state'],dim=-1).indices
+                                codes=activation.gather(-1,selected)
+                                field=-codes.unsqueeze(-2)*sb['decoder'][selected].transpose(-1,-2)
+                                train_sources[s]={'field':field}
+                                continue
+                            activity=activation.sum((0,1))
                             eligible=(activity>0).nonzero().flatten()
                             if len(eligible)<c['actions_per_state']: raise ValueError('Insufficient active source actions')
                             selected=eligible[torch.randperm(len(eligible),generator=gen,device=w.device)[:c['actions_per_state']]]
@@ -462,20 +498,23 @@ def main():
                         student_logp=torch.log_softmax(model.get_output_embeddings()(student),dim=-1)
                         program=(teacher_p.double()*(teacher_logp-student_logp).double()).sum(-1).mean()/distribution_energy
                     else:
-                        program=train_local_loss if objective=='local' else downstream
+                        program=torch.stack([v[2] for v in train_terms]).mean() if objective=='local_parts' else train_local_loss if objective=='local' else downstream
                     loss=program+c['reconstruction_weight']*train_reconstruction
                     optimizer.zero_grad(set_to_none=True); loss.backward()
                     torch.nn.utils.clip_grad_norm_(parameters,1.); optimizer.step()
                     with torch.no_grad():
                         for s in selected_sites:
-                            t=targets[s]; t.decoder.weight.div_(t.decoder.weight.norm(dim=0).clamp_min(1e-10))
+                            if c.get('program_parameters','dictionary')=='dictionary':
+                                t=targets[s]; t.decoder.weight.div_(t.decoder.weight.norm(dim=0).clamp_min(1e-10))
                     if not torch.isfinite(loss): raise FloatingPointError('Non-finite program loss')
                     if (step+1)%c['log_every']==0:
-                        w.record(kind='training',task=train_site,method='generic_program',row_id=step+1,component='excluded_natural_actions',operation='fit',seed=c['target_seed'],loss=float(loss.detach()),program=float(program.detach()),energy=float(energy),recon=float(train_reconstruction.detach()))
+                        w.record(kind='training',task=train_site,method='generic_program',row_id=step+1,component='excluded_natural_actions',operation='fit',seed=c['target_seed'],loss=float(loss.detach()),program=float(program.detach()),energy=float(energy),recon=float(train_reconstruction.detach()),local_loss=float(train_local_loss.detach()),column_loss=float(torch.stack([v[2] for v in train_terms]).mean().detach()))
                         w.progress('PROGRAM_TRAINING',step=step+1,total=c['generic_program_steps'],site=train_site,loss=float(loss.detach()),program=float(program.detach()))
                     if (step+1) in c['program_checkpoints']:
                         label='generic_program_'+str(step+1); dest=w.run/label; dest.mkdir()
                         for s,t in targets.items(): torch.save(t.state_dict(),dest/f'{s}_seed{c["target_seed"]}.pt')
+                        if execution_writers:
+                            torch.save({s:v.detach().cpu() for s,v in execution_writers.items()},dest/'program_writers.pt')
                         evaluate(label,'feasible_tangent' if c.get('capacity_first',False) else 'tangent')
                         with torch.no_grad():
                             for s in sites:
@@ -487,11 +526,14 @@ def main():
                     assert len(program_sites)==1
                     s=program_sites[0]; train_site=s
                     fitted={k:v.detach().clone() for k,v in targets[s].state_dict().items()}
+                    fitted_writer=execution_writers[s].detach().clone() if s in execution_writers else None
                     audits=[]
                     for context,indices in [('fit',fit_sequences),('held_context',used[len(fit_sequences):])]:
                         assert len(indices)>0
                         for label,state in [('initial',initial[s]),('trained',fitted)]:
                             targets[s].load_state_dict(state)
+                            if fitted_writer is not None:
+                                with torch.no_grad(): execution_writers[s].copy_(initial[s]['encoder.weight'].to(w.device) if label=='initial' else fitted_writer)
                             audit_gen=torch.Generator(device=w.device).manual_seed(c['training_seed']+100003)
                             with torch.no_grad():
                                 for item in range(c['program_audit_steps']):
@@ -505,6 +547,11 @@ def main():
                                     selected=eligible[torch.randperm(len(eligible),generator=audit_gen,device=w.device)[:c['actions_per_state']]]
                                     train_sources[s]={k:(v if k=='center' else v[selected]) for k,v in sb.items()}
                                     train_queries[s]=.5+.5*torch.rand(c['actions_per_state'],generator=audit_gen,device=w.device)
+                                    request_kind='aggregate'
+                                    if c.get('program_audit_alternate_parts',False) and item%2:
+                                        request_kind='singleton'
+                                        keep=torch.zeros_like(train_queries[s]); keep[(item//2)%len(keep)]=1
+                                        train_queries[s]=train_queries[s]*keep
                                     requested=-(activation[...,selected]*train_queries[s])@sb['decoder'][selected]
                                     mode='source'; teacher=forward(rr)
                                     teacher_logp=torch.log_softmax(model.get_output_embeddings()(teacher),dim=-1)
@@ -515,16 +562,19 @@ def main():
                                     energy=(teacher-clean_hidden).square().mean()
                                     kl_energy=(teacher_p.double()*(teacher_logp-clean_logp).double()).sum(-1).mean()
                                     assert energy>1e-10 and kl_energy>1e-10
-                                    audits.append(dict(context=context,method=label,item=item,
+                                    audits.append(dict(context=context,method=label,item=item,request_kind=request_kind,
                                         sequences=[int(indices[i]) for i in sample],bank_indices=selected.cpu().tolist(),q=train_queries[s].cpu().tolist(),
                                         affected_token_fraction=float((requested.square().sum(-1)>1e-12).float().mean()),
                                         local_relative_mse=float(torch.stack([v[1] for v in train_terms]).mean()),
+                                        column_relative_mse=float(torch.stack([v[2] for v in train_terms]).mean()),
                                         downstream_relative_mse=float((student-teacher).square().mean()/energy),
                                         distribution_relative_kl=float((teacher_p.double()*(teacher_logp-student_logp).double()).sum(-1).mean()/kl_energy),
                                         source_hidden_energy=float(energy),source_distribution_energy=float(kl_energy)))
                                     if (item+1)%8==0:
                                         w.progress('FIXED_PROGRAM_AUDIT',context=context,method=label,completed=item+1,total=c['program_audit_steps'])
                     targets[s].load_state_dict(fitted)
+                    if fitted_writer is not None:
+                        with torch.no_grad(): execution_writers[s].copy_(fitted_writer)
                     write(w.run/'program_audit.json',dict(rows=audits,scope='Paired fixed natural-text source actions. Held contexts are excluded from program updates. Exposed functional panels remain development.'))
         write(w.run/'quality.json',quality); write(w.run/'execution_diagnostics.json',diagnostic_rows)
         summary=[]
