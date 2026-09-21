@@ -56,7 +56,10 @@ def main():
             replacement[site]=None;zeros[site]=evaluate()[0];replacement.clear()
         for seed in c['seeds']:
             for method in c['variants']:
-                directory=Path(c['original_directory']) if method=='original' else Path(c['adapted_root'])/f'IR04_shift_program_seed{seed}_v1_20260916'/method
+                if c.get('dictionary_directories'):
+                    directory=Path(c['dictionary_directories'][method].format(seed=seed))
+                else:
+                    directory=Path(c['original_directory']) if method=='original' else Path(c['adapted_root'])/f'IR04_shift_program_seed{seed}_v1_20260916'/method
                 for site in c['sites']:
                     state=torch.load(w.checked(directory/f'{site}_seed{seed}.pt','Target dictionary checkpoint'),map_location='cpu',weights_only=True)
                     sae=AutoEncoderTopK(512,state['encoder.weight'].shape[0],int(state['k'])).to(w.device)

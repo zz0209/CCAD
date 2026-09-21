@@ -10092,3 +10092,61 @@ The positive-threshold TopK swap identity motivated an actual local-state diagno
 REPORT.md, METHOD_AND_DECISION.md, STRUCTURAL_DIAGNOSIS.md, FAILURE_HISTORY.md, DEVELOPMENT_SUMMARY.json and HELD_COMPARISON.csv are in artifacts/reuse_generalization_20260921_round05. Five saved relations passed support/capacity/step checks. All evaluated source and clean outputs, requests and document identities match exactly. First smoke finalization, contrast initialization/finalization and gating dtype failures remain preserved; the validated512step contrast checkpoint was separately evaluated successfully. No original run status was rewritten.
 
 The manuscript decision preserves the current formal evidence and62-page PDF without adding development paragraphs or another appendix. Its verified SHA256 is7b8245370d24b9279d213e8351de9ab50f0f795aaf8566cc879462e17162a1b1. Required writing skills informed the focused research report, the separation of actual comparisons from proposed mechanisms, and the decision to retain this study in research records. Sources and plan updated. Before-closeout tracker/plan copies have hashes e27a6771d349d1e6e9f929638f76968241d7a1493e6519ca79c02d6f937832f9 and eba087bcdf0c7c68f44c0974ed74d4405164c88f9c3920fb3803f412f841e7e3. Following this COMPLETE, tracker advances from4to5of15 continuation units. Original five-unit stage remains5/5. Automation remains active at its existing cadence. Completion here records the bounded research unit and retained results, not attainment of the conference or peer-comparison milestone.
+
+## 2026-09-21T16:47:47Z REUSE_GENERALIZATION_05 SYNC
+
+实际写入UTC为2026-09-21T16:47:47Z。白名单研究脚本与主日志已经成组commit并推送，HEAD与origin/main均为4e0bed215536af001a0f5ea375dd8fe478a8b0ea，推送后已核验。暂存检查通过，原上传白名单保持。论文、开发结果与研究文档本地保留，恢复入口为artifacts/reuse_generalization_20260921_round05/REPORT.md。本同步回执随下一工作单元成组保存；tracker完成计数5/15，无活动计算，原automation保持ACTIVE与5分钟周期。
+
+## REUSE_GENERALIZATION_06 START 2026-09-21T16:59:38Z
+
+实际写入UTC为2026-09-21T16:59:38Z。承接训练状态覆盖假说，已重新读取AGENTS、tracker、plan及两项指定写作skill。源码核对确认普通源成员的局部endpoint训练已经存在，本轮研究完整55成员程序分别删除语义部分后在11个位置形成的状态。比较自然、完整删除及部分删除状态训练，保持目标初始化、架构、文本、更新量及之后的对应规则。源程序与语言模型冻结，字典仅学习状态重构；组合的功能保留承担实际检验。新代码为scripts/train_program_state_coverage.py，设计和smoke配置在artifacts/reuse_generalization_20260921_round06。当前共享资源free，GPU约14GB可用，D约3.16TB可用；复用r004与原字典实现。smoke300秒、13GB VRAM、2GB输出，正式规模依据实际吞吐调整。主文件原文已保存于该目录，完成计数保持5/15。实际研究开始时间未单独计量，当前尚无新结果。首次文档patch因整行匹配失败而未修改文件，读取确认后按现内容编辑。
+
+## REUSE_GENERALIZATION_06 PROGRESS 2026-09-21T17:01:02Z
+
+实际写入UTC为2026-09-21T17:01:02Z。完整11位置smoke为PASS，driver26.434494秒、33项训练记录、峰值allocated353969152bytes，已覆盖全部状态采集、三个训练条件、checkpoint与质量输出。正式开发比较固定128拟合传记、32原暴露评价传记、64自然序列、512更新／位置／条件，复用相同脚本。预算为训练1800driver秒、单元3600driver秒、13GB VRAM、6GB输出。三个条件固定自然样本与传记采样序列，控制字典更新量。训练仅包含单独部分、完整或自然状态；三个两部分组合用于评价。实际功能拟合继续使用原run_shift_transfer规则，评价必须承接表示变化后才形成科学判断。
+
+## REUSE_GENERALIZATION_06 PROGRESS 2026-09-21T17:15:29Z
+
+实际写入UTC为2026-09-21T17:15:29Z。三个状态训练条件及四次同规则功能评价全部PASS。表示变化的组合误差initial/natural/whole/parts为.313614/.308917/.288219/.278680；固定成员功能误差为.290600/.334229/.270721/.304937。所有源及干净输出逐值相同，原始数组在development_analysis/function_arrays.npz。开发只有一个目标、32篇原暴露文本。部分状态重构改善没有同步提高固定对应的组合作用，当前结果不支持将状态覆盖单独作为主要机制。
+
+本轮继续比较直接局部作用监督。相同初始字典、原固定成员、128拟合文本和全部源传播状态下，完整作用与逐部分作用使用相同512更新。学习目标是目标成员贡献对源局部贡献的近似，以及共同自然重构项；训练期间不查询语言模型最终响应。原train_shift_program已经提供最终程序响应训练，该局部目标只作为结构研究，不宣称标准蒸馏或投影的新颖性。scripts/train_program_action.py复用既有状态缓存、原投影与TopK实现。实际运行前修正了投影符号调用和布尔检查含义，尚未产生错误run。smoke16更新覆盖11位置和两条件；正式1800秒仍在原单元3600秒预算内。新增关系直接冻结后评价，源部分信息、固定支持、额度和文档身份保持。
+
+## REUSE_GENERALIZATION_06 CORRECTION 2026-09-21T17:22:00Z
+
+实际写入UTC为2026-09-21T17:22:00Z。ACTION_SMOKE_V1为PASS，27.826451秒。正式v1在源作用为零的批次中使用1e-8分母，导致部分训练项达到2839209.25，与预期的统一物理误差权重不符。其评价未开启。于17:19:30前后核实命令行并终止唯一worker182308，资源管理器正常释放，session31846退出1；最后可证实进度为17:19:29.092376Z、115.617164driver秒。确切终止秒未另外记录。原配置、源码、进度与已完成位置checkpoint全部保留，不作为科学比较结果。
+
+修正为每个位置全部拟合状态的源作用平均能量，两个训练条件使用相同尺度，零作用批次完整保留。v2完整smoke为PASS，18.089870秒；正式v2于17:21:26前后启动，当前按512更新继续。中间checkpoint的relation现在按更新步数分别保存，最终512关系包含对应步骤的全部位置。此处时间来自driver进度，实际资源占用以运行记录为准。原始状态覆盖和四次固定拟合结果不受影响。普通CIM查询因sandbox拒绝，随后通过已授权的escalated只读查询核实PID，未操作其他进程。
+
+## REUSE_GENERALIZATION_06 PROGRESS 2026-09-21T17:24:17Z
+
+实际写入UTC为2026-09-21T17:24:17Z。ACTION_DEVELOPMENT_V2已PASS，始于2026-09-21T17:21:26.248046Z，结束于2026-09-21T17:23:30.304182Z，driver124.032546秒，88项训练记录。两条件均完成11位置各512更新。固定原成员及容量，直接使用已有缓存和源局部参数，训练driver内语言模型前向次数为0。独立功能评价正在执行，原有native、geometry_gain、raw与两个训练程序共享相同开发文本及请求。
+
+时间记录补充。前一17:22:00Z标记来自提前取得的时钟读数，实际追加发生于工具返回17:23:05Z之后，该块确切写入秒未知。其事件时间与运行证据保持。后续记录在同一次工具编排内取得时钟并立即追加，避免将提前读取时间当成写入时刻。
+
+## REUSE_GENERALIZATION_06 PROGRESS 2026-09-21T17:27:56Z
+
+实际写入UTC为2026-09-21T17:27:56Z。ACTION_EVALUATION_V2为PASS，19.663869秒，1376项分类预测。单独部分native/whole-action/part-action误差.292976/.218817/.183431；whole减parts为.035386，开发文档配对区间[.024635,.048902]。两部分组合为.290600/.189727/.190533，两个新训练条件几乎相同；完整程序whole优于parts，.194143对.204489。readout分别为单独部分.209723、组合.213910、完整.176303。全部结果保留在action_analysis，未从完整结果中选择性删除不利比较。
+
+这个信号支持继续检验明确的部分作用监督。已固定配方并启动目标3、4、5的同数据复现，后接自然质量和既有四任务消费者。原32篇文本已暴露，因此全部保持开发／目标复现身份；没有独立测试数据主张。原共同关系初始化使用源分类器敏感度，新增局部训练不使用最终任务输出。自然质量复用evaluate_shift_program_material并只增加配置路径支持。消费者保留相同训练方法、旧程序训练、readout及原几何参照。预计新增三个目标约510driver秒、自然质量约100秒、消费者至多1500秒，仍处于单元3600秒配置预算内。当前研究计数5/15保持，阶段性正信号在当轮继续发展。
+
+## REUSE_GENERALIZATION_06 PROGRESS 2026-09-21T17:37:46Z
+
+实际写入UTC为2026-09-21T17:37:46Z。目标3至5的相同配方已完成，单独部分的whole/parts平均误差.191308/.177226，配对文档与目标重采样差值.014082[.006839,.022792]；三个目标均改善。组合.187852/.188493、完整.204100/.206920，其主要差值区间包含零。初始关系部分误差.259044，readout.233120；目标2作为发现样本单独保留。分析脚本aggregate_program_action直接验证四类共享身份及源／干净数值，固定源和请求，目标与文档共同重采样。结果路径REPLICATION_ANALYSIS.json，全部32篇文本仍属已暴露开发，未升级为独立文档确认。
+
+动作监督的数学连接进入MECHANISM.md，相同固定状态下完整与部分训练对应11^T和I请求二阶矩，实际多位置功能由模型执行评价。当前继续既有自然质量与后来消费者队列，不新增方法组件。反防御两项skill用于保留同一请求粒度主线及全部实质比较，拟将成熟结果补入已有程序训练段落。依赖定位工具返回Transport closed，现有环境账本和已验证解释器仍可直接使用，实验没有受影响。
+
+## REUSE_GENERALIZATION_06 PROGRESS 2026-09-21T17:53:58Z
+
+实际写入UTC为2026-09-21T17:53:58Z。原session27849已退出0，最后消费者PASS，driver824.056132秒、225504条预测、57248sequence forwards、4482816token forwards。固定后来头的whole/parts部分响应误差.281070/.242288，文档配对差值.038782[.037221,.040444]，四头均改善。原relation/readout/已有端到端parts为.340193/.238383/.165072。相同重训头配方下whole/parts部分准确率92.5706/91.7603%，差值−.8103点[−.9930,−.6375]；原解释的代词与姓名作用差值11.657点，两个局部程序为7.221/8.646点。全部为既有开发消费者，一个目标与一次head初始化。自然8192tokens平均CE recovery为原.960870、whole.956509、parts.956436。
+
+分析保存于CONSUMER_RETRAINED、CONSUMER_FIXED及CONSUMER_RESPONSE_AND_QUALITY，旧方法与新方法训练文本和位置数不同，主要受控比较保持whole/parts。新结果补充原有program_adaptation段落及同一证据索引，原1024传记独立确认明确属于旧端到端训练。表格与第45、46页已按实际渲染查看，消费者段落加入后继续重新编译检查。一次整行匹配patch未通过且未修改文件，重新读取实际分行后成功。没有新任务类型或额外执行组件。
+
+## REUSE_GENERALIZATION_06 COMPLETE 2026-09-21T18:01:23Z
+
+实际写入UTC及本研究单元完成时间为2026-09-21T18:01:23Z，START为2026-09-21T16:59:38Z。状态覆盖、局部作用训练、三个追加目标、自然质量和同一程序的后来使用已全部结束。22个run中21PASS及1ABANDONED，后者原始RUNNING文件保持。PASS driver合计1803.746406秒，终止运行最后进度115.617164秒；峰值allocated1,863,398,400bytes。共享资源全部free，session27849退出0，当前没有活动研究计算。有效研究、等待和队列时间未分别计量。
+
+实际bulk14,392,704,098bytes，包括smoke、失败和逐目标checkpoint，超过初始6GB单元估算。追加三目标配置分别写有2GB，但单元总存储估算没有同步更新；保留该差异与全部资产，不以删除结果满足原估算。计算处于3600driver秒和13GB VRAM预算内。没有新增下载、安装、人工标注、付费或外部发表。
+
+报告、方法判断与复算定位在artifacts/reuse_generalization_20260921_round06/REPORT.md、METHOD_AND_DECISION.md、RUN_INVENTORY.json及CLOSEOUT.json。配对统计、共享文档／源／干净输出、自然质量和强对照已核验。表格数据与正式分析SHA一致，脚本语法及git diff检查通过。论文build20260921T175518365653Z通过，无overfull、undefined-reference或missing-character，保留既有字体请求及underfull提示；45、46页实际渲染查看，8页正文终点核验。唯一paper/main.pdf为62页、908006bytes、SHA2560b06966517dc26c9e9a6002cc1c48c7fdc08f6c64f3717133429094a771745e8。主线、原确认与重要附录全部保留，新增证据进入原program_adaptation章节。
+
+数学和实际判断已更新。同一请求二阶矩区别同时解释局部监督和原端到端训练中的部分保留；局部监督新增收益延续到四个后来固定头，重训准确率分别报告。状态重构没有产生对应的功能收益，原端到端程序仍提供更准确的后来响应参照。下一候选研究共同作用规则在目标自身执行状态上的泛化，并用两份现有程序的新组合检验同一机制。文献、对照和完整结果决定是否继续该候选；算法名称、局部数值和完成计数不替代整体同行比较。两项写作skill落实于同一正面问题、完整控制与简洁章节表达。完成记录后tracker更新为后续6/15，原automation保持ACTIVE与5分钟周期。

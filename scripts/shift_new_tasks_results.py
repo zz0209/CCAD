@@ -122,7 +122,8 @@ def main():
         if method in ['none', 'source']:
             continue
         for control in ['none', 'geometry', 'geometry_gain', 'native', 'raw', 'raw_reconstruction',
-                        'whole', 'random_parts', 'parts_relation', 'input_tangent_budget', 'input_gain']:
+                        'whole', 'random_parts', 'parts_relation', 'input_tangent_budget', 'input_gain',
+                        'local_whole']:
             if control not in methods or method == control:
                 continue
             mi, ci = methods.index(method), methods.index(control)
