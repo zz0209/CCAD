@@ -1,0 +1,28 @@
+{
+  "base_config": "configs/rg08_grammar_program_development.json",
+  "run_id": "SR20_GPT2_SOURCE4_TARGET5_DEV_20260922",
+  "run_parent": "SHARED_RULE_20",
+  "generator_script": "scripts/train_shared_action_rule.py",
+  "purpose": "Reuse the frozen decoder-conditioned rule with an independent source definition and target dictionary",
+  "scope": "Source4 and target5 did not participate in SR20 training. All sentences remain exposed development data. Frozen source-column corrections receive a least-norm extension using dictionary geometry alone.",
+  "evaluation_only": true,
+  "evaluation_source_seed": 4,
+  "seeds": [1,4,5],
+  "target_seeds": [5],
+  "training_targets": [2,3],
+  "heldout_targets": [5],
+  "dictionary_template": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed{seed}.pt",
+  "program_checkpoints": {
+    "5": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_CONFIRM_T5_20260921/program_step512.pt"
+  },
+  "shared_checkpoint": "D:/CCAD_Storage/runs/shared_rule_20260922/SR20_GPT2_SHARED_TARGET23_DEV_20260922/action_step1024.pt",
+  "source_column_checkpoints": {
+    "source_columns_lr0001": "D:/CCAD_Storage/runs/shared_rule_20260922/SR20_GPT2_SHARED_TARGET23_DEV_20260922_SOURCE_COLUMNS/action_step1024.pt",
+    "source_columns_lr001": "D:/CCAD_Storage/runs/shared_rule_20260922/SR20_GPT2_COLUMNS_TARGET23_LR001_DEV_20260922_SOURCE_COLUMNS/action_step1024.pt"
+  },
+  "recurrence_steps": 4,
+  "learning_rate": 0.0001,
+  "budget_seconds": 360,
+  "run_storage_root": "D:/CCAD_Storage/runs/shared_rule_20260922",
+  "primary_endpoint": "Seven-request source-effect-normalized response RMSE, averaged across the three fixed functions. Compare the frozen shared rule with both saved source-column corrections extended to source4; all methods use the same original source4 and target5 information."
+}

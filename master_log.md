@@ -10759,3 +10759,41 @@ E:\Projects\SAE_Lab\CCAD\EXPERIMENT_TRACKER.md SHA256 819b9232a01553b46389102b74
 接续设计所需的历史核对已经完成。TARGET_OPERATION_HISTORY.md确认R57选择有限更新贡献、SHIFT固定A使用自然激活份额、R59 geometry进行完整归零，R7保留固定与动态消费者。JOINT_NATIVE_HISTORY.md确认head_mixed已联合训练固定关系和目标字典，B=−AP与固定目标部分程序同构造，原误差.156421对动态.083751。上述能力与配方不重新启动。下一项工作集中于解释作用知识与目标操作的关系及其核心机制，尚未选择新的训练方案；设计准备单独记录。
 
 两项指定writing skills用于保持当前共同方法和证据的完整论证。原稿已准确表达固定池执行能力及命名分配结果，本轮论文、表图与附录保持。唯一PDF沿用a7f8b72e2fb73aa377e044cb3f3edc41838fae6a0f97a5b9f49336d1e181eae1。完整报告REPORT.md，全部分析代码留在本地artifact范围。plan与tracker当前入口已更新；整合前逐字副本PLAN_BEFORE_CLOSEOUT.md SHA256 f8826d09d3da1b06d07b231dcd15f56f5ca5cb0b3a1fab809a8d1fc8fb412642，TRACKER_BEFORE_CLOSEOUT.md SHA256 af18dec306a6f41ef6d0e4dd0ccee9eee0dccc1f82ca6e0dfc7c1063af9035ab。automation保持原ACTIVE五分钟及当前对话，没有配置变更、投稿或公开发布。
+
+### FUNCTIONAL_EQUIVALENCE_19 SYNC — 2026-09-22T14:42:32Z
+
+实际写入UTC为2026-09-22T14:42:32Z。本轮仅提交白名单master_log.md的25行追加，暂存范围和格式检查通过。推送成功，HEAD与origin/main均为f0a126cfb10527c83df868d61a6add567f206873；代码、配置和稿件没有变化。完成报告SHA256 e1580ff35184c38b8281728db53d54080fb0d43635f0354c2824b49fb5b6d5c1，两份分析JSON身份已记录于COMPLETE。原ccad配置再次核实ACTIVE、五分钟及当前对话，保持不变。该同步事实追加在提交之后，留待下一工作单元成组同步。
+
+### SHARED_RULE_20 START — 2026-09-22T14:58:56Z
+
+实际写入UTC为2026-09-22T14:58:56Z。本次heartbeat于14:48:20Z触发，已阅读当前入口、两项writing skills及相关历史。科学问题为一次功能训练能否得到服务新目标字典的共同执行规则。选择跨字典共享隐藏空间W的四步投影残差推断，目标与源SAE保持原参数，原支持和请求接口保留。此构造替换逐目标字典适配；真实功能响应训练共同W，拟合target2/3以后交给target4/5。已有独立线性writer、解析求解及状态条件carry代码已核对，具体区别见artifacts/core_mechanism_20260922/ACTION_ENCODER_HISTORY.md与WORK.md。
+
+Gregor与LeCun2010原文完整阅读及独立agent的排列等变构造阅读提供实施依据。独立检查已经参与核心结构选择，正在检查具体共享更新。读取资源时gpu-0free，GPU显存可用14252MiB，D盘可用3428300357632bytes，E盘419760963584bytes。模型运行尚未开始；代码及代表性smoke推进中。准备与原文阅读单独归类，完成计数仍为19。没有论文修改或新验收条件，automation继续原周期。
+
+### SHARED_RULE_20 PROGRESS — 2026-09-22T15:09:16Z
+
+实际写入UTC为2026-09-22T15:09:16Z。共享更新模块在八个真实自然状态上通过显式迭代、排列等变、容量、零请求、梯度及字典逐tensor不变检查，32.14CPU秒。首次GPU启动在创建run之前因D盘父目录不存在而退出，session83704无模型计算和结果；建立项目专用目录后session2170完成smoke，15:05:16.174360Z至15:06:05.940454Z，49.739326driver秒、1848记录、PASS。共享source columns的代表性运行随后启动session43943，使用同一真实前向程序。
+
+独立监测补充FS04已有跨目标共享列确认。原报告与源码已由主体核对，人工.209267→.181807、语法.456163→.341860，共享标量接近。当前候选的区别限定在目标decoder参与的残差反馈，原encoder初值保留；采用同预算source columns作为直接前身。代码检查支持训练target2/3的平衡以及target4/5优化隔离。经典LISTA与NFN的适用机制及成对状态候选已经登记唯一来源文档，后者留作有依据的研究候选。准备、实施验证和真实开发的身份分别保留，当前尚无正式科学结果。
+
+### SHARED_RULE_20 PROGRESS — 2026-09-22T15:22:44Z
+
+实际写入UTC为2026-09-22T15:22:44Z。共享W开发完成1024更新和29568条响应，282.080022driver秒。未优化目标4/5的七请求误差为.168422，原tangent .272258、W=I四步.237458、逐目标program .189169、readout .152704。source columns使用共同学习率.0001的比较也完成，297.070580秒，同一目标误差.170598。两者接近，当前不能将跨字典共享本身归于新的残差结构。原数据均保持开发身份，原始结果在D:/CCAD_Storage/runs/shared_rule_20260922，配对复算在artifacts/core_mechanism_20260922/PAIRED_DEVELOPMENT_LR0001_ANALYSIS.json。
+
+核对旧源码及FS04两份配置发现source_column_lr=.001，已由独立agent确认。保留.0001结果，使用已有.001设置及同1024步、样本、请求与目标调度补充一次公平比较，配置configs/sr20_source_columns_development.json，session57222，run SR20_GPT2_COLUMNS_TARGET23_LR001_DEV_20260922_SOURCE_COLUMNS。该修正由实际旧配方决定，未扩展学习率搜索。W和source columns分别为1048576、196608个参数，训练更新和监督预算相同，计算和参数成本分别记录。总1800driver秒预算内目前重新分配为两次smoke与三次开发。采用与否由完整比较决定；独立源定义调用的历史接口正在只读核对，尚未启动相应实验或增加论文内容。
+
+### SHARED_RULE_20 COMPLETE — 2026-09-22T15:40:09Z
+
+实际写入UTC为2026-09-22T15:40:09Z。本单元完成三项训练开发、三项真实smoke与两项固定参数源定义评价，八项全部PASS。最后评价于2026-09-22T15:34:46之后完成，精确ended_at_utc保存在RUN_INVENTORY.json。合计1099.282299driver秒、835.96875process CPU秒、112002原始响应，最高CUDA allocated2594545664bytes，新增bulk282326863bytes。实际资产CPU检查另32.1404秒；其余阅读与分析总时长未单独计量。预算1800driver秒内完成，GPU租约已核实free，没有剩余模型进程或计算队列。
+
+共享W在原source1和未参与优化target4/5的主要误差.168422，原执行.272258，解析四步.237458，原readout .152704，逐目标program .189169。较准确source columns为.170598，W减columns为−.002176，[−.014885,.009773]。既有.001学习率的columns为.257455，原.0001结果继续作为较强前身保留。三训练配置具有相同1024更新、请求、样本和target2/3平衡调度；参数及运行成本独立记录。
+
+同一checkpoint接受source4→target5与source5→target4。新source使用自身原gate、完整encoder和decoder，W逐值固定。前身通过U_s=D_s+(D_s pinv(D1))(U1−D1)延伸，不利用新目标响应拟合。两个方向W误差.157457/.195449，较强columns为.151837/.174020，原执行.217698/.252407，readout .112461/.111317。W减columns为+.005621，[−.010656,.019673]及+.021429，[.004704,.037692]。两方向共享seed4/5，分别按语法内句对重采样，不计为两个独立seed重复；文本全部保持既有开发身份。
+
+独立agent逐条复算两项新source的19008记录、三请求族和三训练调度，检查零训练、W及字典保持，支持当前取舍，主体采纳。结束四步W作为主方法替换的当前配方，保留共享列几何延伸在独立源定义及新目标上的正面开发信号。该单元归类为改变方法选择的受控开发及共享复用的局部能力证据，未新增独立确认或据此宣称整体科学跨档。标准LISTA/NFN基础、前身FS04、成对状态阅读候选及引用范围均在唯一REFERENCE_REGISTRY.md中。
+
+完整报告artifacts/core_mechanism_20260922/REPORT.md，直接分析为PAIRED_DEVELOPMENT_LR0001_ANALYSIS.json、PAIRED_DEVELOPMENT_LR001_ANALYSIS.json、SOURCE4_DEVELOPMENT_ANALYSIS.json、SOURCE5_DEVELOPMENT_ANALYSIS.json；检查与实际资源见INDEPENDENT_REVIEW.md和RUN_INVENTORY.json。全部run及冻结源码位于D:/CCAD_Storage/runs/shared_rule_20260922。没有原始资产覆盖、新依赖安装或外部费用。代表性运行及逐记录复算已通过。
+
+依照两项writing skills，当前论文继续以完整既有方法论证组织。本轮研究尝试未增加正文分支、图表或附录页。paper/main.pdf SHA256仍为a7f8b72e2fb73aa377e044cb3f3edc41838fae6a0f97a5b9f49336d1e181eae1。plan更新具体方法取舍，tracker完成计数增加至20。整合前tracker与plan逐字副本保留在本单元目录，SHA256分别为221d92a33cc13498a3e230ddea1edf61164de213f64a4ffa70b8629e27114d9d、60a982fc2e711ed4839fdc634aa5eeda7983cb888ff544cf943414be8f13c0a1。
+
+用户在本单元期间明确要求完成手上工作后暂停loop，本单元科学工作及复查完成，随后原位暂停ccad并保留五分钟周期、原prompt、任务归属及全部恢复资产。暂停后不启动后续确认或新研究单元，等待用户检查。
