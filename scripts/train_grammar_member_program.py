@@ -235,7 +235,7 @@ def main():
         'scripts/run_shift_explanation.py', 'scripts/train_shift_dictionaries.py',
         'scripts/run_causalgym_multisite.py', 'scripts/run_r011s1_raw_hook_asset.py',
         'src/ccad/artifacts.py', 'src/ccad/activation_contract.py', 'src/ccad/request_capacity.py',
-        'src/ccad/paired_projection.py'])
+        'src/ccad/paired_projection.py', 'src/ccad/program_compilation.py'])
     handle, error = None, None
     try:
         torch.set_num_threads(2)
@@ -342,6 +342,7 @@ def main():
         source_access = []
         acquisition_phase = 'normalization'
         source_call_counts = {}
+        compiled_ids, compiled_weights = None, None
 
         def hook(module, inputs, output):
             h = output[0] if isinstance(output, tuple) else output
@@ -350,6 +351,22 @@ def main():
             cache['input'] = x.detach()
             if mode == 'none':
                 return output
+            if mode == 'compiled':
+                assert compiled_ids is not None and compiled_weights is not None
+                z = target.encode(x)[:, compiled_ids]
+                coefficients = z*(compiled_weights@request)
+                assert float((z+coefficients).min()) >= -1e-5
+                delta = coefficients@target.decoder.weight[:, compiled_ids].T
+                if execution_counts is not None:
+                    execution_counts.append(dict(operation='compiled', states=len(x),
+                        changed=int((coefficients != 0).sum()),
+                        max_changed_per_state=int((coefficients != 0).sum(-1).max()),
+                        source_encode_calls=0, target_encode_calls=1,
+                        minimum_final_code=float((z+coefficients).min())))
+                hh = h.clone()
+                hh[idx, positions] = x+delta
+                cache['delta'] = delta.detach()
+                return (hh, *output[1:]) if isinstance(output, tuple) else hh
             active_source = active_training_source if fitting else evaluation_source
             active_members = active_source['member_ids']
             active_indices = training_indices if fitting else evaluation_indices
@@ -464,6 +481,8 @@ def main():
             saved = torch.load(w.checked(item['path'].format(target_seed=c['target_seed'],
                                training_run=c.get('checkpoint_run_by_target', {}).get(str(c['target_seed']), ''))),
                                map_location=w.device, weights_only=True)
+            if item.get('initial_dictionary'):
+                saved = dict(dictionary=saved)
             parameter_group = c.get('evaluation_parameter_groups', {}).get(name)
             load_target_parameters(target, initial, saved['dictionary'], parameter_group)
             target.requires_grad_(False)
@@ -472,6 +491,52 @@ def main():
             expected = saved['dictionary'] if parameter_group is None else {
                 key: saved['dictionary'][key] if key in changed_keys else value for key, value in initial.items()}
             assert all(torch.equal(target.state_dict()[key], value) for key, value in expected.items())
+            if item.get('compile_program'):
+                from ccad.program_compilation import compile_program
+                assert c['steps'] == 0 and len(training_parts) == 3 and not c.get('member_requests')
+                fit_states = []
+                mode = 'none'
+                for off in range(0, len(fit), c['eval_batch_pairs']):
+                    with torch.no_grad():
+                        forward(fit[off:off+c['eval_batch_pairs']])
+                    fit_states.append(cache['input'][::2].clone())
+                    w.progress('COMPILATION_STATES', items=min(off+c['eval_batch_pairs'], len(fit)), total=len(fit))
+                states = torch.cat(fit_states)
+                with torch.no_grad():
+                    codes = target.encode(states)
+                    compiled_ids = (codes != 0).any(0).nonzero().flatten()
+                    z = codes[:, compiled_ids]
+                    decoder = target.decoder.weight[:, compiled_ids]
+                    source_codes = source_ae.encode(states)[:, members]
+                    fields_source, fields_program = [], []
+                    for part in range(3):
+                        part_q = (part_ids == part).float()
+                        fields_source.append(-(source_codes*part_q)@source['decoder'])
+                        field, _ = input_member_delta(states, target, source, part_q,
+                            'input_tangent_budget', c['members_per_source']*len(members),
+                            torch.ones(len(states), device=w.device))
+                        fields_program.append(field)
+                    teachers = dict(source=torch.stack(fields_source, 1), program=torch.stack(fields_program, 1))
+                    np.savez_compressed(w.run/f'{name}_compilation_fit.npz',
+                        states=states.cpu().numpy(), codes=z.cpu().numpy(),
+                        decoder=decoder.cpu().numpy(), target_ids=compiled_ids.cpu().numpy(),
+                        **{key: value.cpu().numpy() for key, value in teachers.items()})
+                    for teacher in item.get('compilation_teachers', ['source', 'program']):
+                        fields = teachers[teacher]
+                        started = time.perf_counter()
+                        compiled_weights, diagnostics = compile_program(z, decoder, fields,
+                            steps=c['compilation_steps'])
+                        diagnostics.update(teacher=teacher, states=len(states), target_members=len(compiled_ids),
+                            fitting_seconds=time.perf_counter()-started,
+                            learned_parameters=compiled_weights.numel(), source_runtime_required=False)
+                        write(w.run/f'{name}_compiled_{teacher}_fit.json', diagnostics)
+                        torch.save(dict(dictionary={key: value.detach().cpu() for key, value in target.state_dict().items()},
+                            target_ids=compiled_ids.cpu(), weights=compiled_weights.cpu(),
+                            parts=part_names, request_domain='Each part participation in [0,1]'),
+                            w.run/f'{name}_compiled_{teacher}.pt')
+                        w.progress('COMPILATION_FIT', **diagnostics)
+                        compiled_name = f'compiled_{teacher}' if name == 'program' else f'{name}_compiled_{teacher}'
+                        evaluate(compiled_name, 'compiled')
         target.load_state_dict(initial)
         endpoint_parts = torch.eye(3, device=w.device)[training_parts]
         endpoints = torch.cat([endpoint_parts, endpoint_parts.sum(0, keepdim=True)])
@@ -662,6 +727,9 @@ def main():
                 new_pair_response_evaluations=sum(len(a['rows']) for a in source_access if c['adapt_part'] in a['parts'])))
         write(w.run/'method_summary.json', dict(quality=quality, source_members=members.cpu().tolist(),
             source_parts=part_ids.cpu().tolist(), same_rule='run_shift_transfer.input_member_delta',
+            compiled_execution=(dict(rule='D_t diag(z_t) B q', request_parts=part_names,
+                source_runtime_required=False, fit_steps=c['compilation_steps'])
+                if any(item.get('compile_program') for item in c.get('evaluation_checkpoints', {}).values()) else None),
             heldout_part=c.get('heldout_part'), training_tasks=fit_tasks,
             training_source_members=training_members.cpu().tolist(),
             evaluation_source_members=members[evaluation_indices].cpu().tolist(),
