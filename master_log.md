@@ -10491,3 +10491,35 @@ R10三项空间rank均128，verb/number/gender的平均未覆盖能量为.855132
 数学阅读已核对固定线性误差算子下的条件界，并重读Kiefer–Wolfowitz四页原文，来源登记REFERENCE_REGISTRY。当前支持与容量依赖整份源定义、状态会变化，固定span不能独立预测有限功能。两个agent的结果检查调用均返回capacity，未记作独立结果检查通过。当前对话核对原始数组、指标、空间rank和统计单位，设计阶段收到的具体独立意见已实施。
 
 本轮归类为机制选择诊断，完成计数从12到13；论文及附录保持原样。下一结构候选来自现有有限重编码恒等式，以整个实际源作用为输入取得目标代码差，替换按成员分别编码后进行组装的步骤。R10的有限列训练与state coverage自然重构训练已核对，候选区别为整请求的实际执行及匹配功能训练。启动前仍须确认完整程序接口、固定目标执行预算与所替换的性质，只有真实比较支持时才采用。该候选没有新成果声明或预先增加确认菜单。原automation继续ACTIVE。
+
+## FIELD_COVERAGE_13 SYNC 2026-09-22T09:20:36Z
+
+实际写入UTC为2026-09-22T09:20:36Z。分析源码与主日志已成组提交推送，HEAD=origin/main=426420af5ded0d270d3ec52d82d81116e639f502。diff检查通过，两项白名单文件完成同步；原始资产、研究报告、plan、tracker与来源登记按现有范围本地保留。paper/main.pdf的SHA256仍为d252e10b0d0c363cffc3407205774376f130945019cd3160450763b8ca6929ee，未增加正文或附录。tracker记录本轮完成13及下一整请求重编码候选，明确固定列加法性质、源encoder依赖和目标执行成员预算的取舍。当前没有新增训练进程或用户需要处理的资源事项。一次入口文件patch因上下文未完整匹配而失败，读取当前文件后成功编辑；首次Git写入受到sandbox拒绝，经已有授权对应的权限流程完成，没有覆盖数据或改变科学结果。原automation持续接续。
+
+## FINITE_REQUEST_14 START 2026-09-22T09:33:15Z
+
+实际写入UTC为2026-09-22T09:33:15Z。本轮检验整请求有限重编码能否在同一完整程序训练中替换逐成员切向执行与容量组装，保留解释部分及组合的作用。沿用人工55成员程序与GPT2三语法原开发文本、512更新、源信息及损失，原joint和source-direction readout作为比较。目标修改成员上限为min(原allowance,target.k)，整请求编码差保持非负最终代码；请求映射的加法性质不再自动保留。候选若不能承担完整能力，保留原联合适配并结束该执行配方，不自动追加参数菜单。
+
+独立检查者完成设计核对，明确两个TopK状态差的实际成员预算。阅读agent核对published parts、R32/R42整请求重编码既有实现与自然状态覆盖训练，未发现当前同一完整程序监督比较。公式及未训练重编码属于既有基础，本轮按实际能力评价增量。来源已登记REFERENCE_REGISTRY。两agent同时完成R13保存结果交叉检查，支持其结束决定；该检查发生于本轮接续，不改写R13当时capacity故障记录。
+
+gpu-0核实free，GPU1743/16303MiB，D盘3434456285184bytes、E盘419796217856bytes可用。两项代表性smoke与两项开发预算2400driver秒、14GB显存及4GB新产物，使用r004和现有overlay、共享gpu-0管理器。配置与入口原件在artifacts/finite_request_20260922，bulk在D:/CCAD_Storage/runs/finite_request_20260922。新增实现是现有执行函数的提前返回分支及现有训练driver调用，独立agent承担CPU真实资产检查；未新增训练框架或模型下载。
+
+## FINITE_REQUEST_14 PROGRESS 2026-09-22T09:37:24Z
+
+实际写入UTC为2026-09-22T09:37:24Z。真实checkpoint CPU检查PASS，38.708162秒，覆盖非负、预算、zero request、attention、相同实际源作用的重复成员表示及encoder/decoder非零梯度。人工与GPT2两项GPU smoke均PASS，driver分别25.248172及28.218442秒，保存完整源码和输出。人工开发session13896已启动，GPT2开发session10821按共享gpu-0租约等待，均为512匹配更新。实际数据位置及原始运行记录见D:/CCAD_Storage/runs/finite_request_20260922。首次人工smoke因D盘run父目录尚未建立，在run创建前退出；建立项目父目录后成功运行，没有覆盖旧结果。
+
+原始整请求编码差最多涉及两个TopK状态的支持并集，当前实现按decoder范数加权的代码变化选择min(allowance,k)，截断坐标仍保持非负。CPU实际hooks验证每chunk一次源encoder、两次目标encoder调用。原切向分支公式保持，旧joint响应将在全部开发面板中重放比较。两项指定writing skills用于明确本轮的执行替换问题、实际证据与采用条件，未将既有公式包装成新方法，未扩展论文篇幅。
+
+## FINITE_REQUEST_14 COMPLETE 2026-09-22T10:02:06Z
+
+实际写入UTC为2026-09-22T10:02:06Z。人工开发于2026-09-22T09:46:24.864684Z完成，GPT2开发于2026-09-22T09:49:13.015963Z完成，两项smoke与两项完整运行均PASS。人工24个保留参与请求的nRMSE为joint .083751、整请求训练.115901，差值+.032150，[.027706,.036259]；原readout .094251。GPT2七个主要请求为joint .173549、整请求训练.225986，差值+.052437，[.027782,.078992]；原readout .164719。两项固定单source/target的已暴露开发结果均支持保留逐成员关系及联合适配，结束当前整请求训练配方。候选相对自身初始化有所改善，完整数值与全部强对照在artifacts/finite_request_20260922/COMBINED_ANALYSIS_V2.json和REPORT.md。
+
+人工训练文本、normalization及loss scales与SCIENCE03相同，source及joint响应逐元素重放相同。人工实际每步权重未保存，随机顺序依据独立generator及冻结调用规则核对。GPT2全部512步requests、rows、natural和row_batches与RG08逐数组相同，panel、成员及分组、loss scales相同。两个执行规则均采用min(原allowance,target.k)上限。候选human最多修改20个成员，GPT2最多64；未记录的旧encoder调用保留null，不宣称候选加速。完整独立设计和结果审阅均支持上述决定，MATCHED_TRAINING_CHECK.md保留核验范围。
+
+四项driver合计834.816763秒，最大CUDA allocated2356820480bytes，全部bulk990145319bytes；真实CPU smoke为38.708162秒。完整run ID与UTC在RUN_INVENTORY_V2.json。两项session13896、10821及smoke均退出，gpu-0核实free。沿用原环境及资源管理器，没有新增下载、安装、人工要求或采购，排队和研究时间没有单独测量。
+
+分析补充执行计数时，第一次读取单位置grammar记录缺少site字段，第二次遇到raw_reconstruction的零native事件分母，均在派生文件写入前终止。现有分析函数按resolved hook处理单位置记录，raw执行标为not_applicable，成功生成V2，原始预测未修改，V1与V2所有科学均值逐项相同。第一版资源清单的PowerShell字典聚合得到两个null总量，V2从原摘要重新求和并保持原始UTC字符串；旧文件保留。人工完整面板实际38个查询，其中24个为主要参与请求，此前发给检查者的37个表述已核对并更正。只安装了pdfinfo/pdftoppm的运行环境中，pdftotext/pdffonts调用不可用；改用已安装pypdf读取，未新增工具。
+
+独立主文试读完成三项表达修订，明确保存程序及源参数职责，固定矩阵实验集中承担请求训练原则，同一C(h)程序承担方法验证及后来使用；容量扩展与独立固定关系消费者缩为已有附录引用。两份原文件及原PDF逐字保留于pre_readability，重要结果在同一论文中的位置记录于READABILITY_CHANGES.md。已使用指定两项writing skills以及原编译与PDF工具。新PDF于2026-09-22T09:54:32.851400Z完成，主文7页、全稿66页、920046bytes、SHA256 a7f8b72e2fb73aa377e044cb3f3edc41838fae6a0f97a5b9f49336d1e181eae1。实际查看全部七页主文，8–66页提取文本逐页相同。编译没有未定义引用或缺失字符，两次TeX pass各有1.33pt输出vbox通知，查看页面未见重叠。详细记录为MANUSCRIPT_INSPECTION.json。
+
+本轮计为一次实际方法选择比较，完成计数由13到14；表达改进单独记录，不计科学增量。下一项工作按完整方法复查节点检查共同程序的知识、使用过程与最近邻贡献，选择有具体机制依据的整体设计，不自动增加局部试验队列。ccad配置已读取核实ACTIVE、5分钟、原对话，保持持续接续；本轮没有新增论文实验或附录。

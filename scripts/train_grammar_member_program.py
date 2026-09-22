@@ -206,6 +206,7 @@ def main():
         request = torch.ones(3, device=w.device)
         gain = torch.nn.Parameter(torch.ones(len(members), device=w.device))
         positions, cache = None, {}
+        execution_counts = None
         source_access = []
         acquisition_phase = 'normalization'
 
@@ -232,6 +233,8 @@ def main():
                              'part_member_support': 'input_part_member_support_budget'}.get(mode, c.get('native_operation', 'input_tangent_budget'))
                 delta, counts = input_member_delta(x, target, sp, active_q, operation,
                     c['members_per_source']*len(active_members), torch.ones(len(x), device=w.device))
+                if execution_counts is not None:
+                    execution_counts.append(dict(operation=operation,**counts))
                 if operation != 'raw_reconstruction':
                     assert counts['minimum_final_code'] >= -1e-5
             hh = h.clone()
@@ -275,11 +278,12 @@ def main():
 
         @torch.no_grad()
         def evaluate(name, execution):
-            nonlocal mode, q, request, fitting
+            nonlocal mode, q, request, fitting, execution_counts
             fitting = False
             mode = execution
             result = np.empty((len(queries), len(rows)), dtype=np.float64)
             for qi, (query, vector) in enumerate(queries.items()):
+                execution_counts = [] if c.get('record_execution_counts') else None
                 request = torch.tensor(vector, device=w.device, dtype=torch.float32)
                 q = request[part_ids]
                 for off in range(0, len(rows), c['eval_batch_pairs']):
@@ -291,6 +295,9 @@ def main():
                             component=row['task']+':'+str(row['row_id']), mode=query, operation=query,
                             method=name, seed=source_seed, target_seed=c['target_seed'], split=evaluation_split,
                             margin=value, accuracy=value > 0)
+                if execution_counts is not None:
+                    write(w.run/f'{name}__{query}__execution.json',execution_counts)
+                execution_counts = None
                 w.progress('EVALUATION', method=name, query=query)
             values[name] = result
             np.savez_compressed(w.run/'responses.npz', **values)

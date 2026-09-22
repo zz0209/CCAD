@@ -111,7 +111,7 @@ def main():
             w.checked(Path(c['model_local_dir'])/f,'Pinned Pythia70M','Apache-2.0')
         model=transformers.AutoModelForCausalLM.from_pretrained(c['model_local_dir'],local_files_only=True,dtype=torch.float32,attn_implementation='eager').eval().to(w.device)
         model.requires_grad_(False);model.config.use_cache=False
-        mode='clean';observed={};mask=None;pooled=None
+        mode='clean';observed={};mask=None;pooled=None;execution_counts=None
         def hook(site):
             def f(module,inputs,out):
                 nonlocal pooled
@@ -130,13 +130,16 @@ def main():
                     operation='input_tangent_budget' if 'active' in mode else 'input_fixed_budget'
                     delta,_=input_member_delta(x,targets[site],ss,q[site],operation,c['members_per_source']*len(q[site]),mask)
                     x=x+delta
-                elif mode in ('input_initial','tangent_gain','tangent_mixed') or mode.startswith('source_columns_'):
+                elif mode in ('input_initial','tangent_gain','tangent_mixed','request_initial','request_mixed') or mode.startswith('source_columns_'):
                     ss=sp[site]
                     if mode=='tangent_gain': ss={**ss,'decoder':ss['decoder']*source_gains[site][:,None]}
                     if mode.startswith('source_columns_'):
                         decoder=(sp[site]['decoder']*source_gains[site][:,None] if mode=='source_columns_scalar_mixed' else source_columns[site])
                         ss={**ss,'decoder':decoder}
-                    delta,_=input_member_delta(x,targets[site],ss,q[site],'input_tangent_budget',c['members_per_source']*len(q[site]),mask)
+                    operation='input_request_budget' if mode.startswith('request_') else 'input_tangent_budget'
+                    delta,counts=input_member_delta(x,targets[site],ss,q[site],operation,c['members_per_source']*len(q[site]),mask)
+                    if execution_counts is not None:
+                        execution_counts.append(dict(site=site,**counts))
                     x=x+delta
                 elif mode in ('geometry','geometry_gain','raw'):
                     t=targets[site];z=t.encode(x);b=baselines[site]
@@ -216,10 +219,11 @@ def main():
                     q[s]=torch.tensor([name=='full' or any(i in groups[g].get(s,[]) for g in name.split('+')) for i in source['members'][s]],device=w.device,dtype=torch.float32)
         @torch.no_grad()
         def evaluate(name):
-            nonlocal mode,mask
+            nonlocal mode,mask,execution_counts
             execution=c.get('evaluation_execution',{}).get(name,name)
-            mode=execution if execution.startswith(('transport_','source_columns_')) or execution in ('source','geometry','geometry_gain','raw','raw_reconstruction','input_initial','tangent_gain','tangent_mixed') else ('clean' if execution=='none' else 'student')
+            mode=execution if execution.startswith(('transport_','source_columns_','request_')) or execution in ('source','geometry','geometry_gain','raw','raw_reconstruction','input_initial','tangent_gain','tangent_mixed') else ('clean' if execution=='none' else 'student')
             for query in (['full'] if name=='none' else c['queries']):
+                execution_counts=[] if c.get('record_execution_counts') else None
                 set_query(query);values=np.empty(len(dev),dtype='float32');pooled_values=np.empty((len(dev),512),dtype='float32')
                 order=sorted(range(len(dev)),key=lambda i:len(dev[i]['tokens']))
                 off=0
@@ -233,6 +237,9 @@ def main():
                         v=dev[i]['tokens'];ids[j,:len(v)]=torch.tensor(v,device=w.device);mask[j,:len(v)]=1
                     _,po=forward(ids);values[ix]=(po@pw.T+pb).squeeze(-1).cpu().numpy();pooled_values[ix]=po.cpu().numpy()
                 np.save(w.run/f'{name}__{query}__pooled.npy',pooled_values)
+                if execution_counts is not None:
+                    write(w.run/f'{name}__{query}__execution.json',execution_counts)
+                execution_counts=None
                 for row,value in zip(dev,values):
                     w.record(kind='classification' if 'label' in row else 'response',task='profession',row_id=row['row_id'],component=row['document_sha256'],method=name,operation=query,seed=c['target_seed'],target_seed=c['target_seed'],split='dev',label=row.get('label'),gender=row['gender'],prediction=int(value>0),logit=float(value))
                 w.progress('EVALUATION',method=name,query=query)
@@ -304,7 +311,7 @@ def main():
             assert not training_targets or shared_columns
             for s in sites:
                 targets[s].load_state_dict(initial[s]);coefficients[s].data.copy_(base_coeff[s])
-                coefficients[s].requires_grad_(not independent and not shared_columns and not variant.startswith('tangent_'))
+                coefficients[s].requires_grad_(not independent and not shared_columns and not variant.startswith(('tangent_','request_')))
                 source_gains[s].data.fill_(1.);source_gains[s].requires_grad_(variant=='tangent_gain' or (scalar_columns and s in column_sites))
                 write_matrices[s].data.copy_(targets[s].encoder.weight);write_matrices[s].requires_grad_(independent and s in c['adapt_sites'])
                 source_columns[s].data.copy_(sp[s]['decoder']);source_columns[s].requires_grad_(shared_columns and not scalar_columns and s in column_sites)
@@ -323,7 +330,7 @@ def main():
                 ids=torch.tensor(nat[step*c['batch_sequences']:(step+1)*c['batch_sequences']],device=w.device)
                 mask=torch.ones_like(ids);mode='clean'
                 with torch.no_grad():clean_h,clean_pool=forward(ids);clean={s:observed[s].clone() for s in c['adapt_sites']}
-                if independent or shared_columns or variant in ('head_parts','pooled_parts','white_parts','pooled_whole','parts_relation','head_continuous','pooled_continuous','head_mixed','pooled_mixed','tangent_gain','tangent_mixed'):
+                if independent or shared_columns or variant in ('head_parts','pooled_parts','white_parts','pooled_whole','parts_relation','head_continuous','pooled_continuous','head_mixed','pooled_mixed','tangent_gain','tangent_mixed','request_mixed'):
                     if program_rows:
                         fit=program_rows[64:];take=[fit[(step*c['batch_sequences']+j)%len(fit)] for j in range(c['batch_sequences'])]
                         ids=program_batch(take);mode='clean'
@@ -347,13 +354,13 @@ def main():
                         for s in sites:q[s]=training_requests[s][step]
                     mode='source'
                     with torch.no_grad():teacher_h,teacher_pool=forward(ids)
-                    mode=variant if independent or shared_columns or variant.startswith('tangent_') else 'student';student_h,student_pool=forward(ids)
+                    mode=variant if independent or shared_columns or variant.startswith(('tangent_','request_')) else 'student';student_h,student_pool=forward(ids)
                     energy,pe=scales[:2]
                     state_loss=(token_mse(student_h-teacher_h)/energy+(student_pool-teacher_pool).square().mean()/pe)/2
                     response_energy=scales[2]
                     response_loss=((student_pool-teacher_pool)@pw.T).square().mean()/response_energy
                     weight=c.get('source_response_weight',0.)
-                    if independent or shared_columns or variant in ('head_parts','head_continuous','head_mixed','tangent_gain','tangent_mixed'):
+                    if independent or shared_columns or variant in ('head_parts','head_continuous','head_mixed','tangent_gain','tangent_mixed','request_mixed'):
                         program=(1-weight)*state_loss+weight*response_loss
                     elif variant=='white_parts':
                         error_pool=student_pool-teacher_pool

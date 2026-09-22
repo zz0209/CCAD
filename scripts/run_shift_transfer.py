@@ -39,12 +39,7 @@ def fit_parts(k,b,initial,iterations,total_only=False):
 
 
 def input_member_delta(x, target, source, q, mode, allowance, attention):
-    """Input-dependent columns, allocated once before the human-part query.
-
-    Evaluate bounded token chunks; inactive source columns are exactly zero.
-    Counts include real tokens only. Finite and tangent columns use the same
-    source coefficients and query-independent target support/capacity rule.
-    """
+    """按请求通过目标SAE成员计算更新，分批处理实际词元。"""
     import torch
     def source_codes(h):
         if 'sae' in source:
@@ -54,9 +49,30 @@ def input_member_delta(x, target, source, q, mode, allowance, attention):
     flat=x.reshape(-1,shape[-1]); keep=attention.reshape(-1).bool()
     result=torch.zeros_like(flat)
     count=dict(states=0,changed=0,increased=0,scaled=0,minimum_final_code=0.)
-    directions=-(target.encoder.weight@source['decoder'].T)
     norms=target.decoder.weight.norm(dim=0)
     indices=keep.nonzero().flatten()
+    if mode == 'input_request_budget':
+        budget = min(allowance, int(target.k))
+        count.update(max_changed_per_state=0, target_encode_calls=0, source_encode_calls=0)
+        for ix in indices.split(512):
+            h = flat[ix]
+            z, zs = target.encode(h), source_codes(h)
+            source_delta = -(zs*q)@source['decoder']
+            delta = target.encode(h+source_delta)-z
+            ids = (delta.abs()*norms).topk(budget, dim=-1).indices
+            selected = torch.zeros_like(delta).scatter(-1, ids, 1.)
+            delta = delta*selected
+            result[ix] = delta@target.decoder.weight.T
+            changed = (delta != 0).sum(-1)
+            count['states'] += len(ix)
+            count['changed'] += int(changed.sum())
+            count['increased'] += int((delta > 0).sum())
+            count['minimum_final_code'] = min(count['minimum_final_code'], float((z+delta).detach().min()))
+            count['max_changed_per_state'] = max(count['max_changed_per_state'], int(changed.max()))
+            count['target_encode_calls'] += 2
+            count['source_encode_calls'] += 1
+        return result.reshape(shape), count
+    directions=-(target.encoder.weight@source['decoder'].T)
     if mode.startswith('input_part_'):
         from ccad.request_capacity import part_request_columns
         part_ids = source['part_ids']
