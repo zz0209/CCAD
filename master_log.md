@@ -10523,3 +10523,39 @@ gpu-0核实free，GPU1743/16303MiB，D盘3434456285184bytes、E盘419796217856by
 独立主文试读完成三项表达修订，明确保存程序及源参数职责，固定矩阵实验集中承担请求训练原则，同一C(h)程序承担方法验证及后来使用；容量扩展与独立固定关系消费者缩为已有附录引用。两份原文件及原PDF逐字保留于pre_readability，重要结果在同一论文中的位置记录于READABILITY_CHANGES.md。已使用指定两项writing skills以及原编译与PDF工具。新PDF于2026-09-22T09:54:32.851400Z完成，主文7页、全稿66页、920046bytes、SHA256 a7f8b72e2fb73aa377e044cb3f3edc41838fae6a0f97a5b9f49336d1e181eae1。实际查看全部七页主文，8–66页提取文本逐页相同。编译没有未定义引用或缺失字符，两次TeX pass各有1.33pt输出vbox通知，查看页面未见重叠。详细记录为MANUSCRIPT_INSPECTION.json。
 
 本轮计为一次实际方法选择比较，完成计数由13到14；表达改进单独记录，不计科学增量。下一项工作按完整方法复查节点检查共同程序的知识、使用过程与最近邻贡献，选择有具体机制依据的整体设计，不自动增加局部试验队列。ccad配置已读取核实ACTIVE、5分钟、原对话，保持持续接续；本轮没有新增论文实验或附录。
+
+## FINITE_REQUEST_14 SYNC 2026-09-22T10:07:54Z
+
+实际写入UTC为2026-09-22T10:07:54Z。五份源码与主日志完成白名单提交及推送，HEAD=origin/main=3d71b3eb239af2b7ab8f4abd2fd4e8c34fcede8e。diff检查通过，实际CPU/GPU检查、两项完整运行、分析重放和独立结果检查均有保存证据。报告及全部开发结果按原范围本地保留；paper/main.pdf及同套源仍为唯一当前稿件。源码中的说明文字改为中文，运行冻结源码仍保留原版本。本次同步没有改变模型结果、原始数据或公开范围。tracker记录完成14及完整方法复查工作卡，automation继续ACTIVE、5分钟、原对话。
+
+## METHOD_VALUE_15 START 2026-09-22T10:21:20Z
+
+实际写入UTC为2026-09-22T10:21:20Z。接续完整方法复查，事件为当前heartbeat后的实际阅读，启动事件精确时间未单独计量。核对AGENTS、tracker、plan、指定两项writing skills、用户完整讨论、R12–R14原始分析与当前共同方法。当前git仅有上次同步后的主日志追加，没有运行中的训练队列。
+
+主要科学问题是适配目标字典与源解释共同保存什么可检验知识，以及该知识怎样改善后来的干预决定。当前C(h)q已经在同一保存程序上连接部分响应与分类器使用；本次不重复把该证据视为缺失。R12固定decoder、R13静态覆盖和R14整请求训练配方已经结束。独立agent分别读取最近邻机制、现有参数与激活证据，以及研究选择范围；检查者不启动实验或增加验收条件。具体产物位于artifacts/method_value_20260922。研究选择依据实际知识与使用收益，不依据下一个容易修改的代码环节。尚未授权新的计算队列；需要的计算预算按具体机制确定。
+
+一次追加尝试使用了tracker中的文字作为master_log上下文，apply_patch在写入前报告匹配失败；主日志原内容保持。本条使用实际主日志末尾作为追加位置。没有模型、数据或结果受到影响。
+
+## METHOD_VALUE_15 PROGRESS 2026-09-22T10:39:21Z
+
+实际写入UTC为2026-09-22T10:39:21Z。完整方法复查产生自然功能导数校准候选，设计为artifacts/method_value_20260922/OBSERVABLE_CALIBRATION.md。候选使用自然模型分布score梯度与重构训练目标encoder/decoder的共同Jacobian，替换逐解释程序监督；后来源解释仍通过既有C(h)q执行。训练阶段不读取待评解释成员、任务标签或源响应。Sobolev/Jacobian matching原文及与R23、全局Fisher、动作覆盖和R10的具体差别已核对并登记来源。
+
+独立检查者支持这一监督对象变化，要求以实际容量及成员选择后的完整干预决定采用；不把局部导数拟合或完全消除源依赖作为新验收条件。该意见采纳，记录在INDEPENDENT_SCOPE_REVIEW.md。实际参数比较说明共同方法在自然字典附近改变执行，数值接近不承担注释保留主张。NEIGHBOR_MECHANISMS.md与PARAMETER_MECHANISM.md保留原文和checkpoint证据。
+
+scripts/train_observable_dictionary.py使用既有MultisiteWork和MIT TopK，CPU真实算法检查通过，闭式adjoint与autograd最大误差0，参数梯度与更新、optimizer恢复、随机score重放及后续token梯度均通过。源文件冻结SHA256为3fc89379e58b2523c18d1136123475f1f91335b77c7c2b982d66ead507b931cd。主要配置为configs/mv15_gpt2_observable_dictionary.json，自然训练为128条discovery序列、32条独立文档split的calibration序列与匹配512更新的rec/adjoint。当前单元预算3600driver秒、14GB显存和4GB大型资产。
+
+第一次真实smoke在MultisiteWork创建run目录时发现D盘父目录尚不存在，于模型读取前退出，没有产生run。已建立D:/CCAD_Storage/runs/method_value_20260922后继续同一配置，session16944正在共享gpu-0租约下运行8条fit、2条eval与8次更新检查。运行由原r004环境承担，没有采购或新增安装。冻结后的语法评价配置已经准备，原请求列表已在运行前复核，实际结果尚未产生。准备和机制设计不增加研究完成计数。
+
+## METHOD_VALUE_15 COMPLETE 2026-09-22T10:50:33Z
+
+实际写入UTC为2026-09-22T10:50:33Z。MV15_GPT2_OBSERVABLE_T2_DEV_20260922_SMOKE于10:39:37.300681Z PASS；MV15_GPT2_OBSERVABLE_T2_DEV_20260922于10:41:15.466139Z PASS；MV15_GPT2_TRANSFER_T2_DEV_20260922于10:42:47.324458Z PASS，均为当日。已完成真实自然score采集、匹配rec/adjoint校准和冻结后的原C(h)q完整解释评价。训练使用128条discovery序列，32条calibration序列提供不同文档split的自然测量；三项语法各32个句对沿用已暴露开发面板。原11请求及七项主要请求逐项一致，模型、源定义、成员预算和容量执行保持。
+
+自然导数归一化平方误差为原字典.931025、rec .932887、adjoint .885374；FVE为.985795/.984682/.983932，平均L0均为64。真实新请求nRMSE为adjoint .308068、rec .286183、initial .294828、解释专用program .173549、原readout .164719、原固定关系.269682。adjoint减rec为+.021886，[−.000163,.047356]；减initial为+.013240，[−.009005,.038637]；减program为+.134519，[.106454,.165639]。2000次句对bootstrap共享各请求和方法抽样，条件于单source1/target2及固定语法。全部请求、任务和比较在TRANSFER_ANALYSIS.json；自然quality及cache保留于原run。
+
+原source、none、readout和fixed与RG08、FR14逐元素相同；program_reference与FR14 joint逐元素相同。RG08 initial及program最大差为6.5982e−5和6.2227e−5，主要均值变化分别+4.15e−8和−2.17e−7。首次复算预设全部逐元素相同，在发现实际差异时终止；后续RESPONSE_REPLAY_V2.json保存真实差值、执行身份及指标影响，V1保留。FR14 initial采用input_request_budget，与本轮input_tangent_budget分别解释。独立结果检查于10:47:25Z追加，直接从原始响应复算五项均值，与主分析相同。
+
+当前自然score adjoint训练配方结束，保留解释监督的共同程序。自然导数改善没有形成实际功能采用收益。研究归类为改变方法选择的诊断，导数改善单列局部结果，不称科学突破。该单目标开发结果没有判定所有自然监督或Jacobian方法的可能性。独立检查意见采纳，没有追加人工程序、权重、训练时长或支持变体。R7同程序使用和R9独立源定义复用仍是当前正面能力依据，后续研究考察其保存的作用信息，不重复把旧版本的消费者缺口当成未完成任务。
+
+三项driver合计122.725821秒，CUDA最大allocated2171559936bytes，bulk2197461481bytes，CPU分析约2.133秒，研究及等待时间未单独测量。session16944、68461、50708均退出，gpu-0核实free。原父目录缺失发生于run创建前；随后一次元数据读取请求了不存在的summary.json，实际汇总文件metrics.summary.json已正常读取，运行未受影响。全部资源、UTC、状态和恢复位置见RUN_INVENTORY.json。
+
+完整方法复查与真实候选比较完成，计数由14到15。主文、图表、附录和PDF没有新增内容。报告为artifacts/method_value_20260922/REPORT.md，设计、原文、参数分析、独立审阅和复算均在同目录。入口修改前逐字副本在before_closeout，plan SHA256为0b436c5d1293bcd7cb0d5e0e2fcfdfdf03c7c08d0f43268950313cdcd6a12beb，tracker为cfd7e657dfdd71c0d94883706839122be51bd07005b41a2e4c6bb3314e08d378。计划收拢当前选择，历史结果和适用规则保留。已核实ccad ACTIVE、5分钟、原对话；依据最新持续研究授权保持接续，节点15不触发自动暂停。
