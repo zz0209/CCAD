@@ -13,6 +13,24 @@ from train_shift_dictionaries import site_module
 from run_shift_transfer import input_member_delta
 
 
+def load_target_parameters(target, initial, trained, group=None):
+    assert group in (None, 'encoder', 'decoder')
+    target.load_state_dict(initial)
+    if group is None:
+        target.load_state_dict(trained)
+    else:
+        keys = ('encoder.weight', 'encoder.bias', 'b_dec') if group == 'encoder' else ('decoder.weight',)
+        state = dict(initial)
+        state.update({key: trained[key] for key in keys})
+        target.load_state_dict(state)
+
+
+def freeze_decoder_for_training(target):
+    target.requires_grad_(False)
+    target.encoder.requires_grad_(True)
+    assert {name for name, value in target.named_parameters() if value.requires_grad} == {'encoder.weight', 'encoder.bias'}
+
+
 def project_rows(a):
     """Euclidean projection onto nonnegative rows with total at most one."""
     import torch
@@ -28,6 +46,9 @@ def project_rows(a):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--config',type=Path,required=True)
     args=p.parse_args();c=json.loads(args.config.read_text())
+    freeze_decoder=c.get('freeze_target_decoder',False)
+    assert isinstance(freeze_decoder,bool)
+    assert not freeze_decoder or set(c['variants'])<= {'tangent_mixed'}
     w=MultisiteWork(c,args.config,['scripts/train_shift_response_space.py','scripts/run_shift_transfer.py','scripts/run_shift_explanation.py','scripts/train_shift_dictionaries.py','scripts/run_causalgym_multisite.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py'])
     hooks=[];error=None
     try:
@@ -196,7 +217,8 @@ def main():
         @torch.no_grad()
         def evaluate(name):
             nonlocal mode,mask
-            mode=name if name.startswith(('transport_','source_columns_')) or name in ('source','geometry','geometry_gain','raw','raw_reconstruction','input_initial','tangent_gain','tangent_mixed') else ('clean' if name=='none' else 'student')
+            execution=c.get('evaluation_execution',{}).get(name,name)
+            mode=execution if execution.startswith(('transport_','source_columns_')) or execution in ('source','geometry','geometry_gain','raw','raw_reconstruction','input_initial','tangent_gain','tangent_mixed') else ('clean' if execution=='none' else 'student')
             for query in (['full'] if name=='none' else c['queries']):
                 set_query(query);values=np.empty(len(dev),dtype='float32');pooled_values=np.empty((len(dev),512),dtype='float32')
                 order=sorted(range(len(dev)),key=lambda i:len(dev[i]['tokens']))
@@ -228,8 +250,10 @@ def main():
         if c.get('evaluate_checkpoints'):
             for variant,folder in c['evaluate_checkpoints'].items():
                 folder=Path(folder)
+                for s in sites:targets[s].load_state_dict(initial[s])
                 for s in c['adapt_sites']:
-                    targets[s].load_state_dict(torch.load(w.checked(folder/f'{s}_seed{c["target_seed"]}.pt'),map_location=w.device,weights_only=True))
+                    trained=torch.load(w.checked(folder/f'{s}_seed{c["target_seed"]}.pt'),map_location=w.device,weights_only=True)
+                    load_target_parameters(targets[s],initial[s],trained,c.get('evaluation_parameter_groups',{}).get(variant))
                 relation=np.load(w.checked(folder/'relation.npz'))
                 for s in sites:
                     a=torch.tensor(relation[s+'__native'],device=w.device,dtype=torch.float32)
@@ -242,7 +266,9 @@ def main():
                     for s in sites:write_matrices[s].data.copy_(loaded[s])
                 evaluate(variant)
             w.checks['completed_fixed_checkpoints']=True
-            return w.finish(None)
+            if not c.get('continue_training_after_evaluation',False):
+                return w.finish(None)
+            for s in sites:targets[s].load_state_dict(initial[s])
         # One common normalization for every arm. Near-zero-effect batches must
         # not receive arbitrarily larger weight than informative source actions.
         calibration=[];pooled_effects=[];calgen=torch.Generator(device=w.device).manual_seed(917)
@@ -283,6 +309,8 @@ def main():
                 write_matrices[s].data.copy_(targets[s].encoder.weight);write_matrices[s].requires_grad_(independent and s in c['adapt_sites'])
                 source_columns[s].data.copy_(sp[s]['decoder']);source_columns[s].requires_grad_(shared_columns and not scalar_columns and s in column_sites)
             for s in c['adapt_sites']:targets[s].requires_grad_(not independent and not shared_columns and variant not in ('parts_relation','tangent_gain'))
+            if freeze_decoder:
+                for s in c['adapt_sites']:freeze_decoder_for_training(targets[s])
             groups_opt=[dict(params=[p for p in params if p.requires_grad]+[v for v in write_matrices.values() if v.requires_grad],lr=c['dictionary_lr'])]
             groups_opt.append(dict(params=[a for a in coefficients.values() if a.requires_grad]+[g for g in source_gains.values() if g.requires_grad],lr=c['relation_lr']))
             groups_opt.append(dict(params=[v for v in source_columns.values() if v.requires_grad],lr=c.get('source_column_lr',.001)))
@@ -353,6 +381,14 @@ def main():
                 if time.perf_counter()-w.wall_start>c['budget_seconds']:raise TimeoutError('Program adaptation reached allocated wall budget')
             if training_targets:
                 for s in sites:targets[s].load_state_dict(initial[s])
+            if freeze_decoder:
+                for s in c['adapt_sites']:
+                    state=targets[s].state_dict()
+                    unchanged=all(torch.equal(state[key].cpu(),initial[s][key]) for key in ('decoder.weight','b_dec'))
+                    updated=any(not torch.equal(state[key].cpu(),initial[s][key]) for key in ('encoder.weight','encoder.bias'))
+                    w.checks[f'decoder_frozen_{variant}_{s}']=unchanged
+                    w.checks[f'encoder_updated_{variant}_{s}']=updated
+                    assert unchanged and updated
             dest=bulk/variant;dest.mkdir()
             for s in c['adapt_sites']:torch.save(targets[s].state_dict(),dest/f'{s}_seed{c["target_seed"]}.pt')
             if independent:

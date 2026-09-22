@@ -10437,3 +10437,35 @@ CAPACITY_CONFIRMATION_FREEZE.json已在预测前保存配置、源码、四个�
 原ccad通过应用automation_update原位恢复ACTIVE，周期保持5分钟，目标对话保持01a06e15-b222-7b21-a8cd-eb058a3159e5；最后一次工具返回Updated automation与ACTIVE。长期prompt和本地配置已核对相同，后续修正通知条件同步通过同一工具更新。用户持续运行要求取代到原15轮节点自动暂停，该节点保留为完整复查。未启用goal模式、未启动新增GPU工作、未增加人工要求。git diff --check通过；paper/main.pdf仍为d252e10b0d0c363cffc3407205774376f130945019cd3160450763b8ca6929ee，本次没有把文稿修改记作成果。
 
 下一研究单元需要形成一张可执行工作卡并直接完成必要检验，明确使用动作、确定构造、参数依赖、取代环节、区别于旧尝试的依据、改变决定的比较及预算。当前具体新构造仍在设计中，没有运行自动延续的训练菜单。独立检查将特别核对设计能否在同一单元形成实际取舍，防止连续同义规划。实际研究与等待未分别计量，无新增性能结果。本次核验中输入文件名resolved_config.json不存在，实际方法核对使用现行脚本及已有报告，未据该路径生成结果。
+
+## RESEARCH_REFORM_20260922 SYNC 2026-09-22T07:52:45Z
+
+实际写入UTC为2026-09-22T07:52:45Z。长期automation prompt与本单元主日志已提交并推送，HEAD与origin/main均为9424c51f05c7e97f260971b2eb90328b5c6fdf96。AGENTS、plan、tracker、用户讨论归档及独立审阅按现有忽略规则本地保留；未扩大公开清单。原automation保持ACTIVE，应用配置与项目prompt逐字核对通过。本条为推送后本地追加，研究轮次保持11，下一项设计及实际检验由当前对话继续。
+
+## METHOD_STRUCTURE_12 START 2026-09-22T08:08:29Z
+
+实际写入UTC为2026-09-22T08:08:29Z。本单元决定目标decoder能否保持原样，同时保留完整解释的部分请求能力。原独立writer在人工程序.17018、联合适配.08375，原比较固定自然激活；新候选训练encoder.weight/bias，使激活支持、容量和切向系数共同学习，decoder.weight及b_dec固定。输入为源解释、目标SAE及原训练上下文，输出为保持原目标方向的程序适配，运行仍需要源定义。该构造不增加模块，候选成功时取代联合decoder更新。
+
+完整人工55成员、GPT2三语法分别使用原开发目标和文本，进行保存参数的四组合诊断及512次匹配训练。参数交换中的中心归入编码组，不能仅凭交换结果证明冻结训练可行。原joint程序与source-direction readout保留。两次真实smoke、两次候选训练及已存checkpoint评价预算2400driver秒、14GB显存、4GB新D盘产物。GPU租约free，nvidia-smi实测1743/16303MiB。环境沿用r004及原overlay。新增代码仅为现有driver的参数限制和checkpoint组别评价，子agent承担此有界修改，当前对话承担配置、运行与判断。
+
+独立检查者已据现有原始分析建议保留联合适配为比较起点，结束独立线性writer配方。其意见采纳；本单元进一步检验活跃成员分配这一原比较未改变的参数机制，若能力不足便结束参数限制配方。文献agent核对PW-MCC、Subspaces及IIT原文，确认标准干预监督和参数冻结不单独构成方法新颖性。科学成果按实际能力、机制或方法取舍记账，本项启动不增加完成计数。
+
+## METHOD_STRUCTURE_12 PROGRESS 2026-09-22T08:26:17Z
+
+实际写入UTC为2026-09-22T08:26:17Z。两项真实smoke分别在08:13:13及08:15:26UTC完成，status均PASS，实际driver时间56.973及26.837秒。目标decoder和中心逐元素保持、encoder实际更新已验证。完整人工开发MS12_HUMAN_ENCODER_T1_DEV_20260922已进入512次训练，08:25:50UTC进度144/512，峰值3.118GB。GPT2开发session81249按共享GPU租约排队，人工session40867。两项主要运行均复用原开发数据和原joint检查点，没有读取新确认面板。
+
+独立检查认为当前参数限制确实检验旧writer未改变的激活／支持／容量机制，未增加新门槛。四组合中的中心参数归编码组，与候选训练同时固定中心的差别保持明确。最新原文阅读记录于REFERENCE_REGISTRY，UAI2026 Stop Probing, Start Coding正式PDF与网页摘要结论存在版本不一致，研究解释依据正式PDF；其无监督FISTA比较不代替当前干预程序比较。实际运行尚未提供候选完整结果，原稿保持。
+
+## METHOD_STRUCTURE_12 CORRECTION 2026-09-22T08:27:14Z
+
+实际写入UTC为2026-09-22T08:27:14Z。前条PROGRESS手工填写08:26:17Z，工具实际读取时间为08:26:37Z，该条追加随后完成。真实追加发生于08:26:37Z之后，精确完成秒未知；原文保留，事件时间均来自run实际进度。后续日志使用当前时间工具返回值直接构造记录，停止手工估计秒数。实验身份、配置和科学数据不受影响。
+
+## METHOD_STRUCTURE_12 COMPLETE 2026-09-22T08:42:19Z
+
+实际写入UTC为2026-09-22T08:42:19Z。完整人工程序和GPT2语法的两项真实smoke与两项512次匹配训练均PASS。人工新参与请求的误差为原实现.191616、联合适配.083751、固定decoder训练.115564、原source-direction readout .094251。固定decoder相对联合适配增加.031813，职业及性别分层的配对文档区间[.027200,.036503]；完整及部分请求同样支持联合适配。GPT2相应误差为.294828、.173549、.163688、.164719，冻结相对联合的差值−.009861，按任务分层的配对句对区间[−.025500,.005924]。全部结果条件于各自单source与单target，采用已经使用过的开发材料。
+
+decoder.weight和b_dec逐元素保持、encoder发生更新均由真实checkpoint核实。人工source及joint输出与原SCIENCE03逐元素一致，训练成员、评价成员与损失尺度一致。四组合诊断保留原中心归编码组的定义。全部raw与源码在D:/CCAD_Storage/runs/method_structure_20260922，四个run ID、完整方法比较和复算入口在artifacts/method_structure_20260922/REPORT.md，主要分析为COMBINED_ANALYSIS_V2.json。V2将通用语法重采样描述改为固定source/target，数值重放与原分析逐项一致。第一次分析文件名与human_development.json在Windows规则下冲突，写入前明确终止，原配置未修改，后续独立命名成功。
+
+实际driver合计922.304892秒，118168序列forward及7978236词元forward，最大CUDA allocated3118256128bytes，全部bulk807708895bytes。四项运行按gpu-0租约顺序完成，结束后租约free。环境保持r004及既有overlay，没有安装、下载、人工新增或采购。真实计算与准备时间未分别计量。代码已通过真实CPU参数更新检查、真实GPU smoke、完整开发运行及diff检查；本次仅补充现有driver的参数限制和保存参数组合评价。
+
+独立检查者在08:34:25Z完成结果审阅，支持保留联合适配为共同方法，结束冻结decoder配方，GPT2可行性结果保留开发身份。采纳其单target统计说明修正。文献核对记录于REFERENCE_REGISTRY.md，既有writer、IIT和端到端SAE训练与本候选的实际差别已核对。anti-defensive-writing和defensive-writing-checker用于当前方法决定与报告结构，结果留在研究记录，论文与附录保持原样。本轮归类为改变方法选择的结构诊断，研究完成计数由11推进到12，不增加科学突破或同行评分。原automation保持ACTIVE并接续整体方法研究。旧plan及tracker逐字保存在本轮BEFORE_CLOSEOUT文件。

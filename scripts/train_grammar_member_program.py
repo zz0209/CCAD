@@ -16,6 +16,24 @@ from run_causalgym_multisite import MultisiteWork, ROOT, write
 from run_shift_transfer import input_member_delta
 
 
+def load_target_parameters(target, initial, trained, group=None):
+    assert group in (None, 'encoder', 'decoder')
+    target.load_state_dict(initial)
+    if group is None:
+        target.load_state_dict(trained)
+    else:
+        keys = ('encoder.weight', 'encoder.bias', 'b_dec') if group == 'encoder' else ('decoder.weight',)
+        state = dict(initial)
+        state.update({key: trained[key] for key in keys})
+        target.load_state_dict(state)
+
+
+def freeze_decoder_for_training(target):
+    target.requires_grad_(False)
+    target.encoder.requires_grad_(True)
+    assert {name for name, value in target.named_parameters() if value.requires_grad} == {'encoder.weight', 'encoder.bias'}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True, type=Path)
@@ -106,6 +124,9 @@ def main():
         c.update(steps=8, checkpoint_every=8, fit_pairs_per_task=8,
                  eval_pairs_per_task=2, learning_curve_steps=[4], budget_seconds=240)
         c['run_id'] += '_SMOKE_V2'
+    freeze_decoder = c.get('freeze_target_decoder', False)
+    assert isinstance(freeze_decoder, bool)
+    assert not freeze_decoder or set(c['variants']) <= {'program'}
     w = MultisiteWork(c, args.config, [
         'scripts/train_grammar_member_program.py', 'scripts/run_shift_transfer.py',
         'scripts/run_shift_explanation.py', 'scripts/train_shift_dictionaries.py',
@@ -295,11 +316,14 @@ def main():
             saved = torch.load(w.checked(item['path'].format(target_seed=c['target_seed'],
                                training_run=c.get('checkpoint_run_by_target', {}).get(str(c['target_seed']), ''))),
                                map_location=w.device, weights_only=True)
-            target.load_state_dict(saved['dictionary'])
+            parameter_group = c.get('evaluation_parameter_groups', {}).get(name)
+            load_target_parameters(target, initial, saved['dictionary'], parameter_group)
             target.requires_grad_(False)
             evaluate(name, item['execution'])
-            assert all(torch.equal(target.state_dict()[key], value)
-                       for key, value in saved['dictionary'].items())
+            changed_keys = {'encoder.weight', 'encoder.bias', 'b_dec'} if parameter_group == 'encoder' else {'decoder.weight'}
+            expected = saved['dictionary'] if parameter_group is None else {
+                key: saved['dictionary'][key] if key in changed_keys else value for key, value in initial.items()}
+            assert all(torch.equal(target.state_dict()[key], value) for key, value in expected.items())
         target.load_state_dict(initial)
         endpoint_parts = torch.eye(3, device=w.device)[training_parts]
         endpoints = torch.cat([endpoint_parts, endpoint_parts.sum(0, keepdim=True)])
@@ -366,9 +390,11 @@ def main():
             target.load_state_dict(prior if variant == 'program_warm' else initial)
             is_program = variant.startswith('program')
             target.requires_grad_(is_program or variant == 'whole')
+            if freeze_decoder:
+                freeze_decoder_for_training(target)
             gain.data.fill_(1.)
             gain.requires_grad_(variant == 'gain')
-            parameters = [gain] if variant == 'gain' else list(target.parameters())
+            parameters = [gain] if variant == 'gain' else list(target.encoder.parameters()) if freeze_decoder else list(target.parameters())
             optimizer = torch.optim.AdamW(parameters, lr=c['gain_lr'] if variant == 'gain' else c['dictionary_lr'], weight_decay=0.)
             assert len(optimizer.state) == 0
             first_step = 0
@@ -405,7 +431,7 @@ def main():
                 torch.nn.utils.clip_grad_norm_(parameters, 1.)
                 optimizer.step()
                 with torch.no_grad():
-                    if is_program or variant == 'whole':
+                    if target.decoder.weight.requires_grad and (is_program or variant == 'whole'):
                         target.decoder.weight.div_(target.decoder.weight.norm(dim=0).clamp_min(1e-10))
                     gain.clamp_(min=0)
                 assert bool(torch.isfinite(loss))
@@ -418,6 +444,13 @@ def main():
                 if step+1 in c.get('learning_curve_steps', []):
                     evaluate(f'{variant}_step{step+1}', 'tangent')
                     fitting = True
+            if freeze_decoder:
+                state = target.state_dict()
+                unchanged = all(torch.equal(state[key], initial[key]) for key in ('decoder.weight', 'b_dec'))
+                updated = any(not torch.equal(state[key], initial[key]) for key in ('encoder.weight', 'encoder.bias'))
+                w.checks[f'decoder_frozen_{variant}'] = unchanged
+                w.checks[f'encoder_updated_{variant}'] = updated
+                assert unchanged and updated
             evaluate(variant, 'gain' if variant == 'gain' else 'tangent')
             if variant == 'program':
                 evaluate('readout_program', 'readout')
