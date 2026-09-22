@@ -102,20 +102,23 @@ def main():
     parser.add_argument('--run', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--bootstrap', type=int, default=2000)
+    parser.add_argument('--focal', default='adjoint')
     args = parser.parse_args()
     assert not args.output.exists(), args.output
     assert args.bootstrap > 0
     with np.load(args.run/'responses.npz') as arrays:
-        assert 'adjoint' in arrays.files, arrays.files
-    output = family_analysis(args.run, args.bootstrap)
+        assert args.focal in arrays.files, arrays.files
+    output = family_analysis(args.run, args.bootstrap, focal=args.focal)
     methods = list(output['summary'])
     requested = ['initial', 'program_reference', 'rec', 'adjoint', 'readout', 'fixed']
+    if args.focal != 'adjoint':
+        requested = methods
     output['reported_methods'] = [method for method in requested if method in methods]
     output['additional_methods'] = [method for method in methods if method not in requested]
     output['primary_comparisons'] = {name: output['comparisons'][name]['primary']
-                                     for other in ['rec', 'initial', 'program_reference']
-                                     if (name := 'adjoint_minus_'+other) in output['comparisons']}
-    output['per_query'] = query_analysis(args.run, methods, args.bootstrap)
+                                     for other in (['rec', 'initial', 'program_reference'] if args.focal == 'adjoint' else methods)
+                                     if (name := args.focal+'_minus_'+other) in output['comparisons']}
+    output['per_query'] = query_analysis(args.run, methods, args.bootstrap, focal=args.focal)
     output['inference'] = ('Paired document resampling within each fixed grammatical task, '
                            'with all requests and methods sharing each draw. One fixed source '
                            'and target dictionary; intervals describe the document population '

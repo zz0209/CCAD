@@ -73,6 +73,49 @@ def input_member_delta(x, target, source, q, mode, allowance, attention):
             count['source_encode_calls'] += 1
         return result.reshape(shape), count
     directions=-(target.encoder.weight@source['decoder'].T)
+    if mode in ('input_paired_budget', 'input_orthogonal_budget'):
+        from ccad.paired_projection import paired_coefficients
+        method = 'oblique' if mode == 'input_paired_budget' else 'orthogonal'
+        count.update(rank_min=None, rank_max=0, selected_max=0, condition_max=0.,
+                     coefficient_amplification_max=0., projection_residual_max=0.)
+        for ix in indices.split(32):
+            h = flat[ix]
+            z, zs = target.encode(h), source_codes(h)
+            active = z > 0
+            score = (zs@directions.abs().T)*active*norms
+            original_ids = score.topk(allowance, dim=-1).indices
+            selected = active*torch.zeros_like(score).scatter(-1, original_ids, 1.)
+            width = min(allowance, int(target.k))
+            ids = selected.topk(width, dim=-1).indices
+            retained = selected.gather(1, ids)
+            wj = target.encoder.weight[ids]*retained[..., None]
+            dj = target.decoder.weight.T[ids].transpose(-1, -2)*retained[:, None, :]
+            field = -source['decoder'].T[None]*zs[:, None, :]
+            columns, diagnostics = paired_coefficients(wj, dj, field, method=method)
+            columns = columns*retained[..., None]
+            cap = z.gather(1, ids)*retained
+            negative = (-columns).clamp_min(0)
+            scale = (cap/negative.sum(-1).clamp_min(1e-20)).clamp_max(1)
+            delta = (columns.clamp_min(0)-negative*scale[..., None])@q
+            result[ix] = (dj@delta[..., None]).squeeze(-1)
+            original_columns = directions[ids]*zs[:, None, :]*retained[..., None]
+            amplification = columns.norm(dim=(-1, -2))/original_columns.norm(dim=(-1, -2)).clamp_min(1e-20)
+            count['states'] += len(ix)
+            count['changed'] += int((delta != 0).sum())
+            count['increased'] += int((delta > 0).sum())
+            count['scaled'] += int(((scale < 1) & (negative.sum(-1) > 0)).sum())
+            count['minimum_final_code'] = min(count['minimum_final_code'], float((cap+delta).detach().min()))
+            count['selected_max'] = max(count['selected_max'], int(retained.sum(-1).max()))
+            ranks = diagnostics['rank']
+            rank_min = int(ranks.min())
+            count['rank_min'] = rank_min if count['rank_min'] is None else min(count['rank_min'], rank_min)
+            count['rank_max'] = max(count['rank_max'], int(ranks.max()))
+            valid_rank = ranks > 0
+            if bool(valid_rank.any()):
+                count['condition_max'] = max(count['condition_max'], float(diagnostics['condition_retained'][valid_rank].max()))
+            count['coefficient_amplification_max'] = max(count['coefficient_amplification_max'], float(amplification.max()))
+            count['projection_residual_max'] = max(count['projection_residual_max'], float(diagnostics['inverse_identity_relative_error'].max()))
+        return result.reshape(shape), count
     if mode.startswith('input_part_'):
         from ccad.request_capacity import part_request_columns
         part_ids = source['part_ids']

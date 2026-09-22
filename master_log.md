@@ -10609,3 +10609,47 @@ scripts/train_observable_dictionary.py使用既有MultisiteWork和MIT TopK，CPU
 ## SOURCE_EFFECT_16 CORRECTION 2026-09-22T11:55:20Z
 
 实际写入UTC为2026-09-22T11:55:20Z。按source1评价的原status.json核对，其started_at_utc为2026-09-22T11:42:07.920550Z。上一完成记录的末位微秒误记为920552，差2微秒；本条保留精确原值。RUN_INVENTORY_V2.json与原status.json数值一致，结果、时长与方法选择均保持。
+
+## SOURCE_EFFECT_16 SYNC 2026-09-22T11:59:28Z
+
+实际写入UTC为2026-09-22T11:59:28Z。本单元四份源码、三份配置及主日志按既有白名单完成提交与推送，HEAD、origin/main及远程refs/heads/main均核实为76aea62f98ba59fb2fe9aba4fe65f601697d1952。暂存内容检查与git diff --check通过，实际训练、评价及独立统计复算已完成。研究文档、原始数据和当前论文继续保留原位置。tracker记录本轮完成及后续结构研究选择，automation保持持续接续，没有新增运行队列。此条同步事实在该提交完成后追加。
+
+## PAIRED_PROJECTION_17 START 2026-09-22T12:09:25Z
+
+实际写入UTC为2026-09-22T12:09:25Z。接续R16保留原共同程序的决定，本单元研究自然编码和干预执行的系数关系。启动重新读取AGENTS、tracker、plan、两项指定writing skills、当前执行代码与旧transport实验。普通进程读取因权限被拒绝，授权只读检查确认没有本项目Python任务；GPU使用1743MiB、可用14253MiB、利用率1%。没有启动模型计算。首次日志追加因匹配旧SYNC时间错误而未执行，本条使用核实后的实际原文。
+
+主要问题是目标encoder的读取与decoder写入能否形成一致的投影。balanced POD／Petrov–Galerkin原文提供同一表示空间采用不同读取规则的依据。固定支持上的双基最小二乘与旧约束求解已有等价联系。源码检查进一步指出，使用L=(W_J D_J)†W_J形成保留encoder读取方向的投影，与旧D_J†的Euclidean坐标不同。它保持当前支持及容量，通过校正局部encoder／decoder配对替换原执行系数。该对象的代数关系、历史实现差别和数值秩将决定实际比较。
+
+机制阅读与源码历史比较分别由mechanism_reading和request_execution承担；independent_research_monitor检查主要选择。研究目录为artifacts/paired_projection_20260922。本阶段使用阅读、数学推导与轻量源码检查，模型计算预算将在具体构造确定后登记tracker。当前论文保持原内容，准备与推导不增加科学完成计数。
+
+## PAIRED_PROJECTION_17 PROGRESS 2026-09-22T12:17:39Z
+
+实际写入UTC为2026-09-22T12:17:39Z。原文和成熟实现核对完成，采用标准Petrov–Galerkin局部配对校正作为具体结构比较。旧加权求解具有相同最小二乘数学家族；本次使用当前目标encoder产生读取metric，并在同一最终active支持上校正W_JD_J。原encoder、decoder、源贡献、请求和容量均保持。独立检查支持零训练比较，原字典与保存program分别检验；不进入可微训练或正则菜单。实际原文、modred和PyTorch文档核对在MECHANISM_READING.md，历史代码和结果在IMPLEMENTATION_HISTORY.md，来源已登记REFERENCE_REGISTRY.md。
+
+共享input_member_delta已接入paired与orthogonal两种读取，运行时只对实际支持的小矩阵求逆，保持零padding身份。数值秩使用有效成员数乘float32 epsilon，分解采用float64。记录rank、有效条件数、系数放大量和容量缩放，未分配投影恒等式与实际执行分别解释。统计复用现有family/query分析，并保留原默认adjoint调用。py_compile和diff检查通过，真实CPU验证进行中。
+
+tracker登记同一source1／target2完整开发比较，固定96个已暴露句对、11请求、七个原主要请求。代表性GPU检查用每语法2句对。预算900driver秒、14GB显存、1GBbulk，使用D:/CCAD_Storage/runs/paired_projection_20260922。共享资源当前free，D盘3429870600192bytes、E盘419778392064bytes可用；没有安装、下载或新增人工工作。
+
+## PAIRED_PROJECTION_17 PROGRESS 2026-09-22T12:23:15Z
+
+实际写入UTC为2026-09-22T12:23:15Z。真实CPU检查于2026-09-22T12:17:36.540115Z完成，8个自然状态的支持均为64成员，原始参数保持，全部模式及请求通过。配对矩阵有效条件数为2.93至4.14，投影幂等残差不超过2.62e-15，容量分配后代码非负。输出为本轮CPU_SMOKE.json。
+
+GPU代表性运行PP17_GPT2_S1_T2_DEV_20260922_EVAL2于2026-09-22T12:19:02.574335Z完成，driver26.773113秒，9方法、11请求、6句对，共594响应记录，status及原始结果保留。固定原配置启动96句对完整开发评价，session79153，通过共享gpu-0管理器执行，bulk为同根目录PP17_GPT2_S1_T2_DEV_20260922。代表性检查用于核实实现与资源，完整评价配置保持原定。一次读取使用不存在的metrics.json名称，随后核对目录并确认实际文件为metrics.summary.json，未改写输出。
+
+## PAIRED_PROJECTION_17 PROGRESS 2026-09-22T12:32:02Z
+
+实际写入UTC为2026-09-22T12:32:02Z。完整运行于2026-09-22T12:26:14.750239Z完成，session79153退出，9504响应记录。原七请求误差为initial .294828、paired_initial .284026、orthogonal_initial .287506、program .173549、paired_program .195520、orthogonal_program .197634、原readout .164719。配对相对原读取在自然字典上的差值−.010802，[−.025638,.003653]；program上的差值+.021971，[.000170,.042323]。全部部件、完整请求、任务和请求明细由原统计函数计算，保持固定source1／target2、已暴露96句对的开发身份。
+
+实际rank均为64，配对有效条件数不超过6.784598，系数放大量不超过1.075706。program配对最小最终代码为−1.90735e−6，在既定float32容差内，未修改原始值。原方法与R15同面板五份数组逐元素一致，RG08的初始与program历史数值差异保留。REPLAY_AND_EXECUTION_V2.json将readout未更新的调用计数记为未知并保留原零值；旧汇总不覆盖。
+
+结果支持结束本解析配对配方、保留原执行。两个GPU运行合计253.977268秒，峰值2223921664bytes，新增bulk5044765bytes，共享gpu-0已核实free。独立检查者收到完整原始结果，正在完成本项方法取舍检查。论文未追加内容；本轮报告、统计命令、来源和资源已保存。当前等待检查期间核对早期通用有限干预训练记录，以判断后续选择是否重复旧配方，没有启动新模型运行。
+
+## PAIRED_PROJECTION_17 COMPLETE 2026-09-22T12:42:22Z
+
+实际写入UTC为2026-09-22T12:42:22Z。本轮已完成原文与成熟源码学习、数学与历史比较、真实CPU及GPU检查、96句对开发评价、完整配对统计和独立复算。模型运行实际结束时间为2026-09-22T12:26:14.750239Z，独立检查于2026-09-22T12:38:43Z写入。实际研究、计算与等待未分别计时。两项GPU运行合计driver253.977268秒，资源与源码身份见artifacts/paired_projection_20260922/RUN_INVENTORY.json。
+
+独立检查直接从原始数组复算主要均值及2000次配对bootstrap，结果一致，未发现改变方法选择的实现或比较缺陷。采纳保留原执行、结束解析配对的建议。原字典七请求差值−.010802的区间包含零，program误差由.173549增至.195520；同支持Euclidean没有配对之外的采用理由。本轮归类为改变方法选择的诊断及可复算实现，科学能力没有增加。原有共同方法及强对照保持，当前配方不扩展为人工程序确认或新的系数菜单。
+
+后续选择转向当前关系返回的目标组成及实际研究决定。现有R7同程序消费者的完整证据保持；研究者怎样利用关系中保存的部分作用选择、检查或调用目标组成，将决定需要改变的结构。该项是研究机会，不追加为整篇论文的统一验收条件。早期5632步逐位置和512步多位置generic有限干预训练均已真实执行且结束当前配方，后来局部贡献训练与之区分；没有将其改名重新进入队列。
+
+入口更新前逐字保存TRACKER_BEFORE_CLOSEOUT.md，SHA256为09982209593c0b25b25f2b47cb5471a91621b5a66c786c34efcc9c30cee09f60；PLAN_BEFORE_CLOSEOUT.md为214d6fbc5dbe64b87728cec78f3f8a77515825cb7df5675b30ba77666df2d7b1。plan和tracker记录取舍与恢复位置。两项指定writing skills用于以方法与实际证据组织报告，临时尝试保留研究记录。paper/main.pdf实际核实SHA256仍为a7f8b72e2fb73aa377e044cb3f3edc41838fae6a0f97a5b9f49336d1e181eae1，稿件和图表保持原内容。automation持续接续，无新增goal、人工要求、付费或对外投稿。

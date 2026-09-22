@@ -234,7 +234,8 @@ def main():
         'scripts/train_grammar_member_program.py', 'scripts/run_shift_transfer.py',
         'scripts/run_shift_explanation.py', 'scripts/train_shift_dictionaries.py',
         'scripts/run_causalgym_multisite.py', 'scripts/run_r011s1_raw_hook_asset.py',
-        'src/ccad/artifacts.py', 'src/ccad/activation_contract.py', 'src/ccad/request_capacity.py'])
+        'src/ccad/artifacts.py', 'src/ccad/activation_contract.py', 'src/ccad/request_capacity.py',
+        'src/ccad/paired_projection.py'])
     handle, error = None, None
     try:
         torch.set_num_threads(2)
@@ -362,6 +363,7 @@ def main():
                 if mode == 'gain':
                     sp = dict(active_source, transport_basis=-(target.encoder.weight@active_source['decoder'].T)*gain[active_indices])
                 operation = {'readout': 'raw_reconstruction', 'member_columns': 'input_tangent_budget',
+                             'paired': 'input_paired_budget', 'orthogonal': 'input_orthogonal_budget',
                              'part_member_support': 'input_part_member_support_budget'}.get(mode, c.get('native_operation', 'input_tangent_budget'))
                 delta, counts = input_member_delta(x, target, sp, active_q, operation,
                     c['members_per_source']*len(active_members), torch.ones(len(x), device=w.device))
@@ -447,6 +449,9 @@ def main():
         evaluate('source', 'source')
         evaluate('initial', 'tangent')
         evaluate('readout_initial', 'readout')
+        for name, execution in c.get('initial_executions', {}).items():
+            assert execution in ('paired', 'orthogonal')
+            evaluate(name, execution)
         if c.get('native_operation', '').startswith('input_part_'):
             evaluate('initial_member', 'member_columns')
         if prior is not None:
