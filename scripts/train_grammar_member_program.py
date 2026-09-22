@@ -4,6 +4,7 @@ import os
 import sys
 import time
 import traceback
+from datetime import datetime, timezone
 from pathlib import Path
 
 os.environ.update(CUBLAS_WORKSPACE_CONFIG=':4096:8', OMP_NUM_THREADS='2',
@@ -14,6 +15,7 @@ import transformers
 
 from run_causalgym_multisite import MultisiteWork, ROOT, write
 from run_shift_transfer import input_member_delta
+from ccad.artifacts import sha256
 
 
 def load_target_parameters(target, initial, trained, group=None):
@@ -34,6 +36,85 @@ def freeze_decoder_for_training(target):
     assert {name for name, value in target.named_parameters() if value.requires_grad} == {'encoder.weight', 'encoder.bias'}
 
 
+def balanced_source_schedule(seeds, steps, training_seed, endpoint_count=4):
+    seeds = np.asarray(seeds, dtype=np.int64)
+    assert len(seeds) in (1, 2) and len(set(seeds.tolist())) == len(seeds)
+    rng = np.random.default_rng(training_seed+30000)
+    schedule = np.empty(steps, dtype=np.int64)
+    endpoint_positions = np.arange(0, steps, 2)
+    endpoint_groups = [endpoint_positions[i::endpoint_count] for i in range(endpoint_count)]
+    # 每类 endpoint 分别平衡；小样本中的不足一组请求按 endpoint 总量平衡。
+    groups = endpoint_groups if all(len(group) % len(seeds) == 0 for group in endpoint_groups) else [endpoint_positions]
+    for positions in [*groups, np.arange(1, steps, 2)]:
+        source_ids = np.resize(seeds, len(positions))
+        rng.shuffle(source_ids)
+        schedule[positions] = source_ids
+    return schedule
+
+
+def grouped_source_members(gate):
+    assert gate.ndim == 2 and gate.shape[1] == 3
+    members = gate.sum(1).nonzero().flatten()
+    parts = gate[members].argmax(1)
+    assert bool(((gate == 0) | (gate == 1)).all()) and bool((gate.sum(1) <= 1).all())
+    assert len(members) == 192 and torch.equal(torch.bincount(parts, minlength=3), torch.full((3,), 64, device=gate.device))
+    return members, parts
+
+
+def check_training_sources(c, output):
+    seeds = c['training_source_seeds']
+    definitions, identity = {}, {}
+    request = torch.tensor([.125, .625, 1.])
+    for seed in seeds:
+        path = Path(c['source_run'])/f'topk_s{seed}_source.npz'
+        gate = torch.from_numpy(np.load(path)['gate']).float()
+        members, parts = grouped_source_members(gate)
+        active_q = request[parts]
+        torch.testing.assert_close(active_q, gate[members]@request, rtol=0, atol=0)
+        # 从真实 gate 同时按组和按成员计算请求，检查各源自身的坐标顺序。
+        values = torch.arange(1, len(members)+1, dtype=torch.float32)
+        member_sum = (values*active_q).sum()
+        group_sum = sum(request[p]*values[parts == p].sum() for p in range(3))
+        torch.testing.assert_close(member_sum, group_sum, rtol=0, atol=0)
+        definitions[seed] = (members, parts)
+        identity[str(seed)] = dict(gate=str(path.resolve()), gate_sha256=sha256(path), members=members.tolist(),
+                                   part_ids=parts.tolist(), group_counts=torch.bincount(parts).tolist())
+    schedule_checks = {}
+    for steps in [8, 512]:
+        schedule = balanced_source_schedule(seeds, steps, c['training_seed'])
+        assert np.array_equal(schedule, balanced_source_schedule(seeds, steps, c['training_seed']))
+        counts = {kind: {str(seed): int((schedule[parity::2] == seed).sum()) for seed in seeds}
+                  for kind, parity in [('endpoint', 0), ('continuous', 1)]}
+        assert all(max(v.values())-min(v.values()) <= 1 for v in counts.values())
+        if steps == 512:
+            for endpoint in range(4):
+                selected = schedule[np.arange(2*endpoint, steps, 8)]
+                assert len({int((selected == seed).sum()) for seed in seeds}) == 1
+        fit_count = len(c['tasks'])*(8 if steps == 8 else c['fit_pairs_per_task'])
+        rng = np.random.default_rng(c['training_seed'])
+        rng.random((steps, 3))
+        order = rng.permutation(fit_count)
+        row_batches = np.array([[order[(step*c['batch_pairs']+j) % fit_count]
+            for j in range(c['batch_pairs'])] for step in range(steps)])
+        counts['unique_rows'] = {str(seed): len(np.unique(row_batches[schedule == seed])) for seed in seeds}
+        counts['available_rows'] = fit_count
+        schedule_checks[str(steps)] = counts
+    ordering = {f'{a}_{b}': dict(member_ids_differ=int((definitions[a][0] != definitions[b][0]).sum()),
+        part_order_differs=int((definitions[a][1] != definitions[b][1]).sum()))
+        for i, a in enumerate(seeds) for b in seeds[i+1:]}
+    result = dict(status='PASS', written_utc=datetime.now(timezone.utc).isoformat(),
+                  source_sha256=sha256(Path(__file__)), config_sha256=sha256(Path(c['_check_config_path'])),
+                  source_definitions=identity, actual_source_ordering=ordering,
+                  balanced_request_types=schedule_checks, request_indexing_exact=True,
+                  single_source_schedule_constant=bool((balanced_source_schedule([seeds[0]], 512, c['training_seed']) == seeds[0]).all()),
+                  deterministic_resume_schedule=True, gpu_used=False)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    write(output, result)
+    print(json.dumps(dict(status=result['status'], output=str(output),
+        actual_source_ordering=ordering, schedule_checks=schedule_checks)), flush=True)
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True, type=Path)
@@ -49,8 +130,13 @@ def main():
     parser.add_argument('--adapt-smoke', action='store_true')
     parser.add_argument('--part-columns', action='store_true')
     parser.add_argument('--evaluation-pairs', type=int)
+    parser.add_argument('--program-smoke', action='store_true')
+    parser.add_argument('--check-training-sources', type=Path)
     args = parser.parse_args()
     c = json.loads(args.config.read_text())
+    if args.check_training_sources is not None:
+        c['_check_config_path'] = str(args.config)
+        return check_training_sources(c, args.check_training_sources)
     if args.member_requests:
         c['member_requests'] = True
     if args.heldout_part is not None:
@@ -124,6 +210,23 @@ def main():
         c.update(steps=8, checkpoint_every=8, fit_pairs_per_task=8,
                  eval_pairs_per_task=2, learning_curve_steps=[4], budget_seconds=240)
         c['run_id'] += '_SMOKE_V2'
+    if args.program_smoke:
+        assert c['variants'] == ['program']
+        c.update(steps=8, checkpoint_every=8, fit_pairs_per_task=8,
+                 eval_pairs_per_task=2, budget_seconds=240)
+        c['run_id'] += '_SMOKE'
+    multiple_sources = 'training_source_seeds' in c
+    training_source_seeds = c.get('training_source_seeds', [source_seed])
+    if multiple_sources:
+        assert len(training_source_seeds) in (1, 2) and len(set(training_source_seeds)) == len(training_source_seeds)
+        assert c['variants'] == ['program'] and c['steps'] > 0
+        assert all(not c.get(key) for key in ['heldout_part', 'member_requests', 'adapt_part',
+            'fixed_control', 'isolated_evaluation', 'freeze_target_decoder', 'evaluation_checkpoints'])
+        assert c.get('native_operation', 'input_tangent_budget') == 'input_tangent_budget'
+        assert 'source_checkpoint_template' in c and args.evaluate_from is None
+        assert all(isinstance(seed, int) and seed in c['source_seeds'] for seed in training_source_seeds)
+        if c.get('exclude_self_transfer'):
+            assert c['target_seed'] not in training_source_seeds
     freeze_decoder = c.get('freeze_target_decoder', False)
     assert isinstance(freeze_decoder, bool)
     assert not freeze_decoder or set(c['variants']) <= {'program'}
@@ -179,6 +282,34 @@ def main():
                                part_ids=part_ids[training_indices],
                                decoder=source_ae.decoder.weight[:, training_members].T)
         assert len(training_members) == 64*len(training_parts)
+        source_pool = {source_seed: training_source}
+        source_states = {source_seed: source_state}
+        for seed in training_source_seeds:
+            if seed == source_seed:
+                continue
+            state = torch.load(w.checked(c['source_checkpoint_template'].format(seed=seed)),
+                               map_location=w.device, weights_only=True)
+            ae = AutoEncoderTopK(dim, len(state['encoder.weight']), int(state['k'])).to(w.device)
+            ae.load_state_dict(state)
+            ae.eval().requires_grad_(False)
+            extra_gate = torch.tensor(np.load(w.checked(parent/f'topk_s{seed}_source.npz'))['gate'], device=w.device)
+            extra_members, extra_parts = grouped_source_members(extra_gate)
+            source_pool[seed] = dict(sae=ae, member_ids=extra_members, part_ids=extra_parts,
+                                     decoder=ae.decoder.weight[:, extra_members].T)
+            source_states[seed] = state
+        active_training_seed = training_source_seeds[0]
+        active_training_source = source_pool[active_training_seed]
+        source_identity = {}
+        if multiple_sources:
+            for seed in training_source_seeds:
+                sp = source_pool[seed]
+                checkpoint_path = str(Path(c['source_checkpoint_template'].format(seed=seed)).resolve())
+                gate_path = str((parent/f'topk_s{seed}_source.npz').resolve())
+                source_identity[str(seed)] = dict(
+                    checkpoint=next(item for item in w.inputs if item['path'] == checkpoint_path),
+                    gate=next(item for item in w.inputs if item['path'] == gate_path),
+                    members=sp['member_ids'].cpu().tolist(), part_ids=sp['part_ids'].cpu().tolist())
+            write(w.run/'training_sources.json', dict(evaluation_source=source_seed, sources=source_identity))
         evaluation_indices = (part_ids == heldout).nonzero().flatten() if c.get('isolated_evaluation') else torch.arange(len(members), device=w.device)
         evaluation_source = dict(sae=source_ae, member_ids=members[evaluation_indices],
                                  part_ids=part_ids[evaluation_indices],
@@ -209,6 +340,7 @@ def main():
         execution_counts = None
         source_access = []
         acquisition_phase = 'normalization'
+        source_call_counts = {}
 
         def hook(module, inputs, output):
             h = output[0] if isinstance(output, tuple) else output
@@ -217,12 +349,12 @@ def main():
             cache['input'] = x.detach()
             if mode == 'none':
                 return output
-            active_source = training_source if fitting else evaluation_source
+            active_source = active_training_source if fitting else evaluation_source
             active_members = active_source['member_ids']
             active_indices = training_indices if fitting else evaluation_indices
-            active_q = q[active_indices]
+            active_q = request[active_source['part_ids']] if multiple_sources and fitting else q[active_indices]
             if mode == 'source':
-                delta = -(source_ae.encode(x)[:, active_members]*active_q)@active_source['decoder']
+                delta = -(active_source['sae'].encode(x)[:, active_members]*active_q)@active_source['decoder']
             elif mode == 'fixed':
                 delta = -(target.encode(x)[:, fixed_ids]*(fixed_gate@request))@target.decoder.weight[:, fixed_ids].T
             else:
@@ -246,6 +378,10 @@ def main():
 
         def forward(rr):
             nonlocal positions
+            if multiple_sources and fitting and mode == 'source':
+                counts = source_call_counts.setdefault(acquisition_phase, {}).setdefault(str(active_training_seed), dict(calls=0, pairs=0))
+                counts['calls'] += 1
+                counts['pairs'] += len(rr)
             if fitting and mode == 'source' and c.get('adapt_part'):
                 active_parts = [part_names[i] for i in range(3) if bool((q[part_ids == i] != 0).any())]
                 source_access.append(dict(phase=acquisition_phase, parts=active_parts,
@@ -335,7 +471,6 @@ def main():
         endpoint_parts = torch.eye(3, device=w.device)[training_parts]
         endpoints = torch.cat([endpoint_parts, endpoint_parts.sum(0, keepdim=True)])
         fitting = True
-        energy = []
         calibration = [fit[int(i)] for i in np.linspace(0, len(fit)-1, min(24, len(fit)), dtype=int)]
         calibration_batches = [(calibration[off:off+c['batch_pairs']], endpoints) for off in range(0, len(calibration), c['batch_pairs'])]
         if c.get('adapt_part'):
@@ -348,17 +483,28 @@ def main():
                 selected = [task_fit[int(i)] for i in np.linspace(0, len(task_fit)-1, min(8, len(task_fit)), dtype=int)]
                 task_endpoints = torch.eye(3, device=w.device)[new_index:new_index+1] if ti == new_index else old_endpoints
                 calibration_batches.extend((selected[off:off+c['batch_pairs']], task_endpoints) for off in range(0, len(selected), c['batch_pairs']))
-        with torch.no_grad():
-            for rr, calibration_endpoints in calibration_batches:
-                mode = 'none'
-                clean_h, mask, clean_m = forward(rr)
-                for request in calibration_endpoints:
-                    q, mode = request[part_ids], 'source'
-                    source_h, _, source_m = forward(rr)
-                    energy.append([float(state_mse(source_h, clean_h, mask)),
-                                   float((source_m-clean_m).square().mean())])
-        scales = np.maximum(np.mean(energy, axis=0), 1e-8)
-        write(w.run/'loss_scales.json', dict(hidden=float(scales[0]), response=float(scales[1])))
+        scales_by_source = {}
+        for calibration_seed in training_source_seeds:
+            active_training_seed = calibration_seed
+            active_training_source = source_pool[calibration_seed]
+            energy = []
+            with torch.no_grad():
+                for rr, calibration_endpoints in calibration_batches:
+                    mode = 'none'
+                    clean_h, mask, clean_m = forward(rr)
+                    for request in calibration_endpoints:
+                        q, mode = request[part_ids], 'source'
+                        source_h, _, source_m = forward(rr)
+                        energy.append([float(state_mse(source_h, clean_h, mask)),
+                                       float((source_m-clean_m).square().mean())])
+            scales_by_source[calibration_seed] = np.maximum(np.mean(energy, axis=0), 1e-8)
+        scales = scales_by_source[training_source_seeds[0]]
+        scale_record = dict(hidden=float(scales[0]), response=float(scales[1]))
+        if multiple_sources:
+            scale_record.update(by_source={str(seed): dict(hidden=float(value[0]), response=float(value[1]))
+                for seed, value in scales_by_source.items()}, normalization_contexts=calibration,
+                endpoints=endpoints.cpu().tolist())
+        write(w.run/'loss_scales.json', scale_record)
         rng = np.random.default_rng(c['training_seed'])
         requests = rng.random((c['steps'], 3)).astype('float32')
         if heldout is not None:
@@ -388,9 +534,32 @@ def main():
             member_requests[1::2] = 0
             member_requests[np.ix_(np.arange(1, c['steps'], 2), training_indices.cpu().numpy())] = member_rng.random(
                 (c['steps']//2, len(training_indices)))
+        source_schedule = balanced_source_schedule(training_source_seeds, c['steps'], c['training_seed'])
+        extra_schedule = {}
+        source_resume = None
+        if multiple_sources:
+            member_requests = np.array([vector[source_pool[int(seed)]['part_ids'].cpu().numpy()]
+                                       for vector, seed in zip(requests, source_schedule)])
+            extra_schedule.update(training_source_seeds=np.array(training_source_seeds),
+                                  source_seed_by_step=source_schedule)
+            for seed in training_source_seeds:
+                extra_schedule[f'source_{seed}_members'] = source_pool[seed]['member_ids'].cpu().numpy()
+                extra_schedule[f'source_{seed}_parts'] = source_pool[seed]['part_ids'].cpu().numpy()
+                extra_schedule[f'source_{seed}_loss_scales'] = scales_by_source[seed]
+            coverage = {str(seed): dict(steps=int((source_schedule == seed).sum()),
+                endpoint_steps=int((source_schedule[::2] == seed).sum()),
+                continuous_steps=int((source_schedule[1::2] == seed).sum()),
+                unique_rows=len(np.unique(row_batches[source_schedule == seed])),
+                rows=np.unique(row_batches[source_schedule == seed]).tolist()) for seed in training_source_seeds}
+            write(w.run/'training_source_coverage.json', dict(fit_pairs=len(fit), sources=coverage,
+                schedule_seed=c['training_seed']+30000))
+            source_resume = dict(seeds=training_source_seeds, identity=source_identity,
+                schedule=torch.from_numpy(source_schedule), requests=torch.from_numpy(requests),
+                row_batches=torch.from_numpy(row_batches), natural=torch.from_numpy(natural_indices),
+                scales=torch.from_numpy(np.array([scales_by_source[seed] for seed in training_source_seeds])))
         np.savez_compressed(w.run/'training_schedule.npz', requests=requests, rows=order, row_batches=row_batches, natural=natural_indices,
                             source_members=training_members.cpu().numpy(), source_parts=part_ids[training_indices].cpu().numpy(),
-                            member_requests=member_requests)
+                            member_requests=member_requests, **extra_schedule)
         for variant in c['variants']:
             acquisition_phase = variant
             fitting = True
@@ -411,7 +580,15 @@ def main():
                 gain.data.copy_(saved['gain'])
                 optimizer.load_state_dict(saved['optimizer'])
                 first_step = saved['step']
+                if multiple_sources:
+                    previous = saved['training_sources']
+                    assert previous['seeds'] == source_resume['seeds'] and previous['identity'] == source_resume['identity']
+                    assert all(torch.equal(previous[key].cpu(), source_resume[key])
+                               for key in ['schedule', 'requests', 'row_batches', 'natural', 'scales'])
             for step in range(first_step, c['steps']):
+                active_training_seed = int(source_schedule[step])
+                active_training_source = source_pool[active_training_seed]
+                scales = scales_by_source[active_training_seed]
                 request = torch.tensor(requests[step], device=w.device)
                 if variant == 'whole':
                     request = endpoints[-1]
@@ -444,7 +621,8 @@ def main():
                 assert bool(torch.isfinite(loss))
                 if (step+1) % c['checkpoint_every'] == 0 or step+1 == c['steps']:
                     torch.save(dict(dictionary=target.state_dict(), gain=gain.detach(),
-                        optimizer=optimizer.state_dict(), step=step+1), w.run/f'{variant}_step{step+1}.pt')
+                        optimizer=optimizer.state_dict(), step=step+1,
+                        **({'training_sources': source_resume} if multiple_sources else {})), w.run/f'{variant}_step{step+1}.pt')
                     w.progress('TRAINING', method=variant, step=step+1, loss=float(loss.detach()),
                                response=float(response_loss.detach()), reconstruction=float(reconstruction.detach()),
                                peak_cuda_bytes=torch.cuda.max_memory_allocated())
@@ -461,8 +639,15 @@ def main():
             evaluate(variant, 'gain' if variant == 'gain' else 'tangent')
             if variant == 'program':
                 evaluate('readout_program', 'readout')
-        w.checks['source_frozen'] = all(torch.equal(source_ae.state_dict()[key], value) for key, value in source_state.items())
+        w.checks['source_frozen'] = all(
+            not any(parameter.requires_grad for parameter in source_pool[seed]['sae'].parameters()) and
+            all(torch.equal(source_pool[seed]['sae'].state_dict()[key], value) for key, value in state.items())
+            for seed, state in source_states.items())
         w.checks['base_model_frozen'] = all(not p.requires_grad for p in model.parameters())
+        if multiple_sources:
+            write(w.run/'training_source_calls.json', source_call_counts)
+            w.checks['training_source_calls_match_steps'] = sum(
+                value['calls'] for value in source_call_counts.get('program', {}).values()) == c['steps']-first_step
         if c.get('adapt_part'):
             new_task = c['tasks'][new_index]
             new_rows = {(r['task'], r['row_id']) for access in source_access if c['adapt_part'] in access['parts'] for r in access['rows']}
@@ -476,6 +661,8 @@ def main():
             training_source_members=training_members.cpu().tolist(),
             evaluation_source_members=members[evaluation_indices].cpu().tolist(),
             source_seed=source_seed, target_seed=c['target_seed'],
+            training_source_seeds=training_source_seeds,
+            training_source_identity=source_identity,
             training_variants=c['variants'], requested_steps=c['steps'],
             adaptation_part=c.get('adapt_part'), fitting_pairs_by_task=fit_counts,
             prior_training_steps=c.get('prior_training_steps'),

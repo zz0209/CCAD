@@ -11,12 +11,12 @@ import numpy as np
 import analyze_grammar_member_program as grammar_analysis
 
 
-def family_analysis(run, repetitions):
+def family_analysis(run, repetitions, focal='adjoint'):
     with tempfile.TemporaryDirectory(prefix='ccad-observable-analysis-') as temporary:
         output = Path(temporary)/'families.json'
         previous = sys.argv
         sys.argv = [str(Path(grammar_analysis.__file__)), '--runs', str(run),
-                    '--output', str(output), '--bootstrap', str(repetitions), '--focal', 'adjoint']
+                    '--output', str(output), '--bootstrap', str(repetitions), '--focal', focal]
         try:
             grammar_analysis.main()
         finally:
@@ -31,7 +31,7 @@ def estimate(point, draws):
                 valid_draws=int(valid.sum()), undefined_draws=int((~valid).sum()))
 
 
-def query_analysis(run, methods, repetitions):
+def query_analysis(run, methods, repetitions, focal='adjoint'):
     panel = json.loads((run/'panel.json').read_text())
     config = json.loads((run/'config.resolved.json').read_text())
     with (run/'metrics.raw.jsonl').open() as stream:
@@ -75,18 +75,18 @@ def query_analysis(run, methods, repetitions):
             entry['by_task'] = {task: estimate(point[mi, ti, qi], boot[:, mi, ti, qi])
                                 for ti, task in enumerate(tasks)}
             summary[method][query] = entry
-    focal = methods.index('adjoint')
+    focal_index = methods.index(focal)
     for oi, other in enumerate(methods):
-        if other == 'adjoint':
+        if other == focal:
             continue
-        comparisons['adjoint_minus_'+other] = {}
+        comparisons[focal+'_minus_'+other] = {}
         for qi, query in enumerate(order):
-            difference = point[focal, :, qi]-point[oi, :, qi]
-            draws = boot[:, focal, :, qi]-boot[:, oi, :, qi]
+            difference = point[focal_index, :, qi]-point[oi, :, qi]
+            draws = boot[:, focal_index, :, qi]-boot[:, oi, :, qi]
             entry = estimate(difference.mean(), draws.mean(1))
             entry['by_task'] = {task: estimate(difference[ti], draws[:, ti])
                                 for ti, task in enumerate(tasks)}
-            comparisons['adjoint_minus_'+other][query] = entry
+            comparisons[focal+'_minus_'+other][query] = entry
     effects = {task: {query: dict(sum_squared_effect=float(energies[ti, qi]),
                                 rms=float(np.sqrt(energies[ti, qi]/len(groups[task]))))
                       for qi, query in enumerate(order)} for ti, task in enumerate(tasks)}

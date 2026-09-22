@@ -10559,3 +10559,53 @@ scripts/train_observable_dictionary.py使用既有MultisiteWork和MIT TopK，CPU
 三项driver合计122.725821秒，CUDA最大allocated2171559936bytes，bulk2197461481bytes，CPU分析约2.133秒，研究及等待时间未单独测量。session16944、68461、50708均退出，gpu-0核实free。原父目录缺失发生于run创建前；随后一次元数据读取请求了不存在的summary.json，实际汇总文件metrics.summary.json已正常读取，运行未受影响。全部资源、UTC、状态和恢复位置见RUN_INVENTORY.json。
 
 完整方法复查与真实候选比较完成，计数由14到15。主文、图表、附录和PDF没有新增内容。报告为artifacts/method_value_20260922/REPORT.md，设计、原文、参数分析、独立审阅和复算均在同目录。入口修改前逐字副本在before_closeout，plan SHA256为0b436c5d1293bcd7cb0d5e0e2fcfdfdf03c7c08d0f43268950313cdcd6a12beb，tracker为cfd7e657dfdd71c0d94883706839122be51bd07005b41a2e4c6bb3314e08d378。计划收拢当前选择，历史结果和适用规则保留。已核实ccad ACTIVE、5分钟、原对话；依据最新持续研究授权保持接续，节点15不触发自动暂停。
+
+## METHOD_VALUE_15 SYNC 2026-09-22T10:59:37Z
+
+实际写入UTC为2026-09-22T10:59:37Z。本单元两份源码、两份配置和主日志按原白名单完成成组提交及推送，HEAD=origin/main=11a9a49eb0dbbbb12d71a8f2696be87dc1e91a9a。暂存检查没有空白错误，实际检查、自然训练、冻结评价和独立结果复算均已完成。论文、数据及研究记录保持原本地范围。tracker已经更新完成15及后续工作位置；automation继续ACTIVE、5分钟、原对话。
+
+接续资产核对确认R9十二个run共享384句对和11请求，source2–5各自在三个target中的source数组逐元素一致，所有none数组逐元素一致。同一target的三个source调用同一R8 program checkpoint及相同SHA，已保存reuse_program、reuse_whole、initial和两项readout，能够研究独立源定义所改变的作用及其保持。R9确认与R8确认句子交集为零，不作跨面板逐句比较。R8 source1与R9 source3的target2开发run有完全相同的96句对、请求和目标checkpoint，可承担已有开发对照。该资产核对没有运行模型或增加科学完成计数，后续工作在这些可用信息中选择具体机制与实际用途。
+
+## SOURCE_EFFECT_16 START 2026-09-22T11:10:59Z
+
+实际写入UTC为2026-09-22T11:10:59Z。启动已重新读取AGENTS、tracker、plan和近期原始结果入口。用户要求集中于共同方法保存的功能知识，本单元检验同一目标参数能否保留独立源定义之间的部分作用差异。R9已有十二个方向、相同384句对和11请求，可比较source_s−source_s'与target_s−target_s'。目标程序继续采用C(h)q，当前不增加执行模块。
+
+已有依据为R9固定目标参数接收独立源定义及R7保存代词／姓名作用区别。主要分析按固定target、grammar和request family累计成对差异平方误差，以源差异能量归一化，同时保留源差异RMS及所有方法的作用排序。各方法、请求和方向使用共享句对重采样，四个seed节点属于固定cohort；节点删除用于依赖敏感度。原确认文本已经暴露，本次新分析属于探索。现有全部方法、完整与部分请求保留，不增加源效果筛选条件。
+
+这项研究区分总体效应保存与源定义所携带的差异保存。若源变化在目标上保持，可增强独立源定义复用的具体内容；若主要收益集中于共同响应，按该事实改变方法解释与后续选择。本单元先使用既有数组，CPU预算300秒、轻量产物50MB，不申请GPU或人工资产。独立检查者评价主要选择，另两位agent分别完成原数组分析与相关机制阅读。主体继续核对论文、数学对象和实际使用；结果将决定是否需要进一步模型实验与稿件改动。
+
+## SOURCE_EFFECT_16 PROGRESS 2026-09-22T11:26:13Z
+
+实际写入UTC为2026-09-22T11:26:13Z。R9十二项原始响应的成对来源分析完成，354816条JSONL逐项相符，十五项原绝对nRMSE最大复算差8.33e−17。program的primary来源差异nRMSE为.637324，initial .642365，whole .663761，readout .476850；program减initial为−.005041，[−.017128,.006443]，减whole为−.026437，[−.036319,−.016571]。原绝对nRMSE仍为.169088/.249967/.221316/.121379。原方法排序及全部任务、请求保留在ANALYSIS.json。完整分析4.230162秒，代表性smoke及独立2000次重采样复算均完成。
+
+精确平方误差分解给出program相对initial总误差下降的99.51%来自共同误差，相对whole为97.37%。这些比例仅描述未归一化平方能量，共同项随句子、请求和target变化，不能等同主要nRMSE改善比例或固定幅度校准。源中心化作用占总源作用平方能量约1.82%。本项诊断完成，不增加论文图表或来源差异筛选。独立审阅在11:22:49Z追加同目录INDEPENDENT_REVIEW.md，结果及方法解释意见已采纳。
+
+这项结果与源码中的单一训练source相结合，支持让源定义作为训练输入发生变化。接续候选保持C(h)q、原loss、512更新及同一拟合数据，source1/source3交替提供真实程序监督；原source1与新增source3单独训练提供来源选择对照。source4/5保持训练外，source1另查保持。独立检查支持这项集中训练选择，并建议用原绝对作用保真判断使用收益，来源差异不升级为新增必过条件；该建议采纳。若混合与source3单独训练接近，按来源选择解释结果，不把另一项更强单源教师的效果归因于混合。
+
+本阶段预算扩为1200driver秒、14GB显存和3GB新bulk，覆盖代表性smoke、两项拟合及三项冻结开发评价。已有R8三分支driver约199秒提供吞吐参照。11:22UTC GPU显存使用1743MiB、剩余14253MiB、utilization2%，共享gpu-0及其余资源free；11:26UTC D盘3430945914880bytes、E盘419781545984bytes可用。代码与三份configs在E，bulk使用D:/CCAD_Storage/runs/source_effect_20260922。当前仍在源码与索引验证阶段，没有启动GPU。多源增加一份source normalization访问，训练batch与更新次数保持512；源访问量、源信息及适用范围分别登记，未称全部信息预算相同。
+
+## SOURCE_EFFECT_16 PROGRESS 2026-09-22T11:34:44Z
+
+实际写入UTC为2026-09-22T11:34:44Z。多来源代码及真实gate CPU检查完成。source1/source3的192个成员位置全部不同，part_ids排序有142处不同，各自请求索引与实际gate乘法完全一致。独立随机来源安排按四类endpoint及continuous分别平衡，两份来源各覆盖全部192拟合句对。源码SHA256为71b8d40094fd05548d767a7b5e5182e1bea0a5c471d867245abf1349784a7024，CPU结果与实现说明保存在本单元目录。
+
+真实GPU smoke为SE16_GPT2_MIX_S1S3_T2_DEV_20260922_SMOKE，于11:33:20.206131Z启动、11:33:34.755108Z完成，driver14.526612秒。全部11请求、两份源、8步训练、checkpoint保存及来源冻结通过。每来源训练调用4次、16句对；normalization每来源24次、96句对。metrics.summary.json的finite_results、unique_results、source_frozen、base_model_frozen及training_source_calls_match_steps均为true。session1361已退出，原始资产保留在D盘本单元目录。
+
+正式混合训练SE16_GPT2_MIX_S1S3_T2_DEV_20260922已在共享gpu-0租约内启动，session2490，512步及256步恢复checkpoint保持原预算。当前代码和训练规则固定，随后执行source3单独训练及source1/4/5的冻结开发评价。独立分析agent负责现有统计重用、原R8训练数组比较和全部方法结果整理，不启动模型计算。
+
+## SOURCE_EFFECT_16 COMPLETE 2026-09-22T11:53:42Z
+
+实际写入UTC为2026-09-22T11:53:42Z。本单元完成R9来源差异分析、两项512步程序训练、三项冻结来源评价及独立结果复算。实际GPU事件时间为smoke 11:33:20.206131Z至11:33:34.755108Z、混合训练11:34:06.774453Z至11:35:35.732688Z、source3训练11:36:22.135491Z至11:37:50.056755Z、source4评价11:38:26.468158Z至11:39:22.727952Z、source5评价11:39:47.213237Z至11:40:40.525902Z、source1评价11:42:07.920552Z至11:43:00.886767Z。精确原始时间及资源以artifacts/source_effect_20260922/RUN_INVENTORY_V2.json为准。六项运行均PASS并退出，合计353.813001 driver秒、最大CUDA allocated2301804032bytes、bulk1027999024bytes、95256 sequence forwards及787480 token forwards。原1200秒、14GB、3GB预算内完成，gpu-0已核实free。读取、思考与等待未单独计时。
+
+主要七项新请求误差在source4的原source1训练／source3训练／混合／readout分别为.153803/.160083/.147525/.132355，在source5为.165778/.181697/.160687/.145283。混合减原source1训练的差值分别为−.006277，[−.027134,.014012]及−.005091，[−.022269,.011558]。原source1保持为.173549/.195218，主要差值+.021670，[−.004635,.047495]；部件误差由.154619增加至.181316，差值+.026697，[.001094,.049760]。number分项较一致改善，其他功能的作用方向随来源改变。全部原始对照、full/parts/primary和11项逐请求结果保存在MIXTURE_ANALYSIS.json、三份SOURCE*_TRANSFER_ANALYSIS.json及MIXTURE_NOTES.md。
+
+同一192拟合句对、512更新、requests、rows、natural及row_batches与旧R8逐项相同。source1/source3的normalization各自与单独训练逐值相同，旧R8 program从相同initial和新AdamW开始。训练每source 256调用，额外source3的normalization为24个batch、96个句对请求；训练调用匹配与总信息获取分别记录。source4/5没有进入训练。所有新评价采用已暴露R26的96开发句对，单target2；2000次句对重采样在固定语法内配对，不将来源或方向当作独立目标总体。
+
+独立检查者第一次结果任务发生Selected model is at capacity，重试后于11:50:37Z完成。它从三份原始NPZ独立复算主要点估计与2000次区间，全部一致，并核对来源索引、训练初始化、访问成本及证据身份。主体采纳保留原共同程序、结束当前混合配方的建议。此次没有启动确认队列，也没有增加来源、更新次数或contrast loss。两来源候选、数功能局部结果及完整失败条件继续保存。结果归类为改变方法选择的诊断与局部开发结果，当前共同方法的能力没有因此增加。
+
+接续的结构研究选择考察自然encoder的局部Jacobian与干预执行系数之间的关系。已有balanced POD／Petrov–Galerkin的成对读取及表示机制将与固定独立writer、source-profile加权、逐请求求解及自然Jacobian训练逐项核对，说明其具体输入输出和能替换的现行计算。这是有依据的研究选择，当前没有新的模型队列；R7同程序消费者及R8/R9复用继续定义实际使用目标。独立意见与主体采用依据在INDEPENDENT_REVIEW.md及本轮REPORT.md。
+
+入口更新前逐字保存TRACKER_BEFORE_CLOSEOUT.md，SHA256为df4cf025b70556141a427a1d53a242ea6b6c45d728d9715e3fea47cbbc9e306e，PLAN_BEFORE_CLOSEOUT.md为e379cbbd0100bcabb1ddb6d62f753502e22ab53043afc6db2a54eb970589e079。plan登记方法取舍，tracker推进完成16与下次选择。论文仍为唯一paper/main.pdf，SHA256 a7f8b72e2fb73aa377e044cb3f3edc41838fae6a0f97a5b9f49336d1e181eae1；本次未增加论文内容。两项writing skills用于完整方法及取舍的直接表达，临时尝试保留研究目录。原automation持续执行，没有暂停、删除或新建goal。
+
+## SOURCE_EFFECT_16 CORRECTION 2026-09-22T11:55:20Z
+
+实际写入UTC为2026-09-22T11:55:20Z。按source1评价的原status.json核对，其started_at_utc为2026-09-22T11:42:07.920550Z。上一完成记录的末位微秒误记为920552，差2微秒；本条保留精确原值。RUN_INVENTORY_V2.json与原status.json数值一致，结果、时长与方法选择均保持。
