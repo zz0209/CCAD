@@ -14,6 +14,7 @@ def main():
     parser.add_argument('--bootstrap', type=int, default=2000)
     parser.add_argument('--source-reuse', action='store_true')
     parser.add_argument('--heldout-function', choices=['verb', 'number', 'gender'])
+    parser.add_argument('--focal')
     args = parser.parse_args()
     assert not args.output.exists(), args.output
     arrays, configs, panels, inputs, query_orders = [], [], [], [], []
@@ -114,7 +115,7 @@ def main():
                 by_seed={(f's{edge[0]}_t{edge[1]}' if args.source_reuse else str(edge[1])):
                          float(values[mi, :, fi].mean()) for edge, values in zip(edges, by_seed)},
                 by_task={task: float(point[mi, ti, fi]) for ti, task in enumerate(tasks)})
-    focal = 'reuse_program' if args.source_reuse else 'program'
+    focal = args.focal or ('reuse_program' if args.source_reuse else 'program')
     for other in methods:
         if other == focal:
             continue

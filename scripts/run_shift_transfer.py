@@ -57,6 +57,24 @@ def input_member_delta(x, target, source, q, mode, allowance, attention):
     directions=-(target.encoder.weight@source['decoder'].T)
     norms=target.decoder.weight.norm(dim=0)
     indices=keep.nonzero().flatten()
+    if mode.startswith('input_part_'):
+        from ccad.request_capacity import part_request_columns
+        part_ids = source['part_ids']
+        for ix in indices.split(512):
+            h = flat[ix]
+            z, zs = target.encode(h), source_codes(h)
+            columns, parts, scale, negative_sum = part_request_columns(
+                zs, directions, part_ids, z, norms, allowance, member_support=mode == 'input_part_member_support_budget')
+            participation = torch.stack([q[part_ids == part][0] for part in parts])
+            assert all(bool((q[part_ids == part] == value).all()) for part, value in zip(parts, participation))
+            delta = columns@participation
+            result[ix] = delta@target.decoder.weight.T
+            count['states'] += len(ix)
+            count['changed'] += int((delta != 0).sum())
+            count['increased'] += int((delta > 0).sum())
+            count['scaled'] += int(((scale < 1) & (negative_sum > 0)).sum())
+            count['minimum_final_code'] = min(count['minimum_final_code'], float((z+delta).min()))
+        return result.reshape(shape), count
     if mode.startswith(('input_tangent','input_fixed')):
         basis=source.get('transport_basis',directions) if mode.startswith('input_tangent') else source['fixed_response_basis']
         bp,bn=basis.clamp_min(0),(-basis).clamp_min(0)

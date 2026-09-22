@@ -58,6 +58,10 @@ def main():
             source_metric=bool(c.get('source_metric_rows') or c.get('source_metric_cache') or c.get('source_field_evaluation')),
             confirm=c.get('evidence_level','').startswith('frozen'), smoke='SMOKE' in run.name.upper(),
             config_sha256=hashlib.sha256((run / 'config.resolved.json').read_bytes()).hexdigest(), note=note)
+        if run.name == 'RG11_CAPACITY_DEV_T2_20260921_PART_COLUMNS_EVAL2':
+            row['smoke'] = True
+        if run.name == 'RG11_ADAPT_DEV_number_N8_T2_20260921_SMOKE':
+            row['note'] = 'Path smoke before restricted new-function source access. No limited-context scientific claim uses this run.'
         if path.exists():
             row['summary_sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
         rows.append(row)
@@ -192,6 +196,18 @@ def main():
             'The384newly generated confirmation pairs have no model predictions in this round. The confirmation queue remains unexecuted.',
             'The first text-generation attempt stopped on an empty reflexive candidate. Its240accepted pairs and RNG checkpoint are retained; v2resumes after an explicitly recorded candidate rejection fix.',
             'Generator wall time and active research time were not measured separately. Driver duration includes loading, fitting and evaluation; it is not exclusive GPU compute time.'
+        ]
+    if args.round_id == 'REUSE_GENERALIZATION_11':
+        result['metadata_clarifications'] = [
+            'The six adaptation studies use source1/target2, three omitted functions and8/32new contexts. Fresh and prior parameters receive identical512-update adaptation schedules with a fresh optimizer.',
+            'Prior parameters have an additional512updates on the other two functions. New-function response supervision and normalization are restricted to the designated new contexts.',
+            'The first adaptation smoke verifies execution but predates the restricted request schedule. SMOKE_V2 and all six full studies implement the restricted new-function access.',
+            'Capacity development fixes source contributions and target dictionaries. Part aggregation precedes negative-capacity allocation; the supplied request family comprises disjoint semantic parts.',
+            'Matched part-capacity training shares the original program request, text and natural-state schedules. The fixed-support capacity comparison matches the original selected members.',
+            'Frozen capacity confirmation uses384previously unexecuted sentence pairs and four existing target dictionaries. Both original and saved-program parameters are fixed; no optimization occurs.',
+            'Confirmation resamples paired sentences within grammar and target seeds, conditional on the source and three grammatical families.',
+            'The three capacity holdout runs repeat the original whole-function exclusions and512-update recipe, changing only the request capacity. They remain development; the number smoke checks nonconsecutive part IDs.',
+            'The2-pair capacity evaluation is a smoke although its run ID ends EVAL2. First launch and premature-analysis failures before completed output are recorded in master_log.'
         ]
     args.output.write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({k: v for k, v in result.items() if k not in ['runs', 'metadata_clarifications']}, indent=2))
