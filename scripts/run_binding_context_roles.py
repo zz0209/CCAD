@@ -18,7 +18,8 @@ def main():
     c=json.loads(args.config.read_text());w=MultisiteWork(c,args.config,[
         'scripts/run_binding_context_roles.py','scripts/run_binding_role_rules.py',
         'scripts/run_causalgym_multisite.py','scripts/run_r011s1_raw_hook_asset.py','src/ccad/artifacts.py']+
-        (['scripts/binding_member_selection.py'] if c.get('member_selection') or c.get('composition_record') else []))
+        (['scripts/binding_member_selection.py'] if c.get('member_selection') or c.get('composition_record') or c.get('composition_selection') else [])+
+        (['scripts/binding_composition_selection.py'] if c.get('composition_selection') else []))
     error=None
     try:
         import torch,numpy as np,transformers
@@ -142,12 +143,15 @@ def main():
             context_protocol='Restore clean context residual states before every block, add mean contrasts at selected sites and layers, recompute query states. Pre14 and pre24 equal existing SAE post13 and post23.',
             layers=c['layer_sets']))
         np.savez_compressed(w.run/'context_role_means.npz',means=means.cpu().numpy())
-        if c.get('member_selection') or c.get('composition_record'):
+        if c.get('member_selection') or c.get('composition_record') or c.get('composition_selection'):
             from binding_member_selection import run_selection,record_composition
             def control(method=None,op=None,capture_states=False):
                 nonlocal capture,capture_mean,active
                 capture=capture_states;capture_mean=False;active=(method,op) if method is not None else None
-            if c.get('composition_record'):
+            if c.get('composition_selection'):
+                from binding_composition_selection import run_composition_selection
+                run_composition_selection(c,w,torch,model,rows,codecs,means,cache,batch,forward,control)
+            elif c.get('composition_record'):
                 record_composition(c,w,torch,model,rows,codecs,means,cache,batch,forward,control)
             else:
                 run_selection(c,w,torch,model,rows,codecs,means,cache,batch,forward,control)

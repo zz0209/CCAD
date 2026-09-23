@@ -10921,3 +10921,47 @@ gain 开发比较已完成，原始54,912记录核对，训练调度与R20逐值
 新增composition_fields与evaluate_composition支持在同一原目标decoder上替换成员系数；batch保存两部分与联合的support、系数、原代码及真实hidden delta，完整raw背景另存。run的composition_protocol.json与composition_arrays保存恢复位置；原R57默认逻辑保持。配置configs/cc23_binding_composition_smoke.json及冻结源码记录方法身份。首次调用在创建run前因新D盘父目录尚不存在退出；建立项目专用目录后同ID首次实际run成功，无原始结果被覆盖。GPU共享租约已自动释放，当前free。
 
 本次prompt及改革周期修改已执行，原ccad仍为当前task、ACTIVE、五分钟间隔，实际TOML prompt与项目文件逐字相同。AGENTS.md当前SHA256为8b6b37addd7dc496fe6b724097ebe137141988fb57440b04c3ec0dd896eb1ce6，REFERENCE_REGISTRY.md为62f4efeaac6b511c12b6b19dbeeeb1354d2de39d95d7bd7f59e9ec8c23d118e6，长期prompt为134cb5af882caa1faf58d8ae1c8033cdee3936a1bbb80ff37125f71b878e0ab5。本次治理要求已实施，科学单元继续进行。下一动作直接进入两部分目标成员组合的预测与选择比较，当前记录路径不再追加同类实施检查。
+
+实际写入 UTC 为 2026-09-23T07:30:10Z。本次5个白名单文件已提交并推送为387790e78ba409f2264adb949b40bf661a16e3e0，推送后HEAD等于origin/main，追加本条前已追踪工作区干净。再次核对原ccad为ACTIVE、五分钟间隔、当前任务，prompt与项目文件逐字相同。被忽略规则、tracker、reference及安装记录本地保留，后续直接接续当前科学工作卡。
+
+### CONDITIONAL_COMPOSITION_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T07:37:25Z。当前heartbeat接续完整成员组合比较，独立选题决定继续适用。实现选择为每部分六项同预算成员方案，共36组合；来源为geometry、source/raw在另一部分0/1条件下的响应排名及固定随机。四种预测器为source/raw坐标各自的加法与条件ridge，全部拟合同一source候选响应，目标候选响应只承担评价。连续margin保持原答案减交换答案，实际选择效用为min(−mE,−mA,mEA)，要求两项单独交换且共同恢复，防止单纯保留原答案承担完整使用目标。方法与终点已写入plan，代码由execution_assets实施，research_practice并行完成world聚类分析，当前对话负责配置、实现核对与真实计算。查询gpu-0为free、显存2070/16303MiB；没有重复执行四状态smoke，也没有新增改革检查。
+
+### CONDITIONAL_COMPOSITION_20260923 CORRECTION / PROGRESS
+
+实际写入 UTC 为 2026-09-23T07:45:19Z。实现加入冻结R57 source/raw五点entity路径候选，实际共同池为8×6共48组合。候选方法和终点在读取目标结果之前确定。CC23_BINDING_SELECTION_SMOKE_20260923于07:42:44.637281Z开始，07:43:49.549663Z结束，1080 sequence forwards、39960 token forwards、64.8566886 driver秒，全部四模型拟合、48候选预测及实际干预完成，error=null。status为FAIL，原因是通用unique_results检查使用mode区分同一上下文的候选，新增记录遗漏该标识。原始472条记录、数组、模型、状态全部保留；修复只给候选增加稳定mode，通用检查和科学计算不变。此smoke用于真实执行验证，未升级为科学结果。完整问题目前完成计算投入111.5526241 driver秒，正式开发正在运行。
+
+CC23_BINDING_SELECTION_DEV_20260923使用configs/cc23_binding_selection_development.json，在共享GPU管理器下进入8个source拟合world与8个开发world比较。冻结源码binding_composition_selection.py SHA256为8d3b7d62590adff2a2022965d0cfc09a9fab37bd91d53345396434d57d786e5f。每处保留16个原系数成员，source/raw四模型共享响应与无操作margin，实际三状态效用决定选择。修复在该正式比较中验证，没有重复完整smoke。随后新世界与四个目标字典复用同一source模型；实际吞吐约每252个序列5秒，预算允许完整确认。分析按world保留共享目标、query、order和template依赖。
+
+### CONDITIONAL_COMPOSITION_20260923 COMPLETE
+
+实际写入 UTC 为 2026-09-23T08:05:38Z。正式DEV于2026-09-23T07:45:09.546600Z开始，07:48:16.422545Z完成PASS，8640 sequence forwards、186.8021145 driver秒，记录唯一性修复通过。完整同池比较、world配对分析、作用责任复算及独立采用判断已经完成。source additive/conditional效用为2.7616/2.0021，raw additive/conditional为−.8165/2.8653，固定source/raw R57规则为3.6830/3.6423且三操作正确率100%。独立负责人依据当前配方没有新增实际选择收益，结束其开发及参数续试；32新world四目标确认没有执行，配置已保留至artifacts/scientific_reform_20260923/unexecuted_composition_confirmation/。这项决定替换了前条中拟继续确认的安排。确认world仅预生成身份检查，与相关R56/R57及当前开发panel无重复，没有读取其模型结果。
+
+实际原始证据显示现有SAE位置只承担有限属性作用。R56 existing_pair属性逐行正确1/256，all_except_pair为256/256；本次实体/属性单侧候选margin变化范围6.9663/.5416，联合相应范围6.7305/.6208，56/64上下文的效用最佳实体不随属性候选变化。此前内部PowerShell表格把1/256显示为两位小数0.00，曾被主执行者误述为全部未成功；完整整数复算已纠正为1/256，报告和决定使用精确计数。完整query对成功率0%属于不同统计单位。本次不重复作用定位实验，不把共享背景的组合能力当目标成员新能力。
+
+完整单元实际298.3547386 driver秒、216.921875 CPU秒、9928 sequence forwards、367336 token forwards、peak7659230720 CUDA bytes、36991005 bytes运行资产，含保留FAIL的选择smoke。证据为COMPOSITION_REPORT.md、COMPOSITION_DEVELOPMENT.json、COMPOSITION_RESPONSIBILITY.json、COMPOSITION_COST.json及三个原始run。源码、模型和复算入口均保留。论文核心证据没有升级，本次开发认识留在研究记录，不新增论文实验章节。
+
+### 改革检查与学习对象调整
+
+实际写入 UTC 为 2026-09-23T08:05:38Z。主要结果改变调度，按既定要求同时进行一次改革检查。当前比较直接回答采用问题并取消无用途确认，工程投入限于真实执行和可复算数据；然而本次候选产生没有充分使用当时已经存在的R56定位，导致一项功能主要由共同背景承担。改变候选产生方式，从已经证实的部分作用及尚未解决的使用决定选择素材，原论文的组合结构不再替代当前操作责任。已实际选择完整人工解释的pronouns/associated_words条件贡献，停止binding二次模型与属性层训练队列。负责人读取原始记录、现有44个目标checkpoint、原论文节点干预部分，选择有完整素材的恢复测量。决定与采用依据追加在DECISION.md的2026-09-23T08:01:46Z条目；没有新增评分或审批流程。下次定期检查从本条实际时间重新计算。
+
+### HUMAN_CONDITIONAL_MEDIATION_20260923 START
+
+实际写入 UTC 为 2026-09-23T08:05:38Z。源解释两组均属gender线索。既有R59暴露队列的associated_words单独作用RMS2.7716，pronouns删除后的边际作用RMS.4096，使条件贡献减少与后续敏感度成为可区分解释。当前使用固定开发panel按document hash各label/gender组前32篇共128篇，源55成员、原target2 SAE和R59固定native关系，执行none/P/W/PW/P_restoreW及none_restoreW身份检查。恢复公式为x−D(pz)+D(w(z0−z))，保留incoming残差，在同一hook只编码一次，保存逐token稀疏系数与实际更新。当前真实smoke已启动；run CC23_SHIFT_CONDITIONAL_RESTORE_SMOKE_20260923和后续DEV位于D:/CCAD_Storage/runs/conditional_restore_20260923。配置为cc23_shift_conditional_restore_smoke.json及development.json，8/128文档，单元代表性机制测量预算120+180=300 driver秒。没有新训练、下载或付费，gpu-0启动前free。
+
+此测量决定后续应学习贡献传递还是响应敏感度，未预先认定唯一中介或新增使用优势。进入新方法比较时raw共享相同反事实信息和验证预算。计划及tracker重组前已逐字归档到before/EXPERIMENT_PLAN_binding_composition.md、EXPERIMENT_TRACKER_binding_composition.md，SHA256分别为962070c5ce7487dfeed3baf2c5a04258892f0c16b9299b11c6154c48a1192b16、98c399a160bbd0aec8571fe4a3188f731713aa051b81b476820b90710e311d99。
+
+### HUMAN_CONDITIONAL_MEDIATION_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T08:16:02Z。smoke于08:05:43.725621Z完成PASS，正式DEV于08:06:56.096933Z开始、08:07:58.798827Z完成PASS。两次运行合计77.2869986 driver秒、1496 sequence forwards、134728 token forwards、58.296875 process CPU秒；正式DEV峰值847095808 CUDA bytes。128开发文档的source/native自然W贡献范数保留比例为.348343/.628821，恢复沿P原输出效果反方向的投影比例为.488129/.396151；恢复方向相反的文档为126/128及128/128。身份操作误差为零，实际系数与decoder更新复算通过。完整逐文档结果、分层配对bootstrap区间及复算证据位于RESTORE_DEVELOPMENT.json/.md，原始metrics SHA256为d107c1caefec2ccc06b2b8cfa5077a9181ab1441e7955d8b67a2fbe6251caab6。
+
+独立负责人于08:12:54Z采用既有native承载的条件功能关系，当前不增加学习器。必要接续为原targets3–5在相同128文档上的冻结跨字典复现，以判断方向和幅度差异是否重复。依据DEV实测62.6734976秒，增加约180 driver秒预期投入，每次保留180秒运行上限；资源仍为现有模型与gpu-0。重复source计算保持既有经过验证的runner，共享source和文档不增加独立样本数。该接续属于开发文档上的跨字典重复，不能作为新文本确认。决定保存在DECISION.md；没有新增拟合、参数筛选或验证门槛。
+
+### HUMAN_CONDITIONAL_MEDIATION_20260923 COMPLETE
+
+实际写入 UTC 为 2026-09-23T08:26:19Z。targets3、4、5分别于08:20:23.010311Z、08:21:35.647554Z、08:22:51.391274Z完成PASS，全部原始输出与身份检查保留。四目标W自然贡献保留范数比分别为.628821/.631286/.685418/.668781，恢复相对各自P原效果的反向投影为.396151/.350251/.416039/.392194。固定目标合计为.656755 [.645254,.669510]及.388046 [.381179,.395386]，source为.348343及.488129。恢复方向与P相反的文档数为128/127/128/128，每个目标分母128；各目标共同使用这128篇文档，统计没有把512条目标×文档记录当作独立文档。分析为RESTORE_REPLICATION.json/.md，五run全部成本为RESTORE_COST.json，274.6892187 driver秒、207.84375 CPU秒、5720 sequence forwards、496936 token forwards、peak847111168 CUDA bytes、143500554 bytes运行资产。
+
+依据预先记录的采用规则，现有native保留该条件关系，机制补充完成，不为幅度差异新增条件拟合器。历史核对显示RG05已在15程序、1024新文本、四目标验证条件恢复，RG06已检查单项正确后的条件错误；本轮新增知识是自然W贡献随P实际减少及其跨分解量值差，不能把恢复操作重新计作新能力。源和目标执行不同P程序，量值差本身也不等于W错误归属。DECISION.md的08:21:12Z条目记录这一边界及下一项共同源干预下目标成员归属候选。当前进入独立研究选择，后续实际完整成员操作须显示使用收益。
+
+两项writing skills落实到原条件恢复section的机制说明，未扩张主文方法优势。唯一当前paper/main.pdf已编译，69页，SHA256 ed6099f32f2d6f824cd00d103475d76142903beef48cb6da5e0c24071c61dbd9。实际查看第19页新增公式、结果及第20页衔接，文字、公式及图表没有截断或重叠；编译无undefined或overfull记录。原PDF与改动section逐字保存在before/conditional_mechanism_paper/，原PDF SHA为1bb97f8d0ac2b589227ceef8e1f2aa3556326a95d6223904aaa5e2c059ab8a01，原section SHA为27cf59ca81675753e1a075bdfe6d5378c88b8393b8e2a9c4e8c6ccf153519208。当前section SHA为1e66d8834bef779d2004bb0185fe4a164f27f190c2199e943a7a8496004174fb，EVIDENCE_INDEX SHA为caebd66dd25ae342e67ac300d9f925130e88e91535b88d1ed8fdb3a0ddfa6b5a。论文与证据文件本地保留，不扩大Git白名单。

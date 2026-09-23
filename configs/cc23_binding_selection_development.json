@@ -1,0 +1,55 @@
+{
+  "run_id": "CC23_BINDING_SELECTION_DEV_20260923",
+  "run_parent": "CONDITIONAL_COMPOSITION_20260923",
+  "generator_script": "scripts/run_binding_context_roles.py",
+  "purpose": "Test reusable conditional response relations through actual member-combination decisions",
+  "scope": "Eight source fit worlds and eight separate development worlds; common source responses, 48 target combinations and actual three-operation functional utility",
+  "evidence_level": "controlled_development",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "device": "cuda:0",
+  "seeds": [1, 2],
+  "source_seed": 1,
+  "target_seed": 2,
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD counterbalanced binding-role panel v1",
+  "statistics_unit": "World; paired query, order, template and dictionary",
+  "budget": "Same 5400-driver-second unit; source fit plus development at most1600 seconds, later confirmation reuses identical source model without refitting",
+  "budget_seconds": 1600,
+  "run_storage_root": "D:/CCAD_Storage/runs/conditional_composition_20260923",
+  "panel_seed": 2026092311,
+  "fit_seed": 2026092302,
+  "fit_contexts": 8,
+  "evaluation_contexts": 8,
+  "evaluation_skip": 0,
+  "batch_size": 4,
+  "checkpoint_step": 16384,
+  "layer_sets": [],
+  "names": ["Alice", "Bob", "Carol", "David", "Emma", "Frank", "Grace", "Henry", "Irene", "Jack", "Karen", "Laura", "Mary", "Nancy", "Oliver", "Paul", "Rachel", "Sarah", "Thomas", "Victor", "William", "Peter", "Anna", "James"],
+  "country_capitals": [["France", "Paris"], ["Japan", "Tokyo"], ["Italy", "Rome"], ["Germany", "Berlin"], ["Spain", "Madrid"], ["Russia", "Moscow"], ["China", "Beijing"], ["Canada", "Ottawa"], ["Egypt", "Cairo"], ["Kenya", "Nairobi"], ["Greece", "Athens"], ["Portugal", "Lisbon"], ["Peru", "Lima"], ["Chile", "Santiago"], ["Cuba", "Havana"], ["Austria", "Vienna"], ["Poland", "Warsaw"], ["Turkey", "Ankara"], ["Thailand", "Bangkok"], ["Norway", "Oslo"]],
+  "templates": [
+    {"statement": "{name} lives in the capital of {country}. ", "question": "\nQuestion: Where does {name} live?\nAnswer: {name} lives in the city of"},
+    {"statement": "{name} works in the capital of {country}. ", "question": "\nQuestion: Where does {name} work?\nAnswer: {name} works in the city of"}
+  ],
+  "sae_runtime": {
+    "members": 64,
+    "training_runs": {
+      "14": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+      "24": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914"
+    }
+  },
+  "frozen_means": "runs/REFORM_R56_binding_context_roles_v1_20260915/context_role_means.npz",
+  "frozen_means_sha256": "8a9d888117c84508b23346a86271284c99abb566832b45ecda1fb5831d7ba6f1",
+  "composition_selection": {
+    "fit_worlds": 8,
+    "evaluation_worlds": 8,
+    "members": 16,
+    "candidate_members": 64,
+    "random_seed": 20260923,
+    "ridge": 0.001,
+    "r57_bank": "runs/REFORM_R57_binding_member_selection_v1_20260915/response_bank.npz",
+    "r57_bank_sha256": "f40343421fca7b80d7d91140f695d5528d0e610b596db3261f89c03ac06090e6",
+    "analysis_phase": "development"
+  }
+}
