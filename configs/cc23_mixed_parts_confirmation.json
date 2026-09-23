@@ -1,0 +1,6 @@
+{
+  "base_config": "configs/cc23_single_parts_confirmation.json",
+  "run_id_template": "CC23_MIXED_PARTS_CONFIRM_T{seed}_20260923",
+  "training_request_family": "mixed",
+  "scope": "Matched mixed-request comparison using the same initialization,192fit pairs,512updates,normalization from single parts,384confirmation pairs and target initializations as singleton training."
+}

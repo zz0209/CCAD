@@ -1,0 +1,10 @@
+{
+  "base_config": "configs/cc23_single_parts_development.json",
+  "run_id_template": "CC23_SINGLE_PARTS_CONFIRM_T{seed}_20260923",
+  "evidence_level": "frozen_confirmation",
+  "scope": "Two previously unused target initializations for this recipe and 384 grammar pairs without model outputs before this question; original exposed192 fitting pairs retained. Same frozen member definitions,512updates and three singleton-part teachers. Fixed source, tasks, model and corpus.",
+  "evaluation_panel": "artifacts/scientific_reform_20260923/paired_code_correspondence/confirmation_data/panel.json",
+  "evaluation_split": "paired_code_confirmation",
+  "eval_pairs_per_task": 128,
+  "audit_opened": true
+}

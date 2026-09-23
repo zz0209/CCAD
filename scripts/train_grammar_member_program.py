@@ -15,6 +15,7 @@ import transformers
 
 from run_causalgym_multisite import MultisiteWork, ROOT, write
 from run_shift_transfer import input_member_delta
+from train_grammar_material_support import load_config
 from ccad.artifacts import sha256
 
 
@@ -50,6 +51,18 @@ def balanced_source_schedule(seeds, steps, training_seed, endpoint_count=4):
         rng.shuffle(source_ids)
         schedule[positions] = source_ids
     return schedule
+
+
+def single_part_requests(steps, fit_pairs, batch_pairs):
+    assert fit_pairs % batch_pairs == 0
+    batches_per_epoch = fit_pairs//batch_pairs
+    step_ids = np.arange(steps)
+    part_ids = (step_ids % batches_per_epoch+step_ids//batches_per_epoch) % 3
+    return np.eye(3, dtype=np.float32)[part_ids]
+
+
+def source_measurement_key(seed, row, request):
+    return seed, tuple(row['good']), tuple(row['bad']), row['position'], tuple(request)
 
 
 def grouped_source_members(gate):
@@ -133,7 +146,14 @@ def main():
     parser.add_argument('--program-smoke', action='store_true')
     parser.add_argument('--check-training-sources', type=Path)
     args = parser.parse_args()
-    c = json.loads(args.config.read_text())
+    c = load_config(args.config)
+    training_family = c.setdefault('training_request_family', 'mixed')
+    normalization_family = c.setdefault('normalization_request_family', training_family)
+    assert training_family in ('mixed', 'single_parts')
+    assert normalization_family in ('mixed', 'single_parts')
+    assert training_family != 'single_parts' or normalization_family == 'single_parts'
+    cache_teacher = c.setdefault('cache_training_teacher', False)
+    assert isinstance(cache_teacher, bool)
     if args.check_training_sources is not None:
         c['_check_config_path'] = str(args.config)
         return check_training_sources(c, args.check_training_sources)
@@ -212,7 +232,8 @@ def main():
         c['run_id'] += '_SMOKE_V2'
     if args.program_smoke:
         assert c['variants'] == ['program']
-        c.update(steps=8, checkpoint_every=8, fit_pairs_per_task=8,
+        smoke_steps = 26 if cache_teacher else 8
+        c.update(steps=smoke_steps, checkpoint_every=smoke_steps, fit_pairs_per_task=8,
                  eval_pairs_per_task=2, budget_seconds=240)
         c['run_id'] += '_SMOKE'
     multiple_sources = 'training_source_seeds' in c
@@ -230,9 +251,14 @@ def main():
     freeze_decoder = c.get('freeze_target_decoder', False)
     assert isinstance(freeze_decoder, bool)
     assert not freeze_decoder or set(c['variants']) <= {'program'}
+    if training_family == 'single_parts' or normalization_family == 'single_parts' or cache_teacher:
+        assert all(not c.get(key) for key in ['heldout_part', 'member_requests', 'adapt_part'])
+        assert not multiple_sources
+        assert set(c['variants']) <= {'program', 'gain'}
     w = MultisiteWork(c, args.config, [
         'scripts/train_grammar_member_program.py', 'scripts/run_shift_transfer.py',
         'scripts/run_shift_explanation.py', 'scripts/train_shift_dictionaries.py',
+        'scripts/train_grammar_material_support.py', 'scripts/run_r006b_topk_capacity.py',
         'scripts/run_causalgym_multisite.py', 'scripts/run_r011s1_raw_hook_asset.py',
         'src/ccad/artifacts.py', 'src/ccad/activation_contract.py', 'src/ccad/request_capacity.py',
         'src/ccad/paired_projection.py', 'src/ccad/program_compilation.py'])
@@ -342,6 +368,10 @@ def main():
         source_access = []
         acquisition_phase = 'normalization'
         source_call_counts = {}
+        source_measurements = {}
+        teacher_cache = {}
+        teacher_cache_stats = dict(enabled=cache_teacher, hits=0, misses=0,
+            validation_calls=0, validation_exact=None, stored_bytes=0)
         compiled_ids, compiled_weights = None, None
 
         def hook(module, inputs, output):
@@ -397,10 +427,18 @@ def main():
 
         def forward(rr):
             nonlocal positions
-            if multiple_sources and fitting and mode == 'source':
-                counts = source_call_counts.setdefault(acquisition_phase, {}).setdefault(str(active_training_seed), dict(calls=0, pairs=0))
+            if mode == 'source':
+                phase = acquisition_phase if fitting else 'evaluation'
+                measured_seed = active_training_seed if fitting else source_seed
+                counts = source_call_counts.setdefault(phase, {}).setdefault(str(measured_seed), dict(calls=0, pairs=0, sequences=0, tokens=0))
                 counts['calls'] += 1
                 counts['pairs'] += len(rr)
+                counts['sequences'] += 2*len(rr)
+                counts['tokens'] += sum(len(r[key]) for r in rr for key in ['good', 'bad'])
+                measurements = source_measurements.setdefault(phase, set())
+                measured_q = request[active_training_source['part_ids']] if multiple_sources and fitting else q
+                measurement_request = measured_q.cpu().tolist()
+                measurements.update(source_measurement_key(measured_seed, r, measurement_request) for r in rr)
             if fitting and mode == 'source' and c.get('adapt_part'):
                 active_parts = [part_names[i] for i in range(3) if bool((q[part_ids == i] != 0).any())]
                 source_access.append(dict(phase=acquisition_phase, parts=active_parts,
@@ -425,6 +463,44 @@ def main():
             if time.perf_counter()-w.wall_start > c['budget_seconds']:
                 raise TimeoutError('Declared grammar program budget exceeded')
             return hidden, mask, margins
+
+        def training_teacher(rr):
+            nonlocal acquisition_phase
+            if not cache_teacher:
+                return forward(rr)
+            key = (active_training_seed, tuple((r['task'], r['row_id']) for r in rr),
+                   tuple(request.cpu().tolist()))
+            if key not in teacher_cache:
+                output = forward(rr)
+                saved = tuple(value.detach().cpu().clone() for value in output)
+                teacher_cache[key] = saved
+                teacher_cache_stats['misses'] += 1
+                teacher_cache_stats['stored_bytes'] += sum(value.numel()*value.element_size() for value in saved)
+                return output
+            cached = tuple(value.to(w.device) for value in teacher_cache[key])
+            teacher_cache_stats['hits'] += 1
+            if teacher_cache_stats['validation_calls'] == 0:
+                previous_phase = acquisition_phase
+                acquisition_phase = 'cache_validation'
+                measured = forward(rr)
+                acquisition_phase = previous_phase
+                exact = all(torch.equal(a, b) for a, b in zip(cached, measured))
+                teacher_cache_stats.update(validation_calls=1, validation_exact=exact)
+                save_source_cost()
+                assert exact
+            return cached
+
+        def save_source_cost():
+            write(w.run/'training_source_calls.json', source_call_counts)
+            write(w.run/'source_measurement_cost.json', dict(
+                training_request_family=training_family, normalization_request_family=normalization_family,
+                distinct_pair_requests_by_phase={phase: len(values) for phase, values in source_measurements.items()},
+                distinct_pair_requests_total=len(set().union(*source_measurements.values())),
+                distinct_fitting_pair_requests=len(set().union(*(values for phase, values in source_measurements.items() if phase != 'evaluation'))),
+                actual_calls=source_call_counts, teacher_cache=teacher_cache_stats,
+                teacher_cache_scope='Current run only; fixed source checkpoint and ordered batch with unchanged padding',
+                distinct_measurement_unit='source seed, good and bad token sequences, intervention position, exact source member request',
+                target_validation='No target response selects requests or training hyperparameters within this run. Target forwards provide the training objective and reported evaluation.'))
 
         def state_mse(a, b, mask):
             return ((a-b).square()*mask[:, :, None]).sum()/(mask.sum()*a.shape[-1])
@@ -540,9 +616,10 @@ def main():
         target.load_state_dict(initial)
         endpoint_parts = torch.eye(3, device=w.device)[training_parts]
         endpoints = torch.cat([endpoint_parts, endpoint_parts.sum(0, keepdim=True)])
+        normalization_endpoints = endpoint_parts if normalization_family == 'single_parts' else endpoints
         fitting = True
         calibration = [fit[int(i)] for i in np.linspace(0, len(fit)-1, min(24, len(fit)), dtype=int)]
-        calibration_batches = [(calibration[off:off+c['batch_pairs']], endpoints) for off in range(0, len(calibration), c['batch_pairs'])]
+        calibration_batches = [(calibration[off:off+c['batch_pairs']], normalization_endpoints) for off in range(0, len(calibration), c['batch_pairs'])]
         if c.get('adapt_part'):
             new_index = part_names.index(c['adapt_part'])
             old_endpoints = torch.eye(3, device=w.device)[[i for i in range(3) if i != new_index]]
@@ -569,18 +646,23 @@ def main():
                                        float((source_m-clean_m).square().mean())])
             scales_by_source[calibration_seed] = np.maximum(np.mean(energy, axis=0), 1e-8)
         scales = scales_by_source[training_source_seeds[0]]
-        scale_record = dict(hidden=float(scales[0]), response=float(scales[1]))
+        scale_record = dict(hidden=float(scales[0]), response=float(scales[1]),
+            normalization_request_family=normalization_family, endpoints=normalization_endpoints.cpu().tolist(),
+            normalization_contexts=calibration)
         if multiple_sources:
             scale_record.update(by_source={str(seed): dict(hidden=float(value[0]), response=float(value[1]))
                 for seed, value in scales_by_source.items()}, normalization_contexts=calibration,
-                endpoints=endpoints.cpu().tolist())
+                endpoints=normalization_endpoints.cpu().tolist())
         write(w.run/'loss_scales.json', scale_record)
+        save_source_cost()
         rng = np.random.default_rng(c['training_seed'])
         requests = rng.random((c['steps'], 3)).astype('float32')
         if heldout is not None:
             requests[:, heldout] = 0
         for step in range(0, c['steps'], 2):
             requests[step] = endpoints[(step//2) % len(endpoints)].cpu().numpy()
+        if training_family == 'single_parts':
+            requests = single_part_requests(c['steps'], len(fit), c['batch_pairs'])
         order = rng.permutation(len(fit))
         natural_indices = rng.integers(len(natural_fit), size=(c['steps'], c['natural_batch_states']))
         row_batches = np.array([[order[(step*c['batch_pairs']+j) % len(fit)] for j in range(c['batch_pairs'])] for step in range(c['steps'])])
@@ -630,6 +712,16 @@ def main():
         np.savez_compressed(w.run/'training_schedule.npz', requests=requests, rows=order, row_batches=row_batches, natural=natural_indices,
                             source_members=training_members.cpu().numpy(), source_parts=part_ids[training_indices].cpu().numpy(),
                             member_requests=member_requests, **extra_schedule)
+        unit_coverage = np.zeros((len(fit), 3), dtype=np.int64)
+        for vector, batch in zip(requests, row_batches):
+            if np.isin(vector, [0, 1]).all() and vector.sum() == 1:
+                np.add.at(unit_coverage[:, int(vector.argmax())], batch, 1)
+        write(w.run/'training_request_coverage.json', dict(training_request_family=training_family,
+            fit_pairs=len(fit), steps=c['steps'], unique_request_vectors=len(np.unique(requests, axis=0)),
+            distinct_pair_requests=len({(int(row), tuple(vector.tolist())) for vector, batch in zip(requests, row_batches) for row in batch}),
+            unit_request_counts_by_row=unit_coverage.tolist(),
+            rows_with_all_three_unit_parts=int((unit_coverage > 0).all(1).sum()),
+            actual_requests='training_schedule.npz', normalization_requests='loss_scales.json'))
         for variant in c['variants']:
             acquisition_phase = variant
             fitting = True
@@ -672,7 +764,7 @@ def main():
                 rr = [fit[i] for i in row_batches[step]]
                 mode = 'source'
                 with torch.no_grad():
-                    th, mask, tm = forward(rr)
+                    th, mask, tm = training_teacher(rr)
                 mode = 'gain' if variant == 'gain' else 'tangent'
                 sh, _, sm = forward(rr)
                 hidden_loss = state_mse(sh, th, mask)/scales[0]
@@ -693,6 +785,7 @@ def main():
                     torch.save(dict(dictionary=target.state_dict(), gain=gain.detach(),
                         optimizer=optimizer.state_dict(), step=step+1,
                         **({'training_sources': source_resume} if multiple_sources else {})), w.run/f'{variant}_step{step+1}.pt')
+                    save_source_cost()
                     w.progress('TRAINING', method=variant, step=step+1, loss=float(loss.detach()),
                                response=float(response_loss.detach()), reconstruction=float(reconstruction.detach()),
                                peak_cuda_bytes=torch.cuda.max_memory_allocated())
@@ -714,8 +807,10 @@ def main():
             all(torch.equal(source_pool[seed]['sae'].state_dict()[key], value) for key, value in state.items())
             for seed, state in source_states.items())
         w.checks['base_model_frozen'] = all(not p.requires_grad for p in model.parameters())
+        save_source_cost()
+        if cache_teacher:
+            w.checks['teacher_cache_exact'] = teacher_cache_stats['validation_exact'] is True if teacher_cache_stats['hits'] else True
         if multiple_sources:
-            write(w.run/'training_source_calls.json', source_call_counts)
             w.checks['training_source_calls_match_steps'] = sum(
                 value['calls'] for value in source_call_counts.get('program', {}).values()) == c['steps']-first_step
         if c.get('adapt_part'):

@@ -11634,3 +11634,39 @@ RAW_CHECK使用原始logits独立计算correct减其余25字母均值，指标�
 独有科学收益相对额外复杂度的评价为，使用原冻结对象得到可确认的新内容职责，没有增加训练参数和对应算法；该结果值得增强已有R29支持证据，尚未提高整篇方法必要性评价。复杂源路径的原取得成本仍为5760梯度句对，对照192，不因复用而省略。后续不分配相邻句法、层、成员数或评分变体的投入。当前返回研究选择，重点为中心贡献的独有知识和实际成员决定，不能自动把新的局部内容任务加入队列。
 改革检查核对了上次停止决定与本次动作。paired-code、图关系和相邻receiver没有续试，集合操作重复候选在历史核对后退出；本次从已确认共同组成产生新内容预测，开发信号当次完成确认及稿件更新。贡献集中积累在同一对象，执行方式有具体改善。该支持结果仍未解决整篇方法价值与复杂度的差距，不能把本轮净增量、短计算时间或没有增加总页数称作整体改革成功。没有增加审查层级或暂停项目。
 论文使用两个写作skill的实际改动为在reuse_grammar既有D.8段组织内容预测、最强组合证据及使用幅度，保留简单对照和异质性，研究过程继续只在日志。生成表格与data由scripts/export_region_content_paper.py复算；paper/main.pdf为77页（7正文、2参考、68附录），SHA256 fea2c000f525d9ff9aa344da29f0b40e452da54616336c0958c853b55d04123e。Tectonic编译通过，无未定义引用或水平溢出，保留实际underfull提示；第8/9/52/53/54页真实渲染查看未见裁切重叠。旧PDF、改动前段及索引保存在archive/paper_before_content_transfer_20260923，当前表为Table49，CLAIM_MAP/EVIDENCE_INDEX已更新。paper-compile采用既有锁定Tectonic环境，未安装skill默认编译器。下一动作是白名单同单元同步，automation维持ACTIVE十五分钟；后续研究选择需直接处理上述中心缺口。
+
+### FROZEN_REGION_CONTENT_20260923 SYNC
+实际写入UTC为2026-09-23T20:56:46Z。事件为本条写入前完成的白名单提交与推送，提交/推送精确秒数未单独记录。八个白名单文件成组同步为e5f678161a7a8c88e8b137df71d0550bc37fbdb3，实际核对HEAD与origin/main相同。提交包含四脚本、三配置与主日志，无原始数据、checkpoint或私有研究文稿。py_compile、git diff检查及全部三真实run通过。私有plan/tracker、DECISION、REFERENCE_REGISTRY、论文及数据导出在本地保留。原ccad配置保持ACTIVE十五分钟，当前没有GPU工作，后续接续研究选择；本SYNC随下个工作单元提交。
+
+### CCAD_USER_PAUSE_20260923 PAUSE
+实际写入UTC为2026-09-23T20:59:55Z。用户明确要求暂停loop以便检查，automation工具已返回ccad状态PAUSED，随后读取配置确认status为PAUSED，十五分钟周期保留。暂停操作精确事件时间未单独记录。原prompt、任务归属、研究成果和恢复位置保留，EXPERIMENT_TRACKER.md已更新。最近完成的FROZEN_REGION_CONTENT_20260923实验均已退出，当前恢复阶段为研究选择。暂停期间不启动研究、实验或定期审查，等待用户明确要求恢复。本次为执行状态维护，无科学增量。
+
+
+### DIRECT_SCIENTIFIC_CONTINUATION_20260923 START
+实际写入UTC为2026-09-23T21:05:23Z。用户授权当前任务直接继续完整正向科学尝试并提高信息密度及科学收益相对工程复杂度，明确不重启loop。automation配置只读核对保持PAUSED及十五分钟原周期。接续阶段为研究选择，独立上下文direct_research_choice负责中心机制与采用条件，manuscript_density并行处理既有主文论证；当前任务执行最终选择和完整比较。已重读AGENTS、plan、tracker及最近DECISION，原plan/tracker保存在archive/manual_continuation_20260923。当前准备不计科学增量；后续实质工作与真实资源分开记录。
+
+
+### SINGLE_PART_COMPOSITION_20260923 START
+实际写入UTC为2026-09-23T21:14:25Z。独立负责人已从最强request监督证据选择只观测单部分能否保留未训练组合。现有mixed训练已经看过连续联合请求，本次移除所有组合teacher，明确改变核心方法取得信息的成本。停止相邻内容结构扩展。两臂共同单部分normalization、同512更新和目标初值；三单部分按epoch轮换以保证192个fit输入均覆盖。采用同run内精确batch teacher缓存，两臂均启用，跨目标各自取得并计费；没有新增持久缓存接口。主要binary组合误差、.01近似保持差值及真实非加性对照在输出前固定。开发target2，确认targets4/5及未测384句对。原方法保留source运行依赖，不将监督减少当作部署去依赖。预算9000driver秒、12GiB CUDA、6GiBbulk，GPU管理器检查空闲，实际空闲VRAM14217MiB。configs/cc23_single_parts_base.json及四条件配置为执行入口。科学增量尚待实际输出；已有稿件论证精简单独记录。
+
+
+### SINGLE_PART_COMPOSITION_20260923 PROGRESS
+实际写入UTC为2026-09-23T21:18:18Z。两个真实26-step smoke完成PASS，single/mixed分别24.548283/14.671409driver秒，缓存重新执行核对hidden/mask/margin逐值相同；single18个唯一batch teacher、mixed25个，额外各一次验证。single全部24fit行三part覆盖，完整请求数组与费用保存。计算前一次共享租约写权限失败、一次结果父目录缺少失败均未产生模型结果，已通过授权登记租约和建立本项目父目录解决，原错误记录保留。现在启动target2两条件512-step完整比较，无参数调整。当前稿件主文精简编译成功77页，SHA256 5fddf8930d7edb74287a9b51e17d79b3ee3b0224f46c76ad64db9310122521c4，全部原始数字、核心公式和readout对照保留；该修改为论证组织改进。
+
+
+### SINGLE_PART_COMPOSITION_20260923 PROGRESS
+实际写入UTC为2026-09-23T21:27:19Z。开发target2两臂512更新均PASS，single/mixed主要四组合nRMSE为.212997/.175947，配对差+.037050及95%区间[.004651,.068457]，未满足事前.01近似保持条件。single相对initial .307567、source-additive .260590均改善，交互重建RMSE为.260604，对照source真实交互.589885。readout_initial .168787保持更低误差。source拟合观测576/1177、训练teacher144/280批次，完整运行93.48/91.86秒，观测减少没有转成整体加速。证据为single_part_composition/development_analysis/RESULTS.json。独立负责人据此保留原标准与全部对照，执行原定targets4/5、384新句对的冻结确认，检验较少观测支持未训练组合的能力及代价；不追加参数变体，不改写为全面替代。当前GPU由共享管理器登记，原automation继续PAUSED。
+
+
+### SINGLE_PART_COMPOSITION_20260923 PROGRESS
+实际写入UTC为2026-09-23T21:37:34Z。target4两条件确认已完成PASS，target5按同一冻结配置接续。两个真实输入调度测试及三个脚本py_compile通过。主文空白分词4266至4050，重点附录6869至6312；后者18个table input、33个label与全部315次小数值的内容和次数一致，四个display公式及核心inline约束已核对。删去重复接口、消费者配方和source-pass说明；各保存对象与运行依赖继续区分。该动作减少阅读成本，没有科学增量。当前确认结果将接入同一grammar program段，沿用现有执行器、checkpoint与source定义，不增加并列方法。实际checkpoint核对两训练臂均为16786432个SAE参数及512更新，工程成本保持；两个buffer另计，不当作参数。
+
+### SINGLE_PART_COMPOSITION_20260923 CORRECTION
+实际写入UTC为2026-09-23T21:44:03Z。四个确认run全部PASS，正式分析已生成。独立负责人和执行者核对成本时发现source_measurements跨phase使用task与row_id，确认新面板重新使用行编号，导致distinct_pair_requests_total错误合并拟合与评价输入。各phase实际调用、拟合576/1177计数、模型响应、缓存验证和全部科学统计不受影响；缓存仅在同一fit面板内使用。原run与首次分析保留，分析器将依据good/bad实际token身份重新计算跨phase总量并生成confirmation_v2，逐值核对科学汇总保持。runner后续身份键已改成实际token序列，未重跑模型。该动作是费用统计修正，不增加科学成果。
+
+### SINGLE_PART_COMPOSITION_20260923 COMPLETE
+实际写入UTC为2026-09-23T21:54:15Z。最后模型确认于2026-09-23T21:41:47Z之后完成，精确结束时刻以run status为准，分析和论文整合在本条写入前完成。两smoke、两开发、四确认全部PASS，总1129.963529driver秒、918.484375CPU秒、266792次序列前向、2277180词元前向、2168195584峰值CUDA bytes及5291182058bytes资产；阅读、实现、分析、等待和写作没有独立计时。资源管理器已返回gpu-0 free。完整成本为single_part_composition/COST.json，原始模型输出在D:/CCAD_Storage/runs/single_part_composition_20260923，所有run冻结源码与原计数保留。
+独立采用决定为单项监督的未训练组合能力得到确认，mixed仍承担默认训练。主要nRMSE single .174519、mixed .171215、initial .272333、source-additive .288294；单项相对initial改善.097814 [.083611,.111914]。交互重建误差由initial .303549至single .268220，mixed .267004，source交互RMS .699358。主要single-minus-mixed单侧上界.010395未满足原.01标准，连续强度single .202034、mixed .179347，原readout主要.146150。每目标拟合观测576/1177，训练teacher144/280，两臂同512更新与16786432个参数。使用仍保留原source、目标checkpoint与执行规则。确认语法准确率86.49/87.40及source答案保持96.71/96.19分开报告。开发主要.212997/.175947保留。正式证据为confirmation_v2/RESULTS.json，摘要RESULTS.md。
+费用修正以实际good/bad token、干预位置和请求识别观测，每目标single总量4800、mixed5401，fit/evaluation交集0；原行编号总量4224/5248及修正依据保留。修正前后summary、comparisons、noninferiority、per_request逐值一致，ARRAYS.npz SHA256相同。三项真实面板测试覆盖192fit行的请求覆盖、缓存重复及跨面板行编号重复；全部通过。三个修改脚本py_compile及git diff检查通过。原运行不重复计算。
+改革检查核对上次决定与实际投入：没有继续相邻内容、图关系、receiver及target-group扩展；本次改变同一核心program取得的监督范围，使用同一保存对象完成开发、正面确认、采用和论文整合。独有科学收益是较少源观测保留组合响应及其精度代价的直接知识；额外成本为请求日程、共用缓存、计量统计和六项正式训练，原大规模SAE训练及source运行依赖仍存在。该科学增量集中支持request监督原理；不由保留mixed、及时结束、短运行、代码数量或篇幅提高整篇等级。该问题完成，不继续阈值、强度、层或成员数相邻队列。
+两个写作skill用于合并主文和重点附录重复，新增确认接入已有GPT2方法段及Table42。原主文和重点附录减少773个空白分词，全部重要数学、数字、强对照及表格引用保留；这是阅读成本改变。新增科学证据承担新增附录篇幅，paper/main.pdf现78页（7正文、2参考、69附录），SHA256 1e44debe7c4692087ab5a5061fc47d2788d3a35d7f8ddceb524e61904185336b。编译成功，无未定义引用或水平溢出；查看1至8与29至46页概览及5/29/34/39/41/45/46正常尺寸，未见裁切重叠。数据和表格由export_single_part_composition.py生成，CLAIM_MAP/EVIDENCE_INDEX更新，原稿保存在archive/manual_continuation_20260923。当前用户直接执行的路线完成，automation仍PAUSED十五分钟；后续工作需由用户继续授权，本次不重启loop。

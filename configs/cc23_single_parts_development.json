@@ -1,0 +1,5 @@
+{
+  "base_config": "configs/cc23_single_parts_base.json",
+  "run_id_template": "CC23_SINGLE_PARTS_DEV_T{seed}_20260923",
+  "training_request_family": "single_parts"
+}
