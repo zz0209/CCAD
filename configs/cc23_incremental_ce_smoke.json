@@ -1,0 +1,13 @@
+{
+  "base_config": "configs/cc23_incremental_ce_development.json",
+  "run_id": "CC23_INCREMENTAL_CE_SMOKE_20260923",
+  "training_run": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_TRAIN_SMOKE_20260923",
+  "evidence_level": "smoke",
+  "scope": "Four real validation sequences and one arrival exercise original, global frozen, group frozen and global replay reconstruction through the complete downstream model",
+  "seeds": [2],
+  "target_seeds": [2],
+  "arrivals": ["gender"],
+  "validation_sequences": 4,
+  "budget_seconds": 180,
+  "budget": "Representative four-sequence natural CE smoke within the complete question budget"
+}

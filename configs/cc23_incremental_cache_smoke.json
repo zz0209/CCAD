@@ -1,0 +1,16 @@
+{
+  "base_config": "configs/rg11_capacity_function_holdout.json",
+  "run_id": "CC23_INCREMENTAL_CACHE_SMOKE_20260923",
+  "run_parent": "INCREMENTAL_FUNCTION_BLOCKS_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923",
+  "generator_script": "scripts/train_incremental_function_blocks.py",
+  "purpose": "Capture actual shared-prefix states and source natural deletion teachers for staged functional training",
+  "scope": "Stage-specific teacher files keep later function members and responses outside stage1 training. Existing R26 fit/development sentence identities are retained.",
+  "seeds": [1, 2],
+  "arrivals": ["gender"],
+  "fit_pairs_per_task": 4,
+  "eval_pairs_per_task": 4,
+  "capture_batch_pairs": 4,
+  "budget_seconds": 180,
+  "budget": "Complete question7200 driver seconds,12GiB peak CUDA and20GiB new bulk including smoke/development/confirmation and quality; this is the actual small capture."
+}

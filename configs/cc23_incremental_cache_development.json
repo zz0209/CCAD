@@ -1,0 +1,9 @@
+{
+  "base_config": "configs/cc23_incremental_cache_smoke.json",
+  "run_id": "CC23_INCREMENTAL_CACHE_20260923",
+  "arrivals": ["verb", "number", "gender"],
+  "fit_pairs_per_task": 64,
+  "eval_pairs_per_task": 32,
+  "capture_batch_pairs": 16,
+  "budget_seconds": 300
+}

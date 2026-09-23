@@ -1,0 +1,10 @@
+{
+  "base_config": "configs/cc23_incremental_cache_development.json",
+  "run_id": "CC23_INCREMENTAL_NATIVE_MAPS_20260923",
+  "generator_script": "scripts/prepare_incremental_native_maps.py",
+  "purpose": "Prepare missing source1 native references with the original R26 fitting rows and solver",
+  "scope": "One original384-prefix capture, source1 target2 reproduction and source1 target3 mapping with unchanged512-candidate and64-members-per-part partition64 recipe.",
+  "seeds": [1, 2, 3],
+  "native_target_seeds": [2, 3],
+  "budget_seconds": 240
+}

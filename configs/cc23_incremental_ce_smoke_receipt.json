@@ -1,0 +1,5 @@
+{
+  "base_config": "configs/cc23_incremental_ce_smoke.json",
+  "run_id": "CC23_INCREMENTAL_CE_SMOKE_RECEIPT_20260923",
+  "purpose": "Verify actual natural CE computation and complete result receipt on the representative staged checkpoints"
+}

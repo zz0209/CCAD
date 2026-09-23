@@ -1,0 +1,22 @@
+{
+  "base_config": "configs/rg11_function_adaptation_development.json",
+  "run_id": "CC23_INCREMENTAL_EVALUATE_CONFIRMATION_20260923",
+  "run_parent": "INCREMENTAL_FUNCTION_BLOCKS_20260923",
+  "generator_script": "scripts/evaluate_incremental_function_blocks.py",
+  "purpose": "Confirm cumulative target explanation calls and untrained combinations on new generated sentences and fixed new targets",
+  "scope": "Author grammar-generator samples after excluding historical sentences; frozen three arrivals, training settings and comparisons",
+  "evidence_level": "frozen_confirmation", "audit_opened": true,
+  "target_seeds": [4,5], "seeds": [1,4,5], "arrivals": ["verb","number","gender"],
+  "training_run": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_TRAIN_CONFIRMATION_20260923",
+  "cache_run": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_CACHE_20260923",
+  "native_maps": {
+    "4": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_NATIVE_MAPS_CONFIRMATION_20260923/topk_s1_t4_map.npz",
+    "5": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_NATIVE_MAPS_CONFIRMATION_20260923/topk_s1_t5_map.npz"
+  },
+  "evaluation_panel": "artifacts/scientific_reform_20260923/incremental_function_blocks/confirmation_data/panel.json",
+  "evaluation_panel_sha256": "671194d56d5f04ed7c7cb6a25993c164024c727795da1d000554ce4e3108c811",
+  "evaluation_split": "incremental_function_blocks_confirmation", "eval_pairs_per_task": 128, "batch_pairs": 16,
+  "run_storage_root": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923",
+  "budget_seconds": 1800,
+  "budget": "Shares complete problem budget7200driver seconds,12GiB peakCUDA,24GiB new assets"
+}

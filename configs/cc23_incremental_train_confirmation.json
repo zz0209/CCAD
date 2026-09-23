@@ -1,0 +1,11 @@
+{
+  "base_config": "configs/cc23_incremental_train_development.json",
+  "run_id": "CC23_INCREMENTAL_TRAIN_CONFIRMATION_20260923",
+  "seeds": [1, 4, 5],
+  "initial_checkpoints": [
+    {"seed": 1, "path": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed1.pt"},
+    {"seed": 4, "path": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed4.pt"},
+    {"seed": 5, "path": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed5.pt"}
+  ],
+  "budget_seconds": 3000
+}

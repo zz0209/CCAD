@@ -1,0 +1,16 @@
+{
+  "base_config": "configs/rg11_function_adaptation_development.json",
+  "run_id": "CC23_INCREMENTAL_EVALUATE_SMOKE_20260923",
+  "run_parent": "INCREMENTAL_FUNCTION_BLOCKS_20260923",
+  "generator_script": "scripts/evaluate_incremental_function_blocks.py",
+  "purpose": "Exercise staged natural-group calls and actual full-model responses on real grammar inputs",
+  "scope": "Representative implementation smoke; shared phase information and full sentence interventions",
+  "target_seeds": [2], "arrivals": ["gender"],
+  "training_run": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_TRAIN_SMOKE_20260923",
+  "cache_run": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_CACHE_SMOKE_20260923",
+  "evaluation_panel": "runs/REFORM_R26_contrast_components_v2_20260913/panel.json",
+  "evaluation_split": "development", "eval_pairs_per_task": 2, "batch_pairs": 6,
+  "run_storage_root": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923",
+  "budget_seconds": 240,
+  "budget": "Shares complete problem budget7200driver seconds,12GiB peakCUDA,20GiB new assets"
+}

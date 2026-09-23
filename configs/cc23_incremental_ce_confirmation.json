@@ -1,0 +1,10 @@
+{
+  "base_config": "configs/cc23_incremental_ce_development.json",
+  "run_id": "CC23_INCREMENTAL_CE_CONFIRMATION_20260923",
+  "training_run": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_TRAIN_CONFIRMATION_20260923",
+  "evidence_level": "controlled_confirmation_quality",
+  "seeds": [1, 4, 5],
+  "target_seeds": [1, 4, 5],
+  "budget_seconds": 1800,
+  "budget": "Shares complete question budget of 7200 driver seconds, 12GiB CUDA and 24GiB bulk; evaluate 27 stage2 and three original checkpoints"
+}

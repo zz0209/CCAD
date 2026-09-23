@@ -11243,3 +11243,57 @@ joint实际成功率global/group为.872070/.865234，原字典.674805、raw .632
 同一稿件已更新abstract能力句、正文实际调用段、最近邻来源、discussion及附录D.5，表44与数值宏由确认资产导出，完整源数据、CLAIM_MAP和EVIDENCE_INDEX一同维护。主稿73页958223bytes，SHA256 fb5c79f03b245276f943bbe6ab125f8f92fc78d37867bc2dbf5c7ad49955e2f0。原稿和修改前文件逐字保存在archive/paper_before_functional_blocks_20260923，入口快照在before/functional_blocks_completion。Tectonic编译成功，无undefined/overfull警告；73页文本非空、无replacement字符，全稿概览及首页、正文7页、附录46–47页实际查看，公式、表44、引用和页边界正常。两项写作skills落实为同一核心解释复用论证下的可调用目标组成，必要raw取舍和执行依赖直接表达，研究过程保留本日志。
 
 改革检查与本次采用同步完成，沿用负责人12:32:33Z判断。本次功能监督实际改变目标自然组与部署依赖，正面开发后完成现成确认、质量和成稿，没有停留在局部百分比或将下一heartbeat当延期理由。global/group接近时使用简单结构，既有raw优势保持，新增结构没有成为论文必需门槛。本结果增加了可复用能力，后续投入应从整篇贡献与真实消费者重新选择；不自动启动组宽、配额、loss或素材附近变体。下一研究选择交回独立负责人，当前GPU均已退出，五分钟automation继续ACTIVE。科学增量、功能确认、质量代价与工程记录分别保存；稿件更新与完整文件数量不作为投稿水平证明。
+
+## FUNCTIONAL_BLOCKS_20260923 SYNC
+
+实际写入UTC为2026-09-23T12:42:26Z。本单元17个白名单代码、配置与主日志文件已提交并推送8104e9dcab44045204a86c381dc13bd5c50feb25，核实HEAD=origin/main。编译、真实GPU smokes、开发与确认、统计复算、JSON读取、差异和敏感字符串核对完成；权重、数据、稿件及私有研究文档保留本地，不扩大公开范围。论文导出scripts/export_functional_blocks.py SHA256为1e1349c6af558bc0693c0a8637f4d12b6a8d0c54f753aaddfefdc3fff3bf3f40，paper/data/functional_blocks.json为fdd7943b58cbd33f558e82c5f02089226c8acb57ee40630db5f6d2edb9480f0b。本补记随下次成组同步保留。
+
+独立研究负责人已经接续下一选择，输入为当前完整论文、确认后的目标自然组、W向量和原input-dependent程序，以及历史机制和最近邻原文。选择要求从主要科学与使用差距出发，给出机制预测、真实消费者及机会成本；现成配置不自动成为任务。五分钟automation仍为ACTIVE，当前不暂停研究或重开已完成run。
+
+## INCREMENTAL_FUNCTION_BLOCKS_20260923 START
+
+实际写入UTC为2026-09-23T12:49:53Z。独立选择于本次工具通信中形成，精确形成秒数未知，后续DECISION记录实际写入时刻。当前完整问题为逐项加入已验证解释的目标功能字典。旧参数固定后，全局TopK竞争仍可改变旧成员激活，比较独立组编码、全局编码和全局replay对新功能、旧调用及未训练组合的实际作用。源R26三功能与GPT2/R19五seed素材保持；三种后来解释顺序共同执行。source几何与teacher按到达阶段开放，shared bias全程固定。分组构造本身沿用成熟方法，采用须由真实新增能力及费用决定。
+
+root已经读取RG10/RG11配置、原训练hook和自然状态划分，核对实际gpu-0空闲、13880MiB可用VRAM和D/E可用空间。预算7200 driver秒、12GiB CUDA及20GiB新增资产覆盖完整开发、采用后的确认和质量；当前没有本单元GPU执行。execution_assets负责缓存/训练，finite_response_analysis负责确认文本及统计，root负责consumer、运行及整合。三任务官方原1000对均已进入历史，确认采用作者生成器新抽样并排除历史句子，不称官方剩余未用测试集。旧RG10/RG11适配与新用途差异进入研究选择，继续W组内二阶拟合暂不投入。
+
+修改前plan/tracker逐字保存于artifacts/scientific_reform_20260923/before/incremental_function_blocks_start，SHA256分别为62c8e17aed8579041acc8074a6b8d023fbb6ad98875e6e7fc61081816a463c30和fd842aa38e7845e454717880abbc6c85bb14a1a5ae1ee5f11f2c540fc80b3af3。新计划与工作卡记录真实阶段；完整单元完成后按结果决定采用、结束或具体信息不足，当前不添加附近配置队列。
+
+## INCREMENTAL_FUNCTION_BLOCKS_20260923 PROGRESS
+
+实际写入UTC为2026-09-23T13:02:28Z。本单元CACHE_SMOKE、TRAIN_SMOKE、EVALUATE_SMOKE及正式CACHE全部PASS，实际driver秒分别14.4334295、19.0126344、9.1336428、4.1642794。真实两阶段训练覆盖全部五cell；consumer完整模型执行600序列、4950tokens，保存288项有效逐句结果。重复同batch零更新与baseline逐值相同，旧组参数在Adam之后、restore之前完全相同，CPU原权重/自然输入也验证新参数实际更新及singleton更新相加等于组并集更新。记录位于INCREMENTAL_BLOCKS_CPU_CHECK.json及四个run的checks/原始资产。训练规格内的stage1每batch16/16、stage2 11/11/10和replay功能权重.5/.25/.25已在正式执行前落实，旧bias保持原值。此段为实现与运行进度，尚未据smoke判断科学收益。
+
+正式缓存取得192个fit前缀，384序列/3182tokens；原source成员只生成其规定真实负贡献。训练读取stage1或stage2独立文件，后来的teacher及几何在stage2才加载。TRAIN_DEVELOPMENT于13:01UTC开始，精确开始时间见status.json；包含targets2/3、三种后来解释及每阶段512次更新，当前进程正在运行并保存256/512恢复资产。完整比较及自然质量在训练后立即执行。确认输入已经通过作者generator生成384句对，每任务128对，SHA256 671194d56d5f04ed7c7cb6a25993c164024c727795da1d000554ce4e3108c811；与161个历史文件的26510个整句重合0。生成早期两次运行在模型执行前因seed范围与已有overlay路径失败，修复后成功，原命令与恢复记录保留在输入准备记录；不存在确认模型结果。
+
+## INCREMENTAL_FUNCTION_BLOCKS_20260923 CORRECTION
+
+实际写入UTC为2026-09-23T13:16:27Z。TRAIN_DEVELOPMENT在13:10:56Z完成30个512步训练阶段，PASS共578.6610409 driver秒。EVALUATE_DEVELOPMENT在13:12:59.283501Z因原R26缺少topk_s1_t3_map.npz终止，89.3260907秒、34016序列、280997tokens；source、全部30个新方法checkpoint与native_s2的16896条已完成结果均保存。原R26只保存五seed循环方向，source1→target3参考需要按同384 fit和原partition64配方补齐。当前通过独立补齐参考资产及新run继续剩余方法，已计算数组和逐句结果保持，方法配置不因本故障改变；不以其他source替代。新consumer恢复路径核对原panel、模型、checkpoint及cache身份，并复用原结果，补充missing native/raw。
+
+CE_SMOKE在13:13:08.224784Z完成首个实际checkpoint测量后，保存记录的quality字段与原checkpoint metadata重名而失败。已更正字典合并，保留该run的原始sequence数组和错误，使用CC23_INCREMENTAL_CE_SMOKE_RECEIPT_20260923重新执行同四个真实序列与四个checkpoint，6.3482594秒PASS；随后正式CE_DEVELOPMENT完成20个checkpoint、统一256自然序列的测量，结束状态和精确费用由原run记录。此问题影响输出记录构造，不改变训练或模型干预，当前已有自然质量完整原始量。
+
+## INCREMENTAL_FUNCTION_BLOCKS_20260923 DEVELOPMENT
+
+实际写入UTC为2026-09-23T13:28:37Z。NATIVE_MAPS于13:19:57.829Z完成原384前缀配方，target2支持、权重及partition与原R26逐值相同，target3新增映射保留独立资产。EVALUATE_DEVELOPMENT_RESUME于13:21:03Z完成全部19584项响应，14.2900838 driver秒，复用原有效方法数组并补齐缺失native/raw。全部开发十一run包括失败共805.254891 driver秒、46880序列、1110182tokens、peak2113266688 CUDA bytes及9338422322bytes，见incremental_function_blocks/COST_DEVELOPMENT.json。
+
+首次统计按排序后的panel字典推断query轴，实际consumer按声明顺序保存数组，造成new/old/组合统计分类错误。保留原development和smoke统计，正式分析改用consumer实际query顺序并逐项对照19584条有名称的metrics.raw margin；30项独立复算最大差5.55e-17。正确结果与检查为development_checked/RESULTS.json及ANALYSIS_CHECK.json，原统计不用于采用决定。consumer后续在panel显式保存query_order，此变动只增加顺序元数据，模型操作保持。
+
+正确开发global_frozen的新/旧/组合nRMSE为.168269/.139383/.301105，raw为.233052/.267724/.353445。global减raw新功能为−.064783，95%区间[−.127728,−.002419]，旧功能为−.128341[−.195320,−.057551]。组合误差差值区间包括零，组合正确率global/raw为.853009/.864583。global旧响应normalized变化.031221，二值保持.997396；group旧调用精确保持，但新/旧/组合误差.227925/.228114/.337237。独立负责人13:24:52Z采用global_frozen进入既定冻结确认，理由及完整用途保存在DECISION。group精确保持性质和raw正确率取舍保留，未追加结构或压力测试。
+
+TRAIN_CONFIRMATION于13:26:32Z附近开始，精确开始时刻以status为准，原规格seed1/4/5三顺序45训练阶段、384新句对targets4/5及五seed质量继续本单元。根据开发实际9.338GB与45新增阶段预计约12GB及消费者数组，存储预算从20GiB调整为24GiB；7200 driver秒及12GiB CUDA保持。执行前GPU13897MiB可用、D盘3162.76GiB可用，共享管理器授予gpu-0，未产生外部费用。seed1适配只计质量，source teacher保持原seed1。确认数据、方法、末步、终点及全部比较均冻结。
+
+## INCREMENTAL_FUNCTION_BLOCKS_20260923 CONFIRMATION PROGRESS
+
+实际写入UTC为2026-09-23T13:42:27Z。TRAIN_CONFIRMATION于13:26:32.090025Z开始、13:40:57.690183Z结束，45个固定512步阶段全部PASS，driver865.545601秒，源码与输入保持冻结。NATIVE_MAPS_CONFIRMATION复用已保存原384前缀状态，按原R26算法取得source1到target4/5映射，13:41:50Z附近结束，7.5201435 driver秒PASS，无新增LM状态采集。EVALUATE_CONFIRMATION于13:42:09.148365Z开始，384新句对、targets4/5全部阶段和七请求正在执行，尚未读取确认统计；自然CE随后接续。
+
+计算等待期间，同稿加入目标自然组的训练与执行定义，使input-dependent源成员程序和目标自身固定组各自的输入、保存对象及请求范围在方法部分清楚呈现。新增解释附录准备了冻结参数下TopK mask变化的恒等式，独立负责人核对其相同incoming状态及固定shared bias条件。候选结果数字仍待正式确认，现有PDF保持；修改前源文件及PDF逐字保存在archive/paper_before_incremental_blocks_20260923。此项为研究说明和交付准备，未计科学结果。两项writing skills用于将同一解释复用论证连接保存对象与后来请求，标准组分配、冻结和监督按原技术归属。
+
+## INCREMENTAL_FUNCTION_BLOCKS_20260923 COMPLETE
+
+实际写入UTC为2026-09-23T13:57:57Z。确认consumer于13:46:18Z附近结束，精确时刻见status，248.8743479 driver秒、78336响应、157472 sequence forwards及1343671 tokens，全部既定目标、到达顺序、阶段和对照完成。CE_CONFIRMATION于13:47:49Z附近结束，88.2607177 driver秒、30对象；与开发20对象合为同自然token身份的五seed材料。原始数据保持只读，confirmation/ANALYSIS_CHECK.json对78336具名margin逐项相同，30项独立指标最大差2.78e-17。统计以任务内句对共同抽样，固定目标与到达顺序保持依赖。确认完整输入身份、源码和实际调用随run保存。
+
+独立最终采用为DECISION的13:49:02Z，保持开发冻结的global_frozen。确认新/旧/组合nRMSE为.244794/.164273/.251413，同信息raw为.249791/.279245/.308991，原native为.201981/.201981/.262930。global减raw旧误差−.114972[−.140835,−.089891]、组合−.057578[−.081097,−.032502]，新函数差−.004997[−.047325,.039017]。新功能的开发相对raw优势没有在确认中得到支持，不保留该优势主张。旧调用normalized变化.025863、符号保持.997396；group实际旧调用完全相同，但新/旧/组合误差均更高。replay新功能误差.240170，以旧teacher重放获得小幅收益，完整比较保留。组合正确率global/raw为.831308/.853588，差−2.228个百分点[−3.429,−1.113]，源作用保真与任务正确率分别解释。
+
+采用能力为同一目标字典逐项保存源功能，在加入第三解释后继续调用旧功能和训练未监督的组合。阶段2训练新teacher，固定旧组参数，部署仅需要目标字典、组身份和输入状态。TopK mask恒等式解释冻结旧参数后实际调用变化的路径，标准冻结和分组不承担新颖性。完整五seed的global自然FVE/CE recovery为.9819/.9871，原字典.9857/.9903，各arrival、逐seed、L0、alive/inactive和decoder范数完整保存于COMPLETE_COST_AND_QUALITY.json及CSV。15run含失败共2015.455701 driver秒、1276.34375 CPU秒、212548 sequence forwards、3502941 tokens、38440训练updates、peak2113266688 CUDA bytes、21773144700bytes新增资产，24GiB完整预算内完成。原模型训练、源选择及cache成本继续作为既有输入单列。
+
+同一论文完成方法段、正文后来使用结果、相关工作、discussion及附录D.6整合。正文说明两种保存对象及执行输入，主要比较和任务代价直接可见。表45–46及数值宏由scripts/export_incremental_function_blocks.py从正式确认与50质量对象导出，完整data/incremental_function_blocks.json、CLAIM_MAP和EVIDENCE_INDEX已更新。当前main.pdf为76页、975374bytes、SHA256214b4480963777d2e19e192a6543963b8081213d975fbf4eef20f60e56987ffc，正文8页。Tectonic编译成功，全部76页文字非空、无replacement字符；全稿概览及首页、方法、第7/8页和附录48–50页实际查看，公式、表格和引用正常。第8页balance保留1.33pt vbox提示，实际渲染没有裁切或重叠。旧稿及源逐字保存于archive/paper_before_incremental_blocks_20260923，当前入口此前保存于before/incremental_function_blocks_completion。
+
+改革检查沿用独立负责人本次一次判断。独立配额的预期机制没有自动成为默认结构，比较支持global后实际改变采用；正面开发随即完成确认、材料质量和成稿，未推迟已有条件允许的必要工作。确认改变新函数优势的结论，保持完整强对照与实际用途，未追加相近参数、评分或新门槛。两项连续功能组成工作已增加目标自身调用和新增解释的能力，下一选择须重新判断整篇贡献的主要差距，不能以新增附录或局部指标继续积累分支。当前独立负责人已经从完整论文、原始证据、最近邻与USER_DISCUSSION接续新的主要选择，未指定新GPU实验。全部本单元进程已退出，原五分钟automation继续ACTIVE，白名单代码与主日志成组同步。

@@ -1,0 +1,19 @@
+{
+  "base_config": "configs/cc23_incremental_cache_development.json",
+  "run_id": "CC23_INCREMENTAL_CE_DEVELOPMENT_20260923",
+  "generator_script": "scripts/evaluate_incremental_function_ce.py",
+  "purpose": "Measure natural reconstruction and complete downstream CE for all stage2 functional dictionaries and original seeds on the same validation tokens",
+  "scope": "Natural quality on 256 original R19 validation sequences, with full-model reconstruction at every h11 position. Functional task outcomes are evaluated separately.",
+  "evidence_level": "controlled_development",
+  "training_run": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_TRAIN_DEVELOPMENT_20260923",
+  "token_manifest": "artifacts/final_three_research_20260909/training_material/TOKEN_MANIFEST.json",
+  "seeds": [2, 3],
+  "target_seeds": [2, 3],
+  "arrivals": ["verb", "number", "gender"],
+  "validation_sequences": 256,
+  "batch_size_sequences": 4,
+  "statistics_unit": "Original contiguous 128-token sequences; all dictionaries share the same 256 sequences from 64 natural documents",
+  "dataset_revision": "R19 validation token SHA256 560b5b23be0086b05dc686344571688a6962186dca1ba920a6194052e78bd0a7",
+  "budget_seconds": 1200,
+  "budget": "Shares complete question budget of 7200 driver seconds, 12GiB CUDA and 20GiB bulk; evaluate 18 stage2 and two original checkpoints"
+}
