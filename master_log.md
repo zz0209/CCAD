@@ -11598,3 +11598,39 @@ RAW_CHECK使用原始logits独立计算correct减其余25字母均值，指标�
 当前调度由提出下一种结构后寻找用途，改为从已确认的源知识及实际使用缺口确定中心贡献所需机制。每项主要实现前，当前工作卡必须说明上一审查实际停止了什么投入、替换了何种选择依据、下一动作怎样不同，以及预期贡献和机会成本。已识别低收益的候选产生方式缺少实质新依据时不进入实现或训练；研究继续处理同一贡献缺口的证据与选择。此时没有活动实验，本次没有虚构取消运行，也没有暂停全项目。AGENTS原有研究选择/审查工作方式受本节优先约束，权限、安全、真实证据与strong accept目标保持。
 
 已通过automation_update原位更新ccad，回读tomllib核对保存prompt与项目prompt全文一致、ACTIVE、十五分钟、原target_thread_id一致。git diff --check通过。使用两项既有writing skills将规则直接连接贡献、证据和执行动作，未以写作建议降低目标或隐藏强对照。此次为流程变更，科学新增为零；改革效果需由后续实际选择和集中积累的成果证明。未新建评分、审批层级或管理系统，原定周期审查与主要决定触发继续执行。
+
+
+## CONTRIBUTION_SELECTION_REDLINES_20260923 SYNC
+
+实际写入UTC为2026-09-23T19:58:59Z。白名单prompt与截至COMPLETE的主日志已提交并推送35d7d32662f88065326d78805545da0f2be662a8，已核对HEAD=origin/main。本地AGENTS、plan、tracker与用户原文保留，tracker恢复入口记录本次规则同步。此同步记录在提交后追加，随下一单元同步。
+
+## CENTRAL_CONTRIBUTION_SELECTION_20260923 START
+
+实际写入UTC 2026-09-23T20:04:58Z。事件时间为本次写入时刻。依据用户最高优先级红线及当前研究选择卡，独立负责人central_contribution_choice使用独立上下文，从当前论文、用户原文及原始证据选择中心贡献所需的下一项工作。已结束的paired-code及相近结构候选保持退出资源分配，没有活动训练。当前主执行者核对同一保存对象已有知识、真实使用缺口与可复用证据；选择完成前不启动新候选训练。此次START属于研究选择，科学增量尚无新增，实际资源为短时本地读取和独立agent。下一动作由机制、使用收益与全部复杂度的比较决定，不默认扩展当前实现。
+
+### CENTRAL_CONTRIBUTION_SELECTION_20260923 PROGRESS
+
+实际写入UTC 2026-09-23T20:06:57Z。事件时间为本次读取与写入时段，开始秒数未独立记录。root核对当前reuse_main/reuse_theory、SOURCE_EFFECT_16、FUNCTIONAL_EQUIVALENCE_19及今日已完成的有限响应、向量、交互和功能定位结果，并复读PW-MCC/Subspaces指定原文页。确定当前证据不能将source共同作用改善当作来源差异保持，也不能将共同平均误差当作逐请求可互换组成。最近邻的同一测量对象贯穿机制和构造用途，作为本次贡献选择的依据。独立负责人先形成条件作用指导真实成员责任的初步方向，随后收到已经完成的条件恢复、直接校准、向量及完整组反馈的事实摘要，用于排除已回答的问题。当前尚未选择算法或启动训练，实际GPU/CPU-heavy共享租约为空。该阶段归属研究选择与原文核对，没有新增科学结果或论文篇幅。
+
+### FROZEN_REGION_CONTENT_20260923 START
+实际写入UTC为2026-09-23T20:34:45Z。事件时间为本条记录时正在准备运行，模型尚未产生新输出。20:04:58Z开始的研究选择完成了历史核对和当前科学决定；来源为本次DECISION、R29原始STRUCTURE_FREEZE/score/checkpoint及Marvin–Linzen原文。接收路径、已知标签集合操作及paired-code近邻变体退出实现；取消本身不计科学进展。独立负责人contribution_from_evidence完成选择，execution_assets复用collector，root负责输入、统计与运行。
+科学问题为同一冻结共同功能组成能否在新句法上下文中传递正确控制词的number/gender内容，并区分干扰词变化。R29删除影响不直接给出带方向内容预测，当前不据此定位完整binding算法。所有成员、source评分和SAE冻结；共同/独占/union/union-minus-shared、等成员数cached及raw donor共同执行。新增成本是受控输入与已有模型调用，没有新训练参数；旧source路径建立成本继续保留。完整预算3600 driver秒、8GiB峰值CUDA和1GiB新数组，真实smoke后核对。
+输入为artifacts/scientific_reform_20260923/content_transfer/PANEL.json，SHA256 edade69d897d6a15787be5018bbff3431f12e3d8cea5a27bcbeaaa3735f6bc7b；384输入为128开发与256确认，词汇身份分开，全部四状态与两donor保留。同split名词重复，不按逐行独立计算统计。原入口快照在before/content_transfer_20260923。此次GPU检查空闲13581MiB，资源管理器全部free；可用RAM11765292KiB。普通CIM权限不足与两个runtime缺少psutil已明确暴露，之后授权只读CIM成功，没有安装包或更改环境。
+机制核对还纠正了一项执行前假设：GPT2-medium有24层，h.11后继续h.12至23，不能只调用ln_f/lm_head。实际依据为模型config和run_component_transfer.py；此前假设没有进入实现或实验。本次准备和原始资产核对不计新科学结果。下一动作为真实两机制smoke、冻结开发及具备采用信号时的新目标/新词确认。
+
+### CENTRAL_CONTRIBUTION_SELECTION_20260923 COMPLETE
+实际写入UTC为2026-09-23T20:37:24Z。事件为本条时完成的选择记录整合。科学增量为零，实际交付为FROZEN_REGION_CONTENT_20260923的独立选择、冻结输入、实现委派和成本范围；当前科学单元已经开始，不继续新增选择报告。早期候选取消及原因在DECISION的20:14:29Z/20:18:39Z，最终完整选择在20:32:51Z时间说明所对应条目。当前plan/tracker已按最新采用决定维护，旧入口逐字保存在before/content_transfer_20260923。automation原配置只读核对为ACTIVE、十五分钟、当前任务归属，没有修改或重复创建。全部科研历史与未测确认材料保留。
+
+### FROZEN_REGION_CONTENT_20260923 PROGRESS
+实际写入UTC为2026-09-23T20:42:58Z。smoke实际完成20:39:25Z，development实际完成20:41:04Z，均PASS。smoke为9.550488driver秒、472序列，真实noop误差0；开发28.008192秒、6536序列，全部28block保存，原raw在相同面板各字典之间复用。开发四个factor×syntax格中，两机制的共同组成均有正controller变化并超过distractor绝对变化。TopK共同controller/distractor为.332444/.039436，Mat为.207808/.032852；union移除共同组成的选择性损失为.616068/.370669。科学责任为同一对象的内容预测；共同组单独donor翻转仅.011719/.015625，不将响应变化冒充强操作收益。TopK对cached差为−.001605，Mat为+.084725，方法额外必要性分开判断。
+开发分析为artifacts/scientific_reform_20260923/content_transfer/development/RESULTS.json，所有输入保留。四名词族共同pigeonhole重采样877/1000有效，123次没有可观察边，区间条件于有限词汇及当前目标，不声称种子总体推断。当前有共同内容正面信号，全部SAE、成员、方法、终点与面板保持原定，立即执行目标13至15、256新词汇输入的两机制确认，不调参或扩大排名对照。运行费用在预算内，确认材料此前无模型响应。
+
+### FROZEN_REGION_CONTENT_20260923 CORRECTION
+实际写入UTC为2026-09-23T20:50:04Z。事件为对已保存逐输入结果的指标解释核对。先前PROGRESS中的.011719/.015625及交流中的1%至2%表示干预后答案符合donor标签的比例，其中包含原本已经答错的输入，不能称为答案翻转率。分析现明确计算原clean严格正确且干预后严格符合donor的交集，保留全部输入作为分母、并列不计；原始模型输出和既有指标不变，旧分析保留，新文件位于development_v2与confirmation_v2。开发共同region两机制真正翻转均0；确认TopK为1/768、Mat为10/768。最终采用的是选择性连续内容响应及组合中的增量作用，不将其称为可靠答案控制。
+
+### FROZEN_REGION_CONTENT_20260923 COMPLETE
+实际写入UTC为2026-09-23T20:54:54Z。确认事件于2026-09-23T20:44:14Z完成，证据分析、独立采用及论文整合于本条记录前完成。三个run全部PASS，实际111.1767706000driver秒、97.03125CPU秒、26216序列、267352tokens、peak1617119232CUDA bytes、3440002bytes原始资产；完整阅读、选择、实现、分析和等待的净时间未知。COST.json逐run保留实际范围，无付费、训练或新目标验证。原始输出在D:/CCAD_Storage/runs/content_transfer_20260923，确认主结果为artifacts/scientific_reform_20260923/content_transfer/confirmation_v2/RESULTS.json。
+采用共同组成的连续内容响应及其组合职责。同一R29保存对象在新目标/新词汇中controller/distractor为TopK .164102/.038607、Mat .309459/.056883，union移除共同组成的选择性损失.339352/.564906，全部24个分项为正。单独共同region个别分项无正选择性；与cached的TopK选择性差区间跨零、Mat差为.048265 [.032930,.065490]。真实答案翻转为1/768和10/768。既有结果和错误解释记录保留，development_v2/confirmation_v2的所有旧指标与原分析逐值一致，新增flip从原logprobs复算一致；V2_CHECK.json记录核对范围。统计条件于有限八名词族、固定目标及同一模型/训练语料。
+独有科学收益相对额外复杂度的评价为，使用原冻结对象得到可确认的新内容职责，没有增加训练参数和对应算法；该结果值得增强已有R29支持证据，尚未提高整篇方法必要性评价。复杂源路径的原取得成本仍为5760梯度句对，对照192，不因复用而省略。后续不分配相邻句法、层、成员数或评分变体的投入。当前返回研究选择，重点为中心贡献的独有知识和实际成员决定，不能自动把新的局部内容任务加入队列。
+改革检查核对了上次停止决定与本次动作。paired-code、图关系和相邻receiver没有续试，集合操作重复候选在历史核对后退出；本次从已确认共同组成产生新内容预测，开发信号当次完成确认及稿件更新。贡献集中积累在同一对象，执行方式有具体改善。该支持结果仍未解决整篇方法价值与复杂度的差距，不能把本轮净增量、短计算时间或没有增加总页数称作整体改革成功。没有增加审查层级或暂停项目。
+论文使用两个写作skill的实际改动为在reuse_grammar既有D.8段组织内容预测、最强组合证据及使用幅度，保留简单对照和异质性，研究过程继续只在日志。生成表格与data由scripts/export_region_content_paper.py复算；paper/main.pdf为77页（7正文、2参考、68附录），SHA256 fea2c000f525d9ff9aa344da29f0b40e452da54616336c0958c853b55d04123e。Tectonic编译通过，无未定义引用或水平溢出，保留实际underfull提示；第8/9/52/53/54页真实渲染查看未见裁切重叠。旧PDF、改动前段及索引保存在archive/paper_before_content_transfer_20260923，当前表为Table49，CLAIM_MAP/EVIDENCE_INDEX已更新。paper-compile采用既有锁定Tectonic环境，未安装skill默认编译器。下一动作是白名单同单元同步，automation维持ACTIVE十五分钟；后续研究选择需直接处理上述中心缺口。

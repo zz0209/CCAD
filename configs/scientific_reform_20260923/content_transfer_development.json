@@ -1,0 +1,10 @@
+{
+  "base_config": "configs/scientific_reform_20260923/content_transfer_smoke.json",
+  "run_id": "CC23_CONTENT_TRANSFER_DEVELOPMENT_20260923",
+  "scope": "Frozen R29 regions on all 128 development prefixes, targets11/12 and both objectives; full GPT2-medium continuation after h11",
+  "evidence_level": "controlled_development",
+  "seeds": [11, 12],
+  "target_seeds": [11, 12],
+  "lexical_limit": null,
+  "budget_seconds": 1200
+}
