@@ -1,0 +1,22 @@
+{
+  "run_id": "CC23_RECEIVER_SOURCE_DEVELOPMENT_20260923",
+  "run_parent": "RECEIVER_TRANSFER_20260923",
+  "generator_script": "scripts/run_receiver_transfer.py",
+  "purpose": "Test whether an uncalibrated upstream intervention changes the functional responsibility of published receiver features",
+  "scope": "All 80 direction rows from 40 original within-RC and across-RC pairs, fixed sender18529 and receiver3982/31148",
+  "evidence_level": "controlled_development",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "device": "cuda:0",
+  "seeds": [0],
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-70m-deduped/e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "dataset_revision": "cf080789e16f50238097db1fb9a3947a6cfcf9f6_existing_agreement_development",
+  "panel": "artifacts/scientific_reform_20260923/receiver_transfer/panel.json",
+  "source_parameters": "artifacts/scientific_reform_20260923/receiver_transfer/sources.npz",
+  "batch_size": 8,
+  "budget_seconds": 200,
+  "budget": "Source smoke and full development share 300 driver seconds and 2GiB peak CUDA, using existing local assets",
+  "run_storage_root": "D:/CCAD_Storage/runs/receiver_transfer_20260923",
+  "statistics_unit": "Original sentence pair, with both reciprocal directions retained; fixed public source"
+}
