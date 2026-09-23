@@ -10973,3 +10973,29 @@ CC23_BINDING_SELECTION_DEV_20260923使用configs/cc23_binding_selection_developm
 已核对R19/R20已有native_operation/endpoint及有限响应选择，R57已有重编码更新内成员选择，R60已有自然语境候选；本次复用成熟组件，标准反事实监督和求解器不构成新算法。SHIFT共同source-P候选代码与路径梯度未在旧run保存，需要新采集，Qwen梯度不可跨项目对象搬用。execution_assets已经收到完整实现任务，主执行者承担真实GPU运行；当前处于实现阶段，没有启动本单元run。开发预算900 driver秒含4拟合+4评价smoke，bulk路径为D:/CCAD_Storage/runs/conditional_member_selection_20260923，恢复时读取最新代码/配置和agent消息。选择得到答案后直接采用或结束额外拟合，可信新收益出现时完成同单元必要确认。
 
 前两项完整比较的13个白名单文件已提交推送为92d47ec9071bbe79cbacd8a8dbe60189768f4ea7，推送后HEAD=origin/main。实际GPU运行、分析复算、Python语法及git diff检查均完成，没有上传原始文档或扩大白名单。当前plan/tracker已转入新问题并保留完成证据，原ccad继续按五分钟接续。
+
+### HUMAN_CONDITIONAL_MEMBER_SELECTION_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T08:36:58Z。本次heartbeat重新读取AGENTS、tracker和plan，接续已有实现。scripts/run_shift_conditional_members.py复用contribution_moments/bounded_quadratic及既有模型hook，保存共同source none/P代码、两条件五点实际路径梯度、连续选择权重、固定二值mask及逐文档真实输出。source/raw直接选择共用同一hidden路径，拟合每处源W积分作用；路径积分与完整源响应均记录，拟合阶段目标验证次数为0。没有新求解器或模型训练。
+
+真实smoke CC23_SHIFT_CONDITIONAL_MEMBERS_SMOKE_20260923于08:36:18Z前后完成PASS，准确起止见status.json；4拟合+4评价文档、96 sequence forwards、11280 token forwards、40 backward sequences、8.4833628 driver秒，四选择和六处二值执行均完成。原source路径积分在记录的两个条件中接近实际端点响应，代表路径完整。启动前共享gpu-0为free，显存2070MiB、D盘3426585673728bytes可用，父目录已创建。正式CC23_SHIFT_CONDITIONAL_MEMBERS_DEV_20260923已启动，64拟合+64评价，配置与所有选择固定，当前运行属于原900秒预算。分析agent按同文档两状态配对准备实际响应和职业结果，未使用评价结果选择参数。
+
+### HUMAN_CONDITIONAL_MEMBER_SELECTION_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T08:42:58Z。smoke准确事件时间为08:36:10.056293Z至08:36:18.561294Z。正式DEV于08:36:48.668796Z开始，08:37:10.710233Z完成PASS。64/64开发比较和2000次label×gender配对bootstrap已经完成，原prediction、NPZ及实际feature IDs和二值mask关联通过。native_support/natural/operation/source_raw_path的两条件共同尺度nRMSE为.658937/.715150/.666363/.550269，clean RMSE为1.668765/1.772232/1.704937/1.560762，conditional RMSE为.913079/1.058959/.890897/.295706。源两条件effect RMS为2.863420/.366828，raw_path为1.394384/.264461；更小综合误差尚未保留正常W的完整作用。完整结果见MEMBER_DEVELOPMENT.json/.md。smoke+DEV共30.5027105 driver秒、24.015625 CPU秒、1632 sequence forwards、141600 token forwards、680 backward sequences、peak694063104 CUDA bytes、58582509 bytes资产。
+
+直接读取selected_members显示选中连续拟合总份额natural9.68、operation10.72、native8.82、raw_path19.26，而实际执行全部为22个完整成员。独立负责人据这一具体目标与操作失配决定在同一单元内完成一次二值支持修正。natural/operation/raw均在原fit Q,b上从原support开始确定性single-swap，固定各处额度与候选，直到没有改善；旧native_support保留。记录continuous_fit、原二值和优化后二值代理目标，再在同64评价文档执行完整真实干预。数据始终为开发资料，无新增目标结果用于拟合，不提前冻结新文本确认。该修正不构成新算法、新科学单元或新预算；已经委派execution_assets实施，原run及源码快照保留。原900秒预算仍有充分余量，当前没有GPU任务运行。
+
+### 改革检查
+
+实际写入 UTC 为 2026-09-23T08:42:58Z。独立负责人于08:41:24Z依据本次实质结果检查候选选择，DECISION保留完整意见。近期工作仍主要沿已有response、restoration和selector接口前进，RG05及R19的完整前例在候选形成后才进一步明确；及时结束配方尚未充分改变主要投入来源。本次二值修正直接处理真实操作失配，属于当前完整问题。若完整用途仍不成立，结束整个人工成员配方及相近rank/路径点数/交换配置续试，下一研究选择改从核心差距、机制与可用素材重新产生，不以新的局部接口继续排队。若简单路径具备真实完整用途，则在同一单元完成确认，按相对R57的实际新增操作能力采用。检查改变继续条件与后续投入范围，不增加新评价门槛或独立管理文件；改革计时由本次实际记录重新计算。
+
+### HUMAN_CONDITIONAL_MEMBER_SELECTION_20260923 COMPLETE
+
+实际写入 UTC 为 2026-09-23T08:51:30Z。CC23_SHIFT_CONDITIONAL_MEMBERS_BINARY_20260923于08:44:25.049905Z开始、08:44:47.422239Z完成PASS。三个拟合方法的18组实际Q,b完成固定二值额度、代理目标下降及终止交换核对，原数据和连续解保留。真实64篇评价文档的native_support/natural/operation/source_raw_path共同nRMSE为.658937/.530129/.691898/.817728。natural相对原native改善.128808，2000次文档配对分层bootstrap的95%区间为[.094300,.165892]；clean/conditional RMSE为1.319106/.775918。natural两条件作用RMS为3.950107/1.067880，源为2.863420/.366828。路径选择的对应作用为.609628/.336920。更小代理目标与二值执行一致性没有共同保留完整正常和条件功能，结束当前固定候选22成员配方及邻近参数续试。局部natural改善保留，不外推为功能变化信息普遍无效，也不追加无完整用途的新文本确认。
+
+全部三个run共52.853325 driver秒、41.875 CPU秒、3168 sequence forwards、271920 token forwards、1320 backward sequences、peak694063104 CUDA bytes及112296969 bytes运行目录。原始输出位于D:/CCAD_Storage/runs/conditional_member_selection_20260923，报告MEMBER_BINARY.json/.md保存逐文档实际效果、二值成员身份、配对区间和完整成本。MEMBER_BINARY.json的SHA256为ea42c46b101db21b2dd8bc466db150ae789ed39413e00aee665f709632016c76；runner为ead8934121653285f885e21708b086daa58b2fa40629060cac715d8bf1a9b4d3，analyzer为05afb1c11668a88e490f69910ace15af7b1159c4aa926dc2ca73eae6d787bae3。实际运行、结果关联复算、Python语法与git diff检查均完成，没有新增论文方法主张。
+
+### 改革调度实施
+
+实际写入 UTC 为 2026-09-23T08:51:30Z。落实08:42:58Z检查，下一主要选择交给重新建立独立上下文的independent_research_reset。输入限定为用户目标、当前论文、关键原始证据与最近邻原文，要求独立形成机制判断后才阅读执行者计划和DECISION；原负责人负责结束当前单元及保存机制知识。新负责人已独立提出信息获取层面的困难，并在随后历史核对中识别R19/R20与RG06既有尝试，取消普通主动筛选和相近部分状态训练候选。当前科学工作为从主要功能知识缺口选择新问题，未启动额外GPU运行。该职责调整替换近期围绕已有接口产生候选的安排，不建立并列监督loop或增加审批。
