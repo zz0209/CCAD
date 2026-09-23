@@ -11543,3 +11543,44 @@ RAW_CHECK使用原始logits独立计算correct减其余25字母均值，指标�
 
 本次科学增量是已确认的首字母目标责任定位；诊断是指定重构读出与真实LM编辑作用之间的区别；部署编译和论文密度修改分别计入工程及写作。当前主会贡献评价不因这些工程项提高。tracker已进入研究选择，next_structure_choice独立负责下一组成知识与真实用途判断；实验执行者未获得新训练队列。普通复算与git diff检查完成后同步白名单脚本、配置及主日志，私有原始数据、paper和内部计划不加入公开范围。完整单元预算4800 LM driver秒，已知投入及中断未知量均按原记录保留。
 实际写入时间 UTC 2026-09-23T19:09:17Z
+
+
+## FUNCTIONAL_FRAGMENTS_20260923 SYNC
+
+实际写入时间 UTC 2026-09-23T19:11:02Z
+
+白名单16文件已经成组提交并推送至既有origin/main，HEAD与origin/main实际核对均为4721e8583ea384273fd274fde77f9e5acdf1b15c。暂存差异检查通过，未加入原始数组、checkpoint、内部计划或paper；内部交付身份见本单元COMPLETE。推送完成事件早于本条写入，精确推送完成秒数未独立记录。当前研究选择继续，不重复已完成实验。
+
+## PAIRED_CODE_CORRESPONDENCE_20260923 START
+
+实际写入UTC为2026-09-23T19:25:49Z。事件为当前追加。独立负责人根据当前论文、原始作用结果、既有程序与最近邻原文完成选择，见DECISION的19:13:00Z、19:15:27Z、19:21:35Z。采用完整问题为同一目标E/D/A通过paired-code关系监督能否保存冻结后的source成员子集与真实重新编码连续调用。既有固定模糊A、target-only运行、共同E/D/A训练均不新增贡献。实际两臂physical/code保留同一作用监督、状态对、参数和512更新；代码臂分配部分监督权重给代码关系。停止近邻letter/rank/projection变体，当前实现直接服务已选连续调用问题。
+
+独有科学收益尚待实验，预期为同一已有对象的后来调用改善；额外成本为paired编码、目标适配和完整真实消费者比较。不会将标准损失、新目录或代码误差当贡献。执行者已分配训练和consumer两项独立实现，当前没有新结果；完整问题暂分配3600 driver秒、10GiB CUDA和4GiB新资产，确认以真实开发采用依据及smoke吞吐接续。采用时当单元完成新文本确认和必要稿件整合。未计时的阅读与实现成本不由driver时长代替。
+
+状态与科学路径已更新；更新前原文保存在artifacts/scientific_reform_20260923/before/paired_code_start，plan SHA256 3a031af6de9330dba7dd685a753d4688a7a148d38f4750674dfbb794ee5fadbf，tracker SHA256 c4a410ae85c57eba5987fbe325dbe635a040faa47fb3f394f8e8398dafd205fe。bulk使用D:/CCAD_Storage/runs/paired_code_correspondence_20260923。下一动作是真实smoke及同预算两臂开发，不启动相邻候选队列。
+
+## PAIRED_CODE_CORRESPONDENCE_20260923 PROGRESS
+
+实际写入UTC为2026-09-23T19:33:44Z。独立确认文本生成于2026-09-23T19:30:13Z完成，事件时间来自DATA_MANIFEST。原作者三个BLiMP grammar各128句对，原历史26510句和本日incremental384句对均参与完整句排除。panel SHA256为5e806b9d3e8a18b4188379844291f393eaece44c9825fe3bb2afd056a8729c44，位于artifacts/scientific_reform_20260923/paired_code_correspondence/confirmation_data。采样未读取任何模型输出，gender拒绝一项历史或重复句；数据生成只属必要准备。首调用缺少已安装grammar_runtime_v1的PYTHONPATH，在接受样本前结束；补齐既有overlay后通过共享cpu-heavy租约执行成功，没有安装依赖或修改生成规则。首次租约写入受sandbox限制，经自动审查授权后成功。准备总时长未独立计时。
+
+主要比较保留能够表达全部192成员的原source、原字典readout、既有训练program及其readout；接口沿run_shift_transfer.input_member_delta，不新增affine192训练臂。确认文本尚无模型输出。source依赖分为部署操作与研究诊断，collector的paired-code机制测量会读取source，不能把该测量时间称为target-only运行费用。研究选择成本与收益范围明确，当前科学结果尚未产生。训练和consumer均实施中，实际失败与恢复run身份由下一次结果记录接续。
+
+## PAIRED_CODE_CORRESPONDENCE_20260923 PROGRESS
+
+实际写入UTC为2026-09-23T19:36:44Z。CC23_PAIRED_CODE_DEVELOPMENT_20260923于2026-09-23T19:35:28.377450Z完成PASS。目标2/3各两臂完成512步，共2048次backward、655360次训练状态编码、无新增LM前向；execution_cost保存1,176,874,331bytes资产。共同训练表包含group296/8192与singleton3674/8192真实零作用，不移除零值。训练source teacher重放最大误差1.907e−6；两encoder分支及A、E、D均取得实际梯度，b_dec保持固定，A非负且行和不超过数值容差内的一。
+
+首SMOKE在source_information的Path接口处FAIL，1.9302758driver秒，尚无训练更新；修复字符串到Path参数后SMOKE_RECORDS完成PASS，10.6671506driver秒、719246336bytes峰值CUDA、441660236bytes资产。原失败与新run身份均保留。原始结果位于D:/CCAD_Storage/runs/paired_code_correspondence_20260923，训练脚本为scripts/train_paired_code_correspondence.py。开发最终判断必须依据冻结请求真实模型响应，当前训练质量与loss只支持实现和机制测量，不能作为持续能力的采用结论。完整consumer smoke已接续，之后同单元开发比较；确认文本已具备，尚未运行。
+
+## PAIRED_CODE_CORRESPONDENCE_20260923 COMPLETE
+
+实际写入UTC为2026-09-23T19:49:27Z。真实开发consumer完成时间为2026-09-23T19:41:35Z附近，精确时间以CC23_PAIRED_CODE_EVALUATE_DEVELOPMENT_20260923/status.json为准，本记录不据run名称推断。独立负责人independent_research_reset在19:45:27Z及19:47:20Z向DECISION追加最终结束与改革判断；next_structure_choice无法继续连接，职责按其已保存的独立选择、原始证据及事前预测恢复，未重新定义目标。完整统计为artifacts/scientific_reform_20260923/paired_code_correspondence/development/RESULTS.json，机制和费用为同目录MECHANISM.json、COST.json。母问题与strong accept目标保持。
+
+同一source表、状态对、参数和512步两臂比较完成。96句对、目标2/3、全部192成员的后来请求真实执行；source与target各自在第一次编辑后重新编码。subset nRMSE physical/code为.216840777/.290744982，差+.073904204，95%共同句对区间[.042549116,.101552996]；sequential为.178148373/.187592539，差+.009444167，区间[−.010231547,.026641771]。旧program两者为.184355010/.169626852，readout_program为.162916587/.149176984。code局部grammar正确率略高，源判断保持没有优势；实际作用较小同时保留。正式区间条件于当前固定目标与三个grammar，不能外推所有SAE或状态监督。
+
+机制复算中subset的代码平方误差438.034→263.305，decoded误差603.406→408.849，两端重构残差491.302→359.260，交叉项−817.053→−474.617，局部物理误差277.655→293.492。顺序调用自身路径最终state nRMSE为.353572→.353887。恒等式和共同结果说明单个代码误差不能替代物理使用验证，不声称这些相关变化已经识别因果机制。源三整组与旧完整consumer在相同96句对上的最大margin差5.20e−5；新consumer两个目标共享source/clean逐值一致，独立实际delta平方复算差0。smoke和正式完整响应、数组接口与统计已实际执行。
+
+独有科学收益与额外复杂度评价为当前候选不采用。它回答了一项有具体预测的局部监督问题，没有提供新的持续调用收益；新增paired-code目标、目标适配、A矩阵、实现和阅读成本没有得到相应能力抵偿。固定A、target-only和成员请求接口均属已有能力。停止目标1/4/5确认训练和384新句对模型测量，保留未测文本及全部原始结果；停止loss/A/步数近邻变体。局部负结果不否定FCC，也不因执行快速和及时结束判定整体改革有效。
+
+六run为4PASS/2FAIL，共267.4233115driver秒、199.515625CPU秒、76712sequence forwards、633657tokens、2064SAE backward、峰值1936181248CUDA bytes、1921097311bytes资产。训练首FAIL为Path记录接口，consumer首FAIL为缺少operation键造成记录唯一性检查失败；有效210chunks保留并在新SMOKE_RECORDS恢复，恢复只计24次baseline/noop前向。源模型、SAE、旧program和cache取得费用按原历史另计，阅读、实现、生成、统计和等待未独立计时，字段保持未知。所有本单元GPU会话退出，租约释放。
+
+改革审查已改变当前调度，下一选择须从未保存的具体源知识及后来使用决定产生机制，停止默认给旧执行器添加代数条件。定期检查设为2026-09-23T20:45:27Z之后首次实际唤醒，主要选择与结果提前触发。科学增量未采用；诊断得到已检验范围内的机制取舍；训练/接口与统计维护不算论文贡献。paper/main.pdf及同套源保持本单元开始的77页版本，不新增路线、图表或附录。plan与tracker更新为研究选择，旧入口逐字保存在before/paired_code_completion，plan SHA256 a92e6a4efe3c4f52b1edc26450e7858f6efc3f5fecfb6796886eb9434f13c841，tracker SHA256 b44eeafed585db93d4f68ffd2bb7215777af92b94a1303a3e62ace68b6f26d9b。现有automation保持ACTIVE十五分钟周期，下一唤醒接续研究选择。

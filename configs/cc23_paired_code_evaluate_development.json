@@ -1,0 +1,11 @@
+{
+  "base_config": "configs/cc23_paired_code_evaluate_smoke.json",
+  "run_id": "CC23_PAIRED_CODE_EVALUATE_DEVELOPMENT_20260923",
+  "scope": "Frozen192 member requests on96 exposed development sentence pairs and targets2/3; fixed source reference shared",
+  "training_run": "D:/CCAD_Storage/runs/paired_code_correspondence_20260923/CC23_PAIRED_CODE_DEVELOPMENT_20260923",
+  "target_seeds": [2, 3],
+  "seeds": [1, 2, 3],
+  "eval_pairs_per_task": 32,
+  "batch_pairs": 16,
+  "budget_seconds": 800
+}

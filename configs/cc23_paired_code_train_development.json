@@ -1,0 +1,10 @@
+{
+  "base_config": "configs/cc23_paired_code_train_smoke.json",
+  "run_id": "CC23_PAIRED_CODE_DEVELOPMENT_20260923",
+  "target_seeds": [2, 3],
+  "seeds": [1, 2, 3],
+  "scope": "Physical/code arms share source1 teachers,192 exposed fit states,512x32 request table and original target initializations; allA entries trainable",
+  "steps": 512,
+  "checkpoint_steps": [256, 512],
+  "budget_seconds": 1600
+}

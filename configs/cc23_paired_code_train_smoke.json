@@ -1,0 +1,21 @@
+{
+  "base_config": "configs/rg11_capacity_function_holdout.json",
+  "run_id": "CC23_PAIRED_CODE_SMOKE_20260923",
+  "run_parent": "PAIRED_CODE_CORRESPONDENCE_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/paired_code_correspondence_20260923",
+  "generator_script": "scripts/train_paired_code_correspondence.py",
+  "purpose": "Compare physical supervision with shared physical and paired-code supervision for repeated target-native operations",
+  "scope": "Frozen source1 teachers on exposed192 fit states; shared E/D/A initialization and512-step request table; smoke uses its first8 updates",
+  "mean_constants_source_split": "Natural source-code deletion at the incoming state; original decoder bias and reconstruction residual retained; no new mean fit",
+  "cache_run": "D:/CCAD_Storage/runs/incremental_function_blocks_20260923/CC23_INCREMENTAL_CACHE_20260923",
+  "target_seeds": [2],
+  "seeds": [1, 2],
+  "steps": 8,
+  "checkpoint_steps": [8],
+  "learning_rate": 0.0001,
+  "relation_learning_rate": 0.03,
+  "warmup_steps": 32,
+  "training_seed": 20260923,
+  "budget_seconds": 240,
+  "budget": "Whole question3600 driver seconds,10GiB peak CUDA,4GiB new bulk; shared physical/code smoke included"
+}

@@ -1,0 +1,4 @@
+{
+  "base_config": "configs/cc23_paired_code_train_smoke.json",
+  "run_id": "CC23_PAIRED_CODE_SMOKE_RECORDS_20260923"
+}

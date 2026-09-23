@@ -1,0 +1,17 @@
+{
+  "base_config": "configs/cc23_paired_code_train_smoke.json",
+  "run_id": "CC23_PAIRED_CODE_EVALUATE_SMOKE_20260923",
+  "generator_script": "scripts/evaluate_paired_code_correspondence.py",
+  "purpose": "Actual sentence responses to frozen member subsets, strengths and sequential re-encoded calls",
+  "scope": "Representative real smoke across three grammars and every request family",
+  "training_run": "D:/CCAD_Storage/runs/paired_code_correspondence_20260923/CC23_PAIRED_CODE_SMOKE_RECORDS_20260923",
+  "evaluation_panel": "runs/REFORM_R26_contrast_components_v2_20260913/panel.json",
+  "evaluation_split": "development",
+  "eval_pairs_per_task": 2,
+  "batch_pairs": 6,
+  "program_checkpoints": {
+    "2": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_DEV_T2_20260921/program_step512.pt",
+    "3": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_CONFIRM_T3_20260921/program_step512.pt"
+  },
+  "budget_seconds": 240
+}

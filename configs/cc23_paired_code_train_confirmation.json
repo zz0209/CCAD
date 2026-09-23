@@ -1,0 +1,10 @@
+{
+  "base_config": "configs/cc23_paired_code_train_development.json",
+  "run_id": "CC23_PAIRED_CODE_CONFIRMATION_20260923",
+  "target_seeds": [1, 4, 5],
+  "seeds": [1, 4, 5],
+  "evidence_level": "controlled_frozen_confirmation",
+  "scope": "Frozen physical/code training specification on the same exposed192 fit states and512x32 requests; seed1 is material quality only; target4/5 support subsequent independent functional confirmation",
+  "audit_opened": true,
+  "budget_seconds": 1600
+}
