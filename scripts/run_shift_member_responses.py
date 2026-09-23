@@ -24,6 +24,14 @@ def main():
     parser.add_argument('--config', type=Path, required=True)
     args = parser.parse_args()
     c = json.loads(args.config.read_text())
+    mode = c.get('mode', 'member_responses')
+    capture_pooled = c.get('capture_pooled', False)
+    original_accuracy = c.get('original_head_accuracy', True)
+    assert mode in ['member_responses', 'target_calibration', 'group_evaluation']
+    if mode == 'target_calibration':
+        assert c.get('panel_only') and capture_pooled and not c.get('selected_groups_file')
+    if mode == 'group_evaluation':
+        assert c.get('selected_groups_file')
     work = MultisiteWork(c, args.config, ['scripts/run_shift_member_responses.py',
         'scripts/run_shift_explanation.py', 'scripts/train_shift_dictionaries.py',
         'scripts/run_causalgym_multisite.py', 'scripts/run_r011s1_raw_hook_asset.py', 'src/ccad/artifacts.py'])
@@ -73,7 +81,11 @@ def main():
         pw, pb = torch.tensor(probe['weight'], device=work.device), torch.tensor(probe['bias'], device=work.device)
         panel = json.loads(work.checked(c['evaluation_panel'], 'Fixed document panel').read_text())
         rows = []
-        if c.get('evaluation_only'):
+        if c.get('panel_only'):
+            panel_split = 'calibration' if mode == 'target_calibration' else 'evaluation'
+            rows = [dict(r, selection_split=panel_split) for r in panel['rows']]
+            assert rows
+        elif c.get('evaluation_only'):
             assert c.get('selected_groups_file'), 'Evaluation-only panels require frozen selected groups'
             rows = [dict(r, selection_split='evaluation') for r in panel['rows']]
             assert rows and {(r['label'], r['gender']) for r in rows} == {(0, 0), (0, 1), (1, 0), (1, 1)}
@@ -89,18 +101,29 @@ def main():
         assert len({r['document_sha256'] for r in rows}) == len(rows)
         metadata = dict(row_ids=np.array([r['row_id'] for r in rows]),
             document_sha256=np.array([r['document_sha256'] for r in rows]),
-            splits=np.array([r['selection_split'] for r in rows]), labels=np.array([r['label'] for r in rows]),
+            splits=np.array([r['selection_split'] for r in rows]),
             genders=np.array([r['gender'] for r in rows]), token_counts=np.array([len(r['tokens']) for r in rows]))
+        if all('label' in r for r in rows):
+            metadata['labels'] = np.array([r['label'] for r in rows])
+        if all('profession' in r for r in rows):
+            metadata['professions'] = np.array([r['profession'] for r in rows])
+        if original_accuracy:
+            assert 'labels' in metadata
         common_identity = dict(rows=[dict(document_sha256=r['document_sha256'], tokens=r['tokens'],
-            split=r['selection_split'], label=r['label'], gender=r['gender']) for r in rows],
+            split=r['selection_split'], label=r.get('label'), gender=r['gender']) for r in rows],
             model_revision=c['model_revision'], source_parameters_sha256=sha256(parameter_path),
             source_manifest_sha256=sha256(source_path), probe_sha256=sha256(probe_path),
             conditions=['none', 'dynamic_source_P'], operation='complete_single_member_deletion_at_own_site')
+        if mode != 'member_responses' or capture_pooled or c.get('panel_only'):
+            common_identity.update(observation_mode=mode, capture_pooled=capture_pooled,
+                panel_only=c.get('panel_only', False), original_head_accuracy=original_accuracy,
+                professions=[r.get('profession') for r in rows])
         source_identity = identity_hash(common_identity)
         target_identity = identity_hash(dict(common=source_identity, target_seed=c['target_seed'],
             target_checkpoint_hashes=target_hashes, relation_sha256=sha256(relation_path)))
         write(work.run/'response_membership.json', dict(rows=rows,
-            identity='Frozen new-document evaluation' if c.get('evaluation_only') else 'Historically exposed development documents'))
+            identity=c.get('panel_identity', 'Frozen new-document evaluation' if c.get('evaluation_only')
+                           else 'Historically exposed development documents'), tasks=panel.get('tasks', [])))
         write(work.run/'response_identity.json', dict(source=source_identity, target=target_identity,
             common=common_identity, target_checkpoint_hashes=target_hashes, relation_sha256=sha256(relation_path)))
         for name in ['config.json', 'tokenizer.json', 'model.safetensors']:
@@ -208,20 +231,33 @@ def main():
             with np.load(reference_path) as reference:
                 baseline = reference['baseline_logits'].copy()
                 whole = reference['whole_W_logits'].copy()
+                if capture_pooled:
+                    baseline_pooled = reference['baseline_pooled512'].copy()
+                    whole_pooled = reference['whole_W_pooled512'].copy()
         else:
             baseline = np.empty((len(rows), 2), dtype=np.float32)
             whole = np.empty_like(baseline)
+            if capture_pooled:
+                baseline_pooled = np.empty((len(rows), 2, 512), np.float32)
+                whole_pooled = np.empty_like(baseline_pooled)
             for condition in [0, 1]:
                 for ix, ids, attention in batches(1):
                     mask = attention
                     operation = 'none'
                     baseline[ix, condition] = forward(ids)
+                    if capture_pooled:
+                        baseline_pooled[ix, condition] = pooled.detach().cpu().numpy()
                     operation = 'whole_W'
                     whole[ix, condition] = forward(ids)
+                    if capture_pooled:
+                        whole_pooled[ix, condition] = pooled.detach().cpu().numpy()
                 work.progress('SOURCE_REFERENCE', condition=condition, documents=len(rows))
             reference_path = source_dir/'reference.npz'
+            reference_vectors = dict(baseline_pooled512=baseline_pooled,
+                whole_W_pooled512=whole_pooled) if capture_pooled else {}
             np.savez_compressed(reference_path, **metadata, baseline_logits=baseline, whole_W_logits=whole,
-                whole_W_effects=whole-baseline, status=np.array('PASS'), identity=np.array(source_identity))
+                whole_W_effects=whole-baseline, **reference_vectors,
+                status=np.array('PASS'), identity=np.array(source_identity))
         index['source_reference'] = str(Path(reference_path).resolve())
         write(work.run/'response_index.json', index)
         if c.get('selected_groups_file'):
@@ -255,8 +291,11 @@ def main():
                         hidden[ix, condition] = pooled.detach().cpu().numpy()
                 effects = values-baseline
                 path = group_dir/f'group_{gi:03d}.npz'
+                reference_vectors = dict(baseline_pooled512=baseline_pooled,
+                    whole_W_pooled512=whole_pooled) if capture_pooled else {}
                 np.savez_compressed(path, **metadata, logits=values, effects=effects, pooled512=hidden,
                     baseline_logits=baseline, whole_W_logits=whole, whole_W_effects=source_effect,
+                    **reference_vectors,
                     method=np.array(method), selected_members=np.array(json.dumps(selected, sort_keys=True)),
                     status=np.array('PASS'), identity=np.array(target_identity))
                 index['group_blocks'].append(str(path.resolve()))
@@ -272,23 +311,26 @@ def main():
                     report[method][split] = dict(nrmse=float(np.sqrt(np.mean(error_values**2))/reference_scale),
                         source_rms_scale=reference_scale, conditions={})
                     for condition in [0, 1]:
-                        correct = (values[:, condition]>0) == metadata['labels']
-                        group_accuracy = [float(correct[chosen & (metadata['labels']==y) & (metadata['genders']==g)].mean())
-                            for y in [0, 1] for g in [0, 1]]
                         report[method][split]['conditions'][str(condition)] = dict(
                             rmse=float(np.sqrt(np.mean(error_values[:, condition]**2))),
                             actual_effect_rms=float(np.sqrt(np.mean(effects[chosen, condition]**2))),
-                            source_effect_rms=float(np.sqrt(np.mean(source_effect[chosen, condition]**2))),
-                            accuracy=float(correct[chosen].mean()), worst_group_accuracy=min(group_accuracy))
+                            source_effect_rms=float(np.sqrt(np.mean(source_effect[chosen, condition]**2))))
+                        if original_accuracy:
+                            correct = (values[:, condition]>0) == metadata['labels']
+                            group_accuracy = [float(correct[chosen & (metadata['labels']==y) & (metadata['genders']==g)].mean())
+                                for y in [0, 1] for g in [0, 1]]
+                            report[method][split]['conditions'][str(condition)].update(
+                                accuracy=float(correct[chosen].mean()), worst_group_accuracy=min(group_accuracy))
                 for i, row in enumerate(rows):
                     for condition in [0, 1]:
+                        label_metrics = dict(label=row['label'], correct=bool((values[i, condition]>0)==row['label'])) if original_accuracy else {}
                         work.record(kind='group_response', task='profession', row_id=row['row_id'],
                             component=row['document_sha256'], split=row['selection_split'], method=method,
                             operation=f'condition_{condition}', condition=condition, seed=c['target_seed'], target_seed=c['target_seed'],
-                            label=row['label'], gender=row['gender'], baseline_logit=float(baseline[i, condition]),
+                            **label_metrics, gender=row['gender'], profession=row.get('profession'), baseline_logit=float(baseline[i, condition]),
                             source_logit=float(whole[i, condition]), logit=float(values[i, condition]),
                             source_effect=float(source_effect[i, condition]), actual_effect=float(effects[i, condition]),
-                            prediction=int(values[i, condition]>0), correct=bool((values[i, condition]>0)==row['label']))
+                            prediction=int(values[i, condition]>0))
                 work.progress('COMPLETE_MEMBER_GROUPS', method=method, completed_groups=gi+1,
                     total_groups=len(selections), documents=len(rows), members=22)
             write(work.run/'GROUP_RESULTS.json', report)
@@ -299,7 +341,7 @@ def main():
             for handle in hooks:
                 handle.remove()
             return work.finish(None)
-        if c.get('path_targets') or shared:
+        if mode != 'target_calibration' and (c.get('path_targets') or shared):
             inherited_paths = (shared or previous or {}).get('path_projections', {})
             requested = c.get('path_targets', {})
             path_hashes = {}
@@ -376,7 +418,7 @@ def main():
         source_expected = {}
         for site in wsites:
             source_expected[site] = np.array(groups['associated_words'][site], dtype=np.int64)
-        if shared:
+        if shared and mode != 'target_calibration':
             seen = {site: [] for site in wsites}
             for path in shared['source_blocks']:
                 verify(path, source_identity)
@@ -387,7 +429,7 @@ def main():
         operation = 'member'
         block_candidates = {Path(path).name: path for key in ['source_blocks', 'target_blocks']
             for path in (previous or {}).get(key, [])}
-        for family in (['target'] if shared else ['source', 'target']):
+        for family in (['target'] if shared or mode == 'target_calibration' else ['source', 'target']):
             for active_site in wsites:
                 values = source_expected[active_site] if family == 'source' else candidates[active_site]
                 if family == 'target' and c.get('member_limit_per_site'):
@@ -410,6 +452,8 @@ def main():
                         shape = (len(rows), 2, len(members))
                         result = {key: np.empty(shape, dtype=np.float32)
                             for key in ['logits', 'code_sum', 'code_sq_sum', 'active_tokens', 'delta_l2']}
+                        if capture_pooled:
+                            result['delta_pooled512'] = np.empty((*shape, 512), dtype=np.float32)
                         local = ([source['members'][active_site].index(int(i)) for i in members]
                             if family == 'source' else members.tolist())
                         for condition in [0, 1]:
@@ -418,6 +462,9 @@ def main():
                                 member_index = torch.tensor(local, device=work.device).repeat_interleave(len(ix))
                                 logits = forward(ids.repeat(len(members), 1)).reshape(len(members), len(ix)).T
                                 result['logits'][ix, condition, :] = logits
+                                if capture_pooled:
+                                    observed = pooled.detach().cpu().numpy().reshape(len(members), len(ix), 512).transpose(1, 0, 2)
+                                    result['delta_pooled512'][ix, condition] = observed-baseline_pooled[ix, condition, None, :]
                                 for key, value in active_stats.items():
                                     result[key][ix, condition, :] = value.cpu().numpy().reshape(len(members), len(ix)).T
                         decoder = (parameters[active_site]['decoder'][local] if family == 'source'

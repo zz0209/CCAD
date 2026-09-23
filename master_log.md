@@ -11049,3 +11049,51 @@ T4采集已完成PASS43.0788537秒、71936 sequences，T5当前正在运行，�
 ### 改革检查
 
 实际写入 UTC 为 2026-09-23T09:36:18Z。采用独立负责人09:24:40Z在DECISION.md的检查，覆盖上一检查以来两个完整问题。研究信息从自然贡献和路径代理转到真实有限成员作用；响应basis没有使用优势后采用简单直接校准，停止相近rank/solver续试；正面开发结果在同单元形成新文档确认、实际22成员调用和原论文更新。必要工作没有因后续heartbeat延期，全部比较共享候选、验证信息及执行额度，未增加无关门槛。已证实的增量为少量目标校准改善自然功能组成，以及单成员预测和组合用途的实测差异。下一研究选择继续由独立负责人产生，当前所选择的一般问题是校准观察的信息如何决定后来读出中的解释复用，具体资产与机制规格核对正在进行。独特科学贡献仍由实际能力和机制发展，局部数字与工程完成不承担整体成果认定。
+
+### FINITE_VECTOR_REUSE_20260923 START
+
+实际写入 UTC 为 2026-09-23T09:40:46Z。采用独立负责人09:38:18Z在DECISION.md的完整选择，同八篇原校准文档的目标单成员前向保存完整512维有限下游变化，复用原二值求解及22成员额度，检验原head零空间中的作用信息能否使目标组成复用到后来职业head。四个IR04 none__full冻结head及后来文档均不参与向量选择。唯一新增finite_vector_n8与已冻结direct8、activation8、path8及native比较，输出维度与实际调用次数分别报告。RG06局部贡献训练与RG07已有程序消费者的差异已由负责人核对，本次对象为保持字典参数不变的真实自然成员有限向量。
+
+当前implementation交给execution_assets及finite_response_analysis，分别完成原collector的有限向量/新职业组执行和分析选择。source参考及target singleton旧文件没有pooled512，需补八文档；原完整group文件已有pooled512，保持只读并复用。开发targets2/3使用原IR04 test八格各16篇的128篇暴露资料，后续条件和全部确认规格已确定。真实完整组在四head的作用误差及用途决定采用，向量代理误差不替代实际结果。资源预算2400 driver秒、4GiB CUDA、1GiB新数组，bulk根为D:/CCAD_Storage/runs/finite_vector_reuse_20260923。09:39:23Z前gpu-0 free、13925MiB显存空闲，D/E可用3426289188864/396054802432bytes。当前没有启动GPU，下一动作是四文档真实smoke和原head投影核对。
+
+上单元14个白名单文件已提交推送869d1ec5c38eccf520467590a092f11b4cace875，核实HEAD=origin/main。实际采集、完整组确认、分析复算、源码与输出关联、最终PDF渲染和git diff检查已完成；源码配置没有密钥或原文数据，ignored研究资产本地保留。新问题延续同一项目与五分钟automation，不创建额外loop。
+
+### FINITE_VECTOR_REUSE_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T09:48:42Z。collector新增明确target_calibration和group_evaluation模式，保持旧成员响应接口。精确复用原direct8校准hash及顺序，四目标身份相同；后来128篇开发panel按原IR04 test八格各16篇生成，保留profession、gender、task和原split，不把旧教授护士标签用于新职业准确率。source及target向量仅在新增run保存，原资产只读。首次smoke启动在run创建前因D盘父目录不存在报告FileNotFoundError，没有GPU计算或run资产；建立已授权父目录后运行成功。
+
+CC23_SHIFT_VECTOR_SMOKE_20260923为4篇真实文档、48目标候选、两背景，400 sequence forwards、46896 tokens、6.3322836 driver秒，PASS。source baseline/whole-W pooled为[4,2,512]，没有source singleton或path。原head投影恒等式最大误差1.91e-6，文档与decoder身份一致；与旧不同batch/padding的scalar重播最大差3.12e-4，单独记录且未称逐位相等，见finite_vector_reuse/SMOKE_VECTOR_CHECK.json。
+
+T2完整8篇校准于09:47:43.76Z前后完成，10.0374945秒、4592 sequences、426884 tokens；T3于09:48:27.59Z前后完成，9.8527618秒、4496 sequences、415988 tokens，准确事件见status。T3共享T2 source参考。两个run全部PASS，分析按8×2×512向量构造Q,b，复用原二值额度与交换求解，分别19及14次交换，输出固定22成员。五方法及vector-only支持保存于finite_vector_reuse/t2与t3；后来head未参与选择。下一动作是五方法在128后来职业文档的真实完整组运行，并执行新向量组在原128文档的用途；原对照组结果复用。
+
+### FINITE_VECTOR_REUSE_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T09:53:59Z。T2/T3后来职业完整组与原任务vector-only完整组全部PASS，driver时间分别17.1376824、15.8003674、9.5310665、7.9237231秒。后来五方法主要nRMSE为direct .363390、activation .315346、path .347858、native .701966、vector .234071。vector减direct为−.129319 [−.165622,−.100064]，减activation为−.081275 [−.118343,−.051757]；共享文档配对，没有把四head/目标当独立文档。正常/条件分类准确率vector .847656/.906250，direct .855469/.910156，activation .873047/.908203，使用取舍完整保留。结果为finite_vector_reuse/development/VECTOR_REUSE_RESULTS.json/.md。
+
+机制读数为原head正交误差平方范数direct2.686086、vector .085834，平行误差 .020433/.012524。后来head投影MSE的平行/正交/交叉三项direct为.077606/.064410/.039750，vector为.048017/.014617/.039448，分别合计.181766/.102081；有符号交叉项保留。实际组向量支持可观测信息的机制预测，分类准确率未同步增加，不据此改变原主要终点。独立负责人已决定进入预定targets4/5及256新文档冻结确认，全部8篇、512坐标、22成员、四head及四对照保持原规格。新文档准备与目标4/5配置已经委派，现成工作继续同单元执行。
+
+一次聚焦复算核对真实Q,b、22成员quota及T2/T3的1092/1076个合法交换，全部符合选择规则。与本run标量的向量投影误差约2e-6；跨旧scalar采集，T2有1/4560项差.02212，来自resid_4成员3553的clean代码变化（code_sum 64.323608→63.858261），99分位.000546，T3最大.000966。两个采集的batch/padding不同，记录实际自然TopK代码变化，不把smoke的最大差冒充全体上界；文档、checkpoint与head身份一致，见SELECTION_CHECK.json。该差异不影响本run内有限向量定义及真实完整组比较，不重复GPU诊断。
+
+### FINITE_VECTOR_REUSE_20260923 PROGRESS / 确认输入调整
+
+实际写入 UTC 为 2026-09-23T10:00:02Z。target4/5八文档校准及固定支持已经完成，10.6042016/9.5028335 driver秒、4496/4512 sequences；源参考复用T2，两目标五方法支持固定保存在finite_vector_reuse/t4及t5。原任务64篇评价的向量nRMSE .213741，对direct .284036，配对差−.070295 [−.108579,−.032649]；正常/条件准确率vector .851562/.835938，direct .859375/.843750，差值均−.0078125且区间包含零。旧scalar组完全复用，原T3 native未测保持缺失。原终点表在finite_vector_reuse/original_endpoint/cohort。
+
+新文档准备在原每格32的要求下明确失败，尚未计算确认模型结果。403份历史来源排除后，女性作曲家唯一916篇中913篇已用，仅余3篇，其余七格均至少34篇。独立负责人于09:59:42Z在DECISION采用每格min(32,真实剩余)的新输入数量，共227篇，保留全部八格、原长度限制/split优先/hash顺序与全部历史排除。方法、8篇校准、目标成员、四head及对照完全冻结，没有依照确认结果作调整。原256规格和实际不足证据保留为CONFIRMATION_FREEZE.json、REMAINING_DOCUMENTS.json及PRIOR_USE_COUNTS.json。
+
+确认统计在每head内四格等权计算平方误差和source归一化分母，再按背景/head/目标原规则汇总；准确率、作用幅度及机制平方量使用同样权重。bootstrap每格按真实数量重采样，共享索引，三篇格没有复制为32个独立样本。其单独外推精度有限，实际格数量和区间完整保存。CONFIRMATION_PANEL.json已在模型输出产生前生成，接续真实五组确认；本次可用输入调整维持原解释复用问题。
+
+### FINITE_VECTOR_REUSE_20260923 COMPLETE
+
+实际写入 UTC 为 2026-09-23T10:10:37Z。CC23_SHIFT_VECTOR_CONFIRM_T4_20260923与T5分别在10:02:12.48Z和10:02:44.62Z前后完成PASS，精确起止见status，driver时间26.6218085/24.8651328秒，3178/2270 sequence forwards。227篇确认panel SHA256为7fff25f0af901327a06d461c6910a659d3bf93e78d59fe2eab326871305284ca，206原test、21原dev，历史重合0。原冻结的输入数量不足记录和采用前数量调整均保留。分组等权实现使用已有均衡128文档复算1865个点估计，新旧最大差8.88e-16；不平衡确认按预先确定真实格大小配对抽样。
+
+正式共同nRMSE为vector .263381、direct .509480、activation .504954、path .482699、native .719232。vector减direct的配对差为−.246099 [−.356565,−.179855]，减activation为−.241573 [−.359665,−.171141]，减path为−.219318 [−.333693,−.151004]。八个head×target中七项误差下降，target4的model/software_engineer orientation1保留原量纲RMSE .463461→.485143的个体差异。正常/条件准确率vector .833984/.902344，direct .868164/.903320，source .861328/.902344。采用服务于跨后来读出的源作用保真，正常分类准确率代价单独保留。独立负责人在DECISION的10:06:09Z已作最终采用，结束当前完整问题，原direct8保留原任务用途与对照职责。
+
+实际完整组机制与预定预测一致。原head正交误差平方范数direct3.361656、vector .065436，平行 .018531/.012662；后来head投影MSE的平行/正交/有符号交叉项direct为.067497/.117488/+.054654，vector为.052272/.015366/+.046743。交叉项没有省略。原教授护士开发64篇终点的vector/direct nRMSE为.213741/.284036，仍为开发身份。确认与机制NPZ、逐head数据、目标统计、校准身份及source-P依赖均保存在finite_vector_reuse/confirmation/evaluation及paper/data/finite_vector_reuse.json。新文档正常调用所保存22目标成员后读取指定head，条件调用另执行source-P，均不重新选择成员。
+
+完整单元11个PASS共148.2093557 driver秒、124 CPU秒、28040 sequence forwards、2461696 token forwards、peak860928512 CUDA bytes及72901505bytes运行目录。首次父目录失败在计算前，完整启动耗时未知；新文档准备失败与原freeze、数量检查、修订freeze、0.6755022秒最终CPU生成receipt分开保存。费用为finite_vector_reuse/COST.json/.md，成熟环境、权重和source参考共用，没有新增训练或下载。所有GPU任务均退出，未重复运行旧对照完整组。
+
+主文第4节与discussion已纳入完整有限观测所增加的后来调用能力及分类取舍，附录app:finite_vector_reuse给出观测/零空间机制、实际方法、固定预算、确认权重、表12与全部必要边界。表格由scripts/export_finite_vector_reuse.py读取正式JSON生成，CLAIM_MAP、EVIDENCE_INDEX与使用README同时更新。唯一paper/main.pdf于10:08:07Z编译，71页947288bytes，SHA256 50128aeaabf634b0829d63dc13bd3fd790cd6e42f6802bc44b2551fc9bf4a7ea。查看正文第6–7页、附录第20–22页，最后discussion修改后再次查看第7页，公式/表格/页界没有截断或重叠；最终编译没有undefined或overfull记录。此前编译出现1.39497pt vbox信息，最终编译已无此记录。原71页前的70页PDF和编辑源保存在before/finite_vector_paper，旧PDF SHA256 cae9e2f8c78051e98f040179791dbe9cf3ce3b57dff6998f6c581726a6311904。此前日志使用的有限成员附录编号B.9不准确，当前LaTeX label对应B.3，向量section对应B.4；证据索引统一使用稳定label定位。
+
+### 改革检查
+
+实际写入 UTC 为 2026-09-23T10:10:37Z。采纳独立负责人10:06:09Z的主要结果检查。从局部校准优化转到观测信息与后来读出这一结构问题，相同前向提供的512维信息实际减少了原head未约束的作用差异，并形成新文档上更准确的自然成员功能复用。开发出现信号后完成另两目标及新文档确认、原终点、费用和正文整合；女性作曲家仅余3篇导致有证据的取样及权重调整，没有增加门槛或重复旧数据。标准向量求解直接承担已确认能力，分类准确率代价和source-P依赖影响使用说明。下一主要缺口为同一关系中多个源解释的功能责任及后来组成调用，以及作用保真与消费者效用的联系，进入独立研究选择；没有追加附近参数、head或solver队列。本次检查重置周期，检查后完整单元数0。
