@@ -10999,3 +10999,53 @@ CC23_BINDING_SELECTION_DEV_20260923使用configs/cc23_binding_selection_developm
 ### 改革调度实施
 
 实际写入 UTC 为 2026-09-23T08:51:30Z。落实08:42:58Z检查，下一主要选择交给重新建立独立上下文的independent_research_reset。输入限定为用户目标、当前论文、关键原始证据与最近邻原文，要求独立形成机制判断后才阅读执行者计划和DECISION；原负责人负责结束当前单元及保存机制知识。新负责人已独立提出信息获取层面的困难，并在随后历史核对中识别R19/R20与RG06既有尝试，取消普通主动筛选和相近部分状态训练候选。当前科学工作为从主要功能知识缺口选择新问题，未启动额外GPU运行。该职责调整替换近期围绕已有接口产生候选的安排，不建立并列监督loop或增加审批。
+
+### FINITE_RESPONSE_SPACE_20260923 START
+
+实际写入 UTC 为 2026-09-23T08:59:01Z。采用独立负责人08:52:16Z在DECISION.md中的完整选择。新的观测对象是文档、背景和自然成员的真实有限删除响应矩阵；source W11个成员的跨上下文响应提供共同结构候选，目标成员用8/16篇实际校准文档确定其坐标，预测尚未测量的文档并选择完整多层成员操作。R19/R20已有九候选筛选，RG06已有状态训练，program/readout已校准指定源更新；本次新增信息由逐成员真实有限作用及其跨字典结构承担。SVD与回归复用成熟依赖，不宣称算法首创。最强替代投入是改善SAE功能可分离性，此次观测用于判断两类困难的实际贡献。
+
+当前采集与分析已经分别委派execution_assets、finite_response_analysis，实现scripts/run_shift_member_responses.py及analyze_shift_member_responses.py；主执行者维护配置并承担真实计算。source-only rank使用留出source成员、分层文档fold及8/16文档校准预测选择，防止仅用截断重构误差选择最大rank。原64fit/64eval曝光身份保持；组合效果必须重新运行模型，不能把单成员响应相加当实际结果。完整问题暂分配3600 driver秒、4GiB peak CUDA、2GiB资产，当前没有启动GPU。smoke配置已保存，每site一个目标成员及全部源W成员、4fit4eval；接续范围由实际吞吐确定。资源当前free，VRAM13925MiB可用，D/E盘可用分别3426439659520/396084162560bytes。
+
+前单元6个白名单文件已提交推送3607bd54964609c88b5a8e8d9689b55c0de748a4，推送后HEAD=origin/main。代码、实际输出与分析的聚焦核对没有发现改变结果的缺陷。新计划重组前逐字归档before/EXPERIMENT_PLAN_member_selection.md和EXPERIMENT_TRACKER_member_selection.md，SHA256分别b9b108665fb690febf0971d1f1659c117860e3c62c57311da39681205661000c及f675f7ee24a8b86d2989a19a5818ada5a93ad45389d53860e079e873c328851a，旧结果和研究历史保留。实际下一动作是完成代表性成员采集smoke并依据实测接续完整比较。
+
+### FINITE_RESPONSE_SPACE_20260923 CORRECTION / PROGRESS
+
+实际写入 UTC 为 2026-09-23T09:05:20Z。首个CC23_SHIFT_MEMBER_RESPONSES_SMOKE_20260923于09:02:06.715988Z开始，完成304 sequence forwards与35112 token forwards后在MultisiteWork.finish缺少component字段处抛出KeyError，进程exit1。最后可证实计算进度为09:02:17.238409Z、10.5224771 driver秒，完整结束时刻和峰值显存未知。其有效NPZ、源路径及原RUNNING状态副本保留，09:04:02Z记录真实FAIL。修复给每个实际成员块补充component=name，同时让smoke成员数量限制只作用于target，source保持全部11成员。完整问题投入计入这次失败，不重新取得预算。
+
+CC23_SHIFT_MEMBER_RESPONSES_BATCH_SMOKE_20260923于09:04:17.984Z前后开始，准确事件见status，代表性8文档、11源成员、每site8目标成员及共享五点路径全部PASS。真实1056 sequence forwards、105264 token forwards、80 backward sequences、10.4978142 driver秒、9.328125 CPU秒、peak1288171008 CUDA bytes。旧DEV的48项同文档/位置/成员路径投影与新采集最大绝对差5.6689605e-6，差异在batch/padding数值精度范围内；源路径没有跨任务搬用。原smoke结果不作为科研发现。
+
+依据实测批量吞吐，已启动CC23_SHIFT_MEMBER_RESPONSES_T2_20260923，128篇开发文档、全部285目标成员和完整source库，在900秒单run上限内执行，仍属于3600秒完整问题。当前阶段为共享source路径，后续逐成员输出按块保存。target3配置已准备复用同一个source库；分析与完整组合执行分支已经实现，正式结果完成后立即接续，不等待后续heartbeat。
+
+### FINITE_RESPONSE_SPACE_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T09:17:16Z。T2采集于09:05:10.530614Z开始、09:06:20.032403Z完成PASS，69.4820146 driver秒、77568 sequence forwards；T3于09:06:56.305086Z至09:07:39.627509Z完成PASS，43.3026711秒、71936 sequences。source-only双重交叉验证选择rank2，候选1/2/4/8的验证MSE为.028373/.016862/.029315/.041498。T2未测文档单成员nRMSE按8/16校准为finite .265468/.247366、source activation .271771/.251803、path affine .091975/.084628、target activation affine .141788/.130644。新旧smoke在不同padding/batch排序下source logit最大差约1.9e-4，身份与实际操作一致，双方均为highest精度；保留该数值差异，不追加无关门槛或重复运行。
+
+T2/T3十组完整自然成员操作全部PASS，分别27.0276581/26.7978067秒、各2560 sequences。两目标按共同文档配对的8文档nRMSE为finite .491206、source activation .470853、path .351744、target activation .281318、direct .284036；16文档为.341356/.346324/.355114/.329567/.379654。activation8减direct8误差差为−.002717，95%区间[-.018214,.010754]。两者正常准确率为.882812/.859375、条件均.84375，源正常/条件为.875/.84375。简单目标校准已经改善真实成员组合用途；有限响应空间未增加整体收益。完整证据位于finite_response_t2、finite_response_t3及finite_response_development_cohort/COHORT_GROUP_RESULTS.json/.md，原始run保留实际二值成员调用。
+
+负责人于09:15:40Z采用direct_calibration_n8为默认、activation8/path8/native支持作为冻结确认比较，结束有限响应basis的主替换开发。原source11单成员作用之和相对真实W程序nRMSE1.034235，正常RMS5.820082/2.863452，表明预测个体作用与使用完整组成需要分别评价。该知识不构成额外拒绝条件；源幅度和全部实际结果继续报告。T4/T5确认固定8校准文档、两背景、原候选池、22成员及求解规则，新文档仅执行冻结完整组，不再搜寻rank或成员额度。
+
+T4采集已完成PASS43.0788537秒、71936 sequences，T5当前正在运行，共享source bank没有重复计算。为复用已验证接口，完整研究矩阵全部保存，但方法拟合严格只接收8文档×2背景×候选成员的校准响应；研究费用与方法调用预算分别记录。新文档由已有prepare_shift_restoration.py与完整历史hash排除清单准备，目标256篇，尚未读取任何模型结果。已有条件允许的确认、结果整合和稿件更新在本单元接续。
+
+### FINITE_RESPONSE_SPACE_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T09:20:29Z。T5采集已完成PASS43.8155070秒、72192 sequences，T4/T5确认支持均已冻结为direct8、activation8、path8及原native_support。候选分别281/282，实际使用的校准预算为4496/4512个成员×背景×文档操作，各组固定22完整成员。支持位于finite_response_t4和finite_response_t5/confirmation_selected_members.json；它们只由已规定校准数据和源资料确定，没有根据确认结果修改。
+
+256篇新确认文档已经用现有prepare_shift_restoration.py生成，panel SHA256为03dc45f49184c8d21132677cc6dcbb352c9ba9b879bdab4f0c4fe8a936f5f470。四个label×gender格各64篇，192来自原dataset test、64来自原train，称新的干预文档队列，不称官方test分数。370个历史panel/config引用汇总84957个文档hash，最终历史重合0；具体文件、逐文件排除量、receipt与14.49秒CPU准备成本保存在finite_response_confirmation目录。source模型及dataset revision与原资产相同，未下载或安装新依赖。
+
+即将打开本单元冻结确认，配置为cc23_shift_member_groups_confirm_t4.json及t5，run ID为CC23_SHIFT_MEMBER_GROUPS_CONFIRM_T4_20260923和T5。evaluation_only模式在新文档计算source none/P/W/PW及四组完整自然成员效果，T5复用T4的同文档source参考；不采集新文档单成员或梯度，不拟合新参数。主要终点为两背景共同源尺度nRMSE，职业准确率、最差组和两条件实际作用同时保留。统计共同抽样256篇文档、目标固定等权，方法与成员不随结果调整。
+
+### FINITE_RESPONSE_SPACE_20260923 COMPLETE
+
+实际写入 UTC 为 2026-09-23T09:36:18Z。冻结确认T4/T5已分别在09:21和09:22 UTC完成，精确起止以各run/status.json为准；真实driver时间26.0932619/23.0954846秒，3072/2048 sequence forwards。两目标共同256篇此前未用文档的nRMSE按direct8、activation8、path8、native为.336303/.368629/.443913/.653905。后三者减direct的文档配对95%区间分别为.032326 [.023701,.041476]、.107610 [.091783,.123985]、.317602 [.287273,.351202]。两目标自身误差由.618179/.689632降至.336495/.336111。统计条件于当前两个固定目标字典，不能按512个独立文档计算。采用8篇直接目标校准产生的完整自然成员集合，source有限响应basis结束主替换职责。
+
+职业使用的正常/条件准确率均值direct为.865234/.937500，native为.845703/.904297；条件差为.033203 [.007813,.058594]。T4正常/条件准确率从native .925781/.945313变为direct .867188/.933594，T5从.765625/.863281变为.863281/.941406。误差改善在两个目标上一致，分类准确率收益有目标差异，正文与附录都保留这一取舍。direct正常/条件作用RMS为2.804173/.802458，source为2.789536/.441115；较准确的作用复用与分类准确率分别解释。全部原始逐文档结果、固定成员及统计保存在artifacts/scientific_reform_20260923/finite_response_confirmation/的t4_analysis、t5_analysis及cohort目录。
+
+全单元9个PASS运行共313.191072 driver秒、259.0625 CPU秒、304928 sequence forwards、25298448 token forwards，最大CUDA allocated为1300202496bytes，PASS目录36285248bytes。首FAIL已知10.522477秒和304 sequences另计，完整driver时长下界323.713549秒，实际完整总时长未知。14.49秒新文档准备单独保存。方法验证预算为每目标8文档×2背景×281或282成员，即4496/4512次操作；source调用、路径及开发评价均进入实际研究成本。全部GPU进程已退出，9个PASS状态与FAIL有效块保留，没有重复启动任务。费用由scripts/export_finite_member_confirmation.py从实际summary及failure progress生成，见COST.json/.md。
+
+唯一当前paper/main.pdf已加入正文的完整成员用途、附录B.9的方法/成本/新队列/目标差异及表11，并同步CLAIM_MAP、EVIDENCE_INDEX和paper/data/finite_member_calibration.json。最终编译事件2026-09-23T09:32:25Z，70页940655bytes，SHA256 cae9e2f8c78051e98f040179791dbe9cf3ce3b57dff6998f6c581726a6311904。本次查看第1、6、7、19、20页；最后目标差异补充后重新渲染第6、20页，公式、表格、页界和段落没有截断或重叠。最终编译日志没有undefined或overfull记录。两项writing skills实际作用为以真实完整成员用途组织结果，在同处表达目标差异与信息预算，研究经历保留本日志。
+
+原paper PDF及编辑源保存在before/finite_member_paper，旧PDF SHA256 ed6099f32f2d6f824cd00d103475d76142903beef48cb6da5e0c24071c61dbd9。当前入口更新前已逐字保存before/EXPERIMENT_TRACKER_finite_response.md及EXPERIMENT_PLAN_finite_response.md，SHA256分别38f91d8a85d6a14dacb768037a8a60126718318bd84f13a4438c62b9d90955c9及b136a270029a2a096890f7a612f969153df222401ef84902c2087a66d200dba1。论文和本地数据不扩大Git白名单，原研究记录完整保留。
+
+### 改革检查
+
+实际写入 UTC 为 2026-09-23T09:36:18Z。采用独立负责人09:24:40Z在DECISION.md的检查，覆盖上一检查以来两个完整问题。研究信息从自然贡献和路径代理转到真实有限成员作用；响应basis没有使用优势后采用简单直接校准，停止相近rank/solver续试；正面开发结果在同单元形成新文档确认、实际22成员调用和原论文更新。必要工作没有因后续heartbeat延期，全部比较共享候选、验证信息及执行额度，未增加无关门槛。已证实的增量为少量目标校准改善自然功能组成，以及单成员预测和组合用途的实测差异。下一研究选择继续由独立负责人产生，当前所选择的一般问题是校准观察的信息如何决定后来读出中的解释复用，具体资产与机制规格核对正在进行。独特科学贡献仍由实际能力和机制发展，局部数字与工程完成不承担整体成果认定。
