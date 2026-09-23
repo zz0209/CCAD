@@ -1,0 +1,26 @@
+{
+  "run_id": "CC23_OPERATION_GRANULARITY_SMOKE_RECORDS_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/operation_granularity_20260923",
+  "reference_run": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909",
+  "checkpoint_directory": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384",
+  "pw_run": "runs/FINAL3_R20_gpt2_complete_pw_mcc_v1_20260909",
+  "objectives": ["topk", "matryoshka"],
+  "feature_limit": 128,
+  "candidates": 16,
+  "gram_block": 64,
+  "representative_sizes": [2,4,8,16,32,64,128,256],
+  "random_seed": 2026092316,
+  "cpu_threads": 4,
+  "budget_seconds": 900,
+  "maximum_ram_bytes": 8589934592,
+  "maximum_new_bytes": 1073741824,
+  "identity_files": [
+    "artifacts/final_three_research_20260909/paired_material/TOKEN_MANIFEST.json",
+    "artifacts/final_three_research_20260909/paired_material/discovery_sequence_records.json",
+    "artifacts/final_three_research_20260909/paired_material/document_prefix_records.json",
+    "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909/natural_discovery_states.npz",
+    "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909/natural_calibration_states.npz"
+  ],
+  "scope": "Implementation smoke using source1 first128 IDs and their PW source2 image, all original paired rows; no scientific conclusion",
+  "output": "artifacts/scientific_reform_20260923/operation_granularity/PAIRED_FEASIBILITY_SMOKE_RECORDS.json"
+}

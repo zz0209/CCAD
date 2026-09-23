@@ -1,4 +1,3 @@
-"""Recover exact retained non-audit document prefixes, then tokenize for GPT-2."""
 import os,sys,json,time,hashlib,argparse
 from pathlib import Path
 from datetime import datetime,timezone
@@ -8,16 +7,17 @@ from ccad.artifacts import sha256
 from ccad.data_manifest import canonical_sha256
 import numpy as np
 from transformers import AutoTokenizer
-parser=argparse.ArgumentParser(description=__doc__)
+parser=argparse.ArgumentParser(description='Recover retained document prefixes for a pinned tokenizer')
 parser.add_argument('--source-run',type=Path,default=ROOT/'runs/R008a_paired_corpus_v3_20260903T234000Z')
 parser.add_argument('--model',type=Path,default=Path('D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da'))
 parser.add_argument('--source-tokenizer',type=Path)
 parser.add_argument('--output',type=Path,default=ROOT/'artifacts/final_three_research_20260909/paired_material')
+parser.add_argument('--splits',nargs='+',choices=['mean','discovery','calibration','audit'],default=['mean','discovery','calibration'])
 args=parser.parse_args();start=time.perf_counter();parent=args.source_run;out=args.output;out.mkdir(exist_ok=False,parents=True)
 cfg=json.loads((parent/'config.resolved.json').read_text());manifest=json.loads((parent/'artifacts/token_manifest.json').read_text());docs=[json.loads(s) for s in (parent/'artifacts/documents.jsonl').open()]
 old=AutoTokenizer.from_pretrained(args.source_tokenizer or cfg['tokenizer_local_dir'],local_files_only=True);new=AutoTokenizer.from_pretrained(args.model,local_files_only=True)
 records=[];outputs={};exclusions=[]
-for split in ['mean','discovery','calibration']:
+for split in args.splits:
  info=manifest['outputs'][split];p=parent/info['path'];assert sha256(p)==info['sha256'];tokens=np.fromfile(p,dtype='<u2').tolist();assert tokens[0]==old.eos_token_id;cursor=1;packed=[new.eos_token_id];spans=[]
  selected=sorted((r for r in docs if r['split']==split),key=lambda r:hashlib.sha256((cfg['selection_salt']+'-order\0'+r['document_id']).encode()).hexdigest())
  for r in selected:
@@ -40,4 +40,4 @@ for split in ['mean','discovery','calibration']:
  outputs[split]=dict(path=str(dest),sha256=sha256(dest),tokens=len(packed),sequences=len(packed)//128,documents=len(spans),source_token_sha256=info['sha256'])
  print(json.dumps(outputs[split]),flush=True)
 (out/'document_prefix_records.json').write_text(json.dumps(dict(documents=records,exclusions=exclusions),indent=2)+'\n')
-(out/'TOKEN_MANIFEST.json').write_text(json.dumps(dict(written_at_utc=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),source_run=parent.name,outputs=outputs,wall_seconds=time.perf_counter()-start,audit_tokens_read=False,network_bytes=0,scope='Exact original non-audit document-prefix token hashes verified. Reversible Pythia decode and GPT-2 encode; original hash-split membership retained. Last truncated document excluded per split because full prefix hash unavailable; rare incomplete UTF-8 boundary tokens removed and recorded. No claim to recover full original documents.'),indent=2)+'\n')
+(out/'TOKEN_MANIFEST.json').write_text(json.dumps(dict(written_at_utc=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),source_run=parent.name,outputs=outputs,wall_seconds=time.perf_counter()-start,audit_tokens_read='audit' in args.splits,network_bytes=0,generator_sha256=sha256(Path(__file__)),scope='Exact original document-prefix token hashes verified for the requested splits. Reversible Pythia decode and GPT-2 encode; original hash-split membership retained. Last truncated document excluded per split because full prefix hash unavailable; rare incomplete UTF-8 boundary tokens removed and recorded. No claim to recover full original documents.'),indent=2)+'\n')

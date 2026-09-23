@@ -1,0 +1,19 @@
+{
+  "run_id": "CC23_OPERATION_TARGET_MAP_SMOKE_MATERIALIZED_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/operation_granularity_20260923",
+  "reference_run": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909",
+  "checkpoint_directory": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384",
+  "source_tree_run": "D:/CCAD_Storage/runs/operation_granularity_20260923/CC23_OPERATION_GRANULARITY_20260923",
+  "frozen_groups": "artifacts/scientific_reform_20260923/operation_granularity/COMPONENT_CONTEXTS.json",
+  "pw_run": "runs/FINAL3_R20_gpt2_complete_pw_mcc_v1_20260909",
+  "mechanisms": ["topk", "matryoshka"],
+  "source_seeds": [1, 2],
+  "target_seed": 3,
+  "feature_limit": 128,
+  "candidates": 16,
+  "cpu_threads": 4,
+  "budget_seconds": 90,
+  "maximum_ram_bytes": 8589934592,
+  "maximum_new_bytes": 1073741824,
+  "scope": "Real discovery arrays with restricted dictionaries for execution smoke only; all frozen source members retained; no scientific inference from restricted target masks"
+}

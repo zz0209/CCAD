@@ -1,0 +1,9 @@
+{
+  "base_config": "configs/cc23_operation_response_base.json",
+  "run_id": "CC23_OPERATION_RESPONSE_SMOKE_20260923",
+  "panel_path": "artifacts/scientific_reform_20260923/operation_granularity/smoke_panel.json",
+  "mechanisms": ["topk", "matryoshka"],
+  "member_limit": 1,
+  "budget_seconds": 120,
+  "scope": "Representative real original positions from both mechanisms; six requests, each method and first source singleton; execution verification only"
+}
