@@ -11469,3 +11469,77 @@ TopK整组graph/PW/raw的完整词表nRMSE为.144553/.147410/.097841，graph减P
 九个真实run为七PASS、两FAIL，共376.530522 driver秒、328.890625 CPU秒、15931序列前向、2039168词元、1769223168 bytes峰值CUDA、2798342144 bytes已知峰值RSS及139986786 bytes运行资产。首次smoke准确结束UTC与最终RSS未知，已知时长保留。COST.json由原始status/metrics复算；初次PowerShell有序字典汇总产生null，初始派生文件保存在COST_INITIAL_CAPTURE.json，使用JSON对象重算后总费用完整，原run未改变。选择、阅读、实现和记录另外消耗本单元START至此约58分钟的记录区间，机器运行6.28分钟不能代表全部投入。RESULTS.json SHA256为6136180bfe1777ac7cf8841e4c3465afa3d0a8ca37d905cafb4152e1a528a306，COST.json为f5e07dba475b4f9ca67937a3de39529ef8bab299e0b78eece5d9bbb3313d0de5。运行均退出、GPU租约free，全部修改脚本py_compile及git diff --check通过。
 
 这项主要结果再次触发改革审查。实际确认没有无故延期，完整问题在同一单元得到决定；然而连续从既有素材产生局部候选的方式仍未增加相称的独有贡献，及时结束候选不能被算成改革整体有效。当前进入研究选择，独立负责人必须根据真实使用决定、原始证据与最近邻选择不同的学习对象或素材依据，当前图程序不自动产生下一实验。plan与tracker已经取消旧恢复事项，下一定期审查18:30:29Z；新选择仍须立即接受上述成本标准。
+
+## OPERATION_GRANULARITY_20260923 SYNC
+
+实际写入UTC为2026-09-23T17:33:19Z。17个白名单文件已成组commit/push至既有main，commit为1a0861336764f73a5ea32dd943ccea0d863e3184，核对HEAD=origin/main。代码、固定配置及本单元主日志同步，原始运行、数据、模型、论文和被忽略研究文档保持本地，没有扩大上传范围。ccad当前配置已再次核对为ACTIVE、十五分钟、当前任务归属，长期prompt保持用户最新科学收益/复杂度标准。下一研究选择实际从已验证的上下文功能责任读取证据，independent_research_reset与execution_assets正在核对IOI因果源解释、资产接口及项目已做范围；尚未采用新机制或启动新run，本次同步不算科学进展。本条同步事实留待后续成组提交。
+
+## FUNCTIONAL_FRAGMENTS_20260923 START
+
+实际写入UTC为2026-09-23T17:49:58Z。选择事件为独立负责人DECISION的17:46:53Z。完整问题检验相同word状态的首字母/末字母功能分量能否跨seed预测新词族的成员责任及真实操作选择性。原文A is for Absorption的投影与源功能消融提供成熟依据，本次知识差异要求共同分量和跨字典载体责任的真实预测。研究负责人已核对今日binding和R012/R24/R25；当前停止原图结构及IOI相邻角色扩展。root采用其Qwen post13五seed、独立词族、共同B/V和四carrier的完整规格，未新增模型训练或论文主张。
+
+实际动作是两项实现并行，execution_assets处理tokenizer词族及真实LM collector，finite_response_analysis处理共同算子及统计；root建立配置与运行入口。原plan/tracker逐字副本保存在before/functional_fragments，SHA256分别e26f0ccfc415f39423b6b592819960be1974414183a3067aea57cf1bdba0b458、d0cd9a17192c3cfbbb360e352530e028fecc62756efa01b31b7cbdcbbb7a83f6。启动时没有本问题模型结果，GPU可用；run根D:/CCAD_Storage/runs/functional_fragments_20260923。完整预算4800 LM driver秒、12GiB CUDA及4GiB新数组，source、对照、失败全部累计；阅读实现与等待耗时另计。
+
+主要选择同时接受一次改革审查。学习对象已经从整个成员集合转为内部功能分量，候选由两种可区分的真实行为产生，方法拟合与消费者在同一word状态连接。“独有科学收益 ÷ 额外复杂度”目前仍为待检验预期，收益须来自新成员责任知识或持续定位能力，成本包括标签ridge、共同读写算子、均值和carrier选择及LM测量。raw允许相同整体效果，不能用目标成员接口本身制造独特性。必要source检验、目标开发及具备依据的确认同一单元推进；下一动作是tokenizer材料准备及真实source smoke。下一定期审查18:49:58Z，实质结果提前触发。
+
+## FUNCTIONAL_FRAGMENTS_20260923 PROGRESS
+
+实际写入UTC为2026-09-23T17:57:46Z。词族准备成功，23789可用家族，mean256、fit2038另含10固定ICL、calibration8、development256、confirmation512。真实source smoke于17:54:39.784104Z完成，85.135895 driver秒、291.796875 CPU秒、448序列、66304词元、6878894080 bytes峰值CUDA，原始状态PASS及contract_ok，两个任务word hidden最大差0。小样本结果只验证操作流程，64fit不承担机制选择。
+
+实际概率检查发现clean first的26字母条件准确率.875，但完整词表正确token概率约1.8e-6。当前末尾空格与无leading-space字母可能造成提示答案边界失配，分析者和独立负责人正在对完整接续token及实际argmax解码核实。已启动的正式source在模型加载阶段被隔离终止，准确核验进程249232及父243132后停止；GPU租约自动释放，原RUNNING状态未被工作进程收尾，事实另存functional_fragments/INTERRUPTION.json。该run没有保存前向块，实际完整CPU/driver费用未知，不能记为零。保留旧WORDS、smoke与正式run，修复根据tokenization接口而非模型效果选择提示。目标审计代码继续实现；科学结论暂不更新。
+
+## FUNCTIONAL_FRAGMENTS_20260923 CORRECTION
+
+实际写入UTC为2026-09-23T18:03:57Z。独立负责人17:58:43Z核实并修复唯一token接续边界，prompt以冒号结束，候选encode(' '+uppercase)，完整字符串的token prefix等式逐项成立；全部词族及ICL保持，新材料WORDS_BOUNDARY.json保留旧材料。原smoke在完整词表预测为数字、带空格字母等，裸字母候选概率约1e-6且full-vocab准确率0，其统计算术无误但不能承担该任务结论。
+
+CC23_FRAGMENT_SOURCE_BOUNDARY_SMOKE_20260923于18:02:44Z完成，53.990352 driver秒、580序列、85260词元，包含source八操作、一词64自然active成员native singleton及两项真实oracle联合；状态PASS及contract_ok。word前缀hidden差0。root独立读取其16校准/开发词，clean full-vocab first/last准确率1.0/.3125，正确token概率.9456976/.17492063，26字母总概率.9989532/.8571042。此小样本说明接口修复后可测真实回答，两任务基础难度不同；source解释仍由正式拟合和真实作用检验。
+
+正式CC23_FRAGMENT_SOURCE_BOUNDARY_20260923已启动，使用既有cpu-heavy及gpu-0租约、FP32、batch4，完整256mean/2038fit/8calibration/256development及32词native singleton。两项修改后的输入和源码在各run冻结，原始故障资产保留。target实现和统计已并行准备，零target响应拟合与预先固定确认身份保持。工程修复不计科学增量，下一动作是源功能实际选择性与成员责任分析，条件允许立即接续跨seed比较。
+
+## FUNCTIONAL_FRAGMENTS_20260923 PROGRESS
+
+实际写入UTC为2026-09-23T18:11:48Z。正式source事件结束于18:11:11.158916Z，PASS，13036序列、1916292词元，最后记录elapsed415.999705秒，完整费用以metrics.summary为准。B/V拟合2038词、独立mean256，rank50、condition27.324988、相对求解残差7.29e-15、拟合.325296秒。256开发词clean full-vocab准确率first .984375、last .468750，概率.939713/.201750。全F的两任务margin变化−.002588/−.001145，L为+.000348/−.001452，片段的真实模型作用很小。F四carrier完整删除为−3.984082/+.028423，L为−.420824/−.478096；对应准确率F .40625/.515625、L .9140625/.2734375。32词全部active成员与两项oracle联合响应已完成，原始块保留。
+
+独立负责人依据真实不同成员责任决定继续既定target2/3，root采用，并已启动target smoke。当前能力机会是冻结对象的成员定位；Euclidean最小读出更新尚无可用的功能编辑作用，calibration尺度约.005不用于夸大作用。LEACE原文核对带来具体解释，全字典片段跨seed差可由共同投影下的重构残差差完全说明，故full保持单独不能证明组成责任。停止当前增加协方差写入或其他probe变体的投入建议，先完成已有源端正信号的目标定位比较。这个决定没有改变数据、四carrier规则或强对照，也未打开确认。
+
+本次结果触发聚焦改革检查。已有真实正信号立即进入跨seed比较，采用对象及科学判断已经按原量纲改变；源投影的数值正交和新增脚本不计成果。“独有科学收益 ÷ 额外复杂度”仍待目标定位证据，当前增加的读写算子及约1.2MB保存对象尚不能凭full效果取得方法采用。必要target实现和统计在计算时已完成，当前没有因等待后续heartbeat而延期。plan与tracker同步这一选择，原输入故障和全部费用继续保留。
+
+## FUNCTIONAL_FRAGMENTS_20260923 PROGRESS
+
+实际写入UTC为2026-09-23T18:32:58Z。target2于18:20:42.789102Z、target3于18:27:57.499674Z完成，均PASS。两目标共同256词和32词audit显示F whole相对PW目标作用增加.409464 [.262315,.553080]、平均绝对保护变化增加.033137 [.008394,.059274]；相对energy目标作用增加.453734 [.272010,.645718]、保护变化减少.271895 [−.325924,−.218752]。L相对PW的主要差值区间跨0。源直接whole F作用3.98408/.316356，与目标3.98351/.323409接近，源执行能力本身完整保留。原量纲、准确率取舍、全部角色及source参考在functional_fragments/development/RESULTS.json中。
+
+独立负责人18:29:29Z采用原规则冻结确认，root已启动target4/5新512词与64词全部active审计，会话47715。T4共享一次source直接执行参考，额外2048序列，T5不重复源调用。SOURCE_REFERENCE_SMOKE真实128序列、28.862297秒、6575923712 bytes峰值CUDA，三项source参考与正式source同词logits最大差0。当前同时进行whole-carrier的等价目标权重编译，降低运行时依赖；不新增排名或训练。必要确认在同一完整问题执行，独有科学收益仍由新词族及新seed结果判断，局部开发提高不改变整篇投稿评价。
+
+写入时间补充说明。本单元此前START及三项PROGRESS/CORRECTION中标示的UTC取自提交编辑请求之前的时钟读取，未另外捕获实际文件写入的精确秒，实际写入秒数未知。原文保留，run内事件UTC与此次实际追加时刻分别可核实，不将这些编辑前读数当作精确研究耗时。
+
+
+## FUNCTIONAL_FRAGMENTS_20260923 PROGRESS
+
+T4确认运行CC23_FRAGMENT_TARGET4_CONFIRMATION_20260923于2026-09-23T18:43:51.210565Z完成PASS，T5于18:44:18.380076Z启动，当前会话47715继续负责同一完整问题。T4的512词族和两功能编译核对1024项，成员ID及写入向量与真实原运行逐值相同，最大差0；编译数组139187bytes、wall .830419秒、CPU .890625秒，调用函数不读取source资产。证据为functional_fragments/deployment/target4/CHECK.json，原结果在D盘本单元运行根。该项确认保存对象的代数等价与运行依赖，科学定位比较待两个目标共同统计后决定。
+
+已执行DECISION 18:35:37Z的同稿信息密度决定。paper/sections/reuse_main.tex围绕source-member program的请求监督、冻结请求与后来调用组织；编译、增量和shared-columns移至既有附录职责，finite观察合并并保留scalar优于vector的任务准确率。所有决定结论的raw/readout及fixed-membership主图表保留。当前PDF 76页、正文7页、references2页、附录67页，SHA256 d359aaf74171e7efd6758ccab1b61528379d093467a5c17d46a493b2b1d6a736。执行者查看全部正文页，root读取改变段落并查看实际第7页；Tectonic成功且无undefined/overfull，font-request/underfull警告保留。原件、身份与检查在archive/paper_before_density_20260923。当前carrier结果尚未加入；相关工作一处并列target-group表述将随同单元证据整合完成修改。稿件整理计为阅读成本改善，科学贡献评价不提高。
+实际写入时间 UTC 2026-09-23T18:47:47Z
+
+
+## FUNCTIONAL_FRAGMENTS_20260923 PROGRESS — 冻结确认、采用与改革检查
+
+实验完成事件时间为T4 2026-09-23T18:43:51.210565Z、T5 2026-09-23T18:56:17.921199Z，两run均PASS，资源管理父会话47715 exit0。正式512词族共同统计位于artifacts/scientific_reform_20260923/functional_fragments/confirmation/RESULTS.json，SHA256 7d7014c03f2fb192cdf8c7e3cdbc037e16c3fd243551b64074a2de1112585c73。首字母whole-carrier requested/protected为3.75925/.320564，PW为3.43589/.265859，贡献能量为3.30736/.603872。相对PW目标作用增加.323360 [.216745,.426609]，连带改变增加.054706 [.033042,.078686]；相对能量两项共同改善。末字母相对PW两项区间含零。source直接首字母作用4.12163，仍更大；这些均值不代表逐词复制。64词真实active singleton及实际四成员联合保留完整oracle对照和额外测量成本。独立负责人最终采用见DECISION 18:58:41Z，采用首字母成员定位与紧凑目标调用，结束本单元优化。
+
+RAW_CHECK使用原始logits独立计算correct减其余25字母均值，指标差最大1.33e-15；确认词族相对mean/fit/cal/development重合均0，两个目标和源参考clean logits最大差0。确认target4/5部署权重各139187/139183bytes，512词两角色的成员和delta逐值相同，实际apply不读取source资产。完整费用为cost/COST.json，9个完成summary合计2922.285794 driver秒、2921.4375 CPU秒、85284 sequence forwards、12537196 token forwards、peak6878894080 CUDA bytes及469190430资产bytes；另外一个INTERRUPTED完整时长未知，所有合计按下界解释。四目标CPU编译另8.616453wall/3.03125CPU秒。阅读实现分析等待未单独计时，现有底模及五SAE训练费用作为复用成本列出。
+
+本次改革检查按用户讨论与最新收益成本标准执行。独有科学收益为固定源读出在新字典真实成员责任上的定位能力，以及该排名与低作用投影片段的区别；附加成本为一次监督ridge、目标均值、固定权重、排名和完整研究比较。部署不用源运行时是等价化简带来的费用改变，标准投影不计创新。收益足以保留可用定位工具，但未建立多个源部分之间的可复用组成关系，也未使其成为主程序替代。停止字母、层、rank、dual等近邻队列；同稿以紧凑支持证据呈现，正文缩短只计写作改善。研究组织的实质改变是确认后结束本问题优化，并委派独立上下文的next_structure_choice依据原始知识、当前稿件和最近邻选择下一主要问题，执行者未提供下一算法建议。返回旧program或新增表格不计整体改革成功。
+
+当前阶段为证据整合。execution_assets负责已有预测/物理执行附录的一张可复算表及主文一句观察，主文保持单个中心对象。plan和tracker更新采用范围，旧入口逐字保存在before/functional_fragments_completion，plan SHA256 ca71cbfa04319f73ca0282b87fca492410cdd95caec89f52ce2dcd2fc78ccb60，tracker SHA256 f5e84b0f9162f4760dd1cf108961c2479d7f46707e65266aceb24af91e087025。plan的PW文字已按冻结实际实现写为带符号cosine；计算始终使用既定signed Hungarian。论文编译与成组同步完成后记录COMPLETE，下一研究选择并行进行，不重复任何确认run。
+实际写入时间 UTC 2026-09-23T19:04:25Z
+
+
+## FUNCTIONAL_FRAGMENTS_20260923 COMPLETE
+
+实际科学结果与采用见本单元PROGRESS及DECISION 18:58:41Z。完整交付现在包含冻结源对象、四目标约139KB编译权重、target独立apply接口、512词确认与64词实际成员审查、原始预测与复算、全部费用及同稿证据。当前没有本单元活动计算；会话47715已正常退出，不接续字母、层、rank或dual变体。
+
+论文生成器scripts/export_fragment_confirmation.py直接读取确认RESULTS.json，写出paper/tables/fragment_confirmation.tex、对应values及paper/data/fragment_confirmation.json。完整精度与输入SHA7d7014c03f2fb192cdf8c7e3cdbc037e16c3fd243551b64074a2de1112585c73保留。主文Prediction and physical execution增加一项具体观察，既有A.4用六行表说明定位、投影、PW、energy和直接source的区别；首字母requested/protected取舍、末字母不确定性和实际源依赖成本保留。CLAIM_MAP及原retention索引已更新，没有新增并列主方法。正文编排由8页变为7页，附录由67页变为68页，当前全稿仍77页；增加的支持证据和阅读成本一同报告。
+
+当前paper/main.pdf SHA256 a07de06799a2c5b0cdc267c8c2c44c96fb7d366fc742c6c30587a23465585b0c。最终Tectonic编译2.218166秒，receipt为paper/build/20260923T190348253931Z/BUILD_RECEIPT.json；无undefined引用或overfull，font-request/underfull警告保留。执行者实际查看3/4/7/12/13页，root再次查看12/13页的表格、公式和上下文。历史稿、可编辑源及检查在archive/paper_before_density_20260923及其before_carrier_support，唯一当前入口保持paper/main.pdf。
+
+本次科学增量是已确认的首字母目标责任定位；诊断是指定重构读出与真实LM编辑作用之间的区别；部署编译和论文密度修改分别计入工程及写作。当前主会贡献评价不因这些工程项提高。tracker已进入研究选择，next_structure_choice独立负责下一组成知识与真实用途判断；实验执行者未获得新训练队列。普通复算与git diff检查完成后同步白名单脚本、配置及主日志，私有原始数据、paper和内部计划不加入公开范围。完整单元预算4800 LM driver秒，已知投入及中断未知量均按原记录保留。
+实际写入时间 UTC 2026-09-23T19:09:17Z
