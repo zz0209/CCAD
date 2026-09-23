@@ -1,0 +1,15 @@
+{
+  "base_config": "configs/cc23_shift_parts_t2.json",
+  "run_id": "CC23_SHIFT_FINITE_PARTS_SMOKE_20260923",
+  "run_parent": "FINITE_PARTS_PROGRAM_20260923",
+  "generator_script": "scripts/train_shift_finite_parts.py",
+  "purpose": "Representative actual-model check of finite part training, legal target execution and stored outputs",
+  "scope": "Four existing calibration biographies and eight existing later biographies, 12 steps per arm",
+  "calibration_panel": "artifacts/scientific_reform_20260923/finite_parts_program/SMOKE_CALIBRATION_PANEL.json",
+  "evaluation_panels": {
+    "later": "artifacts/scientific_reform_20260923/finite_parts_program/SMOKE_LATER_PANEL.json"
+  },
+  "steps": 12,
+  "budget_seconds": 300,
+  "budget": "Representative actual inputs and backwards before the complete fixed comparison; charged to the same 2400-second unit"
+}

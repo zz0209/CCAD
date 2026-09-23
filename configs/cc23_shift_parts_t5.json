@@ -1,0 +1,8 @@
+{
+  "base_config": "configs/cc23_shift_parts_t4.json",
+  "run_id": "CC23_SHIFT_FINITE_PARTS_T5_20260923",
+  "target_seed": 5,
+  "seeds": [5],
+  "relation_run": "runs/REFORM_R59_shift_confirm_seed5_v1_20260915",
+  "vector_selection_file": "artifacts/scientific_reform_20260923/finite_vector_reuse/t5/vector_only_selected_members.json"
+}

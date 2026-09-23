@@ -1,0 +1,9 @@
+{
+  "base_config": "configs/cc23_shift_parts_t2.json",
+  "run_id": "CC23_SHIFT_FINITE_PARTS_T3_20260923",
+  "target_seed": 3,
+  "seeds": [3],
+  "scope": "Eight exposed calibration biographies, source P/N/W only; fixed target3 SAE, later combinations and heads excluded from training",
+  "relation_run": "runs/REFORM_R59_shift_confirm_seed3_v1_20260915",
+  "vector_selection_file": "artifacts/scientific_reform_20260923/finite_vector_reuse/t3/vector_only_selected_members.json"
+}

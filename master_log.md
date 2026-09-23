@@ -11097,3 +11097,45 @@ T2完整8篇校准于09:47:43.76Z前后完成，10.0374945秒、4592 sequences�
 ### 改革检查
 
 实际写入 UTC 为 2026-09-23T10:10:37Z。采纳独立负责人10:06:09Z的主要结果检查。从局部校准优化转到观测信息与后来读出这一结构问题，相同前向提供的512维信息实际减少了原head未约束的作用差异，并形成新文档上更准确的自然成员功能复用。开发出现信号后完成另两目标及新文档确认、原终点、费用和正文整合；女性作曲家仅余3篇导致有证据的取样及权重调整，没有增加门槛或重复旧数据。标准向量求解直接承担已确认能力，分类准确率代价和source-P依赖影响使用说明。下一主要缺口为同一关系中多个源解释的功能责任及后来组成调用，以及作用保真与消费者效用的联系，进入独立研究选择；没有追加附近参数、head或solver队列。本次检查重置周期，检查后完整单元数0。
+
+### 白名单同步与研究选择接续
+
+实际写入 UTC 为 2026-09-23T10:13:06Z。本单元15个已核对白名单文件提交并推送44fd1fb7695edad6c6c89352e787c781265d8cba，核实HEAD=origin/main。staged diff检查通过，源码/配置没有密钥或原始文本数据，ignored论文和研究资产本地保留。下一主要研究选择已交由原独立上下文负责人independent_research_reset，输入包含本次实际能力、分类取舍、历史检验及现实文档可用性；当前只形成下一完整问题，不启动未经选择的实验。tracker记录研究选择阶段及责任人，原ccad仍为ACTIVE五分钟接续。此同步记录在本地追加，随后与下一实质工作共同同步。
+
+## FINITE_PARTS_PROGRAM_20260923 START
+
+实际写入 UTC 为 2026-09-23T10:30:18Z。独立选择事件为DECISION记录的2026-09-23T10:28:46Z，此前研究选择与只读资产核对的独立工时未知。启动有限向量监督的自然三部分关系研究，科学问题为已确认的观测机制能否保留P/N/W分别调用的功能区别，并预测未参加拟合的实际组合。MORNING_R01和IR03已有冻结字典三列程序拟合；当前新增比较由相同传记输入、支持与训练预算下的纯pooled和混合标量损失区分机制，容量条件只承担联合分配对照。旧失败及原native行和限制已纳入选择，未把已有参数化重新称为创新。
+
+计划固定target2/3开发、4/5冻结确认，保留原R59 native与raw readout。三训练臂joint_vector、independent_vector、joint_mixed共享原native正支持与当前W22成员并集、初值、八篇传记和每臂240步Adam .03、batch4；每部分80步，固定末步。每臂960目标序列前向及其反向，teacher与评估费用另列。动态11site程序按同一incoming状态编码一次，组合共同执行，跨位置状态继续变化。实际source单部分完整pooled作为监督，之后真实运行全部组合，旧singleton和source-P背景不冒充本次target-native程序。
+
+execution_assets实施scripts/train_shift_finite_parts.py，finite_response_analysis实施分析，主执行者准备配置、运行和完整交付。configs/cc23_shift_parts_t2、t3、smoke.json已经保存。原教授护士64开发评价、四格各一篇smoke拟合及八格各一篇smoke用途面板由finite_parts_program/prepare_panels.py生成，保持历史曝光身份，64篇与八篇拟合无重合。确认的既有227后来职业面板保留曝光身份，原任务未用文档按预结果min32规则正在准备。
+
+投入为完整问题2400 driver秒、8GiB peak CUDA、1GiB新增运行资产，代表性smoke为12步每臂。10:20–10:23UTC实际GPU free13925MiB、共享租约全部free，Get-Process未见python任务。CIM拒绝读取后使用普通Get-Process核对，不修改权限或其他进程。D/E可用3426110406656/395907166208bytes。未启动新的真实模型计算，准备不计实验结果。独立源资料及既有环境复用，不新增付费、权重或依赖。
+
+入口修改前原文已保存在artifacts/scientific_reform_20260923/before/finite_parts_program，plan SHA256为57f9c5cb0285cdd4c9e5dfee900f41e983fba6d92e226be5dbdbd287be792a63，tracker为ad7dcf5e0c16e03b88e3789c4ff6204bde29fcd6f62c8b112226672df0a6b7fe。采用条件为后来组合的实际作用保留及P/N区别、W条件作用继续有用；开发信号出现时同单元确认与整合，只有训练loss改善时结束配方。当前无需重复改革检查，主要结果出现后处理其调度后果。
+
+### FINITE_PARTS_PROGRAM_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T10:35:45Z。smoke在2026-09-23T10:32:57Z附近完成，正式T2最后实际输出为10:34:56.788448Z，精确run完成时间保存在各status.json。CC23_SHIFT_FINITE_PARTS_SMOKE_20260923为PASS，12.8414507 driver秒、504前向序列、67752词元、144反向序列。三臂实际训练、变长输入、八请求及实际容量记录完整运行。分析者使用真实输出执行50次配对bootstrap，并用独立NumPy式复算，主nRMSE最大差5.55e-17，P减N和PW减P误差差0，原head投影最大差8.85e-7。smoke数字仅承担实现核对，不承担科学采用。
+
+正式CC23_SHIFT_FINITE_PARTS_T2_20260923全部PASS，74.3423273 driver秒、11168前向序列、1063784词元、2880反向序列。三个条件各240步和两套评价已保存。T3按相同规则运行，等待其完整数组共同分析，不读取中间评价改变训练。全部bulk位于D:/CCAD_Storage/runs/finite_parts_program_20260923；实际成本从各run原始统计汇总。
+
+原任务新文档确认准备完成，128篇四格各32、历史hash重合0，panel SHA256为9659d2aece1355d5c9fa444adf9e6051b69ac39de8ef08d09ddd1b662032e71f。排除继承403历史文件的85213篇并加入后来227篇；仅使用原数据split、hash、token长度与数量选择。原数据剩余护士男/女532/4799篇，教授男/女52301/51970篇。男性护士来自原train，其余取原test，原dataset split和本研究新文档身份分别保存。准备实际0.8945101秒，freeze、排除来源及完整panel在finite_parts_program/confirmation。已曝光227后来职业面板与这一新文档队列分别承担不同确认。
+
+时间记录补充：START块预填10:30:18Z早于同次工具实际读钟10:30:20Z；该块准确文件写入秒数未知，应以10:30:20Z读钟及随后成功写入为可证实区间，原条目保持。本条按本次实际读钟记录，不由run ID倒推时间。选择和模型事件各自以上述原始记录为准。
+
+## FINITE_PARTS_PROGRAM_20260923 COMPLETE
+
+实际写入 UTC 为 2026-09-23T10:43:18Z。最后T3实际评价事件为2026-09-23T10:36:30.565526Z，开发统计写入2026-09-23T10:37:08.619243Z，独立结束决定为DECISION的2026-09-23T10:41:15Z。本问题完成真实训练、完整用途比较、配对统计、采用或结束决定及必要交付。目标4/5同配方确认不执行，已准备配置和128新文档保留，当前没有活动GPU任务。
+
+后来四head和两固定目标的组合nRMSE为joint_vector .329194、independent .330428、mixed .328964、native .363156、raw .278056。vector减mixed为+.000231[-.010564,.011687]，joint减independent为−.001234[-.002533,.000242]；主要组合量未支持预定的纯向量或共享容量增量。相对native的组合误差改善−.033962[-.049624,-.019720]按开发范围保留。原任务64篇相应误差为.192208/.194132/.195068/.236070/.177192。原head与后来head使用固定权重，统计以真实文档在格内共同重采样，head和固定target不计独立样本。
+
+局部功能信息完整保留。后来P减N作用误差vector/mixed/native为.523291/.575069/.592357，源准确率差.117188由vector保留.107422；条件W误差为1.223101/1.738524/1.188437。vector较mixed改善条件误差，但相对native没有改善。source条件作用RMS .221609，vector .411795、mixed .508614、native .347167。independent在完整PNW操作实际产生target2/3各7680/13697个有效member-token截断，代码截断量1856.652342/1213.992501；这些实际约束差异没有对应主要组合预测增益。完整逐例向量、head、关系、实际clip及区间见finite_parts_program/development_later与development_original，未以静态可行性充当科学能力。
+
+三个PASS共169.9889947 driver秒、131.203125 CPU秒、22840前向序列、2195320词元、5904反向序列，peak1083161600 CUDA bytes，36243080bytes资产。SMOKE/T2/T3分别12.8414507/74.3423273/82.8052167秒，全部正常退出。COST.json、真实smoke复算、README及两个正式分析目录已经交付。新128文档只完成输入准备，没有产生确认结果；既有227后来面板也未用于本问题的确认。新脚本身份train_shift_finite_parts.py为8585fe3eeab9e451a98134cc4b170b33974b5635656ab6700afdf72474e7e475，analyze_shift_finite_parts.py为96a3a22863e36b35177cbbd40e15ae6381db3b0dfc72f5e8e82afe2a261227d7。
+
+采用独立结束判断，当前配方退出队列。已确认W向量结果和现有论文主张保持，不为本次开发结果新增论文段落；paper/main.pdf仍为71页及已记录50128aea开头的完整hash。运行中的plan/tracker逐字归档在before/finite_parts_program/EXPERIMENT_PLAN_during.md及EXPERIMENT_TRACKER_during.md，SHA256分别28529f02ab83a0e579cdf37d702f4a1e99ead735bd1de35109501be1011a5e64、46f32e9bcc7426b77d8fa4c58af5f53cc55b32f43b165ffe593118d98924a898。当前入口已改为研究选择，原ccad保持ACTIVE五分钟。
+
+### 改革检查
+
+实际写入 UTC 为 2026-09-23T10:43:18Z。采纳独立负责人10:41:15Z意见。本次同预算完整动态程序和fractional强比较实际检验一个机制，得到主要量相近后结束，准备好的确认和预算剩余没有增加无用实验。P减N与条件作用的真实局部改善完整保留，未据此宣称整体提升。近期连续SHIFT55与少量传记校准使已确认W正信号继续延伸到旧三列拟合，本次结果说明该延伸没有改变整体贡献。实际调度已经停止B矩阵、训练步数、支持及loss配比附近的续试；下一主要选择交给independent_research_reset，从学习对象、SAE素材和真实消费者重新比较投入价值。该负责人已收到接续任务；当前保存对象、旧论文或刚完成的代码不预定下一方案。本次检查重置周期，完整单元数归零。

@@ -1,0 +1,27 @@
+{
+  "base_config": "configs/cc23_shift_vector_t2.json",
+  "run_id": "CC23_SHIFT_FINITE_PARTS_T2_20260923",
+  "run_parent": "FINITE_PARTS_PROGRAM_20260923",
+  "generator_script": "scripts/train_shift_finite_parts.py",
+  "purpose": "Fit one frozen target-native relation from separate finite source-part effects and evaluate later combinations",
+  "scope": "Eight exposed calibration biographies, source P/N/W only; fixed target2 SAE, later combinations and heads excluded from training",
+  "calibration_panel": "artifacts/scientific_reform_20260923/finite_vector_reuse/CALIBRATION_PANEL.json",
+  "vector_selection_file": "artifacts/scientific_reform_20260923/finite_vector_reuse/t2/vector_only_selected_members.json",
+  "evaluation_panels": {
+    "original": "artifacts/scientific_reform_20260923/finite_parts_program/ORIGINAL_DEVELOPMENT_PANEL.json",
+    "later": "artifacts/scientific_reform_20260923/finite_vector_reuse/LATER_DEVELOPMENT_PANEL.json"
+  },
+  "variants": ["joint_vector", "independent_vector", "joint_mixed"],
+  "steps": 240,
+  "learning_rate": 0.03,
+  "training_seed": 20260923,
+  "batch_size": 4,
+  "eval_batch_size": 8,
+  "token_budget": 4096,
+  "checkpoint_every": 30,
+  "budget_seconds": 800,
+  "maximum_cuda_bytes": 8589934592,
+  "budget": "Part of one 2400 driver-second research problem; fixed 240 steps per arm, 8GiB CUDA ceiling",
+  "run_storage_root": "D:/CCAD_Storage/runs/finite_parts_program_20260923",
+  "statistics_unit": "Paired biography within original label or later profession by gender; fixed targets and heads are not independent observations"
+}
