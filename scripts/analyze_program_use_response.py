@@ -12,9 +12,12 @@ def main():
     parser.add_argument('--runs', nargs='+', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--bootstrap', type=int, default=2000)
+    parser.add_argument('--reference', default='input_program')
+    parser.add_argument('--controls', nargs='+')
+    parser.add_argument('--fixed-targets', action='store_true')
     args = parser.parse_args()
     assert not args.output.exists(), args.output
-    index, inputs = {}, []
+    index, inputs, duplicates = {}, [], 0
     for run in args.runs:
         assert json.loads((run/'status.json').read_text())['status'] == 'PASS', run
         raw = run/'metrics.raw.jsonl'
@@ -24,8 +27,14 @@ def main():
                 row = json.loads(line)
                 if row['classifier'] == 'frozen':
                     key = tuple(row[k] for k in ['target_seed', 'task', 'method', 'operation', 'component'])
-                    assert key not in index, key
                     assert row['probe_seed'] == 42
+                    if key in index:
+                        previous = index[key]
+                        assert {k: v for k, v in row.items() if k not in ('run_id', 'logit')} == {
+                            k: v for k, v in previous.items() if k not in ('run_id', 'logit')}, key
+                        assert abs(row['logit']-previous['logit']) < 2e-5, key
+                        duplicates += 1
+                        continue
                     index[key] = row
     seeds = sorted({k[0] for k in index})
     tasks = sorted({k[1] for k in index})
@@ -75,25 +84,32 @@ def main():
     for _ in range(args.bootstrap):
         draws = {pair: np.concatenate([rng.choice(g, len(g), replace=True) for g in groups])
                  for pair, groups in strata.items()}
-        samples.append(measure(draws, rng.integers(len(seeds), size=len(seeds))).mean((1, 2)))
+        selected = np.arange(len(seeds)) if args.fixed_targets else rng.integers(len(seeds), size=len(seeds))
+        samples.append(measure(draws, selected).mean((1, 2)))
     samples = np.array(samples)
     result = dict(written_at_utc=datetime.now(timezone.utc).isoformat(), inputs=inputs,
                   targets=seeds, tasks=tasks, methods={}, contrasts={}, bootstrap=args.bootstrap,
                   inference='Mean over fixed tasks and target initializations. Pool squared error and source effect across the three named parts within each task. Resample target seeds and profession/gender-stratified biographies, sharing draws across orientations, methods and requests. Existing development cohort.',
-                  reference_logit_check=True)
+                  reference_logit_check=True, duplicate_records_verified=duplicates,
+                  fixed_targets=args.fixed_targets, contrast_direction='control_minus_reference')
+    if args.fixed_targets:
+        result['inference'] = 'Condition on the listed target dictionaries, fixed tasks and source explanation. Resample biographies within each profession/gender stratum, sharing draws across targets, orientations, methods and requests. Existing development cohort; no target-seed population inference.'
     for i, method in enumerate(methods):
         result['methods'][method] = {family: dict(mean=float(observed[i, :, :, j].mean()),
             ci95=np.quantile(samples[:, i, j], [.025, .975]).tolist(),
             by_target=observed[i, :, :, j].mean(0).tolist(),
             by_task=observed[i, :, :, j].mean(1).tolist())
             for j, family in enumerate(['full', 'parts'])}
-    i = methods.index('input_program')
-    for control in ['input_tangent_budget', 'input_gain', 'native', 'geometry_gain', 'raw', 'raw_reconstruction']:
+    i = methods.index(args.reference)
+    controls = args.controls if args.controls is not None else ['input_tangent_budget', 'input_gain', 'native', 'geometry_gain', 'raw', 'raw_reconstruction']
+    assert len(controls) == len(set(controls)) and args.reference not in controls
+    for control in controls:
         c = methods.index(control)
-        result['contrasts'][control+' minus input_program'] = {family: dict(
+        result['contrasts'][control+' minus '+args.reference] = {family: dict(
             mean=float((observed[c, :, :, j]-observed[i, :, :, j]).mean()),
             ci95=np.quantile(samples[:, c, j]-samples[:, i, j], [.025, .975]).tolist())
             for j, family in enumerate(['full', 'parts'])}
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open('x') as stream:
         json.dump(result, stream, indent=2, allow_nan=False)
     print(json.dumps(dict(output=args.output.as_posix(), targets=seeds, results=result['methods'])))

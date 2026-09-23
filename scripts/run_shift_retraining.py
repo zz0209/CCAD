@@ -6,6 +6,7 @@ or target outputs fit the correspondence or select its support.
 """
 from pathlib import Path
 import argparse
+import hashlib
 import json
 import random
 import sys
@@ -55,6 +56,25 @@ def main():
         adapted_programs=cfg.get('adapted_programs',{})
         adapted_inputs=cfg.get('adapted_input_programs',{})
         input_gains={}
+        shared_specs = cfg.get('shared_source_columns', {})
+        shared_columns, shared_identity = {}, {}
+        for name, spec in shared_specs.items():
+            assert name.startswith('input_') and name in cfg['methods'] and name not in adapted_inputs
+            path = work.checked(spec['path'], 'Frozen shared source columns')
+            actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+            assert actual_hash == spec['sha256'], (name, actual_hash)
+            with np.load(path) as columns:
+                assert set(columns.files) == set(source['members'])
+                shared_columns[name] = {site: torch.tensor(columns[site], device=work.device)
+                                        for site in source['members']}
+            for site, value in shared_columns[name].items():
+                assert value.shape == params[site]['decoder'].shape
+                assert value.dtype == params[site]['decoder'].dtype and bool(torch.isfinite(value).all())
+            shared_identity[name] = dict(path=str(path), sha256=actual_hash,
+                shapes={site: list(value.shape) for site, value in shared_columns[name].items()},
+                parameter_updates=0)
+        if shared_identity:
+            write(work.run/'shared_source_columns.json', shared_identity)
         for site in source['members']:
             state = torch.load(work.checked(Path(cfg['target_directory']) /
                               f'{site}_seed{cfg["target_seed"]}.pt'),
@@ -131,8 +151,10 @@ def main():
                 elif method.startswith('input_') or method=='raw_reconstruction':
                     if bool(q.any()):
                         target=adapted_targets.get(method,{}).get(site,targets[site])
-                        execution='input_tangent_budget' if method in adapted_inputs else method
+                        execution='input_tangent_budget' if method in adapted_inputs or method in shared_columns else method
                         current_source={**s,'decoder':s['decoder']*input_gains[method][site][:,None]} if method in input_gains else s
+                        if method in shared_columns:
+                            current_source = {**s, 'decoder': shared_columns[method][site]}
                         delta,_=input_member_delta(h,target,current_source,q,execution,
                                                    cfg['members_per_source']*len(q),mask)
                         h=h+delta
@@ -231,12 +253,25 @@ def main():
                         assert previous['members_per_source']==cfg['members_per_source']
                         assert previous.get('fixed_basis_run')==cfg.get('fixed_basis_run')
                         assert previous.get('adapted_input_programs',{}).get(method)==adapted_inputs.get(method)
+                        assert previous.get('shared_source_columns',{}).get(method)==shared_specs.get(method)
                     if method in adapted_programs:
                         assert previous.get('adapted_programs',{}).get(method)==adapted_programs[method]
                     x=np.load(work.checked(cache/(key+'__train.npy')))
                     y=np.load(work.checked(cache/(key+'__evaluation.npy')))
                     y=y[[old_index[r['document_sha256']] for r in evaluation]]
                     assert x.shape==(len(train),512) and y.shape==(len(evaluation),512)
+                    if cfg.get('reuse_cached_heads', False):
+                        assert json.loads(work.checked(cache/'status.json').read_text())['status']=='PASS'
+                        for field in ['tasks','probe_seeds','probe_lr','probe_batch_size','probe_epochs']:
+                            assert previous.get(field)==cfg.get(field),field
+                        old_inputs=json.loads(work.checked(cache/'inputs.json').read_text())['inputs']
+                        for field in ['training_panel','evaluation_panel']:
+                            panel_path=Path(cfg[field]).resolve()
+                            recorded={v['sha256'] for v in old_inputs if Path(v['path']).resolve()==panel_path}
+                            assert recorded=={hashlib.sha256(panel_path.read_bytes()).hexdigest()},field
+                        assert old_rows==evaluation
+                        assert json.loads(work.checked(cache/'task_membership.json').read_text())=={
+                            name:dict(train_indices=v[0],evaluation_indices=v[1]) for name,v in task_indices.items()}
                 elif method == 'none' and not multi_task:
                     x = np.load(work.checked(source_run/'train_pooled.npz'))['hidden']
                 else:
@@ -250,24 +285,34 @@ def main():
                     ti, ei, labels, erows = task_indices[task_name]
                     xx = torch.tensor(x[ti], device=work.device)
                     for probe_seed in cfg['probe_seeds']:
-                        torch.manual_seed(probe_seed)
-                        head = torch.nn.Linear(512, 1, device=work.device)
-                        optimizer = torch.optim.AdamW(head.parameters(), lr=cfg['probe_lr'])
-                        for epoch in range(cfg.get('probe_epochs',1)):
-                            for start in range(0, len(ti), cfg['probe_batch_size']):
-                                values = head(xx[start:start+cfg['probe_batch_size']]).squeeze(-1)
-                                loss = torch.nn.functional.binary_cross_entropy_with_logits(
-                                    values, labels[start:start+cfg['probe_batch_size']])
-                                optimizer.zero_grad()
-                                loss.backward()
-                                optimizer.step()
-                        weight, bias = head.weight.detach().cpu().numpy(), head.bias.detach().cpu().numpy()
+                        suffix = f'__{task_name}' if multi_task else ''
+                        reuse_head=cached and cfg.get('reuse_cached_heads',False)
+                        if reuse_head:
+                            saved_head=np.load(work.checked(cache/f'{key}{suffix}__probe{probe_seed}.npz'))
+                            weight,bias=saved_head['weight'],saved_head['bias']
+                        else:
+                            torch.manual_seed(probe_seed)
+                            head = torch.nn.Linear(512, 1, device=work.device)
+                            optimizer = torch.optim.AdamW(head.parameters(), lr=cfg['probe_lr'])
+                            for epoch in range(cfg.get('probe_epochs',1)):
+                                for start in range(0, len(ti), cfg['probe_batch_size']):
+                                    values = head(xx[start:start+cfg['probe_batch_size']]).squeeze(-1)
+                                    loss = torch.nn.functional.binary_cross_entropy_with_logits(
+                                        values, labels[start:start+cfg['probe_batch_size']])
+                                    optimizer.zero_grad()
+                                    loss.backward()
+                                    optimizer.step()
+                            weight, bias = head.weight.detach().cpu().numpy(), head.bias.detach().cpu().numpy()
                         if method == 'none':
                             clean_heads[task_name, probe_seed] = (weight, bias)
                         reference_weight, reference_bias = clean_heads[task_name, probe_seed] if multi_task else (old_probe['weight'], old_probe['bias'])
                         logits = (y[ei] @ weight.T+bias).ravel()
                         frozen_logits = (y[ei] @ reference_weight.T+reference_bias).ravel()
-                        suffix = f'__{task_name}' if multi_task else ''
+                        if reuse_head:
+                            np.testing.assert_allclose(logits,saved_head['logits'],rtol=0,atol=2e-5)
+                            np.testing.assert_allclose(frozen_logits,saved_head['frozen_logits'],rtol=0,atol=2e-5)
+                            logits,frozen_logits=saved_head['logits'],saved_head['frozen_logits']
+                            work.progress('REUSE_HEAD',method=method,query=query,task=task_name,cache=str(cache))
                         np.savez_compressed(work.run/f'{key}{suffix}__probe{probe_seed}.npz',
                                             weight=weight, bias=bias, logits=logits, frozen_logits=frozen_logits)
                         results = {}
@@ -290,6 +335,14 @@ def main():
                     del xx
         work.checks.update(disjoint_documents=True, ambiguous_training_only=True,
                            frozen_correspondences=True, completed_cells=len(summary))
+        if shared_columns:
+            work.checks.update(shared_source_columns_frozen=all(not value.requires_grad and value.grad is None
+                for columns in shared_columns.values() for value in columns.values()),
+                original_target_parameters_frozen=all(not parameter.requires_grad for target in targets.values()
+                    for parameter in target.parameters()),
+                source_parameters_frozen=all(not value.requires_grad for source_params in params.values()
+                    for value in source_params.values()),
+                language_model_parameters_frozen=not any(parameter.requires_grad for parameter in model.parameters()))
     except Exception:
         error = traceback.format_exc()
     finally:

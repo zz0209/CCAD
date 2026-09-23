@@ -1,0 +1,20 @@
+{
+  "evaluation_panel": "artifacts/scientific_reform_20260923/confirmation_data/panel.json",
+  "evaluation_split": "cr23_new_sentence_confirmation",
+  "generator_adapter": "artifacts/reuse_generalization_20260921_round10/generator_adapter",
+  "model_local_dir": "D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "generation_seed": 2026092301,
+  "tasks": ["regular_plural_subject_verb_agreement_1", "anaphor_number_agreement", "anaphor_gender_agreement"],
+  "eval_pairs_per_task": 128,
+  "exclusion_manifests": [
+    "artifacts/final_value_five_20260913/R31_RESPONSE_EXCLUSION_MANIFEST.json",
+    "artifacts/final_value_five_20260913/r31_response_fresh_grammar/DATA_MANIFEST.json"
+  ],
+  "exclusion_panels": [
+    {"path": "runs/REFORM_R26_contrast_components_v2_20260913/panel.json", "sha256": "d3b5fa7b2dfa3736423c462a688f4a6adad0d8dcd560e973cef9d95d101e4d5a"},
+    {"path": "artifacts/reuse_generalization_20260921_round08/confirmation_data/panel.json", "sha256": "6c1bf94b942f5d0a50d9c9d0a1579426b5588ae680d96747f846f6d03fa4ae6d"},
+    {"path": "artifacts/reuse_generalization_20260921_round09/confirmation_data_v2/panel.json", "sha256": "0e8b1e7cb092b2f61ca1b5a20c708ecb548d61cb9a3a1399a2ecc5a2f2c0508d"},
+    {"path": "artifacts/reuse_generalization_20260921_round10/confirmation_data_v2/panel.json", "sha256": "70a0334660e23fadda01a3d5c7cebc6df53fecd5c03a67e5247457e3ebdc0967"},
+    {"path": "artifacts/member_use_20260922/confirmation_data/panel.json", "sha256": "8c28c92c0074456e916eda48f2a12c8a5e6f4973d061774a6bcf98b714b668d3"}
+  ]
+}

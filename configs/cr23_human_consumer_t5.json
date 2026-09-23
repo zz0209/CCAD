@@ -1,0 +1,69 @@
+{
+  "run_id": "CR23_HUMAN_SHARED_USE_T5_20260923",
+  "run_parent": "CALIBRATION_REUSE_20260923",
+  "generator_script": "scripts/run_shift_retraining.py",
+  "purpose": "Use frozen FS04 shared source columns and gains in the existing later-classifier consumer",
+  "scope": "Existing R7 consumer documents and tasks. Frozen FS04 objects trained on target2/3 are applied to original target5. Reuse original baseline features and identical classifier training.",
+  "evidence_level": "development_existing_consumer_shared_calibration",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "threshold_source_split": "Frozen FS04 shared source columns and per-member gains, trained on source-only fit contexts with target2/3. No new calibration training or target5 response fitting.",
+  "statistics_unit": "Profession/gender-stratified biographies with paired methods, requests and confounding orientations; fixed source and target dictionaries",
+  "device": "cuda:0",
+  "seeds": [5],
+  "target_seed": 5,
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-70m-deduped/e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "source_manifest": "E:/Projects/SAE_Lab/CCAD/artifacts/correspondence_reform_20260913/r57_shift_consumer/PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:/CCAD_Storage/references/feature_circuits_shift/saes/50a434461d36ed78d1b0b901944e6edc829f1dce/published_shift55.npz",
+  "notebook": "E:/Projects/SAE_Lab/CCAD/artifacts/correspondence_reform_20260913/r57_shift_consumer/bib_shift.ipynb",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "relation_run": "runs/REFORM_R59_shift_confirm_seed5_v1_20260915",
+  "frozen_source_run": "E:/Projects/SAE_Lab/CCAD/runs/REFORM_R58_shift_source_development_v2_20260915",
+  "members_per_source": 2,
+  "methods": ["none", "source", "native", "raw_reconstruction", "input_tangent_budget", "input_program", "input_shared_columns", "input_shared_gain"],
+  "queries": ["full", "pronouns", "names", "associated_words"],
+  "training_panel": "artifacts/independent_reuse_20260916/IR04_NEW_TASKS_PANEL.json",
+  "evaluation_panel": "artifacts/independent_reuse_20260916/IR04_NEW_TASKS_PANEL.json",
+  "evaluation_split": "test",
+  "eval_batch_size": 16,
+  "eval_token_budget": 4096,
+  "probe_seeds": [42],
+  "reuse_cached_heads": true,
+  "probe_lr": 0.01,
+  "probe_batch_size": 128,
+  "probe_epochs": 4,
+  "tasks": [
+    {"name": "composer_surgeon_orientation0", "negative": 5, "positive": 25, "orientation": 0},
+    {"name": "composer_surgeon_orientation1", "negative": 5, "positive": 25, "orientation": 1},
+    {"name": "model_software_engineer_orientation0", "negative": 12, "positive": 24, "orientation": 0},
+    {"name": "model_software_engineer_orientation1", "negative": 12, "positive": 24, "orientation": 1}
+  ],
+  "adapted_input_programs": {
+    "input_program": {
+      "directory": "D:/CCAD_Storage/training_curves/SCIENCE04_shift_t5_v1_20260919/tangent_mixed",
+      "sites": ["embed", "mlp_0", "resid_0"],
+      "source_gains": false
+    }
+  },
+  "shared_source_columns": {
+    "input_shared_columns": {
+      "path": "D:/CCAD_Storage/runs/final_science_20260921_round04/FS04_HUMAN_SHARED_COLUMNS_FIT_20260921_checkpoints/source_columns_mixed/source_columns.npz",
+      "sha256": "263d8170d7f9fd3359ba3f19e488b7a33db678dd9d492099ef06cbb95602fa44"
+    },
+    "input_shared_gain": {
+      "path": "D:/CCAD_Storage/runs/final_science_20260921_round04/FS04_HUMAN_SHARED_COLUMNS_FIT_20260921_checkpoints/source_columns_scalar_mixed/source_columns.npz",
+      "sha256": "a879fd9f666fa01dbaa340973a68dc7cef324c8ba58ab4e2e5c09670bc3a056c"
+    }
+  },
+  "feature_cache_runs": [
+    "runs/IR04_shift_consumer_seed5_v1_20260916",
+    "D:/CCAD_Storage/runs/reuse_generalization_20260921_round07/RG07_PROGRAM_USE_T5_20260921"
+  ],
+  "budget_seconds": 1500,
+  "budget": "CALIBRATION_REUSE scientific unit total at most4800 driver seconds,8GB VRAM,2GB new bulk. This frozen consumer run at most1500 seconds; reuse saved baseline features.",
+  "run_storage_root": "D:/CCAD_Storage/runs/calibration_reuse_20260923"
+}

@@ -1,0 +1,27 @@
+{
+  "base_config": "configs/rg08_grammar_program_development.json",
+  "run_id": "CR23_GPT2_GAIN_TARGET23_20260923",
+  "run_parent": "CALIBRATION_REUSE_20260923",
+  "generator_script": "scripts/train_shared_action_rule.py",
+  "purpose": "Determine whether shared member gains preserve the reusable functional correction with 192 parameters and unchanged dictionaries",
+  "scope": "The existing R20 fit and development sentences remain development data. Train source1 gains using targets2/3, evaluate targets4/5, then freeze for independent text confirmation.",
+  "learning_rate": 0.005,
+  "seeds": [1, 2, 3, 4, 5],
+  "target_seeds": [2, 3, 4, 5],
+  "training_targets": [2, 3],
+  "heldout_targets": [4, 5],
+  "recurrence_steps": 4,
+  "dictionary_template": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed{seed}.pt",
+  "program_checkpoints": {
+    "2": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_DEV_T2_20260921/program_step512.pt",
+    "3": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_CONFIRM_T3_20260921/program_step512.pt",
+    "4": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_CONFIRM_T4_20260921/program_step512.pt",
+    "5": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_CONFIRM_T5_20260921/program_step512.pt"
+  },
+  "steps": 1024,
+  "checkpoint_every": 128,
+  "budget_seconds": 900,
+  "budget": "One inherited scalar parameterization, existing FS04 learning rate, matched R20 supervision and update count. No learning-rate search. Total scientific unit including confirmation and mechanism observation at most3600 driver seconds,8GB VRAM and2GB new bulk before a research decision.",
+  "run_storage_root": "D:/CCAD_Storage/runs/calibration_reuse_20260923",
+  "evaluation_methods": ["none", "source", "initial", "readout_initial", "source_scalar", "program"]
+}

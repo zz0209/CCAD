@@ -10797,3 +10797,99 @@ Gregor与LeCun2010原文完整阅读及独立agent的排列等变构造阅读提
 依照两项writing skills，当前论文继续以完整既有方法论证组织。本轮研究尝试未增加正文分支、图表或附录页。paper/main.pdf SHA256仍为a7f8b72e2fb73aa377e044cb3f3edc41838fae6a0f97a5b9f49336d1e181eae1。plan更新具体方法取舍，tracker完成计数增加至20。整合前tracker与plan逐字副本保留在本单元目录，SHA256分别为221d92a33cc13498a3e230ddea1edf61164de213f64a4ffa70b8629e27114d9d、60a982fc2e711ed4839fdc634aa5eeda7983cb888ff544cf943414be8f13c0a1。
 
 用户在本单元期间明确要求完成手上工作后暂停loop，本单元科学工作及复查完成，随后原位暂停ccad并保留五分钟周期、原prompt、任务归属及全部恢复资产。暂停后不启动后续确认或新研究单元，等待用户检查。
+
+### SHARED_RULE_20 PAUSE_AND_SYNC — 2026-09-22T15:44:10Z
+
+实际写入UTC为2026-09-22T15:44:10Z。automation工具成功将原ccad更新为PAUSED，配置复读确认status=PAUSED、FREQ=MINUTELY;INTERVAL=5、target_thread_id=01a06e15-b222-7b21-a8cd-eb058a3159e5，prompt与原任务归属保留。全部计算已退出，八run的实际结果及独立检查完成，暂停期间没有追加队列。
+
+八份白名单源码、配置及master_log通过暂存检查后成组提交推送。HEAD与origin/main均为a02c86c58372b821964401181e4a69a61c6afd6c。没有上传原始数据、模型、私有研究目录或大文件。报告SHA256为871996e965f0766214943ef9d6ff67f557596cb13b4c492c3d3455deb8183269，RUN_INVENTORY.json为dcf123cbb5ebc19651062932465a5a91f6b6f88d4c9a579a29e6f18765c90d66。此同步事实在提交后按真实时间本地追加，下一工作单元成组同步。当前tracker记录暂停、已完成取舍及恢复资产。
+
+### ORIENTATION_20260923 阅读记录
+
+实际写入 UTC 为 2026-09-23T05:07:41Z。用户要求学习当前进度、项目内容及 SAE Lab reference 的各类研究。阅读发生于 2026-09-23，本次阅读开始时间和累计耗时未单独记录。该动作属于项目学习，没有增加研究轮计数。
+
+已阅读当前 AGENTS、tracker、plan、近期主日志、历史入口、理论推导相关章节、当前论文主文与重要附录、claim map、关键执行模块、代表性 run 报告和分析清单。当前 main.pdf 为 66 页，SHA256 为 a7f8b72e2fb73aa377e044cb3f3edc41838fae6a0f97a5b9f49336d1e181eae1；原理论 PDF 为 47 页。实际查看当前 PDF 第 1、2、4、7 页渲染，没有执行全稿视觉审查或全部统计复算。
+
+reference 读取范围为 86 个目录、82 份 PDF 的摘要或首页节选，指定近邻论文继续阅读方法与实验页面；48 个目录存在代码。全部 PDF 文本已提取，阅读深度与第三方代码范围逐项记录。提取过程由 pypdf 改为 pypdfium2，首次 pdfium TextPage 上下文接口调用失败后改用显式 close，完整提取成功。提取问题仅影响临时阅读文本，没有修改任何原始 PDF。提取脚本与临时材料保存在 tmp/orientation_20260923。本次只使用本机 CPU 阅读与文本处理，无模型计算、GPU 租约、依赖安装或外部费用。
+
+阅读确认当前阶段完成至 SHARED_RULE_20，当前方法为通过源程序训练的输入相关关系，执行仍保留源编码参数，目标字典在 program training 中发生更新。主要证据连接组成请求、Pythia 确认、GPT2 扩展与固定目标接受其他源定义。当前共享 W 配方已结束默认开发，共享列几何延伸保持开发信号，原 readout 等完整比较继续保留。本次没有产生新的实验结果、独立确认或论文修改。
+
+学习交付为 artifacts/orientation_20260923/READING_NOTES.md，SHA256 为 24fee25ea4fc055dc960a0aae061575a0e65d75a9600d4c6833c31fd32bffd37；目录清单为同目录 REFERENCE_INVENTORY.json。两项 writing skills 用于核对当前主线与证据组织，具体认识记录在学习文件。新增本地文献阅读范围已追加至唯一 REFERENCE_REGISTRY.md。
+
+原暂停状态与恢复位置保持，未调用 automation 更新工具、未启动后续研究单元、未提交或推送。后续行动等待用户本次学习后的具体要求；研究状态继续采用 EXPERIMENT_TRACKER.md。
+
+### ORIENTATION_20260923 时间记录勘误
+
+实际写入 UTC 为 2026-09-23T05:08:49Z，本次由实时钟读取后立即追加。上条阅读记录中的 2026-09-23T05:07:41Z 未经对应时刻的时钟读取支持，原精确写入时间应记为未知。可核实的边界为写入前时钟 2026-09-23T05:06:57Z 和写入后时钟 2026-09-23T05:08:20Z。该勘误仅涉及记录时间，原阅读内容、文件 hash、项目状态与科学证据不变。
+
+### SCIENTIFIC_REFORM_20260923 START
+
+实际写入 UTC 为 2026-09-23T05:27:45Z。用户要求当前对话负责结构性改革并执行必要研究，保留跨 seed many-to-many 母问题及 ACL/ICLR Main strong accept 目标。用户明确指出当前科学价值与研究方式未达要求，授权替换方法和工作安排。原讨论逐字保存在 artifacts/scientific_reform_20260923/USER_DISCUSSION.txt，SHA256 为 04fe6862a25e314c198135a2e53e3cfb3fc5cd167b274f06ac964c7625f39eb4。本工作包含治理调整及实际科学检验，分别报告，治理工作不增加科学完成轮计数。
+
+原 AGENTS、plan、tracker、prompt 与 automation 配置已逐字保存于同目录 before。SHA256 分别为 538b7559163c5c2c66194fa60b6397fe6b3df41a3fccb2bd9afff649a90ee590、dcffb92b695fe792fe8f7d55c2aa309eb5edba7e9d811c3abd9badf83cc237e5、56fa440aa29373ad40ebdcd80233121ce4da5928b4b37c09fe2f591dccc83f52、e8aafabe91262aa22f929733bc5fc91567e5d54960ed872b94c2ab23c984c9bf、60bb1e6e2be60bb0255f6cfff942cc9811c2b347a002e70375e9a750fbda3e50。
+
+已通过独立上下文启动 research_choice，负责由问题与证据选择主要机制；execution_assets 只读核对真实资产及可执行比较；research_practice 核实附件工具来源及可采用的研究选择机制。三者未获得启动模型计算权限。主体同步落实职责与阶段安排，当前旧 automation 保持暂停，尚未迁移或恢复。新方法尚未被预先指定，共享修正参与候选比较。
+
+本次使用 research-refine 与 idea-creator 的问题选择、机制和可区分预测内容，以及两项 writing skills。依照用户当前要求，跳过自评分阈值、自动多轮评审与模板扩张。AGENTS 的工作单元、研究选择职责和调度方式已修改；原有数据、权限、历史、引用及证据要求保留。后续实际比较由独立选择与资源核对决定。
+
+### CALIBRATION_REUSE_20260923 START / PROGRESS
+
+实际写入 UTC 为 2026-09-23T05:49:16Z。独立负责人选择功能校准跨 SAE 重训复用的完整问题；决定记录为 artifacts/scientific_reform_20260923/DECISION.md。已有 FS04 共享校准先例保留，本次机制预测使用训练目标实际 hidden update 共同误差与 source 干预点 gradient，检验后来目标的功能误差。采用 gain、方向修正与原字典/逐目标 program/readout 的真实比较，不追加优化器或 learning-rate 搜索。
+
+CPU 已保存响应分析完成，核对 48,576 条记录，四方向结果在 CALIBRATION_STRUCTURE.json。该动作 wall 0.449 秒，开发数据身份不变。新增 192 个非负 gain 使用 configs/cr23_shared_scalar_development.json，1024 updates 与 R20 同训练批次/请求/目标顺序，lr 0.005 沿用 FS04。真实 smoke run CR23_GPT2_GAIN_TARGET23_20260923_SOURCE_SCALAR_SMOKE 于 2026-09-23T05:39:03.802345+00:00 完成，wall 58.3490778 秒、peak CUDA 2313537024 bytes。正式 run CR23_GPT2_GAIN_TARGET23_20260923_SOURCE_SCALAR 已 PASS，最后评价事件 2026-09-23T05:47:50.049454+00:00，wall 232.93854670005385 秒，67312 sequences，556545 tokens，峰值 2341202432 bytes。实际资源为既有 RTX5070Ti、r004 环境与 gpu-0 租约，无付费。
+
+384 个新句对的生成正在运行，配置 cr23_confirmation_data.json，先固定 FROZEN_CONFIRMATION.md 的 checkpoint、参数化、请求、统计单位和机制样本范围；当时新 panel 尚不存在。首次调用漏设已有 grammar_runtime_v1 的 PYTHONPATH，导入 jsonlines 前退出且没有接受样本；补齐已登记环境路径后正常生成，没有安装依赖或改动采样规则。训练/确认共用最多 3600 driver 秒、8GB peak CUDA、2GB 新 bulk 的预算。主稿尚未改变，当前产出属于开发比较及确认准备，未宣称科学目标已达到。
+
+### CALIBRATION_REUSE_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T05:59:48Z。384 新句对已于 2026-09-23T05:49:43.797378+00:00 保存 manifest，完整排除身份见 confirmation_data/DATA_MANIFEST.json。真实 capture smoke 于 2026-09-23T05:50:49.221010+00:00 PASS，wall 29.66673549998086 秒；source干预增量作为独立叶变量计算 gradient，原 no_grad 响应保留，重放响应差受2e-5数值核对。当前 source1 正式确认正在运行，随后接续 source4/5。
+
+gain 开发比较已完成，原始54,912记录核对，训练调度与R20逐值相同。source1→target4/5 三语法等权误差分别为 initial .272258、columns .170598、gain .222761、program .189169、readout .152704；gain−columns .052164，句子bootstrap95%区间[.037365,.069766]。结果位于 calibration_development/CALIBRATION_REUSE.json。该开发结果支持方向修正的额外作用，整体方法采用仍需真实使用比较。
+
+独立负责人核对 FS04 与 R7，发现 FS04 共享 G 已有完整55成员/11位置、新128 biographies、12连续请求及4个fixedhead确认，但R7后来分类器使用的是SCIENCE04逐目标程序。该消费者不能转记为共享 G 的使用证据。主体采纳在本单元将已经冻结的FS04 columns/scalar用于R7原target4/5、原文本、full与三个部分及原head配方，旧对照特征直接复用。每目标新增57248序列，依据旧R7吞吐预计850–1000秒。为完成附件明确的同一对象用途检验，在新消费者启动前将整个问题预算调整为4800 driver秒，8GB peak CUDA与2GB新bulk不变；没有重训校准或新增研究问题。
+
+治理检查指出内部gain/columns改善需要连接整体采用，plan已加入readout、原程序、字典身份、source依赖及完整成本的共同决定。原ccad automation通过官方工具原位更新target为当前task及新prompt，保留原5分钟频率和PAUSED状态，未创建重复loop。当前真实工作由本任务继续执行。
+
+### CALIBRATION_REUSE_20260923 PROGRESS / CORRECTION
+
+实际写入 UTC 为 2026-09-23T06:15:01Z。source1 独立句子确认已于 2026-09-23T06:03:40.336285+00:00 完成，PASS，118272记录、244992 sequences、2088944 tokens、726.5610104999505 driver秒，最终 peak_allocated_bytes 为3060474368。source4/5 由同一管理器依次执行，当前source4接近完成，所有新配置及冻结输入保持不变。
+
+预先指定的96句对、七请求、两个未参与拟合目标共1344项机制观察中，实际初始响应误差RMS为.434484，共同隐藏误差的gradient预测RMSE为.232804，训练目标真实响应误差均值预测为.221859。该结果支持同配置重训的共同误差可被复用，gradient表达式尚无超过响应均值的预测证据。完整source4/5完成后按原设计统一分析。冻结记录中的条件部分表述明确为完整删除后恢复单个部分，对应原有双部分请求减full请求，计算、数据和请求均未改变；原文字副本保存于before/FROZEN_CONFIRMATION.md。
+
+共享FS04对象的真实consumer smoke已于2026-09-23T06:04:56.933478+00:00 PASS，wall50.7956343999831秒、7424记录、3712 sequences、355424 tokens、peak1089010688bytes。相同consumer输入及head的缓存一致性已核对，正式target4/5配置已准备，随后执行。同一问题的新增计算目前累计1098.311秒。两项消费者分析工具在真实R7数据上验证默认输出与CLI控制结果一致，重复输入128304行逐项核对，fixed-target计算只改变区间抽样单位。验证记录在consumer_analysis_check/IMPLEMENTATION_CHECK.json。
+
+前条训练资源记录采用了训练阶段进度值，完整run最终峰值以metrics.summary.json为准。gain smoke最终2499881472bytes，完整gain最终2585112576bytes；早先2313537024和2341202432bytes分别是中途进度值。该勘误不改变耗时、预测或科学结论。
+
+独立负责人在等待计算期间核对R57、R59、R7及原冻结源码，明确source/raw梯度、贡献选择、自然删除及后来分类器已有能力，认识已追加DECISION.md。该阅读不新增实验或验收条件。当前稿件及相关源已逐字备份至before/paper，尚未修改。当前科学工作保持原字典和原共享对象，完整采用决定等待同一对象的实际消费者结果。
+
+### CALIBRATION_REUSE_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T06:27:20Z。source4和source5确认均PASS，分别530.0892710000044和530.4810212999582 driver秒、88704条记录。三份确认共295680条记录已由分析程序核对，2000次句子配对bootstrap完成，分析wall6.085秒，GPU调用为零。正式输出为artifacts/scientific_reform_20260923/confirmation_analysis/CALIBRATION_REUSE.json及逐单位CSV。
+
+固定字典下三来源等权七请求nRMSE为initial .249736、columns .176597、gain .208411、program .167899、readout .126967。columns相对initial的差为−.073138，95%句子区间[−.082964,−.064703]；gain减columns为.031814，[.025711,.039206]；columns减program为.008698，[−.005065,.022091]；columns减readout为.049631，[.038759,.058690]。区间条件化于固定字典，不外推seed总体。三个source的共同隐藏误差预测RMSE为.232804/.214963/.198864，响应均值预测.221859/.220788/.199670，零预测.434484/.384271/.451046。这支持跨字典共同功能误差与方向校准的额外作用，当前仍等待消费者完成整体采用判断。
+
+共享对象消费者已启动，session17932在gpu-0管理器内按target4、target5顺序执行，配置cr23_human_consumer_t4.json和t5.json。原baseline features与head训练条件匹配，新增两方法各四请求。当前target4执行full请求。CPU成本核对已保存COST_AND_USE.md，FS04列28160参数、106807bytes，gain55训练参数但NPZ导出完整列106883bytes；逐目标program三份SAE共25191936参数、100776999bytes。共享新增目标零次功能拟合，program原配方512次更新。历史总wall含多个方法及评价，单独拟合秒数未知，不声称纯训练加速倍数。
+
+同一论文附录app:shared_columns正在整合完整对象的数学延伸、误差预测和使用比较。当前PDF仍是原66页版本；待消费者结果完成后生成正式表格、编译并实际查看。现有导出脚本增加从原始分析生成三张表及来源索引的分支，语法检查通过，正式数据运行尚待消费者结果。没有新增拟合或修改独立确认输入。
+
+### CALIBRATION_REUSE_20260923 COMPLETE
+
+实际写入 UTC 为 2026-09-23T07:15:29Z。完整消费者target4和target5均PASS，每项225504条记录，driver耗时953.5840788和962.1719449秒。target5结束事件为2026-09-23T06:56:26.578821Z。两个正式消费者共451008条原始记录，结果为artifacts/scientific_reform_20260923/HUMAN_SHARED_RESPONSE.json及HUMAN_SHARED_UTILITY.json。按人物传记及profession/gender分层配对bootstrap2000次，条件化于两个固定目标、source解释和已有开发任务队列。
+
+共享columns、共享gain、initial、逐目标program、readout及native的三部分职业准确率分别为.893624/.895452/.879541/.904757/.910797/.911698；columns相对initial提高.014083，区间[.012035,.015951]，相对program为−.011133，[−.013326,−.008880]。columns部分响应误差.315001，program .155830，readout .116385。pronoun减name的准确率差columns .047976、program .118050、readout .116164。columns相对initial该区别增加.001396，[−.002633,.005385]。完整结果揭示用途与部分判断的代价，不能用响应误差改善替代。
+
+独立负责人于2026-09-23T06:58:33Z完成整体采用，见DECISION.md最后一节。保留共享校准的原字典执行工具职责及共同功能误差知识，结束其通用替代逐目标program的开发职责。三source的真实共同误差可以预测后来字典响应，gradient预测与直接训练目标平均响应误差接近。当前问题已经回答，不追加验收。下一问题为条件功能关系能否跨分解改善真实目标组合决定，使用binding双侧交换的固定margin四状态及实际hidden delta，同信息source/raw与加性响应作为直接对照。该选择改变学习对象与实际用途，不继续相邻writer配方，不宣称整体达到strong accept。
+
+完整问题9项真实运行共4074.637320899754 driver秒、3219.0625 process CPU秒、805760 sequence forwards、15164489 token forwards；peak CUDA allocated为3060474368 bytes，新运行目录764个文件共920191208 bytes。成本见COST_AND_USE.md，所有计算由既有r004环境和共享gpu-0调度，无新增付费或模型下载。完整单元预算为4800 driver秒、8GB peak CUDA、2GB新bulk。完成单元计1项，治理与写作不计实验，9个运行不计9项科学成果。当前没有本单元活动GPU进程。
+
+为复用既有计算，target5使用已验证的84份baseline head，32份共享方法head按原配方训练。实际历史数组逐值一致，重算logits最大差3.814697e−6，在既有2e−5数值范围内，证据为consumer_analysis_check/HEAD_REUSE_CHECK.json。保留原logits及完整输入身份。没有声称测得运行加速。相关修改及真实smoke、正式运行均保留冻结源码。改动前runner保存在before/run_shift_retraining_pre_head_cache.py，SHA256为2eae49开头，完整身份见该单元成本记录与对应检查文件。
+
+论文正式导出曾误用r004的Python3.13加载既有cp312绘图环境，在NumPy导入处退出，未写出正式产物。改用已登记bundled Python3.12完成导出，没有安装依赖或改变实验。首次apply_patch尝试同时删除并添加同路径被工具拒绝，后续普通文件编辑完成plan与tracker；报告补丁的多余匹配行未找到时整项未应用，移除该匹配后完成。以上编辑工具失败没有改变数据或研究结果。
+
+同一paper/main.pdf已更新至68页，编译事件2026-09-23T06:58:54.253326Z至06:58:58.008036Z，exit0，930011 bytes，SHA256为1bb97f8d0ac2b589227ceef8e1f2aa3556326a95d6223904aaa5e2c059ab8a01。构建记录paper/build/20260923T065854253326Z/BUILD_RECEIPT.json。实际查看第1、3、6、7、30、31、32、33页，确认改动处表格、公式及页面衔接可读，编译日志无Overfull或undefined。新增结果在同一app:shared_columns及正文使用段；表24–26由分析输出生成，来源索引及manifest同步。两项writing skills用于把完整对象、直接证据和真实用途写入同一论证；历史强对照与重要成果保留。正文没有加入研究经历或自评分。
+
+本地保留文档身份如下。AGENTS.md SHA256为994d801e3f553d8814c537dfa84d6e2a14da03220562f710ce344ac0c8f5cf98；EXPERIMENT_PLAN.md为137c08af18c0f85968de9f9c95202df1aad7bb6702e90d47fb0e09716092eb4e；REFERENCE_REGISTRY.md为015b8501e18ab48a5621507dcf3fb905454eff3e62773e1aea81da17d77392d0；artifacts/scientific_reform_20260923/REPORT.md为12c76efeb7af3ab6bd01007da2a78a3d410893b03967ad354e39975500b5522e；同目录DECISION.md为bcdee35f83d59a58896591c9ccd981e31a5b2f18de68c69a0f8b309117b72715。忽略文件保持本地，不扩大Git白名单。tracker接续CONDITIONAL_COMPOSITION_20260923的实施与真实smoke准备，启动新计算前读取既有吞吐和资源，登记完整问题预算。
+
+### CCAD 执行归属与周期恢复
+
+实际写入 UTC 为 2026-09-23T07:16:54Z。完成本单元采用和论文核对后，通过官方automation_update将原ccad原位恢复ACTIVE，目标为当前任务01a0cc9b-67c9-77d1-bb30-344cb29a591a，五分钟周期。实际TOML核对status、target、周期及prompt与configs/CCAD_AUTOMATION_PROMPT.md逐字相同，原created_at为1788312151799，updated_at为1790147800820。没有创建新loop。tracker已更新为当前实施准备，无活动GPU任务。原run_shift_retraining备份的完整SHA256为2eae490191a07c7df043b758404ceda6f4f3d9bca59a094b9d0becd68a74f117。

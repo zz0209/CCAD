@@ -1,0 +1,34 @@
+{
+  "base_config": "configs/rg08_grammar_program_development.json",
+  "run_id": "CR23_GPT2_SOURCE5_CONFIRM_20260923",
+  "run_parent": "CALIBRATION_REUSE_20260923",
+  "generator_script": "scripts/train_shared_action_rule.py",
+  "purpose": "Confirm transfer of frozen calibration to source5 and target4 without fitting their responses",
+  "scope": "Fresh sentences. Source5 and target4 did not participate in calibration fitting. Targets2/3 supply only the predeclared common-error predictor. Frozen minimum-norm geometry extension; zero new training.",
+  "evaluation_only": true,
+  "evaluation_source_seed": 5,
+  "seeds": [1,2,3,4,5],
+  "target_seeds": [2,3,4],
+  "training_targets": [2,3],
+  "heldout_targets": [4],
+  "dictionary_template": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed{seed}.pt",
+  "program_checkpoints": {
+    "2": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_DEV_T2_20260921/program_step512.pt",
+    "3": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_CONFIRM_T3_20260921/program_step512.pt",
+    "4": "D:/CCAD_Storage/runs/reuse_generalization_20260921_round08/RG08_GPT2_PROGRAM_CONFIRM_T4_20260921/program_step512.pt"
+  },
+  "shared_checkpoint": "D:/CCAD_Storage/runs/shared_rule_20260922/SR20_GPT2_SHARED_TARGET23_DEV_20260922/action_step1024.pt",
+  "source_column_checkpoints": {
+    "source_columns_lr0001": "D:/CCAD_Storage/runs/shared_rule_20260922/SR20_GPT2_SHARED_TARGET23_DEV_20260922_SOURCE_COLUMNS/action_step1024.pt",
+    "source_columns_gain": "D:/CCAD_Storage/runs/calibration_reuse_20260923/CR23_GPT2_GAIN_TARGET23_20260923_SOURCE_SCALAR/action_step1024.pt"
+  },
+  "evaluation_methods": ["none", "source", "initial", "readout_initial", "source_columns_lr0001", "source_columns_gain", "program"],
+  "recurrence_steps": 4,
+  "learning_rate": 0.0001,
+  "evaluation_panel": "artifacts/scientific_reform_20260923/confirmation_data/panel.json",
+  "evaluation_split": "cr23_new_sentence_confirmation",
+  "eval_pairs_per_task": 128,
+  "capture_execution": {"pairs_per_task": 32, "methods": ["source", "initial", "source_columns_lr0001", "source_columns_gain"]},
+  "budget_seconds": 900,
+  "run_storage_root": "D:/CCAD_Storage/runs/calibration_reuse_20260923"
+}

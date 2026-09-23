@@ -14,23 +14,32 @@ def main():
     p.add_argument('--bootstrap', type=int, default=2000)
     p.add_argument('--seed', type=int, default=20260916)
     p.add_argument('--classifier', default='retrained', choices=['retrained', 'frozen'])
+    p.add_argument('--reference')
+    p.add_argument('--controls', nargs='+')
+    p.add_argument('--fixed-targets', action='store_true')
     a = p.parse_args()
     if a.output.exists():
         raise FileExistsError(f'Keep retained results unchanged; choose a new output: {a.output}')
-    rows, identities, specs = {}, [], {}
+    rows, identities, specs, duplicates = {}, [], {}, 0
     for run in a.runs:
+        assert json.loads((run/'status.json').read_text())['status'] == 'PASS', run
         raw = run/'metrics.raw.jsonl'
         identities.append(dict(path=str(raw), sha256=hashlib.sha256(raw.read_bytes()).hexdigest()))
         cfg = json.loads((run/'config.resolved.json').read_text())
-        specs.update({t['name']: t for t in cfg['tasks']})
+        for task in cfg['tasks']:
+            assert task['name'] not in specs or specs[task['name']] == task
+            specs[task['name']] = task
         for line in raw.read_text().splitlines():
             r = json.loads(line)
             if r['classifier'] != a.classifier:
                 continue
             key = tuple(r[k] for k in ['task', 'method', 'operation', 'target_seed', 'probe_seed', 'component'])
             if key in rows:
-                assert r['prediction'] == rows[key]['prediction']
+                assert {k: v for k, v in r.items() if k not in ('run_id', 'logit')} == {
+                    k: v for k, v in rows[key].items() if k not in ('run_id', 'logit')}, key
                 assert abs(r['logit']-rows[key]['logit']) < 2e-5
+                duplicates += 1
+                continue
             rows[key] = r
     methods = sorted({k[1] for k in rows})
     seeds = sorted({k[3] for k in rows})
@@ -104,7 +113,8 @@ def main():
     samples, pair_samples = [], []
     for _ in range(a.bootstrap):
         draws = {pair: [rng.choice(ix, len(ix), replace=True) for ix in strata[pair]] for pair in pairs}
-        mean, per_pair = measure(rng.integers(len(seeds), size=len(seeds)), draws)
+        selected = np.arange(len(seeds)) if a.fixed_targets else rng.integers(len(seeds), size=len(seeds))
+        mean, per_pair = measure(selected, draws)
         samples.append(mean)
         pair_samples.append(per_pair)
     samples = np.array(samples)
@@ -117,13 +127,17 @@ def main():
             value = observed[mi, qi] if qi < 4 else observed[mi, 1:].mean(0)
             sample = samples[:, mi, qi] if qi < 4 else samples[:, mi, 1:].mean(1)
             result[method][query] = {n: dict(mean=float(value[j]), ci95=np.quantile(sample[:, j], [.025, .975]).tolist()) for j,n in enumerate(names)}
-    contrasts, interactions = {}, {}
-    for method in methods:
+    contrasts, interactions, request_contrast_differences = {}, {}, {}
+    references = methods if a.reference is None else [a.reference]
+    assert set(references) <= set(methods)
+    controls = a.controls if a.controls is not None else ['none', 'geometry', 'geometry_gain', 'native', 'raw', 'raw_reconstruction',
+                        'whole', 'random_parts', 'parts_relation', 'input_tangent_budget', 'input_gain', 'local_whole']
+    if a.controls is not None:
+        assert set(controls) <= set(methods) and len(controls) == len(set(controls))
+    for method in references:
         if method in ['none', 'source']:
             continue
-        for control in ['none', 'geometry', 'geometry_gain', 'native', 'raw', 'raw_reconstruction',
-                        'whole', 'random_parts', 'parts_relation', 'input_tangent_budget', 'input_gain',
-                        'local_whole']:
+        for control in controls:
             if control not in methods or method == control:
                 continue
             mi, ci = methods.index(method), methods.index(control)
@@ -138,6 +152,10 @@ def main():
             value = (observed[mi, 1:]-observed[ci, 1:]).mean(0)-(observed[mi, 0]-observed[ci, 0])
             sample = (samples[:, mi, 1:]-samples[:, ci, 1:]).mean(1)-(samples[:, mi, 0]-samples[:, ci, 0])
             interactions[key] = {n: dict(mean=float(value[j]), ci95=np.quantile(sample[:, j], [.025, .975]).tolist()) for j,n in enumerate(names)}
+            value = (observed[mi, 1]-observed[mi, 2])-(observed[ci, 1]-observed[ci, 2])
+            sample = (samples[:, mi, 1]-samples[:, mi, 2])-(samples[:, ci, 1]-samples[:, ci, 2])
+            request_contrast_differences[key] = {n: dict(mean=float(value[j]),
+                ci95=np.quantile(sample[:, j], [.025, .975]).tolist()) for j, n in enumerate(names)}
     # The old explanation's pronoun-versus-name judgment is a predeclared
     # secondary endpoint. Retain its complete task profiles, not selected cases.
     request_contrasts, direction_accuracy = {}, {}
@@ -160,10 +178,14 @@ def main():
                   task_pairs=pairs, profession_gender_counts=counts, source_changed_counts=changed_counts,
                   results=result, contrasts=contrasts, part_minus_full_interactions=interactions,
                   pronouns_minus_names=request_contrasts, by_direction_accuracy=direction_accuracy,
+                  pronouns_minus_names_between_methods=request_contrast_differences,
                   by_pair={pair: {m: by_pair[i,j].tolist() for j,m in enumerate(methods)} for i,pair in enumerate(pairs)},
                   bootstrap=a.bootstrap, bootstrap_seed=a.seed,
                   inference='Fixed task-pair cohort and source explanation; jointly resample target seeds and documents within each profession/gender stratum, sharing draws across methods, requests, orientations and classifier seeds. Average classifier seeds; task pairs are not treated as independent directions. A one-target development interval contains document uncertainty only.',
-                  metric_order=names, query_order=queries)
+                  metric_order=names, query_order=queries, fixed_targets=a.fixed_targets,
+                  duplicate_records_verified=duplicates)
+    if a.fixed_targets:
+        output['inference'] = 'Condition on the listed target dictionaries, fixed task-pair cohort and source explanation. Resample documents within each profession/gender stratum, sharing draws across targets, methods, requests, orientations and classifier seeds. No target-seed population inference.'
     a.output.parent.mkdir(parents=True, exist_ok=True)
     a.output.write_text(json.dumps(output, indent=2)+'\n')
     print(json.dumps(dict(output=str(a.output), methods=methods, target_seeds=seeds, pairs=pairs)))
