@@ -1,0 +1,49 @@
+{
+  "run_id": "CC23_BINDING_COMPOSITION_SMOKE_20260923",
+  "run_parent": "CONDITIONAL_COMPOSITION_20260923",
+  "generator_script": "scripts/run_binding_context_roles.py",
+  "purpose": "Record actual entity, attribute and joint member updates with fixed-answer margins",
+  "scope": "Representative real development smoke, two development worlds, two templates, two orders and both queried entities. Preserve R57 all-layer clean-context operation and raw background.",
+  "evidence_level": "development_smoke",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "device": "cuda:0",
+  "seeds": [1, 2],
+  "source_seed": 1,
+  "target_seed": 2,
+  "model_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+  "model_local_dir": "D:/CCAD_Storage/models/qwen2.5-1.5b/8faed761d45a263340a0528343f099c05c9a4323",
+  "dataset_revision": "CCAD counterbalanced binding-role panel v1",
+  "statistics_unit": "World with paired order, template, query, operation and dictionary; smoke supports execution checks only",
+  "budget": "Same CONDITIONAL_COMPOSITION_20260923 unit, 5400 driver seconds, 10GB CUDA allocated and 3GB new bulk. This real smoke at most240 driver seconds.",
+  "budget_seconds": 240,
+  "run_storage_root": "D:/CCAD_Storage/runs/conditional_composition_20260923",
+  "panel_seed": 9561501,
+  "fit_seed": 9561502,
+  "fit_contexts": 0,
+  "evaluation_contexts": 2,
+  "evaluation_skip": 64,
+  "batch_size": 4,
+  "checkpoint_step": 16384,
+  "layer_sets": [],
+  "names": ["Alice", "Bob", "Carol", "David", "Emma", "Frank", "Grace", "Henry", "Irene", "Jack", "Karen", "Laura", "Mary", "Nancy", "Oliver", "Paul", "Rachel", "Sarah", "Thomas", "Victor", "William", "Peter", "Anna", "James"],
+  "country_capitals": [["France", "Paris"], ["Japan", "Tokyo"], ["Italy", "Rome"], ["Germany", "Berlin"], ["Spain", "Madrid"], ["Russia", "Moscow"], ["China", "Beijing"], ["Canada", "Ottawa"], ["Egypt", "Cairo"], ["Kenya", "Nairobi"], ["Greece", "Athens"], ["Portugal", "Lisbon"], ["Peru", "Lima"], ["Chile", "Santiago"], ["Cuba", "Havana"], ["Austria", "Vienna"], ["Poland", "Warsaw"], ["Turkey", "Ankara"], ["Thailand", "Bangkok"], ["Norway", "Oslo"]],
+  "templates": [
+    {"statement": "{name} lives in the capital of {country}. ", "question": "\nQuestion: Where does {name} live?\nAnswer: {name} lives in the city of"},
+    {"statement": "{name} works in the capital of {country}. ", "question": "\nQuestion: Where does {name} work?\nAnswer: {name} works in the city of"}
+  ],
+  "sae_runtime": {
+    "members": 64,
+    "training_runs": {
+      "14": "runs/REFORM_R32_qwen_topk_five_seed_16m_v1_20260914",
+      "24": "runs/REFORM_R32_qwen_l23_topk_five_seed_16m_v1_20260914"
+    }
+  },
+  "frozen_means": "runs/REFORM_R56_binding_context_roles_v1_20260915/context_role_means.npz",
+  "frozen_means_sha256": "8a9d888117c84508b23346a86271284c99abb566832b45ecda1fb5831d7ba6f1",
+  "composition_record": {
+    "candidate_members": 64,
+    "families": ["raw", "source", "target"],
+    "worlds_by_split": {"development": 2}
+  }
+}

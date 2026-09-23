@@ -10893,3 +10893,31 @@ gain 开发比较已完成，原始54,912记录核对，训练调度与R20逐值
 ### CCAD 执行归属与周期恢复
 
 实际写入 UTC 为 2026-09-23T07:16:54Z。完成本单元采用和论文核对后，通过官方automation_update将原ccad原位恢复ACTIVE，目标为当前任务01a0cc9b-67c9-77d1-bb30-344cb29a591a，五分钟周期。实际TOML核对status、target、周期及prompt与configs/CCAD_AUTOMATION_PROMPT.md逐字相同，原created_at为1788312151799，updated_at为1790147800820。没有创建新loop。tracker已更新为当前实施准备，无活动GPU任务。原run_shift_retraining备份的完整SHA256为2eae490191a07c7df043b758404ceda6f4f3d9bca59a094b9d0becd68a74f117。
+
+### CALIBRATION_REUSE_20260923 同步记录
+
+实际写入 UTC 为 2026-09-23T07:18:38Z。白名单17个代码、配置及主日志文件通过git diff --cached --check、文件体积核对与新增内容凭据检查，提交7c51966cf9038116b7a92e0a26de71d29e169394已推送既有origin/main。推送后核对HEAD等于origin/main，工作区在本条追加前无已追踪改动。未上传忽略的研究文档、数据、模型或论文，未改变白名单。当前tracker SHA256为fadc909fe95d3cfbb3b08a4b803f6524cc17b120a01466b1245d071f67d6944a。本条同步事实本地保留，在后续研究单元一并同步。
+
+### 改革定期检查与执行要求
+
+实际写入 UTC 为 2026-09-23T07:22:33Z。用户要求当前任务继续五分钟automation，修改prompt，允许安装discussion技能，并定期审视改革效果、无效及时加强。已归档本次修改前prompt、tracker、AGENTS至artifacts/scientific_reform_20260923/before/*_20260923T072032Z.md。原ccad通过官方工具原位保持ACTIVE及当前task、五分钟周期，prompt增加持续执行、完整问题、事件及周期检查、无效改革改变调度、真实成果汇报。周期只在tracker，两个完整单元或四小时后首次唤醒，先到者触发，不新增检查loop。
+
+独立research_choice检查已采纳。同一对象消费者在完整单元及时完成，GPT2正结果没有阻止依据实际部分区别结束共享G通用替代职责，说明结果已经改变调度。现存风险是新问题复用R57接口而仅增加条件参数，R57已有entity/both两条条件路径。四状态或双侧恢复只支持执行和机制观察；若source/raw简单模型已作出相同目标组合决定，采用简单实现并结束额外模块；若实际joint support或系数变化，修正操作与机制解释；若可复用条件作用改变新组合选择，同单元完成确认与使用。连续仅改善拟合或复现旧能力时重新选择学习对象及监督。意见已反馈执行agent，未追加验收、评分或报告系统。
+
+### CONDITIONAL_COMPOSITION_20260923 START
+
+实际写入 UTC 为 2026-09-23T07:22:33Z。当前问题按plan接续，检验条件功能关系是否帮助预测和选择未见目标成员组合。execution_assets复用binding_member_selection.py及run_binding_context_roles.py实现真实四状态记录，保留原R57默认流程，entity与attribute分别保存实际变化，统一原答案减swap答案margin，joint使用两部分之和。原全层clean-context背景保留，SAE层及raw背景明确保存。主执行者负责真实GPU验证，当前尚未启动计算。
+
+预算为完整问题5400 driver秒、10GB peak CUDA allocated、3GB新bulk，smoke最多240秒。依据R57五run共1877.562秒、峰值7.824GB，包含双部分构造、开发与五SAE比較、新世界确认和真实选择收益；实际smoke吞吐用于预算内安排。查询共享gpu-0为free，显存2070/16303MiB，D盘可用3426847555584bytes。复用r004与已有模型/SAE，不新增付费。research_practice同时按用户授权核对scientific-problem-selection官方技能及安装，不等待其完成才进行科学实现。
+
+### Scientific Problem Selection 安装与调用
+
+实际写入 UTC 为 2026-09-23T07:25:11Z。research_practice已完成标准skill-installer安装，核验事件为2026-09-23T07:23:57Z。固定官方anthropics/knowledge-work-plugins commit 1bd42820da111e5f0206e570bf5228a1c35839c7，完整读取入口、九个模块及Apache2.0许可证，11文件与官方Git blob逐项一致，未覆盖既有技能、修改实验环境或安装可执行依赖。入口C:/Users/zz/.codex/skills/scientific-problem-selection/SKILL.md已加入长期prompt，可直接读取。记录在artifacts/scientific_reform_20260923/SKILL_INSTALLATION.md，registry已登记用途。该安装属于研究组织支持，当前binding实现同时进行，不计科学成果。
+
+### CONDITIONAL_COMPOSITION_20260923 PROGRESS
+
+实际写入 UTC 为 2026-09-23T07:28:12Z。真实smoke CC23_BINDING_COMPOSITION_SMOKE_20260923于2026-09-23T07:26:51.783110Z启动，07:27:38.553460Z完成PASS。两个开发world、两templates、两orders及双query共16行，raw/source/target各四状态192条记录。208 sequence forwards、7696 token forwards，46.6959354999708 driver秒、22.515625 CPU秒，peak7250160640 CUDA bytes，完整目录8652448bytes。noop margin误差0，实际joint更新与两部分之和误差0。固定原答案margin均值按none/entity/attribute/both排列为raw 5.6074/−5.0817/−4.6220/4.9367，source 5.6074/−3.9895/−4.6911/4.1491，target 5.6074/−3.7117/−4.7054/3.9916。此数据验证真实执行与已知binding结构，不作为新增组合选择能力。
+
+新增composition_fields与evaluate_composition支持在同一原目标decoder上替换成员系数；batch保存两部分与联合的support、系数、原代码及真实hidden delta，完整raw背景另存。run的composition_protocol.json与composition_arrays保存恢复位置；原R57默认逻辑保持。配置configs/cc23_binding_composition_smoke.json及冻结源码记录方法身份。首次调用在创建run前因新D盘父目录尚不存在退出；建立项目专用目录后同ID首次实际run成功，无原始结果被覆盖。GPU共享租约已自动释放，当前free。
+
+本次prompt及改革周期修改已执行，原ccad仍为当前task、ACTIVE、五分钟间隔，实际TOML prompt与项目文件逐字相同。AGENTS.md当前SHA256为8b6b37addd7dc496fe6b724097ebe137141988fb57440b04c3ec0dd896eb1ce6，REFERENCE_REGISTRY.md为62f4efeaac6b511c12b6b19dbeeeb1354d2de39d95d7bd7f59e9ec8c23d118e6，长期prompt为134cb5af882caa1faf58d8ae1c8033cdee3936a1bbb80ff37125f71b878e0ab5。本次治理要求已实施，科学单元继续进行。下一动作直接进入两部分目标成员组合的预测与选择比较，当前记录路径不再追加同类实施检查。
