@@ -1,0 +1,11 @@
+{
+  "base_config": "configs/cc23_functional_blocks_reference_fit.json",
+  "run_id": "CC23_FUNCTIONAL_BLOCKS_REFERENCE_CONFIRMATION_20260923",
+  "purpose": "Evaluate frozen original target masks and source/raw references on the explicit confirmation panel",
+  "scope": "Frozen target4/5 masks and raw map learned only from64 calibration rows; confirmation responses are saved for the functional block consumer.",
+  "mode": "evaluate",
+  "audit_opened": true,
+  "evidence_level": "controlled_frozen_confirmation",
+  "frozen_relation_run": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_REFERENCE_FIT_20260923",
+  "evaluation_panels": {"confirmation": "artifacts/scientific_reform_20260923/material_support/CONFIRMATION_PANEL.json"}
+}

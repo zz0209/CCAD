@@ -1,0 +1,17 @@
+{
+  "base_config": "configs/cc23_functional_blocks_evaluate_development.json",
+  "run_id": "CC23_FUNCTIONAL_BLOCKS_EVALUATE_CONFIRMATION_20260923",
+  "purpose": "Evaluate frozen target4/5 functional groups with the same mixed donor requests and original/raw comparisons",
+  "scope": "Four fixed functional checkpoints on512 explicit confirmation rows, with original source and raw responses from the same frozen panel.",
+  "seeds": [4, 5],
+  "audit_opened": true,
+  "evidence_level": "controlled_frozen_confirmation",
+  "reference_run": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_REFERENCE_CONFIRMATION_20260923",
+  "reference_panel": "confirmation",
+  "checkpoints": [
+    {"seed": 4, "arm": "global_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed4__global/step_512"},
+    {"seed": 4, "arm": "group_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed4__group/step_512"},
+    {"seed": 5, "arm": "global_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed5__global/step_512"},
+    {"seed": 5, "arm": "group_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed5__group/step_512"}
+  ]
+}

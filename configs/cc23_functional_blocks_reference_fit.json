@@ -1,0 +1,18 @@
+{
+  "base_config": "configs/cc23_material_evaluate_smoke.json",
+  "run_id": "CC23_FUNCTIONAL_BLOCKS_REFERENCE_FIT_20260923",
+  "run_parent": "FUNCTIONAL_BLOCKS_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/functional_blocks_20260923",
+  "purpose": "Fit the original target4 and target5 fractional masks and raw comparison on the fixed pure-axis calibration panel",
+  "scope": "Only64 closed calibration rows and two original target dictionaries; source teacher and raw fitting follow the frozen material consumer recipe.",
+  "mode": "fit",
+  "seeds": [4, 5],
+  "audit_opened": false,
+  "evaluation_panels": {},
+  "target_checkpoints": [
+    {"seed": 4, "arm": "original", "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_4"},
+    {"seed": 5, "arm": "original", "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_5"}
+  ],
+  "budget_seconds": 300,
+  "budget": "Shared complete FUNCTIONAL_BLOCKS question2400 driver seconds, peak8GiB CUDA and8GiB new storage; this fit uses the existing64 calibration rows."
+}

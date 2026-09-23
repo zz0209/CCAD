@@ -37,9 +37,12 @@ def main():
     args = parser.parse_args()
     cfg = load_config(args.config)
     cfg.setdefault('generator_script', 'scripts/evaluate_material_ce.py')
-    work = MultisiteWork(cfg, args.config, ['scripts/evaluate_material_ce.py',
+    source_files = ['scripts/evaluate_material_ce.py',
         'scripts/run_causalgym_multisite.py', 'src/ccad/activation_contract.py',
-        'src/ccad/sae_quality.py', 'src/ccad/artifacts.py'])
+        'src/ccad/sae_quality.py', 'src/ccad/artifacts.py']
+    if cfg.get('functional_blocks', False):
+        source_files.append('src/ccad/functional_blocks.py')
+    work = MultisiteWork(cfg, args.config, source_files)
     error = None
     tail_tokens = sae_tokens = 0
     try:
@@ -48,6 +51,8 @@ def main():
         sys.path.insert(0, cfg['sparsify_overlay_dir'])
         sys.path.insert(0, cfg['sparsify_source_dir'])
         from sparsify import SparseCoder
+        if cfg.get('functional_blocks', False):
+            from ccad.functional_blocks import load_checkpoint, encode
 
         torch.set_num_threads(4)
         torch.use_deterministic_algorithms(True)
@@ -150,7 +155,7 @@ def main():
         batch_size = int(cfg.get('batch_size_tokens', 256))
         assert batch_size > 0
 
-        def measure(sae=None, zero=False, input_variance=None):
+        def measure(sae=None, zero=False, input_variance=None, groups=None, allocation=None):
             nonlocal tail_tokens, sae_tokens
             losses = np.empty(len(cache_indices), np.float64)
             squared_error, l0_total = 0., 0
@@ -165,7 +170,10 @@ def main():
                     inputs = np.array(states[cache_indices[start:stop]])
                     x = torch.as_tensor(inputs, device=work.device)
                     if sae is not None:
-                        values, indices, _ = sae.encode(x)
+                        if groups is None:
+                            values, indices, _ = sae.encode(x)
+                        else:
+                            values, indices, _ = encode(sae, x, groups, allocation)
                         reconstruction = sae.decode(values, indices)
                         squared_error += float((reconstruction-x).double().square().sum())
                         positive = values > 0
@@ -219,11 +227,17 @@ def main():
             directory = Path(spec['path'])
             work.checked(directory/'cfg.json', 'SAE checkpoint configuration')
             weights_path = work.checked(directory/'sae.safetensors', 'SAE checkpoint weights')
-            sae = SparseCoder.load_from_disk(directory, device=str(work.device)).float().eval()
+            groups = allocation = None
+            if cfg.get('functional_blocks', False):
+                work.checked(directory/'functional_groups.json', 'Fixed functional group identity')
+                sae, groups, metadata = load_checkpoint(directory, device=str(work.device))
+                allocation = metadata['allocation']
+            else:
+                sae = SparseCoder.load_from_disk(directory, device=str(work.device)).float().eval()
             sae.requires_grad_(False)
             assert sae.d_in == 2048 and sae.num_latents == 8192 and sae.cfg.k == 64
             loss_sum, reconstruction_ce, quality = measure(sae=sae,
-                input_variance=input_statistics['total_variance'])
+                input_variance=input_statistics['total_variance'], groups=groups, allocation=allocation)
             recovery = ce_recovered(clean_ce, reconstruction_ce, zero_ce)
             key = f"{spec['arm']}_s{spec['seed']}"
             output_path = work.run/(key+'_ce.npz')

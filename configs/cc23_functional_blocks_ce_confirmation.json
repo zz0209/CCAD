@@ -1,0 +1,17 @@
+{
+  "base_config": "configs/cc23_functional_blocks_ce_development.json",
+  "run_id": "CC23_FUNCTIONAL_BLOCKS_CE_CONFIRMATION_20260923",
+  "purpose": "Measure same-position reconstruction and CE quality for the remaining three functional SAE seeds",
+  "scope": "Six frozen checkpoints for seeds1/4/5 on the existing fixed validation positions; seed1 is used only for material quality.",
+  "seeds": [1, 4, 5],
+  "audit_opened": false,
+  "checkpoints": [
+    {"seed": 1, "arm": "global_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed1__global/step_512"},
+    {"seed": 1, "arm": "group_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed1__group/step_512"},
+    {"seed": 4, "arm": "global_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed4__global/step_512"},
+    {"seed": 4, "arm": "group_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed4__group/step_512"},
+    {"seed": 5, "arm": "global_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed5__global/step_512"},
+    {"seed": 5, "arm": "group_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_CONFIRMATION_20260923/seed5__group/step_512"}
+  ],
+  "budget_seconds": 600
+}

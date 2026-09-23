@@ -1,0 +1,15 @@
+{
+  "base_config": "configs/cc23_functional_blocks_train_smoke.json",
+  "run_id": "CC23_FUNCTIONAL_BLOCKS_EVALUATE_SMOKE_20260923",
+  "generator_script": "scripts/evaluate_grammar_functional_blocks.py",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "reference_run": "D:/CCAD_Storage/runs/material_support_20260923/CC23_MATERIAL_EVALUATE_DEVELOPMENT_20260923",
+  "reference_panel": "development",
+  "evaluation_subjects": [0],
+  "batch_size": 32,
+  "checkpoints": [
+    {"seed": 2, "arm": "global_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_SMOKE_20260923/seed2__global/step_8"},
+    {"seed": 2, "arm": "group_supervised", "path": "D:/CCAD_Storage/runs/functional_blocks_20260923/CC23_FUNCTIONAL_BLOCKS_TRAIN_SMOKE_20260923/seed2__group/step_8"}
+  ],
+  "budget_seconds": 300
+}
