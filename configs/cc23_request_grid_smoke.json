@@ -1,0 +1,17 @@
+{
+  "base_config": "configs/cc23_shift_vector_t2.json",
+  "run_id": "CC23_SHIFT_GRID_SMOKE_20260923",
+  "run_parent": "REUSABLE_STRUCTURE_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/reusable_structure_20260923",
+  "generator_script": "scripts/run_shift_request_grid.py",
+  "purpose": "Replay original Boolean responses and collect real fractional requests on two exposed documents",
+  "scope": "Real model smoke on the first two existing check documents; no independent confirmation",
+  "panel": "artifacts/scientific_reform_20260923/reusable_structure/SMOKE_PANEL.json",
+  "phase": "evaluation",
+  "boolean_reference_file": "D:/CCAD_Storage/runs/finite_parts_program_20260923/CC23_SHIFT_FINITE_PARTS_T2_20260923/evaluation/original.npz",
+  "replay_atol": 0.00001,
+  "eval_batch_size": 2,
+  "maximum_cuda_bytes": 4294967296,
+  "budget_seconds": 180,
+  "budget": "Part of the complete 1800 driver-second, 4GiB CUDA, 512MiB evidence question"
+}

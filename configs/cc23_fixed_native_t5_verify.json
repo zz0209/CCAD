@@ -1,0 +1,30 @@
+{
+  "audit_opened": false,
+  "budget": "Existing reusable structure unit; target-only capability delivery, 60 driver seconds and 4GiB CUDA",
+  "budget_seconds": 60,
+  "candidate_family_frozen": true,
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "deployment": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\scientific_reform_20260923\\reusable_structure\\fixed_deployment_t5\\deployment.json",
+  "device": "cuda:0",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "eval_batch_size": 8,
+  "evidence_level": "deployment_equivalence_verification",
+  "generator_script": "scripts/run_shift_fixed_native.py",
+  "maximum_cuda_bytes": 4294967296,
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\scientific_reform_20260923\\reusable_structure\\fixed_deployment_t5\\validation_panel.json",
+  "purpose": "Verify the frozen target-only deployment against its original full-batch grid responses",
+  "scope": "Exact first complete confirmation batch; three frozen target-only requests compared with saved grid responses",
+  "replay_atol": 1e-05,
+  "run_id": "CC23_SHIFT_FIXED_NATIVE_T5_20260923",
+  "run_parent": "REUSABLE_STRUCTURE_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/reusable_structure_20260923",
+  "seeds": [
+    5
+  ],
+  "statistics_unit": "Same documents and three fixed requests",
+  "target_seed": 5,
+  "token_budget": 4096,
+  "verify_reference_run": "D:\\CCAD_Storage\\runs\\reusable_structure_20260923\\CC23_SHIFT_GRID_CONFIRMATION_T5_20260923"
+}

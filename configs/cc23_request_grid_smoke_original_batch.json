@@ -1,0 +1,8 @@
+{
+  "base_config": "configs/cc23_request_grid_smoke.json",
+  "run_id": "CC23_SHIFT_GRID_SMOKE_ORIGINAL_BATCH_20260923",
+  "panel": "artifacts/scientific_reform_20260923/reusable_structure/SMOKE_ORIGINAL_BATCH_PANEL.json",
+  "eval_batch_size": 8,
+  "purpose": "Verify real Boolean replay with the exact original document batch and collect fractional request smoke",
+  "scope": "Original first evaluation batch; retained two-document smoke differs in batching and remains a recorded failure"
+}

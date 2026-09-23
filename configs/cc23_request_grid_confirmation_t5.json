@@ -1,0 +1,9 @@
+{
+  "base_config": "configs/cc23_request_grid_confirmation_t4.json",
+  "run_id": "CC23_SHIFT_GRID_CONFIRMATION_T5_20260923",
+  "target_seed": 5,
+  "seeds": [5],
+  "relation_run": "E:/Projects/SAE_Lab/CCAD/runs/REFORM_R59_shift_confirm_seed5_v1_20260915",
+  "source_run": "D:/CCAD_Storage/runs/reusable_structure_20260923/CC23_SHIFT_GRID_CONFIRMATION_T4_20260923",
+  "scope": "Same frozen 128 biographies and 27 target requests; source responses reused from target4 evaluation"
+}

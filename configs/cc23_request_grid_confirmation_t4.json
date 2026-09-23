@@ -1,0 +1,12 @@
+{
+  "base_config": "configs/cc23_request_grid_calibration_t4.json",
+  "run_id": "CC23_SHIFT_GRID_CONFIRMATION_T4_20260923",
+  "purpose": "Evaluate frozen predictions and target operation selection on new biographies and uncalibrated strengths",
+  "scope": "128 reserved biographies; all 27 fixed requests measured for source and target solely for frozen-method evaluation",
+  "panel": "artifacts/scientific_reform_20260923/finite_parts_program/confirmation/CONFIRMATION_PANEL.json",
+  "phase": "evaluation",
+  "evidence_level": "frozen_new_document_confirmation",
+  "frozen_prediction_models": "artifacts/scientific_reform_20260923/reusable_structure/frozen_models/MODELS.json",
+  "frozen_prediction_models_sha256": "4553b9f12ee5813e71f804d47f81166755fcbff1c7858db22f80ca06e6602ac6",
+  "budget_seconds": 480
+}

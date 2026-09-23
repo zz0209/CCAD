@@ -1,0 +1,18 @@
+{
+  "base_config": "configs/cc23_shift_vector_t2.json",
+  "run_id": "CC23_SHIFT_GRID_CALIBRATION_T4_20260923",
+  "run_parent": "REUSABLE_STRUCTURE_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/reusable_structure_20260923",
+  "generator_script": "scripts/run_shift_request_grid.py",
+  "purpose": "Calibrate a frozen response correspondence from three target singleton operations",
+  "scope": "Exact original fit8 biographies; all source Boolean requests and only three target singleton requests",
+  "panel": "artifacts/scientific_reform_20260923/reusable_structure/FIT_PANEL.json",
+  "phase": "calibration",
+  "target_seed": 4,
+  "seeds": [4],
+  "relation_run": "E:/Projects/SAE_Lab/CCAD/runs/REFORM_R59_shift_confirm_seed4_v1_20260915",
+  "eval_batch_size": 8,
+  "maximum_cuda_bytes": 4294967296,
+  "budget_seconds": 240,
+  "budget": "Part of the complete 1800 driver-second, 4GiB CUDA, 512MiB evidence question"
+}
