@@ -1,0 +1,25 @@
+{
+  "run_id": "CC23_JOINT_DONOR_SOURCE_PARTS_20260923",
+  "run_parent": "GRAMMAR_MATERIAL_SELECTION_20260923",
+  "purpose": "Measure whether fixed source number and time members extract one requested factor from a donor differing in both factors",
+  "scope": "Source-only development measurement within the material-support question. All 384 original R4 temporal inputs retained; existing source members remain frozen. Single-factor donor calls are reference measurements.",
+  "audit_opened": false,
+  "evidence_level": "controlled_development",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "sae_layer": 15,
+  "source_seed": 1,
+  "source_budgets": {"number": 16, "time": 32},
+  "member_budgets": [16, 32],
+  "material_run": "runs/SEVEN_R4_l15_material_v1_20260907",
+  "source_run": "runs/SEVEN_R4_l15_source_v1_20260907",
+  "discovery_blocks": [0, 1, 2, 3, 4, 5],
+  "discovery_cues": [0, 1, 2, 3],
+  "batch_size": 32,
+  "final_layer_cached_tail": true,
+  "sae_checkpoints": [{
+    "seed": 1,
+    "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_1"
+  }],
+  "budget_seconds": 300,
+  "budget": "At most 300 driver seconds and 8 GiB CUDA; cached original 384 inputs, one existing source SAE, fixed supports. Small derived results in project; no new training."
+}

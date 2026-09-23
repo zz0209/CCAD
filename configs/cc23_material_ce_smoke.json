@@ -1,0 +1,27 @@
+{
+  "run_id": "CC23_MATERIAL_CE_SMOKE_20260923",
+  "run_parent": "MATERIAL_SUPPORT_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/material_support_20260923",
+  "generator_script": "scripts/evaluate_material_ce.py",
+  "purpose": "Measure fixed eligible-position full-vocabulary CE recovery from the current final-layer cache",
+  "scope": "Original seed2 and actual eight-step factorial checkpoint on all256 original validation sequences. Identical non-EOS input positions before position127; next-token labels and cache identity remain fixed.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "device": "cuda:0",
+  "seeds": [2],
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_revision": "9bb295ddab0e05d785b879661af7260fed5140fc",
+  "sparsify_source_dir": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "sparsify_overlay_dir": "D:/CCAD_Storage/environments/r005a_sparsify_overlay",
+  "quality_manifest": "D:/CCAD_Storage/runs/material_support_20260923/CC23_MATERIAL_CACHE_20260923/cache_manifest.json",
+  "batch_size_tokens": 256,
+  "oracle_ce_tolerance": 0.001,
+  "checkpoints": [
+    {"seed": 2, "arm": "original", "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_2"},
+    {"seed": 2, "arm": "factorial_smoke", "path": "D:/CCAD_Storage/runs/material_support_20260923/CC23_MATERIAL_TRAIN_SMOKE_20260923/seed2__factorial/step_8"}
+  ],
+  "budget_seconds": 600,
+  "budget": "CE quality allocation600 driver seconds within the full question7200 driver seconds, peak12GiB CUDA and16GiB new storage. Storage includes all real smoke outputs, fifteen SAE cells at256/512/1024 and their recovery states; each SAE checkpoint134259016 bytes and optimizer recovery268593886 bytes.",
+  "statistics_unit": "Fixed original validation sequences and shared initialization seeds; token positions remain paired across all methods"
+}

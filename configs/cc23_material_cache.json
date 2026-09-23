@@ -1,0 +1,7 @@
+{
+  "base_config": "configs/cc23_material_cache_smoke.json",
+  "run_id": "CC23_MATERIAL_CACHE_20260923",
+  "grammar_panel": "artifacts/scientific_reform_20260923/material_support/TRAIN_PANEL.json",
+  "natural_sequences": 2048,
+  "quality_sequences": 256
+}

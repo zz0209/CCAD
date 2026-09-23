@@ -1,0 +1,16 @@
+{
+  "base_config": "configs/cc23_material_train_smoke.json",
+  "run_id": "CC23_MATERIAL_TRAIN_20260923",
+  "seeds": [1, 2, 3, 4, 5],
+  "initial_checkpoints": [
+    {"seed": 1, "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_1"},
+    {"seed": 2, "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_2"},
+    {"seed": 3, "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_3"},
+    {"seed": 4, "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_4"},
+    {"seed": 5, "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_5"}
+  ],
+  "cache_manifest": "D:/CCAD_Storage/runs/material_support_20260923/CC23_MATERIAL_CACHE_20260923/schedules/training_cache_manifest.json",
+  "steps": 1024,
+  "budget": "Fifteen SAE cells <=5700 driver seconds within full question7200 seconds and12GiB peak CUDA. Full question storage allocation16GiB includes original smoke files, immutable256/512/1024 checkpoints, recovery optimizer states and shared input caches.",
+  "checkpoint_steps": [256, 512, 1024]
+}

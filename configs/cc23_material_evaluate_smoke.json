@@ -1,0 +1,32 @@
+{
+  "run_id": "CC23_MATERIAL_EVALUATE_SMOKE_20260923",
+  "run_parent": "MATERIAL_SUPPORT_20260923",
+  "run_storage_root": "D:/CCAD_Storage/runs/material_support_20260923",
+  "generator_script": "scripts/evaluate_grammar_material_support.py",
+  "purpose": "Fit a selective native correspondence on pure donors and execute it on mixed donors",
+  "scope": "Fixed source functional teacher; same calibration information and solver across original and three material arms. Training and functional development are separate.",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "device": "cuda:0",
+  "seeds": [2],
+  "model_revision": "7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "dataset_revision": "authored_functional_support_20260923",
+  "model_local_dir": "D:/CCAD_Storage/models/pythia-1b-deduped/7199d8fc61a6d565cd1f3c62bf11525b563e13b2",
+  "sparsify_source_dir": "D:/CCAD_Storage/references/source/sparsify_42c0645",
+  "sparsify_overlay_dir": "D:/CCAD_Storage/environments/r005a_sparsify_overlay",
+  "source_checkpoint": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_1",
+  "source_components": "runs/SEVEN_R4_l15_source_v1_20260907/source_components.json",
+  "mode": "fit_evaluate",
+  "calibration_panel": "artifacts/scientific_reform_20260923/material_support/CALIBRATION_PANEL.json",
+  "evaluation_panels": {"development": "artifacts/scientific_reform_20260923/material_support/DEVELOPMENT_SMOKE_PANEL.json"},
+  "batch_size": 32,
+  "target_checkpoints": [
+    {"seed": 2, "arm": "original", "path": "D:/CCAD_Storage/training_curves/SEVEN_R4_l15_train_k64_five_resume_v4_20260907/step_4096/seed_2"},
+    {"seed": 2, "arm": "natural_replay", "path": "D:/CCAD_Storage/runs/material_support_20260923/CC23_MATERIAL_TRAIN_SMOKE_20260923/seed2__natural_replay/step_8"},
+    {"seed": 2, "arm": "correlated", "path": "D:/CCAD_Storage/runs/material_support_20260923/CC23_MATERIAL_TRAIN_SMOKE_20260923/seed2__correlated/step_8"},
+    {"seed": 2, "arm": "factorial", "path": "D:/CCAD_Storage/runs/material_support_20260923/CC23_MATERIAL_TRAIN_SMOKE_20260923/seed2__factorial/step_8"}
+  ],
+  "budget_seconds": 900,
+  "budget": "Functional fit and actual consumer within total question7200 driver seconds, 12GiB CUDA and12GiB bulk.",
+  "statistics_unit": "Lexical subject blocks with dependent factor cells and fixed target seeds"
+}

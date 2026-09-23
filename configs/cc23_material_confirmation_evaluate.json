@@ -1,0 +1,8 @@
+{
+  "base_config": "configs/cc23_material_confirmation_fit.json",
+  "run_id": "CC23_MATERIAL_CONFIRMATION_EVALUATE_20260923",
+  "mode": "evaluate",
+  "audit_opened": true,
+  "frozen_relation_run": "D:/CCAD_Storage/runs/material_support_20260923/CC23_MATERIAL_CONFIRMATION_FIT_20260923",
+  "evaluation_panels": {"confirmation": "artifacts/scientific_reform_20260923/material_support/CONFIRMATION_PANEL.json"}
+}

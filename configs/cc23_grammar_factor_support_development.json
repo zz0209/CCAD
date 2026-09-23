@@ -1,0 +1,5 @@
+{
+  "base_config": "configs/cc23_grammar_factor_support_smoke.json",
+  "run_id": "CC23_GRAMMAR_FACTOR_SUPPORT_DEV_20260923",
+  "panel_path": "artifacts/scientific_reform_20260923/grammar_factor_support/PANEL.json"
+}
