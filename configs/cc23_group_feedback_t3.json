@@ -1,0 +1,15 @@
+{
+  "base_config": "configs/cc23_shift_vector_t3.json",
+  "run_id": "CC23_GROUP_FEEDBACK_T3_20260923",
+  "run_parent": "GROUP_FEEDBACK_20260923",
+  "generator_script": "scripts/run_shift_group_feedback.py",
+  "purpose": "Select complete target groups using real group feedback at matched target forward budgets",
+  "scope": "Eight fixed calibration biographies, two backgrounds, 281 complete-group queries per search method",
+  "calibration_run": "D:/CCAD_Storage/runs/finite_vector_reuse_20260923/CC23_SHIFT_VECTOR_CALIBRATION_T3_20260923",
+  "search": {"seed": 2026092317, "population": 16, "elite": 4, "group_budget": 281},
+  "group_batch_size": 4,
+  "maximum_cuda_bytes": 4294967296,
+  "budget_seconds": 600,
+  "budget": "Part of the complete 2400-driver-second group-feedback research question",
+  "run_storage_root": "D:/CCAD_Storage/runs/group_feedback_20260923"
+}

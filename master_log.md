@@ -11321,3 +11321,31 @@ TRAIN_CONFIRMATION于13:26:32Z附近开始，精确开始时刻以status为准�
 三个有run记录的尝试累计14.471228300011717 driver秒、10.828125 process CPU秒、1152 sequence forwards、6732 tokens、peak320947712 CUDA bytes、1994119bytes运行资产；初次run建立前异常时长及CPU准备8.9038251秒另列，准备资产207648bytes，详见receiver_transfer/COST.json。source预算内完成，原1800 driver秒/8GiB完整问题预算的剩余部分未消费。README提供真实调用、输出和复算入口，全部源码、配置、失败与逐批输出保留。当前没有GPU任务，原五分钟automation ACTIVE。
 
 改革检查沿独立本次判断完成一次。公开关系与成熟测量给出了有根据且可区分的预测，首项真实结果直接取消目标拟合投入，避免把新关系名称自动变成新方法。非零作用及小量排序差异均保留，其使用增量没有被拔高。对比已足以回答本项投入决定，未追加优化基线或额外sender。当前根本差距继续交给独立负责人从整体能力与实际消费者选择下一问题，已明确要求审视连续功能编译与本次路径诊断的共同价值，不能按已有部件继续生成局部变体。下一研究选择已经接续，当前工作卡及plan均记录结束证据，原入口保存于before/receiver_transfer_completion。
+
+## RECEIVER_TRANSFER_20260923 SYNC
+
+实际写入UTC为2026-09-23T14:27:24Z。六个白名单文件已提交推送至既有main，commit为98ec49a9617dfe6a41531d7078581b8a4fa5eba1，核对HEAD与origin/main一致。提交为三脚本、两配置及主日志，真实smoke/开发与原始独立复算完成，Python语法、JSON、diff、白名单及敏感字段检查通过；无模型参数、数据或被忽略论文加入提交。SOURCE_ANALYSIS/RESULTS.json本地SHA256为37cea9f487c97ac28c5fb4a7c7ccf10f911bd4b52673ce4be5c543f11e9931f3，COST.json为a3726b080e9ef5e3742e0b35398dc1f0fddcac979659190c7da1d19f050f025c，其余输入身份在manifest。当前gpu-0为free，下一独立科学选择继续执行，原五分钟automation保持ACTIVE。
+
+## GROUP_FEEDBACK_20260923 START
+
+实际写入UTC为2026-09-23T14:35:41Z。本单元选择发生于本次heartbeat接续中的独立负责人消息，消息精确UTC未知。依据既有W向量复用能力、source singleton叠加nRMSE1.034235及实际完整组调用，研究相同验证预算下改变所观测的组成能否提高后来作用保真。保留八篇校准传记、none/source-P背景、目标2/3候选285/281及六site的2/6/6/4/2/2额度，原finite_vector_n8与真实完整组反馈的自适应/固定提议搜索同场比较；新两臂不读取singleton响应。其完整使用过程是校准目标组成一次、保存二值成员、后来文本在目标自身SAE执行删除并交由冻结head读取。拟采用成熟cross-entropy子集搜索，不将求解器名称计为新算法。
+
+execution_assets实现实际collector及可恢复选择，finite_response_analysis核对开发资料和全历史排除后确认资料，root负责执行与真实成本。本次改变观测分配及选择依据，不重训字典；开发的后来作用决定是否进入同单元冻结确认。详细算法数值与科学取舍由负责人追加DECISION。总预算暂定2400 driver秒、4GiB峰值CUDA、1GiB新增数组，涵盖失败、smoke、开发和具备依据的确认。当前GPU尚未启动，读取实际资源为RTX5070Ti已用2269MiB、空闲13727MiB，D盘3383404003328bytes、E盘395710279680bytes可用；正式运行仍由共享管理器取得gpu-0租约。原入口逐字保存在artifacts/scientific_reform_20260923/before/group_feedback_start，plan/tracker已更新。当前产出为明确研究选择和执行准备，尚无新科学结果。
+
+## GROUP_FEEDBACK_20260923 PROGRESS
+
+实际写入UTC为2026-09-23T14:42:44Z。负责人14:38:47Z完成独立规格，root据此实现三份运行配置并核读真实hook与预算逻辑。scripts/run_shift_group_feedback.py已编译和CLI验证，真实SMOKE于14:41:01.511040Z结束PASS，33组每方法共1056序列，10.7129393 driver秒；T2于14:42:05.146203Z结束PASS，285组每方法共9120序列，27.1133008秒。两方法最初17项相同，后续按实际组loss更新adaptive分布，passive保持p0；当前差值仅是校准拟合结果，不能作为后来使用收益。T3已经通过相同管理器启动，GPU租约随过程自动释放，逐组数组和RNG保存供恢复。
+
+开发固定比较原任务及后来四head，方法与32/64/128/N曲线均在评价前保存。analysis核实原finite_parts未执行的128篇professor/nurse面板仍可用于确认，四格各32、96原test及32原train；1352个有status的真实run交集0，证据为group_feedback/RESERVED_CONFIRMATION_CHECK.json。旧227篇后来任务已曝光，新的composer女性格没有剩余，确认采用原职业用途，后来head仅为开发证据。此调整依据输入使用事实，在任何新评价前确定。下一动作是完成T3和两目标实际完整组评价，再根据跨文档收益作采用或结束决定。
+
+## GROUP_FEEDBACK_20260923 COMPLETE
+
+实际写入UTC为2026-09-23T14:55:02Z。最后GPU开发于14:49:38.115427Z结束，独立负责人于14:52:36Z作出并记录结束决定。原任务64评价文档pooled nRMSE adaptive/passive/vector为.414521/.687048/.420871，adaptive减passive为−.272528[−.314488,−.238955]，减vector为−.006350[−.023270,.014288]。原职业head对应误差.240454/.393687/.213741，adaptive减vector为+.026713[.0000176,.057917]。later128文档四head误差.259813/.470962/.234071，adaptive减vector为+.025742[.001046,.055848]。later正常准确率adaptive较vector增加.033203[.023438,.042969]，条件准确率减少.003906[−.009766,0]；完整作用及任务取舍保留在同一结果，未据它们重新选择预算、head或方法。
+
+采用决定为保留finite_vector_n8，结束当前完整组反馈配方及同配方target4/5确认。八篇校准中的优质目标组实际与加性预测相近。T2 adaptive实际/加性SSE为.933599/.947729，vector为1.005286/1.017241；T3为1.007237/1.175621及.926084/.952395。T3 passive的非加性余项很大且与加性误差相抵消，但其完整使用更差。源singleton nRMSE1.034235提供了有根据的机会，实际目标测量使判断转为当前优质组的代理失配不足以解释主要使用差距。本次知识是直接组测量和独立成员测量之间的信息取舍，反馈搜索超过固定提议的结果保留，未称一般算法优势。原128确认文档继续未执行，任何后续用途仍须保留真实曝光身份。
+
+全部七run PASS，真实29408序列、2993648tokens，driver174.1088225999847秒、CPU140.421875秒、peak744314880 CUDA bytes、资产111413435bytes。配置为configs/cc23_group_feedback_，搜索和执行分别由scripts/run_shift_group_feedback.py与原run_shift_member_responses.py承担。逐组原始loss复算差0、RNG及概率更新精确重放；正式原/later统计1000次共同文档bootstrap，直接SSE复算最大差0/5.55e−17。原始资产在D:/CCAD_Storage/runs/group_feedback_20260923，README记录实际运行及复算，源及singleton成本作为已取得输入保留。完整预算2400秒/4GiB CUDA/1GiB数组内完成，资源管理器核实全部free。当前稿件76页及其既有主张保持，本单元为科学诊断与方法取舍，没有新增方法能力主张。
+
+本地正式证据SHA256分别为group_feedback/development_original/RESULTS.json 9920656c43df9f616d8c62532ba6a1b1672f2a91f8abb3e5b8c63ee0728fcb6d，development_later/RESULTS.json 224e615a776cb3f1d95264f745f8741e875ca64fe4faeca89f36c31773c61325，COST.json da594527513d8cd68beb0d985f1b97fec24a02d0ef4156d49f6213996add9f20，CALIBRATION_INTERACTION.json 5e02a6e3bf3134206a0965411baefbc5f6018e2441b288c52e383daa6f0543c8。旧入口已逐字保存在before/group_feedback_completion，plan与tracker记录当前采用决定。
+
+改革检查采用负责人本次判断。新测量真正改变了目标验证的分配，已有条件的完整开发及机制分析均在同一问题完成；局部pooled差异未被用作扩大论文的依据，负结果也未扩大为FCC方向无效。连续返回旧方法提示候选仍需从整体知识价值重新产生，当前停止附近CEM、查询次数、候选规模和校准文本续试，将下一选择交给独立负责人重估学习与保存对象及真实消费者。该选择已经接续，当前未指定新run，五分钟automation持续ACTIVE。两项writing skills落实为保留同篇正面证据与必要取舍、将本次研究过程保留主日志及结果目录，不为一次诊断新增论文篇幅。

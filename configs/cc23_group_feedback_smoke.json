@@ -1,0 +1,9 @@
+{
+  "base_config": "configs/cc23_group_feedback_t2.json",
+  "run_id": "CC23_GROUP_FEEDBACK_SMOKE_20260923",
+  "purpose": "Verify complete-group execution and a feedback proposal update on actual calibration inputs",
+  "evidence_level": "representative_smoke",
+  "scope": "Both methods use 33 real groups on eight documents and two backgrounds, including one adaptive proposal update",
+  "search": {"seed": 2026092316, "population": 16, "elite": 4, "group_budget": 33},
+  "budget_seconds": 180
+}
