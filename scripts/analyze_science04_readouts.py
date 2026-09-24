@@ -10,15 +10,16 @@ from analyze_science04_confirmation import OUT, BULK, families, weights, summari
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--bulk-root',type=Path,default=BULK)
+    p.add_argument('--run-root','--bulk-root',dest='run_root',type=Path,default=BULK)
+    p.add_argument('--evidence-root',type=Path,default=OUT)
     p.add_argument('--output',type=Path,default=OUT/'ROUND04_INFINITIVE_READOUT_SUPPLEMENT.json')
     args=p.parse_args()
     if args.output.exists():raise FileExistsError(args.output)
     seeds=[1,3,4,5]
-    runs=[args.bulk_root/f'SCIENCE04_infinitive_t{s}_v{2 if s==1 else 1}_20260919' for s in seeds]
+    runs=[args.run_root/f'SCIENCE04_infinitive_t{s}_v{2 if s==1 else 1}_20260919' for s in seeds]
     idx=json.loads((runs[0]/'INDEX.json').read_text())
     rows=idx['rows'];names=idx['queries']
-    panel=json.loads((OUT/'ROUND04_INFINITIVE_PANEL.json').read_text())
+    panel=json.loads((args.evidence_root/'ROUND04_INFINITIVE_PANEL.json').read_text())
     ff=families(panel['families'],names)
     values=[dict(np.load(r/'responses.npz')) for r in runs]
     source=values[0]['source'].astype(float);clean=values[0]['none'].astype(float)
@@ -33,7 +34,7 @@ def main():
     dw=[weights(rng,len(verbs))[:,vi]*weights(rng,len(nouns))[:,ni]]
     result=summarize(methods,nums,den,dw,ff,rng,np.sqrt(den.mean(-1)).tolist(),seeds,
                      dict(setting='infinitive',scope='Supplementary analysis of retained outputs; primary unchanged',runs=list(map(str,runs))))
-    primary=json.loads((OUT/'ROUND04_INFINITIVE_ANALYSIS.json').read_text())
+    primary=json.loads((args.evidence_root/'ROUND04_INFINITIVE_ANALYSIS.json').read_text())
     for m in ['tangent_gain','tangent_mixed','raw_reconstruction']:
         assert result['summary'][m]==primary['summary'][m]
     result['quality']={str(s):json.loads((r/'quality.json').read_text()) for s,r in zip(seeds,runs)}

@@ -46,7 +46,7 @@ def summarize(methods,nums,den,docweights,ff,rng,source_effect,seeds,extra,contr
                 contrasts.append(dict(method=m,reference=ref,family=f,delta=summary[m][f]['nrmse']-summary[ref][f]['nrmse'],interval=np.quantile(samples[m,f]-samples[ref,f],[.025,.975]).tolist()))
     return dict(written_at_utc=datetime.now(timezone.utc).isoformat(),summary=summary,differences=contrasts,per_query=perquery,source_effect_rms=source_effect,seeds=seeds,**extra)
 
-def human():
+def human(source_head=ROOT/'runs/IR04_shift_consumer_seed2_v1_20260916'):
     seeds=[2,3,4,5];runs=[BULK/f'SCIENCE04_shift_t{s}_v1_20260919' for s in seeds]
     for r in runs:assert json.loads((r/'status.json').read_text())['status']=='PASS',r
     req=json.loads((OUT/'ROUND04_REQUESTS.json').read_text());names=req['queries'];ff=families(req['families'],names)
@@ -57,8 +57,8 @@ def human():
     old=json.loads((BULK/'SCIENCE03_shift_execution_reform_v1_20260919/program_context_membership.json').read_text())
     assert training[0]==old
     rows=memberships[0]['rows'];tasks=['composer_surgeon_orientation0','composer_surgeon_orientation1','model_software_engineer_orientation0','model_software_engineer_orientation1']
-    w=np.stack([np.load(ROOT/'runs/IR04_shift_consumer_seed2_v1_20260916'/f'none__full__{t}__probe42.npz')['weight'].ravel() for t in tasks],1)
-    bias=np.array([np.load(ROOT/'runs/IR04_shift_consumer_seed2_v1_20260916'/f'none__full__{t}__probe42.npz')['bias'].item() for t in tasks])
+    w=np.stack([np.load(source_head/f'none__full__{t}__probe42.npz')['weight'].ravel() for t in tasks],1)
+    bias=np.array([np.load(source_head/f'none__full__{t}__probe42.npz')['bias'].item() for t in tasks])
     clean=np.load(runs[0]/'none__full__pooled.npy').astype(float)
     source=np.stack([np.load(runs[0]/f'source__{q}__pooled.npy').astype(float) for q in names])
     for r in runs[1:]:
@@ -111,16 +111,18 @@ def infinitive():
     return summarize(methods,nums,den,dw,ff,rng,np.sqrt(den.mean(-1)).tolist(),seeds,dict(setting='infinitive',contexts=len(rows),verbs=verbs,nouns=nouns,queries=names,statistics='2000 paired target-seed and crossed verb/noun draws; paired roles/forms; interior/boundary coordinates resampled separately; exhaustive12 finer masks and3 endpoints fixed; source fixed.',functional_effects=effects,runs=list(map(str,runs))))
 
 def main():
-    global BULK
+    global BULK, OUT
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('setting',choices=['human','infinitive'])
-    p.add_argument('--bulk-root',type=Path,default=BULK,help='Retained science run directory, or runs/science_upgrade_20260919 in the extracted companion.')
+    p.add_argument('--run-root','--bulk-root',dest='run_root',type=Path,default=BULK,help='Directory containing the retained science runs.')
+    p.add_argument('--evidence-root',type=Path,default=OUT,help='Directory containing the frozen requests, panels and freeze.')
+    p.add_argument('--source-head',type=Path,default=ROOT/'runs/IR04_shift_consumer_seed2_v1_20260916',help='Directory containing the four frozen later-head NPZ files.')
     p.add_argument('--output',type=Path,help='New analysis file; retained results are never overwritten.')
-    args=p.parse_args();BULK=args.bulk_root.resolve()
+    args=p.parse_args();BULK=args.run_root.resolve();OUT=args.evidence_root.resolve()
     dest=args.output or OUT/f'ROUND04_{args.setting.upper()}_ANALYSIS.json'
     if dest.exists():raise FileExistsError(dest)
     dest.parent.mkdir(parents=True,exist_ok=True)
-    result=human() if args.setting=='human' else infinitive()
+    result=human(args.source_head.resolve()) if args.setting=='human' else infinitive()
     result['freeze_sha256']=hashlib.sha256((OUT/'ROUND04_FREEZE.json').read_bytes()).hexdigest()
     result['analysis_code_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     dest.write_text(json.dumps(result,indent=2)+'\n')

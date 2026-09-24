@@ -1,0 +1,23 @@
+{
+  "run_storage_root": "D:/CCAD_Storage/runs/member_information_20260924",
+  "run_parent": "MEMBER_INFORMATION_20260924",
+  "base_config": "configs/science04_infinitive_t3_v1.json",
+  "confirmation_panel": "artifacts/submission_round_20260924/member_information/confirmation_panel.json",
+  "development_panel": "artifacts/science_upgrade_20260919/ROUND04_INFINITIVE_PANEL.json",
+  "training_run_root": "D:/CCAD_Storage/runs/science_upgrade_20260919",
+  "target_runs": {
+    "1": "SCIENCE04_infinitive_t1_v2_20260919",
+    "3": "SCIENCE04_infinitive_t3_v1_20260919",
+    "4": "SCIENCE04_infinitive_t4_v1_20260919",
+    "5": "SCIENCE04_infinitive_t5_v1_20260919"
+  },
+  "target_seeds": [1, 3, 4, 5],
+  "batch_size": 16,
+  "budget_seconds": 1200,
+  "peak_cuda_budget_bytes": 4294967296,
+  "bootstrap": 2000,
+  "bootstrap_seed": 240924,
+  "groups": [[0, 1, 2], [3]],
+  "purpose": "检验同一冻结语义组作用中的source成员方向是否支持新的成员请求。",
+  "budget": "完整问题最多1200 driver秒、4GiB CUDA、500MiB新资产；无训练更新。"
+}

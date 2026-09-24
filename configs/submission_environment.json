@@ -1,0 +1,14 @@
+{
+  "purpose": "Recorded model runtime for the supplied experiment source",
+  "python": "3.13.7",
+  "packages": {
+    "torch": "2.8.0+cu128",
+    "transformers": "5.15.0",
+    "numpy": "2.5.2",
+    "safetensors": "0.8.0"
+  },
+  "cuda_runtime": "12.8",
+  "dictionary_learning_commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+  "numerical_replay": "Python 3.12 or later and NumPy; Matplotlib 3.10.8 for optional figure reconstruction",
+  "latex": "A TeX distribution with pdfLaTeX, BibTeX, natbib and the standard packages requested by submission_preamble.tex"
+}

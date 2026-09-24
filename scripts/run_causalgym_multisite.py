@@ -65,6 +65,17 @@ def aligned_positions(row, donor, mode):
 class MultisiteWork:
     def __init__(self, cfg, config_path, source_files=None):
         self.cfg, self.config_path = cfg, Path(config_path)
+        if 'source_revision' in cfg:
+            source_revision = cfg['source_revision']
+            if not isinstance(source_revision, str) or not source_revision.strip():
+                raise ValueError('source_revision must be a nonempty source identity')
+            revision_origin = 'configuration'
+        else:
+            source_revision = subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+            revision_origin = 'git'
+        self.environment_spec = Path(cfg.get('environment_spec', ROOT/'.aris/compute/local-r006b1-env-spec.json'))
+        if 'environment_spec' in cfg and not self.environment_spec.is_file():
+            raise FileNotFoundError(self.environment_spec)
         self.run = Path(cfg.get('run_storage_root', ROOT/'runs'))/cfg['run_id']
         self.run.mkdir(exist_ok=False)
         self.started = datetime.now(timezone.utc)
@@ -88,7 +99,8 @@ class MultisiteWork:
               run_parent=cfg.get('run_parent','FINAL_FIVE_R15'), purpose=cfg['purpose'], milestone=cfg.get('milestone','external-multisite-source-and-native-groups'),
               evidence_level=cfg.get('evidence_level','controlled_development'), started_utc=self.started.isoformat(), project_root=str(ROOT),
               config_hash=sha256(self.run/'config.resolved.json'), code_snapshot_hash=aggregate(code), source_snapshot_required=True,
-              git_head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+              git_head=source_revision if revision_origin == 'git' else None,
+              source_revision=source_revision, source_revision_origin=revision_origin,
               audit_opened=cfg['audit_opened'], candidate_family_frozen=cfg['candidate_family_frozen'],
               mean_constants_source_split=cfg.get('mean_constants_source_split', 'Same dictionary donor differences cancel a fixed mean and decoder bias'),
               threshold_source_split=cfg.get('threshold_source_split','Configuration before this experiment; original exposed train components remain development'),
@@ -139,7 +151,7 @@ class MultisiteWork:
         kernel = self.checked(Path(cfg['sparsify_source'])/'sparsify/fused_encoder.py', 'Sparsify42c0645 encoding kernel', 'MIT')
         self.checked(Path(cfg['sparsify_source'])/'sparsify/sparse_coder.py', 'Sparsify42c0645 preprocessing reference', 'MIT')
         self.encode_kernel = runpy.run_path(str(kernel))['fused_encoder']
-        self.checked(ROOT/'.aris/compute/local-r006b1-env-spec.json')
+        self.checked(self.environment_spec)
         if cfg.get('prepared_panel'):
             dataset=self.checked(Path(cfg['prepared_panel']),cfg['dataset_name']+' prepared panel','Pinned public task data')
             prepared=json.loads(dataset.read_text())
