@@ -111,8 +111,12 @@ class Model:
         full = transformers.AutoModelForCausalLM.from_pretrained(cfg['model_dir'], dtype=torch.bfloat16,
                                                                  attn_implementation='eager', local_files_only=True)
         self.backbone = full.model
-        # Only the classifier layer output is read, so later layers are never run.
-        self.backbone.layers = self.backbone.layers[:cfg['probe_layer'] + 1]
+        if cfg.get('full_model'):
+            # Natural-text families need the next-token distribution, so every layer and the output head are kept.
+            self.full = full.to(dev).eval().requires_grad_(False)
+        else:
+            # Only the classifier layer output is read, so later layers are never run.
+            self.backbone.layers = self.backbone.layers[:cfg['probe_layer'] + 1]
         self.backbone.to(dev).eval().requires_grad_(False)
         self.mode, self.captured = None, None
         layers = self.backbone.layers
@@ -150,6 +154,12 @@ class Model:
         self.mode = None
         h, self.captured = self.captured.float(), None
         return (h * mask[..., None]).sum(1) / mask.sum(1, keepdim=True)
+
+    def logprobs(self, ids, mask, mode=None):
+        self.mode = mode
+        logits = self.full(input_ids=ids, attention_mask=mask, use_cache=False).logits
+        self.mode, self.captured = None, None
+        return logits.float().log_softmax(-1)
 
 
 class Probe(torch.nn.Module):
@@ -274,8 +284,9 @@ def readout_mode(dicts, q):
 
 
 class TargetMap:
-    def __init__(self, dicts, idx, weights):
-        self.dicts, self.idx, self.weights = dicts, idx, weights
+    # cap bounds the deletion fraction of each target feature; None lets a one-to-one gain exceed one.
+    def __init__(self, dicts, idx, weights, cap=1.):
+        self.dicts, self.idx, self.weights, self.cap = dicts, idx, weights, cap
         self.slices = {s: dicts.target_slice(s, idx[s]) for s in dicts.sites}
 
     def mode(self, q, weights=None):
@@ -283,7 +294,8 @@ class TargetMap:
 
         def run(site, x):
             t, rows = self.slices[site], self.dicts.rows[site]
-            a = torch.clamp(q[:, rows] @ weights[site], max=1.)
+            a = q[:, rows] @ weights[site]
+            a = a if self.cap is None else torch.clamp(a, max=self.cap)
             x32 = x.float()
             z = jumprelu(x32 @ t['W_enc'] + t['b_enc'], t['threshold'])
             return (x32 - (z * a[:, None, :]) @ t['W_dec']).to(x.dtype)
@@ -617,8 +629,81 @@ def execute(cfg, run):
     inits = dict(native=native_w, hungarian=hung_w)
     # One-to-one control: the Hungarian matches with gains trained by part supervision, same data and updates.
     matched_only = {s: torch.tensor((hung_w[s] > 0).astype(np.float32), device=dev) for s in dicts.sites}
+    # Gains of one-to-one maps may exceed one when matched_gain_max is set, so a match can delete more than itself.
+    gain_max = cfg.get('matched_gain_max', 1.)
+    natural_families = {'natural', 'natural_matched'} & set(cfg['fit_families'])
+    assert not (natural_families or cfg.get('natural_lm_texts')) or cfg.get('full_model'), 'natural text needs full_model'
+    if natural_families or cfg.get('natural_lm_texts'):
+        corpus = json.loads(Path(cfg['natural_lm_texts']).read_text())
+        nat_ids, nat_mask = {}, {}
+        for split in ('train', 'eval'):
+            enc = model.tok(corpus[split], truncation=True, max_length=cfg['natural_lm_len'], padding='max_length',
+                            return_tensors='pt')
+            nat_ids[split], nat_mask[split] = enc['input_ids'].to(dev), enc['attention_mask'].to(dev)
+        run.records([dict(kind='natural_lm_data', train=len(corpus['train']), eval=len(corpus['eval']),
+                          source_sha256=corpus['source_sha256'], length=cfg['natural_lm_len'])])
+
+    def natural_q(n, rng):
+        # Each sequence draws an inclusion probability uniformly and each feature joins with it.
+        draw = rng.random((n, len(features))) < rng.random((n, 1))
+        draw[np.arange(n), rng.integers(0, len(features), n)] |= ~draw.any(1)
+        return torch.tensor(draw.astype(np.float32), device=dev)
+
+    def natural_error(ids, mask, q, tmap, weights):
+        # Probability-weighted squared error of next-token log-probability changes, against the source edit.
+        with torch.no_grad():
+            lp0 = model.logprobs(ids, mask)
+            ds = model.logprobs(ids, mask, source_mode(dicts, q)) - lp0
+            w = lp0.exp() * mask[..., None]
+        dt = model.logprobs(ids, mask, tmap.mode(q, weights)) - lp0
+        return (w * (dt - ds) ** 2).sum(), (w * ds ** 2).sum()
+
+    def train_natural(family, init, seed):
+        torch.manual_seed(seed)
+        rng = np.random.default_rng(seed)
+        matched = family == 'natural_matched'
+        mask_of = matched_only if matched else allowed
+        hi = gain_max if matched else 1.
+        params = {s: torch.nn.Parameter(torch.tensor(inits[init][s], device=dev)) for s in dicts.sites}
+        opt = torch.optim.Adam(params.values(), lr=cfg['fit_lr'])
+        tmap = TargetMap(dicts, candidates, {s: params[s] for s in dicts.sites}, cap=None if hi > 1 else 1.)
+        curve = []
+        for step in range(cfg['natural_steps']):
+            ix = rng.choice(len(nat_ids['train']), cfg['natural_lm_batch'], replace=False)
+            q = natural_q(len(ix), rng)
+            weights = {s: params[s] * mask_of[s] for s in dicts.sites}
+            err, eff = natural_error(nat_ids['train'][ix], nat_mask['train'][ix], q, tmap, weights)
+            fit_loss = err / eff.clamp_min(1e-12)
+            l1 = sum(w.sum() for w in weights.values())
+            loss = fit_loss + cfg['fit_l1'] * l1
+            opt.zero_grad()
+            loss.backward()
+            opt.step()
+            with torch.no_grad():
+                for p in params.values():
+                    p.clamp_(0., hi)
+            curve.append(dict(step=step, fit_loss=float(fit_loss), l1=float(l1)))
+            if step % 25 == 0 or step == cfg['natural_steps'] - 1:
+                run.progress(stage='fit', method=f'{family}_{init}_s{seed}', step=step, fit_loss=round(float(fit_loss), 5),
+                             l1=round(float(l1), 2))
+        run.records([dict(kind='fit_curve', family=family, init=init, seed=seed, **c) for c in curve])
+        return TargetMap(dicts, candidates, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites},
+                         cap=None if hi > 1 else 1.)
+
+    @torch.no_grad()
+    def natural_eval(tmap):
+        rng = np.random.default_rng(cfg['natural_eval_seed'])
+        num = den = 0.
+        for ix in batches(len(nat_ids['eval']), cfg['natural_lm_batch']):
+            q = natural_q(len(ix), rng)
+            err, eff = natural_error(nat_ids['eval'][ix], nat_mask['eval'][ix], q, tmap, tmap.weights)
+            num += float(err)
+            den += float(eff)
+        return float(np.sqrt(num / den))
 
     def train_map(family, init, seed):
+        if family in ('natural', 'natural_matched'):
+            return train_natural(family, init, seed)
         torch.manual_seed(seed)
         rng = np.random.default_rng(seed)
         params = {s: torch.nn.Parameter(torch.tensor(inits[init][s], device=dev)) for s in dicts.sites}
@@ -631,6 +716,7 @@ def execute(cfg, run):
                    singletons=['complete', 'single', 'single'])[family]
         label_free = family in ('random', 'singletons')
         mask_of = matched_only if family == 'parts_matched' else allowed
+        hi = gain_max if family == 'parts_matched' else 1.
         per = cfg['fit_sequences'] // len(req)
         tmap = maps['native']
         curve = []
@@ -679,16 +765,17 @@ def execute(cfg, run):
             opt.step()
             with torch.no_grad():
                 for p in params.values():
-                    p.clamp_(0., 1.)
+                    p.clamp_(0., hi)
             curve.append(dict(step=step, fit_loss=float(fit_loss), l1=float(l1)))
             if step % 25 == 0 or step == cfg['fit_steps'] - 1:
                 run.progress(stage='fit', method=f'{family}_{init}_s{seed}', step=step, fit_loss=round(float(fit_loss), 5),
                              l1=round(float(l1), 2))
         run.records([dict(kind='fit_curve', family=family, init=init, seed=seed, **c) for c in curve])
-        return TargetMap(dicts, candidates, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites})
+        return TargetMap(dicts, candidates, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites},
+                         cap=None if hi > 1 else 1.)
 
     labels = dict(complete='complete_sup', parts='part_sup', subsets='subset_sup', parts_matched='matched_part_sup',
-                  random='random_sup', singletons='singleton_sup')
+                  random='random_sup', singletons='singleton_sup', natural='natural_sup', natural_matched='natural_matched')
     for init in cfg['fit_inits']:
         for seed in cfg['fit_seeds']:
             for family in cfg['fit_families']:
@@ -702,6 +789,13 @@ def execute(cfg, run):
         eval_resp[name] = responses(eval_texts, eval_base, tmap.mode, name, names)
     np.savez_compressed(run.dir / 'responses.npz', request_names=np.array(names), eval_true=eval_true, eval_spur=eval_spur,
                         eval_base=eval_base, **eval_resp)
+    if cfg.get('natural_lm_texts'):
+        # Natural-text fidelity of every map under random feature subsets on held-out generic text.
+        natural_errors = {}
+        for name, tmap in maps.items():
+            natural_errors[name] = natural_eval(tmap)
+            run.progress(stage='natural_eval', method=name, error=round(natural_errors[name], 4))
+        (run.dir / 'NATURAL.json').write_text(json.dumps(natural_errors, indent=1))
     summary = {}
     src = eval_resp['source']
     for method, resp in eval_resp.items():
@@ -738,6 +832,7 @@ def execute(cfg, run):
     dicts.drop_full_target()
     counts = {k: {s: int((m.weights[s] > cfg['active_weight']).any(0).sum()) for s in dicts.sites} for k, m in maps.items()}
     result = dict(written_utc=now(), nrmse=summary, use=use, families=families,
+                  natural=json.loads((run.dir / 'NATURAL.json').read_text()) if cfg.get('natural_lm_texts') else None,
                   target_features=dict((k, sum(v.values())) for k, v in counts.items()),
                   native_quality=native_quality, natural_tokens=float(sum(corr_store[s]['tokens'] for s in dicts.sites) / len(dicts.sites)))
     (run.dir / 'RESULTS.json').write_text(json.dumps(result, indent=1))
