@@ -36,13 +36,15 @@ class Side:
         self.sae = dictionary_class(self.model.config.hidden_size, state['encoder.weight'].shape[0], int(state['k'])).to(device)
         self.sae.load_state_dict(state)
         self.sae.eval().requires_grad_(False)
-        self.edit, self.positions, self.codes = None, None, None
+        self.edit, self.positions, self.codes, self.states = None, None, None, None
         self.model.get_submodule(spec['hook_module_path']).register_forward_hook(self.hook)
 
     def hook(self, module, inputs, output):
         h = output[0] if isinstance(output, tuple) else output
         if self.codes is not None:
             self.codes.append(self.sae.encode(h.detach()))
+        if self.states is not None:
+            self.states.append(h.detach())
         if self.edit is None:
             return output
         delta = self.edit(h)
@@ -115,9 +117,17 @@ def main():
         # Natural-text activation statistics between the source members and every target feature.
         sums = dict(n=0., a=torch.zeros(m, device=device, dtype=torch.float64), b=None, aa=torch.zeros(m, device=device, dtype=torch.float64),
                     bb=None, ab=None)
+        # Dense reference: an affine least-squares map from source to target hook states on the same natural text.
+        dense = c.get('dense_stitch', False) and target.model is not source.model
+        dim = source.model.config.hidden_size
+        if dense:
+            xtx = torch.zeros(dim+1, dim+1, device=device, dtype=torch.float64)
+            xty = torch.zeros(dim+1, target.model.config.hidden_size, device=device, dtype=torch.float64)
         for off in range(0, c['correlation_sequences'], c['natural_batch']):
             ids = batch(tokens, slice(off, off+c['natural_batch']))
             source.codes, target.codes = [], []
+            if dense:
+                source.states, target.states = [], []
             with torch.no_grad():
                 source.model(ids)
                 if target.model is not source.model:
@@ -125,6 +135,12 @@ def main():
             za = source.codes[0][..., members].reshape(-1, m).double()
             zb = target.codes[0].reshape(za.shape[0], -1).double()
             source.codes = target.codes = None
+            if dense:
+                xa = source.states[0].reshape(-1, dim).double()
+                xa = torch.cat([xa, torch.ones(len(xa), 1, device=device, dtype=torch.float64)], 1)
+                xtx += xa.T@xa
+                xty += xa.T@target.states[0].reshape(len(xa), -1).double()
+                source.states = target.states = None
             if sums['b'] is None:
                 n_t = zb.shape[1]
                 sums.update(b=torch.zeros(n_t, device=device, dtype=torch.float64), bb=torch.zeros(n_t, device=device, dtype=torch.float64),
@@ -155,6 +171,9 @@ def main():
         for i in range(m):
             matched[position[int(hungarian[i])], i] = 1.
         dec_t = target.sae.decoder.weight[:, cand].T
+        if dense:
+            ridge = c['dense_ridge']*xtx.diagonal().mean()*torch.eye(dim+1, device=device, dtype=torch.float64)
+            stitch = torch.linalg.solve(xtx+ridge, xty)[:dim].float()
         np.savez_compressed(w.run/'correlation.npz', members=members.cpu().numpy(), parts=parts.cpu().numpy(),
                             hungarian=hungarian.cpu().numpy(), hungarian_corr=corr_cpu[np.arange(m), hungarian.cpu().numpy()],
                             nearest=nearest.cpu().numpy(), nearest_corr=corr.gather(1, nearest).cpu().numpy())
@@ -194,11 +213,57 @@ def main():
                     side.edit = None if make_edit is None else make_edit(q)
                     out[qi, off:off+len(rr)] = margins(side, rr, eos).cpu().numpy()
                     side.edit = None
+            record_task(name, out)
+            return out
+
+        def record_task(name, out):
             w.records([dict(kind='task', task=r['task'], row_id=r['row_id'], component=f"{r['task']}:{r['row_id']}",
                             method=name, operation=query, mode=query,
                             seed=c['seeds'][0], target_seed=c['seeds'][1], margin=float(out[qi, j]))
                        for qi, query in enumerate(queries) for j, r in enumerate(rows)])
+
+        @torch.no_grad()
+        def evaluate_dense_task():
+            # The source edit computed in the source model and carried into the target hook by the dense map.
+            out = np.empty((len(queries), len(rows)))
+            for qi, vector in enumerate(queries.values()):
+                q = torch.tensor(vector, device=device, dtype=torch.float32)[parts]
+                for off in range(0, len(rows), c['eval_batch_pairs']):
+                    rr = rows[off:off+c['eval_batch_pairs']]
+                    source.states = []
+                    margins(source, rr, eos)
+                    mapped = (-(source.sae.encode(source.states[0])[..., members]*q)@dec_s)@stitch
+                    source.states = None
+                    target.edit = lambda h, d=mapped: d
+                    out[qi, off:off+len(rr)] = margins(target, rr, eos).cpu().numpy()
+                    target.edit = None
+            record_task('dense_stitch', out)
             return out
+
+        @torch.no_grad()
+        def evaluate_dense_natural():
+            gen = torch.Generator(device='cpu').manual_seed(c['natural_eval_seed'])
+            num = den = 0.
+            for off in range(0, c['natural_eval_sequences'], c['natural_batch']):
+                ids = batch(valid, slice(off, off+c['natural_batch']))
+                p = torch.rand(len(ids), 1, generator=gen)
+                q = (torch.rand(len(ids), m, generator=gen) < p).float().to(device)
+                source.states = []
+                lp_s0 = source.logprobs(ids)
+                h_a = source.states[0]
+                source.states = None
+                source.edit = source_edit(q)
+                d_s = source.logprobs(ids)-lp_s0
+                source.edit = None
+                lp_t0 = target.logprobs(ids)
+                weight = .5*(lp_s0.exp()+lp_t0.exp())
+                mapped = (-(source.sae.encode(h_a)[..., members]*q[:, None, :])@dec_s)@stitch
+                target.edit = lambda h, d=mapped: d
+                d_t = target.logprobs(ids)-lp_t0
+                target.edit = None
+                num += float((weight*(d_t-d_s)**2).sum())
+                den += float((weight*d_s**2).sum())
+            return float(np.sqrt(num/den))
 
         @torch.no_grad()
         def evaluate_natural(name, weights):
@@ -235,6 +300,25 @@ def main():
         maps = dict(hungarian_activation=matched)
         values['hungarian_activation'] = evaluate_task('hungarian_activation', target, lambda q: membership_edit(matched, q))
         natural['hungarian_activation'] = evaluate_natural('hungarian_activation', matched)
+        if c['target'].get('gate'):
+            # The target dictionary's own explanation, selected by the same rule, deleted part by part: what
+            # rediscovery in the target gives, without any correspondence.
+            gate_t = torch.tensor(np.load(w.checked(c['target']['gate'], 'Target explanation groups'))['gate'], device=device)
+            members_t = gate_t.sum(1).nonzero().flatten()
+            parts_t = gate_t[members_t].argmax(1)
+            dec_tm = target.sae.decoder.weight[:, members_t].T
+            first = torch.stack([(parts == k).nonzero()[0, 0] for k in range(int(parts.max())+1)])
+
+            def rediscovered_edit(q):
+                q_t = q[first][parts_t]
+
+                def edit(h):
+                    return -(target.sae.encode(h)[..., members_t]*q_t)@dec_tm
+                return edit
+            values['rediscovered'] = evaluate_task('rediscovered', target, rediscovered_edit)
+        if dense:
+            values['dense_stitch'] = evaluate_dense_task()
+            natural['dense_stitch'] = evaluate_dense_natural()
         np.savez_compressed(w.run/'responses.npz', **values)
         w.progress('BASELINES', natural=natural)
         endpoints = torch.cat([torch.eye(3, device=device), torch.ones(1, 3, device=device)])
