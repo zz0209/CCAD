@@ -43,7 +43,7 @@ def complete_part():
             ('random_parts', 'Random halves', RANDOM, '^'),
             ('parts', 'Part supervision', PART, 'o'),
             ('raw_reconstruction', 'Re-applied\nsource edit', READOUT, 'h')]
-    fig, ax = plt.subplots(figsize=(3.25, 2.75))
+    fig, ax = plt.subplots(figsize=(3.25, 2.5))
     ax.plot([0, .66], [0, .66], color='.78', lw=.6, zorder=0)
     labels = {'hungarian_decoder': (.262, .492, 'left'), 'hungarian_activation': (.222, .441, 'right'),
               'geometry': (.300, .640, 'left'), 'activation_top2': (.222, .560, 'right'),
@@ -137,18 +137,21 @@ def alternatives():
     # (a) Matching against the learned correspondence over every target, by atom stability of the explained features.
     # (b) Part error on SAEBench against the retention of the source activation by the target reconstruction.
     data = json.loads((ART / 'e4_scale' / 'ATOM_STABILITY.json').read_text())
-    fig, (ax_a, ax_b) = plt.subplots(2, 1, figsize=(3.25, 3.75))
+    fig, (ax_a, ax_b) = plt.subplots(2, 1, figsize=(3.25, 3.5))
     for key, label, marker, filled in SETTINGS:
         rows = [r for r in data['rows'] if r['setting'] == key]
         ratio_panel(ax_a, [r['hungarian_cos'] for r in rows], [r['errors']['hungarian'] / r['errors']['part'] for r in rows],
                     marker, filled, label)
+    calibrated = [r for r in data['rows'] if r.get('calibrated') is not None]
+    ax_a.scatter([r['hungarian_cos'] for r in calibrated], [r['calibrated'] / r['errors']['part'] for r in calibrated],
+                 s=16, marker='x', color=MATCH, linewidth=.9, label='Calibrated matches', zorder=4)
     ax_a.axhline(1, color='.7', lw=.6, zorder=0)
     ax_a.set_yscale('log')
     ax_a.set_yticks([1, 2, 5, 10, 20, 50])
     ax_a.set_yticklabels(['1', '2', '5', '10', '20', '50'])
     ax_a.set_ylim(.8, 60)
     ax_a.set_xlabel('Decoder cosine of Hungarian matches')
-    ax_a.set_ylabel('Hungarian error / learned error')
+    ax_a.set_ylabel('Matching error / learned error')
     ax_a.legend(frameon=False, fontsize=6.6, ncol=2, loc='lower center', bbox_to_anchor=(.5, 1.0), handletextpad=.2,
                 columnspacing=1.2, borderaxespad=.1, labelspacing=.25)
     ax_a.text(-.19, 1.02, '(a)', transform=ax_a.transAxes, fontsize=8, va='bottom')

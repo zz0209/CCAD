@@ -22,14 +22,14 @@ def settings():
     rows = [
         r'Setting & Model & Explanation & Source SAE & Target SAEs & Correspondence & Fit / held-out \\',
         r'\midrule',
-        r'SHIFT & Pythia-70M & 55 features in 3 annotated parts at 11 sites & ReLU 32k, published & TopK 8k, 4 retrained & fixed; membership, 3 early dictionaries & 503 / 1,735 biographies \\',
-        r'Infinitive & Pythia-70M & 4 features in predicate and object parts & ReLU 32k, published & TopK 8k, 4 retrained; 16 SAEBench TopK & input-dependent; dictionary & 64 / 96 contexts \\',
-        r'Grammar & GPT-2 Medium & 3 functions of 64 features & TopK 8k & TopK 8k, 4 retrained & input-dependent; dictionary & 192 / 384 minimal pairs \\',
-        r'Grammar & Qwen3-1.7B & 3 functions of 64 features & Qwen-Scope 32k & Qwen-Scope 32k at other $L_0$ & input-dependent; dictionary & 192 / 384 minimal pairs \\',
-        r'SHIFT & Gemma-2-2B & 43 features in 2 annotated parts at 23 sites & Gemma Scope 16k, published & Gemma Scope 65k; Gemma Scope 16k at lowest $L_0$ & fixed; membership only & 1,024 / 1,736 biographies \\',
+        r'SHIFT & Pythia-70M & 55 features, 3 parts, 11 sites & ReLU 32k & TopK 8k, 4 retrained & fixed; membership, 3 dictionaries & 503 / 1,735 bios \\',
+        r'Infinitive & Pythia-70M & 4 features, 2 parts & ReLU 32k & TopK 8k, 4 retrained; 16 SAEBench & input-dependent; dictionary & 64 / 96 contexts \\',
+        r'Grammar & GPT-2 Medium & 3 functions of 64 features & TopK 8k & TopK 8k, 4 retrained & input-dependent; dictionary$^*$ & 192 / 384 pairs \\',
+        r'Grammar & Qwen3-1.7B & 3 functions of 64 features & Qwen-Scope 32k & Qwen-Scope 32k, other $L_0$ & input-dependent; dictionary$^*$ & 192 / 384 pairs \\',
+        r'SHIFT & Gemma-2-2B & 43 features, 2 parts, 23 sites & Gemma Scope 16k & Gemma Scope 65k; 16k at lowest $L_0$ & fixed; membership & 1,024 / 1,736 bios \\',
     ]
     col = r'>{\raggedright\arraybackslash}p'
-    body = '\n'.join([r'\begin{tabular}{@{}ll' + f'{col}{{2.7cm}}{col}{{1.8cm}}{col}{{2.7cm}}{col}{{2.2cm}}{col}{{1.9cm}}' + '@{}}',
+    body = '\n'.join([r'\begin{tabular}{@{}ll' + f'{col}{{2.5cm}}{col}{{1.7cm}}{col}{{2.8cm}}{col}{{2.5cm}}{col}{{1.8cm}}' + '@{}}',
                       r'\toprule', *rows, r'\bottomrule', r'\end{tabular}'])
     (TAB / 'naacl_settings.tex').write_text(body + '\n')
 
