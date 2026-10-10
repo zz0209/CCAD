@@ -26,6 +26,14 @@ SETTINGS = [
     dict(key='qwen', kind='grammar', runs=[MIRROR / f'NAACL_E4B_QWEN17_S{s}_T{t}_v4_20261010' for s, t in ((1, 2), (2, 1))],
          methods=dict(complete='whole', part='program', readout='readout_initial', untrained='initial',
                       hungarian_decoder='hungarian_decoder', hungarian_activation='hungarian_activation', gain='gain')),
+    # Fixed memberships run with the target SAE alone; membership_initial executes the Hungarian decoder matches.
+    dict(key='gpt2_fixed', kind='grammar', runs=[BULK / f'NAACL_E9_GPT2_FIXED_T{t}_v1_20261010' for t in (2, 3, 4, 5)],
+         methods=dict(complete='membership_whole', part='membership', readout='readout_initial',
+                      hungarian_decoder='membership_initial')),
+    dict(key='qwen_fixed', kind='grammar',
+         runs=[MIRROR / f'NAACL_E9_QWEN17_FIXED_S{s}_T{t}_v1_20261010' for s, t in ((1, 2), (2, 1))],
+         methods=dict(complete='membership_whole', part='membership', readout='readout_initial',
+                      hungarian_decoder='membership_initial')),
 ]
 CONTRASTS = [('part', 'complete'), ('part', 'readout'), ('part', 'hungarian_decoder')]
 

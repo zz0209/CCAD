@@ -54,11 +54,12 @@ def analyse(run, draws, rng):
                                                            for m in members]))
         point[g]['seeds'] = len(members)
     contrasts = {}
-    parts = [g for g in groups if g.startswith(('part_sup_', 'subset_sup_'))]
+    parts = [g for g in groups if g.startswith(('part_sup_', 'subset_sup_', 'random_sup_', 'singleton_sup_'))]
     for p in parts:
         init = p.split('_sup_')[1]
-        for other in [f'complete_sup_{init}', f'part_sup_{init}', 'readout', 'hungarian_decoder', 'native']:
-            if other == p:
+        for other in [f'complete_sup_{init}', f'part_sup_{init}', f'random_sup_{init}', f'singleton_sup_{init}',
+                      'readout', 'hungarian_decoder', 'native']:
+            if other == p or f'{other}-{p}' in contrasts:
                 continue
             if other in boot:
                 contrasts[f'{p}-{other}'] = {f: dict(point=point[p][f] - point[other][f],

@@ -1,0 +1,141 @@
+{
+  "audit_opened": true,
+  "batch_pairs": 4,
+  "budget": "1500 driver seconds per target, gpu-0 lease.",
+  "budget_seconds": 1500,
+  "candidate_family_frozen": true,
+  "checkpoint_every": 256,
+  "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+  "device": "cuda:0",
+  "dictionary_lr": 0.0001,
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "eval_batch_pairs": 16,
+  "eval_pairs_per_task": 32,
+  "evaluation_panel": "",
+  "evaluation_split": "development",
+  "evidence_level": "development",
+  "exclusion_manifests": [
+    "artifacts/final_value_five_20260913/R31_RESPONSE_EXCLUSION_MANIFEST.json",
+    "artifacts/final_value_five_20260913/r31_response_fresh_grammar/DATA_MANIFEST.json"
+  ],
+  "fit_pairs_per_task": 64,
+  "fixed_control": false,
+  "gain_lr": 0.005,
+  "generation_seed": 9252108,
+  "generator_adapter": "artifacts/reuse_generalization_20260921_round08/generator_adapter",
+  "generator_script": "scripts/train_grammar_member_program.py",
+  "hook_module_path": "transformer.h.11",
+  "members_per_source": 2,
+  "model_local_dir": "D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "natural_batch_states": 256,
+  "natural_states": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909/natural_discovery_states.npz",
+  "panel": "runs/REFORM_R26_contrast_components_v2_20260913/panel.json",
+  "primary_endpoint": "Source-effect-normalized margin RMSE pooled over seven specified untrained requests within each grammar, averaged across three grammars and four target seeds. Paired bootstrap resamples sentences within grammar and target seeds, retaining all requests and methods together.",
+  "primary_requests": [
+    "verb_number",
+    "verb_gender",
+    "number_gender",
+    "participation_a",
+    "participation_b",
+    "participation_c",
+    "half"
+  ],
+  "purpose": "E9 fixed correspondence for the GPT2Medium grammatical explanation, testing whether part supervision of a target-only membership improves part fidelity over complete supervision.",
+  "queries": {
+    "full": [
+      1,
+      1,
+      1
+    ],
+    "gender": [
+      0,
+      0,
+      1
+    ],
+    "half": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "number": [
+      0,
+      1,
+      0
+    ],
+    "number_gender": [
+      0,
+      1,
+      1
+    ],
+    "participation_a": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "participation_b": [
+      0.75,
+      0.25,
+      0.5
+    ],
+    "participation_c": [
+      0.5,
+      0.75,
+      0.25
+    ],
+    "verb": [
+      1,
+      0,
+      0
+    ],
+    "verb_gender": [
+      1,
+      0,
+      1
+    ],
+    "verb_number": [
+      1,
+      1,
+      0
+    ]
+  },
+  "reconstruction_weight": 1.0,
+  "response_weight": 0.9,
+  "run_id": "NAACL_E9_GPT2_FIXED_DEV_LR0.02_T2_v1_20261010",
+  "run_id_template": "NAACL_E9_GPT2_FIXED_DEV_LR0.02_T{seed}_v1_20261010",
+  "run_parent": "NAACL_SPRINT_20261010",
+  "run_storage_root": "D:/CCAD_Storage/runs/naacl_sprint_20261010",
+  "scope": "Fixed part-level memberships over target features, run with the target SAE alone and the target dictionary frozen. Complete and part supervision share inputs, request schedule, updates and parameters. Rows, requests, model, source and targets equal RG08.",
+  "seeds": [
+    1,
+    2
+  ],
+  "source_checkpoint": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed1.pt",
+  "source_run": "runs/REFORM_R26_contrast_components_v2_20260913",
+  "statistics_unit": "Paired sentence draws within three fixed grammatical paradigms and target seeds; source and model fixed",
+  "steps": 512,
+  "target_checkpoint": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed2.pt",
+  "target_checkpoint_template": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed{seed}.pt",
+  "target_seed": 2,
+  "target_seeds": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "threshold_source_split": "Original R26 source-only component selection remains unchanged",
+  "training_seed": 913,
+  "variants": [
+    "membership_whole",
+    "membership"
+  ],
+  "membership_candidates": 16,
+  "membership_init": "D:/CCAD_Storage/runs/naacl_sprint_20261010/grammar_matching_maps_s1/hungarian_decoder_s{source_seed}_t{target_seed}.npz",
+  "membership_lr": 0.02
+}

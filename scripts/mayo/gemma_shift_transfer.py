@@ -605,8 +605,12 @@ def execute(cfg, run):
         params = {s: torch.nn.Parameter(torch.tensor(inits[init][s], device=dev)) for s in dicts.sites}
         opt = torch.optim.Adam(params.values(), lr=cfg['fit_lr'])
         # The subset family adds one random half of the features per biography, whose source response is computed live.
+        # The label-free families keep the complete request and replace the two part rows by two rows of random feature
+        # subsets of uniformly drawn size, or of single features, so they see no annotation at equal budget.
         req = dict(complete=['complete'], parts=train_requests, subsets=train_requests + ['random'],
-                   parts_matched=train_requests)[family]
+                   parts_matched=train_requests, random=['complete', 'random', 'random'],
+                   singletons=['complete', 'single', 'single'])[family]
+        label_free = family in ('random', 'singletons')
         mask_of = matched_only if family == 'parts_matched' else allowed
         per = cfg['fit_sequences'] // len(req)
         tmap = maps['native']
@@ -614,22 +618,37 @@ def execute(cfg, run):
         for step in range(cfg['fit_steps']):
             bios = rng.choice(len(fit_texts), per, replace=False)
             rows = [(r, b) for r in req for b in bios]
-            # Each feature joins with probability one half, or with a per-row probability drawn uniformly so that
-            # small subsets, whose responses do not saturate, also appear.
-            inclusion = .5 if cfg['subset_inclusion'] == 'half' else rng.random((per, 1))
-            draw = rng.random((per, len(features))) < inclusion
-            draw[np.arange(per), rng.integers(0, len(features), per)] |= ~draw.any(1)
-            random_q = torch.tensor(draw.astype(np.float32), device=dev)
-            q = torch.stack([random_q[k % per] if r == 'random' else qmat[names.index(r)] for k, (r, _) in enumerate(rows)])
+            if label_free:
+                # Every row draws its own subset; a singleton row starts empty and receives exactly one feature.
+                inclusion = rng.random((len(rows), 1)) if family == 'random' else 0.
+                draw = rng.random((len(rows), len(features))) < inclusion
+                draw[np.arange(len(rows)), rng.integers(0, len(features), len(rows))] |= ~draw.any(1)
+                random_q = torch.tensor(draw.astype(np.float32), device=dev)
+                q = torch.stack([random_q[k] if r in ('random', 'single') else qmat[names.index(r)]
+                                 for k, (r, _) in enumerate(rows)])
+            else:
+                # Each feature joins with probability one half, or with a per-row probability drawn uniformly so that
+                # small subsets, whose responses do not saturate, also appear.
+                inclusion = .5 if cfg['subset_inclusion'] == 'half' else rng.random((per, 1))
+                draw = rng.random((per, len(features))) < inclusion
+                draw[np.arange(per), rng.integers(0, len(features), per)] |= ~draw.any(1)
+                random_q = torch.tensor(draw.astype(np.float32), device=dev)
+                q = torch.stack([random_q[k % per] if r == 'random' else qmat[names.index(r)]
+                                 for k, (r, _) in enumerate(rows)])
             ids, mask = model.encode([fit_texts[b] for _, b in rows])
-            target = np.array([np.nan if r == 'random' else fit_source[train_requests.index(r), b] for r, b in rows],
+            drawn = ('random', 'single')
+            target = np.array([np.nan if r in drawn else fit_source[train_requests.index(r), b] for r, b in rows],
                               dtype=np.float32)
-            live = [k for k, (r, _) in enumerate(rows) if r == 'random']
+            live = [k for k, (r, _) in enumerate(rows) if r in drawn]
             if live:
                 with torch.no_grad():
                     src = probe(model.pooled(ids[live], mask[live], source_mode(dicts, q[live]))).cpu().numpy()
                 target[live] = src - fit_base[[rows[k][1] for k in live]]
-            scale = np.array([norm[train_requests.index('complete' if r == 'random' else r)] for r, _ in rows])
+            scale = np.array([norm[train_requests.index('complete' if r in drawn else r)] for r, _ in rows])
+            if label_free:
+                # Drawn rows are normalized by their own mean source energy in the batch, as each part row is by its
+                # part energy, so small subsets keep the same weight as the complete request.
+                scale[live] = max(float(np.mean(target[live] ** 2)), 1e-8)
             weights = {s: params[s] * mask_of[s] for s in dicts.sites}
             logit = probe(model.pooled(ids, mask, tmap.mode(q, weights)))
             delta = logit - torch.tensor(fit_base[[b for _, b in rows]], device=dev)
@@ -649,7 +668,8 @@ def execute(cfg, run):
         run.records([dict(kind='fit_curve', family=family, init=init, seed=seed, **c) for c in curve])
         return TargetMap(dicts, candidates, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites})
 
-    labels = dict(complete='complete_sup', parts='part_sup', subsets='subset_sup', parts_matched='matched_part_sup')
+    labels = dict(complete='complete_sup', parts='part_sup', subsets='subset_sup', parts_matched='matched_part_sup',
+                  random='random_sup', singletons='singleton_sup')
     for init in cfg['fit_inits']:
         for seed in cfg['fit_seeds']:
             for family in cfg['fit_families']:

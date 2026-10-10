@@ -1,0 +1,143 @@
+{
+  "audit_opened": true,
+  "batch_pairs": 4,
+  "budget": "Two 512-update membership arms plus evaluation on 384 further pairs, at most 7200 driver seconds.",
+  "budget_seconds": 7200,
+  "candidate_family_frozen": true,
+  "checkpoint_every": 256,
+  "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+  "device": "cuda:0",
+  "dictionary_lr": 3e-05,
+  "dictionary_overlay_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+  "dictionary_source_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+  "eval_batch_pairs": 16,
+  "eval_pairs_per_task": 128,
+  "evaluation_panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_fresh_panel_rg09/confirmation_panel.json",
+  "evaluation_split": "rg09_new_sentence_confirmation",
+  "evidence_level": "frozen_protocol_public_targets",
+  "fit_pairs_per_task": 64,
+  "fixed_control": false,
+  "gain_lr": 0.005,
+  "generator_script": "scripts/train_grammar_member_program.py",
+  "hook_module_path": "model.layers.14",
+  "members_per_source": 2,
+  "model_local_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/qwen3-1.7b-base",
+  "model_revision": "see assets/DOWNLOAD_MANIFEST.json entry qwen3-1.7b-base",
+  "natural_batch_states": 256,
+  "natural_states": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/natural_states.npz",
+  "panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/fit_panel.json",
+  "primary_endpoint": "Source-effect-normalized margin RMSE pooled over seven specified untrained requests within each grammar, averaged across three grammars and four target seeds. Paired bootstrap resamples sentences within grammar and target seeds, retaining all requests and methods together.",
+  "primary_requests": [
+    "verb_number",
+    "verb_gender",
+    "number_gender",
+    "participation_a",
+    "participation_b",
+    "participation_c",
+    "half"
+  ],
+  "purpose": "E9 fixed correspondence for the Qwen3-1.7B grammatical explanation between Qwen-Scope dictionaries, run with the target SAE alone and the target dictionary frozen.",
+  "queries": {
+    "full": [
+      1,
+      1,
+      1
+    ],
+    "gender": [
+      0,
+      0,
+      1
+    ],
+    "half": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "number": [
+      0,
+      1,
+      0
+    ],
+    "number_gender": [
+      0,
+      1,
+      1
+    ],
+    "participation_a": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "participation_b": [
+      0.75,
+      0.25,
+      0.5
+    ],
+    "participation_c": [
+      0.5,
+      0.75,
+      0.25
+    ],
+    "verb": [
+      1,
+      0,
+      0
+    ],
+    "verb_gender": [
+      1,
+      0,
+      1
+    ],
+    "verb_number": [
+      1,
+      1,
+      0
+    ]
+  },
+  "reconstruction_weight": 1.0,
+  "response_weight": 0.9,
+  "run_id": "NAACL_E9_QWEN17_FIXED_S2_T1_v1_20261010",
+  "run_id_template": "NAACL_E9_QWEN17_FIXED_S{source_seed}_T{seed}_v1_20261010",
+  "run_parent": "NAACL_SPRINT_20261010",
+  "run_storage_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010",
+  "scope": "Source groups use only source gradients on source_selection pairs. Fitting uses the original 64 fit pairs per grammar. Confirmation uses 384 further BLiMP pairs that no earlier Qwen3 run evaluated, after the dictionary learning rate was chosen on development runs. Matched update budget across arms.",
+  "seeds": [
+    2,
+    1
+  ],
+  "source_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/topk_seed2.pt",
+  "source_run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2",
+  "statistics_unit": "Paired sentences within three fixed grammatical paradigms; one public target per direction.",
+  "steps": 512,
+  "target_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/topk_seed1.pt",
+  "target_checkpoint_template": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/topk_seed{seed}.pt",
+  "target_seed": 1,
+  "target_seeds": [
+    1,
+    2
+  ],
+  "tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "threshold_source_split": "Original R26 source-only component selection remains unchanged",
+  "training_seed": 913,
+  "variants": [
+    "membership_whole",
+    "membership"
+  ],
+  "source_revision": "867d1b8 plus NAACL_SPRINT_20261010 working-tree scripts; the run stores its source snapshot",
+  "environment_spec": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/CCAD/.aris/compute/mayo-ccad-env.json",
+  "backbone_module": "model",
+  "source_checkpoint_template": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/topk_seed{seed}.pt",
+  "source_seed": 2,
+  "source_seeds": [
+    1,
+    2
+  ],
+  "membership_candidates": 16,
+  "membership_init": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_matching_maps_l14_v2_s{source_seed}/hungarian_decoder_s{source_seed}_t{target_seed}.npz",
+  "membership_lr": 0.02,
+  "dev_choice": "membership_lr=0.02 chosen on the GPT2Medium development split, NAACL_E9_GPT2_FIXED_DEV_*"
+}

@@ -40,15 +40,15 @@ def delta(c):
 
 def supervision(entries):
     lines = [r'\begin{tabular}{lccccccc}', r'\toprule',
-             r' & \multicolumn{5}{c}{Part-deletion error} & \multicolumn{2}{c}{Part $-$ complete supervision} \\',
-             r'\cmidrule(lr){2-6}\cmidrule(lr){7-8}',
-             r'Setting & Hungarian & Untrained & Re-applied$^\dagger$ & Complete & Part & Part error & Complete error \\',
+             r' & & \multicolumn{4}{c}{Part-deletion error} & \multicolumn{2}{c}{Part $-$ complete supervision} \\',
+             r'\cmidrule(lr){3-6}\cmidrule(lr){7-8}',
+             r'Setting & Runs with & Hungarian & Re-applied$^\dagger$ & Complete & Part & Part error & Complete error \\',
              r'\midrule']
     for e in entries:
-        errors = [e['hungarian'], e['natural'], e['readout'], e['complete'], e['part']]
+        errors = [e['hungarian'], e['readout'], e['complete'], e['part']]
         best = min(float(x) for x in errors if x != '--')
         errors = [r'\textbf{' + x + '}' if x != '--' and float(x) == best else x for x in errors]
-        cells = errors + [e['delta_part'], e['delta_complete']]
+        cells = [e['runs_with']] + errors + [e['delta_part'], e['delta_complete']]
         label = r'\begin{tabular}[t]{@{}l@{}}' + e['label'] + r'\\[-1pt]{\scriptsize ' + e['targets'] + r'}\end{tabular}'
         lines.append(label + ' & ' + ' & '.join(cells) + r' \\[5pt]')
     lines += [r'\bottomrule', r'\end{tabular}']
@@ -58,7 +58,7 @@ def supervision(entries):
 def shift_entry():
     d = json.loads((ART / 'e1_matching' / 'E1_SHIFT_R59PANEL.json').read_text())
     s, c = d['summary'], d['contrasts']['parts-whole']
-    return dict(label='SHIFT, Pythia-70M', targets='4 retrained', form='fixed', hungarian=f3(s['hungarian_decoder']['parts_nrmse']),
+    return dict(label='SHIFT, Pythia-70M', targets='4 retrained', runs_with='New SAE', hungarian=f3(s['hungarian_decoder']['parts_nrmse']),
                 natural=f3(s['native']['parts_nrmse']), readout=f3(s['raw_reconstruction']['parts_nrmse']),
                 complete=f3(s['whole']['parts_nrmse']), part=f3(s['parts']['parts_nrmse']),
                 delta_part=delta(c['parts']), delta_complete=delta(c['full']))
@@ -66,13 +66,19 @@ def shift_entry():
 
 def supervision_entries():
     d = json.loads((ART / 'e2_supervision' / 'SUPERVISION.json').read_text())['settings']
-    labels = dict(infinitive=('Infinitive, Pythia-70M', '4 retrained'), infinitive_public=('Infinitive, Pythia-70M', '16 SAEBench'),
-                  gpt2=('Grammar, GPT-2 Medium', '4 retrained'), qwen=('Grammar, Qwen3-1.7B', '2 Qwen-Scope'))
+    labels = dict(infinitive=('Infinitive, Pythia-70M', '4 retrained', r'Both$^\dagger$'),
+                  infinitive_public=('Infinitive, Pythia-70M', '16 SAEBench', r'Both$^\dagger$'),
+                  gpt2=('Grammar, GPT-2 Medium', '4 retrained', r'Both$^\dagger$'),
+                  gpt2_fixed=('Grammar, GPT-2 Medium', '4 retrained', 'New SAE'),
+                  qwen=('Grammar, Qwen3-1.7B', '2 Qwen-Scope', r'Both$^\dagger$'),
+                  qwen_fixed=('Grammar, Qwen3-1.7B', '2 Qwen-Scope', 'New SAE'))
     out = []
-    for key, (label, targets) in labels.items():
+    for key, (label, targets, runs_with) in labels.items():
+        if key not in d:
+            continue
         p, c = d[key]['point'], d[key]['contrasts']['part-complete']
         untrained = p.get('natural', p.get('untrained'))
-        out.append(dict(label=label, targets=targets, form=r'input$^\dagger$', hungarian=f3(p['hungarian_decoder']['parts']),
+        out.append(dict(label=label, targets=targets, runs_with=runs_with, hungarian=f3(p['hungarian_decoder']['parts']),
                         natural=f3(untrained['parts']) if untrained else '--', readout=f3(p['readout']['parts']),
                         complete=f3(p['complete']['parts']), part=f3(p['part']['parts']),
                         delta_part=delta(c['parts']), delta_complete=delta(c['complete'])))
@@ -216,7 +222,7 @@ def gemma_entries(path):
     out = []
     for t, label in zip(targets, ['Gemma Scope 65k', r'Gemma Scope 16k, lowest $L_0$']):
         p, c = d[t]['point'], d[t]['contrasts']['part_sup_hungarian-complete_sup_hungarian']
-        out.append(dict(label='SHIFT, Gemma-2-2B', targets=label, hungarian=f3(p['hungarian_decoder']['parts']),
+        out.append(dict(label='SHIFT, Gemma-2-2B', targets=label, runs_with='New SAE', hungarian=f3(p['hungarian_decoder']['parts']),
                         natural=f3(p['native']['parts']), readout=f3(p['readout']['parts']),
                         complete=f3(p['complete_sup_hungarian']['parts']), part=f3(p['part_sup_hungarian']['parts']),
                         delta_part=delta(c['parts']), delta_complete=delta(c['complete'])))
@@ -241,6 +247,25 @@ def gemma_parts(path):
         lines.append(label + ' & ' + ' & '.join(cells) + r' \\')
     lines += [r'\bottomrule', r'\end{tabular}']
     (TAB / 'naacl_gemma_parts.tex').write_text('\n'.join(lines) + '\n')
+
+
+def gemma_labelfree(path, final_path):
+    # Supervision families at equal budget in Gemma-2-2B; parts and random subsets together come from the final runs.
+    d, targets = gemma_targets(path)
+    f, final_targets = gemma_targets(final_path)
+    rows = [('complete_sup_hungarian', 'Complete', d), ('singleton_sup_hungarian', 'Single features', d),
+            ('random_sup_hungarian', 'Random subsets', d), ('part_sup_hungarian', 'Parts', d),
+            ('subset_sup_hungarian', 'Parts and random subsets', f)]
+    lines = [r'\begin{tabular}{lcccccc}', r'\toprule',
+             r' & \multicolumn{3}{c}{Gemma Scope 65k} & \multicolumn{3}{c}{Gemma Scope 16k, lowest $L_0$} \\',
+             r'\cmidrule(lr){2-4}\cmidrule(lr){5-7}',
+             r'Training requests & Complete & Parts & Other & Complete & Parts & Other \\', r'\midrule']
+    for key, label, source in rows:
+        keys = targets if source is d else final_targets
+        cells = [f3(source[t]['point'][key][fam]) for t in keys for fam in ['complete', 'parts', 'new']]
+        lines.append(label + ' & ' + ' & '.join(cells) + r' \\')
+    lines += [r'\bottomrule', r'\end{tabular}']
+    (TAB / 'naacl_gemma_labelfree.tex').write_text('\n'.join(lines) + '\n')
 
 
 def gemma_part_use(path):
@@ -319,6 +344,7 @@ def main():
     parser.add_argument('--gemma', type=Path)
     parser.add_argument('--gemma-use', action='store_true', help='also write the Gemma use tables; needs USE.json in every run')
     parser.add_argument('--gemma-part-use', type=Path)
+    parser.add_argument('--gemma-labelfree', type=Path)
     args = parser.parse_args()
     settings()
     use()
@@ -336,6 +362,8 @@ def main():
         gemma_use(args.gemma)
     if args.gemma_part_use:
         gemma_part_use(args.gemma_part_use)
+    if args.gemma_labelfree:
+        gemma_labelfree(args.gemma_labelfree, args.gemma)
     supervision(entries)
     print('tables written', len(entries))
 

@@ -373,6 +373,31 @@ def main():
         teacher_cache_stats = dict(enabled=cache_teacher, hits=0, misses=0,
             validation_calls=0, validation_exact=None, stored_bytes=0)
         compiled_ids, compiled_weights = None, None
+        membership, membership_ids, membership_allowed, membership_init = None, None, None, None
+        if any(v.startswith('membership') for v in c['variants']):
+            # Fixed part-level correspondence that runs with the target SAE alone. Each candidate target feature carries a
+            # deletion fraction for each part; candidates are the nearest target decoder directions of the part's source
+            # features, and training starts from the Hungarian decoder matches.
+            with torch.no_grad():
+                dt = target.decoder.weight/target.decoder.weight.norm(dim=0, keepdim=True)
+                ds = source['decoder']/source['decoder'].norm(dim=1, keepdim=True)
+                nearest = (ds@dt).topk(c['membership_candidates'], dim=1).indices
+            init_map = np.load(w.checked(c['membership_init'].format(target_seed=c['target_seed'], source_seed=source_seed)))
+            init_ids = torch.tensor(init_map['target_members'], device=w.device)
+            membership_ids = torch.unique(torch.cat([nearest.flatten(), init_ids]))
+            position = {t: i for i, t in enumerate(membership_ids.tolist())}
+            membership_allowed = torch.zeros(len(membership_ids), 3, device=w.device)
+            for member, part in enumerate(part_ids.tolist()):
+                membership_allowed[[position[t] for t in nearest[member].tolist()], part] = 1.
+            membership_init = torch.zeros_like(membership_allowed)
+            for t, row in zip(init_ids.tolist(), init_map['partition64']):
+                membership_init[position[t]] += torch.tensor(row, device=w.device)
+            membership_init = membership_init.clamp(max=1.)
+            membership_allowed = torch.maximum(membership_allowed, (membership_init > 0).float())
+            membership = torch.nn.Parameter(membership_init.clone())
+            write(w.run/'membership_candidates.json', dict(target_features=len(membership_ids),
+                allowed_entries=int(membership_allowed.sum()), candidates_per_source=c['membership_candidates'],
+                init=c['membership_init']))
 
         def hook(module, inputs, output):
             h = output[0] if isinstance(output, tuple) else output
@@ -405,6 +430,9 @@ def main():
                 delta = -(active_source['sae'].encode(x)[:, active_members]*active_q)@active_source['decoder']
             elif mode == 'fixed':
                 delta = -(target.encode(x)[:, fixed_ids]*(fixed_gate@request))@target.decoder.weight[:, fixed_ids].T
+            elif mode == 'membership':
+                coefficients = ((membership*membership_allowed)@request).clamp(max=1.)
+                delta = -(target.encode(x)[:, membership_ids]*coefficients)@target.decoder.weight[:, membership_ids].T
             else:
                 sp = active_source
                 if mode == 'gain':
@@ -541,6 +569,8 @@ def main():
         evaluate('source', 'source')
         evaluate('initial', 'tangent')
         evaluate('readout_initial', 'readout')
+        if membership is not None:
+            evaluate('membership_initial', 'membership')
         for name, execution in c.get('initial_executions', {}).items():
             assert execution in ('paired', 'orthogonal')
             evaluate(name, execution)
@@ -736,8 +766,13 @@ def main():
                 freeze_decoder_for_training(target)
             gain.data.fill_(1.)
             gain.requires_grad_(variant == 'gain')
-            parameters = [gain] if variant == 'gain' else list(target.encoder.parameters()) if freeze_decoder else list(target.parameters())
-            optimizer = torch.optim.AdamW(parameters, lr=c['gain_lr'] if variant == 'gain' else c['dictionary_lr'], weight_decay=0.)
+            is_membership = variant.startswith('membership')
+            if is_membership:
+                membership.data.copy_(membership_init)
+            parameters = ([gain] if variant == 'gain' else [membership] if is_membership
+                          else list(target.encoder.parameters()) if freeze_decoder else list(target.parameters()))
+            learning_rate = c['gain_lr'] if variant == 'gain' else c['membership_lr'] if is_membership else c['dictionary_lr']
+            optimizer = torch.optim.AdamW(parameters, lr=learning_rate, weight_decay=0.)
             assert len(optimizer.state) == 0
             first_step = 0
             if variant in c.get('resume_checkpoints', {}):
@@ -756,7 +791,7 @@ def main():
                 active_training_source = source_pool[active_training_seed]
                 scales = scales_by_source[active_training_seed]
                 request = torch.tensor(requests[step], device=w.device)
-                if variant == 'whole':
+                if variant in ('whole', 'membership_whole'):
                     request = endpoints[-1]
                 if heldout is not None:
                     assert request[heldout] == 0 and bool((part_ids[training_indices] != heldout).all())
@@ -769,7 +804,7 @@ def main():
                 mode = 'source'
                 with torch.no_grad():
                     th, mask, tm = training_teacher(rr)
-                mode = 'gain' if variant == 'gain' else 'tangent'
+                mode = 'gain' if variant == 'gain' else 'membership' if is_membership else 'tangent'
                 sh, _, sm = forward(rr)
                 hidden_loss = state_mse(sh, th, mask)/scales[0]
                 response_loss = (sm-tm).square().mean()/scales[1]
@@ -784,9 +819,12 @@ def main():
                     if target.decoder.weight.requires_grad and (is_program or variant == 'whole'):
                         target.decoder.weight.div_(target.decoder.weight.norm(dim=0).clamp_min(1e-10))
                     gain.clamp_(min=0)
+                    if is_membership:
+                        membership.clamp_(0., 1.)
                 assert bool(torch.isfinite(loss))
                 if (step+1) % c['checkpoint_every'] == 0 or step+1 == c['steps']:
                     torch.save(dict(dictionary=target.state_dict(), gain=gain.detach(),
+                        membership=membership.detach() if is_membership else None,
                         optimizer=optimizer.state_dict(), step=step+1,
                         **({'training_sources': source_resume} if multiple_sources else {})), w.run/f'{variant}_step{step+1}.pt')
                     save_source_cost()
@@ -803,7 +841,11 @@ def main():
                 w.checks[f'decoder_frozen_{variant}'] = unchanged
                 w.checks[f'encoder_updated_{variant}'] = updated
                 assert unchanged and updated
-            evaluate(variant, 'gain' if variant == 'gain' else 'tangent')
+            evaluate(variant, 'gain' if variant == 'gain' else 'membership' if is_membership else 'tangent')
+            if is_membership:
+                np.savez_compressed(w.run/f'{variant}_membership.npz', target_ids=membership_ids.cpu().numpy(),
+                                    weights=(membership*membership_allowed).detach().cpu().numpy(),
+                                    allowed=membership_allowed.cpu().numpy(), parts=np.array(part_names))
             if variant == 'program':
                 evaluate('readout_program', 'readout')
         w.checks['source_frozen'] = all(

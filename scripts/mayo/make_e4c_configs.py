@@ -27,6 +27,10 @@ BASE = dict(
                         'biographies of other professions. Response-trained maps also see source deletion responses of the '
                         'original classifier on 1024 ambiguous training biographies, with equal steps and sequences for '
                         'complete and part supervision.'))
+# Bias in Bios profession ids of the later SHIFT classifiers used in Pythia-70M: composer 5, surgeon 25, model 12,
+# software engineer 24.
+LATER_PAIRS = [dict(name='composer_surgeon', negative=5, positive=25),
+               dict(name='model_software_engineer', negative=12, positive=24)]
 TARGETS = dict(w65k=dict(target_width='65k', target_choice='sfc_rule',
                          target_label='Gemma Scope 65k at the SFC L0 rule, a wider dictionary of similar sparsity'),
                l0low16k=dict(target_width='16k', target_choice='lowest_l0',
@@ -49,6 +53,17 @@ def main():
           **TARGETS['l0low16k'], eval_split='dev', skip_use=False, fit_inits=['hungarian'], fit_seeds=[0],
           fit_families=['complete', 'parts', 'subsets', 'parts_matched'], subset_inclusion='uniform',
           fit_steps=3, natural_bios=64, fit_bios=64, eval_bios=64, limit_use=256, member_subsets=2)
+    smoke = dict(**TARGETS['l0low16k'], eval_split='dev', fit_inits=['hungarian'], fit_seeds=[0], subset_inclusion='uniform',
+                 fit_steps=3, natural_bios=64, fit_bios=64, eval_bios=64, limit_use=256, member_subsets=2)
+    write('e8a_gemma_smoke_labelfree', run_id='NAACL_E8A_GEMMA2B_smoke_labelfree_v1_20261010',
+          purpose='Smoke test of the label-free request families on small subsets.', skip_use=True,
+          fit_families=['parts', 'random', 'singletons'], **smoke)
+    write('e8b_gemma_smoke_taskuse', run_id='NAACL_E8B_GEMMA2B_smoke_taskuse_v1_20261010',
+          purpose='Smoke test of the later-classifier use stage on small subsets.', skip_use=False, limit_task=64,
+          source_run=f'{B}/runs/naacl_sprint_20261010/NAACL_E8A_GEMMA2B_smoke_labelfree_v1_20261010',
+          methods=['source', 'readout', 'hungarian_decoder', 'part_sup_hungarian_s0', 'random_sup_hungarian_s0',
+                   'singleton_sup_hungarian_s0'],
+          parts=['pronouns'], later_pairs=LATER_PAIRS, later_epochs=4, **smoke)
     for key, target in TARGETS.items():
         write(f'e4c_gemma_dev_{key}', run_id=f'NAACL_E4C_GEMMA2B_dev_{key}_v1_20261010',
               purpose='Development choice of initialization and training length on the dev split; no use stage.',
@@ -72,6 +87,20 @@ def main():
               maps=['hungarian_decoder', 'hungarian_activation', 'native'] + learned,
               methods=['source', 'readout', 'hungarian_decoder', 'hungarian_activation', 'native'] + learned,
               parts=['pronouns', 'female_descriptions'])
+        write(f'e8a_gemma_labelfree_{key}', run_id=f'NAACL_E8A_GEMMA2B_labelfree_{key}_v1_20261010',
+              purpose=('Equal-budget comparison of part supervision with two label-free request families, random feature '
+                       'subsets of uniformly drawn size and single features, each beside the complete request.'),
+              **target, eval_split='test', skip_use=True, fit_inits=['hungarian'], fit_seeds=[0, 1, 2],
+              fit_families=['complete', 'parts', 'random', 'singletons'], subset_inclusion='uniform', eval_bios=100000)
+        learned = [f'{f}_hungarian_s{s}' for f in ['complete_sup', 'part_sup', 'random_sup', 'singleton_sup']
+                   for s in (0, 1, 2)]
+        write(f'e8b_gemma_taskuse_{key}', run_id=f'NAACL_E8B_GEMMA2B_taskuse_{key}_v1_20261010',
+              purpose=('Part-level SHIFT on the original classifier and on four later classifiers that never supervised '
+                       'a correspondence, before and after retraining, with the correspondences of the label-free run.'),
+              **target, eval_split='test', skip_use=False, fit_inits=['hungarian'], fit_seeds=[0, 1, 2],
+              source_run=f'{B}/runs/naacl_sprint_20261010/NAACL_E8A_GEMMA2B_labelfree_{key}_v1_20261010',
+              methods=['source', 'readout', 'hungarian_decoder', 'native'] + learned,
+              parts=['pronouns', 'female_descriptions'], later_pairs=LATER_PAIRS, later_epochs=4)
         if args.final_init:
             # final v1 of the low-L0 target was stopped before any result to change the subset family, hence v2.
             write(f'e4c_gemma_final_{key}', run_id=f'NAACL_E4C_GEMMA2B_final_{key}_v2_20261010',

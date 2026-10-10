@@ -12048,3 +12048,47 @@ SHIFT复现：删除43个特征并重训分类器后职业.954、性别.522（SF
 同期补充的只读分析：scripts/naacl_dictionary_drift.py测量infinitive四个重训目标resid_4字典在响应训练后的变化，完整监督与部分监督的解码器方向余弦平均.987与.985、最小.946与.940，编码器平均.994，写入附录字典质量部分（e2_supervision/DICTIONARY_DRIFT.json）。审稿2的Q7要求说明图1示例如何选出，scripts/naacl_find_example.py在NAACL_E1_shift_r59panel_seed2_v2_20261010（种子2目标字典，test_confirmation划分）上按固定面板顺序取第一篇满足规则的传记（三个源部分答案不全相同，完整监督与Hungarian解码器匹配都重现完整删除的答案并改变至少一个部分答案，部分监督重现全部四个答案），附录F.3加入这一规则，图1图注指向附录。附录复现部分改为资产版本表（Table 14），列出四个模型、公开字典、dictionary_learning与feature-circuits的仓库与提交，Mayo环境版本按.aris/compute/local.md核对为Python 3.10、PyTorch 2.7.1、Transformers 5.19.0。
 
 编译后正文结论止于第8页，局限从第9页开始，全文20页，无未定义引用与超宽行。最保守结论是部分监督在Gemma-2-2B的原分类器部分级决策上比完整监督和Hungarian匹配更接近源，重训分类器后各方法都保留代词作用更大的发现。下一步是语言红线扫描、引用核对（REFERENCE_REGISTRY中TO VERIFY条目）、版面空白处理，以及第三次独立审稿。
+
+### NAACL_SPRINT_20261010 START（审稿 3 与 E8、E9）
+
+实际写入UTC为2026-10-10T14:59:31Z。
+
+收尾工作已完成：语言红线扫描改写局限一句；Gemma Scope、Qwen3与Paulo和Belrose三条TO VERIFY条目已按ACL Anthology、arXiv页面与模型卡核实，bib与REFERENCE_REGISTRY同步；附录复现段落改为资产版本表；草稿快照review/draft_20261010T1433.pdf（SHA256 479800f1…）。冲刺前的paper/main.pdf（SHA256 45a113cc…）复制到archive/naacl_sprint_20261010/paper__main_20261010T0524Z.pdf。
+
+第三位独立审稿（无项目背景，只读PDF）给出Soundness 3、Excitement 2.5、Overall 3.0（Findings）、Confidence 4，要点保存在artifacts/naacl_sprint_20261010/review/REVIEW_03_draft_20261010T1433.md。逐条核对后确认属实的主要问题有四项。W1：部分误差正是部分监督的训练请求，论文没有比较同预算下不需要标注的请求族，按恒等式随机子集或单特征删除也能约束每个特征的误差。W2：四个设定的输入相关形式读取源SAE并训练目标字典，只用新SAE执行的证据只有SHIFT。W3：Gemma Table 4用的原分类器正是训练响应所用的分类器，重训分类器后完整监督反而更接近源。W4：部分标签不随对应迁移。另有13处数字或措辞与表格不一致，均已核对。
+
+据此改变的研究动作如下。E8a（Gemma，Mayo，run NAACL_E8A_GEMMA2B_labelfree_{w65k,l0low16k}_v1_20261010）在gemma_shift_transfer.py加入两种无标注请求族，random（完整请求加两行大小均匀抽取的随机子集）与singletons（完整请求加两行单特征删除），每行独立抽取并在源上实时计算响应，按批内源能量归一化，与complete、parts在相同序列数和更新次数下各训练三个种子，test划分评价。E8b（run NAACL_E8B_GEMMA2B_taskuse_*_v1）新增scripts/mayo/gemma_task_use.py，用E8a的全部对应分别删除代词与女性描述部分，在原professor/nurse分类器之外加入四个从未参与训练的后续分类器（composer/surgeon与model/software engineer，两种性别混杂方向，四轮训练，与Pythia相同），每个分类器测原分类头与重训分类头，并保存逐篇logit供bootstrap。冒烟run NAACL_E8A_GEMMA2B_smoke_labelfree_v1与NAACL_E8B_GEMMA2B_smoke_taskuse_v1于14:54Z PASS，正式run于14:55:56Z在tmux会话ccad-e8中两张GPU各一个字典启动。E9（GPT-2 Medium，本机GPU，gpu-0租约）在train_grammar_member_program.py加入membership与membership_whole变体，每个候选目标特征对三个部分各有一个删除比例，候选为每个源特征解码器余弦最近的16个目标特征，从Hungarian解码器匹配初始化，目标字典冻结，只用目标SAE执行；开发阶段在目标种子2的development划分上比较学习率.005与.02（configs/naacl_sprint_20261010/make_e9_grammar_fixed_configs.py，scripts/naacl_run_e9.ps1），之后在confirmation划分的四个目标上确认。
+
+同时完成的只读分析为scripts/naacl_hidden_part_changes.py：在完整删除给出源答案的SHIFT测试传记中，至少一个单部分删除答案与源不同的比例，Hungarian解码器匹配19.0%，前两名解码器匹配29.2%，校准解码器13.6%，自然文本拟合12.2%，完整监督12.3%，部分监督5.6%，重新应用源编辑2.6%（e1_matching/HIDDEN_PART_CHANGES.json），替换附录F.3原先以全部方法同时一致为条件的统计。正文与附录按审稿核对修改了以下内容：贡献列表中re-applied edit的适用范围；匹配方法“重现完整删除”的说法；Table 2图注中Untrained的含义与Pythia适配三个早期字典；图3标题；保留比例回归后的结论；Gemma多对多结构只在稀疏字典中明显；结构统计来自第一个训练种子；Table 3图注说明部分误差与准确率来自不同分类器；正文写明后续分类器的职业对；附录C、B.5与局限中的对应句子；Table 12图注说明另一组96个语境与三个端点的组成。摘要与结论等E8、E9结果后统一改写。
+
+### NAACL_SPRINT_20261010 PROGRESS（E9 GPT-2 固定形式完成）
+
+实际写入UTC为2026-10-10T15:31:57Z。
+
+开发阶段两个run（NAACL_E9_GPT2_FIXED_DEV_LR{0.005,0.02}_T2_v1_20261010，development划分每个语法32对）PASS，部分监督的部分误差为.214与.207，按预先规则选学习率.02。确认阶段NAACL_E9_GPT2_FIXED_T{2,3,4,5}_v1_20261010于15:11:10Z至15:31:29Z在本机GPU依次PASS（gpu-0租约，每个约5分钟），confirmation划分每个语法128对，与Table 2的GPT-2行相同。每个目标的候选为1,968个目标特征、2,376个允许的成员关系项。
+
+结果（scripts/naacl_supervision_table.py新增gpt2_fixed设定，e2_supervision/SUPERVISION.json，bootstrap重抽四个目标与句对）：只用目标SAE、目标字典冻结时，部分误差为部分监督.223、完整监督.258，差−.034[−.050,−.019]，完整误差差+.002[−.011,.016]，新请求差−.006[−.021,.011]。Hungarian解码器匹配（固定形式的初始值，部分误差.294，与E1的Hungarian结果相同，可作为实现核对）比部分监督高.071[.044,.104]。重新应用源编辑为.126，比部分监督低.097[.081,.116]。输入相关形式在同一面板上为部分监督.162、完整监督.203。
+
+判断：部分监督降低部分误差的结论在只用目标SAE的固定形式中于第二个模型家族成立，代价是在同族重训字典上比保留原SAE重新施加编辑高约.10、比输入相关形式高约.06。独有收益是语法解释也能只用新SAE执行，并给出放弃原SAE的准确代价；新增复杂度是已有脚本中的一个训练变体，没有新的训练阶段或运行依赖。正文Table 2加入GPT-2固定形式一行，输入相关形式保留为infinitive所需的形式。Qwen固定形式（scripts/mayo/make_e9_qwen_configs.py，学习率沿用.02）等Mayo上E8a结束、显存足够后启动。
+
+### NAACL_SPRINT_20261010 PROGRESS（写作组织，不含新实验）
+
+实际写入UTC为2026-10-10T15:52:56Z。
+
+用户转来一位旁观Opus的评价，并要求不要用负结果削弱正结果，论文按故事组织正面证据，篇幅限制下的取舍不等于隐瞒。核对该评价的事实部分：旧稿的跨源复用结果保留在附录B.3（New source explanations，新请求误差部分监督.169、完整监督.221、训练前.250，十二个方向全部改善，差−.052[−.059,−.046]），不违反撤出正文须保留在附录的规则；评价中“.121对.169”的.121是重新应用源编辑，.169是本方法。另核对Table 12图注：E2 infinitive评价面板（artifacts/science_upgrade_20260919/ROUND04_INFINITIVE_PANEL.json）用authorized、coached、compelled、obliged、permitted、requested与delegates、pilots、technicians、volunteers，Table 12用hired、motivated、paid、recruited、selected、trained与accountants、paramedics、plumbers、translators，两组语境不同，图注正确。
+
+据此调整的文稿内容：第2节理论段落改为请求族覆盖的表述（方程moment与coverage，附录A新增coverage小节及证明），说明完整监督只保护完整请求、部分监督保护部分的并集、大小均匀抽取的随机子集保护全部请求且不需要注释；5.2节加入跨源复用一段，删去只陈述re-applied edit更准确的单独段落（该限制保留在局限部分一次）；5.3节以SAEBench上部分监督.165对重新应用源编辑.344、每个目标都更低开头；5.4节删去部分标签专一性的陈述（附录B.5与局限保留）；正文Table 3与附录Table 11重复，删去正文表，正文引用附录表。编译后结论在第8页，局限从第8页开始。摘要、引言与结论等E8a结果后按新的主线统一改写。
+
+### NAACL_SPRINT_20261010 PROGRESS（E8a 完成，主线改写）
+
+实际写入UTC为2026-10-10T17:22:08Z。
+
+NAACL_E8A_GEMMA2B_labelfree_l0low16k_v1_20261010于14:55:58Z至16:55:04Z、w65k_v1于14:55:58Z至16:59:54Z在Mayo PASS（status.json）。Mayo SSH转发约17:01Z至17:17:43Z中断，回执显示Mayo电脑客户端重连但workstation未验证；期间workstation上的tmux任务继续运行，连接恢复后下载，镜像在D:/CCAD_Storage/runs/naacl_sprint_20261010/mayo_mirror。汇总为e4_scale/E8A_LABELFREE.json（naacl_analyze_gemma.py，对比项扩展到随机与单特征族）。
+
+完整、部分、其他请求误差（65k；16k）：完整监督.031/.096/.154；.059/.194/.212。部分监督.032/.043/.133；.085/.087/.227。随机子集.063/.102/.117；.081/.143/.192。单特征.091/.191/.178；.111/.181/.225。E8a中完整与部分监督的数值与正式run完全相同。随机减完整监督的部分误差在16k为−.051[−.068,−.032]，在65k为+.005[−.009,.032]；随机子集在两个字典的其他请求上都是单一请求族中最低，65k比完整监督低.036[.030,.042]、比部分监督低.015[.011,.021]；部分监督在部分上都最低，比随机子集低.059与.056。单特征在两个字典的部分误差都接近完整监督或更差。
+
+判断：无注释的随机子集保护跨越部分的编辑，在稀疏字典上也收回约一半部分收益，但在65k字典上不能代替注释部分；注释部分承担随机子集没有的信息，与覆盖上界的预测一致（部分族只覆盖部分的线性组合，随机子集覆盖全部方向但每个方向的训练量更少）。正式run中的部分加随机子集族在部分上与部分监督相差不到.01，其他请求在65k降到.093。故事据此定为“按将要使用的编辑训练对应：注释部分保护部分，随机子集保护其余编辑，两者合用兼顾两者”，原先预想的“随机子集足以代替注释”不成立，按计划中的第二种结果处理。
+
+文稿改动：摘要、引言最后两段与贡献列表按新主线改写，突出完整编辑掩盖部分错误、覆盖原理、各设定一致的部分监督收益、字典差别大时约为重新应用源编辑一半的误差、跨源复用和Gemma只用新字典；结论改为正面表述，限制只在局限部分说明一次；Table 2加入Runs with列与GPT-2固定形式一行、去掉Untrained列（附录Table 9与Gemma表保留）；图4改为六种方法（加入随机子集、部分加随机子集），scripts/naacl_figures.py合并E8a与正式run；5.4节按请求类型重写；附录新增Training families without annotation小节与Table（naacl_tables.py --gemma-labelfree）。正文删去与表格重复的三句，编译后正文正好8页，无超宽行。
+
+E9 Qwen：NAACL_E9_QWEN17_FIXED_S2_T1_v1_20261010于16:57:28Z至17:13:00Z PASS（GPU1，与E8b同卡）；只用目标SAE时部分误差部分监督.304、完整监督.325、Hungarian初始值.385、重新应用源编辑.234。S1_T2方向于17:18Z在GPU0启动。E8b两个run于16:55Z与17:00Z自动开始，16k每次表示提取约2分钟。

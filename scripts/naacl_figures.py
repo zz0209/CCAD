@@ -18,6 +18,7 @@ COMPLETE = '#8a5a9e'
 MATCH = '#8d8d8d'
 READOUT = '#b5832e'
 OTHER = '#4d6f9a'
+RANDOM = '#b0543f'
 
 
 def style():
@@ -145,21 +146,26 @@ def gemma_groups(run, rng, draws):
             for k, gs in out.items()}
 
 
-def gemma(runs):
+def gemma(runs, extra_runs):
     assert runs, 'pass --gemma-runs and --gemma-titles'
     rng = np.random.default_rng(20261010)
     spec = [('hungarian_decoder', 'Hungarian matching', MATCH, 'D'), ('readout', 'Re-applied source edit', READOUT, 'h'),
             ('complete_sup_hungarian', 'Complete supervision', COMPLETE, 'X'),
+            ('random_sup_hungarian', 'Random subsets', RANDOM, '^'),
             ('part_sup_hungarian', 'Part supervision', PART, 'o'),
-            ('subset_sup_hungarian', 'Part and subset supervision', OTHER, 's')]
+            ('subset_sup_hungarian', 'Parts and random subsets', OTHER, 's')]
     fig, axes = plt.subplots(1, len(runs), figsize=(6.75, 2.3), sharey=True)
     record, top, legend = {}, 0., {}
-    for ax, (title, run) in zip(np.atleast_1d(axes), runs):
+    for ax, (title, run), extra in zip(np.atleast_1d(axes), runs, extra_runs or [None] * len(runs)):
         res = gemma_groups(run, rng, 2000)
+        # Methods trained only in the other run of the same dictionary are added; shared methods keep this run.
+        if extra is not None:
+            for key, value in gemma_groups(extra, rng, 2000).items():
+                res.setdefault(key, value)
         record[title] = {k: {g: dict(point=p, interval=np.quantile(b, [.025, .975]).tolist()) for g, (p, b) in v.items()}
                          for k, v in res.items()}
         xs = np.arange(len(GEMMA_GROUPS))
-        width = .14
+        width = .13
         for i, (key, label, color, marker) in enumerate(spec):
             if key not in res:
                 continue
@@ -167,7 +173,7 @@ def gemma(runs):
                 p, b = res[key][g]
                 lo, hi = np.quantile(b, [.025, .975])
                 top = max(top, hi)
-                h = ax.errorbar(x + (i - 2) * width, p, yerr=[[p - lo], [hi - p]], fmt=marker, ms=4.2, color=color,
+                h = ax.errorbar(x + (i - (len(spec) - 1) / 2) * width, p, yerr=[[p - lo], [hi - p]], fmt=marker, ms=4.2, color=color,
                                 mec='white' if key == 'part_sup_hungarian' else color, mew=.4, elinewidth=.9,
                                 capsize=1.4, capthick=.7)
                 legend[label] = h
@@ -177,9 +183,10 @@ def gemma(runs):
     np.atleast_1d(axes)[0].set_ylim(0, top * 1.05)
     np.atleast_1d(axes)[0].set_ylabel('Response error (nRMSE)')
     order = [label for _, label, _, _ in spec if label in legend]
-    fig.legend([legend[k] for k in order], order, loc='upper center', ncol=len(order), frameon=False, fontsize=7,
-               bbox_to_anchor=(.5, 1.03))
-    fig.tight_layout(pad=.3, rect=(0, 0, 1, .93))
+    rows = 1 if len(order) <= 5 else 2
+    fig.legend([legend[k] for k in order], order, loc='upper center', ncol=-(-len(order) // rows), frameon=False,
+               fontsize=7, bbox_to_anchor=(.5, 1.03))
+    fig.tight_layout(pad=.3, rect=(0, 0, 1, .93 if rows == 1 else .86))
     for ext in ['pdf', 'svg']:
         fig.savefig(FIG / f'naacl_gemma.{ext}')
     (ART / 'e4_scale' / 'GEMMA_FIGURE_DATA.json').write_text(json.dumps(record, indent=1))
@@ -190,11 +197,12 @@ def main():
     parser.add_argument('figures', nargs='*', default=['complete_part', 'public'])
     parser.add_argument('--gemma-runs', nargs='*', type=Path, default=[])
     parser.add_argument('--gemma-titles', nargs='*', default=[])
+    parser.add_argument('--gemma-extra-runs', nargs='*', type=Path, default=[])
     args = parser.parse_args()
     style()
     for name in args.figures:
         if name == 'gemma':
-            gemma(list(zip(args.gemma_titles, args.gemma_runs)))
+            gemma(list(zip(args.gemma_titles, args.gemma_runs)), args.gemma_extra_runs)
         else:
             globals()[name]()
 
