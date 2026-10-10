@@ -12028,3 +12028,23 @@ dev2 l0low16k（半数随机子集监督，Hungarian初始化，600篇dev传记�
 SHIFT复现：删除43个特征并重训分类器后职业.954、性别.522（SFC报告.950/.524）；我们的未编辑分类器为.808/.687，原分类器在删除后为.936/.520（SFC报告.677/.819与.760/.515，差异来自分类器训练的数值类型与初始化，记录为复现差异）。只用新字典时，部分监督重训后为.956/.522/最差组.917（65k）与.953/.520/.908（最低L0）；Hungarian解码器与激活匹配在最低L0上把最差组降到.862与.843，学习对应为.908至.926。
 
 正文新增5.4节Gemma结果与图4、Table 4，Table 2加入两行Gemma，摘要、贡献列表、5.2节与附录据此更新，主文正好8页。汇总为e4_scale/E4C_FINAL.json、GEMMA_FIGURE_DATA.json、E4C_SPLIT_*.json，表由naacl_tables.py --gemma --gemma-use生成。草稿快照artifacts/naacl_sprint_20261010/review/draft_20261010T1250.pdf，将交给第二位独立审稿agent。
+
+### NAACL_SPRINT_20261010 PROGRESS（审稿 2 与修订）
+
+实际写入UTC为2026-10-10T12:58:57Z。
+
+本阶段脚本、配置与主日志已提交并推送，commit 38638018，推送后HEAD与origin/main一致。白名单之外以及其他会话留下的修改（.gitignore、CCAD_AUTOMATION_PROMPT.md、submission_release_manifest.json、reproduce_submission_results.py、validate_submission_packages.py、draw_callable_story.py、export_callable_example.py）未纳入。
+
+第二位独立审稿（无项目背景）阅读draft_20261010T1250.pdf，给出Soundness 3、Overall 2.5、Confidence 4。主要意见为W1没有任何下游决策区分部分与完整监督，W2只用新字典的部署只在Gemma干净成立，W3保留比例解释被Gemma 65k（保留98%但readout误差.147）推翻，W4独立单位与区间未含训练种子且“七个设定全部”掩盖一个含零区间，W5迁移的是作用不保证标签，W6重新选择基线的表述，W7缺少若干消融，W8理论贡献较小，以及若干数字核对、表格加粗与用词问题。
+
+据此改变的动作如下。新增scripts/mayo/gemma_part_use.py与partuse配置，用final run保存的成员关系对两个注释部分分别执行删除并重训分类器，比较源、readout、Hungarian、自然文本拟合与三种子完整、部分监督得到的部分级决策，于12:51Z在Mayo两张GPU启动（tmux ccad-e4c-partuse）。naacl_analyze_gemma.py的bootstrap改为同时重抽训练种子，部分减完整监督的部分误差区间变为[−.068,−.043]与[−.121,−.092]，可变子集对新请求的改善在65k为−.040[−.051,−.020]，在最低L0为−.028[−.065,.010]含零。scripts/naacl_retention_partial.py显示公开字典上保留比例与readout误差的相关在每种宽度内为−.84与−.80，八个配置为−.92，回归掉宽度与log k后为−.38，正文改为描述性陈述，删去“何时足够”的主张。scripts/naacl_grammar_answers.py计算语法设定部分删除后的BLiMP答案，单部分删除下准确率多接近上限，答案一致率GPT-2完整监督.922、部分监督.899，Qwen为.862与.881，两种监督在答案层面没有一致的差别。正文修改包括摘要与贡献（六/七区间不含零、只在65k声称子集改善、readout作比较而非条件）、方法（输入相关形式训练目标字典）、实验设定（命名Bias in Bios、独立单位数）、5.2（重新选择表述为得到不同解释并报告readout .113）、5.3改名为公开SAEBench字典、5.4（无中间强度、标签专一性移入正文、子集结果加区间）、5.5（保真目标论证移入正文、用途比较如实写出两种监督都保留发现）、结论与局限、参考文献格式、表3去加粗、表5加入两种前两名匹配、新增Gemma逐部分表、图3与图4标记。Gemma用途表移到附录以保持正文8页。
+
+### NAACL_SPRINT_20261010 PROGRESS（Gemma 部分级 SHIFT 与审稿 2 修订完成）
+
+实际写入UTC为2026-10-10T14:30:02Z。NAACL_E4C_GEMMA2B_partuse_l0low16k_v1_20261010与partuse_w65k_v1_20261010均于12:51:03Z启动，分别于14:07:43Z与14:19:28Z PASS（status.json），本地镜像在D:/CCAD_Storage/runs/naacl_sprint_20261010/mayo_mirror，汇总为artifacts/naacl_sprint_20261010/e4_scale/E4C_PART_USE.json（scripts/naacl_analyze_part_use.py）。
+
+这组run回答审稿2的W1，即部分与完整监督是否在实际使用的决策上分开。只用新字典，对两个注释部分分别删除，在1,736篇平衡test传记上测原分类器与重训分类器。原分类器的最差组准确率，源解释删除代词为89.6%、删除女性描述为69.6%。部分监督删除女性描述得到70.3%（65k，三个训练种子69.4至70.7）与67.2%（最低L0 16k，65.9至68.2）。完整监督为64.5%（63.6至65.0）与51.9%（51.4至53.0），Hungarian解码器匹配为69.1%与60.6%。完整监督迁移的解释低估女性描述部分的作用，在稀疏字典中最明显，部分监督与源一致。重训分类器之后，代词删除比女性描述删除的提升在源中为+9.7个百分点，各方法在5.3至13.4之间，部分监督与完整监督的女性描述重训准确率为79.6/77.6与81.3/83.9，重训后两种监督不分开。正文5.5新增Table 4（tables/naacl_gemma_part_use.tex，naacl_tables.py --gemma-part-use）与一段文字，附录Gemma设定加入部分级SHIFT段落，摘要与贡献第4条据此改写。
+
+同期补充的只读分析：scripts/naacl_dictionary_drift.py测量infinitive四个重训目标resid_4字典在响应训练后的变化，完整监督与部分监督的解码器方向余弦平均.987与.985、最小.946与.940，编码器平均.994，写入附录字典质量部分（e2_supervision/DICTIONARY_DRIFT.json）。审稿2的Q7要求说明图1示例如何选出，scripts/naacl_find_example.py在NAACL_E1_shift_r59panel_seed2_v2_20261010（种子2目标字典，test_confirmation划分）上按固定面板顺序取第一篇满足规则的传记（三个源部分答案不全相同，完整监督与Hungarian解码器匹配都重现完整删除的答案并改变至少一个部分答案，部分监督重现全部四个答案），附录F.3加入这一规则，图1图注指向附录。附录复现部分改为资产版本表（Table 14），列出四个模型、公开字典、dictionary_learning与feature-circuits的仓库与提交，Mayo环境版本按.aris/compute/local.md核对为Python 3.10、PyTorch 2.7.1、Transformers 5.19.0。
+
+编译后正文结论止于第8页，局限从第9页开始，全文20页，无未定义引用与超宽行。最保守结论是部分监督在Gemma-2-2B的原分类器部分级决策上比完整监督和Hungarian匹配更接近源，重训分类器后各方法都保留代词作用更大的发现。下一步是语言红线扫描、引用核对（REFERENCE_REGISTRY中TO VERIFY条目）、版面空白处理，以及第三次独立审稿。

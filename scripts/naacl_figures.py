@@ -88,8 +88,10 @@ def public():
     grid = np.linspace(xs.min(), xs.max(), 40)
     for key, label, color, marker in spec:
         y = np.array(series[key])
-        ax.scatter(xs, y, s=16, marker=marker, color=color, edgecolor='white' if key == 'tangent_mixed' else color,
-                   linewidth=.4, label=label, zorder=3)
+        hollow = key == 'tangent_full'
+        ax.scatter(xs, y, s=18 if hollow else 15, marker=marker, facecolor='none' if hollow else color,
+                   edgecolor='white' if key == 'tangent_mixed' else color, linewidth=.8 if hollow else .4, label=label,
+                   zorder=4 if hollow else 3)
         slope, intercept = np.polyfit(xs, y, 1)
         ax.plot(grid, slope * grid + intercept, color=color, lw=.7, alpha=.8)
         # 95% band of the fitted line from resampling the 16 public targets.
@@ -146,7 +148,7 @@ def gemma_groups(run, rng, draws):
 def gemma(runs):
     assert runs, 'pass --gemma-runs and --gemma-titles'
     rng = np.random.default_rng(20261010)
-    spec = [('hungarian_decoder', 'Hungarian matching', MATCH, 'o'), ('readout', 'Re-applied source edit', READOUT, 'h'),
+    spec = [('hungarian_decoder', 'Hungarian matching', MATCH, 'D'), ('readout', 'Re-applied source edit', READOUT, 'h'),
             ('complete_sup_hungarian', 'Complete supervision', COMPLETE, 'X'),
             ('part_sup_hungarian', 'Part supervision', PART, 'o'),
             ('subset_sup_hungarian', 'Part and subset supervision', OTHER, 's')]
@@ -165,8 +167,9 @@ def gemma(runs):
                 p, b = res[key][g]
                 lo, hi = np.quantile(b, [.025, .975])
                 top = max(top, hi)
-                h = ax.errorbar(x + (i - 2) * width, p, yerr=[[p - lo], [hi - p]], fmt=marker, ms=3.6, color=color,
-                                mec='white' if key == 'part_sup_hungarian' else color, mew=.4, elinewidth=.6)
+                h = ax.errorbar(x + (i - 2) * width, p, yerr=[[p - lo], [hi - p]], fmt=marker, ms=4.2, color=color,
+                                mec='white' if key == 'part_sup_hungarian' else color, mew=.4, elinewidth=.9,
+                                capsize=1.4, capthick=.7)
                 legend[label] = h
         ax.set_xticks(xs)
         ax.set_xticklabels([g for g, _ in GEMMA_GROUPS], fontsize=7)

@@ -21,10 +21,10 @@ SETTINGS = [
                       gain='tangent_gain')),
     dict(key='gpt2', kind='grammar', runs=[RG08 / f'RG08_GPT2_PROGRAM_CONFIRM_T{t}_20260921' for t in (2, 3, 4, 5)],
          extra_runs=[BULK / f'NAACL_E1_GPT2_T{t}_v1_20261010' for t in (2, 3, 4, 5)],
-         methods=dict(complete='whole', part='program', readout='readout_initial', natural='initial',
+         methods=dict(complete='whole', part='program', readout='readout_initial', untrained='initial',
                       hungarian_decoder='hungarian_decoder', hungarian_activation='hungarian_activation', gain='gain')),
     dict(key='qwen', kind='grammar', runs=[MIRROR / f'NAACL_E4B_QWEN17_S{s}_T{t}_v4_20261010' for s, t in ((1, 2), (2, 1))],
-         methods=dict(complete='whole', part='program', readout='readout_initial', natural='initial',
+         methods=dict(complete='whole', part='program', readout='readout_initial', untrained='initial',
                       hungarian_decoder='hungarian_decoder', hungarian_activation='hungarian_activation', gain='gain')),
 ]
 CONTRASTS = [('part', 'complete'), ('part', 'readout'), ('part', 'hungarian_decoder')]

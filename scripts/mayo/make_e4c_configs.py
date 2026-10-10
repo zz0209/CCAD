@@ -63,6 +63,15 @@ def main():
                        'dev2 showed that half-size subsets leave small requests unconstrained under saturating responses.'),
               **target, eval_split='dev', skip_use=True, fit_inits=['hungarian'], fit_seeds=[0], fit_families=['subsets'],
               subset_inclusion='uniform', eval_bios=600)
+        learned = [f'{f}_hungarian_s{s}' for f in ['complete_sup', 'part_sup'] for s in (0, 1, 2)]
+        write(f'e4c_gemma_partuse_{key}', run_id=f'NAACL_E4C_GEMMA2B_partuse_{key}_v1_20261010',
+              purpose=('Part-level SHIFT: delete each annotated part alone through each method, retrain the classifier and '
+                       'compare the decisions each part supports, using the saved correspondences of the final run.'),
+              **target, eval_split='test', skip_use=False, fit_inits=['hungarian'], fit_seeds=[0, 1, 2],
+              source_run=f'{B}/runs/naacl_sprint_20261010/NAACL_E4C_GEMMA2B_final_{key}_v2_20261010',
+              maps=['hungarian_decoder', 'hungarian_activation', 'native'] + learned,
+              methods=['source', 'readout', 'hungarian_decoder', 'hungarian_activation', 'native'] + learned,
+              parts=['pronouns', 'female_descriptions'])
         if args.final_init:
             # final v1 of the low-L0 target was stopped before any result to change the subset family, hence v2.
             write(f'e4c_gemma_final_{key}', run_id=f'NAACL_E4C_GEMMA2B_final_{key}_v2_20261010',

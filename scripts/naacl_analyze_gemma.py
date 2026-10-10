@@ -41,11 +41,15 @@ def analyse(run, draws, rng):
     methods = [k for k in data.files if k not in ('request_names', 'eval_true', 'eval_spur', 'eval_base', 'source')]
     groups = groups_of(methods)
     point, boot = {}, {}
+    # Training seeds are resampled together with biographies, so intervals include seed variation.
+    seed_draws = {len(m): rng.integers(0, len(m), (len(w), len(m))) for m in groups.values()}
     for g, members in groups.items():
         point[g], boot[g] = {}, {}
+        picks = seed_draws[len(members)]
         for f, ix in fam.items():
             point[g][f] = float(np.mean([nrmse(data[m], src, ix, np.ones(n)) for m in members]))
-            boot[g][f] = np.mean([nrmse(data[m], src, ix, w) for m in members], axis=0)
+            per_member = np.stack([nrmse(data[m], src, ix, w) for m in members])
+            boot[g][f] = per_member[picks, np.arange(len(w))[:, None]].mean(1)
             point[g][f + '_effect_ratio'] = float(np.mean([np.sqrt((data[m][ix] ** 2).sum() / (src[ix] ** 2).sum())
                                                            for m in members]))
         point[g]['seeds'] = len(members)

@@ -42,7 +42,7 @@ def supervision(entries):
     lines = [r'\begin{tabular}{lccccccc}', r'\toprule',
              r' & \multicolumn{5}{c}{Part-deletion error} & \multicolumn{2}{c}{Part $-$ complete supervision} \\',
              r'\cmidrule(lr){2-6}\cmidrule(lr){7-8}',
-             r'Setting & Hungarian & Natural fit & Re-applied$^\dagger$ & Complete & Part & Part error & Complete error \\',
+             r'Setting & Hungarian & Untrained & Re-applied$^\dagger$ & Complete & Part & Part error & Complete error \\',
              r'\midrule']
     for e in entries:
         errors = [e['hungarian'], e['natural'], e['readout'], e['complete'], e['part']]
@@ -71,8 +71,9 @@ def supervision_entries():
     out = []
     for key, (label, targets) in labels.items():
         p, c = d[key]['point'], d[key]['contrasts']['part-complete']
+        untrained = p.get('natural', p.get('untrained'))
         out.append(dict(label=label, targets=targets, form=r'input$^\dagger$', hungarian=f3(p['hungarian_decoder']['parts']),
-                        natural=f3(p['natural']['parts']) if 'natural' in p else '--', readout=f3(p['readout']['parts']),
+                        natural=f3(untrained['parts']) if untrained else '--', readout=f3(p['readout']['parts']),
                         complete=f3(p['complete']['parts']), part=f3(p['part']['parts']),
                         delta_part=delta(c['parts']), delta_complete=delta(c['complete'])))
     return out
@@ -97,10 +98,6 @@ def use():
         signed = f"{100 * pn:.1f}" if pn >= 0 else f"$-${100 * -pn:.1f}"
         cells = [e, f"{100 * r['parts_mean']['profession']['mean']:.1f}", f"{100 * r['parts_mean']['worst_group']['mean']:.1f}",
                  signed if key != 'none' else '--']
-        if key == 'parts':
-            # Bold marks agreement with the source explanation, not the highest accuracy.
-            label = r'\textbf{' + label + '}'
-            cells = [r'\textbf{' + x + '}' if i in (0, 3) else x for i, x in enumerate(cells)]
         lines.append(label + ' & ' + ' & '.join(cells) + r' \\')
         if key == 'raw_reconstruction':
             lines.append(r'\midrule')
@@ -139,7 +136,7 @@ def full_results():
     sup = json.loads((ART / 'e2_supervision' / 'SUPERVISION.json').read_text())['settings']
     e1 = json.loads((ART / 'e1_matching' / 'E1_SHIFT_R59PANEL.json').read_text())['summary']
     names = [('hungarian_decoder', 'Hungarian, decoder'), ('hungarian_activation', 'Hungarian, activation'),
-             ('natural', 'Natural-text fit'), ('readout', r'Re-applied edit$^\dagger$'),
+             ('natural', 'Natural-text fit'), ('untrained', 'Untrained columns'), ('readout', r'Re-applied edit$^\dagger$'),
              ('gain', 'Gains only, part sup.'), ('complete', 'Complete sup.'), ('part', 'Part sup.')]
     shift_keys = dict(hungarian_decoder='hungarian_decoder', hungarian_activation='hungarian_activation', natural='native',
                       readout='raw_reconstruction', complete='whole', part='parts')
@@ -163,6 +160,7 @@ def full_results():
 def shift_parts():
     d = json.loads((ART / 'e1_matching' / 'E1_SHIFT_R59PANEL.json').read_text())
     rows = [('hungarian_decoder', 'Hungarian, decoder'), ('hungarian_activation', 'Hungarian, activation'),
+            ('geometry', 'Top-2 decoder'), ('activation_top2', 'Top-2 activation'),
             ('geometry_gain', 'Calibrated decoder'), ('native', 'Natural-text fit'),
             ('raw_reconstruction', r'Re-applied edit$^\dagger$'), ('whole', 'Complete sup.'),
             ('parts_relation', 'Part sup., membership only'), ('parts', 'Part sup.')]
@@ -225,6 +223,46 @@ def gemma_entries(path):
     return out
 
 
+def gemma_parts(path):
+    d, targets = gemma_targets(path)
+    rows = [('hungarian_decoder', 'Hungarian, decoder'), ('hungarian_activation', 'Hungarian, activation'),
+            ('top2_decoder', 'Top-2 decoder'), ('native', 'Natural-text fit'), ('readout', r'Re-applied edit$^\dagger$'),
+            ('matched_part_sup_hungarian', 'Matched gains, part sup.'), ('complete_sup_hungarian', 'Complete sup.'),
+            ('part_sup_hungarian', 'Part sup.'), ('subset_sup_hungarian', 'Part and subset sup.')]
+    lines = [r'\begin{tabular}{lcccccc}', r'\toprule',
+             r' & \multicolumn{3}{c}{Gemma Scope 65k} & \multicolumn{3}{c}{Gemma Scope 16k, lowest $L_0$} \\',
+             r'\cmidrule(lr){2-4}\cmidrule(lr){5-7}',
+             r'Method & Pronouns & Women & Agreement & Pronouns & Women & Agreement \\', r'\midrule']
+    for key, label in rows:
+        cells = []
+        for t in targets:
+            pp, ag = d[t]['per_part'][key], d[t]['agreement'][key]
+            cells += [f3(pp['pronouns']), f3(pp['female_descriptions']), f"{100 * ag['parts']:.1f}"]
+        lines.append(label + ' & ' + ' & '.join(cells) + r' \\')
+    lines += [r'\bottomrule', r'\end{tabular}']
+    (TAB / 'naacl_gemma_parts.tex').write_text('\n'.join(lines) + '\n')
+
+
+def gemma_part_use(path):
+    d = json.loads(path.read_text())['runs']
+    targets = [next(k for k in d if 'w65k' in k), next(k for k in d if 'l0low16k' in k)]
+    rows = [('source', 'Original explanation'), ('readout', r'Re-applied edit$^\dagger$'),
+            ('hungarian_decoder', 'Hungarian, decoder'), ('native', 'Natural-text fit'),
+            ('complete_sup_hungarian', 'Complete sup.'), ('part_sup_hungarian', 'Part sup.')]
+    lines = [r'\begin{tabular}{lcccc}', r'\toprule', r' & \multicolumn{2}{c}{65k} & \multicolumn{2}{c}{16k, lowest $L_0$} \\',
+             r'\cmidrule(lr){2-3}\cmidrule(lr){4-5}', r'Deleted part & Pron. & Women & Pron. & Women \\', r'\midrule']
+    for key, label in rows:
+        cells = []
+        for t in targets:
+            o = d[t][key]['original']
+            cells += [f"{100 * o['pronouns']['worst_group']:.1f}", f"{100 * o['female_descriptions']['worst_group']:.1f}"]
+        lines.append(label + ' & ' + ' & '.join(cells) + r' \\')
+        if key == 'source':
+            lines.append(r'\midrule')
+    lines += [r'\bottomrule', r'\end{tabular}']
+    (TAB / 'naacl_gemma_part_use.tex').write_text('\n'.join(lines) + '\n')
+
+
 def gemma_use(path):
     d, targets = gemma_targets(path)
     rows = [('clean', 'Unedited'), ('oracle', 'Trained on balanced data'), ('source', 'Original explanation'),
@@ -280,6 +318,7 @@ def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--gemma', type=Path)
     parser.add_argument('--gemma-use', action='store_true', help='also write the Gemma use tables; needs USE.json in every run')
+    parser.add_argument('--gemma-part-use', type=Path)
     args = parser.parse_args()
     settings()
     use()
@@ -292,8 +331,11 @@ def main():
     entries = [shift_entry()] + supervision_entries()
     if args.gemma:
         entries += gemma_entries(args.gemma)
+        gemma_parts(args.gemma)
     if args.gemma_use:
         gemma_use(args.gemma)
+    if args.gemma_part_use:
+        gemma_part_use(args.gemma_part_use)
     supervision(entries)
     print('tables written', len(entries))
 
