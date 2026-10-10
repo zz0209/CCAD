@@ -40,6 +40,7 @@ def complete_part():
             ('geometry_gain', 'Calibrated decoder', MATCH, 'v'),
             ('native', 'Natural-text fit', OTHER, 'P'),
             ('whole', 'Complete supervision', COMPLETE, 'X'),
+            ('random_parts', 'Random halves', RANDOM, '^'),
             ('parts', 'Part supervision', PART, 'o'),
             ('raw_reconstruction', 'Re-applied\nsource edit', READOUT, 'h')]
     fig, ax = plt.subplots(figsize=(3.25, 2.75))
@@ -47,7 +48,7 @@ def complete_part():
     labels = {'hungarian_decoder': (.262, .492, 'left'), 'hungarian_activation': (.222, .441, 'right'),
               'geometry': (.300, .640, 'left'), 'activation_top2': (.222, .560, 'right'),
               'geometry_gain': (.336, .352, 'center'), 'native': (.272, .262, 'left'),
-              'whole': (.108, .318, 'left'), 'parts': (.150, .082, 'left'),
+              'whole': (.108, .318, 'left'), 'random_parts': (.134, .249, 'right'), 'parts': (.150, .082, 'left'),
               'raw_reconstruction': (.118, .168, 'right')}
     for key, label, color, marker in rows:
         x, y = s[key]['full_nrmse'], s[key]['parts_nrmse']
@@ -71,7 +72,7 @@ def complete_part():
         fig.savefig(FIG / f'naacl_complete_part.{ext}')
 
 
-def public():
+def public_panel(ax, legend_size=7):
     data = json.loads((ART / 'e4_scale' / 'E4A_RESULTS.json').read_text())
     xs, series = [], {'raw_reconstruction': [], 'tangent_full': [], 'tangent_mixed': []}
     widths = []
@@ -81,7 +82,6 @@ def public():
         for key in series:
             series[key].append(run['methods'][key]['parts']['nrmse'])
     xs = np.array(xs)
-    fig, ax = plt.subplots(figsize=(3.25, 2.25))
     spec = [('raw_reconstruction', 'Re-applied source edit', READOUT, 'h'),
             ('tangent_full', 'Complete supervision', COMPLETE, 'X'),
             ('tangent_mixed', 'Part supervision', PART, 'o')]
@@ -106,7 +106,13 @@ def public():
     ax.set_xlabel('Source activation retained by the target reconstruction')
     ax.set_ylabel('Part-deletion error (nRMSE)')
     ax.set_ylim(0, .65)
-    ax.legend(frameon=False, fontsize=7, loc='upper right', handletextpad=.3, borderaxespad=.2)
+    ax.legend(frameon=False, fontsize=legend_size, loc='upper right', handletextpad=.3, borderaxespad=.2)
+    return xs, widths, series
+
+
+def public():
+    fig, ax = plt.subplots(figsize=(3.25, 2.25))
+    xs, widths, series = public_panel(ax)
     fig.tight_layout(pad=.3)
     for ext in ['pdf', 'svg']:
         fig.savefig(FIG / f'naacl_public.{ext}')
@@ -114,6 +120,43 @@ def public():
     (ART / 'e4_scale' / 'PUBLIC_FIGURE_DATA.json').write_text(json.dumps(dict(
         retained=xs.tolist(), widths=widths, part_nrmse=series, pearson_with_retention=corr), indent=1))
     print('pearson with retention', corr)
+
+
+SETTINGS = [('SHIFT, Pythia-70M', 'SHIFT, Pythia-70M', 'o', False), ('Infinitive, Pythia-70M', 'Infinitive, Pythia-70M', 's', False),
+            ('Grammar, GPT-2 Medium', 'Grammar, GPT-2 Medium', 'D', False), ('Infinitive, SAEBench', 'Infinitive, SAEBench', 's', True),
+            ('Grammar, Qwen3-1.7B', 'Grammar, Qwen-Scope', 'D', True), ('SHIFT, Gemma-2-2B', 'SHIFT, Gemma Scope', 'o', True)]
+INK = '#33424d'
+
+
+def ratio_panel(ax, x, ratio, marker, filled, label, size=17):
+    ax.scatter(x, ratio, s=size, marker=marker, facecolor=INK if filled else 'white', edgecolor=INK, linewidth=.7,
+               label=label, zorder=3)
+
+
+def alternatives():
+    # (a) Matching against the learned correspondence over every target, by atom stability of the explained features.
+    # (b) Part error on SAEBench against the retention of the source activation by the target reconstruction.
+    data = json.loads((ART / 'e4_scale' / 'ATOM_STABILITY.json').read_text())
+    fig, (ax_a, ax_b) = plt.subplots(2, 1, figsize=(3.25, 3.75))
+    for key, label, marker, filled in SETTINGS:
+        rows = [r for r in data['rows'] if r['setting'] == key]
+        ratio_panel(ax_a, [r['hungarian_cos'] for r in rows], [r['errors']['hungarian'] / r['errors']['part'] for r in rows],
+                    marker, filled, label)
+    ax_a.axhline(1, color='.7', lw=.6, zorder=0)
+    ax_a.set_yscale('log')
+    ax_a.set_yticks([1, 2, 5, 10, 20, 50])
+    ax_a.set_yticklabels(['1', '2', '5', '10', '20', '50'])
+    ax_a.set_ylim(.8, 60)
+    ax_a.set_xlabel('Decoder cosine of Hungarian matches')
+    ax_a.set_ylabel('Hungarian error / learned error')
+    ax_a.legend(frameon=False, fontsize=6.6, ncol=2, loc='lower center', bbox_to_anchor=(.5, 1.0), handletextpad=.2,
+                columnspacing=1.2, borderaxespad=.1, labelspacing=.25)
+    ax_a.text(-.19, 1.02, '(a)', transform=ax_a.transAxes, fontsize=8, va='bottom')
+    public_panel(ax_b, legend_size=6.6)
+    ax_b.text(-.19, 1.02, '(b)', transform=ax_b.transAxes, fontsize=8, va='bottom')
+    fig.tight_layout(pad=.3, h_pad=.8)
+    for ext in ['pdf', 'svg']:
+        fig.savefig(FIG / f'naacl_alternatives.{ext}')
 
 
 GRID = [('lowest', '16k', 'final_l0low16k'), ('lower', '16k', 'grid_w16k_lower'), ('higher', '16k', 'grid_w16k_higher'),

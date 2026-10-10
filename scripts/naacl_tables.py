@@ -170,7 +170,7 @@ def shift_parts():
             ('geometry', 'Top-2 decoder'), ('activation_top2', 'Top-2 activation'),
             ('geometry_gain', 'Calibrated decoder'), ('native', 'Natural-text fit'),
             ('raw_reconstruction', r'Re-applied edit$^\dagger$'), ('whole', 'Complete sup.'),
-            ('parts_relation', 'Part sup., membership only'), ('parts', 'Part sup.')]
+            ('random_parts', 'Random halves'), ('parts_relation', 'Part sup., membership only'), ('parts', 'Part sup.')]
     lines = [r'\begin{tabular}{lccccc}', r'\toprule',
              r' & \multicolumn{3}{c}{Part error} & \multicolumn{2}{c}{Answer agreement} \\',
              r'\cmidrule(lr){2-4}\cmidrule(lr){5-6}', r'Method & Pronouns & Names & Assoc. & Complete & Parts \\', r'\midrule']
