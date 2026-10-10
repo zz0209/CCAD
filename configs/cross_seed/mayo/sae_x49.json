@@ -1,0 +1,45 @@
+{
+  "hook_module_path": "transformer.h.11",
+  "audit_opened": false,
+  "threshold_start_step": 128,
+  "learning_rate": 0.000282842712474619,
+  "group_fractions": [
+    0.125,
+    0.125,
+    0.25,
+    0.5
+  ],
+  "model_revision": "7c3302ebe5bf8e622661b8c96a639a8ada3a7d16",
+  "k": 64,
+  "seeds": [
+    1,
+    2
+  ],
+  "dictionary_overlay_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+  "eval_batch_size_sequences": 4,
+  "model_local_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/seed_models/gpt2-medium-x49",
+  "token_manifest": "configs/cross_seed/mayo/TOKEN_MANIFEST_MAYO.json",
+  "dictionary_commit": "60ec6bf5264944d64a4ca271f45a29ebfb9d4946",
+  "layer": 11,
+  "steps": 16384,
+  "model_id": "stanford-crfm/beren-gpt2-medium-x49",
+  "batch_size_sequences": 8,
+  "bulk_output_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/saes/CSM_SAE_gpt2_x49_v1_20261010",
+  "dict_size": 8192,
+  "purpose": "Two TopK SAE seeds on the x49 GPT-2 Medium seed model, with the recipe of the OpenAI GPT-2 Medium SAEs.",
+  "dictionary_source_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+  "objectives": [
+    "topk"
+  ],
+  "decay_start": 8192,
+  "checkpoint_steps": [
+    4096,
+    16384
+  ],
+  "budget_seconds": 7200,
+  "run_id": "CSM_SAE_gpt2_x49_v1_20261010",
+  "scope": "Same 16,777,216 natural training tokens, block 11, 8,192 features, k=64 and schedule as FINAL3_R19; only the language model differs.",
+  "warmup_steps": 128,
+  "round_id": "CROSS_SEED_MODELS",
+  "model_license": "not stated on the model card"
+}

@@ -14,7 +14,8 @@ def count_lines(path):
 
 def main():
     runs = {}
-    for status in ROOT.glob('runs/*/*/status.json'):
+    statuses = list(ROOT.glob('runs/*/*/status.json')) + list(ROOT.glob('code/CCAD/runs/CSM_*/status.json'))
+    for status in statuses:
         run = status.parent
         st = json.loads(status.read_text())
         progress = run / 'progress.json'
@@ -22,13 +23,16 @@ def main():
         if progress.exists():
             p = json.loads(progress.read_text())
             stage = ' / '.join(str(p.get(k)) for k in ['stage', 'method', 'query', 'step'] if p.get(k) is not None)
+            # SAE training runs report completed and total steps.
+            if st.get('status') == 'RUNNING' and 'total_steps' in p:
+                items = dict(done=p['completed_steps'], total=p['total_steps'])
         # Runs that report finished items carry them as done and total in progress.jsonl.
         history = run / 'progress.jsonl'
         if st.get('status') == 'RUNNING' and history.exists():
             rows = [json.loads(line) for line in history.read_text().splitlines() if '"total"' in line]
             if rows:
                 items = dict(done=rows[-1]['done'], total=rows[-1]['total'])
-        runs[run.name] = dict(status=st.get('status'), started=st.get('started_at_utc'), ended=st.get('ended_at_utc'),
+        runs[run.name] = dict(status=st.get('status'), started=st.get('started_at_utc') or st.get('updated_utc'), ended=st.get('ended_at_utc'),
                               records=count_lines(run / 'metrics.raw.jsonl'), stage=stage, items=items)
     downloads = {}
     for item in sorted((ROOT / 'assets').iterdir()):

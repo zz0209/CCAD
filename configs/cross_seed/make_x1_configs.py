@@ -45,3 +45,17 @@ for target in [2, 3, 4, 5]:
                           'with task parts, keep both part fidelity and natural-text fidelity?'))
     (out / f'x1b_gpt2_t{target}.json').write_text(json.dumps(cfg_b, indent=2))
     print(cfg_b['run_id'])
+# X1c repeats X1 with the explanations of source SAEs 2 to 5, each carried into the next seed in the R26 cycle.
+for source_seed, target in [(2, 3), (3, 4), (4, 5), (5, 1)]:
+    cfg = json.loads((out / 'x1_gpt2_t2.json').read_text())
+    cfg.update(run_id=f'CSM_X1C_gpt2_s{source_seed}_t{target}_v1_20261010', seeds=[source_seed, target],
+               families=['matched_natural', 'membership_natural', 'membership_parts'],
+               purpose='X1c: the X1 comparison for the explanations of four further source SAEs.',
+               scope=(f'GPT-2 Medium block 11, source TopK SAE seed {source_seed} with its R26 source groups, target SAE '
+                      f'seed {target}. Same recipe and evaluation pairs as X1.'))
+    cfg['source'] = dict(cfg['source'], sae_checkpoint=f'{saes}/topk_seed{source_seed}.pt',
+                         sae_label=f'GPT-2 Medium TopK SAE seed {source_seed}',
+                         gate=str(root/f'runs/REFORM_R26_contrast_components_v2_20260913/topk_s{source_seed}_source.npz'))
+    cfg['target'] = dict(cfg['target'], sae_checkpoint=f'{saes}/topk_seed{target}.pt', sae_label=f'GPT-2 Medium TopK SAE seed {target}')
+    (out / f'x1c_gpt2_s{source_seed}_t{target}.json').write_text(json.dumps(cfg, indent=2))
+    print(cfg['run_id'])

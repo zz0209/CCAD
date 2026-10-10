@@ -12270,3 +12270,34 @@ X1四个run（CSM_X1_gpt2_s1_t{2..5}_v1_20261010）于21:37:15Z至22:04:23Z在�
 4. 局限：只有一个模型与一个解释，四个目标SAE共用源SAE种子1；自然文本训练512步、每步4条序列，损失仍在下降，训练长度的影响由X1b检验。
 
 X1b（CSM_X1B_gpt2_s1_t{2..5}_v1，1,024步，族为membership_natural与membership_mixed，后者交替512个自然文本批与512次部分监督更新）已通过冒烟测试并排在gpu-0队列中。cross_seed_transfer.py为交替族增加了分开计数的自然文本与任务日程，已有族的批次与请求顺序不变。E12第一个目标于21:51Z前后在Mayo GPU1开始。
+
+### CROSS_SEED_MODELS PROGRESS（X2 准备：独立的解释选择脚本复现 R26）
+
+实际写入UTC为2026-10-10T22:07:55Z。
+
+X2需要在新模型种子上按同一规则选择源解释。新增scripts/select_grammar_explanation.py，只实现R26的对比规则（共享前缀处每个特征对句子边际的一阶贡献，减去其在另外两个任务上的平均正贡献，每个任务取胜出且为正的前64个），不含R26其余流程。核对run CSM_SELECT_gpt2_openai_s1_check_v1_20261010（OpenAI GPT-2 Medium与TopK SAE种子1，R26 panel的source_selection 192对，两对一批、长度64，与R26相同），22:07:40Z PASS，得到的192个成员与原topk_s1_source.npz完全相同（reference_check.json，identical为true）。SAE训练沿用scripts/run_dictionary_training_curve.py，它检查model.safetensors与tokenizer.json，Stanford CRFM检查点为pytorch_model.bin，需要小的适配。模型下载仍等待用户确认。
+
+### CROSS_SEED_MODELS PROGRESS（X1b：训练长度与交替训练）
+
+实际写入UTC为2026-10-10T22:26:58Z。
+
+X1b四个run（CSM_X1B_gpt2_s1_t{2..5}_v1_20261010）于22:04:54Z至22:26:12Z在本机gpu-0依次PASS，每个约5分钟。analyze_cross_seed.py新增--merge-runs，把同一目标、同一句对的X1b方法并入X1的run做配对bootstrap（检查两组run的面板、任务与固定响应完全相同），输出artifacts/cross_seed_models/X1_X1B_GPT2.json，2,000次。
+
+结果（四个目标平均，完整/部分/新请求/自然文本）：自然文本训练1,024步为.282/.303/.299/.354，512步为.247/.276/.280/.350，差（1,024减512）在部分上为+.027[.001,.056]；交替训练（512个自然文本批加512次部分监督更新）为.245/.258/.294/.450，与只用部分监督相比部分误差+.002[−.014,.018]，自然文本误差.450对.624。
+
+判断：
+1. 自然文本目标在512步后已基本收敛（自然文本误差.350对.354），继续训练反而略微损害任务部分。X2沿用512步作为事先固定的训练长度，不按任务结果挑选步数。
+2. 交替训练在任务部分上与部分监督相同，同时把自然文本误差从.624降到.450，但不及只用自然文本训练的.350。任务部分与一般功能之间存在取舍；跨模型普遍性的主要工具用不接触任务的自然文本训练，交替训练作为“用途”上的补充。
+
+### CROSS_SEED_MODELS PROGRESS（让出本机 GPU；X2 移到 Mayo 启动）
+
+实际写入UTC为2026-10-10T22:41:36Z。
+
+用户在本轮表示技术上能做的都同意、由执行者决定，并要求让出或暂停本机GPU供其使用。动作：
+1. 本机：约22:30Z停止X1c的runner与两个Python进程（run CSM_X1C_gpt2_s2_t3_v1_20261010在训练中被停止，status.json停在RUNNING，没有任务结果，保留原目录）；等待自己的gpu-0租约心跳过期后用resource_manager reap回收，之后gpu-0为free、无owner，本机显存只剩桌面程序约3.7GB。本机此后不再运行CCAD计算。
+2. Mayo：杀掉E12 runner中等待GPU0的worker（进程724665），E12只在GPU1上依次运行五个目标，GPU0在E10最后一个目标结束后留给新方向。
+3. 下载（用户授权）：scripts/mayo/download_seed_models.py在Mayo下载openai-community/gpt2-medium（6dcaa7a9）、stanford-crfm/arwen-gpt2-medium-x21（096da99a）、stanford-crfm/beren-gpt2-medium-x49（7c3302eb）、EleutherAI/pythia-70m-seed1（b9221418）与seed2（9df96128），每个另存为model.safetensors与tokenizer.json的标准副本，清单assets/seed_models/SEED_MODELS_MANIFEST.json（原始文件与副本的大小和SHA256），共9.1GB。两个Stanford CRFM模型卡未写许可证；配置含reorder_and_upcast_attn与scale_attn_by_inverse_layer_idx，transformers 5.19可直接加载。
+4. 上传：cross_seed_transfer.py、select_grammar_explanation.py、GPT-2自然文本（train SHA256 2dd8a9d4…与本机一致）、R26面板、E9确认面板、OpenAI GPT-2 Medium的五个TopK SAE与R26源组；共用代码（run_causalgym_multisite.py等）在Mayo与本机SHA256一致。Mayo代码目录不是git仓库，配置写入source_revision。
+5. 检验：Mayo上X1c冒烟PASS（15秒）；跨模型分支用OpenAI SAE放在两个不同模型上做代码路径检查PASS（数字无意义）。
+6. 启动：configs/cross_seed/make_mayo_x2_configs.py生成SAE训练、解释选择、六个X2迁移（x21与x49各自的模型内新SAE种子，以及跨到另一模型的两个SAE种子）和四个X1c v2配置；runner为scripts/mayo/run_cross_seed_x2.sh（tmux ccad-x2）。第一次启动时x21的SAE训练因Mayo代码目录缺少runs文件夹失败（run目录尚未建立，没有输出），建好目录后用scripts/mayo/run_cross_seed_x2_lane.sh单独重启x21一路（tmux ccad-x2-lane1）；原runner的GPU1一路转去运行X1c v2，GPU0一路等待E10结束后训练x49的SAE。x21 SAE训练实测0.115秒每步，16,384步约31分钟，与E12和X1c共用GPU1。
+7. status_json.py加入code/CCAD/runs下的SAE训练run及其步数进度，进度网页登记X2队列。

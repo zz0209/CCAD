@@ -45,8 +45,17 @@ def main():
     parser.add_argument('--runs', nargs='+', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--draws', type=int, default=2000)
+    parser.add_argument('--merge-runs', nargs='*', type=Path, default=[],
+                        help='runs on the same targets and pairs whose methods are added under the suffix @merged')
     args = parser.parse_args()
     loaded = [load(r) for r in args.runs]
+    for i, run in enumerate(args.merge_runs):
+        values, order, tasks, natural = load(run)
+        base = loaded[i]
+        assert order == base[1] and np.array_equal(tasks, base[2])
+        assert all(np.array_equal(values[k], base[0][k]) for k in FIXED)
+        base[0].update({f'{k}@merged': v for k, v in values.items() if k not in FIXED})
+        base[3].update({f'{k}@merged': v for k, v in natural.items()})
     tasks = loaded[0][2]
     methods = [m for m in loaded[0][0] if m not in FIXED]
     point = {m: {f: float(np.mean([errors(v, o, t, m, np.ones(len(t)))[f] for v, o, t, _ in loaded])) for f in FAMILIES}

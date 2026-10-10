@@ -1,0 +1,35 @@
+{
+  "source_revision": "e8a112c030dca6d3d0604e791760016fb37e3ba6",
+  "run_parent": "CROSS_SEED_MODELS",
+  "run_storage_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models",
+  "device": "cuda:0",
+  "audit_opened": false,
+  "candidate_family_frozen": true,
+  "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+  "dictionary_source_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+  "budget": "Mayo GPU, one job per run.",
+  "run_id": "CSM_SELECT_gpt2_x21_s1_v1_20261010",
+  "generator_script": "scripts/select_grammar_explanation.py",
+  "seeds": [
+    1
+  ],
+  "model_revision": "096da99a0ffe50dc3b5c8618e3e7b0bfbff84b77",
+  "model_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/seed_models/gpt2-medium-x21",
+  "model_label": "stanford-crfm/arwen-gpt2-medium-x21",
+  "sae_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/saes/CSM_SAE_gpt2_x21_v1_20261010/step_16384/topk_seed1.pt",
+  "sae_label": "x21 TopK SAE seed 1",
+  "hook_module_path": "transformer.h.11",
+  "panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/r26_panel.json",
+  "tasks": [
+    "regular_plural_subject_verb_agreement_1",
+    "anaphor_number_agreement",
+    "anaphor_gender_agreement"
+  ],
+  "members_per_component": 64,
+  "max_length": 64,
+  "gradient_batch_pairs": 2,
+  "eos_token_id": 50256,
+  "purpose": "Grammatical explanation of x21 SAE seed 1 by the R26 contrast rule.",
+  "scope": "Source-selection rows of the R26 panel only."
+}

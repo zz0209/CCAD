@@ -1,0 +1,41 @@
+{
+  "written_at_utc": "2026-09-09T05:55:42Z",
+  "model": "D:\\CCAD_Storage\\models\\gpt2-medium\\6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "tokenizer_sha256": "8414cab924d8b9b33013f0d221c5862f365ee9be39c5c2bfae8a5a9e970478a6",
+  "source_inputs": [
+    {
+      "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\FINAL5_R14_unique24m_repack_v3_20260908\\artifacts\\sampled_documents.jsonl",
+      "sha256": "56f738f28969814b5b0851cef37d13bb7e002533c9357f6a17cf01c7a6767f77",
+      "bytes": 170576220
+    },
+    {
+      "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R011_NR1_long_budget_corpus_v2_20260904T012000Z\\artifacts\\sampled_documents.jsonl",
+      "sha256": "5eb700319a66b6577f82e02619df58002366bff361fc5241e5e72b4fd31f1178",
+      "bytes": 29152480
+    }
+  ],
+  "paired_exclusion": {
+    "path": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\documents.jsonl",
+    "sha256": "33421f067172f0322551346c1985e3799cf8bb90d9950a55f4cf1b0de38fe201"
+  },
+  "outputs": {
+    "train": {
+      "path": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/train.uint16.bin",
+      "sha256": "2dd8a9d486e2fd3bb522d8ea37415f1cccc78f9d0315b7fd57bbda332dc19300",
+      "tokens": 16777216,
+      "documents": 24018,
+      "bytes": 33554432
+    },
+    "validation": {
+      "path": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/validation.uint16.bin",
+      "sha256": "560b5b23be0086b05dc686344571688a6962186dca1ba920a6194052e78bd0a7",
+      "tokens": 32768,
+      "documents": 64,
+      "bytes": 65536
+    }
+  },
+  "wall_seconds": 24.84771379999438,
+  "context_length": 128,
+  "network_bytes": 0,
+  "scope": "Original natural document order and original train/validation labels retained. GPT-2 re-tokenization; no benchmark text. Training uses 16M-token prefix of retained R14 train; validation uses retained R011 validation. Exact text and document disjointness checked against all original paired splits by metadata only."
+}
