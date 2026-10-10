@@ -305,6 +305,9 @@ def main():
                     dtype=torch.long if name=='candidates' else torch.float32)
                     for name in ['native','geometry','geometry_gain','raw','candidates']}
             fit_summary=json.loads(w.checked(Path(c['relation_run'])/'RELATION_FIT.json').read_text())
+            for name,path in c.get('extra_relations',{}).items():
+                extra=np.load(w.checked(Path(path),'Frozen label-free matching relation'))
+                for site in sites:relations[site][name]=torch.tensor(extra[site+'__'+name],device=w.device,dtype=torch.float32)
             for name,spec in c.get('adapted_programs',{}).items():
                 folder=Path(spec['directory']);adapted_targets[name]={}
                 fitted=np.load(w.checked(folder/'relation.npz','Frozen adapted program relation'))
@@ -457,7 +460,7 @@ def main():
                     for j,i in enumerate(ix):v=dev[i]['tokens'];ids[j,:len(v)]=torch.tensor(v,device=w.device);mask[j,:len(v)]=1
                     with torch.no_grad():model.gpt_neox(ids,attention_mask=mask,use_cache=False);values=(pooled@pw.T+pb).squeeze(-1)
                     logits[ix]=values.cpu().numpy();w.sequence_forwards+=len(ix);w.token_forwards+=ids.numel();start+=len(ix)
-                for r,value in zip(dev,logits):w.record(kind='classification',task='profession',row_id=r['row_id'],component=r['document_sha256'],method=mode,operation=query,seed=c['target_seed'],target_seed=c['target_seed'],split=evaluation_split,label=r['label'],gender=r['gender'],prediction=int(value>0),logit=float(value))
+                w.records([dict(kind='classification',task='profession',row_id=r['row_id'],component=r['document_sha256'],method=mode,operation=query,seed=c['target_seed'],target_seed=c['target_seed'],split=evaluation_split,label=r['label'],gender=r['gender'],prediction=int(value>0),logit=float(value)) for r,value in zip(dev,logits)])
                 acc={f'{y}/{g}':float(np.mean([(v>0)==r['label'] for r,v in zip(dev,logits) if r['label']==y and r['gender']==g])) for y in [0,1] for g in [0,1]};res=dict(profession=float(np.mean([(v>0)==r['label'] for r,v in zip(dev,logits)])),gender=float(np.mean([(v>0)==r['gender'] for r,v in zip(dev,logits)])),worst_group=min(acc.values()),groups=acc)
                 results[f'{mode}/{query}']=res;w.progress('RESULT',method=mode,query=query,result=res)
                 if c.get('eval_token_budget'):torch.cuda.empty_cache()

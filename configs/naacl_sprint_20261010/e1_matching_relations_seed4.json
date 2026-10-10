@@ -1,0 +1,15 @@
+{
+  "output_dir": "D:/CCAD_Storage/runs/naacl_sprint_20261010/matching_relations_seed4",
+  "device": "cuda:0",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "target_seed": 4,
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "natural_sequences": 512,
+  "batch_sequences": 16,
+  "members_per_source": 2
+}

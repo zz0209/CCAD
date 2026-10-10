@@ -1,0 +1,19 @@
+{
+  "output_dir": "D:/CCAD_Storage/runs/naacl_sprint_20261010/grammar_matching_maps_s1",
+  "device": "cpu",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "source_checkpoint": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed1.pt",
+  "source_run": "runs/REFORM_R26_contrast_components_v2_20260913",
+  "source_seed": 1,
+  "target_checkpoint_template": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed{seed}.pt",
+  "target_seeds": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "natural_states": "runs/FINAL3_R19_gpt2_selector_five_cycle_v2_20260909/natural_discovery_states.npz",
+  "natural_count": 32768,
+  "members_per_source": 2
+}

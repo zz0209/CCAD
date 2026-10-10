@@ -131,6 +131,13 @@ class MultisiteWork:
             f.write(json.dumps(row)+'\n')
         self.metrics.append(row)
 
+    def records(self, rows):
+        # One append per batch keeps file handles rare on scanned bulk volumes.
+        rows = [dict(run_id=self.cfg['run_id'], metric_version='multisite-v1', **row) for row in rows]
+        with (self.run/'metrics.raw.jsonl').open('a',encoding='utf-8') as f:
+            f.write(''.join(json.dumps(row)+'\n' for row in rows))
+        self.metrics.extend(rows)
+
     def setup(self):
         import torch
         import transformers

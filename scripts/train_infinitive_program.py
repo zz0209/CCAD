@@ -67,6 +67,9 @@ def main():
             write(w.run/'training_dictionary_schedule.json',dict(block_length=2,indices=training_schedule,targets=c['source_column_training_targets']))
         old=np.load(w.checked(Path(c['relation_run'])/'relation.npz'))
         relations={k:torch.tensor(old[k],device=w.device,dtype=torch.long if k=='candidates' else torch.float32) for k in old.files}
+        extra_names=list(c.get('extra_relations',{}))
+        for name,template in c.get('extra_relations',{}).items():
+            relations[name]=torch.tensor(np.load(w.checked(template.format(seed=c['target_seed']),'Frozen label-free matching relation'))[name],device=w.device,dtype=torch.float32)
         ix=(relations['native'].sum(1)>0).nonzero().flatten(); assert len(ix)==8
         base=relations['native'][ix].clone(); a=torch.nn.Parameter(base.clone())
         gain=torch.nn.Parameter(torch.ones(4,device=w.device),requires_grad=False)
@@ -89,7 +92,7 @@ def main():
                         delta=(columns@q)@target.decoder.weight.T
                     h=h+delta
                 elif mode=='student': h=h-(z[...,ix]*(a@q))@target.decoder.weight[:,ix].T
-                elif mode in ['native','geometry','geometry_gain']:
+                elif mode in ['native','geometry','geometry_gain'] or mode in extra_names:
                     h=h-(z*(relations[mode]@q))@target.decoder.weight.T
                 elif mode=='raw_reconstruction':
                     reconstructed=target.decode(z)
@@ -204,7 +207,8 @@ def main():
                 if training_targets:
                     # 随机安排字典，保持每个字典的端点、连续请求和更新次数平衡。
                     target.load_state_dict(training_targets[training_schedule[step//2]])
-                v=(endpoints[step%3] if variant=='endpoints' else
+                v=(torch.ones(2,device=w.device) if variant.endswith('_full') else
+                   endpoints[step%3] if variant=='endpoints' else
                    endpoints[(step//2)%3] if ('mixed' in variant or variant=='tangent_gain') and step%2==0 else
                    torch.rand(2,generator=gen,device=w.device))
                 q=expand(v)

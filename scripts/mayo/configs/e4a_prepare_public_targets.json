@@ -1,0 +1,26 @@
+{
+  "output_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/public_targets",
+  "saebench_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/saebench_pythia70m/pythia70m_sweep_topk_ctx128_0730/resid_post_layer_4",
+  "trainers": [
+    "trainer_0",
+    "trainer_1",
+    "trainer_2",
+    "trainer_3",
+    "trainer_4",
+    "trainer_5",
+    "trainer_6",
+    "trainer_7",
+    "trainer_8",
+    "trainer_9",
+    "trainer_10",
+    "trainer_11",
+    "trainer_12",
+    "trainer_13",
+    "trainer_14",
+    "trainer_15"
+  ],
+  "first_id": 101,
+  "source_parameters": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/infinitive/source_parts.npz",
+  "natural_states": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/infinitive/fit_states.npz",
+  "members_per_source": 2
+}

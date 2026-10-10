@@ -1,0 +1,73 @@
+{
+  "audit_opened": true,
+  "baselines": [
+    "native",
+    "geometry",
+    "geometry_gain",
+    "hungarian_decoder",
+    "hungarian_activation",
+    "activation_top2",
+    "native_tangent_relation_8",
+    "raw_reconstruction"
+  ],
+  "batch_sequences": 4,
+  "budget": "Two 512-update arms and 39 requests on 96 fresh contexts, at most 600 driver seconds per target.",
+  "budget_seconds": 600,
+  "candidate_family_frozen": true,
+  "dataset_revision": "science04-new-infinitive-contexts-v1",
+  "device": "cuda:0",
+  "dictionary_lr": 0.0001,
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "eval_batch_size": 16,
+  "evidence_level": "frozen_new_context_request_confirmation",
+  "fit_panel": "artifacts/independent_reuse_20260916/IR01_fit_panel.json",
+  "functional_weight": 0.0,
+  "gain_before_selection": true,
+  "generator_script": "scripts/train_infinitive_program.py",
+  "methods": [
+    "none",
+    "source",
+    "native",
+    "geometry",
+    "geometry_gain",
+    "native_response_relation_8",
+    "native_tangent_relation_8",
+    "raw_reconstruction"
+  ],
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "natural_batch_states": 512,
+  "natural_states": "runs/IR01_infinitive_natural_dev_v1_20260916/fit_states.npz",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\science_upgrade_20260919\\ROUND04_INFINITIVE_PANEL.json",
+  "purpose": "E1 label-free matching and E2 complete-request versus part-request training of the same input-dependent executor on the published infinitive explanation.",
+  "reconstruction_weight": 1.0,
+  "relation_lr": 0.005,
+  "relation_run": "D:\\CCAD_Storage\\runs\\science_upgrade_20260919\\SCIENCE04_infinitive_seed1_material_v1_20260919",
+  "request_panel_sha256": "246149628ddf5011c4c159a37065b8010bea7693d04084b2802e6ae536c1a0ca",
+  "run_id": "NAACL_E2_infinitive_t1_v1_20261010",
+  "run_parent": "NAACL_SPRINT_20261010",
+  "run_storage_root": "D:/CCAD_Storage/runs/naacl_sprint_20261010",
+  "scope": "Same panel, source, targets, schedule seed and update budget as SCIENCE04. tangent_full trains only on the complete request; tangent_mixed repeats the original part-request schedule.",
+  "seeds": [
+    1
+  ],
+  "source_parameters": "artifacts/morning_reform_20260916/independent_circuit_reading/source_parts.npz",
+  "source_response_weight": 0.9,
+  "statistics_unit": "Target seed, crossed verb/noun and paired request family; fixed public source.",
+  "steps": 512,
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R58_shift_dictionaries_curve_v1_20260915/step_8192",
+  "target_seed": 1,
+  "threshold_source_split": "Four fixed published SFC Figure18 source features, selected before outputs",
+  "training_seed": 913,
+  "variants": [
+    "tangent_full",
+    "tangent_mixed"
+  ],
+  "extra_relations": {
+    "hungarian_decoder": "D:/CCAD_Storage/runs/naacl_sprint_20261010/infinitive_matching/infinitive_matching_seed{seed}.npz",
+    "hungarian_activation": "D:/CCAD_Storage/runs/naacl_sprint_20261010/infinitive_matching/infinitive_matching_seed{seed}.npz",
+    "activation_top2": "D:/CCAD_Storage/runs/naacl_sprint_20261010/infinitive_matching/infinitive_matching_seed{seed}.npz"
+  }
+}

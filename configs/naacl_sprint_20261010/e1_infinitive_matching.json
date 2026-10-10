@@ -1,0 +1,27 @@
+{
+  "output_dir": "D:/CCAD_Storage/runs/naacl_sprint_20261010/infinitive_matching",
+  "device": "cpu",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "source_parameters": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\morning_reform_20260916\\independent_circuit_reading\\source_parts.npz",
+  "natural_states": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\IR01_infinitive_natural_dev_v1_20260916\\fit_states.npz",
+  "targets": [
+    [
+      1,
+      "D:/CCAD_Storage/training_curves/REFORM_R58_shift_dictionaries_curve_v1_20260915/step_8192"
+    ],
+    [
+      3,
+      "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192"
+    ],
+    [
+      4,
+      "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192"
+    ],
+    [
+      5,
+      "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192"
+    ]
+  ],
+  "members_per_source": 2
+}

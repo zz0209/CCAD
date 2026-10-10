@@ -1,0 +1,27 @@
+{
+  "output_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2",
+  "model_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/qwen3-1.7b-base",
+  "hook_module_path": "model.layers.14",
+  "saes": {
+    "1": {
+      "path": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/qwen-scope-1.7b-w32k-l50/layer14.sae.pt",
+      "k": 50
+    },
+    "2": {
+      "path": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/qwen-scope-1.7b-w32k-l100/layer14.sae.pt",
+      "k": 100
+    }
+  },
+  "panels": {
+    "fit": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/grammar/R26_panel.json",
+    "confirmation": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/grammar/RG08_confirmation_panel.json"
+  },
+  "natural_tokenizer_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/pythia-70m-deduped",
+  "natural_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/grammar/discovery.uint16.bin",
+  "natural_sequences": 1024,
+  "natural_seed": 20261010,
+  "states_per_batch": 512,
+  "members_per_group": 64,
+  "sentence_prefix_text": "\n",
+  "scope": "Public Qwen-Scope TopK SAEs for Qwen3-1.7B-Base at one residual layer; source groups selected only from the source_selection split with source gradients."
+}

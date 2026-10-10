@@ -11713,3 +11713,318 @@ RAW_CHECK使用原始logits独立计算correct减其余25字母均值，指标�
 正式ACL/ARR稿件paper/main.pdf正文8页、总19页，SHA256 be86287d76d65e81d44c1643c8696772aee9655a4ad40767f14a51e1aaa97f85；ICLR稿件paper/main_iclr.pdf正文9页、总22页，SHA256 9fdfc9792f1a8d1a972e2feb10c450889dac4570c4f99d849fdbf1d2b64d53d3。两稿共用科学源、官方样式保持，全部页面渲染概览及主要数学、图表、新机制段的实际尺寸检查完成，无Overfull或未定义引用。纸面精简由中心方法及证据范围决定，历史78页稿完整归档；页数不计科学增量。
 
 匿名包paper/delivery/acl_arr_20260924.zip为3226539bytes、SHA256 fdafcb1b2498918d0e71ad26d67cec845426fd67e8096c34b4bdd77a3f98b807；iclr_2027_20260924.zip为3206220bytes、SHA256 157930c68ea6bb936df3e06ef772def5186eb25a258e9857f7ad7f12b3f8ea18。各158文件，实际独立解压、Tectonic0.17.0编译，逐页文本与正式稿相同，包内PDF逐字相同。逐文件hash、匿名扫描和ZIP完整性通过；六张表、1735条human预测、16个GPT2真实response运行复算通过。完整模型训练复现仍需要已登记的外部模型、SAE、完整panel与训练缓存，小包准确区分数值复算和模型重放；原项目资产保持。实际对外投稿与公开发布未执行。十份本轮脚本py_compile和diff检查通过，白名单源码同步接续处理。
+
+### SUBMISSION_ROUND_20260924 SYNC
+
+实际写入UTC为2026-09-24T01:53:08Z。十五项白名单代码、配置和主日志已提交并推送为867d1b8，实际核对HEAD=origin/main。最后加入的交付验证脚本也已py_compile通过。公开同步范围仅为既有代码白名单，稿件、投稿ZIP与私有结果保持本地；没有对外投稿。两份最终PDF与ZIP保持COMPLETE记录身份，paper/delivery/VALIDATION.json保存独立解压、逐页文本、匿名检查及数值复算结果。本SYNC事实本地追加保留。
+
+### PROSE_REVIEW_20260926 START
+
+实际写入UTC为2026-09-26T06:48:48Z。用户要求检查模板化语言，采取有把握的小幅修改，并判断academic-humanizer的适用性。已阅读该skill、anti-defensive-writing与defensive-writing-checker，检查两套格式共用正文、附录、限制与声明。采用删除冗余表达、保护事实与结论强度的步骤。本次属于文字维护，科学增量为零，没有模型计算或新研究选择，loop保持暂停。
+
+修改前诊断为五处重复表达。reuse_main摘要末句再次概括前文的监督与复用关系；引言末段重复已有的请求族结论；reuse_infinitive结果段首句没有增加后续具体作用数字之外的信息；reuse_main后续分类器段末句重复已定义的两个测量对象；结论第二段首句仅笼统宣称具体意义。删除这五处，保留紧邻的证据、术语、数字、引文、公式及全部比较。附录的条件与使用依赖影响解释，保持。未发现需要大幅重写的依据。修改前两份源文件、PDF及当前入口信息保存于archive/prose_review_20260926，原20260924投稿包保持。后续编译、版面检查及投稿包更新仅维护交付一致性。
+
+### PROSE_REVIEW_20260926 COMPLETE
+
+实际写入UTC为2026-09-26T06:52:25Z。五处删除已完成，源文件差异检查确认数字、数学内容、引用及比较结论保持。其他科学内容保持。编译记录为paper/build/20260926T064930942519Z与20260926T064948490201Z。ACL/ARR为19页、ICLR为22页，无Overfull或undefined；Underfull提示对应自动分栏与浮动体留白。全部41页渲染概览及摘要、结论等关键页面检查完成，没有发现文字重叠或裁切。页面证据为artifacts/prose_review_20260926/pdf_review。
+
+当前PDF SHA256分别为c8856c35397a2cb2dcdd1d8595b5334ced3a8136d2bb7b633594d8c35d3c4798与4e7d40fdc3e4e4892da1989877b71298eeab6973c08f419b99f27200f46c2710。新包acl_arr_20260926.zip与iclr_2027_20260926.zip各158文件，SHA256分别为a933f90fc787527371efcbc03b956767570542aa0c62f1695e795dd45df7d730与b4854c80230a5ad6d15546b4efad6059a3c6c5e2dcc77fce91383fb3ea576bf9。ZIP完整性、每项清单hash及当前PDF/源一致性通过。与20260924包比较，变化严格限于两份文字源、PDF和PACKAGE_MANIFEST.json，其余内容逐字节相同；本次未重复模型计算或数值分析。验证脚本为artifacts/prose_review_20260926/verify_packages.py，结果为paper/delivery/VALIDATION.json。入口文件更新时工具返回文本匹配失败；重新读取确认tracker和交付说明已更新，本条单独追加，原历史保持。
+
+本次独有科学收益为零；文字阅读成本通过删除五处冗余表达减少，工程成本为两次文稿编译、页面检查与源码包同步。未改变研究选择、主张或投稿目标，未重新启动loop，没有追加实验。用户要求的保守文字检查完成。
+
+### NAACL_REVISION_20260927 START / PROGRESS
+
+实际写入UTC为2026-09-27T22:24:55Z。本条记录此前已进行的读取、编辑和图形检查，准备起始秒数未知。用户明确改投NAACL Main并移除ICLR当前交付，提供Dora讨论作为参考，要求改进表达及审阅图形。讨论逐字保存在artifacts/naacl_revision_20260927/USER_DISCUSSION.txt。独有科学收益没有增加；本次收益为让已有匹配监督证据承担中心发现，成本为图文编辑及重新编译，不增加模型、统计或训练。
+
+已阅读当前AGENTS、plan/tracker、共用正文和附录、原始已保存human_program_adaptation统计、academic-humanizer/anti-defensive-writing/defensive-writing-checker既有要求，并读取scientific-visualization及publication_guidelines。实际查看Dora原PDF页4至5，借鉴现象与证据直接连接的表达，没有引用其机制作为CCAD证据。Figure 1保留原已选文本例子，右侧由条件错误率改为同一执行器的whole/parts监督在组合与部分请求上的误差及原95%区间。原条件结果完整保留主文及附录表。Figure 2点区间最直接表达方法估计及不确定性，保留原图文件，图注减少过程性信息。摘要提前给出.139/.140与.293/.122比较，末句报告uniform成员信息干预结果；结果标题及交叉引用相应更新。所有图中数值直接读取原JSON。六张表及1735条原预测复算通过，模型调用为零。
+
+旧稿、源文件、计划、规则、配置、图形和脚本保存在archive/naacl_revision_20260927。当前ICLR模板、入口、PDF及编译附件已移动至该目录，旧delivery整体保留；当前仅构建NAACL/ARR。原AI使用范围按ARR政策保留于匿名Acknowledgments。工具apply_patch曾返回文本匹配失败，重新读取后发现前面文件已改变，随后仅编辑尚未改变的文件，没有程序化重写或恢复旧内容。当前编译成功，PDF身份和最终页面、投稿包检查将在COMPLETE记录。automation保持暂停。
+
+### NAACL_REVISION_20260927 CORRECTION
+
+实际写入UTC为2026-09-27T22:36:19Z。用户指出Figure 1的新柱图削弱原文本与条件错误的关系，颜色和分隔线丢失，并要求实际处理Figure 2。此前关于图形净提升的判断没有通过用户审阅。原完整PDF、ZIP与验证记录保存于archive/naacl_revision_20260927/matched_bar_review；匹配柱图原文件保留在本单元artifacts/figures。
+
+Figure 1恢复原案例与条件错误率比较，保留绿色成员结果、红色pronoun差异、表头分隔线、四种方法和区间。Figure 2改为四种方法乘三项研究的矩阵，逐格显示原nRMSE及95%区间；色阶只编码点估计相对同项研究初始误差的比值，统一0–1范围，不添加新统计推断。当前文件由scripts/reproduce_submission_results.py直接读取原数值生成，六张表和1735条原预测复算通过。稿件中的Figure 1引用恢复其原作用，匹配监督结果继续保留摘要和专门结果段。已重新逐段检查正文，保留有证据的摘要组织调整与uniform干预结果，不扩大为新科学贡献。当前进行实际页面及匿名包复核，研究数据、科学目标与暂停状态保持。
+
+### NAACL_REVISION_20260927 COMPLETE
+
+实际写入UTC为2026-09-27T22:39:10Z。当前PDF为paper/main.pdf，正文8页、总19页，254129bytes，SHA256 af3593ea6ba38660324940c0e88f6b7e8ad9cc35c4a6a642917b3d06efc19dba。已渲染全部页面并查看两图与正文结尾的实际页面；版面证据为artifacts/naacl_revision_20260927/corrected_pdf_review。图形源、PDF/PNG/SVG、图注和正文引用同步，原数据与区间保持。当前figure manifest只列论文使用的两图，旧完整manifest保存在本单元归档。
+
+匿名包paper/delivery/naacl_arr_20260927.zip含158文件、3229109bytes，SHA256 4d112f7353ed7cd4ed0a76e2f476c683f2415b2728e8440462cd3d9f0f61eee2。独立解压至paper/build/naacl_arr_visual_review_20260927并通过Tectonic0.17.0编译；每页文本相同，包内PDF逐字节等于当前稿，匿名检查、逐文件hash、ZIP完整性、六张表和1735原预测复算均通过。GPT2四目标及十二跨source方向原响应点估计最大差分别5.55e-17与2.78e-17。编译无Overfull或undefined，证据paper/delivery/VALIDATION.json。没有新增bootstrap、模型训练或推理。
+
+本次科学增量为零；保留的文字收益是提前呈现匹配监督发现并明确uniform成员信息实验所得结果。图形收益为Figure 1案例与群体统计的直接连接，以及Figure 2同时读取十二项估计、区间和相对初始变化。额外成本限于显示比值、图文修改、重建和包验证。项目目标已改为NAACL Main，automation实际更新返回PAUSED且十五分钟周期保持；未投稿、未公开论文。研究历史和用户未采用的图形版本均保留。
+
+### NAACL_FIGURE_REVIEW_20260927 START / COMPLETE
+
+实际写入UTC为2026-09-27T22:52:05Z。本次为用户要求的图文修订补记，开始秒数未知。用户明确不接受上次矩阵的呈现，要求实际学习NAACL图版。公开下载Menon等NAACL2025长文249与Kang等短文58，渲染并查看前者第4–5页、后者第4页，参考来源及使用范围已记REFERENCE_REGISTRY。首次下载被本机网络权限限制，随后通过授权下载公开PDF成功；未向外部上传研究材料。旧PDF、图形、文稿、脚本、manifest及投稿包保存在archive/naacl_figure_revision_20260927。
+
+图形选择依据为当前十二个分类均值的比较任务。Figure 2使用统一零点和0–.65刻度的分组柱图，三项研究各含四种方法；颜色与纹理区分方法，柱顶保留原均值、原配对95%区间。移除相对初始比值的色阶及解释，图注说明各研究独立的response normalization。Figure 1保持。摘要用删除整个feature set和其中部分的差异引入问题；方法先说明改变目标SAE激活，再定义C_i；human实验开头直接交代冻结后组合与强度的检验。公式、测量结果、比较对象和主张强度保持，没有追加科学实验。
+
+当前paper/main.pdf为262994bytes，SHA256 692000122444aeeff083d7c36e877b5458d174964332691a9936ea64e59bb977；正文8页、总19页。全部页面已渲染，实际查看第1、3、6、8页及前12页概览，图例、数值、刻度和图注在正式版面中核对，无Overfull或undefined。新匿名ZIP为3239131bytes、158文件，SHA256 894fa464800b092227f8c40534cbf90d8fe0c5edad587c458ed725f802926079。独立解压至paper/build/naacl_arr_bar_review_20260927并编译，逐页文本与当前稿相同；逐文件hash、匿名检查、六表、1735原预测及16个GPT2原响应点估计复算均通过，验证见paper/delivery/VALIDATION.json。
+
+独有科学收益为零；本次收益限于原始误差的直接比较、可读图例和具体操作说明。额外成本为文献图版阅读、图文编辑与重新编译；没有新增模型、参数、统计要求或研究候选，automation保持暂停。
+
+### VISUAL_STORY_20260927 START / PROGRESS
+
+实际写入UTC为2026-09-27T23:20:28Z。开始事件秒数未知。用户要求直接完成稿件，图形须呈现解释结构、执行和实际作用。本次停止继续替换均值图样式，使用数学示意解释误差抵消，并从冻结模型重放预先规定的拟合面板前两个句子，导出真实source-to-target列系数。案例不参与结论选择，确认统计保持原数据。本次属于图文交付，独有科学增量为零，额外成本限于CPU重放、矢量图生成、正文编排及匿名包验证，没有新增训练参数或研究候选。旧文稿和manifest已保存于archive/visual_story_20260927。脚本scripts/export_callable_example.py首次沙箱运行在初始化阶段没有输出，已通过该会话中断；没有创建结果目录。重试使用现有r004环境、CPU两个线程，输出artifacts/visual_story_20260927/replay。automation保持PAUSED。
+
+### VISUAL_STORY_20260927 CORRECTION / COMPLETE
+
+实际写入UTC为2026-09-27T23:41:06Z。本单元已完成。前条START/PROGRESS所列时间取自写入前的工具时钟，精确写入秒数未另外记录；首次运行没有创建目录的判断不准确，后来核对发现replay空目录。初始两次中断发生在依赖初始化期间，精确耗时未知；诊断重试遇到FileExistsError，没有覆盖旧目录。使用独立replay_v2和replay_v3完成重放，分别109.914765和110.241017 driver秒，CPU两个线程，各14次序列前向、零训练更新。全部系数和作用逐项比较完全一致；诊断显示主要等待来自torch内部模块初始化。冻结脚本、两组输出和输入hash保存在artifacts/visual_story_20260927，当前导出为paper/data/callable_example.json。
+
+选取规则是原64句拟合面板的最初两个句子，绘图使用第一句最后一个token，不查看测试结果选择案例。源四成员1620/6798/25089/10570映射到八目标成员，共32个非零条目，包含一个增加激活的条目。图中保留全部条目，线宽随绝对值变化，颜色指源语义组，符号由线型表示；正向连接加白色描边改善交叉辨认。右侧两维作用使用原96文本、四目标确认均值，原强对照和区间保留全文。Figure 1为代数示意和精简执行图。用户指出格式问题后，重新排布数学标注、请求箭头、作用标签和坐标，查看独立图片及正文实际页面。
+
+按照用户提供的聚焦评审，摘要改为核心发现、方法与主要验证，正文第5页Table 1集中列出匹配监督和组内成员分配的定量证据；表格由原JSON复算。正文仍8页，总20页。当前PDF为361488bytes，SHA256 67176863d2fd39bf3f70844d2ac1f0b96f1039039005ac9f204c04a224404536。已渲染全部20页，查看全部概览和第2、5、6、8页实际尺寸，未见文字相互覆盖或页面裁切，编译无Overfull或undefined。旧案例图和误差比较完整保留附录，全部统计及主张强度保持。
+
+匿名包paper/delivery/naacl_arr_20260927.zip共167文件、3452526bytes，SHA256 dcaf5e3655c9f9f79bc4bb69c5a26cfc8a6f2c37314562a695a6ba4c5f037692。独立解压至paper/build/naacl_arr_story_review_20260927，重新编译后每页文本相同，包内原PDF逐字节相同；七张表、1735原预测和16个GPT2原响应点估计复算通过，两张主图从匿名化JSON重建后与当前PNG逐像素相同。完整证据见paper/delivery/VALIDATION.json。源码包包含可编辑SVG、模型系数导出与图表生成代码。
+
+独有科学收益 ÷ 额外复杂度：本次科学增量为零。表达收益是读者能够连接误差抵消、真实many-to-many列、双语境作用与正文核心比较；额外成本为绘图代码、两次有限CPU重放、一个紧凑证据表和原统计图的附录空间。没有新增拟合、运行依赖或方法模块，不提高科学等级评价。当前授权稿件整理已完成，旧稿、旧包及未采用图形保留，automation保持PAUSED，没有新增研究队列，也没有执行外部投稿。
+
+### LANGUAGE_REVISION_20260928 START / COMPLETE
+
+实际写入UTC为2026-09-28T17:01:30Z。开始事件秒数未知，本条补记本次用户要求的小幅语言修改。范围为说明性冒号、破折号、否定对照句及密集三项列举。依据当前源文件调整摘要、正文与附录句子，并同步图内说明、核心表头和生成脚本。四份修改文稿的数字及引用序列逐项相同，公式、原始数据及科学结论保持。原稿、旧包及有关源文件保存在archive/language_revision_20260928。没有新研究候选或模型运行。
+
+当前paper/main.pdf为362639bytes，SHA256为ef6b43099fb829f5470ff3e818381f1f984ab2eea5a793a98bb9cf96ceb377e9，正文8页、总20页。渲染记录位于artifacts/language_revision_20260928/pages，实际查看第2、5、6、8页，修改后的文字和图形标注未见覆盖。匿名包paper/delivery/naacl_arr_20260928.zip为3454593bytes、167文件，SHA256为d538bed6534fd5c96577ae949594f1b16e7cd561adf101ef9f390933cd6ce365。独立解压编译通过，逐页文本相同，包内PDF逐字节相同；无Overfull或undefined。七表、1735原预测、16个GPT2原响应点估计复算通过，两张主图逐像素重建相同。验证见paper/delivery/VALIDATION.json。使用既有CPU文档环境，没有新增依赖。
+
+独有科学收益与额外复杂度分别为零科学增量和有限语言编辑、图表重建、交付验证成本。本次只调整表达，不提高科学等级评价。当前修改已经交付，automation继续PAUSED。
+
+### TERMINOLOGY_REVISION_20261002 START
+
+实际写入UTC为2026-10-03T03:55:10Z（写入前时钟读数，精确完成秒数未知）。用户要求依据Downloads/Untitled.tsv中的讨论做有针对性的小幅修改。讨论文件是写作参考，所含建议和对论文的转述逐项依据当前源文件核对。文件SHA256为50332c6e25548f6ff6727edaa88cdccdcce455e4cfab6b43be30b7b806c14cae，逐字副本、旧稿及源文件、旧匿名包、manifest和tracker保存在archive/terminology_revision_20261002。当前工作范围为摘要术语、引言的SAE更换动机、request首次说明、组合误差的实验对象及部分分号。保留科学主张、结果和方法结构。首次patch因一段上下文不匹配未执行，依据最新源文件完成编辑。独有科学收益为零，新增成本为有限文字修改、编译和版面检查。没有启动研究实验，automation保持PAUSED。下一步编译并核对正文页数、数字、引用、内部跳转及可编辑交付包。
+
+### TERMINOLOGY_REVISION_20261002 CORRECTION / COMPLETE
+
+实际写入UTC为2026-10-03T04:04:46Z。本单元完成。前条START中的2026-10-03T03:55:10Z是写入前时钟读数，准确写入时刻未知。首编译开始时间为BUILD_RECEIPT记录的2026-10-03T03:58:06.995367Z。首次编译将结论最后一行排到第9页，经精简两句恢复正文8页，没有修改模板间距。渲染首次因输出目录尚未创建而失败，建立目录后成功。首次主图复算使用默认STIX字体，逐像素检查未通过；依据包内README使用Times New Roman后两张图均完全相同，STIX输出保存在独立编译目录的reproduced_story_stix。
+
+实际修改为摘要用普通句子说明训练方式和实验对象，保留request-error identity与member program及其内部定义链接；引言说明更换SAE宽度或稀疏度时复用既有研究的动机；正文首次request说明包含q_i=0/1，组合误差注明full deletion与三个pairwise unions。三个源文件合计减少16处分号，保留14处适合原句关系的分号。实验数字与引文序列一致，唯一新增数字是request的0/1定义。采用manuscript-writing-review的针对性术语检查，并依据anti-defensive-writing和defensive-writing-checker保留核心主张、证据及使用意义。讨论中的一般性推测没有被改写成本文结论。
+
+当前PDF为paper/main.pdf，363411bytes，SHA256为280603d2f3c1f66499793ecb68acf9af75bf345057c03a18df3204c047beff4b。正文8页，总20页。全部20页已渲染并查看概览，实际尺寸查看第1、2、5、8页，未发现文字覆盖或裁切。摘要链接目的地为equation.2.2和subsection.2.3。检查记录在artifacts/terminology_revision_20261002/CHECKS.json及同目录三个源文件diff，旧稿和源文件逐字保存在archive/terminology_revision_20261002。
+
+可编辑匿名包为paper/delivery/naacl_arr_20261002.zip，共167文件、3455490bytes，SHA256为b0253539965f34f57ff44bca429f7592e36420da7dd411d0e60c0a635502c817。独立解压编译后20页文本逐页一致，包内PDF逐字节一致，无Overfull或undefined。七张表、1735条原预测及16个GPT2原响应运行的点估计复算通过，两张主图使用稿件字体重建后逐像素一致；完整验证在paper/delivery/VALIDATION.json。没有重新训练模型或重新估计置信区间。
+
+独有科学收益为零。表达收益是读者能够直接理解训练修改对象、请求含义及结果来源；额外成本限于文字编辑、CPU文档编译和已有复算，无新增模型参数、依赖或研究阶段。本次授权修改已完成，automation继续PAUSED。
+
+### FIGURE_REVISION_20261009 START
+
+实际写入UTC为2026-10-09T20:56:15Z。用户要求核对NAACL行政及排版要求，依据其提供的FlashTrace图版重新设计论文图表，使用专业绘图工具。工作范围为四张论文图表、必要图注、版面和匿名交付核验。原始统计与方法保持，automation保持PAUSED。逐字备份在archive/figure_revision_20261009，原PDF SHA256为280603d2f3c1f66499793ecb68acf9af75bf345057c03a18df3204c047beff4b。已阅读全文NAACL2027 CFP、ARR CFP及ACLPUB格式说明，阅读Matplotlib多面板及标注矩阵教程。FlashTrace公开PDF首次下载因受限网络DNS失败，经授权网络方式下载成功。沿用既有CPU文档环境，无模型计算。表达收益由真实例子、执行过程、对应结构及结果的连续阅读检验；独有科学收益为零，新增复杂度限于矢量图排版与必要交付检查。
+
+### FIGURE_REVISION_20261009 CORRECTION
+
+实际写入UTC为2026-10-09T20:56:11Z。前条START的时间未经写入时钟核验，准确写入时刻未知。已核实备份及首次下载命令完成于2026-10-09T20:55:23Z。后续追加使用写入命令的实时UTC。
+
+
+### FIGURE_REVISION_20261009 PROGRESS
+
+实际写入UTC为2026-10-09T21:05:37Z。四张图已生成并编译，正文8页、总20页。主图为真实固定成员监督比较与训练/调用过程、完整4乘8带符号对应矩阵与语境作用；附录为真实分类例子及三项研究的点估计和95%区间。重复表格内容并入Figure1，同一数据保留。摘要按200词要求精简，保留两个术语的内部链接；AI披露归入Ethical considerations，复现说明由既有附录和README承载。原始paper/data文件逐字节保持。官方模板身份、A4、字体嵌入、主要正文结束位置及正常文字边界通过本地检查；实际查看第1、2、5、6、9、11、12、13页。
+
+首源码替换patch因同文件多操作被拒绝，后续patch因上下文不符被拒绝，均在原文核对后修正。原始日志数组比较着色曾按数值差异判断，实际检查后依据分类符号判断，最终只标注真正改变的类别。首次本地数值重建的raw-grammar步骤因本地不存在包内INDEX.json终止；七表和图已生成，后续本地七表及1735预测复算通过，完整16run核对将在匿名包中进行。图例缺少字体glyph已经改用真实marker。独立图表检查agent已启动，剩余工作为检查意见处理、完整页面检查、行政说明及匿名包独立复现。
+
+
+### FIGURE_REVISION_20261009 COMPLETE
+
+实际写入UTC为2026-10-09T21:11:08Z。用户授权的图表设计、格式核对和匿名交付完成。四张图分别承担监督比较与调用过程、具体句子及完整带符号矩阵与作用、真实分类例子与共同样本比较、三项研究新请求误差的说明职责。独立检查所提的模型状态标注、与source不同的答案定义、请求群体说明及颜色语义已采用。矩阵保留32个真实系数，四张图使用Times New Roman、矢量PDF和可编辑SVG。全部paper/data与归档逐字节相同，数值和区间保持。无模型训练，CPU工作复用既有环境；完整墙钟工作时长未知。
+
+补充图注后曾有结论进入第九页，精简图注及结论中的重复表述后，正文与结论在第八页完成。Limitations紧接结论从第八页开始，符合官方不强制分页要求。本地检查原本只识别页首Limitations，因此在章节位于页中时终止；已按实际章节位置及正文边界核对，未改变八页限制。首次打包因受限执行环境不能读取D盘原数组而终止；通过授权的读取方式后成功，原数组未修改。上述失败没有覆盖正式实验结果。
+
+当前paper/main.pdf为415068bytes、正文8页、总20页、摘要175词，SHA256为9f1680d692ab819c0d456d8228872c50c2e57aae88b97c4795a96ab36674307b。所有页面已渲染并检查，主要公式、两张正文图、两张附录图和灰度图均已查看。官方acl.sty与acl_natbib.bst逐字节一致，全部A4、字体嵌入、匿名，数学附录保持双栏；无Overfull或undefined。原稿及源文件保存在archive/figure_revision_20261009。核对详情为artifacts/figure_revision_20261009/FORMAT_CHECKS.json与FORMAT_ADMIN_REVIEW.md。
+
+匿名包paper/delivery/naacl_arr_20261009.zip含169文件、3575327bytes，SHA256为b1a8881da1f6d651d740663fa34a2ea1ddd3108cdf6817affd713a0fb40f0018。独立解压编译后20页文本逐页一致，包内PDF逐字节一致。七表与1735原预测复算通过，16个GPT2原响应运行点估计最大差异为5.551115123125783e-17；四张图使用稿件字体重建后逐像素相同。验证为paper/delivery/VALIDATION.json，独立工作目录为paper/build/naacl_arr_figure_review_20261009。此次没有重新运行bootstrap或重做科学验证。
+
+行政状态限定为稿件与匿名材料已经检查。OpenReview作者名单、资料、冲突关系、审稿义务、Responsible NLP Checklist、历史提交情况和实际NAACL commitment由作者依据事实完成，本次没有填写或提交。AI用途披露已经置于伦理说明和材料README。
+
+独有科学收益为零；表达收益为真实例子、方法调用及证据的连续阅读。新增成本限于绘图源码、CPU编译及已有结果复现；没有新增模型参数、训练阶段或研究队列。当前工作卡已更新，automation保持PAUSED。
+
+
+### METHOD_FIGURE_20261009 START
+
+实际写入UTC为2026-10-09T21:20:14Z。用户要求聚焦方法图、总览大图和流程图，明确数据图不属于本次修改对象。保留当前数值图与原数据，重新制作方法总览。参考论文arXiv2602.01914v4的源文件Figures/overview.drawio.pdf，其PDF Creator为diagrams.net，嵌入mxfile版本29.3.0，共217个mxCell。本次使用官方draw.io 32.4.1便携版，Authenticode签名Valid，签署者draw.io Ltd。官方参考源码与工具发行信息保存在artifacts/method_figure_20261009/references；下载179820351bytes，断点续传完成。受限环境导出终止，授权环境同一导出成功。旧稿、方法图和相关源码已保存在archive/method_figure_20261009。科学增量为零，目标为准确、可读的完整方法视觉说明。
+
+### METHOD_FIGURE_20261009 COMPLETE
+
+实际写入UTC为2026-10-09T21:37:27Z。事件发生于本次连续编辑、导出和验证期间，未单独测量完整耗时。完成draw.io原生方法总览，source角色、signed edits、target Jacobian、多对多连接、共同容量、请求选择、decoder写入及完整模型响应训练均在同一图中表达。独立图形检查提出容量输入、明确请求选择和反馈文字交叉三项具体修正，已采用并查看最终PDF页面。修改初期正文有三行进入第九页，通过精简图注及结论的重复表述恢复正文八页；没有改变字号与页边距。受限环境再次导出失败，授权环境完成相同draw.io导出。
+
+当前paper/main.pdf为452649bytes、20页、正文8页、摘要175词，Limitations从第9页开始。SHA256为832ac264d47ac22a9adeff02b8831c26ffc673d56c80e90c1226374a16316dcf。所有字体嵌入、A4、官方review模板与双栏保留，无Overfull或undefined；实际页面和全稿总览已查看。Tectonic对导入PDF1.7与输出1.5发出版本提示，渲染、嵌入字体及独立编译检查通过。数据图PDF/SVG与修改前的匿名包逐字节一致，原数据身份检查通过。
+
+交付包paper/delivery/naacl_arr_20261009_method.zip包含170文件、4663012bytes，SHA256为46b3ca5764f79d2ddaaabc21846da1ec3ebaab8092a1220a07964f44eec94706。独立解压编译后20页文本逐页一致，包内PDF与稿件逐字节一致，原生方法图和三张数据图重建后逐像素一致。七张表、1735条原预测、16个GPT2原始响应运行点估计复算通过，最大绝对差为5.551115123125783e-17。原置信区间保留，没有重新运行bootstrap。证据位于artifacts/method_figure_20261009/REVIEW.md、FORMAT_CHECKS.json、UNCHANGED_DATA_FIGURES.json及paper/delivery/VALIDATION.json。
+
+独有科学收益为零；表达收益为完整方法的可读视觉说明。增加原生图形文件、导出及轻量CPU编译维护，无新增研究模块、训练参数、模型或科学实验。旧稿与源码保留在archive/method_figure_20261009。tracker已更新，本单元完成，automation保持PAUSED；作者提交事项仍未核实。
+
+### VISUAL_POLISH_20261009 START
+
+实际写入UTC为2026-10-09T21:41:37Z。用户认可当前方法图方向，要求处理轻微重叠、学习数据图范本、同步正文图注并形成当前完整交稿版本。保留paper/main.pdf、全部图形和相关源码于archive/visual_polish_20261009。本次只调整图形表达与必要文字，保持数据、统计定义和科学结论；研究automation保持PAUSED。
+
+### VISUAL_POLISH_20261009 PROGRESS
+
+实际写入UTC为2026-10-09T21:46:35Z。已查看RAVEL第7页Figure3、end-to-end SAE第2页Figure1及第8页Figure3。方法图缩短相邻标题，调整capacity输入与输出连线、请求文字和原state标记，容量符号采用正文η_j。Figure2使用同零点同尺度的成对横条，直接标记12个原始均值；矩阵保留全部32个带符号数值。Figure3/4把点估计数字移入独立列，保留原paired区间；Figure4共同方法行使用浅色标识。图注和README同步，正文统计与结论保持。
+
+绘图首次按模块导入时因scripts目录未进入搜索路径终止，加入现有scripts路径后执行成功，没有更改依赖或模型。PDF已重新编译，20页、正文8页；逐页查看第2、6、12、13页的实际阅读效果。当前正在一次独立视觉与含义检查，之后完成匿名包及数值复算。
+
+### VISUAL_POLISH_20261009 COMPLETE
+
+实际写入UTC为2026-10-09T21:49:10Z。完成方法图与三张数据图的实际尺寸检查，全部页面总览及三张灰度图已查看。独立图形检查未发现确需修改的遮挡、裁切或科学含义不一致；Figure2成对数字间距紧凑且可区分。方法图η_j和正文Eq7一致；Figure2的12个响应标签与原effects相同，全部32个矩阵系数保持。图注与README同步。
+
+当前paper/main.pdf为452448bytes、20页、正文8页、摘要175词，SHA256为0a328ec9c3d0a131cc950e122f0c3bc16d60d3874983f688bc19096896bcac4d。与本轮开始稿件相比，只有第2、6、12、13页文字发生变化；其余16页文字相同。全部A4、字体嵌入、官方review模板保持，无Overfull或undefined。原始数值数据逐字节保持。
+
+匿名包paper/delivery/naacl_arr_20261009_visual.zip为4653447bytes、170文件，SHA256为66286cd5028baf78427fea0df9e6497570c7e25f794eeb25a0f6ebccdb5d3252。独立解压后的Tectonic编译成功，20页文字逐页一致，四张图重建后逐像素一致，包内PDF与当前稿件逐字节相同；七表、1735预测及16个GPT2响应运行点估计复算通过。证据为artifacts/visual_polish_20261009/REVIEW.md、FORMAT_CHECKS.json及paper/delivery/VALIDATION.json。没有重新运行bootstrap。
+
+本次独有科学收益为零，图形表达与图文一致性得到改善。新增成本为现有绘图脚本与原生图形的维护、轻量CPU导出和复现；模型参数、训练阶段、实验队列没有增加。正式投稿和作者表单状态未核实。旧稿与完整图形保存在archive/visual_polish_20261009，当前入口已更新，本单元完成，automation保持PAUSED。
+
+### METHOD_SPACING_20261009 START
+
+实际写入UTC为2026-10-09T22:05:23Z。用户提供七处方法图截图，要求调整相邻文字、节点、箭头及反馈线，并实际查看导出结果。本次保留修改前图形、PDF和发布配置于archive/method_spacing_20261009。调整paper/figures/callable_method.drawio的布局，保持方法、数据和研究状态。完成条件为七处局部检查、整图及论文实际尺寸检查、当前PDF和可编辑源一致。此项属于图形维护，独有科学收益为零，新增成本为轻量导出与验证。
+
+### METHOD_SPACING_20261009 PROGRESS
+
+实际写入UTC为2026-10-09T22:12:11Z。完成容量分配路径、公式与节点、请求说明、训练标签及反馈线的间距修改。draw.io在受限执行中没有产生更新文件，核对文件时间后使用授权导出成功。第一份检查脚本预期第2页文字变化，实际为全部文字保持，随后按实际修改范围更正检查。七处放大查看覆盖于三个局部图；检查进一步发现η_j下标与方框间距不足，减少符号字号，并将选择标签写为Select rows。此前候选包naacl_arr_20261009_spacing.zip保留，当前交付使用spacing_r2唯一版本。第一份候选已通过独立编译、数值复算及四图重建；最后的排版修改继续核对。本单元没有研究实验或GPU任务。
+
+### METHOD_SPACING_20261009 COMPLETE
+
+实际写入UTC为2026-10-09T22:13:11Z。七处截图对应区域、完整图及当前论文第2页已实际查看。容量连线从target code右侧进入容量系数，选择箭头与容量输出顺序连接；初始公式、请求说明、训练标签及反馈线均留出间距。保存当前原生drawio、PDF、SVG、PNG并更新唯一稿件paper/main.pdf。PDF为452290 bytes、20页、正文8页，SHA256为248b151971245ae1aab5c77690e466582461caf8be8dcb46820d5e193b7a71eb。其余19页逐像素相同，数据图及所有数值资产保持逐字节相同。
+
+当前交付包paper/delivery/naacl_arr_20261009_spacing_r2.zip为4646245 bytes、170文件，SHA256为da1d155da59513b709364e714a2b83b9dfb69d44834011301ad9b3fcf0dfad73。独立解压编译、逐页文字、四图逐像素重建、七表与1735预测以及16个GPT2原始响应点估计复算通过。编译没有Overfull或undefined。证据为artifacts/method_spacing_20261009/REVIEW.md、CHECKS.json和paper/delivery/VALIDATION.json。修改前图形及PDF保存在archive/method_spacing_20261009，候选包保留。
+
+本单元属于图形表达维护，独有科学收益为零，成本为图源维护、轻量CPU导出及验证。没有新增模型、训练或研究决定；automation保持PAUSED。当前请求已经完成。
+
+### METHOD_LOGIC_20261009 START
+
+实际写入UTC为2026-10-09T22:19:45Z。用户指出target activation容量引线的悬空起点，要求核对整图逻辑。核对正文第2节、intervention_transport.py的allocate_columns及transport_field、train_grammar_member_program.py的完整响应与重构目标。当前图形与稿件保存在archive/method_logic_20261009。修正内容包括整组activation输出的明确分支、source edits整组输入、对应关系与执行路径的对象连接，并由独立检查者核对科学含义。科学方法、模型和原始结果保持；此项为图形逻辑修正，科学增量为零。
+
+### METHOD_LOGIC_20261009 PROGRESS
+
+实际写入UTC为2026-10-09T22:23:36Z。zt输出总线上增加可见分支点，容量连接绑定分支对象与容量对象；Ys连接四列整体，计算与执行路径绑定原生图形对象。统一示意target维度为8，四个source成员、8×4对应矩阵和8维执行向量相容。导出检查发现draw.io旋转梯形会变换连接坐标，依据实际导出修正encoder及decoder接点，现已逐处查看。独立检查指出自然重构包含decoder bias、共同选行依赖decoder norm、训练重构使用未干预状态，已在图和图注表达，复查未发现继续修改的具体计算问题。训练匹配同时标记task和hidden responses，图注明确归一化。
+
+当前稿件已编译，20页、正文8页，第2页和第8页实际尺寸已查看。PDF为455874 bytes，SHA256为a2b06d7a7c9f3bfbbc7f44535537c6d3939e03a9daa7b69de0cb822f8d9641fa。当前完成包内图源、导出图与正文的一致性核对，原始数据与方法保持。
+
+### METHOD_LOGIC_20261009 COMPLETE
+
+实际写入UTC为2026-10-09T22:24:40Z。当前方法图已逐项核对source贡献、target编码、共同选行、负向容量、请求组合、decoder状态增量及完整训练目标。zt整组输出的可见分支明确连接容量计算；原生对象连接、整组Ys输入、示意维度、自然重构bias及图注选行分数均已查看。独立复查没有发现上述修正引入新的科学错误。当前图源、导出图和论文实际版面一致。
+
+paper/main.pdf为455874 bytes、20页、正文8页，SHA256为a2b06d7a7c9f3bfbbc7f44535537c6d3939e03a9daa7b69de0cb822f8d9641fa。其余19页逐像素相同。当前包paper/delivery/naacl_arr_20261009_logic.zip为4658408 bytes、170文件，SHA256为f8f758d5d4b86ac85a5e22454b29fcf6e2d86707cf745bdc666c58aab5604e96。独立解压编译、20页文字、四图逐像素重建、七表、1735预测及16个GPT2原始响应点估计复算通过，编译没有Overfull或undefined。包中只有方法图三个文件、当前PDF、对应图注源和包清单发生变化，其他资产逐字节相同。
+
+证据为artifacts/method_logic_20261009/REVIEW.md、CHECKS.json与paper/delivery/VALIDATION.json。旧稿和图形保存于archive/method_logic_20261009，先前交付包保留。此项为图形逻辑修正，独有科学收益为零；新增成本为图源维护、CPU导出及检查。研究automation保持PAUSED，当前请求已完成。
+
+### ORIENTATION_READING_20261010
+
+实际写入UTC为2026-10-10T04:35:08Z。阅读开始与结束的准确时刻未记录，未知。用户要求通读项目、周边文献、当前论文与AGENTS.md，并理解各目录用途。本次阅读AGENTS.md、EXPERIMENT_TRACKER.md、EXPERIMENT_PLAN.md、CBSM蓝本、paper/main.pdf全部20页（SHA256 a2b06d7a7c9f3bfbbc7f44535537c6d3939e03a9daa7b69de0cb822f8d9641fa）及其TeX源，核对src/ccad/intervention_transport.py的allocate_columns与scripts/run_shift_transfer.py的input_member_delta同正文公式(5)–(6)一致。文献阅读包括Sparse Feature Circuits第2–4节与SHIFT实验、Reproducible Subspaces第1–4节、Semantic OT与SharedSAE引言和方法部分，以及2026-09-15旧稿首页；联网检索2026年跨seed对应与解释迁移工作，没有发现处理同一问题的新论文。
+
+paper/references.bib保留anonymous2026benchmark（OpenReview forum 5cy6WtSC8f），Reproducible Subspaces将其描述为以删除作用和替换检验评价跨seed对应方法的基准；当前正文没有引用。OpenReview页面要求人工浏览器验证，本次没有获得全文，内容仍为TO VERIFY。
+
+阅读中整理的观察均来自现有稿件表格。source-direction readout的误差在人工解释成员级请求（.087对.149，Table 9）、GPT2新请求（.135对.176，Table 11）、跨source复用（.121对.169，Table 12）和后续分类器响应（.121对.148，Table 15）上低于训练后program，infinitive研究中program更低（.151对.281）。program训练后，target字典自身的readout误差上升，infinitive为.281到.902，GPT2为.135到.154。正文引用的Table 8、Figure 3、Figure 4和Table 4位于附录。paper/CLAIM_MAP.md仍引用当前20页稿件已经移除的附录标签。
+
+本次没有修改代码、配置、稿件或研究状态，没有模型运行或GPU使用，automation保持PAUSED，科学增量为零。下一步由用户决定。
+
+### MAYO_WORKSTATION_REGISTRATION_20261010
+
+实际写入UTC为2026-10-10T04:59:30Z。用户告知可以使用Mayo云端workstation，并要求写入Claude Code。依照个人PC手册，Claude Code在2026-10-10T04:57Z前后两次执行只读SSH检查，均exit0，结果为R5543246、两张RTX 6000 Ada（各49140 MiB，空闲）、24个CPU线程、约93 GiB内存、`/mnt/nvme3-data` 可用4.4T，以及环境 `mayolink-cu121` 的PyTorch 2.5.1+cu121可见两张GPU。连接摘要和使用规则写入 `C:/Users/zz/.claude/CLAUDE.md`；硬件信息登记在 `.aris/compute/local.md` 的Mayo remote workstation条目。远程机器上没有创建目录、上传文件或运行任务，CCAD代码与数据没有部署。科学增量为零，automation保持PAUSED。
+
+### NAACL_SPRINT_20261010 START
+
+实际写入UTC为2026-10-10T05:20:03Z。用户提供一份外部Opus 5.5审稿，判定当前稿件为workshop水平，并授权较高权限，要求建立自动循环，使论文整体提高两个档次，达到NAACL Main strong accept水平，信息分配合理、故事易懂，不允许降低投稿档次。ARR截止为2026-10-13T11:59:00Z，冻结时间定为2026-10-13T04:00:00Z。
+
+研究选择由本会话依据原始表格作出。论文主线改为SAE重训后解释的部分级迁移，诊断通用特征对应方法下完整一致掩盖部分错误，主方法改为部分监督、只需新SAE的多对多对应，source-direction readout作为可访问原SAE时的参照上限。决定性实验E1至E7、篇幅分配、写作红线和时间表写入EXPERIMENT_PLAN.md，执行状态写入EXPERIMENT_TRACKER.md。修改前的plan、tracker、AGENTS、automation prompt、paper/main.pdf及主要TeX源逐字保存在archive/naacl_sprint_20261010，SHA256见同目录SHA256SUMS.txt。
+
+执行归属改为Claude Code会话7f55591b的自定节奏循环，Codex automation ccad保持PAUSED。尚未运行新实验。
+
+### NAACL_SPRINT_20261010 PROGRESS
+
+实际写入UTC为2026-10-10T06:54:58Z。事件时间来自各run的status.json。
+
+E6完成，没有发现实现缺陷。infinitive固定关系的八个目标特征在确认语境中平均每词元只有0.80个激活，未训练时只产生源作用的28%，训练后在新语境中作用过冲到1.55倍，误差升到.961；训练后字典的readout因重构沿源方向改变而过冲到2.07倍。报告为artifacts/naacl_sprint_20261010/e6_anomaly/REPORT.md。
+
+E1首次批量运行NAACL_E1_shift_r59panel_seed2_v1于05:39:46Z以FAIL结束，原因是逐行打开D盘指标文件时遇到PermissionError，扫描软件锁定文件的可能最大，已写出的11,068行保留。scripts/run_causalgym_multisite.py新增按批追加的records方法，run_shift_transfer.py、run_shift_retraining.py与train_grammar_member_program.py改为每个查询或批次追加一次，记录内容和格式不变，之后以v2 run ID重跑。新增标准匹配脚本naacl_matching_relations.py、naacl_grammar_matching_maps.py与naacl_infinitive_matching.py，只用自然文本上的解码器余弦或激活相关做Hungarian一对一匹配和互斥的前两名匹配。1,735篇面板前三个目标的部分结果显示完整请求训练的静态对应完整误差最低(.098)而部分误差为.298，部分请求训练为.145与.124，解码器Hungarian匹配为.260与.437，前两名解码器匹配使代词减姓名的准确率差降到−.0008。这些数字在全部目标完成前只作工作记录。
+
+Mayo工作区建立在/mnt/nvme3-data/harvardhds/ccad-m364569，环境与资产登记在.aris/compute/local.md。E4a在16个公开SAEBench TopK字典上运行infinitive解释迁移，前12个目标中readout的部分误差为.354，部分请求训练的程序为.171，完整请求训练为.214，标准匹配高于1.6。E4b首次准备在句首加eos，干预位置出现范数达5238的状态，公开SAE在这些位置的FVE只有.39与.33，改为换行前缀后为.69与.75，旧准备目录与两个已启动的run更名为superseded_*保留，以换行前缀重新准备，两个方向于06:51Z开始训练。
+
+本机GPU队列依次为E1剩余两个run、infinitive完整与部分监督四个目标、GPT2匹配评价四个目标以及SHIFT后续分类器用途四个目标。临时进度网页为tmp/progress_viewer，不进Git。
+
+### FIGURE_PALETTE_20261010 START / PROGRESS
+
+实际写入UTC为2026-10-10T05:25:00Z。此项开始事件为2026-10-10T05:15:48Z，当前补记。用户要求调整论文全部图形的配色，提高对比度及饱和度，并在项目目录之外提供可下载的Fig.1样式说明。原始图形、PDF、两份绘图脚本、release配置及原tracker保存在archive/figure_palette_20261010。当前稿件引用四张图。方法图调整为深紫、孔雀绿、赭金，数据图调整为孔雀绿、莓红、深灰；布局、数值、统计尺度及方法语义保持。热图标签根据背景亮度使用黑色或白色。使用scientific-visualization 1.4的颜色冗余编码、灰度检查与真实尺寸检查步骤。
+
+工作只涉及现有图源、CPU导出、稿件编译和下载说明。科学增量为零，新增成本为图形维护及视觉检查。当前tracker已由并发Claude Code会话更新为NAACL_SPRINT_20261010，本次保留其执行安排，配色工作记录独立保存于artifacts/figure_palette_20261010。下一步完成四图和全稿检查、同步交付包，并将说明与可编辑示例保存到项目外下载目录。
+
+### FIGURE_PALETTE_20261010 CORRECTION
+
+实际写入UTC为2026-10-10T05:27:15Z。上一条START / PROGRESS中的05:25:00Z为手工输入的错误时刻。该条实际写入的准确秒数未保存，记为未知；工具记录证明其写入早于2026-10-10T05:24:11Z。开始事件2026-10-10T05:15:48Z有此前工具记录支持。后续追加由写入命令读取当前UTC。
+
+### FIGURE_PALETTE_20261010 COMPLETE
+
+实际写入UTC为2026-10-10T05:28:08Z。四张当前论文图的配色和必要的文字前景色调整完成，完成时刻由本条写入记录。方法图使用深紫、孔雀绿、赭金，数据图使用孔雀绿、莓红与深灰；方法图原生XML去除颜色属性值后结构相同。检查32个热图标签，最低文字对比度为5.028。实际查看四图彩色与灰度版本及全稿第2、6、12、13页；20页文字相同，其他16页逐像素相同。数据与表格同上一交付包逐字节相同。
+
+paper/main.pdf为455635 bytes，SHA256为45a113cca7109fe91511de5abac2ac231f201a2926620cc7783033dd6aa0e98c。paper/delivery/naacl_arr_20261010_palette.zip为4657509 bytes、170文件，SHA256为9cffdac90a5d741152a56063ccd70895b6d8e1a18dff23b6661a5d77b5e8fa4b。独立解压编译、20页文字、四图逐像素重建、七表、1735预测及16个GPT2原始响应结果复算通过；没有Overfull或undefined。包内scripts/run_shift_transfer.py另含并发会话增加的extra_relations读取分支，本次未修改该文件，也未执行该新增分支；其余包变化为图形、绘图脚本、README及清单。
+
+下载说明及四种格式示例保存于C:/Users/zz/.codex/visualizations/2026/09/23/01a0cc9b-67c9-77d1-bb30-344cb29a591a/method_figure_style_20261010/，同级method_figure_style_20261010.zip为1552315 bytes、5文件，ZIP完整性通过。说明包含可直接交给模型的指令、结构表达、字体、配色、连接端口、实际尺寸与灰度检查、原生矢量编辑及导出。科学增量为零，成本为现有图形维护和CPU验证。证据为artifacts/figure_palette_20261010/CHECKS.json、pages/与paper/delivery/VALIDATION.json。并发研究tracker和执行安排保持，本次配色及下载说明请求已完成。
+
+### NAACL_SPRINT_20261010 PROGRESS
+
+实际写入UTC为2026-10-10T07:54:17Z。事件时间来自各run的status.json。
+
+infinitive完整与部分监督四个目标全部PASS（最后一个于07:2xZ完成，准确秒数见NAACL_E2_infinitive_t5_v1_20261010/status.json）。四目标平均的部分请求误差为部分监督.146、完整监督.178、readout .296，参与请求为.139、.149、.306，成员请求两种监督均为.216，完整请求为.142与.134；部分请求上部分监督在三个目标更低，第五个目标两者相同(.230与.226)。Hungarian解码器匹配在三个目标过冲3.5至5.9倍，误差2.0至7.6。汇总为artifacts/naacl_sprint_20261010/e2_supervision/E2_INFINITIVE.json。
+
+GPT2四个目标的标准匹配评价全部PASS，完整、部分、新请求误差为Hungarian解码器.246/.294/.256、Hungarian激活.285/.337/.296、前两名激活.276/.304/.293，readout为.145/.126/.135。汇总为artifacts/naacl_sprint_20261010/e1_matching/E1_GPT2.json。
+
+Qwen3-1.7B两个方向的v2确认（换行前缀，字典学习率3e-5）全部PASS。两方向平均的完整、部分、新请求误差为部分监督程序.195/.213/.205、完整监督.191/.225/.205、readout .203/.216/.209、Hungarian解码器.324/.327/.328。学习率1e-4的v1确认不稳定，已更名为superseded_*保留。汇总为artifacts/naacl_sprint_20261010/e4_scale/E4B_QWEN_v2.json。
+
+用户在Mayo完成Hugging Face登录并接受Gemma许可，令牌文件由huggingface_hub读取，内容未被打印或复制。google/gemma-2-2b修订c5ebcd40下载完成(10,479,239,529 bytes)，Gemma Scope残差流23层与注意力两层的16k、65k canonical字典下载完成，manifest在Mayo assets目录。SFC公开的Gemma SHIFT解释取自saprmarks/feature-circuits的experiments/bib_shift.ipynb（MIT许可），43个特征逐条保存在artifacts/naacl_sprint_20261010/e4_scale/GEMMA_SHIFT43.json，按注释分为代词(35)与女性描述(8)两部分。SFC加载规则（16k中L0最接近100）与canonical字典在全部23个位置一致，核对结果为GEMMA_SCOPE_L0_RULE.json。
+
+新增scripts/mayo/gemma_shift_transfer.py，在Gemma-2-2B上复现SFC的分类器与删除流程，并把解释迁移到另一组Gemma Scope字典，比较readout、Hungarian解码器与激活匹配、前两名解码器匹配、自然文本编辑空间拟合，以及完整与部分请求监督训练的固定对应，最后只用目标字典执行SHIFT。小样本试运行NAACL_E4C_GEMMA2B_SHIFT_smoke_20261010 PASS，用时4.5分钟。试运行显示65k字典对多数解释特征保留余弦0.95至1.0的近似副本，只有resid_0、resid_1、resid_11、resid_13、resid_14等位置最佳匹配余弦在0.65至0.78之间，因此加入第二个目标，即同宽度、L0最低的16k字典，并在Bias in Bios dev划分上比较自然文本拟合与Hungarian两种初始化，test划分只用于最终run。dev运行在Mayo tmux会话ccad-e4c-dev中进行。
+
+### NAACL_SPRINT_20261010 PROGRESS
+
+实际写入UTC为2026-10-10T08:13:20Z。
+
+新增scripts/naacl_supervision_table.py，在infinitive四个重训目标、16个公开SAEBench目标、GPT-2 Medium四个目标（RG08程序run加E1匹配run，按各自panel的查询顺序对齐）与Qwen两个方向上，以目标与输入的配对bootstrap（2000次）计算各方法完整、部分、新请求误差及差值，输出artifacts/naacl_sprint_20261010/e2_supervision/SUPERVISION.json。部分监督减完整监督的部分误差为infinitive −.033[−.078,.005]、公开字典−.040[−.066,−.017]、GPT-2 −.041[−.055,−.029]、Qwen −.012[−.020,−.006]，SHIFT为−.168[−.204,−.141]；完整误差差值除SHIFT(+.049[.036,.060])外均在±.012以内且区间含零。曾假设部分共同作用程度可以解释各设定收益大小，计算的共同作用指数为infinitive .034、GPT-2 .152、Qwen .146，与收益排序不一致，该解释不进入论文，指数保留在SUPERVISION.json。
+
+核对发现infinitive与语法设定的部分监督对应为输入相关形式，执行时读取源SAE，只有SHIFT（及Gemma）的固定对应只用新SAE，Table 2与正文据此标注。迁移SHIFT的代词部分目标特征最强12个激活落在人称代词上的比例为部分监督.691、Hungarian解码器.586、源特征.874（e8_labels）。
+
+Qwen学习率1e-4的确认（v1）在同一RG08确认面板上评价后，部分监督程序完整误差.286高于初始化.261，随后在dev上比较1e-5与3e-5（程序新请求误差.257与.256）选择3e-5并完成v2。由于v1曾暴露该面板，新增scripts/naacl_qwen_fresh_panel.py把GPT-2跨源研究的另外384对（round09 confirmation_data_v2）重新分词，确认与拟合面板及RG08面板均无重叠，并生成v3配置（scripts/mayo/make_e4b_v3_configs.py、run_e4b_v3.sh），待Gemma dev结束后在Mayo运行。v1与dev分析结果保存为e4_scale/E4B_QWEN_v1.json、E4B_QWEN_DEV_LR1e-5.json、E4B_QWEN_DEV_LR3e-5.json。
+
+paper/main.tex改为输入naacl_main、naacl_limitations、naacl_statements与naacl_appendix，题目改为Carrying SAE Explanations into New Dictionaries, Part by Part；旧章节文件保留且已逐字归档。新附录保留成员信息（infinitive成员子集.197对均匀分配.521）、单部分监督组合（.175对.171）与完整一致下的部分改变比例，表格由paper/data中的原数据经naacl_tables.py重新生成。补充paulo2025、karvonen2025saebench、lieberum2024gemmascope、deng2026qwenscope、gemmateam2024gemma2、yang2025qwen3、dearteaga2019bias文献条目。Tectonic首次需要cmsy9与cmsy6字体，从官方bundle下载到项目缓存。草稿编译为12页，位于paper/build/naacl_sprint_draft。
+
+### NAACL_SPRINT_20261010 PROGRESS
+
+实际写入UTC为2026-10-10T08:36:52Z。事件时间来自各run的status.json。
+
+Gemma dev划分（600篇平衡dev传记）两个run PASS，l0low16k于08:30:41Z完成，w65k于08:35:55Z完成。最低L0的16k目标上，完整、部分、新请求误差为Hungarian解码器.141/.238/.208、readout .142/.139/.251、自然文本拟合.119/.175/.262、完整监督（Hungarian初始化）.057/.195/.213、部分监督（Hungarian初始化）.077/.082/.231；部分监督减完整监督的部分误差为−.113[−.122,−.103]。65k目标上Hungarian解码器.089/.093/.188、readout .169/.147/.262、完整监督.029/.076/.144、部分监督.033/.041/.133。Gemma分类器对删除的logit变化很大且饱和，多数请求源效应RMS为50至68。两个目标上Hungarian初始化在部分与新请求上都不差于自然文本拟合初始化，且使用更少目标特征，test正式run定为Hungarian初始化。最低L0目标上部分监督在新请求（层段、跨部分随机特征子集）上弱于Hungarian，这与恒等式一致，只训练两个注释部分时，部分内部各特征的误差不受约束。因此新增第三种监督，在两个部分和完整删除之外，每篇传记加一个随机半数特征子集，其源响应在训练中实时计算，归一化使用完整请求能量（gemma_shift_transfer.py的subsets族）。该族先在dev划分上运行（NAACL_E4C_GEMMA2B_dev2_*，Mayo tmux ccad-e4c-dev2），test run在其后启动。分析脚本scripts/naacl_analyze_gemma.py，结果为e4_scale/E4C_DEV_L0LOW16K.json与E4C_DEV_W65K.json。
+
+Qwen v3两个run在评价前FAIL，原因是配置沿用RG08面板的split标签confirmation，新面板的split为rg09_new_sentence_confirmation，评价行数为0触发断言。配置改为该标签并以v4 run ID重跑，v3目录保留。
+
+### NAACL_SPRINT_20261010 PROGRESS
+
+实际写入UTC为2026-10-10T08:52:23Z。两个Qwen v4 run于2026-10-10T08:51:27Z PASS（status.json）。
+
+在384对未被任何Qwen3 run评价过的BLiMP句对上，两方向平均的完整、部分、新请求误差为部分监督.218/.243/.227、完整监督.224/.257/.234、readout .224/.228/.225、自然文本拟合.285/.304/.294、Hungarian解码器.351/.367/.359。部分减完整监督的部分误差为−.014[−.024,−.007]，部分监督减readout的部分误差为+.015[−.019,.043]。结论与v2方向一致，v2的部分监督优势(−.012)在新句对上保持。Table 2的Qwen行改用v4，正文与附录据此更新，附录说明学习率1e-4的确认、dev选择与新面板确认的顺序。汇总为e4_scale/E4B_QWEN_v4.json与e2_supervision/SUPERVISION.json。
+
+### NAACL_SPRINT_20261010 PROGRESS / CORRECTION
+
+实际写入UTC为2026-10-10T09:07:23Z。
+
+dev2 l0low16k（半数随机子集监督，Hungarian初始化，600篇dev传记）PASS。完整、部分、新请求误差为子集监督.079/.088/.223、部分监督.087/.096/.223、完整监督.054/.196/.222。随机半数子集请求的误差明显下降（members_0至7中子集监督多为.08至.13，部分监督多为.10至.26），但汇总的新请求误差不变，主要来自只含一至三个特征的小请求，例如早层女性描述（单特征，源效应RMS 7.7，子集监督相对误差2.44）与晚层女性描述（源效应RMS 25.6，误差1.21）。Gemma分类器对半数以上特征的删除接近饱和，半数子集的响应无法约束单个特征的误差，这与恒等式中监督请求分布决定约束方向一致。结果为e4_scale/E4C_DEV2_L0LOW16K.json。
+
+因此把子集监督改为每行先从均匀分布抽取入选概率、再逐特征抽样，使小子集也出现（配置键subset_inclusion为uniform，旧行为为half，gemma_shift_transfer.py同时保证子集非空）。在此之前，正式run NAACL_E4C_GEMMA2B_final_l0low16k_v1_20261010已于09:03:19Z启动，仍处于干净分类器表示收集阶段、没有任何迁移结果。我先发送中断信号，随后关闭其tmux会话，进程在处理中断前因会话关闭而结束，未写出状态，status.json由手工改为FAIL并写明原因与结束时间范围（09:05:03Z至09:05:20Z之间）。新的dev3（l0low16k，只训练可变大小子集族）在GPU1运行，正式run改用v2 ID（final_l0low16k_v2与final_w65k_v2，三种监督族、三个训练种子、test划分、含SHIFT用途），由Mayo tmux会话ccad-e4c-final依次启动。dev2 w65k仍以半数子集运行，作为开发记录保留。
+
+### NAACL_SPRINT_20261010 PROGRESS（独立审稿与修订）
+
+实际写入UTC为2026-10-10T09:35:54Z。
+
+一个不带项目背景的独立agent按NAACL领域主席标准阅读草稿draft_20261010T0910.pdf，给出Soundness 2.5、Overall 2.5（接近Findings）、Confidence 4。主要意见为readout在多数设定与本方法相当或更好且未证明目标原生的必要性，目标字典被微调造成混杂，主指标是部分监督的训练族，基线获得的信息较少，用途证据不能区分两种监督，多对多结构未展示，与干预对齐方法的关系不清，以及19处文字与数字不一致。审稿要点保存在artifacts/naacl_sprint_20261010/review/REVIEW_01_draft_20261010T0910.md。
+
+据此改变的研究动作如下。Gemma正式run在启动前加入一对一对照族parts_matched（只训练Hungarian匹配的删除比例，使用同样的任务数据与部分监督），并在自然文本统计中加入每个源特征在目标重构中的保留比例与目标字典FVE。代码改动后先用smoke v3测试，v3因与dev3同卡显存不足FAIL，v4在另一张卡PASS（09:25Z），随后正式run final_*_v2于09:26Z前后启动，Gemma Scope字典不训练、只训练成员关系。
+
+新增分析为scripts/naacl_dictionary_quality.py（适配字典的自然文本FVE下降最多0.59个百分点，DICTIONARY_QUALITY.json）、SHIFT逐部分误差与答案一致率（完整监督关联词部分.447，部分监督.109，部分答案平衡一致率89.3%对96.2%，readout为.157/.065/.044与97.5%）、用途表区间、全方法完整/部分/新请求表。正文重写了摘要、引言（加入贡献列表与readout适用条件）、方法（列为成员关系，min(1,Aq)，说明哪些设定适配字典）、实验设定（统一陈述数据纪律）、结果（修正审稿指出的范围、措辞与引用位置，Table 2改为加粗每行最小值，加入只训练成员关系的部分监督.159）、相关工作（加入Li等2016、Balagansky等2025、crosscoders、DAS与因果抽象、Makelov等、RAVEL）与局限。补充bricken2023monosemanticity、cunningham2024sparse、radford2019gpt2、lindsey2024crosscoders、balagansky2025permutability文献条目。图2标签放大并重新排布。Gemma结果小节与Gemma用途表等待正式run。
+
+### NAACL_SPRINT_20261010 PROGRESS
+
+实际写入UTC为2026-10-10T10:39:22Z。
+
+为回应审稿的基线与混杂意见，补充三项只读分析。scripts/naacl_reselection_baseline.py用GPT-2跨源run中各种子自己的源梯度选择作为在目标SAE中重新选择的解释，与源解释在同一批384对上比较，十二个方向平均的完整、部分、新请求误差为.229/.260/.243，迁移得到的部分监督对应为.169/.163/.169，readout为.123/.113/.121（e1_matching/GPT2_RESELECTION_BASELINE.json）。naacl_supervision_table.py加入只训练增益、字典不变的变体，公开SAEBench字典上部分误差.244（readout .344，部分监督.165），GPT-2 .204，Qwen3 .296。scripts/naacl_retention_retrained.py按公开目标的同一定义计算重训目标的源特征保留比例，infinitive四个重训目标平均.82（readout部分误差.296，接近公开字典回归线在该保留比例处的.36），GPT-2为.84（e4_scale/RETENTION_RETRAINED.json）。保留比例不能单独解释不同设定之间readout误差水平的差异，正文只在公开字典与Gemma内部使用这一解释。图1(b)文字放大，图3加入回归线的95%带。Gemma正式run于10:39Z分别进行到第7与第5个方法的响应计算。
+
+### NAACL_SPRINT_20261010 PROGRESS（E4c 正式结果）
+
+实际写入UTC为2026-10-10T12:36:53Z。NAACL_E4C_GEMMA2B_final_l0low16k_v2_20261010于12:24:37Z PASS，final_w65k_v2于12:33:35Z PASS（status.json）。评价为1,736篇平衡test传记，学习方法为三个训练种子平均，字典不训练。
+
+完整、部分、新请求误差在65k与最低L0 16k目标上分别为：部分监督.032/.043/.133与.085/.087/.227，完整监督.031/.096/.154与.059/.194/.212，部分加可变子集监督.044/.052/.093与.083/.094/.199，Hungarian匹配加部分监督增益.074/.070/.184与.091/.184/.229，Hungarian解码器.089/.095/.192与.138/.227/.206，readout .167/.147/.262与.143/.144/.254，自然文本拟合.277/.254/.241与.121/.175/.261。部分减完整监督的部分误差为−.053[−.055,−.051]与−.108[−.113,−.103]，完整误差+.001与+.026。女性描述部分的误差从完整监督的.139与.265降到部分监督的.053与.104。可变子集监督使新请求误差相对部分监督下降.040与.028，完整与部分误差变化不超过.012。最低L0目标上，一至三个特征的层段内请求所有方法误差都在.26以上。目标保留源特征激活98.1%与88.3%，FVE 86.7%与73.9%。部分监督平均每个源特征用3.5与6.4个目标特征，16与26个目标特征被多个源特征共用。按成员权重加权，分配给代词部分的目标特征激活落在人称代词上的比例为.45与.34，Hungarian匹配为.44与.58，源特征为.59，响应训练没有提高标签专一性，这一负面观察写入附录与局限。
+
+SHIFT复现：删除43个特征并重训分类器后职业.954、性别.522（SFC报告.950/.524）；我们的未编辑分类器为.808/.687，原分类器在删除后为.936/.520（SFC报告.677/.819与.760/.515，差异来自分类器训练的数值类型与初始化，记录为复现差异）。只用新字典时，部分监督重训后为.956/.522/最差组.917（65k）与.953/.520/.908（最低L0）；Hungarian解码器与激活匹配在最低L0上把最差组降到.862与.843，学习对应为.908至.926。
+
+正文新增5.4节Gemma结果与图4、Table 4，Table 2加入两行Gemma，摘要、贡献列表、5.2节与附录据此更新，主文正好8页。汇总为e4_scale/E4C_FINAL.json、GEMMA_FIGURE_DATA.json、E4C_SPLIT_*.json，表由naacl_tables.py --gemma --gemma-use生成。草稿快照artifacts/naacl_sprint_20261010/review/draft_20261010T1250.pdf，将交给第二位独立审稿agent。

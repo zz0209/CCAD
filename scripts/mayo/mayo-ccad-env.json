@@ -1,0 +1,19 @@
+{
+  "name": "mayo-ccad-env",
+  "registered_utc": "2026-10-10T06:45:00Z",
+  "host": "R5543246 (Mayo workstation, accessed through MayoLink)",
+  "gpus": "2 x NVIDIA RTX 6000 Ada Generation, 49140 MiB each, driver 535.309.01",
+  "python": "/mnt/nvme3-data/harvardhds/ccad-m364569/env/bin/python, CPython 3.10.12",
+  "packages": {
+    "torch": "2.7.1+cu118",
+    "torchvision": "0.22.1+cu118",
+    "transformers": "5.19.0",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "safetensors": "0.8.0",
+    "huggingface_hub": "2.2.0",
+    "nnsight": "0.3.7 (installed without dependencies, needed only for the dictionary_learning package import)"
+  },
+  "dictionary_learning": "copy of D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf at /mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+  "difference_from_local_r004": "Local runs use Python 3.13.7, torch 2.8.0+cu128 and transformers 5.15.0 on an RTX 5070 Ti. Results across the two environments are compared through their own baselines inside each run."
+}

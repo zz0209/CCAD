@@ -1,0 +1,16 @@
+{
+  "output_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_matching_maps_l14_v2_s2",
+  "device": "cuda:0",
+  "dictionary_source_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+  "dictionary_overlay_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+  "source_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/topk_seed2.pt",
+  "source_run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2",
+  "source_seed": 2,
+  "target_checkpoint_template": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/topk_seed{seed}.pt",
+  "target_seeds": [
+    1
+  ],
+  "natural_states": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/natural_states.npz",
+  "natural_count": 32768,
+  "members_per_source": 2
+}

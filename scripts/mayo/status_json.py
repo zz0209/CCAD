@@ -1,0 +1,41 @@
+import json
+import subprocess
+from pathlib import Path
+
+ROOT = Path('/mnt/nvme3-data/harvardhds/ccad-m364569')
+
+
+def count_lines(path):
+    if not path.exists():
+        return 0
+    with path.open('rb') as f:
+        return sum(chunk.count(b'\n') for chunk in iter(lambda: f.read(1 << 22), b''))
+
+
+def main():
+    runs = {}
+    for status in ROOT.glob('runs/*/*/status.json'):
+        run = status.parent
+        st = json.loads(status.read_text())
+        progress = run / 'progress.json'
+        stage = None
+        if progress.exists():
+            p = json.loads(progress.read_text())
+            stage = ' / '.join(str(p.get(k)) for k in ['stage', 'method', 'query', 'step'] if p.get(k) is not None)
+        runs[run.name] = dict(status=st.get('status'), started=st.get('started_at_utc'), ended=st.get('ended_at_utc'),
+                              records=count_lines(run / 'metrics.raw.jsonl'), stage=stage)
+    downloads = {}
+    for item in sorted((ROOT / 'assets').iterdir()):
+        if item.is_dir():
+            files = [p for p in item.rglob('*') if p.is_file() and '.cache' not in p.parts]
+            downloads[item.name] = dict(files=len(files), size=f'{sum(p.stat().st_size for p in files) / 2**30:.2f} GiB')
+    gpu = subprocess.run(['nvidia-smi', '--query-gpu=index,utilization.gpu,memory.used', '--format=csv,noheader,nounits'],
+                         capture_output=True, text=True, check=True).stdout
+    gpus = [dict(index=int(a), util=int(b), mem=int(c)) for a, b, c in (line.split(', ') for line in gpu.strip().splitlines())]
+    sessions = subprocess.run(['tmux', 'ls'], capture_output=True, text=True).stdout.strip().splitlines()
+    print(json.dumps(dict(runs=runs, downloads=downloads, gpus=gpus,
+                          sessions=[s.split(':')[0] for s in sessions if s.startswith('ccad')])))
+
+
+if __name__ == '__main__':
+    main()

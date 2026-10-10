@@ -278,7 +278,7 @@ def main():
         w.environment = dict(python=sys.executable, torch=torch.__version__, numpy=np.__version__,
                              transformers=transformers.__version__, threads=2,
                              model=c['model_revision'], hook=c['hook_module_path'])
-        for filename in ['model.safetensors', 'config.json', 'tokenizer.json']:
+        for filename in c.get('model_files', ['model.safetensors', 'config.json', 'tokenizer.json']):
             w.checked(Path(c['model_local_dir'])/filename)
         model = transformers.AutoModelForCausalLM.from_pretrained(c['model_local_dir'],
             local_files_only=True, dtype=torch.float32, attn_implementation='eager').eval().to(w.device)
@@ -452,7 +452,7 @@ def main():
                     ids[2*i+j, :len(tokens)] = torch.tensor(tokens, device=w.device)
                     mask[2*i+j, :len(tokens)] = 1
             positions = torch.tensor([r['position'] for r in rr], device=w.device).repeat_interleave(2)
-            hidden = model.transformer(ids, attention_mask=mask, use_cache=False).last_hidden_state
+            hidden = model.get_submodule(c.get('backbone_module', 'transformer'))(ids, attention_mask=mask, use_cache=False).last_hidden_state
             logits = model.get_output_embeddings()(hidden[:, :-1])
             per_token = logits.log_softmax(-1).gather(-1, ids[:, 1:, None]).squeeze(-1)
             total = (per_token*mask[:, 1:]).double().sum(1).reshape(-1, 2)
@@ -521,11 +521,10 @@ def main():
                     rr = rows[off:off+c['eval_batch_pairs']]
                     _, _, margins = forward(rr)
                     result[qi, off:off+len(rr)] = margins.cpu().numpy()
-                    for row, value in zip(rr, margins.cpu().tolist()):
-                        w.record(kind='grammar_program', task=row['task'], row_id=row['row_id'],
-                            component=row['task']+':'+str(row['row_id']), mode=query, operation=query,
-                            method=name, seed=source_seed, target_seed=c['target_seed'], split=evaluation_split,
-                            margin=value, accuracy=value > 0)
+                    w.records([dict(kind='grammar_program', task=row['task'], row_id=row['row_id'],
+                        component=row['task']+':'+str(row['row_id']), mode=query, operation=query,
+                        method=name, seed=source_seed, target_seed=c['target_seed'], split=evaluation_split,
+                        margin=value, accuracy=value > 0) for row, value in zip(rr, margins.cpu().tolist())])
                 if execution_counts is not None:
                     write(w.run/f'{name}__{query}__execution.json',execution_counts)
                 execution_counts = None
@@ -553,6 +552,11 @@ def main():
             target.load_state_dict(initial)
         if c.get('fixed_control'):
             evaluate('fixed', 'fixed')
+        for name, template in c.get('matching_maps', {}).items():
+            saved_map = np.load(w.checked(template.format(target_seed=c['target_seed'], source_seed=source_seed)))
+            fixed_ids = torch.tensor(saved_map['target_members'], device=w.device)
+            fixed_gate = torch.tensor(saved_map['partition64'], device=w.device, dtype=torch.float32)
+            evaluate(name, 'fixed')
         for name, item in c.get('evaluation_checkpoints', {}).items():
             saved = torch.load(w.checked(item['path'].format(target_seed=c['target_seed'],
                                training_run=c.get('checkpoint_run_by_target', {}).get(str(c['target_seed']), ''))),

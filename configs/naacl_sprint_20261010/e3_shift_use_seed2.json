@@ -1,0 +1,142 @@
+{
+  "adapted_programs": {
+    "parts": {
+      "directory": "D:/CCAD_Storage/training_curves/IR04_shift_program_seed2_v1_20260916/parts",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    },
+    "parts_relation": {
+      "directory": "D:/CCAD_Storage/training_curves/IR04_shift_program_seed2_v1_20260916/parts_relation",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    },
+    "random_parts": {
+      "directory": "D:/CCAD_Storage/training_curves/IR04_shift_program_seed2_v1_20260916/random_parts",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    },
+    "whole": {
+      "directory": "D:/CCAD_Storage/training_curves/IR04_shift_program_seed2_v1_20260916/whole",
+      "sites": [
+        "embed",
+        "mlp_0",
+        "resid_0"
+      ]
+    }
+  },
+  "audit_opened": true,
+  "budget": "Later classifier use with cached representations for previously evaluated methods; at most 1800 driver seconds per target.",
+  "budget_seconds": 1800,
+  "candidate_family_frozen": true,
+  "confirmation_freeze": "artifacts\\independent_reuse_20260916\\IR04_CONFIRMATION_FREEZE.json",
+  "context_response": true,
+  "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+  "device": "cuda:0",
+  "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+  "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+  "eval_batch_size": 16,
+  "eval_token_budget": 4096,
+  "evaluation_panel": "artifacts\\independent_reuse_20260916\\IR04_NEW_TASKS_PANEL.json",
+  "evaluation_split": "test",
+  "evidence_level": "development_existing_consumer_target_replication",
+  "fit_batch_sequences": 8,
+  "fit_iterations": 1200,
+  "fit_sequences": 128,
+  "frozen_source_run": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R58_shift_source_development_v2_20260915",
+  "functional_weight": 0.99,
+  "generator_script": "scripts/run_shift_retraining.py",
+  "members_per_source": 2,
+  "methods": [
+    "none",
+    "source",
+    "hungarian_decoder",
+    "hungarian_activation",
+    "activation_top2",
+    "geometry",
+    "geometry_gain",
+    "native",
+    "raw",
+    "raw_reconstruction",
+    "whole",
+    "random_parts",
+    "parts_relation",
+    "parts"
+  ],
+  "model_local_dir": "D:\\CCAD_Storage\\models\\pythia-70m-deduped\\e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+  "neighbors_per_source": 16,
+  "notebook": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\bib_shift.ipynb",
+  "paired_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\R008a_paired_corpus_v3_20260903T234000Z\\artifacts\\discovery.uint16.bin",
+  "probe_batch_size": 128,
+  "probe_epochs": 4,
+  "probe_lr": 0.01,
+  "probe_seeds": [
+    42
+  ],
+  "purpose": "E3 later classifier use of label-free matching relations next to the frozen learned correspondences.",
+  "queries": [
+    "full",
+    "pronouns",
+    "names",
+    "associated_words"
+  ],
+  "relation_run": "runs/REFORM_R59_shift_confirm_seed2_v1_20260915",
+  "ridge": 0.001,
+  "run_id": "NAACL_E3_shift_use_seed2_v1_20261010",
+  "run_parent": "NAACL_SPRINT_20261010",
+  "scope": "Same consumer cohort, tasks, classifier recipe and frozen IR04 checkpoints. New label-free matching relations are fitted on natural text only.",
+  "seeds": [
+    2
+  ],
+  "source_manifest": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\correspondence_reform_20260913\\r57_shift_consumer\\PUBLISHED_EXPLANATION.json",
+  "source_parameters": "D:\\CCAD_Storage\\references\\feature_circuits_shift\\saes\\50a434461d36ed78d1b0b901944e6edc829f1dce\\published_shift55.npz",
+  "statistics_unit": "Biographies clustered by document; development one target dictionary stack",
+  "target_directory": "D:/CCAD_Storage/training_curves/REFORM_R59_shift_dictionaries_seeds2to5_v1_20260915/step_8192",
+  "target_seed": 2,
+  "tasks": [
+    {
+      "name": "composer_surgeon_orientation0",
+      "negative": 5,
+      "orientation": 0,
+      "positive": 25
+    },
+    {
+      "name": "composer_surgeon_orientation1",
+      "negative": 5,
+      "orientation": 1,
+      "positive": 25
+    },
+    {
+      "name": "model_software_engineer_orientation0",
+      "negative": 12,
+      "orientation": 0,
+      "positive": 24
+    },
+    {
+      "name": "model_software_engineer_orientation1",
+      "negative": 12,
+      "orientation": 1,
+      "positive": 24
+    }
+  ],
+  "threshold_source_split": "All adaptation arms share the old source classifier and503source-use contexts. Original geometry/native/raw retain natural-text fits. Relation-only andwhole controls match source information,steps andparameters except the stated dictionary/request change. Reconstruction readout uses original source activation rule on target reconstruction.",
+  "training_panel": "artifacts\\independent_reuse_20260916\\IR04_NEW_TASKS_PANEL.json",
+  "run_storage_root": "D:/CCAD_Storage/runs/naacl_sprint_20261010",
+  "feature_cache_runs": [
+    "runs/IR04_shift_consumer_seed2_v1_20260916"
+  ],
+  "extra_relations": {
+    "hungarian_decoder": "D:/CCAD_Storage/runs/naacl_sprint_20261010/matching_relations_seed2/matching_relations.npz",
+    "hungarian_activation": "D:/CCAD_Storage/runs/naacl_sprint_20261010/matching_relations_seed2/matching_relations.npz",
+    "activation_top2": "D:/CCAD_Storage/runs/naacl_sprint_20261010/matching_relations_seed2/matching_relations.npz"
+  }
+}

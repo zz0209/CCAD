@@ -53,6 +53,7 @@ def main():
                   for s in source['members']}
         frozen = np.load(work.checked(Path(cfg['relation_run'])/'relation.npz'))
         targets, relations, adapted_targets = {}, {}, {}
+        extra_relations={name:np.load(work.checked(Path(path),'Frozen label-free matching relation')) for name,path in cfg.get('extra_relations',{}).items()}
         adapted_programs=cfg.get('adapted_programs',{})
         adapted_inputs=cfg.get('adapted_input_programs',{})
         input_gains={}
@@ -84,10 +85,12 @@ def main():
             sae.requires_grad_(False)
             targets[site] = sae
             relation_names = list(dict.fromkeys(['native', 'geometry', 'geometry_gain', 'raw', 'candidates']+
-                                               [m for m in cfg['methods'] if m not in ['source', 'none','raw_reconstruction'] and not m.startswith('input_') and m not in adapted_programs]))
+                                               [m for m in cfg['methods'] if m not in ['source', 'none','raw_reconstruction'] and not m.startswith('input_') and m not in adapted_programs and m not in extra_relations]))
             relations[site] = {name: torch.tensor(frozen[site+'__'+name], device=work.device,
                                                   dtype=torch.long if name == 'candidates' else torch.float32)
                                for name in relation_names}
+            for name, bank_extra in extra_relations.items():
+                relations[site][name] = torch.tensor(bank_extra[site+'__'+name], device=work.device, dtype=torch.float32)
         for name,spec in adapted_programs.items():
             folder=Path(spec['directory'])
             bank_new=np.load(work.checked(folder/'relation.npz','Frozen adapted program relation'))
@@ -322,13 +325,13 @@ def main():
                                                                for r in erows]].mean())
                                      for p in [0, 1] for g in [0, 1]}
                             results[state] = dict(profession=float(correct.mean()), worst_group=min(group.values()), groups=group)
-                            for r, value in zip(erows, values):
-                                work.record(method=method, operation=query, classifier=state,
-                                            task=task_name,
-                                            row_id=r['document_sha256'], mode=state, seed=probe_seed,
-                                            probe_seed=probe_seed, target_seed=cfg['target_seed'],
-                                            component=r['document_sha256'], label=r['label'], gender=r['gender'],
-                                            logit=float(value), prediction=int(value > 0), split=cfg['evaluation_split'])
+                            work.records([dict(method=method, operation=query, classifier=state,
+                                               task=task_name,
+                                               row_id=r['document_sha256'], mode=state, seed=probe_seed,
+                                               probe_seed=probe_seed, target_seed=cfg['target_seed'],
+                                               component=r['document_sha256'], label=r['label'], gender=r['gender'],
+                                               logit=float(value), prediction=int(value > 0), split=cfg['evaluation_split'])
+                                          for r, value in zip(erows, values)])
                         summary[f'{key}{suffix}__probe{probe_seed}'] = results
                         work.progress('RESULT', method=method, query=query, task=task_name, probe_seed=probe_seed, results=results)
                         write(work.run/'RETRAINING_RESULTS.json', summary)
