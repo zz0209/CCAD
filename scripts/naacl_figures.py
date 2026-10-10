@@ -41,14 +41,14 @@ def complete_part():
             ('native', 'Natural-text fit', OTHER, 'P'),
             ('whole', 'Complete supervision', COMPLETE, 'X'),
             ('parts', 'Part supervision', PART, 'o'),
-            ('raw_reconstruction', 'Re-applied source edit', READOUT, 'h')]
+            ('raw_reconstruction', 'Re-applied\nsource edit', READOUT, 'h')]
     fig, ax = plt.subplots(figsize=(3.25, 2.75))
     ax.plot([0, .66], [0, .66], color='.78', lw=.6, zorder=0)
     labels = {'hungarian_decoder': (.262, .492, 'left'), 'hungarian_activation': (.222, .441, 'right'),
               'geometry': (.300, .640, 'left'), 'activation_top2': (.222, .560, 'right'),
               'geometry_gain': (.336, .352, 'center'), 'native': (.272, .262, 'left'),
-              'whole': (.108, .318, 'left'), 'parts': (.158, .072, 'left'),
-              'raw_reconstruction': (.098, .195, 'center')}
+              'whole': (.108, .318, 'left'), 'parts': (.150, .082, 'left'),
+              'raw_reconstruction': (.118, .168, 'right')}
     for key, label, color, marker in rows:
         x, y = s[key]['full_nrmse'], s[key]['parts_nrmse']
         (xl, xh), (yl, yh) = ci[key]['full'], ci[key]['parts']
@@ -114,6 +114,47 @@ def public():
     (ART / 'e4_scale' / 'PUBLIC_FIGURE_DATA.json').write_text(json.dumps(dict(
         retained=xs.tolist(), widths=widths, part_nrmse=series, pearson_with_retention=corr), indent=1))
     print('pearson with retention', corr)
+
+
+GRID = [('lowest', '16k', 'final_l0low16k'), ('lower', '16k', 'grid_w16k_lower'), ('higher', '16k', 'grid_w16k_higher'),
+        ('highest', '16k', 'grid_w16k_highest'), ('lowest', '65k', 'grid_w65k_lowest'), ('closest\nto 100', '65k', 'final_w65k'),
+        ('highest', '65k', 'grid_w65k_highest')]
+
+
+def grid():
+    # Part error of each method on seven Gemma Scope targets, ordered by width and by L0 relative to the source.
+    runs = {}
+    for name in ['E4C_FINAL.json', 'E10_GRID.json']:
+        runs.update(json.loads((ART / 'e4_scale' / name).read_text())['runs'])
+    spec = [('hungarian_decoder', 'Hungarian matching', MATCH, 'D'), ('readout', 'Re-applied source edit', READOUT, 'h'),
+            ('complete_sup_hungarian', 'Complete supervision', COMPLETE, 'X'),
+            ('part_sup_hungarian', 'Part supervision', PART, 'o'),
+            ('subset_sup_hungarian', 'Parts and random subsets', OTHER, 's')]
+    fig, ax = plt.subplots(figsize=(6.75, 2.1))
+    record, legend = {}, {}
+    for x, (l0, width, key) in enumerate(GRID):
+        run = next(v for k, v in runs.items() if key in k)
+        record[f'{width} {l0}'] = {}
+        for i, (method, label, color, marker) in enumerate(spec):
+            p, (lo, hi) = run['point'][method]['parts'], run['intervals'][method]['parts']
+            record[f'{width} {l0}'][method] = dict(point=p, interval=[lo, hi])
+            h = ax.errorbar(x + (i - (len(spec) - 1) / 2) * .14, p, yerr=[[p - lo], [hi - p]], fmt=marker, ms=4.2,
+                            color=color, mec='white' if method == 'part_sup_hungarian' else color, mew=.4, elinewidth=.9,
+                            capsize=1.4, capthick=.7)
+            legend[label] = h
+    ax.axvline(3.5, color='.8', lw=.6)
+    ax.set_xticks(range(len(GRID)))
+    ax.set_xticklabels([l0 for l0, _, _ in GRID], fontsize=7)
+    ax.text(1.5, -.115, 'Width 16k, L0 relative to the source', ha='center', fontsize=7.4, transform=ax.get_xaxis_transform())
+    ax.text(5.0, -.115, 'Width 65k', ha='center', fontsize=7.4, transform=ax.get_xaxis_transform())
+    ax.set_ylabel('Part-deletion error (nRMSE)')
+    ax.set_ylim(0, None)
+    fig.legend([legend[label] for _, label, _, _ in spec], [label for _, label, _, _ in spec], loc='upper center',
+               ncol=len(spec), frameon=False, fontsize=7, bbox_to_anchor=(.5, 1.02))
+    fig.tight_layout(pad=.3, rect=(0, 0, 1, .9))
+    for ext in ['pdf', 'svg']:
+        fig.savefig(FIG / f'naacl_grid.{ext}')
+    (ART / 'e4_scale' / 'GRID_FIGURE_DATA.json').write_text(json.dumps(record, indent=1))
 
 
 GEMMA_GROUPS = [('Complete', lambda r: r == 'complete'), ('Parts', lambda r: r in ('pronouns', 'female_descriptions')),

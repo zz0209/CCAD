@@ -101,6 +101,25 @@ def main():
               source_run=f'{B}/runs/naacl_sprint_20261010/NAACL_E8A_GEMMA2B_labelfree_{key}_v1_20261010',
               methods=['source', 'readout', 'hungarian_decoder', 'native'] + learned,
               parts=['pronouns', 'female_descriptions'], later_pairs=LATER_PAIRS, later_epochs=4)
+    # E10 grid: the same frozen recipe on further Gemma Scope dictionaries, ordered by how far they move from the source.
+    grid = dict(w16k_lower=('16k', 'next_lower_l0'), w16k_higher=('16k', 'next_higher_l0'),
+                w16k_highest=('16k', 'highest_l0'), w65k_lowest=('65k', 'lowest_l0'), w65k_highest=('65k', 'highest_l0'))
+    for key, (width, choice) in grid.items():
+        write(f'e10_gemma_grid_{key}', run_id=f'NAACL_E10_GEMMA2B_grid_{key}_v1_20261010',
+              purpose=('Grid over Gemma Scope target dictionaries with the frozen E4c recipe, testing whether the error of '
+                       'matching and of re-applying the source edit grows with the change of dictionary while the '
+                       'learned correspondence stays accurate.'),
+              target_width=width, target_choice=choice, target_label=f'Gemma Scope {width}, {choice} relative to the source',
+              eval_split='test', skip_use=True, fit_inits=['hungarian'], fit_seeds=[0, 1],
+              fit_families=['complete', 'parts', 'subsets'], subset_inclusion='uniform', eval_bios=100000)
+    readback = dict(w16k_lowest=TARGETS['l0low16k'], w65k_sfc=TARGETS['w65k'],
+                    **{key: dict(target_width=width, target_choice=choice) for key, (width, choice) in grid.items()})
+    write('e10_gemma_readback', run_id='NAACL_E10_GEMMA2B_readback_v1_20261010',
+          purpose=('Dictionary change of every Gemma Scope target at the explanation sites: read-back error and retention of '
+                   'the explained source features, Hungarian decoder cosine and target variance explained, on the natural '
+                   'biographies of the transfer runs.'),
+          **TARGETS['w65k'], targets={k: {f: v[f] for f in ['target_width', 'target_choice']} for k, v in readback.items()})
+    for key, target in TARGETS.items():
         if args.final_init:
             # final v1 of the low-L0 target was stopped before any result to change the subset family, hence v2.
             write(f'e4c_gemma_final_{key}', run_id=f'NAACL_E4C_GEMMA2B_final_{key}_v2_20261010',

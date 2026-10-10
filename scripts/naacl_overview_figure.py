@@ -87,14 +87,15 @@ def main():
         ax.text(4.44, y, label, ha='right', va='center', fontsize=7.4, color=GROUP[name], linespacing=1.1)
     ax.text(4.97, .56, 'many-to-many membership', ha='center', fontsize=7.4, color=INK)
 
-    ax.add_patch(FancyBboxPatch((5.66, 1.42), 1.0, .40, boxstyle='round,pad=0.02,rounding_size=0.05', fc='#eef4f3',
+    ax.add_patch(FancyBboxPatch((5.66, 1.36), 1.0, .50, boxstyle='round,pad=0.02,rounding_size=0.05', fc='#eef4f3',
                                 ec=PART, lw=.6))
-    ax.text(6.16, 1.62, 'delete one part\nthrough new features', ha='center', va='center', fontsize=7.4, linespacing=1.15)
+    ax.text(6.16, 1.61, 'delete one part or a\nrandom feature subset\nthrough new features', ha='center', va='center',
+            fontsize=7.4, linespacing=1.15)
     ax.add_patch(FancyBboxPatch((5.66, .86), 1.0, .34, boxstyle='round,pad=0.02,rounding_size=0.05', fc='white',
                                 ec='.45', lw=.6))
     ax.text(6.16, 1.03, 'frozen language model', ha='center', va='center', fontsize=7.4)
     arrow(ax, (5.47, 1.42), (5.66, 1.58), color='.35')
-    arrow(ax, (6.16, 1.42), (6.16, 1.20), color='.35')
+    arrow(ax, (6.16, 1.36), (6.16, 1.20), color='.35')
     ax.text(6.16, .43, 'match the original effect\nof every part', ha='center', va='center', fontsize=7.4, color=PART,
             linespacing=1.15)
     arrow(ax, (6.16, .86), (6.16, .60), color=PART)

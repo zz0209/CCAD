@@ -191,6 +191,21 @@ def accuracies(logits, true, spur):
     return out
 
 
+def pick_option(options, source_l0, choice):
+    # Options are the average_l0_<k> folders of one width; choices other than the extremes are relative to the
+    # average L0 of the source dictionary at the same site.
+    l0 = lambda o: int(o.split('_')[-1])
+    ranked = sorted(options, key=l0)
+    if choice == 'lowest_l0':
+        return ranked[0]
+    if choice == 'highest_l0':
+        return ranked[-1]
+    if choice == 'next_lower_l0':
+        return [o for o in ranked if l0(o) < source_l0][-1]
+    assert choice == 'next_higher_l0', choice
+    return [o for o in ranked if l0(o) > source_l0][0]
+
+
 class Dictionaries:
     def __init__(self, cfg, features, dev):
         rule = json.loads(Path(cfg['l0_rule']).read_text())
@@ -204,9 +219,9 @@ class Dictionaries:
             if cfg['target_choice'] == 'sfc_rule':
                 paths['target'] = root / entry['sfc_rule'] / 'params.npz'
             else:
-                assert cfg['target_choice'] == 'lowest_l0', cfg['target_choice']
-                lowest = min(entry['options'], key=lambda o: int(o.split('_')[-1]))
-                paths['target'] = root / f'layer_{site.split("_")[1]}/width_{cfg["target_width"]}/{lowest}/params.npz'
+                source_l0 = int(rule[f'{site}/{cfg["source_width"]}']['sfc_rule'].split('_')[-1])
+                option = pick_option(entry['options'], source_l0, cfg['target_choice'])
+                paths['target'] = root / f'layer_{site.split("_")[1]}/width_{cfg["target_width"]}/{option}/params.npz'
             assert paths['target'] != paths['source'], site
             self.paths[site] = {k: str(v) for k, v in paths.items()}
             p = np.load(paths['source'])
@@ -340,6 +355,7 @@ def natural_statistics(model, dicts, texts, cfg, run, candidates=None):
                              ps=torch.zeros(r, dtype=torch.float64, device=dev),
                              ntok_pron=torch.zeros((), dtype=torch.float64, device=dev),
                              zs_hat=torch.zeros(r, dtype=torch.float64, device=dev),
+                             zs_hat2=torch.zeros(r, dtype=torch.float64, device=dev),
                              res=torch.zeros((), dtype=torch.float64, device=dev),
                              xsum=torch.zeros(dicts.src[site]['W_enc'].shape[0], dtype=torch.float64, device=dev),
                              x2=torch.zeros((), dtype=torch.float64, device=dev))
@@ -374,6 +390,7 @@ def natural_statistics(model, dicts, texts, cfg, run, candidates=None):
             recon = (zt.to(torch.bfloat16) @ t['W_dec']).float() + t['b_dec']
             zs_hat = jumprelu(recon @ s['W_enc'] + s['b_enc'], s['threshold'])
             a['zs_hat'] += (zs * zs_hat).sum(0).double()
+            a['zs_hat2'] += (zs_hat ** 2).sum(0).double()
             a['res'] += ((flat - recon) ** 2).sum().double()
             a['xsum'] += flat.sum(0).double()
             a['x2'] += (flat ** 2).sum().double()
@@ -540,6 +557,8 @@ def execute(cfg, run):
                                 hungarian_activation_corr=[float(corr[r, act_lists[site][r][0]]) for r in range(cos.shape[0])],
                                 pron_share_all_target=st['pt'] / np.maximum(st['zt'], 1e-12),
                                 source_retention=st['zs_hat'] / np.maximum(st['zs2'], 1e-12),
+                                # Squared error of the source activation read back from the target reconstruction.
+                                source_readback_error=(st['zs2'] - 2 * st['zs_hat'] + st['zs_hat2']) / np.maximum(st['zs2'], 1e-12),
                                 target_fve=float(1 - st['res'] / (st['x2'] - (st['xsum'] ** 2).sum() / n)))
     np.savez_compressed(run.dir / 'natural_statistics.npz', **{f'{s}__{k}': np.asarray(v) for s, d in corr_store.items()
                                                                 for k, v in d.items()}, **{f'{s}__candidates': candidates[s] for s in dicts.sites})

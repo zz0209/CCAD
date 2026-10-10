@@ -149,7 +149,8 @@ def full_results():
     blocks = [('SHIFT, Pythia-70M, 4 retrained', {k: (e1[v]['full_nrmse'], e1[v]['parts_nrmse'], e1[v]['unions_nrmse'])
                                                    for k, v in shift_keys.items()})]
     labels = dict(infinitive='Infinitive, Pythia-70M, 4 retrained', infinitive_public='Infinitive, Pythia-70M, 16 SAEBench',
-                  gpt2='Grammar, GPT-2 Medium, 4 retrained', qwen='Grammar, Qwen3-1.7B, 2 Qwen-Scope')
+                  gpt2='Grammar, GPT-2 Medium, 4 retrained', gpt2_fixed='Grammar, GPT-2 Medium, new SAE alone',
+                  qwen='Grammar, Qwen3-1.7B, 2 Qwen-Scope', qwen_fixed='Grammar, Qwen3-1.7B, new SAE alone')
     for key, label in labels.items():
         p = sup[key]['point']
         blocks.append((label, {k: (p[k]['complete'], p[k]['parts'], p[k]['new']) for k, _ in names if k in p}))
@@ -268,6 +269,31 @@ def gemma_labelfree(path, final_path):
     (TAB / 'naacl_gemma_labelfree.tex').write_text('\n'.join(lines) + '\n')
 
 
+def gemma_task_use(path):
+    # Worst-group accuracy after deleting the part describing women, on the classifier the correspondences were trained
+    # with and on four later classifiers that never supervised them.
+    d = json.loads(path.read_text())['runs']
+    targets = [next(k for k in d if 'w65k' in k), next(k for k in d if 'l0low16k' in k)]
+    rows = [('source', 'Original'), ('readout', r'Re-applied edit$^\dagger$'),
+            ('hungarian_decoder', 'Hungarian, decoder'), ('native', 'Natural-text fit'),
+            ('complete_sup_hungarian', 'Complete sup.'), ('random_sup_hungarian', 'Random subsets'),
+            ('part_sup_hungarian', 'Part sup.')]
+    lines = [r'\begin{tabular}{lcccc}', r'\toprule',
+             r' & \multicolumn{2}{c}{Training classifier} & \multicolumn{2}{c}{New classifiers} \\',
+             r'\cmidrule(lr){2-3}\cmidrule(lr){4-5}', r'Method & 65k & 16k & 65k & 16k \\', r'\midrule']
+    for key, label in rows:
+        cells = []
+        for scope in ['shift', 'later']:
+            for t in targets:
+                part = d[t][scope]['female_descriptions']['original']
+                cells.append(f"{100 * (part['_source_wg'] if key == 'source' else part[key]['wg']):.1f}")
+        lines.append(label + ' & ' + ' & '.join(cells) + r' \\')
+        if key == 'source':
+            lines.append(r'\midrule')
+    lines += [r'\bottomrule', r'\end{tabular}']
+    (TAB / 'naacl_gemma_task_use.tex').write_text('\n'.join(lines) + '\n')
+
+
 def gemma_part_use(path):
     d = json.loads(path.read_text())['runs']
     targets = [next(k for k in d if 'w65k' in k), next(k for k in d if 'l0low16k' in k)]
@@ -345,6 +371,7 @@ def main():
     parser.add_argument('--gemma-use', action='store_true', help='also write the Gemma use tables; needs USE.json in every run')
     parser.add_argument('--gemma-part-use', type=Path)
     parser.add_argument('--gemma-labelfree', type=Path)
+    parser.add_argument('--gemma-task-use', type=Path)
     args = parser.parse_args()
     settings()
     use()
@@ -364,6 +391,8 @@ def main():
         gemma_part_use(args.gemma_part_use)
     if args.gemma_labelfree:
         gemma_labelfree(args.gemma_labelfree, args.gemma)
+    if args.gemma_task_use:
+        gemma_task_use(args.gemma_task_use)
     supervision(entries)
     print('tables written', len(entries))
 
