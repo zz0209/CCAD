@@ -11,6 +11,8 @@ export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TMPDIR="$ROOT/tmp" HF_HOME="$ROOT
 cd "$CODE/scripts"
 passed() { grep -q '"PASS"' "$1/status.json" 2>/dev/null; }
 gpu=$1
+# The Gemma run on GPU 1 grows its cached memory during evaluation, so the GPT-2 runs wait until it has ended.
+until grep -qE '"(PASS|FAIL)"' "$RUNS/CSM_C1_GEMMA2B_natural_l0low16k_v1_20261011/status.json" 2>/dev/null; do sleep 60; done
 run() {
   passed "$RUNS/$1" && return 0
   CUDA_VISIBLE_DEVICES=$gpu "$PY" cross_seed_transfer.py --config "../$CFG/$2.json" "${@:3}" > "$ROOT/logs/$1.log" 2>&1
