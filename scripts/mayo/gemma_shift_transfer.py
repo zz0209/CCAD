@@ -572,7 +572,7 @@ def execute(cfg, run):
         pos = {t: k for k, t in enumerate(union)}
         candidates[site] = np.array(union)
         cand_rows[site] = [[pos[t] for t in row] for row in per_row]
-        if 'natural_capacity' in cfg['fit_families']:
+        if any('capacity' in f for f in cfg['fit_families']):
             # Capacity control: each candidate of each source feature is replaced by a random target feature from the
             # same activation-frequency bin, outside every real candidate, so the map keeps its size and firing rates
             # but loses the features chosen for the explanation. The replacement of the Hungarian match starts at one.
@@ -793,12 +793,18 @@ def execute(cfg, run):
             return train_natural(family, init, seed)
         torch.manual_seed(seed)
         rng = np.random.default_rng(seed)
-        params = {s: torch.nn.Parameter(torch.tensor(inits[init][s], device=dev)) for s in dicts.sites}
-        opt = torch.optim.Adam(params.values(), lr=cfg['fit_lr'])
         # A family ending in _state fits the layer-22 token states with the same requests, biographies and draws as
-        # the family it extends, which fits the classifier response.
+        # the family it extends, which fits the classifier response. A capacity_ prefix uses the frequency-matched
+        # random candidates, a matched_ prefix keeps only the Hungarian match of each source feature.
         reader = 'state' if family.endswith('_state') else 'classifier'
         base = family[:-len('_state')] if reader == 'state' else family
+        capacity = base.startswith('capacity_')
+        base = base[len('capacity_'):] if capacity else base
+        one_to_one = base.startswith('matched_') or base == 'parts_matched'
+        base = base[len('matched_'):] if base.startswith('matched_') else base
+        cand_of, init_of = (cap_candidates, cap_init) if capacity else (candidates, inits[init])
+        params = {s: torch.nn.Parameter(torch.tensor(init_of[s], device=dev)) for s in dicts.sites}
+        opt = torch.optim.Adam(params.values(), lr=cfg['fit_lr'])
         # The subset family adds one random half of the features per biography, whose source response is computed live.
         # The label-free families keep the complete request and replace the two part rows by two rows of random feature
         # subsets of uniformly drawn size, or of single features, so they see no annotation at equal budget.
@@ -806,10 +812,11 @@ def execute(cfg, run):
                    parts_matched=train_requests, random=['complete', 'random', 'random'],
                    singletons=['complete', 'single', 'single'])[base]
         label_free = base in ('random', 'singletons')
-        mask_of = matched_only if base == 'parts_matched' else allowed
-        hi = gain_max if base == 'parts_matched' else 1.
+        mask_of = matched_only if one_to_one else (cap_allowed if capacity else allowed)
+        hi = gain_max if one_to_one else 1.
         per = cfg['fit_sequences'] // len(req)
-        tmap = maps['native']
+        # The training forward uses the same deletion cap as the returned map: none when one-to-one gains may exceed one.
+        tmap = TargetMap(dicts, cand_of, {s: params[s] for s in dicts.sites}, cap=None if hi > 1 else 1.)
         curve = []
         for step in range(cfg['fit_steps']):
             bios = rng.choice(len(fit_texts), per, replace=False)
@@ -865,12 +872,13 @@ def execute(cfg, run):
                 run.progress(stage='fit', method=f'{family}_{init}_s{seed}', step=step, fit_loss=round(float(fit_loss), 5),
                              l1=round(float(l1), 2))
         run.records([dict(kind='fit_curve', family=family, init=init, seed=seed, **c) for c in curve])
-        return TargetMap(dicts, candidates, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites},
+        return TargetMap(dicts, cand_of, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites},
                          cap=None if hi > 1 else 1.)
 
     labels = dict(complete='complete_sup', parts='part_sup', subsets='subset_sup', parts_matched='matched_part_sup',
                   random='random_sup', singletons='singleton_sup', natural='natural_sup', natural_matched='natural_matched',
-                  natural_capacity='natural_capacity', subsets_state='subset_state_sup', random_state='random_state_sup')
+                  natural_capacity='natural_capacity', subsets_state='subset_state_sup', random_state='random_state_sup',
+                  matched_subsets_state='matched_subset_state_sup', capacity_subsets_state='capacity_subset_state_sup')
     for init in cfg['fit_inits']:
         for seed in cfg['fit_seeds']:
             for family in cfg['fit_families']:
