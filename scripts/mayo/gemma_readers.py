@@ -76,7 +76,7 @@ def execute(cfg, run):
         saved = json.loads((source_run / 'maps.json').read_text())
         for name in spec['methods']:
             # One-to-one maps trained with gains above one were applied without the deletion cap.
-            cap = None if gain_max > 1 and name.startswith(('natural_matched', 'matched_part_sup')) else 1.
+            cap = None if gain_max > 1 and name.startswith(('natural_matched', 'matched_')) else 1.
             executors[f"{spec['prefix']}{name}"] = TargetMap(
                 dicts, {s: np.array(v['idx']) for s, v in saved[name].items()},
                 {s: torch.tensor(np.array(v['weights'], dtype=np.float32), device=dev) for s, v in saved[name].items()}, cap)
