@@ -12794,3 +12794,15 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 实际写入UTC为2026-10-11T18:20:17Z。用户本轮明确授权：硬件允许、确有重要性的下载由执行者作专家决策，用户的其他要求继续适用（已写入会话记忆）。按负责人报告从 BLiMP 官方仓库 alexwarstadt/blimp 固定 commit 3e56b06f 下载九个从未使用的一致关系范式到既有 BLiMP 目录，清单 artifacts/scientific_reform_20260913/reference_material/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/FRESH_PARADIGMS_MANIFEST.json（每个文件的 URL、字节数、SHA256、1,000 行，并与 GitHub API 列出的大小核对；CC BY 4.0）。负责人列出的 determiner_noun_agreement_with_adj_1 在仓库中名为 determiner_noun_agreement_with_adjective_1，按仓库实际名称取用，其余八个名称一致。第一次下载因该名称 404 中止，此前已下载的五个文件保留并经大小核对。
 
 源模型筛选（结果前写定的纳入条件）：scripts/fresh_paradigm_filter.py 对每个源解释计算完整源编辑使九个范式前 128 对边际的平均绝对变化与干净边际标准差之比，比值 ≥ .10 对该模型全部源解释都成立的范式进入该模型的确认集合；不读取任何目标字典或映射。GPT-2 的五个源解释取自 s1_t2、s2_t3、s3_t4、s4_t5、s5_t1 的读取方配置，Qwen 的两个源解释取自 s1_t2_ts0、s2_t1_ts0。scripts/run_fresh_filter.ps1 在本机 gpu-0 租约下运行，输出 artifacts/containment/FRESH_PARADIGMS_GPT2.json 与 FRESH_PARADIGMS_QWEN.json。scripts/grammar_readers.py 增加 natural_doc_offset（默认 0），确认读取方用验证文本第 129 至 256 篇。
+
+### READER_COVERAGE EXP-U PROGRESS（确认范式的源模型筛选结果）
+
+实际写入UTC为2026-10-11T18:36:43Z。scripts/run_fresh_filter.ps1 完成（本机 gpu-0），结果 artifacts/containment/FRESH_PARADIGMS_GPT2.json 与 FRESH_PARADIGMS_QWEN.json。GPT-2 Medium（五个源解释）纳入八个：determiner_noun_agreement_1、_2、_irregular_1、_irregular_2、_with_adjective_1、_with_adj_2、_with_adj_irregular_1、_with_adj_irregular_2；irregular_plural_subject_verb_agreement_2 至少一个源解释的比值低于 .10，不纳入。Qwen3-1.7B（两个源解释）纳入四个：determiner_noun_agreement_2、_irregular_2、_with_adj_2、_with_adj_irregular_2；其余五个至少一个源解释低于 .10（例如源 1 的 determiner_noun_agreement_1 为 .090、_with_adj_irregular_1 为 .060）。纳入只用源模型，在评价任何目标映射之前完成。确认读取方在开发采用判定之后运行，读取开发采用判定之前不读取确认数据。
+
+### READER_COVERAGE CONF DECISION（五个确认目标，按事先规则判定）
+
+实际写入UTC为2026-10-11T18:42:40Z。CSM_CONF_GEMMA2B_readers_w65k_highest_v1_20261011 PASS 后，五个确认目标合并分析写入 artifacts/containment/CONF_GEMMA_READERS.json（test 前 256 条平衡传记，两个训练种子，2,000 次 bootstrap，目标为固定层）。
+
+1. 事先规则（plan“独立确认 CONF”一段）：E2(RC) 减标量 subsets、Hungarian、通用文本映射，合并区间都在 0 以下，并且至少四个目标点估计方向相同。结果：减标量 subsets −.011[−.016,−.005]，五个目标中两个为负（w16k_lower −.005、w65k_lowest −.098；w16k_higher +.015、w16k_highest +.029、w65k_highest 为正）；减 Hungarian −.060[−.065,−.056]，五个为负；减通用文本映射 −.037[−.044,−.031]，五个为负。第一项的方向条件不满足，CONF 不成立。按事先写定的后果：论文中主方法在 E2 上相对标量分类器拟合的优势只写两个开发目标，网格结果如实报告并分析目标特征。
+2. 同一数据上的其他量（如实报告，不改变上项判定）：原分类器部分误差 RC .123，标量 subsets .077、标量部分监督 .069；逐词元读取方 RC 明显更低，传记下一词元 .263 对 .453（−.190[−.215,−.166]），第 22 层状态 .331 对 .812（−.481），通用文本下一词元 .293 对 .613（−.320[−.405,−.259]）。主目标下一一对照 E2 高 .020[.015,.025]（五个目标中四个更高）。
+3. 对后续工作的作用：第四位负责人已把以后实验的主要判据改为已覆盖与未覆盖读取方，CONF 的 E2 判定作为历史规则如实保留；EXP-U 的 Gemma 确认（七个目标，未用传记与文档）按负责人的规则另行判定，该规则对已覆盖读取方允许 +.04 并要求未覆盖读取方三项比较区间在 0 以下且至少六个目标方向相同。
