@@ -51,3 +51,27 @@ for key in ['w65k', 'l0low16k']:
         parallel = dict(readers, run_id=f'CSM_EXP2_GEMMA2B_readers_{key}_v2_20261011')
         (configs / f'exp2_gemma_readers_{key}_v2.json').write_text(json.dumps(parallel, indent=1))
         print(parallel['run_id'])
+    # Controls under the chosen main objective (reader-complete, annotated subsets, Ledoit-Wolf whitening): the
+    # one-to-one map with gains up to four, the capacity control on frequency-matched random candidates, and the
+    # classifier-loss one-to-one map trained with its own deletion cap.
+    ext = dict(base, run_id=f'CSM_EXT_GEMMA2B_controls_{key}_v1_20261011', run_root=f'{M}/runs/cross_seed_models',
+               fit_families=['matched_subsets_state', 'capacity_subsets_state', 'parts_matched'], fit_inits=['hungarian'],
+               fit_seeds=SEEDS, eval_split='dev', skip_use=True, state_reader='ledoit_wolf', whiten_bios=1024,
+               whiten_tokens=60000, matched_gain_max=4., capacity_bins=64,
+               purpose=('READER_COVERAGE extension: one-to-one and capacity controls under the reader-complete main '
+                        'objective, and the classifier-loss one-to-one control with gains up to four.'))
+    (configs / f'ext_gemma_controls_{key}.json').write_text(json.dumps(ext, indent=1))
+    if key == 'w65k':
+        smoke = dict(ext, run_id=ext['run_id'] + '_SMOKE', natural_bios=64, fit_bios=32, fit_steps=2, eval_bios=16,
+                     limit_use=64, fit_seeds=[0], whiten_bios=32)
+        (configs / 'ext_gemma_controls_smoke.json').write_text(json.dumps(smoke, indent=1))
+    ext_readers = dict(readers, run_id=f'CSM_EXT_GEMMA2B_readers_{key}_v1_20261011',
+                       map_runs=[dict(run=f'{M}/runs/cross_seed_models/{ext["run_id"]}', prefix='ext_',
+                                      methods=[f'{f}_hungarian_s{s}' for s in SEEDS
+                                               for f in ['matched_subset_state_sup', 'capacity_subset_state_sup', 'matched_part_sup']]),
+                                 dict(run=state_runs['ledoit_wolf'], prefix='lw_',
+                                      methods=[f'subset_state_sup_hungarian_s{s}' for s in SEEDS]),
+                                 dict(run=c1, prefix='', methods=['hungarian_decoder'])],
+                       purpose='READER_COVERAGE extension: held-out readers for the controls under the main objective.')
+    (configs / f'ext_gemma_readers_{key}.json').write_text(json.dumps(ext_readers, indent=1))
+    print(ext['run_id'], ext_readers['run_id'])
