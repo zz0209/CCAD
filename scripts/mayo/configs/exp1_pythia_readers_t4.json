@@ -1,0 +1,259 @@
+{
+ "model_local_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/pythia-70m-deduped",
+ "source_manifest": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/PUBLISHED_EXPLANATION.json",
+ "notebook": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/bib_shift.ipynb",
+ "source_parameters": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/published_shift55.npz",
+ "target_directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/step_8192",
+ "target_seed": 4,
+ "frozen_source_run": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/REFORM_R58_shift_source_development_v2_20260915",
+ "dictionary_source_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+ "dictionary_overlay_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+ "natural_lm_eval_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/r011_validation.uint16.bin",
+ "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+ "source_revision": "1d5b09770ae3ecfe0bc330e6bf6c8d109d235999",
+ "run_id": "CSM_EXP1_PYTHIA70M_readers_t4_v1_20261011",
+ "run_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models",
+ "seed": 0,
+ "evaluation_membership": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/CSM_C2_PYTHIA70M_program_t4_ts42_v1_20261011/evaluation_membership.json",
+ "executors": [
+  {
+   "name": "native",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/REFORM_R59_shift_confirm_seed4_v1_20260915/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "geometry_gain",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/REFORM_R59_shift_confirm_seed4_v1_20260915/relation.npz",
+   "key": "geometry_gain"
+  },
+  {
+   "name": "hungarian_decoder",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/matching_relations_seed4/matching_relations.npz",
+   "key": "hungarian_decoder"
+  },
+  {
+   "name": "parts_relation_s42",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t4_ts42/parts_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "natural_relation_s42",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t4_ts42/natural_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "matched_rows_free_s42",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t4_ts42/natural_matched/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "parts_relation_cap4_s42",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t4_ts42/parts_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "natural_relation_cap4_s42",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t4_ts42/natural_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "one_to_one_s42",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t4_ts42/natural_matched/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "subset_relation_s42",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2c_programs/t4_ts42/subset_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "parts_relation_state_s42",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2d_programs/t4_ts42/parts_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "subset_relation_state_s42",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2d_programs/t4_ts42/subset_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "parts_relation_s43",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t4_ts43/parts_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "natural_relation_s43",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t4_ts43/natural_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "matched_rows_free_s43",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t4_ts43/natural_matched/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "parts_relation_cap4_s43",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t4_ts43/parts_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "natural_relation_cap4_s43",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t4_ts43/natural_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "one_to_one_s43",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t4_ts43/natural_matched/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "subset_relation_s43",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2c_programs/t4_ts43/subset_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "parts_relation_state_s43",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2d_programs/t4_ts43/parts_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "subset_relation_state_s43",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2d_programs/t4_ts43/subset_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "parts_relation_s44",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t4_ts44/parts_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "natural_relation_s44",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t4_ts44/natural_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "matched_rows_free_s44",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t4_ts44/natural_matched/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "parts_relation_cap4_s44",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t4_ts44/parts_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "natural_relation_cap4_s44",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t4_ts44/natural_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "one_to_one_s44",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t4_ts44/natural_matched/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "subset_relation_s44",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2c_programs/t4_ts44/subset_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "parts_relation_state_s44",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2d_programs/t4_ts44/parts_relation/relation.npz",
+   "key": "native"
+  },
+  {
+   "name": "subset_relation_state_s44",
+   "relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2d_programs/t4_ts44/subset_relation/relation.npz",
+   "key": "native"
+  }
+ ],
+ "dataset_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/bias_in_bios/052f01de644dba841176e0449528b41f27d94a61",
+ "data_seed": 42,
+ "later_pairs": [
+  {
+   "name": "composer_surgeon",
+   "negative": 5,
+   "positive": 25
+  },
+  {
+   "name": "model_software_engineer",
+   "negative": 12,
+   "positive": 24
+  }
+ ],
+ "head_train_bios": 4000,
+ "head_epochs": 4,
+ "probe_seed": 42,
+ "probe_lr": 0.01,
+ "probe_batch": 128,
+ "batch": 16,
+ "max_length": 2048,
+ "random_requests": 16,
+ "random_seed": 20261011,
+ "natural_docs": 128,
+ "female_words": [
+  "woman",
+  "women",
+  "female",
+  "girl",
+  "girls",
+  "lady",
+  "ladies",
+  "mother",
+  "mothers",
+  "mom",
+  "wife",
+  "daughter",
+  "sister",
+  "aunt",
+  "niece",
+  "grandmother",
+  "bride",
+  "girlfriend",
+  "actress",
+  "waitress",
+  "hostess",
+  "mrs",
+  "ms",
+  "miss",
+  "madam",
+  "feminine",
+  "maternal",
+  "sorority",
+  "queen",
+  "princess"
+ ],
+ "male_words": [
+  "man",
+  "men",
+  "male",
+  "boy",
+  "boys",
+  "gentleman",
+  "gentlemen",
+  "father",
+  "fathers",
+  "dad",
+  "husband",
+  "son",
+  "brother",
+  "uncle",
+  "nephew",
+  "grandfather",
+  "groom",
+  "boyfriend",
+  "actor",
+  "waiter",
+  "host",
+  "mr",
+  "sir",
+  "mister",
+  "masculine",
+  "paternal",
+  "fraternity",
+  "king",
+  "prince",
+  "guy"
+ ],
+ "purpose": "READER_COVERAGE: held-out readers for every saved Pythia-70M SHIFT relation."
+}
