@@ -683,7 +683,7 @@ def execute(cfg, run):
                           source_sha256=corpus['source_sha256'], length=cfg['natural_lm_len'])])
 
     whiten = None
-    if any(f.endswith('_state') for f in cfg['fit_families']):
+    if any(f.endswith(('_state', '_statemixed')) for f in cfg['fit_families']):
         # Reader-complete families fit the layer-22 token states that every downstream reader sees. Their error is
         # whitened by the covariance of clean states on unlabeled biographies of other professions, either with the
         # Ledoit-Wolf estimate or by standardizing each dimension. The first position is left out everywhere.
@@ -796,8 +796,11 @@ def execute(cfg, run):
         # A family ending in _state fits the layer-22 token states with the same requests, biographies and draws as
         # the family it extends, which fits the classifier response. A capacity_ prefix uses the frequency-matched
         # random candidates, a matched_ prefix keeps only the Hungarian match of each source feature.
-        reader = 'state' if family.endswith('_state') else 'classifier'
-        base = family[:-len('_state')] if reader == 'state' else family
+        # A family ending in _statemixed alternates these biography steps with generic-text steps of random subsets,
+        # both read by the whitened layer-22 states, with the biography step count of the family it extends.
+        mixed = family.endswith('_statemixed')
+        reader = 'state' if family.endswith(('_state', '_statemixed')) else 'classifier'
+        base = family[:family.rindex('_')] if reader == 'state' else family
         capacity = base.startswith('capacity_')
         base = base[len('capacity_'):] if capacity else base
         one_to_one = base.startswith('matched_') or base == 'parts_matched'
@@ -818,7 +821,30 @@ def execute(cfg, run):
         # The training forward uses the same deletion cap as the returned map: none when one-to-one gains may exceed one.
         tmap = TargetMap(dicts, cand_of, {s: params[s] for s in dicts.sites}, cap=None if hi > 1 else 1.)
         curve = []
-        for step in range(cfg['fit_steps']):
+        steps = cfg['fit_steps'] * (2 if mixed else 1)
+
+        def update(fit_loss, weights, step):
+            l1 = sum(w.sum() for w in weights.values())
+            loss = fit_loss + cfg['fit_l1'] * l1
+            opt.zero_grad()
+            loss.backward()
+            opt.step()
+            with torch.no_grad():
+                for p in params.values():
+                    p.clamp_(0., hi)
+            curve.append(dict(step=step, fit_loss=float(fit_loss), l1=float(l1)))
+            if step % 25 == 0 or step == steps - 1:
+                run.progress(stage='fit', method=f'{family}_{init}_s{seed}', step=step, fit_loss=round(float(fit_loss), 5),
+                             l1=round(float(l1), 2))
+
+        for step in range(steps):
+            if mixed and step % 2 == 0:
+                ix = rng.choice(len(nat_ids['train']), cfg['natural_lm_batch'], replace=False)
+                q = natural_q(len(ix), rng)
+                weights = {s: params[s] * mask_of[s] for s in dicts.sites}
+                update(state_loss(nat_ids['train'][ix], nat_mask['train'][ix], q, tmap, weights, ['random'] * len(ix)),
+                       weights, step)
+                continue
             bios = rng.choice(len(fit_texts), per, replace=False)
             rows = [(r, b) for r in req for b in bios]
             if label_free:
@@ -859,18 +885,7 @@ def execute(cfg, run):
                 logit = probe(model.pooled(ids, mask, tmap.mode(q, weights)))
                 delta = logit - torch.tensor(fit_base[[b for _, b in rows]], device=dev)
                 fit_loss = ((delta - torch.tensor(target, device=dev)) ** 2 / torch.tensor(scale, device=dev)).mean()
-            l1 = sum(w.sum() for w in weights.values())
-            loss = fit_loss + cfg['fit_l1'] * l1
-            opt.zero_grad()
-            loss.backward()
-            opt.step()
-            with torch.no_grad():
-                for p in params.values():
-                    p.clamp_(0., hi)
-            curve.append(dict(step=step, fit_loss=float(fit_loss), l1=float(l1)))
-            if step % 25 == 0 or step == cfg['fit_steps'] - 1:
-                run.progress(stage='fit', method=f'{family}_{init}_s{seed}', step=step, fit_loss=round(float(fit_loss), 5),
-                             l1=round(float(l1), 2))
+            update(fit_loss, weights, step)
         run.records([dict(kind='fit_curve', family=family, init=init, seed=seed, **c) for c in curve])
         return TargetMap(dicts, cand_of, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites},
                          cap=None if hi > 1 else 1.)
@@ -878,7 +893,8 @@ def execute(cfg, run):
     labels = dict(complete='complete_sup', parts='part_sup', subsets='subset_sup', parts_matched='matched_part_sup',
                   random='random_sup', singletons='singleton_sup', natural='natural_sup', natural_matched='natural_matched',
                   natural_capacity='natural_capacity', subsets_state='subset_state_sup', random_state='random_state_sup',
-                  matched_subsets_state='matched_subset_state_sup', capacity_subsets_state='capacity_subset_state_sup')
+                  matched_subsets_state='matched_subset_state_sup', capacity_subsets_state='capacity_subset_state_sup',
+                  subsets_statemixed='subset_statemixed_sup')
     for init in cfg['fit_inits']:
         for seed in cfg['fit_seeds']:
             for family in cfg['fit_families']:

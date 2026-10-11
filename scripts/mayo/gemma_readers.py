@@ -114,9 +114,12 @@ def execute(cfg, run):
 
     data = read_split(cfg, cfg['eval_split'])
     bios, true, gender = sfc_balanced(data, cfg['data_seed'])
-    bios, true, gender = bios[:cfg['eval_bios']], true[:cfg['eval_bios']], gender[:cfg['eval_bios']]
+    # Confirmation readers start after the biographies and documents that development readers already used.
+    off, doff = cfg.get('eval_offset', 0), cfg.get('natural_doc_offset', 0)
+    bios, true, gender = (x[off:off + cfg['eval_bios']] for x in (bios, true, gender))
     corpus = json.loads(Path(cfg['natural_lm_texts']).read_text())
-    docs = corpus['eval'][:cfg['natural_docs']]
+    docs = corpus['eval'][doff:doff + cfg['natural_docs']]
+    assert len(bios) and len(docs), (len(bios), len(docs))
 
     @torch.no_grad()
     def forward(ids, mask, mode):
@@ -223,7 +226,7 @@ def execute(cfg, run):
             out[fam] = cell
         summary[name] = out
     record = dict(written_utc=datetime.now(timezone.utc).isoformat(), description=DESCRIPTION, eval_split=cfg['eval_split'],
-                  bios=len(bios), docs=len(docs), readers=readers, word_class_tokens={k: len(v) for k, v in classes.items()},
+                  bios=len(bios), docs=len(docs), eval_offset=off, natural_doc_offset=doff, readers=readers, word_class_tokens={k: len(v) for k, v in classes.items()},
                   e2=('mean of the later classifiers, the gender probe and the biography next-token error; the original '
                       'classifier supervised the part maps and is reported separately'), summary=summary)
     (run.dir / 'READERS.json').write_text(json.dumps(record, indent=1))

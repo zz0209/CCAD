@@ -12731,3 +12731,11 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 
 1. P1 八个方向 PASS（s2_t3、s3_t4、s4_t5、s5_t1 第一次因配置沿用 Mayo 路径在导入阶段失败，目录改名为 failed_CSM_P1_GPT2_distmixed_*_mayo_paths 保留；本机与 Mayo 的面板、文本与 SAE 文件 SHA256 前缀逐一相同后改用本机路径重跑）。合并分析 artifacts/containment/P1_GPT2.json（与 X1、X1c、C8 合并，开发数据）：distmixed（每类输入 256 步）自身范式部分误差 .219、完整 .204、新请求 .291、通用文本 .389；对照为句对下一词元拟合 .216、.204、.312、.586，通用文本拟合 .244、.228、.257、.348。单一目标在只用一半步数时已接近两个专门拟合各自的最好值。
 2. EXP-U GPT-2 开始。scripts/cross_seed_transfer.py 新增 statemixed 族（S 臂）：编辑写入处的钩子状态经 Ledoit-Wolf 白化（前 128 条训练文本序列、16,384 个词元估计协方差，WHITENING.json 记录收缩系数与特征值范围），通用文本上读全部位置，句对上读编辑位置，请求与交替顺序同 distmixed。scripts/make_u_gpt2_configs.py 生成 U 与 S 同一 run 的配置（每族 1024 步，每类输入 512 步）；冒烟 CSM_U_GPT2_s1_t2_v1_20261011_SMOKE PASS（两族都完成训练与评价）。八个方向由 scripts/run_u_gpt2.ps1 在本机 gpu-0 租约下依次运行。
+
+### READER_COVERAGE EXP-U PROGRESS（Gemma 统一臂实现与排队；GPT-2 开发读取方排队）
+
+实际写入UTC为2026-10-11T17:11:56Z。
+
+1. Gemma 统一臂。scripts/mayo/gemma_shift_transfer.py 新增 subsets_statemixed 族（标签 subset_statemixed_sup）：偶数步为 FineWeb 训练文本上的随机子集、奇数步为原 subsets_state 的传记步，都读第 22 层 Ledoit-Wolf 白化状态（白化协方差同 RC），总步数为 fit_steps 的两倍（400 加 400）；参数更新收进同一个函数，原有族的行为不变。scripts/mayo/gemma_readers.py 增加 eval_offset 与 natural_doc_offset（默认 0），供确认读取方使用未用的传记与文档。scripts/mayo/make_u_gemma_configs.py 生成两个开发目标的训练配置（两个训练种子）、冒烟配置与 dev 读取方配置（统一臂、RC 三个种子、通用文本拟合、标量部分监督与 Hungarian）。scripts/mayo/run_u_gemma.sh 在 tmux ccad-u0（GPU0，65k，等 ccad-use0）与 ccad-u1（GPU1，16k，等 ccad-use1）排队，先做冒烟。三个文件在 Mayo 上 py_compile 通过；正在运行的 CONF 进程不受影响，之后启动的 FINAL 读取方使用新版读取脚本（默认偏移为 0，行为不变）。
+2. GPT-2 开发读取方。scripts/make_u_gpt2_readers.py 生成八个方向的读取方配置（读取设置同此前的留出读取方 run，四个已用范式现计为开发数据，执行器为 Hungarian、G、P、U、S，同一 run 内配对），scripts/run_u_gpt2_readers.ps1 在 EXP-U 训练全部 PASS 后于本机 gpu-0 依次运行。
+3. 九个未用 BLiMP 范式在本机与 Mayo 都没有副本，需要从官方仓库 alexwarstadt/blimp 固定 commit 3e56b06f 下载（每个约 450 KB，CC BY 4.0）。确认阶段才需要，已向用户请求下载许可，开发阶段不受影响。
