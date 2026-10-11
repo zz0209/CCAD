@@ -120,7 +120,7 @@
  "lr": 0.02,
  "training_seed": 0,
  "progress_every": 32,
- "source_revision": "d88842d0fe6a90ee604a8c6e175b1f7e28ad631b",
+ "source_revision": "b28f53467afbc5b9ef7149f616296bef8cee7002",
  "matched_gain_max": 4.0,
  "capacity_bins": 64
 }
