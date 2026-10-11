@@ -12459,3 +12459,12 @@ D1汇总到此：GPT-2通过（增益上限4的一一对照C7待跑），Pythia�
 1. GPT-2能力对照八个方向全部PASS（X1四个、X1c四个；s1→t4在00:42Z停止后重跑）。汇总（artifacts/containment/C5_GPT2_CAPACITY.json，analyze_cross_seed.py，八个方向的共同方法，bootstrap同时重抽方向与任务内句对，2,000次）：随机且激活频率匹配的候选部分误差1.001、完整1.001、新请求1.001、自然文本.992；同方向真实候选的自然文本多对多.244、.228、.257、.348，部分监督多对多部分.249、自然文本.720，Hungarian部分.314、自然文本.523，增益上限1的自然文本一一部分.323。能力对照减自然文本多对多：部分+.757[+.724,+.788]。D2在GPT-2上成立，保留“含有”：效果来自按激活相关选出的特征，同样数量、同样激活率的其他特征给不出任何效果。analyze_cross_seed.py改为只汇总每个run都有的方法（X1比X1c多两族）。
 2. Pythia C2第1版评价四个目标全部完成（t2、t3因matched_rows_free的容量检查FAIL，t4、t5 PASS）。C2b与C2c在ccad-c2继续。
 3. READER_COVERAGE EXP-1：scripts/mayo/gemma_readers.py实现（提交e2e4880）。对C1与E8a的全部已保存映射、源编辑与readout，在256篇平衡dev传记上用原分类器、E8b的四个后续分类器（按E8b的配方与种子重新训练）、新训练的性别探针（第22层干净汇聚状态、平衡训练传记的性别标签）、传记下一词元分布、代词与女性/男性描述词的概率质量、第22层逐词元状态读取，并在128篇留出FineWeb文本上读取下一词元分布；请求为完整、两个部分、new族与16个固定随机子集（每个请求自抽包含概率，种子20261011）。词表在任何结果之前写入scripts/mayo/make_reader_configs.py（女性与男性各30个词）。增益上限4的一一映射按训练时的方式不截断载荷。每4批保存部分结果，可从中断处继续。tmux ccad-exp1在GPU1先跑冒烟测试，再依次跑两个Gemma目标。status_json.py改为只对运行中的run计数，减轻每分钟轮询的磁盘读取。
+
+### READER_COVERAGE START（EXP-1 运行中；EXP-2 实现与排队；白化选择准则）
+
+实际写入UTC为2026-10-11T03:13:23Z。
+
+1. EXP-1冒烟测试于03:05:51Z PASS（407秒）：源编辑在所有读取方上误差为0；readout、Hungarian与一一映射的读取值合理；词表在Gemma词表中得到代词15个、女性描述55个、男性描述56个词元（含首字母大写形式）。两个Gemma目标的完整评价在tmux ccad-exp1（GPU1）依次运行。
+2. EXP-2实现（提交b75d4fd）：gemma_shift_transfer.py新增Model.states与以_state结尾的族，用与对应分类器族相同的请求、传记与随机抽取，拟合第22层逐词元状态的白化误差（首个位置不计），每个请求按批内同类行的源效应能量归一，所有抽取的子集共用一个归一量；白化用其他职业无标签传记上干净状态的Ledoit-Wolf协方差（sklearn）或逐维标准化，信息写入WHITENING.json。2×2的两个标量格使用已保存的E4c subsets映射与E8a random映射：三组run（E4c、E8a、C1）的候选数组已在Mayo上核对完全一致，初始化、学习率、步数与随机抽取相同。配置：scripts/mayo/make_exp2_gemma_configs.py（两个目标×两种白化，族subsets_state与random_state，三个种子，eval_split=dev，skip_use）；之后用gemma_readers在dev上读取E4c subsets、E8a random、两种白化的完整表示映射、Hungarian、C1自然文本映射与部分监督映射。
+3. 白化方式的唯一一次dev选择，结果前写定：两个目标、两个完整表示族上部分请求的E2平均较低者入选；相差不到.01时取Ledoit-Wolf。已写入EXPERIMENT_PLAN.md。
+4. 调度：Mayo项目环境新增scikit-learn 1.5.2（同时装入joblib 1.6.0、threadpoolctl 3.7.0、cloudpickle 3.1.2；numpy 2.2.6、scipy 1.15.3、torch 2.7.1+cu118不变），scripts/mayo/mayo-ccad-env.json已记录。GPU0新线tmux ccad-exp2在Gemma能力对照结束后运行EXP-2（冒烟测试、四个训练run、两个读取run），之后运行E12第2版（新的认领目录）；原GPU0线的E12部分因预先建立的认领目录而跳过。make_reader_configs.py改为主函数形式，避免被导入时重写配置。
