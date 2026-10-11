@@ -8,12 +8,12 @@
  "correlation_sequences": 512,
  "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
  "device": "cuda:0",
- "dictionary_overlay_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
- "dictionary_source_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+ "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+ "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
  "eos_token_id": 50256,
  "eval_batch_pairs": 16,
  "eval_pairs_per_task": 128,
- "evaluation_panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/e9_confirmation_panel.json",
+ "evaluation_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\reuse_generalization_20260921_round08\\confirmation_data\\panel.json",
  "evaluation_split": "confirmation",
  "families": [
   "membership_distmixed"
@@ -25,9 +25,9 @@
  "natural_batch": 4,
  "natural_eval_seed": 1,
  "natural_eval_sequences": 128,
- "natural_eval_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/validation.uint16.bin",
- "natural_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/train.uint16.bin",
- "panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/r26_panel.json",
+ "natural_eval_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_three_research_20260909\\training_material\\validation.uint16.bin",
+ "natural_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_three_research_20260909\\training_material\\train.uint16.bin",
+ "panel": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R26_contrast_components_v2_20260913\\panel.json",
  "progress_every": 32,
  "purpose": "READER_COVERAGE pilot P1: generic-text random subsets alternating with the explanation parts and random subsets, both read through the full next-token distribution, as one objective for the language-model consumer.",
  "queries": {
@@ -96,22 +96,22 @@
   3
  ],
  "source": {
-  "gate": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/gpt2_saes/topk_s2_source.npz",
+  "gate": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R26_contrast_components_v2_20260913\\topk_s2_source.npz",
   "hook_module_path": "transformer.h.11",
-  "model_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/seed_models/gpt2-medium-openai",
+  "model_dir": "D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
   "model_files": [
    "config.json",
    "model.safetensors"
   ],
   "model_label": "openai-community/gpt2-medium 6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
-  "sae_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/gpt2_saes/topk_seed2.pt",
+  "sae_checkpoint": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed2.pt",
   "sae_label": "GPT-2 Medium TopK SAE seed 2"
  },
  "source_revision": "e8a112c030dca6d3d0604e791760016fb37e3ba6",
  "steps": 512,
  "target": {
   "hook_module_path": "transformer.h.11",
-  "sae_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/gpt2_saes/topk_seed3.pt",
+  "sae_checkpoint": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed3.pt",
   "sae_label": "GPT-2 Medium TopK SAE seed 3",
   "same_model": true
  },

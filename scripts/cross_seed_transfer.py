@@ -11,6 +11,7 @@ import numpy as np
 import torch
 import transformers
 from scipy.optimize import linear_sum_assignment
+from sklearn.covariance import LedoitWolf
 
 from run_causalgym_multisite import MultisiteWork, write
 
@@ -405,6 +406,45 @@ def main():
             target.edit = target.positions = None
             return (weight*(d_t-d_s)**2).sum(), (weight*d_s**2).sum()
 
+        whiten = None
+        if any('state' in f for f in c['families']):
+            # Ledoit-Wolf covariance of clean hook states on the first natural-text sequences, inverted to whiten the
+            # edit vectors that the state family compares.
+            chunks = []
+            for off in range(0, c['whiten_sequences'], c['natural_batch']):
+                source.states = []
+                with torch.no_grad():
+                    source.model(batch(tokens, slice(off, off+c['natural_batch'])))
+                chunks.append(source.states[0].reshape(-1, source.states[0].shape[-1]).double().cpu())
+                source.states = None
+            lw = LedoitWolf().fit(torch.cat(chunks).numpy())
+            vals, vecs = np.linalg.eigh(lw.covariance_)
+            whiten = torch.tensor(vecs @ np.diag(vals**-.5) @ vecs.T, device=device, dtype=torch.float32)
+            write(w.run/'WHITENING.json', dict(tokens=int(sum(len(x) for x in chunks)), shrinkage=float(lw.shrinkage_),
+                                               eigenvalue_min=float(vals.min()), eigenvalue_max=float(vals.max())))
+
+        def state_error(ids, positions, q, weights, cap=1.):
+            # Whitened error of the edit vector at the hook where the membership writes its edit, at the edited
+            # positions: every token of natural text, or the last shared prefix token of each task pair.
+            with torch.no_grad():
+                source.states = []
+                source.model(ids)
+                h = source.states[0]
+                source.states = None
+                if positions is not None:
+                    h = h[torch.arange(len(h), device=device), positions][:, None, :]
+                d_s = source_edit(q)(h)
+            d_t = membership_edit(weights, q, cap)(h)
+            return (((d_t-d_s)@whiten)**2).sum(), ((d_s@whiten)**2).sum()
+
+        def pair_state_error(rr, q, weights, cap=1.):
+            length = max(len(r['good']) for r in rr)
+            ids = torch.full((len(rr), length), eos, dtype=torch.long, device=device)
+            for i, row in enumerate(rr):
+                ids[i, :len(row['good'])] = torch.tensor(row['good'], device=device)
+            positions = torch.tensor([r['position'] for r in rr], device=device)
+            return state_error(ids, positions, q, weights, cap)
+
         values = dict(none_source=evaluate_task('none_source', source, None),
                       source=evaluate_task('source', source, source_edit))
         values['none_target'] = values['none_source'] if target.model is source.model else evaluate_task('none_target', target, None)
@@ -447,8 +487,28 @@ def main():
             for step in range(c['steps']):
                 weights = (param*mask).clamp(0., hi)
                 # Mixed families alternate natural-text subsets and task requests, each with its own schedule; the
-                # distmixed family reads its task requests through the full next-token distribution.
-                if family.endswith('natural') or (family.endswith('mixed') and step % 2 == 0):
+                # distmixed family reads its task requests through the full next-token distribution, and the statemixed
+                # family reads both through the whitened hook state.
+                if family.endswith('statemixed'):
+                    if step % 2 == 0:
+                        start = c['correlation_sequences']+natural_steps*c['natural_batch']
+                        natural_steps += 1
+                        ids = batch(tokens, slice(start, start+c['natural_batch']))
+                        p = torch.rand(len(ids), 1, generator=gen)
+                        q = (torch.rand(len(ids), m, generator=gen) < p).float().to(device)
+                        err, eff = state_error(ids, None, q, weights, cap)
+                    else:
+                        k = task_steps
+                        task_steps += 1
+                        rr = [fit[i] for i in rng.choice(len(fit), c['batch_pairs'], replace=False)]
+                        if k % 2 == 0:
+                            q = endpoints[(k//2) % len(endpoints)][parts].expand(len(rr), -1)
+                        else:
+                            p = torch.rand(len(rr), 1, generator=gen)
+                            q = (torch.rand(len(rr), m, generator=gen) < p).float().to(device)
+                        err, eff = pair_state_error(rr, q, weights, cap)
+                    loss = err/eff.clamp_min(1e-12)
+                elif family.endswith('natural') or (family.endswith('mixed') and step % 2 == 0):
                     start = c['correlation_sequences']+natural_steps*c['natural_batch']
                     natural_steps += 1
                     ids = batch(tokens, slice(start, start+c['natural_batch']))
