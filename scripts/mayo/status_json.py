@@ -32,8 +32,10 @@ def main():
             rows = [json.loads(line) for line in history.read_text().splitlines() if '"total"' in line]
             if rows:
                 items = dict(done=rows[-1]['done'], total=rows[-1]['total'])
+        # Only running runs are counted; finished runs keep large metric files that need not be read on every poll.
         runs[run.name] = dict(status=st.get('status'), started=st.get('started_at_utc') or st.get('updated_utc'), ended=st.get('ended_at_utc'),
-                              records=count_lines(run / 'metrics.raw.jsonl'), stage=stage, items=items)
+                              records=count_lines(run / 'metrics.raw.jsonl') if st.get('status') == 'RUNNING' else None,
+                              stage=stage, items=items)
     downloads = {}
     for item in sorted((ROOT / 'assets').iterdir()):
         if item.is_dir():
