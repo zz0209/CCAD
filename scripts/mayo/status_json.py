@@ -31,7 +31,8 @@ def main():
         if st.get('status') == 'RUNNING' and history.exists():
             rows = [json.loads(line) for line in history.read_text().splitlines() if '"total"' in line]
             if rows:
-                items = dict(done=rows[-1]['done'], total=rows[-1]['total'])
+                last = rows[-1]
+                items = dict(done=last['done'] if 'done' in last else last['items'], total=last['total'])
         # Only running runs are counted; finished runs keep large metric files that need not be read on every poll.
         runs[run.name] = dict(status=st.get('status'), started=st.get('started_at_utc') or st.get('updated_utc'), ended=st.get('ended_at_utc'),
                               records=count_lines(run / 'metrics.raw.jsonl') if st.get('status') == 'RUNNING' else None,
