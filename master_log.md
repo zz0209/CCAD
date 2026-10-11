@@ -12776,3 +12776,21 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 
 1. 取消 USE 用途 run。tmux ccad-use0/1 排队的 CSM_USE_GEMMA2B_state_* 与 EXP-R 的用途 run 内容重复（EXP-R 用相同 E8b 设计重新计算迁移臂，并加入完整删除），两者都尚未启动任何进程，已取消，以便 Gemma 统一臂提前约一小时开始。FINAL 读取方比预计慢（16k 在 17:41Z 完成 96 批中的 19 批），Gemma 统一臂与 EXP-R 因此顺延。
 2. 调度失误。取消 use 会话后，等待这两个会话的 ccad-u0/1 立即满足了等待条件；随后停止 u 会话又使等待它们的 ccad-expr0/1 满足条件。u 会话在启动任何进程前被停止；expr0 已开始冒烟 CSM_REDISCOVER_GEMMA2B_l0low16k_v1_20261011_SMOKE（与 GPU0 上正在运行的 CONF 共用显存约 1 至 2 分钟）后随会话一起停止。该目录改名为 abandoned_CSM_REDISCOVER_GEMMA2B_l0low16k_v1_20261011_SMOKE_stopped_requeue 保留，认领目录改名为 tmp/expr_claims/stopped_smoke_claim_1745。CONF w65k_highest 进程未受影响（仍在运行）。重新排队：ccad-u0/1 等 ccad-final0/1，ccad-expr0/1 等 ccad-u0/1。教训已写入会话记忆：停止一条等待链中的会话之前，先把等待它的后续会话改为等待其他会话。
+
+### READER_COVERAGE EXP-U PROGRESS（Gemma 确认数据的可用数量核对）
+
+实际写入UTC为2026-10-11T17:44:32Z。按负责人要求在运行前核对。data/cross_seed/natural_fineweb_slice.json 的 eval 划分共 256 篇（train 4,096 篇），负责人指定的第 129 至 256 篇可用 128 篇；平衡 test 传记共 1,736 条（C1 run 记录），第 257 至 512 条可用 256 条。暴露情况如实记录：此前所有留出读取方 run 只读过 eval 前 128 篇与平衡 test 前 256 条；但各训练 run 自带的评价在全部 256 篇 eval 文档上计算通用文本下一词元误差（NATURAL.json），并在全部 1,736 条平衡 test 传记上计算原分类器部分误差（NRMSE.json），这些汇总值曾在 CONTAINMENT 与 READER_COVERAGE 的讨论中出现（例如 16k 部分监督的 1.335），没有用于 EXP-U 的任何选择。确认读取方读取的读取方集合（后续分类器、性别探针、逐词元读取方）此前从未在这两部分数据上计算过。
+
+### READER_COVERAGE EXP-U PROGRESS（GPT-2 联合目标八个方向的拟合内结果）
+
+实际写入UTC为2026-10-11T18:12:56Z。CSM_UJ_GPT2_* 八个方向 PASS（本机）。与 X1、X1c、C8 合并分析 artifacts/containment/UJ_GPT2_TRANSFER.json（开发数据：解释三个范式的确认句对与验证文本）：U（distjoint）部分 .202、完整 .193、新请求 .230、通用文本 .361；P（句对下一词元拟合）.216、.204、.312、.586；G（通用文本拟合）.244、.228、.257、.348；Hungarian .314、.285、.289、.523。U 在自身范式三类请求上都最低，通用文本为 G 的 1.04 倍；逐方向部分误差 U 在八个方向中五个低于 P。S（statejoint）为 .259、.257、.252、.374，四项都差于 U。采用判定按负责人规则等开发读取方的 E2 与 fw（正在本机运行）。
+
+### READER_COVERAGE CORRECTION（上一条的逐方向计数）
+
+实际写入UTC为2026-10-11T18:13:03Z。上一条写“U 在八个方向中五个低于 P”。逐方向部分误差 U 为 .222、.245、.197、.197、.211、.181、.182、.184，P 为 .239、.225、.260、.207、.213、.208、.180、.201，U 更低的方向为六个（s1_t3 与 s4_t5 两个方向 P 更低）。
+
+### READER_COVERAGE EXP-U PROGRESS（确认范式下载与源模型筛选）
+
+实际写入UTC为2026-10-11T18:20:17Z。用户本轮明确授权：硬件允许、确有重要性的下载由执行者作专家决策，用户的其他要求继续适用（已写入会话记忆）。按负责人报告从 BLiMP 官方仓库 alexwarstadt/blimp 固定 commit 3e56b06f 下载九个从未使用的一致关系范式到既有 BLiMP 目录，清单 artifacts/scientific_reform_20260913/reference_material/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/FRESH_PARADIGMS_MANIFEST.json（每个文件的 URL、字节数、SHA256、1,000 行，并与 GitHub API 列出的大小核对；CC BY 4.0）。负责人列出的 determiner_noun_agreement_with_adj_1 在仓库中名为 determiner_noun_agreement_with_adjective_1，按仓库实际名称取用，其余八个名称一致。第一次下载因该名称 404 中止，此前已下载的五个文件保留并经大小核对。
+
+源模型筛选（结果前写定的纳入条件）：scripts/fresh_paradigm_filter.py 对每个源解释计算完整源编辑使九个范式前 128 对边际的平均绝对变化与干净边际标准差之比，比值 ≥ .10 对该模型全部源解释都成立的范式进入该模型的确认集合；不读取任何目标字典或映射。GPT-2 的五个源解释取自 s1_t2、s2_t3、s3_t4、s4_t5、s5_t1 的读取方配置，Qwen 的两个源解释取自 s1_t2_ts0、s2_t1_ts0。scripts/run_fresh_filter.ps1 在本机 gpu-0 租约下运行，输出 artifacts/containment/FRESH_PARADIGMS_GPT2.json 与 FRESH_PARADIGMS_QWEN.json。scripts/grammar_readers.py 增加 natural_doc_offset（默认 0），确认读取方用验证文本第 129 至 256 篇。

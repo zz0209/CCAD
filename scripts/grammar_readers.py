@@ -112,7 +112,10 @@ def main():
     pairs = [r for path in c['heldout_paradigms'] for r in pairs_of(path, tok, prefix, eos, c['pairs_per_paradigm'])]
     tasks = np.array([r['task'] for r in pairs])
     tokens = np.memmap(c['natural_eval_tokens'], dtype=c.get('token_dtype', '<u2'), mode='r').reshape(-1, c['context'])
-    docs = np.asarray(tokens[:c['natural_docs']], dtype=np.int64)
+    # Confirmation readers start after the documents that development readers and transfer evaluations already used.
+    doff = c.get('natural_doc_offset', 0)
+    docs = np.asarray(tokens[doff:doff + c['natural_docs']], dtype=np.int64)
+    assert len(docs) == c['natural_docs'], (doff, len(docs))
     execs = ['source'] + list(executors)
     store = {}
 
