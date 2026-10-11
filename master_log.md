@@ -12628,3 +12628,11 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 3. 发现并修正的实现错误。scripts/mayo/gemma_readers.py 对 matched_subset_state_sup 映射使用删除上限 1，而训练时该映射不设上限（增益上限 4）。EXT 读取方配置包含这类映射，EXT 读取方尚未开始，已修正（一一映射一律按 natural_matched 或 matched_ 前缀判断）并复制到 Mayo；此前完成的读取方 run 不含这类映射，不受影响。
 4. 实际动作。scripts/mayo/make_conf_gemma_configs.py 生成配置：每个目标训练 subsets_state、matched_subsets_state、natural 三族乘种子 0 与 1（E10 配方，Ledoit-Wolf 白化，候选与 Hungarian 初始化同 E10），在全部 test 传记上评价；读取方 run 的映射为 E10 的 Hungarian 解码器匹配、标量部分监督与标量 subsets（种子 0、1）和 CONF 的三族，用 E10 run 的原分类器。scripts/mayo/run_conf_gemma.sh 在 tmux ccad-conf0（等 ccad-gpu0next 结束后用 GPU0）与 ccad-conf1（等 ccad-ext 结束后用 GPU1）运行，先做冒烟训练与冒烟读取方，再按认领目录逐个目标运行。预计两张 GPU 合计约 10 至 12 小时，进度登记在 tmp/progress_viewer/jobs.json。
 5. 不同结果的作用。确认成立时，主方法与覆盖原理在 Gemma 上有七个目标的证据，正文主图使用开发与确认目标；不成立时，正文只写两个开发目标上的优势，网格结果如实报告并分析失败目标的特征（L0、宽度、解码器余弦）。
+
+### READER_COVERAGE PROGRESS（论文分析口径与 test 最终数字的排队）
+
+实际写入UTC为2026-10-11T11:27:41Z。
+
+1. 分析脚本扩展。scripts/containment_analyze_readers.py 增加通用文本下一词元一列（文档用独立随机数生成器重抽，传记抽样不变）、--contrast 配对对比与 --pool 多目标合并（目标作为固定层，逐抽样平均）。用它重算 EXP-2 两个目标，DR2、DR3 的全部数字与 artifacts/containment/EXP2_GEMMA_DR.json 逐项相同，新文件为 artifacts/containment/EXP2_GEMMA_PAPER.json。新增对比（dev，两个目标合并，部分请求）：RC 减标量部分监督，原分类器 +.021[+.014,+.028]，E2 −.030[−.039,−.023]，传记下一词元 −.223，第 22 层状态 −.441，通用文本下一词元 −.614[−.812,−.478]；RC 减通用文本映射，通用文本下一词元 −.022[−.038,−.006]。RC 虽只在传记上拟合，在通用文本下一词元上也不差于专门在通用文本上拟合的映射；16k 目标上标量部分监督映射的通用文本下一词元误差为 1.551，比不编辑偏离更远。
+2. 论文主图。scripts/rc_figures.py 画出四个面板的“拟合目标（输入、读取方、请求）乘使用者”误差矩阵（paper/figures/rc_reader_matrix.pdf），每列最低值加框，拟合目标自己的读取方用角标标出。当前 Gemma 面板为 dev 数字，test 数字到达后替换。
+3. test 最终数字排队。开发阶段的全部判定用 dev 传记；论文数字改用 test。scripts/mayo/make_final_gemma_configs.py 生成两个开发目标的 test 读取方配置（EXP-2 全部映射加 EXT 对照），tmux ccad-final0（GPU0，65k，等 ccad-conf0 结束）与 ccad-final1（GPU1，16k，等 ccad-conf1 结束）。

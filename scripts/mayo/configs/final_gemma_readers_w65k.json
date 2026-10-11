@@ -1,0 +1,218 @@
+{
+ "run_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models",
+ "model_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/gemma-2-2b",
+ "model_revision": "c5ebcd40d208330abc697524c919956e692655cf",
+ "dataset_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/bias_in_bios/052f01de644dba841176e0449528b41f27d94a61",
+ "features": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/GEMMA_SHIFT43.json",
+ "l0_rule": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/GEMMA_SCOPE_L0_RULE.json",
+ "res_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/gemma-scope-2b-pt-res",
+ "att_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/gemma-scope-2b-pt-att",
+ "source_width": "16k",
+ "expected_features": 43,
+ "probe_layer": 22,
+ "seed": 0,
+ "data_seed": 42,
+ "probe_seed": 42,
+ "probe_lr": 0.01,
+ "probe_batch": 32,
+ "natural_bios": 3000,
+ "natural_batch": 16,
+ "candidates_cos": 24,
+ "candidates_corr": 8,
+ "fit_bios": 1024,
+ "fit_sequences": 24,
+ "fit_steps": 400,
+ "fit_lr": 0.02,
+ "fit_l1": 1e-05,
+ "subset_inclusion": "uniform",
+ "eval_batch": 64,
+ "use_batch": 64,
+ "layer_bands": {
+  "early": [
+   0,
+   9
+  ],
+  "middle": [
+   10,
+   15
+  ],
+  "late": [
+   16,
+   22
+  ]
+ },
+ "member_subsets": 8,
+ "member_seed": 0,
+ "active_weight": 0.05,
+ "statistics_unit": "Balanced biographies stratified by profession and gender",
+ "information_budget": "All target-only executors use the same target dictionaries. Label-free maps use 3000 natural biographies of other professions. Response-trained maps also see source deletion responses of the original classifier on 1024 ambiguous training biographies, with equal steps and sequences for complete and part supervision.",
+ "run_id": "CSM_FINAL_GEMMA2B_readers_w65k_v1_20261011",
+ "purpose": "READER_COVERAGE final numbers: held-out readers on test biographies for every map frozen by the EXP-2 decisions and the controls under the main objective.",
+ "target_width": "65k",
+ "target_choice": "sfc_rule",
+ "target_label": "Gemma Scope 65k at the SFC L0 rule, a wider dictionary of similar sparsity",
+ "eval_split": "test",
+ "eval_bios": 256,
+ "dev_choice": "fit_init=hungarian from NAACL_E4C_GEMMA2B_dev_*_v1_20261010; families ['complete', 'parts', 'subsets', 'parts_matched'] with uniform subset inclusion after NAACL_E4C_GEMMA2B_dev2_*_v1 and dev3_*_v1",
+ "full_model": true,
+ "matched_gain_max": 4.0,
+ "natural_lm_texts": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/natural_fineweb_slice.json",
+ "natural_lm_len": 128,
+ "natural_lm_batch": 4,
+ "natural_steps": 512,
+ "natural_eval_seed": 1,
+ "probe_run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/CSM_C1_GEMMA2B_natural_w65k_v1_20261011",
+ "map_runs": [
+  {
+   "run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/NAACL_E4C_GEMMA2B_final_w65k_v2_20261010",
+   "prefix": "e4c_",
+   "methods": [
+    "subset_sup_hungarian_s0",
+    "subset_sup_hungarian_s1",
+    "subset_sup_hungarian_s2"
+   ]
+  },
+  {
+   "run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/NAACL_E8A_GEMMA2B_labelfree_w65k_v1_20261010",
+   "prefix": "e8a_",
+   "methods": [
+    "random_sup_hungarian_s0",
+    "random_sup_hungarian_s1",
+    "random_sup_hungarian_s2"
+   ]
+  },
+  {
+   "run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/CSM_EXP2_GEMMA2B_state_w65k_ledoit_wolf_v1_20261011",
+   "prefix": "lw_",
+   "methods": [
+    "subset_state_sup_hungarian_s0",
+    "random_state_sup_hungarian_s0",
+    "subset_state_sup_hungarian_s1",
+    "random_state_sup_hungarian_s1",
+    "subset_state_sup_hungarian_s2",
+    "random_state_sup_hungarian_s2"
+   ]
+  },
+  {
+   "run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/CSM_EXP2_GEMMA2B_state_w65k_standardized_v1_20261011",
+   "prefix": "std_",
+   "methods": [
+    "subset_state_sup_hungarian_s0",
+    "random_state_sup_hungarian_s0",
+    "subset_state_sup_hungarian_s1",
+    "random_state_sup_hungarian_s1",
+    "subset_state_sup_hungarian_s2",
+    "random_state_sup_hungarian_s2"
+   ]
+  },
+  {
+   "run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/CSM_C1_GEMMA2B_natural_w65k_v1_20261011",
+   "prefix": "",
+   "methods": [
+    "hungarian_decoder",
+    "natural_sup_hungarian_s0",
+    "part_sup_hungarian_s0",
+    "natural_sup_hungarian_s1",
+    "part_sup_hungarian_s1",
+    "natural_sup_hungarian_s2",
+    "part_sup_hungarian_s2"
+   ]
+  },
+  {
+   "run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/CSM_EXT_GEMMA2B_controls_w65k_v1_20261011",
+   "prefix": "ext_",
+   "methods": [
+    "matched_subset_state_sup_hungarian_s0",
+    "capacity_subset_state_sup_hungarian_s0",
+    "matched_part_sup_hungarian_s0",
+    "matched_subset_state_sup_hungarian_s1",
+    "capacity_subset_state_sup_hungarian_s1",
+    "matched_part_sup_hungarian_s1",
+    "matched_subset_state_sup_hungarian_s2",
+    "capacity_subset_state_sup_hungarian_s2",
+    "matched_part_sup_hungarian_s2"
+   ]
+  }
+ ],
+ "batch": 4,
+ "later_pairs": [
+  {
+   "name": "composer_surgeon",
+   "negative": 5,
+   "positive": 25
+  },
+  {
+   "name": "model_software_engineer",
+   "negative": 12,
+   "positive": 24
+  }
+ ],
+ "later_epochs": 4,
+ "random_requests": 16,
+ "random_seed": 20261011,
+ "female_words": [
+  "woman",
+  "women",
+  "female",
+  "girl",
+  "girls",
+  "lady",
+  "ladies",
+  "mother",
+  "mothers",
+  "mom",
+  "wife",
+  "daughter",
+  "sister",
+  "aunt",
+  "niece",
+  "grandmother",
+  "bride",
+  "girlfriend",
+  "actress",
+  "waitress",
+  "hostess",
+  "mrs",
+  "ms",
+  "miss",
+  "madam",
+  "feminine",
+  "maternal",
+  "sorority",
+  "queen",
+  "princess"
+ ],
+ "male_words": [
+  "man",
+  "men",
+  "male",
+  "boy",
+  "boys",
+  "gentleman",
+  "gentlemen",
+  "father",
+  "fathers",
+  "dad",
+  "husband",
+  "son",
+  "brother",
+  "uncle",
+  "nephew",
+  "grandfather",
+  "groom",
+  "boyfriend",
+  "actor",
+  "waiter",
+  "host",
+  "mr",
+  "sir",
+  "mister",
+  "masculine",
+  "paternal",
+  "fraternity",
+  "king",
+  "prince",
+  "guy"
+ ],
+ "natural_docs": 128
+}

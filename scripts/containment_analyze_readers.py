@@ -13,7 +13,10 @@ DESCRIPTION = ('Held-out reader errors of saved Gemma correspondences on develop
                'rules DR1 to DR3, with a bootstrap over biographies within profession-by-gender strata and over '
                'training seeds.')
 FAMILIES = ['complete', 'parts', 'new', 'random']
+DOC_FAMILIES = ['complete', 'parts', 'random']
 EXTRA = ['bio_next_token', 'state', 'mass_pronoun', 'mass_female', 'mass_male']
+# Readers on which the paired contrasts given with --contrast are reported, all on part requests.
+CONTRAST_READERS = ['original', 'E2', 'bio_next_token', 'state', 'fineweb_next_token']
 
 
 def groups_of(names):
@@ -41,13 +44,24 @@ def per_bio(z, req, reqs_of, name, readers):
     return err, eff
 
 
-def analyse(run, draws, rng):
+def per_doc(z, nreq, reqs_of, name):
+    # Next-token squared error and source energy per generic-text document, summed over the requests of each family.
+    err, eff = {}, {}
+    for fam in DOC_FAMILIES:
+        rows = [nreq.index(r) for r in reqs_of[fam]]
+        err[fam, 'fineweb_next_token'] = z[f'doc|{name}|nt_err'][rows].sum(0)
+        eff[fam, 'fineweb_next_token'] = z[f'doc|{name}|nt_eff'][rows].sum(0)
+    return err, eff
+
+
+def analyse(run, draws, rng, doc_rng):
     z = dict(np.load(run / 'responses.npz'))
     requests = json.loads((run / 'requests.json').read_text())['families']
     record = json.loads((run / 'READERS.json').read_text())
     readers = record['readers']
     held = [r for r in readers if r != 'original'] + ['bio_next_token']
     req = list(z['request_names'])
+    nreq = list(z['natural_request_names'])
     reqs_of = {f: requests[f] for f in FAMILIES}
     names = [n for n in record['summary'] if n != 'source']
     groups = groups_of(names)
@@ -59,15 +73,24 @@ def analyse(run, draws, rng):
         picks = rng.choice(idx, size=(draws, len(idx)))
         for d in range(draws):
             np.add.at(w[d], picks[d], 1.)
+    # Documents are resampled with their own generator, so the biography draws do not depend on this addition.
+    n_doc = z[f'doc|{names[0]}|nt_err'].shape[1]
+    wd = np.zeros((draws, n_doc))
+    picks = doc_rng.integers(0, n_doc, (draws, n_doc))
+    for d in range(draws):
+        np.add.at(wd[d], picks[d], 1.)
     keys = [(f, r) for f in FAMILIES for r in readers + EXTRA]
+    doc_keys = [(f, 'fineweb_next_token') for f in DOC_FAMILIES]
     point, boot = {}, {}
     for g, members in groups.items():
         stats = [per_bio(z, req, reqs_of, m, readers) for m in members]
+        doc_stats = [per_doc(z, nreq, reqs_of, m) for m in members]
         seed_pick = rng.integers(0, len(members), (draws, len(members)))
         point[g], boot[g] = {}, {}
-        for key in keys:
-            vals = np.stack([np.sqrt(e[key].sum() / f[key].sum()) for e, f in stats])
-            bvals = np.stack([np.sqrt((w * e[key]).sum(1) / (w * f[key]).sum(1)) for e, f in stats])
+        for key in keys + doc_keys:
+            source, weight = (doc_stats, wd) if key in doc_keys else (stats, w)
+            vals = np.stack([np.sqrt(e[key].sum() / f[key].sum()) for e, f in source])
+            bvals = np.stack([np.sqrt((weight * e[key]).sum(1) / (weight * f[key]).sum(1)) for e, f in source])
             point[g][key] = float(vals.mean())
             boot[g][key] = bvals[seed_pick, np.arange(draws)[:, None]].mean(1)
         for f in FAMILIES:
@@ -81,17 +104,36 @@ def contrast(boot_a, boot_b, pa, pb):
     return dict(point=pa - pb, interval=np.quantile(boot_a - boot_b, [.025, .975]).tolist())
 
 
+def report(name, point, readers, rec):
+    print(name)
+    width = max(len(g) for g in point)
+    cols = ['original'] + [r for r in readers if r != 'original'] + EXTRA + ['fineweb_next_token', 'E2']
+    print(' ' * width, '  '.join(c[:10].rjust(10) for c in cols))
+    for g, pt in point.items():
+        print(g.ljust(width), '  '.join(f"{pt[('parts', c)]:10.3f}" for c in cols))
+    for k, v in rec['contrasts'].items():
+        print(f"  {k}: {v['point']:+.3f} [{v['interval'][0]:+.3f}, {v['interval'][1]:+.3f}]")
+    if 'DR' in rec:
+        print('  DR', {k: v for k, v in rec['DR'].items() if not isinstance(v, dict) or 'point' in v})
+
+
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--runs', nargs='+', required=True)
     parser.add_argument('--draws', type=int, default=2000)
     parser.add_argument('--whitening', default=None, help='prefix of the chosen reader-complete maps, lw_ or std_')
+    parser.add_argument('--contrast', nargs=2, action='append', default=[], metavar=('A', 'B'),
+                        help='paired contrast A minus B on part requests, for each run and for the pooled runs')
+    parser.add_argument('--pool', action='store_true', help='also average every map group over the runs, targets fixed')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     rng = np.random.default_rng(20261011)
+    doc_rng = np.random.default_rng(20261012)
     out = dict(written_utc=datetime.now(timezone.utc).isoformat(), description=DESCRIPTION, draws=args.draws, runs={})
+    pooled = []
     for name in args.runs:
-        point, boot, readers = analyse(RUNS / name, args.draws, rng)
+        point, boot, readers = analyse(RUNS / name, args.draws, rng, doc_rng)
+        pooled.append((point, boot))
         rec = dict(point={g: {f'{k[0]}|{k[1]}' if isinstance(k, tuple) else k: v for k, v in p.items()} for g, p in point.items()},
                    intervals={g: {f'{k[0]}|{k[1]}': np.quantile(v, [.025, .975]).tolist() for k, v in b.items()}
                               for g, b in boot.items()}, contrasts={})
@@ -124,17 +166,28 @@ def main():
                 for ref in ['hungarian_decoder', 'natural_sup_hungarian']:
                     if has(ref):
                         rec['contrasts'][f'DR2 {g}-{ref} parts E2'] = contrast(boot[g][E2], boot[ref][E2], point[g][E2], point[ref][E2])
+        for a, b in args.contrast:
+            for r in CONTRAST_READERS:
+                key = ('parts', r)
+                rec['contrasts'][f'{a}-{b} parts {r}'] = contrast(boot[a][key], boot[b][key], point[a][key], point[b][key])
         out['runs'][name] = rec
-        print(name)
-        width = max(len(g) for g in point)
-        cols = ['original'] + [r for r in readers if r != 'original'] + EXTRA + ['E2']
-        print(' ' * width, '  '.join(c[:10].rjust(10) for c in cols))
-        for g, pt in point.items():
-            print(g.ljust(width), '  '.join(f"{pt[('parts', c)]:10.3f}" for c in cols))
-        for k, v in rec['contrasts'].items():
-            print(f"  {k}: {v['point']:+.3f} [{v['interval'][0]:+.3f}, {v['interval'][1]:+.3f}]")
-        if 'DR' in rec:
-            print('  DR', {k: v for k, v in rec['DR'].items() if not isinstance(v, dict) or 'point' in v})
+        report(name, point, readers, rec)
+    if args.pool:
+        # Targets are fixed strata: the pooled value and every bootstrap draw are the means over the runs.
+        common = [g for g in pooled[0][0] if all(g in p for p, _ in pooled)]
+        point = {g: {k: float(np.mean([p[g][k] for p, _ in pooled])) for k in pooled[0][1][g]} for g in common}
+        boot = {g: {k: np.mean([b[g][k] for _, b in pooled], 0) for k in pooled[0][1][g]} for g in common}
+        rec = dict(point={g: {f'{k[0]}|{k[1]}': v for k, v in p.items()} for g, p in point.items()},
+                   intervals={g: {f'{k[0]}|{k[1]}': np.quantile(v, [.025, .975]).tolist() for k, v in b.items()}
+                              for g, b in boot.items()}, contrasts={})
+        for a, b in args.contrast:
+            for r in CONTRAST_READERS:
+                key = ('parts', r)
+                c = contrast(boot[a][key], boot[b][key], point[a][key], point[b][key])
+                c['runs_negative'] = int(sum(p[a][key] < p[b][key] for p, _ in pooled))
+                rec['contrasts'][f'{a}-{b} parts {r}'] = c
+        out['pooled'] = dict(runs=args.runs, **rec)
+        report('pooled', point, readers, rec)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(out, indent=1))
 
