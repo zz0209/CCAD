@@ -259,8 +259,9 @@ def main():
                 with torch.no_grad():
                     for s in c['adapt_sites']:
                         if variant not in relation_only:targets[s].decoder.weight.div_(targets[s].decoder.weight.norm(dim=0).clamp_min(1e-10))
-                    for a in coefficients.values():
-                        if variant=='natural_matched':a.clamp_(0.,c['matched_gain_max'])
+                    for s,a in coefficients.items():
+                        # The one-to-one control keeps only each matched entry, a gain on its own source feature.
+                        if variant=='natural_matched':a.clamp_(0.,c['matched_gain_max']).mul_(matched_init[s]>0)
                         else:project_rows(a,c.get('relation_capacity',1.))
                 assert torch.isfinite(loss)
                 if (step+1)%16==0:

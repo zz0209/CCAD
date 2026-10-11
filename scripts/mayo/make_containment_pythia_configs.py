@@ -55,18 +55,21 @@ for target in [2, 3, 4, 5]:
     (configs / f'c2_pythia_eval_t{target}.json').write_text(json.dumps(evaluation, indent=1))
     print(target)
 # C2b: the same many-to-many arms with each target feature's total deletion allowed up to four, the bound of the
-# one-to-one control, to separate the number of target features from the size of the edit.
+# one-to-one control, to separate the number of target features from the size of the edit; and the one-to-one control
+# itself, which keeps only each Hungarian match (the version 1 arm also trained the other entries of the matched rows).
 for target in [2, 3, 4, 5]:
     programs = {}
     for training_seed in [42, 43, 44]:
         cfg = json.loads((configs / f'c2_pythia_program_t{target}_ts{training_seed}.json').read_text())
         bulk = f'{runs}/c2b_programs/t{target}_ts{training_seed}'
         cfg.update(run_id=f'CSM_C2B_PYTHIA70M_program_t{target}_ts{training_seed}_v1_20261011', bulk_output_dir=bulk,
-                   variants=['parts_relation', 'natural_relation'], relation_capacity=4.,
+                   variants=['parts_relation', 'natural_relation', 'natural_matched'], relation_capacity=4.,
                    purpose=('CONTAINMENT experiment 2b: part-supervised and natural-text many-to-many correspondences '
-                            'whose total deletion per target feature may reach four, as the one-to-one control may.'))
+                            'whose total deletion per target feature may reach four, and the one-to-one control with '
+                            'gains up to four on the Hungarian matches.'))
         (configs / f'c2b_pythia_program_t{target}_ts{training_seed}.json').write_text(json.dumps(cfg, indent=1))
-        programs.update({f'{v}_cap4_ts{training_seed}': dict(directory=f'{bulk}/{v}', sites=cfg['adapt_sites'], gain_max=4.)
+        names = dict(parts_relation='parts_relation_cap4', natural_relation='natural_relation_cap4', natural_matched='one_to_one')
+        programs.update({f'{names[v]}_ts{training_seed}': dict(directory=f'{bulk}/{v}', sites=cfg['adapt_sites'], gain_max=4.)
                          for v in cfg['variants']})
     evaluation = json.loads((configs / f'c2_pythia_eval_t{target}.json').read_text())
     evaluation.update(run_id=f'CSM_C2B_PYTHIA70M_eval_t{target}_v1_20261011', adapted_programs=programs,
