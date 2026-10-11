@@ -43,7 +43,7 @@
  "notebook": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/bib_shift.ipynb",
  "paired_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/grammar/discovery.uint16.bin",
  "program_contexts": "source_development",
- "purpose": "CONTAINMENT experiment 2b: part-supervised and natural-text many-to-many correspondences whose total deletion per target feature may reach four, as the one-to-one control may.",
+ "purpose": "CONTAINMENT experiment 2b: part-supervised and natural-text many-to-many correspondences whose total deletion per target feature may reach four, and the one-to-one control with gains up to four on the Hungarian matches.",
  "queries": [
   "full",
   "pronouns",
@@ -76,9 +76,10 @@
  "training_seed": 43,
  "variants": [
   "parts_relation",
-  "natural_relation"
+  "natural_relation",
+  "natural_matched"
  ],
- "source_revision": "d88842d0fe6a90ee604a8c6e175b1f7e28ad631b",
+ "source_revision": "781f49d8d761190f25b152fca805f40cedd27b60",
  "run_storage_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models",
  "matched_relation": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/matching_relations_seed4/matching_relations.npz",
  "natural_lm_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/r011_train.uint16.bin",
