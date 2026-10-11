@@ -7,7 +7,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 from matplotlib.colors import LinearSegmentedColormap
-from matplotlib.patches import Polygon, Rectangle
+from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Polygon, Rectangle
 from matplotlib.transforms import blended_transform_factory
 import numpy as np
 
@@ -125,6 +125,98 @@ def reader_matrix():
         if k % 2 == 0:
             objective_labels(ax, rows, w_in)
     save(fig, 'rc_reader_matrix')
+
+
+PRONOUN = '#4f6f8f'
+WOMEN = '#9a5b7a'
+STATE = '#1d6b63'
+CLASSIFIER = '#b0543f'
+MATCH = '#7d7d7d'
+
+
+def box(ax, x, y, w, h, text, ec='#3a3a3a', fc='white', size=7.2, style='normal'):
+    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle='round,pad=0.008,rounding_size=0.012', ec=ec, fc=fc, lw=.7))
+    ax.text(x + w / 2, y + h / 2, text, ha='center', va='center', fontsize=size, fontstyle=style, color='#1e1e1e')
+
+
+def arrow(ax, a, b, color='#3a3a3a', lw=.7, style='-|>'):
+    ax.add_patch(FancyArrowPatch(a, b, arrowstyle=style, mutation_scale=7, color=color, lw=lw, shrinkA=0, shrinkB=0))
+
+
+def overview_schematic(ax):
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis('off')
+    src = [(.06, y) for y in [.70, .63, .56, .49]] + [(.06, y) for y in [.37, .30, .23]]
+    colors = [PRONOUN] * 4 + [WOMEN] * 3
+    tgt = [(.22, .73 - .075 * k) for k in range(8)]
+    links = [(0, 0), (0, 1), (1, 1), (2, 2), (2, 3), (3, 3), (3, 6), (4, 4), (4, 5), (5, 5), (6, 6), (6, 7), (1, 4)]
+    for i, j in links:
+        ax.plot([src[i][0], tgt[j][0]], [src[i][1], tgt[j][1]], color=colors[i], lw=.8, alpha=.75, zorder=1)
+    for (x, y), c in zip(src, colors):
+        ax.scatter(x, y, s=24, color=c, zorder=2, lw=0)
+    for x, y in tgt:
+        ax.scatter(x, y, s=24, facecolor='white', edgecolor='#3a3a3a', lw=.7, zorder=2)
+    ax.text(.06, .77, 'Source\nSAE', ha='center', va='bottom', fontsize=7.2)
+    ax.text(.22, .77, 'New\nSAE', ha='center', va='bottom', fontsize=7.2)
+    ax.text(.0, .595, 'pronouns', ha='left', va='center', fontsize=6.8, color=PRONOUN, rotation=90)
+    ax.text(.0, .30, 'women', ha='left', va='center', fontsize=6.8, color=WOMEN, rotation=90)
+    ax.text(.14, .08, 'fitted membership $A$', ha='center', va='center', fontsize=7.2)
+    # The edited model and its consumers, with the reader each fit matches drawn in its color.
+    box(ax, .31, .54, .21, .13, 'edit through\nnew features')
+    box(ax, .31, .35, .21, .13, 'frozen model,\nlayers 0 to 22')
+    box(ax, .31, .16, .21, .13, 'layer-22 states', ec=STATE)
+    ax.text(.415, .135, 'read by the state fit', ha='center', va='top', fontsize=6.6, color=STATE)
+    ax.text(.415, .715, 'request $q$, parts or\nrandom subsets', ha='center', va='bottom', fontsize=6.6, color='.25')
+    arrow(ax, (.26, .605), (.31, .605))
+    arrow(ax, (.415, .54), (.415, .48))
+    arrow(ax, (.415, .35), (.415, .29))
+    readers = [('original classifier', .74, CLASSIFIER), ('later classifiers', .57, '#3a3a3a'),
+               ('gender probe', .40, '#3a3a3a'), ('next token', .23, '#3a3a3a')]
+    for name, y, ec in readers:
+        box(ax, .67, y - .055, .25, .11, name, ec=ec, size=6.9)
+        arrow(ax, (.52, .225), (.67, y))
+    ax.text(.795, .80, 'read by the classifier fit', ha='center', va='bottom', fontsize=6.6, color=CLASSIFIER)
+    ax.text(.62, .04, 'inputs are biographies or generic text', ha='center', va='bottom', fontsize=6.6, color='.25')
+
+
+def overview_uses(ax):
+    pt = json.loads((ART / 'EXP2_GEMMA_PAPER.json').read_text())['runs'][
+        'CSM_EXP2_GEMMA2B_readers_l0low16k_v2_20261011']['point']
+    uses = [('Original\nclassifier', lambda m: pt[m]['parts|original']),
+            ('Held-out\nclassifiers', lambda m: np.mean([pt[m][f'parts|{r}'] for r in LATER + ['gender']])),
+            ('Biography\nnext token', lambda m: pt[m]['parts|bio_next_token']),
+            ('Generic-text\nnext token', lambda m: pt[m]['parts|fineweb_next_token'])]
+    series = [('hungarian_decoder', 'Hungarian matching', MATCH, 's', ':'),
+              ('part_sup_hungarian', 'Classifier fit', CLASSIFIER, 'o', '-'),
+              ('lw_subset_state_sup_hungarian', 'State fit', STATE, 'D', '-')]
+    xs = np.arange(len(uses))
+    for m, label, color, marker, ls in series:
+        ys = [f(m) for _, f in uses]
+        ax.plot(xs, ys, color=color, marker=marker, ms=4, lw=.9, ls=ls, label=label, mec='white', mew=.4)
+    ax.axhline(1, color='.55', lw=.6, ls='--')
+    ax.text(len(uses) - 1.02, 1.03, 'no edit', ha='right', va='bottom', fontsize=6.8, color='.4')
+    ax.set_xticks(xs)
+    ax.set_xticklabels([u for u, _ in uses], fontsize=6.9)
+    ax.set_ylim(0, 1.65)
+    ax.set_xlim(-.3, len(uses) - .7)
+    ax.set_yticks([0, .5, 1, 1.5])
+    ax.set_ylabel('Part-deletion error (nRMSE)', fontsize=7.4)
+    ax.tick_params(labelsize=7, length=2.5, width=.5)
+    for s in ['top', 'right']:
+        ax.spines[s].set_visible(False)
+    ax.legend(frameon=False, fontsize=6.9, loc='upper left', handlelength=1.8)
+
+
+def overview():
+    fig = plt.figure(figsize=(6.3, 2.25))
+    a = fig.add_axes([.0, .02, .56, .96])
+    b = fig.add_axes([.64, .2, .35, .74])
+    overview_schematic(a)
+    overview_uses(b)
+    fig.text(.005, .985, '(a) A correspondence and the consumers of the edited model', fontsize=8, va='top')
+    fig.text(.585, .985, '(b) Gemma-2-2B SHIFT, 16k lowest-$L_0$ target', fontsize=8, va='top')
+    save(fig, 'rc_overview')
 
 
 def save(fig, name):
