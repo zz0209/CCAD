@@ -33,10 +33,26 @@ def balanced_agreement(pred, ref, clean, w):
     return .5 * (a + b)
 
 
-def analyse(run, draws, rng):
-    logits = np.load(run / 'task_logits.npz')
-    labels = json.loads((run / 'task_labels.json').read_text())
-    keys = [k.split('|') for k in logits.files]
+def load(runs):
+    # Runs with the same tasks and biographies are merged into one set of logits; shared keys (the clean answers and the
+    # source deletion) must agree, so every method is compared on the same draws.
+    logits, labels = {}, None
+    for run in runs:
+        z = np.load(run / 'task_logits.npz')
+        lab = json.loads((run / 'task_labels.json').read_text())
+        assert labels is None or lab == labels, run
+        labels = lab
+        for k in z.files:
+            if k in logits:
+                assert np.allclose(logits[k], z[k], atol=1e-3), (run, k)
+            else:
+                logits[k] = z[k]
+    return logits, labels
+
+
+def analyse(runs, draws, rng):
+    logits, labels = load(runs)
+    keys = [k.split('|') for k in logits]
     methods = sorted({m for _, part, m, _ in keys if part != 'none'})
     parts = sorted({part for _, part, _, _ in keys if part != 'none'})
     groups = {}
@@ -120,6 +136,7 @@ def strip(summary):
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--runs', nargs='+', type=Path, required=True)
+    parser.add_argument('--merge', action='store_true', help='analyse all runs together as one set of methods')
     parser.add_argument('--draws', type=int, default=2000)
     parser.add_argument('--seed', type=int, default=20261011)
     parser.add_argument('--output', type=Path, required=True)
@@ -128,10 +145,15 @@ def main():
     record = dict(written_utc=datetime.now(timezone.utc).isoformat(), description=DESCRIPTION, draws=args.draws, runs={})
     pairs = [('part_sup_hungarian', 'complete_sup_hungarian'), ('part_sup_hungarian', 'random_sup_hungarian'),
              ('part_sup_hungarian', 'singleton_sup_hungarian'), ('random_sup_hungarian', 'complete_sup_hungarian'),
-             ('part_sup_hungarian', 'hungarian_decoder'), ('part_sup_hungarian', 'readout')]
-    for run in args.runs:
-        assert json.loads((run / 'status.json').read_text())['status'] == 'PASS', run
-        out, groups = analyse(run, args.draws, rng)
+             ('part_sup_hungarian', 'hungarian_decoder'), ('part_sup_hungarian', 'readout'),
+             ('subset_state_sup_hungarian', 'part_sup_hungarian'), ('subset_state_sup_hungarian', 'complete_sup_hungarian'),
+             ('subset_state_sup_hungarian', 'hungarian_decoder'), ('subset_state_sup_hungarian', 'readout')]
+    batches_of_runs = [args.runs] if args.merge else [[run] for run in args.runs]
+    for runs in batches_of_runs:
+        for run in runs:
+            assert json.loads((run / 'status.json').read_text())['status'] == 'PASS', run
+        run = runs[0] if len(runs) == 1 else Path('+'.join(r.name for r in runs))
+        out, groups = analyse(runs, args.draws, rng)
         later, shift = summarize(out, groups, LATER), summarize(out, groups, ['shift'])
         record['runs'][run.name] = dict(later=strip(later), shift=strip(shift), later_contrasts=contrasts(later, pairs),
                                         shift_contrasts=contrasts(shift, pairs),
