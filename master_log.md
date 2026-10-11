@@ -12743,3 +12743,17 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 ### READER_COVERAGE EXP-R START（重新发现流程的实现与排队）
 
 实际写入UTC为2026-10-11T17:15:57Z。按第四位负责人报告第 3 节写定的流程实现 scripts/mayo/gemma_rediscover.py：在 fit 划分的 1,024 条模糊训练传记上，每个解释位点加零值叶节点，一次反向传播得到原分类器 logit 对各位点的梯度，对目标字典全部特征计算激活乘梯度归因的绝对值之和并全局排序；同一遍统计每个特征在代词词元与女性和男性词表词元上的激活质量占比。按排序逐个检查，代词占比 ≥ .5 进入 pronouns，性别词占比 ≥ .5 进入 female_descriptions，其余跳过；接受数达到迁移映射（EXP-2 状态拟合三个种子）中载荷非零的目标特征数的平均值时停止，最多检查 2,000 个。删除方式为执行器 PartMap（加入 scripts/mayo/gemma_shift_transfer.py），每个重新发现的特征按其所属源部分被请求删除的比例删除；scripts/mayo/gemma_task_use.py 增加 rediscovered 方法。scripts/mayo/make_expr_gemma_configs.py 生成两个开发目标的重新发现与用途配置（E8b 设计、test 传记，方法为源编辑、Hungarian、迁移映射三个种子与重新发现，部分为完整删除、代词与女性描述）以及 16k 目标上的冒烟配对。scripts/mayo/run_expr_gemma.sh 在 tmux ccad-expr0（GPU0，65k，等 ccad-u0）与 ccad-expr1（GPU1，16k，等 ccad-u1）排队，先做冒烟；Mayo 上 py_compile 通过。判定规则见 EXPERIMENT_PLAN 顶部 EXP-R 一段。
+
+### READER_COVERAGE CONF PROGRESS（第四个确认目标 w16k_highest）
+
+实际写入UTC为2026-10-11T17:19:33Z。CSM_CONF_GEMMA2B_w16k_highest_v1_20261011 与读取方 CSM_CONF_GEMMA2B_readers_w16k_highest_v1_20261011 PASS（status.json 记录时间为准）。
+
+部分请求（test 256 条传记，两个训练种子）：E2 状态拟合 .163，标量 subsets .135（+.029[+.022,+.037]），标量部分监督 .122（+.041），Hungarian .200（−.037），通用文本拟合 .198（−.035）。原分类器状态拟合 .138，对标量部分监督 .050 与标量 subsets .056。逐词元读取方状态拟合最好：传记下一词元 .250 对 .333 与 .366，第 22 层状态 .314 对 .515 与 .643，通用文本下一词元 .283 对 .328 与 .442。判断：在这个稠密目标（Gemma Scope 16k 最高 L0）上，状态拟合在分类器类读取方上与分类器拟合的差距扩大到 .07 至 .09，超过第四位负责人已覆盖读取方规则中 +.04 的容许值；逐词元读取方仍是状态拟合最好。最后一个目标 w65k_highest 在 GPU0 运行。
+
+### READER_COVERAGE EXP-U H（新增一个有机制依据的臂，结果前写定采用规则）
+
+实际写入UTC为2026-10-11T17:21:34Z。
+
+1. 依据。第四位负责人决定之后到达的确认结果显示，状态拟合在稠密目标上的已覆盖读取方差距扩大（w16k_highest 原分类器 .138 对 .050，E2 +.029 至 +.041），超过负责人规则的 +.04 容许值；负责人决定时只看到 w16k_higher（+.015）。命题给出直接的机制：拟合读取方取为状态加已知使用者（原分类器）时，G_fit 为两者之和，与原分类器方向一致的读取方（全部后续分类器与性别探针，效应相关 ≥ .993）得到与分类器拟合相同量级的覆盖系数，状态项继续覆盖逐词元读取方。这是负责人所列“任何新的分类器目标变体”之外的情况：它由命题导出，回应决定之后的新证据，并且不替换负责人设定的统一臂。
+2. 实现。scripts/mayo/gemma_shift_transfer.py 新增 subsets_statemixedclf 族（标签 subset_statemixedclf_sup）：与 subsets_statemixed 相同的交替与步数，传记步的损失为白化状态误差加原分类器响应误差（两者各按原有方式归一，等权）。Gemma 统一 run（CSM_U_GEMMA2B_*，尚未开始）同时训练两个族，dev 读取方配置同时读取两者；已上传 Mayo 并 py_compile 通过。
+3. 采用规则（结果前写定）。先按负责人规则判定统一臂 U_G（subset_statemixed）对 RC。H 在两个开发目标的 dev 传记上同时满足以下两项时，H 取代 U_G 作为 Gemma 实例：已覆盖读取方（四个后续分类器与性别探针）平均误差不高于 U_G，且不高于 RC 加 .01；未覆盖读取方（传记下一词元、FineWeb 下一词元与三类词质量）平均误差不超过 U_G 加 .02。否则 H 作为消融行报告。确认阶段按负责人的七目标规则评价被采用的 Gemma 实例。

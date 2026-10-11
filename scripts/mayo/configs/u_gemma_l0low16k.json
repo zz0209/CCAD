@@ -25,7 +25,8 @@
  "fit_lr": 0.02,
  "fit_l1": 1e-05,
  "fit_families": [
-  "subsets_statemixed"
+  "subsets_statemixed",
+  "subsets_statemixedclf"
  ],
  "subset_inclusion": "uniform",
  "eval_batch": 64,

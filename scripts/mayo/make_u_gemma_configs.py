@@ -10,7 +10,9 @@ SEEDS = [0, 1]
 # biography-only state fit RC on development biographies.
 for key in ['w65k', 'l0low16k']:
     base = json.loads((configs / f'exp2_gemma_state_{key}_ledoit_wolf.json').read_text())
-    cfg = dict(base, run_id=f'CSM_U_GEMMA2B_{key}_v1_20261011', fit_families=['subsets_statemixed'], fit_seeds=SEEDS,
+    # The second family adds the original classifier's response to the biography steps (arm H, master_log EXP-U H).
+    cfg = dict(base, run_id=f'CSM_U_GEMMA2B_{key}_v1_20261011', fit_families=['subsets_statemixed', 'subsets_statemixedclf'],
+               fit_seeds=SEEDS,
                full_model=True, natural_lm_texts=f'{M}/data/cross_seed/natural_fineweb_slice.json', natural_lm_len=128,
                natural_lm_batch=4, natural_steps=512, natural_eval_seed=1,
                purpose=('READER_COVERAGE EXP-U: the unified rule for the Gemma SHIFT explanation, whitened layer-22 states '
@@ -25,7 +27,8 @@ for key in ['w65k', 'l0low16k']:
     c1 = readers['probe_run']
     readers.update(run_id=f'CSM_U_GEMMA2B_readers_{key}_v1_20261011',
                    map_runs=[dict(run=f'{M}/runs/cross_seed_models/{cfg["run_id"]}', prefix='u_',
-                                  methods=[f'subset_statemixed_sup_hungarian_s{s}' for s in SEEDS]),
+                                  methods=[f'{f}_hungarian_s{s}' for s in SEEDS
+                                           for f in ['subset_statemixed_sup', 'subset_statemixedclf_sup']]),
                              dict(run=lw, prefix='lw_', methods=[f'subset_state_sup_hungarian_s{s}' for s in [0, 1, 2]]),
                              dict(run=c1, prefix='', methods=['hungarian_decoder'] +
                                   [f'{f}_hungarian_s{s}' for s in [0, 1, 2] for f in ['natural_sup', 'part_sup']])],

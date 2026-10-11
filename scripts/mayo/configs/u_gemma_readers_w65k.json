@@ -68,7 +68,9 @@
    "prefix": "u_",
    "methods": [
     "subset_statemixed_sup_hungarian_s0",
-    "subset_statemixed_sup_hungarian_s1"
+    "subset_statemixedclf_sup_hungarian_s0",
+    "subset_statemixed_sup_hungarian_s1",
+    "subset_statemixedclf_sup_hungarian_s1"
    ]
   },
   {

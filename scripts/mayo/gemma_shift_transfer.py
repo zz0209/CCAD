@@ -705,7 +705,7 @@ def execute(cfg, run):
                           source_sha256=corpus['source_sha256'], length=cfg['natural_lm_len'])])
 
     whiten = None
-    if any(f.endswith(('_state', '_statemixed')) for f in cfg['fit_families']):
+    if any(f.endswith(('_state', '_statemixed', '_statemixedclf')) for f in cfg['fit_families']):
         # Reader-complete families fit the layer-22 token states that every downstream reader sees. Their error is
         # whitened by the covariance of clean states on unlabeled biographies of other professions, either with the
         # Ledoit-Wolf estimate or by standardizing each dimension. The first position is left out everywhere.
@@ -819,9 +819,12 @@ def execute(cfg, run):
         # the family it extends, which fits the classifier response. A capacity_ prefix uses the frequency-matched
         # random candidates, a matched_ prefix keeps only the Hungarian match of each source feature.
         # A family ending in _statemixed alternates these biography steps with generic-text steps of random subsets,
-        # both read by the whitened layer-22 states, with the biography step count of the family it extends.
-        mixed = family.endswith('_statemixed')
-        reader = 'state' if family.endswith(('_state', '_statemixed')) else 'classifier'
+        # both read by the whitened layer-22 states, with the biography step count of the family it extends. The
+        # _statemixedclf family adds the original classifier's response to the biography steps, so the fitted reader
+        # is the states together with the known consumer.
+        mixed = family.endswith(('_statemixed', '_statemixedclf'))
+        with_classifier = family.endswith('_statemixedclf')
+        reader = 'state' if family.endswith(('_state', '_statemixed', '_statemixedclf')) else 'classifier'
         base = family[:family.rindex('_')] if reader == 'state' else family
         capacity = base.startswith('capacity_')
         base = base[len('capacity_'):] if capacity else base
@@ -890,7 +893,7 @@ def execute(cfg, run):
             weights = {s: params[s] * mask_of[s] for s in dicts.sites}
             if reader == 'state':
                 fit_loss = state_loss(ids, mask, q, tmap, weights, [r for r, _ in rows])
-            else:
+            if reader == 'classifier' or with_classifier:
                 drawn = ('random', 'single')
                 target = np.array([np.nan if r in drawn else fit_source[train_requests.index(r), b] for r, b in rows],
                                   dtype=np.float32)
@@ -906,7 +909,8 @@ def execute(cfg, run):
                     scale[live] = max(float(np.mean(target[live] ** 2)), 1e-8)
                 logit = probe(model.pooled(ids, mask, tmap.mode(q, weights)))
                 delta = logit - torch.tensor(fit_base[[b for _, b in rows]], device=dev)
-                fit_loss = ((delta - torch.tensor(target, device=dev)) ** 2 / torch.tensor(scale, device=dev)).mean()
+                clf_loss = ((delta - torch.tensor(target, device=dev)) ** 2 / torch.tensor(scale, device=dev)).mean()
+                fit_loss = clf_loss if reader == 'classifier' else fit_loss + clf_loss
             update(fit_loss, weights, step)
         run.records([dict(kind='fit_curve', family=family, init=init, seed=seed, **c) for c in curve])
         return TargetMap(dicts, cand_of, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites},
@@ -916,7 +920,7 @@ def execute(cfg, run):
                   random='random_sup', singletons='singleton_sup', natural='natural_sup', natural_matched='natural_matched',
                   natural_capacity='natural_capacity', subsets_state='subset_state_sup', random_state='random_state_sup',
                   matched_subsets_state='matched_subset_state_sup', capacity_subsets_state='capacity_subset_state_sup',
-                  subsets_statemixed='subset_statemixed_sup')
+                  subsets_statemixed='subset_statemixed_sup', subsets_statemixedclf='subset_statemixedclf_sup')
     for init in cfg['fit_inits']:
         for seed in cfg['fit_seeds']:
             for family in cfg['fit_families']:
