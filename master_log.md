@@ -12765,3 +12765,7 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 1. 现象。按负责人要求以 1024 步交替（每类输入 512 步）运行的 U 臂，在已完成的前四个方向上自身范式部分误差为 .416、.263、.492、.501，同方向 512 步试点 P1 为 .268、.272、.216、.210，句对拟合 P（512 个任务步）为 .233（四方向平均）。单批损失在训练后段出现尖峰（s1_t4 第 992 步 .55）。判断：交替的两类梯度在恒定学习率 .02 的 Adam 下长时间训练不稳定，最终映射取在不稳定处；这是优化实现问题，不能用来判定规则本身。S 臂（statemixed）四方向部分 .298、通用文本 .383。
 2. 处置。停止交替 U 的剩余运行（s4_t5 运行中被停止，目录改名为 abandoned_CSM_U_GPT2_s4_t5_v1_20261011_stopped_for_joint 保留；本机 gpu-0 上该进程留下的租约在进程不存在后按非强制方式回收）；已完成的七个交替 run 保留为记录。停止原先排队的开发读取方（它会读取不稳定的映射）。
 3. 新实现。scripts/cross_seed_transfer.py 新增 distjoint 与 statejoint 族：每一步同时取一批通用文本（随机子集）与一批解释句对（部分、完整与随机子集交替），两项误差各自归一后相加，512 步。这样每类输入看到的批数与对应专门拟合相同，优化器步数也与 G、P 相同，规则仍是负责人决定的统一规则，只是写成一个目标。冒烟 CSM_UJ_GPT2_s1_t2_v1_20261011_SMOKE PASS。scripts/run_uj_gpt2.ps1 在本机依次运行八个方向，随后运行开发读取方（scripts/make_u_gpt2_readers.py 已改为读取 UJ 映射）。负责人的采用规则不变。
+
+### READER_COVERAGE EXP-U CORRECTION（Gemma 统一臂同样改为联合目标）
+
+实际写入UTC为2026-10-11T17:34:59Z。Gemma 统一臂原定为交替步（subsets_statemixed，400 加 400 步，Adam 学习率 .02），与语法设定中已出现训练不稳定的写法相同，并且尚未开始运行。为避免同样的问题并与语法设定的实现一致，改为联合目标：族名改为 subsets_statejoint（每个传记步加一批 FineWeb 文本的随机子集白化状态误差，400 步）与 subsets_statejointclf（再加原分类器响应误差，即 EXP-U H 一条中的 H 臂）；标签为 subset_statejoint_sup 与 subset_statejointclf_sup。上一条 H 中的采用规则与负责人对统一臂的采用规则不变，只把 U_G 指向 subset_statejoint_sup。scripts/mayo/gemma_shift_transfer.py、make_u_gemma_configs.py 与配置已上传 Mayo，py_compile 通过；Gemma 统一 run 尚未开始。

@@ -67,10 +67,10 @@
    "run": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/CSM_U_GEMMA2B_l0low16k_v1_20261011",
    "prefix": "u_",
    "methods": [
-    "subset_statemixed_sup_hungarian_s0",
-    "subset_statemixedclf_sup_hungarian_s0",
-    "subset_statemixed_sup_hungarian_s1",
-    "subset_statemixedclf_sup_hungarian_s1"
+    "subset_statejoint_sup_hungarian_s0",
+    "subset_statejointclf_sup_hungarian_s0",
+    "subset_statejoint_sup_hungarian_s1",
+    "subset_statejointclf_sup_hungarian_s1"
    ]
   },
   {

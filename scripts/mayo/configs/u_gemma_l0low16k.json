@@ -25,8 +25,8 @@
  "fit_lr": 0.02,
  "fit_l1": 1e-05,
  "fit_families": [
-  "subsets_statemixed",
-  "subsets_statemixedclf"
+  "subsets_statejoint",
+  "subsets_statejointclf"
  ],
  "subset_inclusion": "uniform",
  "eval_batch": 64,
@@ -51,7 +51,7 @@
  "statistics_unit": "Balanced biographies stratified by profession and gender",
  "information_budget": "All target-only executors use the same target dictionaries. Label-free maps use 3000 natural biographies of other professions. Response-trained maps also see source deletion responses of the original classifier on 1024 ambiguous training biographies, with equal steps and sequences for complete and part supervision.",
  "run_id": "CSM_U_GEMMA2B_l0low16k_v1_20261011",
- "purpose": "READER_COVERAGE EXP-U: the unified rule for the Gemma SHIFT explanation, whitened layer-22 states on biographies and generic text alternately, 400 steps each.",
+ "purpose": "READER_COVERAGE EXP-U: the unified rule for the Gemma SHIFT explanation, whitened layer-22 states on biographies and generic text as one objective, 400 steps, with and without the original classifier response.",
  "target_width": "16k",
  "target_choice": "lowest_l0",
  "target_label": "Gemma Scope 16k at the lowest released L0, a sparser dictionary of equal width",
