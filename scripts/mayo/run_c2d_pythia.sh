@@ -12,7 +12,7 @@ cd "$CODE/scripts"
 passed() { grep -q '"PASS"' "$1/status.json" 2>/dev/null; }
 gpu=$1
 # GPU 1 has no memory to spare until the C2 lane (C2b and C2c) has finished.
-while tmux has-session -t ccad-c2 2>/dev/null; do sleep 60; done
+while tmux has-session -t '=ccad-c2' 2>/dev/null; do sleep 60; done
 for target in 2 3 4 5; do
   for seed in 42 43 44; do
     name=CSM_C2D_PYTHIA70M_program_t${target}_ts${seed}_v1_20261011

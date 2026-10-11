@@ -20,7 +20,7 @@ passed "$RUNS/CSM_C8_GPT2_rc_s1_t2_v1_20261011_SMOKE" || exit 1
 for direction in s1_t2 s1_t3 s1_t4 s1_t5 s2_t3 s3_t4 s4_t5 s5_t1; do
   run "CSM_C8_GPT2_rc_${direction}_v1_20261011" "c8_gpt2_rc_${direction}"
 done
-while tmux has-session -t ccad-exp1 2>/dev/null; do sleep 60; done
+while tmux has-session -t '=ccad-exp1' 2>/dev/null; do sleep 60; done
 for direction in s1_t2 s2_t1; do
   for seed in 0 1 2; do
     run "CSM_C8_QWEN17_rc_${direction}_ts${seed}_v1_20261011" "c8_qwen17_rc_${direction}_ts${seed}"

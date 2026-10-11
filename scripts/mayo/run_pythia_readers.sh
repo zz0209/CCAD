@@ -15,7 +15,7 @@ readers() {
 }
 readers CSM_EXP1_PYTHIA70M_readers_t2_v1_20261011_SMOKE "$1" exp1_pythia_readers_smoke
 passed "$RUNS/CSM_EXP1_PYTHIA70M_readers_t2_v1_20261011_SMOKE" || exit 1
-while tmux has-session -t ccad-c2d 2>/dev/null; do sleep 60; done
+while tmux has-session -t '=ccad-c2d' 2>/dev/null; do sleep 60; done
 for target in 2 3 4 5; do
   readers "CSM_EXP1_PYTHIA70M_readers_t${target}_v1_20261011" "$1" "exp1_pythia_readers_t${target}"
 done
