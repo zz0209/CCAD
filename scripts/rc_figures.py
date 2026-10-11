@@ -34,13 +34,13 @@ def style():
 
 def gemma_panel(run):
     pt = json.loads((ART / 'FINAL_GEMMA_READERS.json').read_text())['runs'][run]['point']
-    rows = [('hungarian_decoder', ('Hungarian matching', '', ''), None),
-            ('natural_sup_hungarian', ('Generic text', 'Next token', 'Random'), 5),
-            ('part_sup_hungarian', ('Biographies', 'Classifier', 'Parts'), 0),
-            ('e4c_subset_sup_hungarian', ('Biographies', 'Classifier', 'Parts, random'), 0),
-            ('e8a_random_sup_hungarian', ('Biographies', 'Classifier', 'Random'), 0),
-            ('lw_subset_state_sup_hungarian', ('Biographies', 'Layer-22 states', 'Parts, random'), 4),
-            ('lw_random_state_sup_hungarian', ('Biographies', 'Layer-22 states', 'Random'), 4)]
+    rows = [('hungarian_decoder', ('Hungarian matching', '', ''), ()),
+            ('natural_sup_hungarian', ('Generic text', 'Next token', 'Random'), (5,)),
+            ('part_sup_hungarian', ('Biographies', 'Classifier', 'Parts'), (0,)),
+            ('e4c_subset_sup_hungarian', ('Biographies', 'Classifier', 'Parts, random'), (0,)),
+            ('e8a_random_sup_hungarian', ('Biographies', 'Classifier', 'Random'), (0,)),
+            ('lw_subset_state_sup_hungarian', ('Biographies', 'Layer-22 states', 'Parts, random'), (4,)),
+            ('lw_random_state_sup_hungarian', ('Biographies', 'Layer-22 states', 'Random'), (4,))]
     cols = ['Original classifier', 'Held-out classifiers', 'Biography next token', 'Word-class mass',
             'Layer-22 states', 'Generic text']
     get = lambda m, r: pt[m][f'parts|{r}']
@@ -52,16 +52,18 @@ def gemma_panel(run):
 
 def grammar_panel(family):
     held = json.loads((ART / f'GRAMMAR_READERS_{family}.json').read_text())['point']
+    held['u_distjoint'] = json.loads((ART / f'UJ_{family}_READERS.json').read_text())['point']['u_distjoint']
     own = json.loads((ART / f'C8_{family}_RC.json').read_text())['point']
-    if family == 'GPT2':
-        own = dict(own, **{k: v for k, v in json.loads((ART / 'C7_GPT2_MATCHED4.json').read_text())['point'].items()})
+    own['membership_distjoint@merged2'] = json.loads((ART / f'UJ_{family}_TRANSFER.json').read_text())['point'][
+        'membership_distjoint@merged2']
     own_key = dict(hungarian_activation='hungarian_activation', membership_natural='membership_natural',
-                   matched_natural4='matched_natural@merged' if family == 'GPT2' else 'matched_natural',
-                   membership_parts='membership_parts', rc_distparts='membership_distparts@merged')
-    rows = [('hungarian_activation', ('Hungarian matching', '', ''), None),
-            ('membership_natural', ('Generic text', 'Next token', 'Random'), 3),
-            ('membership_parts', ('BLiMP pairs', 'Margin', 'Parts'), 0),
-            ('rc_distparts', ('BLiMP pairs', 'Next token', 'Parts'), 0)]
+                   membership_parts='membership_parts', rc_distparts='membership_distparts@merged',
+                   u_distjoint='membership_distjoint@merged2')
+    rows = [('hungarian_activation', ('Hungarian matching', '', ''), ()),
+            ('membership_natural', ('Generic text', 'Next token', 'Random'), (3,)),
+            ('membership_parts', ('BLiMP pairs', 'Margin', 'Parts'), (0,)),
+            ('rc_distparts', ('BLiMP pairs', 'Next token', 'Parts'), (0,)),
+            ('u_distjoint', ('Pairs, generic', 'Next token', 'Parts, random'), (0, 3))]
     cols = ['Own paradigms', 'Held-out margins', 'Held-out next token', 'Generic text']
     values = np.array([[own[own_key[m]]['parts'], np.mean([held[m]['parts'][r] for r in MARGINS]),
                         held[m]['parts']['heldout_next_token'], held[m]['parts']['fineweb_next_token']]
@@ -79,8 +81,7 @@ def heat(ax, title, cols, values, fits):
             text = f'{v:.2f}'.lstrip('0') if v < 1 else f'{v:.2f}'
             ax.text(j, i, text, ha='center', va='center', fontsize=7, color='white' if shown[i, j] > .52 else '#1e1e1e',
                     fontweight='bold' if best[j] == i else 'normal')
-        if fits[i] is not None:
-            j = fits[i]
+        for j in fits[i]:
             ax.add_patch(Polygon([(j - .5, i - .5), (j - .2, i - .5), (j - .5, i - .2)], closed=True, color='#1e1e1e', lw=0))
     for j, i in enumerate(best):
         ax.add_patch(Rectangle((j - .5, i - .5), 1, 1, fill=False, ec='#1e1e1e', lw=.9))
@@ -111,7 +112,7 @@ def reader_matrix():
     fig = plt.figure(figsize=(6.3, 4.7))
     left, gap, width = .34, .025, .29
     w_in = width * 6.3
-    top_h, bottom_h = 7 * .19 / 4.7, 4 * .19 / 4.7
+    top_h, bottom_h = 7 * .19 / 4.7, 5 * .19 / 4.7
     top_y, bottom_y = .495, .045
     panels = [((left, top_y, width, top_h), '(a) Gemma-2-2B SHIFT, 65k target',
                gemma_panel('CSM_FINAL_GEMMA2B_readers_w65k_v1_20261011')),
