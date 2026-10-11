@@ -10,7 +10,8 @@ M = '/mnt/nvme3-data/harvardhds/ccad-m364569'
 # documents equal those of the local configs; only paths differ, and the batches stay at the Mayo values that the
 # 48 GB cards hold. The joint maps were trained locally and are copied to data/cross_seed/local_maps.
 fresh = json.loads((ART / 'FRESH_PARADIGMS_QWEN.json').read_text())['included']
-jobs = [('ureaders', d, s) for d in ['s2_t1'] for s in [0, 1, 2]] + \
+# s1_t2_ts2 joined after the local readers strained the 32 GB host memory of the workstation that runs them.
+jobs = [('ureaders', 's1_t2', 2)] + [('ureaders', d, s) for d in ['s2_t1'] for s in [0, 1, 2]] + \
        [('cureaders', d, s) for d in ['s1_t2', 's2_t1'] for s in [0, 1, 2]]
 for kind, direction, seed in jobs:
     base = json.loads((MAYO_CONFIGS / f'readers_qwen17_{direction}_ts{seed}.json').read_text())

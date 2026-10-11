@@ -60,11 +60,32 @@ def pythia_table():
     (TAB / 'rc_pythia_readers.tex').write_text(table(PYTHIA_ROWS, values, READERS, ['E2']))
 
 
+def rediscovery_table():
+    # Worst-group accuracy of the SHIFT task after each deletion, with the head retrained and with the original head.
+    runs = json.loads((ART / 'EXPR_GEMMA.json').read_text())['runs']
+    targets = [('CSM_EXPR_GEMMA2B_w65k_v1_20261011', '65k target'),
+               ('CSM_EXPR_GEMMA2B_l0low16k_v1_20261011', '16k lowest-$L_0$ target')]
+    rows = [('source', 'Source explanation'), ('transferred', 'Transferred (state fit)'),
+            ('hungarian_decoder', 'Hungarian matching'), ('rediscovered', 'Rediscovered')]
+    parts = [('complete', 'Compl.'), ('pronouns', 'Pron.'), ('female_descriptions', 'Women')]
+    lines = ['\\begin{tabular}{l' + 'rrr' * 4 + '}', '\\toprule',
+             ' & ' + ' & '.join(f'\\multicolumn{{6}}{{c}}{{{t}}}' for _, t in targets) + ' \\\\',
+             ' & ' + ' & '.join(f'\\multicolumn{{3}}{{c}}{{{h}}}' for _ in targets for h in ['Retrained head', 'Original head']) + ' \\\\',
+             'Explanation & ' + ' & '.join(p for _ in range(4) for _, p in parts) + ' \\\\', '\\midrule']
+    for m, label in rows:
+        cells = [f"{runs[r][head]['worst_group'][f'{p}|{m}']:.3f}".lstrip('0') for r, _ in targets
+                 for head in ['retrained', 'original'] for p, _ in parts]
+        lines.append(' & '.join([label] + cells) + ' \\\\')
+    lines += ['\\bottomrule', '\\end{tabular}']
+    (TAB / 'rc_rediscovery.tex').write_text('\n'.join(lines) + '\n')
+
+
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.parse_args()
     gemma_tables()
     pythia_table()
+    rediscovery_table()
 
 
 if __name__ == '__main__':
