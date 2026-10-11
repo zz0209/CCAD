@@ -152,6 +152,7 @@ def main():
         params=[p for s in c['adapt_sites'] for p in targets[s].parameters()]
         base_coeff={s:a.detach().clone() for s,a in coefficients.items()}
         base_indices=dict(indices)
+        member_total=sum(len(source['members'][s]) for s in sites)
         natural_variants={'natural','natural_relation','natural_matched'}&set(c['variants'])
         if natural_variants or c.get('natural_eval_sequences'):
             # Task-free family: generic natural text with random feature subsets, from a corpus outside the training
@@ -160,7 +161,6 @@ def main():
             natural_eval_tokens=np.memmap(w.checked(c['natural_lm_eval_tokens'],'Generic natural evaluation text from held-out documents','ODC-By-1.0'),dtype='<u2',mode='r').reshape(-1,128)
             natural_order=np.random.default_rng(c['training_seed']+7).permutation(len(natural_tokens))
             nat_eval=torch.tensor(np.array(natural_eval_tokens[:c['natural_eval_sequences']],dtype='int64'),device=w.device)
-            member_total=sum(len(source['members'][s]) for s in sites)
             write(w.run/'natural_membership.json',dict(training_sequences=len(natural_tokens),evaluation_sequences=len(nat_eval)))
         if 'natural_matched' in natural_variants:
             matched_relation=np.load(w.checked(c['matched_relation'],'Hungarian decoder matches on natural text'))
@@ -198,8 +198,8 @@ def main():
         if natural_variants or c.get('natural_eval_sequences'):natural_scores['initial']=natural_evaluation('initial')
         bulk=Path(c['bulk_output_dir']);bulk.mkdir(parents=True,exist_ok=False)
         checkpoints=[]
-        trained=('whole','parts','parts_relation','random_parts','natural','natural_relation','natural_matched')
-        relation_only=('parts_relation','natural_relation','natural_matched')
+        trained=('whole','parts','parts_relation','random_parts','subset_relation','natural','natural_relation','natural_matched')
+        relation_only=('parts_relation','subset_relation','natural_relation','natural_matched')
         base_params=dict(coefficients)
         if 'natural_matched' in natural_variants:
             # Natural-text error of plain Hungarian matching, the starting point of the one-to-one control.
@@ -229,13 +229,17 @@ def main():
                     ids=torch.tensor(np.array(natural_tokens[np.sort(natural_order[start:start+c['batch_sequences']])],dtype='int64'),device=w.device)
                     err,eff=natural_error(ids,natural_q(len(ids),generator))
                     program=err/eff.clamp_min(1e-12)
-                elif variant in ('whole','parts','parts_relation','random_parts'):
+                elif variant in ('whole','parts','parts_relation','random_parts','subset_relation'):
                     if program_rows:
                         fit=program_rows[64:];take=[fit[(step*c['batch_sequences']+j)%len(fit)] for j in range(c['batch_sequences'])]
                         ids=program_batch(take);mode='clean'
                         with torch.no_grad():clean_h,clean_pool=forward(ids)
                     if variant in ('parts','parts_relation') and c.get('request_training')=='semantic_singletons':
                         set_query(list(groups)[step%len(groups)])
+                    elif variant=='subset_relation':
+                        # Annotation-free requests on the unlabeled task inputs: per-sequence random feature subsets.
+                        qs=natural_q(len(ids),generator)
+                        for s in sites:q[s]=qs[s]
                     else:
                         for s in sites:q[s]=torch.ones_like(q[s]) if variant=='whole' else (torch.rand(q[s].shape,generator=generator,device=w.device)<.5).float()
                     mode='source'

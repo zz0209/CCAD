@@ -71,6 +71,16 @@ for target in [2, 3, 4, 5]:
         names = dict(parts_relation='parts_relation_cap4', natural_relation='natural_relation_cap4', natural_matched='one_to_one')
         programs.update({f'{names[v]}_ts{training_seed}': dict(directory=f'{bulk}/{v}', sites=cfg['adapt_sites'], gain_max=4.)
                          for v in cfg['variants']})
+        # C2c: annotation-free random feature subsets on the unlabeled source-use contexts, deletion bound one as in
+        # part supervision, the main method of rule D1 when only the grammar families pass.
+        sub = json.loads((configs / f'c2_pythia_program_t{target}_ts{training_seed}.json').read_text())
+        sub_bulk = f'{runs}/c2c_programs/t{target}_ts{training_seed}'
+        sub.update(run_id=f'CSM_C2C_PYTHIA70M_program_t{target}_ts{training_seed}_v1_20261011', bulk_output_dir=sub_bulk,
+                   variants=['subset_relation'],
+                   purpose=('CONTAINMENT experiment 2c: a many-to-many correspondence trained with random feature subsets '
+                            'on unlabeled source-use contexts, without part annotation.'))
+        (configs / f'c2c_pythia_program_t{target}_ts{training_seed}.json').write_text(json.dumps(sub, indent=1))
+        programs[f'subset_relation_ts{training_seed}'] = dict(directory=f'{sub_bulk}/subset_relation', sites=sub['adapt_sites'])
     evaluation = json.loads((configs / f'c2_pythia_eval_t{target}.json').read_text())
     evaluation.update(run_id=f'CSM_C2B_PYTHIA70M_eval_t{target}_v1_20261011', adapted_programs=programs,
                       methods=['none', 'source'] + list(programs),

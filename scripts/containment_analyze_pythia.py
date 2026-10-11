@@ -12,11 +12,26 @@ DESCRIPTION = ('Part, complete and union errors of the Pythia-70M SHIFT correspo
                'and biographies within label-by-gender strata.')
 RUNS = Path('D:/CCAD_Storage/runs/cross_seed_models')
 SEEDS = (42, 43, 44)
-TRAINED = ['parts_relation', 'natural_relation', 'natural_matched', 'parts_relation_cap4', 'natural_relation_cap4']
+# matched_rows_free is the version 1 natural_matched arm: the Hungarian-matched target features with every source
+# feature allowed on every one of them, gains up to four. one_to_one keeps only each match.
+TRAINED = ['parts_relation', 'natural_relation', 'one_to_one', 'parts_relation_cap4', 'natural_relation_cap4',
+           'matched_rows_free', 'subset_relation']
 FIXED = ['hungarian_decoder', 'geometry_gain', 'native', 'raw_reconstruction']
 CONTRASTS = [('natural_relation', 'parts_relation'), ('natural_relation', 'hungarian_decoder'),
-             ('natural_relation', 'natural_matched'), ('natural_relation_cap4', 'natural_matched'),
-             ('natural_relation_cap4', 'parts_relation_cap4'), ('parts_relation', 'hungarian_decoder')]
+             ('natural_relation', 'one_to_one'), ('natural_relation_cap4', 'one_to_one'),
+             ('natural_relation_cap4', 'parts_relation_cap4'), ('parts_relation', 'hungarian_decoder'),
+             ('natural_relation_cap4', 'matched_rows_free'), ('subset_relation', 'parts_relation'),
+             ('subset_relation', 'natural_relation')]
+RENAME = [('natural_matched_ts', 'matched_rows_free@'), ('_cap4_ts', '_cap4@'), ('one_to_one_ts', 'one_to_one@'), ('_ts', '@')]
+
+
+def usable(run):
+    # Version 1 evaluations fail only the capacity check of the matched-rows arm, whose gains may sum above four.
+    status = json.loads((run / 'status.json').read_text())['status']
+    if status == 'PASS':
+        return True
+    checks = json.loads((run / 'metrics.summary.json').read_text())['checks']
+    return [k for k, v in checks.items() if not v] == ['adapted_capacity']
 
 
 def family_error(values, method, queries, idx):
@@ -30,7 +45,7 @@ def merged(target, versions):
     # Both evaluations score the same panel with the same unedited and source passes; their other methods are joined.
     docs, values, labels, genders = None, {}, None, None
     for run in versions:
-        assert json.loads((run / 'status.json').read_text())['status'] == 'PASS', run
+        assert usable(run), run
         d, v, lab, gen = load(run)
         if docs is None:
             docs, labels, genders = d, lab, gen
@@ -38,7 +53,11 @@ def merged(target, versions):
         for key in [k for k in v if k[0] in ('none', 'source') and k in values]:
             assert np.allclose(v[key], values[key], atol=1e-5), (target, key)
         for (method, query), arr in v.items():
-            values[(method.replace('_cap4_ts', '_cap4@').replace('_ts', '@'), query)] = arr
+            for old, new in RENAME:
+                if old in method:
+                    method = method.replace(old, new)
+                    break
+            values[(method, query)] = arr
     return docs, values, labels, genders
 
 
@@ -60,7 +79,12 @@ def main():
         for s in SEEDS:
             a = json.loads((RUNS / f'CSM_C2_PYTHIA70M_program_t{t}_ts{s}_v1_20261011' / 'NATURAL.json').read_text())
             b = json.loads((RUNS / f'CSM_C2B_PYTHIA70M_program_t{t}_ts{s}_v1_20261011' / 'NATURAL.json').read_text())
-            natural[t][s] = dict(a, parts_relation_cap4=b['parts_relation'], natural_relation_cap4=b['natural_relation'])
+            sub = json.loads((RUNS / f'CSM_C2C_PYTHIA70M_program_t{t}_ts{s}_v1_20261011' / 'NATURAL.json').read_text())
+            natural[t][s] = dict(initial=a['initial'], hungarian_decoder=a['hungarian_decoder'],
+                                 parts_relation=a['parts_relation'], natural_relation=a['natural_relation'],
+                                 matched_rows_free=a['natural_matched'], one_to_one=b['natural_matched'],
+                                 parts_relation_cap4=b['parts_relation'], natural_relation_cap4=b['natural_relation'],
+                                 subset_relation=sub['subset_relation'])
     docs0, _, labels, genders = data[2]
     for docs, _, lab, gen in data.values():
         assert docs == docs0 and np.array_equal(lab, labels) and np.array_equal(gen, genders)
@@ -88,7 +112,7 @@ def main():
                               for f in FAMILIES} for a, c in CONTRASTS}
     d1 = dict(ratio_to_part_supervision=summary['natural_relation']['parts'] / summary['parts_relation']['parts'],
               below_hungarian=summary['natural_relation']['parts'] < summary['hungarian_decoder']['parts'],
-              below_one_to_one=summary['natural_relation']['parts'] < summary['natural_matched']['parts'])
+              below_one_to_one=summary['natural_relation']['parts'] < summary['one_to_one']['parts'])
     d1['pass'] = bool(d1['ratio_to_part_supervision'] <= 1.15 and d1['below_hungarian'] and d1['below_one_to_one'])
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(dict(written_utc=datetime.now(timezone.utc).isoformat(), description=DESCRIPTION,

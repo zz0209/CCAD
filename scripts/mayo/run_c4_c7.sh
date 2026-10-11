@@ -12,12 +12,16 @@ export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TMPDIR="$ROOT/tmp" HF_HOME="$ROOT
 cd "$CODE/scripts"
 passed() { grep -q '"PASS"' "$1/status.json" 2>/dev/null; }
 gpu=$1
-# Experiment 2b first: the Pythia many-to-many arms with deletion bound four, then their evaluations.
+# Experiments 2b and 2c first: the Pythia many-to-many arms with deletion bound four, the corrected one-to-one control
+# and the annotation-free subsets on task inputs, then their evaluations.
 for target in 2 3 4 5; do
   for seed in 42 43 44; do
     name=CSM_C2B_PYTHIA70M_program_t${target}_ts${seed}_v1_20261011
     passed "$RUNS/$name" || CUDA_VISIBLE_DEVICES=$gpu "$PY" train_shift_program.py \
       --config "../$CFG/c2b_pythia_program_t${target}_ts${seed}.json" > "$ROOT/logs/$name.log" 2>&1
+    name=CSM_C2C_PYTHIA70M_program_t${target}_ts${seed}_v1_20261011
+    passed "$RUNS/$name" || CUDA_VISIBLE_DEVICES=$gpu "$PY" train_shift_program.py \
+      --config "../$CFG/c2c_pythia_program_t${target}_ts${seed}.json" > "$ROOT/logs/$name.log" 2>&1
   done
 done
 for target in 2 3 4 5; do

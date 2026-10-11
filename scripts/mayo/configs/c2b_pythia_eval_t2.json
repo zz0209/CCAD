@@ -27,6 +27,14 @@
    ],
    "gain_max": 4.0
   },
+  "subset_relation_ts42": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2c_programs/t2_ts42/subset_relation",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ]
+  },
   "parts_relation_cap4_ts43": {
    "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t2_ts43/parts_relation",
    "sites": [
@@ -54,6 +62,14 @@
    ],
    "gain_max": 4.0
   },
+  "subset_relation_ts43": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2c_programs/t2_ts43/subset_relation",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ]
+  },
   "parts_relation_cap4_ts44": {
    "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2b_programs/t2_ts44/parts_relation",
    "sites": [
@@ -80,6 +96,14 @@
     "resid_0"
    ],
    "gain_max": 4.0
+  },
+  "subset_relation_ts44": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2c_programs/t2_ts44/subset_relation",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ]
   }
  },
  "audit_opened": true,
@@ -110,12 +134,15 @@
   "parts_relation_cap4_ts42",
   "natural_relation_cap4_ts42",
   "one_to_one_ts42",
+  "subset_relation_ts42",
   "parts_relation_cap4_ts43",
   "natural_relation_cap4_ts43",
   "one_to_one_ts43",
+  "subset_relation_ts43",
   "parts_relation_cap4_ts44",
   "natural_relation_cap4_ts44",
-  "one_to_one_ts44"
+  "one_to_one_ts44",
+  "subset_relation_ts44"
  ],
  "model_local_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/pythia-70m-deduped",
  "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
@@ -155,5 +182,5 @@
  "extra_relations": {
   "hungarian_decoder": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/matching_relations_seed2/matching_relations.npz"
  },
- "source_revision": "781f49d8d761190f25b152fca805f40cedd27b60"
+ "source_revision": "2a7d2048c996472497abc63e8980fc5667b91791"
 }
