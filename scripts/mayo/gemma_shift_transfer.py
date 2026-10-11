@@ -362,6 +362,7 @@ def natural_statistics(model, dicts, texts, cfg, run, candidates=None):
                              zs2=torch.zeros(r, dtype=torch.float64, device=dev),
                              zt=torch.zeros(d, dtype=torch.float64, device=dev),
                              zt2=torch.zeros(d, dtype=torch.float64, device=dev),
+                             ft=torch.zeros(d, dtype=torch.float64, device=dev),
                              zst=torch.zeros(r, d, dtype=torch.float64, device=dev),
                              pt=torch.zeros(d, dtype=torch.float64, device=dev),
                              ps=torch.zeros(r, dtype=torch.float64, device=dev),
@@ -394,6 +395,7 @@ def natural_statistics(model, dicts, texts, cfg, run, candidates=None):
             a['zs2'] += (zs ** 2).sum(0).double()
             a['zt'] += zt.sum(0).double()
             a['zt2'] += (zt ** 2).sum(0).double()
+            a['ft'] += (zt > 0).sum(0).double()
             a['zst'] += (zs.T @ zt).double()
             a['pt'] += zt[is_pron].sum(0).double()
             a['ps'] += zs[is_pron].sum(0).double()
@@ -538,6 +540,8 @@ def execute(cfg, run):
     dicts.load_full_target()
     nat = natural_statistics(model, dicts, natural, cfg, run)
     cos_lists, act_lists, top2_lists, candidates, cand_rows, corr_store = {}, {}, {}, {}, {}, {}
+    cap_candidates, cap_allowed, cap_init, capacity_stats = {}, {}, {}, {}
+    crng = np.random.default_rng(cfg['seed'] + 11)
     for site in dicts.sites:
         st = nat[site]
         n = st['n']
@@ -562,6 +566,32 @@ def execute(cfg, run):
         pos = {t: k for k, t in enumerate(union)}
         candidates[site] = np.array(union)
         cand_rows[site] = [[pos[t] for t in row] for row in per_row]
+        if 'natural_capacity' in cfg['fit_families']:
+            # Capacity control: each candidate of each source feature is replaced by a random target feature from the
+            # same activation-frequency bin, outside every real candidate, so the map keeps its size and firing rates
+            # but loses the features chosen for the explanation. The replacement of the Hungarian match starts at one.
+            rate = st['ft'] / n
+            bins = np.empty(len(rate), dtype=int)
+            bins[np.argsort(rate, kind='stable')] = np.arange(len(rate)) * cfg['capacity_bins'] // len(rate)
+            free = ~np.isin(np.arange(len(rate)), union)
+            pools = [np.flatnonzero((bins == b) & free) for b in range(cfg['capacity_bins'])]
+            rep_rows, rep_match = [], []
+            for r, row in enumerate(per_row):
+                chosen = {}
+                for t in row:
+                    chosen[t] = int(crng.choice([u for u in pools[bins[t]] if u not in chosen.values()]))
+                rep_rows.append(list(chosen.values()))
+                rep_match.append(chosen[cos_lists[site][r][0]])
+            cap_union = sorted({u for row in rep_rows for u in row})
+            cpos = {t: k for k, t in enumerate(cap_union)}
+            cap_candidates[site] = np.array(cap_union)
+            cap_allowed[site] = torch.zeros(len(per_row), len(cap_union), device=dev)
+            cap_init[site] = np.zeros((len(per_row), len(cap_union)), dtype=np.float32)
+            for r in range(len(per_row)):
+                cap_allowed[site][r, [cpos[u] for u in rep_rows[r]]] = 1.
+                cap_init[site][r, cpos[rep_match[r]]] = 1.
+            capacity_stats[site] = dict(candidates=len(cap_union), real_candidates=len(union),
+                                        real_rate=float(rate[union].mean()), replacement_rate=float(rate[cap_union].mean()))
         corr_store[site] = dict(cos=cos[:, union], corr=corr[:, union], pron_share_target=(st['pt'] / np.maximum(st['zt'], 1e-12))[union],
                                 pron_share_source=st['ps'] / np.maximum(st['zs'], 1e-12),
                                 pron_token_share=float(st['ntok_pron'] / n), tokens=float(n),
@@ -573,7 +603,10 @@ def execute(cfg, run):
                                 source_readback_error=(st['zs2'] - 2 * st['zs_hat'] + st['zs_hat2']) / np.maximum(st['zs2'], 1e-12),
                                 target_fve=float(1 - st['res'] / (st['x2'] - (st['xsum'] ** 2).sum() / n)))
     np.savez_compressed(run.dir / 'natural_statistics.npz', **{f'{s}__{k}': np.asarray(v) for s, d in corr_store.items()
-                                                                for k, v in d.items()}, **{f'{s}__candidates': candidates[s] for s in dicts.sites})
+                                                                for k, v in d.items()}, **{f'{s}__candidates': candidates[s] for s in dicts.sites},
+                        **{f'{s}__capacity_candidates': cap_candidates[s] for s in cap_candidates})
+    if capacity_stats:
+        (run.dir / 'CAPACITY.json').write_text(json.dumps(dict(bins=cfg['capacity_bins'], sites=capacity_stats), indent=1))
     del nat
     gram = natural_statistics(model, dicts, natural, cfg, run, candidates)
     native_w, native_quality = native_fit(dicts, candidates, cand_rows, gram)
@@ -631,7 +664,7 @@ def execute(cfg, run):
     matched_only = {s: torch.tensor((hung_w[s] > 0).astype(np.float32), device=dev) for s in dicts.sites}
     # Gains of one-to-one maps may exceed one when matched_gain_max is set, so a match can delete more than itself.
     gain_max = cfg.get('matched_gain_max', 1.)
-    natural_families = {'natural', 'natural_matched'} & set(cfg['fit_families'])
+    natural_families = {'natural', 'natural_matched', 'natural_capacity'} & set(cfg['fit_families'])
     assert not (natural_families or cfg.get('natural_lm_texts')) or cfg.get('full_model'), 'natural text needs full_model'
     if natural_families or cfg.get('natural_lm_texts'):
         corpus = json.loads(Path(cfg['natural_lm_texts']).read_text())
@@ -662,11 +695,13 @@ def execute(cfg, run):
         torch.manual_seed(seed)
         rng = np.random.default_rng(seed)
         matched = family == 'natural_matched'
-        mask_of = matched_only if matched else allowed
+        capacity = family == 'natural_capacity'
+        mask_of = matched_only if matched else (cap_allowed if capacity else allowed)
         hi = gain_max if matched else 1.
-        params = {s: torch.nn.Parameter(torch.tensor(inits[init][s], device=dev)) for s in dicts.sites}
+        cand_of, init_of = (cap_candidates, cap_init) if capacity else (candidates, inits[init])
+        params = {s: torch.nn.Parameter(torch.tensor(init_of[s], device=dev)) for s in dicts.sites}
         opt = torch.optim.Adam(params.values(), lr=cfg['fit_lr'])
-        tmap = TargetMap(dicts, candidates, {s: params[s] for s in dicts.sites}, cap=None if hi > 1 else 1.)
+        tmap = TargetMap(dicts, cand_of, {s: params[s] for s in dicts.sites}, cap=None if hi > 1 else 1.)
         curve = []
         for step in range(cfg['natural_steps']):
             ix = rng.choice(len(nat_ids['train']), cfg['natural_lm_batch'], replace=False)
@@ -687,7 +722,7 @@ def execute(cfg, run):
                 run.progress(stage='fit', method=f'{family}_{init}_s{seed}', step=step, fit_loss=round(float(fit_loss), 5),
                              l1=round(float(l1), 2))
         run.records([dict(kind='fit_curve', family=family, init=init, seed=seed, **c) for c in curve])
-        return TargetMap(dicts, candidates, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites},
+        return TargetMap(dicts, cand_of, {s: (params[s] * mask_of[s]).detach() for s in dicts.sites},
                          cap=None if hi > 1 else 1.)
 
     @torch.no_grad()
@@ -702,7 +737,7 @@ def execute(cfg, run):
         return float(np.sqrt(num / den))
 
     def train_map(family, init, seed):
-        if family in ('natural', 'natural_matched'):
+        if family in ('natural', 'natural_matched', 'natural_capacity'):
             return train_natural(family, init, seed)
         torch.manual_seed(seed)
         rng = np.random.default_rng(seed)
@@ -775,7 +810,8 @@ def execute(cfg, run):
                          cap=None if hi > 1 else 1.)
 
     labels = dict(complete='complete_sup', parts='part_sup', subsets='subset_sup', parts_matched='matched_part_sup',
-                  random='random_sup', singletons='singleton_sup', natural='natural_sup', natural_matched='natural_matched')
+                  random='random_sup', singletons='singleton_sup', natural='natural_sup', natural_matched='natural_matched',
+                  natural_capacity='natural_capacity')
     for init in cfg['fit_inits']:
         for seed in cfg['fit_seeds']:
             for family in cfg['fit_families']:

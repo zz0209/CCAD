@@ -21,3 +21,13 @@ for key in ['w65k', 'l0low16k']:
                  eval_bios=16, limit_use=64, fit_seeds=[0])
     (configs / f'c1_gemma_natural_{key}_smoke.json').write_text(json.dumps(smoke, indent=1))
     print(cfg['run_id'])
+    # CONTAINMENT experiment 5: the natural-text family on candidates replaced by random target features of matched
+    # activation frequency, with everything else as in experiment 1.
+    cap = dict(cfg, run_id=f'CSM_C5_GEMMA2B_capacity_{key}_v1_20261011', fit_families=['natural_capacity'], capacity_bins=64,
+               purpose=('CONTAINMENT experiment 5: capacity control for the natural-text many-to-many correspondence, with '
+                        'each candidate replaced by a random target feature from the same activation-frequency bin.'))
+    (configs / f'c5_gemma_capacity_{key}.json').write_text(json.dumps(cap, indent=1))
+    smoke = dict(cap, run_id=cap['run_id']+'_SMOKE', natural_bios=64, fit_bios=32, fit_steps=2, natural_steps=2,
+                 eval_bios=16, limit_use=64, fit_seeds=[0])
+    (configs / f'c5_gemma_capacity_{key}_smoke.json').write_text(json.dumps(smoke, indent=1))
+    print(cap['run_id'])
