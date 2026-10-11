@@ -12834,3 +12834,7 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 ### READER_COVERAGE CORRECTION（Qwen 本机队列等待超时）
 
 实际写入UTC为2026-10-11T20:00:42Z。scripts/run_uj_qwen.ps1 第一次运行在等待 GPU 租约 3,600 秒后放弃冒烟（GPT-2 确认读取方依次占用租约），按脚本规定以“Qwen smoke failed”退出；没有启动任何 Qwen 进程，也没有产生 run 目录。脚本改为等 GPT-2 确认读取方最后一个方向结束后再开始，已重新排队（日志 D:/CCAD_Storage/runs/cross_seed_models/UJ_QWEN_runner_2.log）。
+
+### READER_COVERAGE EXP-R PROGRESS（16k 目标的用途比较）
+
+实际写入UTC为2026-10-11T20:06:48Z。CSM_EXPR_GEMMA2B_l0low16k_v1_20261011 PASS（GPU1）。scripts/expr_analyze.py（SHIFT 任务，平衡 test 传记，2,000 次 bootstrap，传记在职业乘性别层内重抽并与迁移映射的三个种子配对）。重新训练分类头后的最差组准确率：完全删除，源解释 .917，迁移 T .907（三个种子 .908、.910、.903），重新发现 D .712，Hungarian .908；T 减 D +.195[+.161,+.233]，高于负责人规则的 −1 个百分点下界。部分对比（只删代词减只删女性描述）：源 +.134，T +.051，D +.332，Hungarian +.247；T 与源的距离比 D 近 .114[.009,.234]。原分类头不重新训练时，部分对比源 +.203，T 约 +.233，D 约 −.046。本目标上两项条件都满足；按规则需两个目标，65k 的 EXP-R 在 GPU0 上排在 FINAL 与统一臂之后。
