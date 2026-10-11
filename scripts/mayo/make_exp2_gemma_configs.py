@@ -45,3 +45,9 @@ for key in ['w65k', 'l0low16k']:
         purpose='READER_COVERAGE EXP-2: held-out readers for the four reader-by-request cells on development biographies.')
     (configs / f'exp2_gemma_readers_{key}.json').write_text(json.dumps(readers, indent=1))
     print(readers['run_id'])
+    if key == 'l0low16k':
+        # The same readers on GPU 1 in parallel with the 65k readers on GPU 0; the version 1 identifier stays with the
+        # GPU 0 lane, which is stopped before it reaches this target.
+        parallel = dict(readers, run_id=f'CSM_EXP2_GEMMA2B_readers_{key}_v2_20261011')
+        (configs / f'exp2_gemma_readers_{key}_v2.json').write_text(json.dumps(parallel, indent=1))
+        print(parallel['run_id'])
