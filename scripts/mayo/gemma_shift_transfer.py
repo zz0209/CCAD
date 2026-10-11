@@ -312,6 +312,28 @@ class TargetMap:
                 for s in self.dicts.sites}
 
 
+class PartMap:
+    # A rediscovered explanation: each target feature belongs to one named part and is deleted by the fraction of that
+    # source part which a request deletes.
+    def __init__(self, dicts, red, features):
+        assert red['dictionaries'] == dicts.paths
+        self.part_rows = {p: [i for i, f in enumerate(features) if f['part'] == p] for p in sorted({f['part'] for f in features})}
+        self.slices = {s: dicts.target_slice(s, np.array(v['idx'])) for s, v in red['sites'].items() if v['idx']}
+        self.parts = {s: v['part'] for s, v in red['sites'].items() if v['idx']}
+
+    def mode(self, q):
+        frac = {p: q[:, rows].mean(1) for p, rows in self.part_rows.items()}
+
+        def run(site, x):
+            if site not in self.slices:
+                return x
+            t = self.slices[site]
+            a = torch.stack([frac[p] for p in self.parts[site]], 1)
+            z = jumprelu(x.float() @ t['W_enc'] + t['b_enc'], t['threshold'])
+            return (x.float() - (z * a[:, None, :]) @ t['W_dec']).to(x.dtype)
+        return run
+
+
 def request_masks(cfg, features):
     n = len(features)
     parts = sorted({f['part'] for f in features})

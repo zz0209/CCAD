@@ -10,9 +10,9 @@ import numpy as np
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gemma_shift_transfer import (Dictionaries, Model, Probe, Run, TargetMap, accuracies, collect_pooled, probe_scores,
-                                  read_split, readout_mode, request_masks, sfc_ambiguous, sfc_balanced, source_mode,
-                                  train_probe)
+from gemma_shift_transfer import (Dictionaries, Model, PartMap, Probe, Run, TargetMap, accuracies, collect_pooled,
+                                  probe_scores, read_split, readout_mode, request_masks, sfc_ambiguous, sfc_balanced,
+                                  source_mode, train_probe)
 
 DESCRIPTION = ('Part-level SHIFT in Gemma-2-2B on the original professor/nurse classifier and on later classifiers that '
                'never supervised any correspondence. Each annotated part is deleted alone through each saved '
@@ -138,7 +138,10 @@ def execute(cfg, run):
     saved = json.loads((source_run / 'maps.json').read_text())
     maps = {name: TargetMap(dicts, {s: np.array(v['idx']) for s, v in saved[name].items()},
                             {s: torch.tensor(np.array(v['weights'], dtype=np.float32), device=dev) for s, v in saved[name].items()})
-            for name in cfg['methods'] if name not in ('source', 'readout')}
+            for name in cfg['methods'] if name not in ('source', 'readout', 'rediscovered')}
+    if 'rediscovered' in cfg['methods']:
+        # The explanation selected again in the target dictionary by the fixed rediscovery procedure.
+        maps['rediscovered'] = PartMap(dicts, json.loads(Path(cfg['rediscovery']).read_text()), features)
     if 'readout' in cfg['methods']:
         dicts.load_full_target()
     total, done = len(cfg['parts']) * len(cfg['methods']), 0
