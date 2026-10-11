@@ -12560,3 +12560,7 @@ DR3（部分请求上部分监督映射的传记下一词元误差高于Hungaria
 ### READER_COVERAGE PROGRESS（调度：EXP-2 读取并行；Qwen 留出读取方排队）
 
 实际写入UTC为2026-10-11T07:27:12Z。EXP-1结束后GPU1空出约30 GB。为缩短EXP-2的等待，16k目标的EXP-2读取改在GPU1上并行运行（tmux ccad-exp2g1，run ID CSM_EXP2_GEMMA2B_readers_l0low16k_v2_20261011，内容与v1配置相同，由make_exp2_gemma_configs.py生成），等两个16k完整表示训练run通过后开始；GPU0的EXP-2线照旧先跑65k读取。tmux ccad-gpu0e12在65k读取通过后停止GPU0的EXP-2线（使它不再进入16k v1读取），若v1目录已在那一分钟内建立则改名为abandoned_*，随后在GPU0上依次运行E12第2版五个网格目标。Qwen语法留出读取方：四个留出BLiMP文件上传Mayo（data/grammar/heldout，SHA256与R26清单一致），配置由scripts/mayo/make_qwen_reader_configs.py生成，tmux ccad-qreaders在C8 Qwen结束后运行六个run（C4的五个映射与C8的RC映射）。Pythia目标2的完整表示两格：有注释（状态损失）部分误差.192（分类器为主的部分监督.161），无注释（状态损失）.285至.319（分类器为主的随机子集约.285）。
+
+### READER_COVERAGE PROGRESS（语法 RC 一格：Qwen 六个 run）
+
+实际写入UTC为2026-10-11T07:30:38Z。CSM_C8_QWEN17_rc_*六个run全部PASS。与C4合并（artifacts/containment/C8_QWEN_RC.json，2,000次bootstrap，共用同一对字典的run不是独立重复，区间只作参考）：RC部分.344、完整.338、新请求.381、自然文本.442；无任务数据多对多.346、.323、.364、.338；边际部分监督.383、.354、.378、.572。RC减边际部分监督 部分−.040[−.081,−.002]；RC减无任务数据多对多 部分−.002[−.023,+.019]、完整+.015[−.001,+.033]。判断与GPT-2一致：拟合任务读取方读到的完整分布比只拟合边际更准，且少破坏自然文本行为；通用文本训练的映射在自然文本上仍最好。Qwen留出读取方（ccad-qreaders）现在开始。
