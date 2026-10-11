@@ -38,12 +38,12 @@
   "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\scientific_reform_20260913\\reference_material\\blimp\\3e56b06fcabca9b30822fc66435fca6b1aa40bb1\\distractor_agreement_relative_clause.jsonl"
  ],
  "pairs_per_paradigm": 128,
- "batch_pairs": 16,
+ "batch_pairs": 8,
  "natural_eval_tokens": "D:\\CCAD_Storage\\runs\\naacl_sprint_20261010\\mayo_mirror\\qwen_local\\qwen_natural_eval.uint32.bin",
  "token_dtype": "<u4",
  "context": 128,
  "natural_docs": 128,
- "natural_batch": 8,
+ "natural_batch": 4,
  "executors": [
   {
    "name": "hungarian_activation",

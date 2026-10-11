@@ -46,8 +46,9 @@ for direction in ['s1_t2', 's2_t1']:
                             'explanations, read through the full next-token distribution (U) or the whitened hook state (S).'))
         (OUT / f'uj_qwen17_{direction}_ts{seed}.json').write_text(json.dumps(cfg, indent=1))
         readers = local(json.loads((MAYO_CONFIGS / f'readers_qwen17_{direction}_ts{seed}.json').read_text()))
+        # Half the Mayo batches: full-vocabulary log-probabilities of five executors overflow the 16 GB local GPU.
         readers.update(dictionary_source_dir=GPT2_LOCAL['dictionary_source_dir'], dictionary_overlay_dir=GPT2_LOCAL['dictionary_overlay_dir'],
-                       run_root=str(RUNS), device='cuda:0')
+                       run_root=str(RUNS), device='cuda:0', batch_pairs=8, natural_batch=4)
         keep = {e['name']: e for e in readers['executors'] if e['name'] in ('hungarian_activation', 'membership_natural', 'rc_distparts')}
         u = str(RUNS / cfg['run_id'] / 'maps.npz')
         readers.update(run_id=f'CSM_UREADERS_QWEN17_{direction}_ts{seed}_v1_20261011',

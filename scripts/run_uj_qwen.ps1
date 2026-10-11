@@ -13,13 +13,14 @@ if (-not (& $passed "$R\CSM_UJ_QWEN17_s1_t2_ts0_v1_20261011_SMOKE")) {
     & $py $rm run --resource gpu-0 --project CCAD --task 'EXP-U Qwen smoke' --wait-sec 3600 -- $py cross_seed_transfer.py --config '..\configs\cross_seed_pilot\uj_qwen17_s1_t2_ts0.json' --smoke
 }
 if (-not (& $passed "$R\CSM_UJ_QWEN17_s1_t2_ts0_v1_20261011_SMOKE")) { throw 'Qwen smoke failed' }
+# PowerShell names are case-insensitive, so the loop variable must not be $r, which would overwrite the run root $R.
 $runs = foreach ($d in 's1_t2', 's2_t1') { foreach ($s in 0, 1, 2) { "${d}_ts$s" } }
-foreach ($r in $runs) {
-    if (& $passed "$R\CSM_UJ_QWEN17_${r}_v1_20261011") { continue }
-    & $py $rm run --resource gpu-0 --project CCAD --task "EXP-U Qwen $r" --wait-sec 3600 -- $py cross_seed_transfer.py --config "..\configs\cross_seed_pilot\uj_qwen17_$r.json"
+foreach ($name in $runs) {
+    if (& $passed "$R\CSM_UJ_QWEN17_${name}_v1_20261011") { continue }
+    & $py $rm run --resource gpu-0 --project CCAD --task "EXP-U Qwen $name" --wait-sec 3600 -- $py cross_seed_transfer.py --config "..\configs\cross_seed_pilot\uj_qwen17_$name.json"
 }
-foreach ($r in $runs) {
-    if (& $passed "$R\CSM_UREADERS_QWEN17_${r}_v1_20261011") { continue }
-    & $py $rm run --resource gpu-0 --project CCAD --task "EXP-U Qwen readers $r" --wait-sec 3600 -- $py grammar_readers.py --config "..\configs\cross_seed_pilot\ureaders_qwen17_$r.json"
+foreach ($name in $runs) {
+    if (& $passed "$R\CSM_UREADERS_QWEN17_${name}_v1_20261011") { continue }
+    & $py $rm run --resource gpu-0 --project CCAD --task "EXP-U Qwen readers $name" --wait-sec 3600 -- $py grammar_readers.py --config "..\configs\cross_seed_pilot\ureaders_qwen17_$name.json"
 }
 Write-Output 'EXP-U Qwen finished'

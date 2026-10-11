@@ -261,6 +261,43 @@ def targets():
     save(fig, 'rc_targets')
 
 
+EXPR = None
+
+
+def rediscovery():
+    # SHIFT on the target dictionary with the retrained head: worst-group accuracy after each deletion request.
+    runs = json.loads(Path(EXPR).read_text())['runs']
+    titles = {'w65k': '65k target', 'l0low16k': '16k lowest-$L_0$ target'}
+    series = [('source', 'Source explanation', '#1e1e1e', 's'), ('transferred', 'Transferred (state fit)', STATE, 'D'),
+              ('hungarian_decoder', 'Hungarian matching', MATCH, 'o'), ('rediscovered', 'Rediscovered', GENERIC, '^')]
+    parts = [('complete', 'Complete'), ('pronouns', 'Pron.'), ('female_descriptions', 'Women')]
+    # The 65k target first, as in the other Gemma figures.
+    names = sorted(runs, key=lambda n: list(titles).index(n.split('_')[3]))
+    fig, axes = plt.subplots(1, len(runs), figsize=(3.03, 1.8), sharey=True)
+    for ax, name in zip(np.atleast_1d(axes), names):
+        wg = runs[name]['retrained']['worst_group']
+        for k, (m, label, color, marker) in enumerate(series):
+            xs = np.arange(len(parts)) + (k - 1.5) * .18
+            ax.scatter(xs, [wg[f'{p}|{m}'] for p, _ in parts], s=26, marker=marker, color=color, lw=.3,
+                       edgecolor='white', label=label, zorder=3)
+        ax.set_title(titles[name.split('_')[3]], fontsize=7.8, pad=3)
+        ax.set_xticks(range(len(parts)))
+        ax.set_xticklabels([p for _, p in parts], fontsize=7.2)
+        ax.set_ylim(.3, 1.)
+        ax.set_xlim(-.5, len(parts) - .5)
+        ax.grid(axis='y', color='.88', lw=.4)
+        ax.set_axisbelow(True)
+        ax.tick_params(labelsize=7.2, length=2.2, width=.5)
+        for s in ['top', 'right']:
+            ax.spines[s].set_visible(False)
+    np.atleast_1d(axes)[0].set_ylabel('Worst-group accuracy', fontsize=7.6)
+    handles, labels = np.atleast_1d(axes)[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc='upper center', ncol=2, frameon=False, fontsize=7.2, handletextpad=.2,
+               columnspacing=.8, bbox_to_anchor=(.56, 1.01))
+    fig.subplots_adjust(left=.155, right=.995, top=.69, bottom=.13, wspace=.1)
+    save(fig, 'rc_rediscovery')
+
+
 def save(fig, name):
     for ext in ['pdf', 'svg']:
         fig.savefig(FIG / f'{name}.{ext}')
@@ -278,10 +315,12 @@ def main():
     parser.add_argument('--figures', nargs='+', default=['reader_matrix'])
     parser.add_argument('--preview', type=Path, default=None, help='also write PNG previews to this directory')
     parser.add_argument('--targets', type=Path, default=ART / 'GEMMA_TARGETS.json', help='summary from rc_targets.py')
+    parser.add_argument('--expr', type=Path, default=ART / 'EXPR_GEMMA.json', help='summary from expr_analyze.py')
     args = parser.parse_args()
     PREVIEW = args.preview
-    global TARGETS
+    global TARGETS, EXPR
     TARGETS = args.targets
+    EXPR = args.expr
     style()
     for name in args.figures:
         globals()[name]()

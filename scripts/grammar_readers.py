@@ -175,6 +175,9 @@ def main():
                 put(f'pair|{name}|nt_err', shape, ri, ix, err.cpu().numpy())
                 put(f'pair|{name}|nt_eff', shape, ri, ix, eff.cpu().numpy())
         log.progress(stage='pairs', items=bi + 1, total=len(batches))
+    # The sentence batches leave cached blocks of other shapes; releasing them keeps the document stage on the device.
+    del lp0, lps, lpe, ds, w0, keep
+    torch.cuda.empty_cache()
     for bi in range(0, len(docs), c['natural_batch']):
         ids = torch.tensor(docs[bi:bi + c['natural_batch']], device=device)
         with torch.no_grad():
