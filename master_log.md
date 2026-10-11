@@ -12769,3 +12769,10 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 ### READER_COVERAGE EXP-U CORRECTION（Gemma 统一臂同样改为联合目标）
 
 实际写入UTC为2026-10-11T17:34:59Z。Gemma 统一臂原定为交替步（subsets_statemixed，400 加 400 步，Adam 学习率 .02），与语法设定中已出现训练不稳定的写法相同，并且尚未开始运行。为避免同样的问题并与语法设定的实现一致，改为联合目标：族名改为 subsets_statejoint（每个传记步加一批 FineWeb 文本的随机子集白化状态误差，400 步）与 subsets_statejointclf（再加原分类器响应误差，即 EXP-U H 一条中的 H 臂）；标签为 subset_statejoint_sup 与 subset_statejointclf_sup。上一条 H 中的采用规则与负责人对统一臂的采用规则不变，只把 U_G 指向 subset_statejoint_sup。scripts/mayo/gemma_shift_transfer.py、make_u_gemma_configs.py 与配置已上传 Mayo，py_compile 通过；Gemma 统一 run 尚未开始。
+
+### READER_COVERAGE CORRECTION（Mayo 队列调整与一次调度失误）
+
+实际写入UTC为2026-10-11T17:43:45Z。
+
+1. 取消 USE 用途 run。tmux ccad-use0/1 排队的 CSM_USE_GEMMA2B_state_* 与 EXP-R 的用途 run 内容重复（EXP-R 用相同 E8b 设计重新计算迁移臂，并加入完整删除），两者都尚未启动任何进程，已取消，以便 Gemma 统一臂提前约一小时开始。FINAL 读取方比预计慢（16k 在 17:41Z 完成 96 批中的 19 批），Gemma 统一臂与 EXP-R 因此顺延。
+2. 调度失误。取消 use 会话后，等待这两个会话的 ccad-u0/1 立即满足了等待条件；随后停止 u 会话又使等待它们的 ccad-expr0/1 满足条件。u 会话在启动任何进程前被停止；expr0 已开始冒烟 CSM_REDISCOVER_GEMMA2B_l0low16k_v1_20261011_SMOKE（与 GPU0 上正在运行的 CONF 共用显存约 1 至 2 分钟）后随会话一起停止。该目录改名为 abandoned_CSM_REDISCOVER_GEMMA2B_l0low16k_v1_20261011_SMOKE_stopped_requeue 保留，认领目录改名为 tmp/expr_claims/stopped_smoke_claim_1745。CONF w65k_highest 进程未受影响（仍在运行）。重新排队：ccad-u0/1 等 ccad-final0/1，ccad-expr0/1 等 ccad-u0/1。教训已写入会话记忆：停止一条等待链中的会话之前，先把等待它的后续会话改为等待其他会话。
