@@ -1,0 +1,127 @@
+{
+ "run_id": "CSM_C8_GPT2_rc_s2_t3_v1_20261011",
+ "run_parent": "CONTAINMENT",
+ "run_storage_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models",
+ "generator_script": "scripts/cross_seed_transfer.py",
+ "device": "cuda:0",
+ "seeds": [
+  2,
+  3
+ ],
+ "purpose": "READER_COVERAGE EXP-2: part supervision fitted to the full next-token distribution of the task sentences, for the GPT-2 Medium grammatical explanations.",
+ "scope": "GPT-2 Medium block 11, source TopK SAE seed 2 with its R26 source groups, target SAE seed 3. Same candidates, data, steps and evaluation pairs as X1 and X1c.",
+ "budget": "Mayo GPU, one job per run.",
+ "audit_opened": true,
+ "candidate_family_frozen": true,
+ "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+ "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+ "dictionary_source_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+ "dictionary_overlay_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+ "source": {
+  "model_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/seed_models/gpt2-medium-openai",
+  "model_label": "openai-community/gpt2-medium 6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "sae_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/gpt2_saes/topk_seed2.pt",
+  "sae_label": "GPT-2 Medium TopK SAE seed 2",
+  "hook_module_path": "transformer.h.11",
+  "gate": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/gpt2_saes/topk_s2_source.npz",
+  "model_files": [
+   "config.json",
+   "model.safetensors"
+  ]
+ },
+ "target": {
+  "same_model": true,
+  "sae_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/gpt2_saes/topk_seed3.pt",
+  "sae_label": "GPT-2 Medium TopK SAE seed 3",
+  "hook_module_path": "transformer.h.11"
+ },
+ "natural_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/train.uint16.bin",
+ "natural_eval_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/validation.uint16.bin",
+ "context": 128,
+ "natural_batch": 4,
+ "correlation_sequences": 512,
+ "natural_eval_sequences": 128,
+ "natural_eval_seed": 1,
+ "candidates_per_source": 16,
+ "panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/r26_panel.json",
+ "evaluation_panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/e9_confirmation_panel.json",
+ "evaluation_split": "confirmation",
+ "tasks": [
+  "regular_plural_subject_verb_agreement_1",
+  "anaphor_number_agreement",
+  "anaphor_gender_agreement"
+ ],
+ "queries": {
+  "full": [
+   1,
+   1,
+   1
+  ],
+  "gender": [
+   0,
+   0,
+   1
+  ],
+  "half": [
+   0.5,
+   0.5,
+   0.5
+  ],
+  "number": [
+   0,
+   1,
+   0
+  ],
+  "number_gender": [
+   0,
+   1,
+   1
+  ],
+  "participation_a": [
+   0.25,
+   0.5,
+   0.75
+  ],
+  "participation_b": [
+   0.75,
+   0.25,
+   0.5
+  ],
+  "participation_c": [
+   0.5,
+   0.75,
+   0.25
+  ],
+  "verb": [
+   1,
+   0,
+   0
+  ],
+  "verb_gender": [
+   1,
+   0,
+   1
+  ],
+  "verb_number": [
+   1,
+   1,
+   0
+  ]
+ },
+ "eos_token_id": 50256,
+ "fit_pairs_per_task": 64,
+ "eval_pairs_per_task": 128,
+ "eval_batch_pairs": 16,
+ "batch_pairs": 4,
+ "families": [
+  "membership_distparts"
+ ],
+ "steps": 512,
+ "lr": 0.02,
+ "training_seed": 0,
+ "progress_every": 32,
+ "source_revision": "befeabf9d66c48e2d35bbb862afdf8e0e6091d28",
+ "matched_gain_max": 4.0,
+ "capacity_bins": 64,
+ "decoy_frequency_sequences": 64
+}

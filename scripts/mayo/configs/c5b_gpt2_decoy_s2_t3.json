@@ -120,7 +120,7 @@
  "lr": 0.02,
  "training_seed": 0,
  "progress_every": 32,
- "source_revision": "b28f53467afbc5b9ef7149f616296bef8cee7002",
+ "source_revision": "befeabf9d66c48e2d35bbb862afdf8e0e6091d28",
  "matched_gain_max": 4.0,
  "capacity_bins": 64,
  "decoy_frequency_sequences": 64
