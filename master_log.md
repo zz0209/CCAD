@@ -12543,3 +12543,7 @@ DR3（部分请求上部分监督映射的传记下一词元误差高于Hungaria
 实际写入UTC为2026-10-11T06:03:10Z。用户告知本机资源空出，可跑旁支任务。共享资源管理器显示gpu-0空闲。决定把语法家族的留出读取方评价放在本机（GPT-2 Medium模型、SAE与X1映射都在本地，C7、C8映射已同步），原因是DR2在家族层面要求四个家族中至少三个满足留出读取方条件，而语法家族尚无留出读取方。
 
 结果前写定的定义：读取方为未参与任何对应拟合与解释选择的四个BLiMP范式（irregular_plural_subject_verb_agreement_1、regular_plural_subject_verb_agreement_2、distractor_agreement_relational_noun、distractor_agreement_relative_clause，本地R26参考数据，各取文件前128对）的好坏句边际，与这些句子编辑位置起的完整下一词元分布；E2_grammar为四个范式边际误差与留出句下一词元误差的平均（部分请求）；FineWeb留出文本的下一词元误差单独报告。执行器为每个方向的Hungarian激活匹配、无任务数据多对多、边际部分监督、增益上限1与4的自然文本一一、增益上限4的部分监督一一与RC（membership_distparts）。已写入EXPERIMENT_PLAN.md。
+
+### READER_COVERAGE CORRECTION（C2d 等待条件错误，延误约 45 分钟）
+
+实际写入UTC为2026-10-11T06:45:31Z。C2d线（run_c2d_pythia.sh）用tmux has-session -t ccad-c2等待C2线结束；tmux按前缀匹配会话名，C2线在约06:00Z结束后，这个名字匹配到C2d自己的会话ccad-c2d，于是该线一直等待，06:44Z检查时发现没有任何C2D run。三个等待其他线的脚本（run_c2d_pythia.sh、run_pythia_readers.sh、run_c8_rc_grammar.sh）改为精确匹配（-t '=名字'），06:44Z至06:45Z重启ccad-c2d、ccad-pyreaders与ccad-c8（C8的GPT-2部分已完成，重启后跳过）。C2d已开始训练。没有结果受影响，只是Pythia的C2d与留出读取方推迟约45分钟。本机的GPT-2语法留出读取方已完成五个方向。
