@@ -86,6 +86,26 @@ for target in [2, 3, 4, 5]:
                       methods=['none', 'source'] + list(programs),
                       purpose='CONTAINMENT experiment 2b evaluation on complete and part deletions of the SHIFT explanation.')
     (configs / f'c2b_pythia_eval_t{target}.json').write_text(json.dumps(evaluation, indent=1))
+# C2d (READER_COVERAGE EXP-2): part supervision and annotation-free subsets on task inputs fitted to the hidden states
+# alone (source_response_weight 0), the reader-complete cells next to the classifier-weighted parts_relation (C2) and
+# subset_relation (C2c) cells.
+for target in [2, 3, 4, 5]:
+    programs = {}
+    for training_seed in [42, 43, 44]:
+        cfg = json.loads((configs / f'c2_pythia_program_t{target}_ts{training_seed}.json').read_text())
+        bulk = f'{runs}/c2d_programs/t{target}_ts{training_seed}'
+        cfg.update(run_id=f'CSM_C2D_PYTHIA70M_program_t{target}_ts{training_seed}_v1_20261011', bulk_output_dir=bulk,
+                   variants=['parts_relation', 'subset_relation'], source_response_weight=0.,
+                   purpose=('READER_COVERAGE EXP-2: part supervision and annotation-free subsets fitted to the final and '
+                            'pooled hidden states only, without the classifier response.'))
+        (configs / f'c2d_pythia_program_t{target}_ts{training_seed}.json').write_text(json.dumps(cfg, indent=1))
+        programs.update({f'{v}_state_ts{training_seed}': dict(directory=f'{bulk}/{v}', sites=cfg['adapt_sites'])
+                         for v in cfg['variants']})
+    evaluation = json.loads((configs / f'c2_pythia_eval_t{target}.json').read_text())
+    evaluation.update(run_id=f'CSM_C2D_PYTHIA70M_eval_t{target}_v1_20261011', adapted_programs=programs,
+                      methods=['none', 'source'] + list(programs),
+                      purpose='READER_COVERAGE EXP-2 evaluation of the Pythia reader-complete cells.')
+    (configs / f'c2d_pythia_eval_t{target}.json').write_text(json.dumps(evaluation, indent=1))
 smoke = json.loads((configs / 'c2_pythia_program_t2_ts42.json').read_text())
 smoke.update(run_id=smoke['run_id'] + '_SMOKE', bulk_output_dir=smoke['bulk_output_dir'] + '_smoke', steps=4,
              natural_eval_sequences=8, development_per_group=2)

@@ -102,6 +102,8 @@ def execute(cfg, run):
     for h in heads.values():
         h.requires_grad_(False)
     torch.save({k: v.state_dict() for k, v in heads.items()}, run.dir / 'heads.pt')
+    # The large pooled batches above leave cached blocks that the reader loop never needs; other jobs share the GPU.
+    torch.cuda.empty_cache()
     readers = list(heads)
 
     classes = dict(pronoun=word_ids(model.tok, sorted(PRONOUNS)), female=word_ids(model.tok, cfg['female_words']),
