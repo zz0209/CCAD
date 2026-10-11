@@ -12570,3 +12570,7 @@ DR3（部分请求上部分监督映射的传记下一词元误差高于Hungaria
 实际写入UTC为2026-10-11T07:44:47Z。Pythia全部评价完成（C2第1版评价t2、t3因matched_rows_free的容量检查FAIL，按规定只接受这一项失败；C2b、C2d评价全部PASS）。汇总（artifacts/containment/C2_PYTHIA.json，scripts/containment_analyze_pythia.py，目标字典、目标内训练种子与分层传记三层bootstrap，2,000次；R59面板已暴露，属开发证据）。部分误差：部分监督.159，删除上限4的部分监督.141，RC（有注释、只用状态损失）.206，任务输入随机子集（分类器为主）.290，RC-lf（无注释、只用状态损失）.298，自然文本多对多.332，删除上限4的自然文本多对多.374，Hungarian .434，修正后的一一.468，matched_rows_free .439，R59 native .300，readout .119。自然文本误差：删除上限4的自然文本多对多.783，matched_rows_free .788，修正后的一一.834，删除上限4的部分监督.859，其余.867至.876，Hungarian 1.014。
 对比：自然文本多对多减部分监督+.173[+.158,+.189]；减Hungarian −.103[−.125,−.079]；减修正后的一一−.137[−.252,−.040]；任务输入随机子集减部分监督+.131[+.103,+.158]；RC减部分监督+.047[+.032,+.067]；RC-lf减任务输入随机子集+.008[−.015,+.027]。
 D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian与一一，比值不满足，D1记录不变。原分类器上，把分类器响应换成状态损失，有注释一格略差、无注释一格不变；留出读取方上的比较等Pythia留出读取方。同一删除上限下多对多胜过一一（部分与自然文本都是）。EXP-2 Gemma四个训练run全部PASS，两个GPU上的读取评价开始。
+
+### READER_COVERAGE CORRECTION（重新调度时误停 Qwen 读取 run）
+
+实际写入UTC为2026-10-11T08:17:32Z。08:16Z检查发现GPU1同时运行EXP-2 16k读取、Qwen留出读取方与Pythia留出读取方，EXP-2 16k只完成10/96批（按速度约13:00Z才完成），Qwen每个run约1小时。决定：GPU1只留EXP-2 16k与Pythia读取；GPU0在65k读取完成后先跑剩下的Qwen读取，再跑E12第2版（新线tmux ccad-gpu0next，run_gpu0_after_exp2_65k.sh已更新；旧的ccad-gpu0e12已停止）。执行时用pkill -f按命令行停止Qwen读取线，该匹配同时命中远程命令本身所在的shell，并使ccad-qreaders会话关闭，正在运行的CSM_READERS_QWEN17_s1_t2_ts0_v1_20261011（07:29:43Z开始，通用文本阶段7/16）随之终止。其目录改名为abandoned_CSM_READERS_QWEN17_s1_t2_ts0_v1_20261011_killed0817，不进入汇总，由ccad-gpu0next重跑。损失约47分钟GPU1计算。以后停止单条线时用tmux会话的精确名称，不用按命令行匹配的pkill。
