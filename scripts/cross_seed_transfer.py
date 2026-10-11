@@ -446,7 +446,8 @@ def main():
             natural_steps = task_steps = 0
             for step in range(c['steps']):
                 weights = (param*mask).clamp(0., hi)
-                # Mixed families alternate natural-text subsets and task parts, each with its own schedule.
+                # Mixed families alternate natural-text subsets and task requests, each with its own schedule; the
+                # distmixed family reads its task requests through the full next-token distribution.
                 if family.endswith('natural') or (family.endswith('mixed') and step % 2 == 0):
                     start = c['correlation_sequences']+natural_steps*c['natural_batch']
                     natural_steps += 1
@@ -455,7 +456,7 @@ def main():
                     q = (torch.rand(len(ids), m, generator=gen) < p).float().to(device)
                     err, eff = natural_error(ids, q, weights, cap, cset)
                     loss = err/eff.clamp_min(1e-12)
-                elif family.endswith('distparts'):
+                elif family.endswith(('distparts', 'distmixed')):
                     # Reader-complete part supervision: part and complete requests alternate with per-pair random
                     # feature subsets, all read by the full next-token distribution of the task sentences.
                     k = task_steps
