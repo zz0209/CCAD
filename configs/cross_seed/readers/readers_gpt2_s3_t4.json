@@ -1,0 +1,87 @@
+{
+ "run_id": "CSM_READERS_GPT2_s3_t4_v1_20261011",
+ "run_root": "D:\\CCAD_Storage\\runs\\cross_seed_models",
+ "device": "cuda:0",
+ "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+ "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+ "source": {
+  "model_dir": "D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "model_label": "openai-community/gpt2-medium 6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "sae_checkpoint": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed3.pt",
+  "sae_label": "GPT-2 Medium TopK SAE seed 3",
+  "hook_module_path": "transformer.h.11",
+  "gate": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R26_contrast_components_v2_20260913\\topk_s3_source.npz"
+ },
+ "target": {
+  "same_model": true,
+  "sae_checkpoint": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed4.pt",
+  "sae_label": "GPT-2 Medium TopK SAE seed 4",
+  "hook_module_path": "transformer.h.11"
+ },
+ "eos_token_id": 50256,
+ "sentence_prefix": "",
+ "part_names": [
+  "verb",
+  "number",
+  "gender"
+ ],
+ "random_requests": 16,
+ "random_seed": 20261011,
+ "heldout_paradigms": [
+  "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\scientific_reform_20260913\\reference_material\\blimp\\3e56b06fcabca9b30822fc66435fca6b1aa40bb1\\irregular_plural_subject_verb_agreement_1.jsonl",
+  "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\scientific_reform_20260913\\reference_material\\blimp\\3e56b06fcabca9b30822fc66435fca6b1aa40bb1\\regular_plural_subject_verb_agreement_2.jsonl",
+  "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\scientific_reform_20260913\\reference_material\\blimp\\3e56b06fcabca9b30822fc66435fca6b1aa40bb1\\distractor_agreement_relational_noun.jsonl",
+  "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\scientific_reform_20260913\\reference_material\\blimp\\3e56b06fcabca9b30822fc66435fca6b1aa40bb1\\distractor_agreement_relative_clause.jsonl"
+ ],
+ "pairs_per_paradigm": 128,
+ "batch_pairs": 16,
+ "natural_eval_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_three_research_20260909\\training_material\\validation.uint16.bin",
+ "context": 128,
+ "natural_docs": 128,
+ "natural_batch": 8,
+ "executors": [
+  {
+   "name": "hungarian_activation",
+   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_X1C_gpt2_s3_t4_v2_20261010\\maps.npz",
+   "key": "hungarian_activation",
+   "cap": 1.0
+  },
+  {
+   "name": "membership_natural",
+   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_X1C_gpt2_s3_t4_v2_20261010\\maps.npz",
+   "key": "membership_natural",
+   "cap": 1.0
+  },
+  {
+   "name": "membership_parts",
+   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_X1C_gpt2_s3_t4_v2_20261010\\maps.npz",
+   "key": "membership_parts",
+   "cap": 1.0
+  },
+  {
+   "name": "matched_natural",
+   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_X1C_gpt2_s3_t4_v2_20261010\\maps.npz",
+   "key": "matched_natural",
+   "cap": 1.0
+  },
+  {
+   "name": "matched_natural4",
+   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_C7_GPT2_matched4_s3_t4_v1_20261011\\maps.npz",
+   "key": "matched_natural",
+   "cap": null
+  },
+  {
+   "name": "matched_parts4",
+   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_C7_GPT2_matched4_s3_t4_v1_20261011\\maps.npz",
+   "key": "matched_parts",
+   "cap": null
+  },
+  {
+   "name": "rc_distparts",
+   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_C8_GPT2_rc_s3_t4_v1_20261011\\maps.npz",
+   "key": "membership_distparts",
+   "cap": 1.0
+  }
+ ],
+ "purpose": "READER_COVERAGE: held-out BLiMP paradigms and generic text for the GPT-2 Medium grammar correspondences."
+}
