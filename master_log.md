@@ -12387,3 +12387,29 @@ X2模型内（部分误差 / 自然文本）：x49 SAE1→SAE2：Hungarian .225/
 6. 进度查看器登记了C2、C4/C7与E12第2版三个队列；status_json.py兼容训练程序的进度格式。
 
 当前判断不变，D1在实验1、2、4完成后判定。下一步：C1完成后汇总自然文本误差与部分误差，并用已保存映射跑部分级SHIFT；同时实现实验5能力对照（每个源特征随机抽同样数量、激活频率匹配的候选）。
+
+### CONTAINMENT PROGRESS（实验 5 能力对照实现与第一个结果；实验 2b 删除上限 4 的多对多；实验 0 完成）
+
+实际写入UTC为2026-10-11T00:40:14Z。
+
+1. Pythia第一个目标（t2，训练种子42/43/44）的自然文本误差（256条R011留出序列，nRMSE）：R59原关系.914，Hungarian（增益1）1.075，部分监督多对多.873，自然文本多对多.861至.872，增益上限4的自然文本一一.769至.780。增益可到4的一一对照在自然文本上明显好于多对多；多对多的投影要求每个目标特征的删除总量不超过1，候选又限于R59关系的支撑（每个源特征至多2个目标特征）。部分误差要等评价run。为分开“目标特征的个数”和“允许超过1的删除量”两个因素，加入实验2b：train_shift_program.py新增relation_capacity（行投影到总量不超过该值的单纯形），C2b用parts_relation与natural_relation、relation_capacity=4，4目标×3种子，排在ccad-c2的实验2之后、Qwen之前（run_c4_c7.sh），各有评价run。D1仍按事先写下的规则判定，2b作为附加对照报告。
+2. 实验5能力对照：cross_seed_transfer.py新增capacity_natural族，gemma_shift_transfer.py新增natural_capacity族。每个源特征的每个候选（激活相关前16加Hungarian；Gemma为余弦与相关的候选并集）换成同一激活频率分箱（64箱，在自然文本相关统计时计数）中、不属于任何真实候选的随机目标特征，Hungarian匹配的替换者初始为1，其余训练与评价同自然文本多对多。GPT-2冒烟测试PASS，第一个方向s1→t2正式run PASS（约285秒）：替换候选的平均激活率.0087，真实候选.0116；部分误差1.002、完整1.003、新请求1.003、自然文本.994，基本等于不编辑；同方向X1的自然文本多对多部分.269、自然文本.343（analyze_cross_seed.py合并比较，本机与Mayo两次运行的固定基线相差约1e-4，合并检查改为容差1e-3）。这一方向上D2的“含有”措辞得到支持：效果来自按激活相关选出的特征，换成同样多、同样频率的随机特征就消失。其余7个GPT-2方向在tmux ccad-c5运行；Gemma两个目标在GPU0的ccad-gpu0于C1 65k结束后运行（先冒烟测试），之后是E12第2版。
+3. 实验0完成：GPT-2八个方向的Hungarian解码器余弦为.679至.720（artifacts/containment/GPT2_DECODER_COSINES.json，scripts/containment_decoder_cosines.py），s1→t2至t5与旧记录grammar_matching_maps_s1一致。
+4. C7（GPT-2增益上限4的一一对照）改为在GPU1上C5结束后运行（tmux ccad-c7，run_c7_after_c5.sh），不再等Qwen。分析脚本：containment_analyze_pythia.py（目标、训练种子、传记三层bootstrap与D1判定），naacl_analyze_gemma.py加入自然文本族分组、对比与自然文本误差。提交e727259。
+
+### CONTAINMENT CORRECTION（GPU1 显存：GPT-2 线改为等 C1 结束；两个停止的 run 改名）
+
+实际写入UTC为2026-10-11T00:42:51Z。
+
+00:41Z检查发现GPU1上C1 l0low16k的缓存显存已增至40.5 GB，加上C2（2.4 GB）与C5（3.7 GB）共占46.6 GB，可用约1 GB，C1有显存不足的风险。00:42:15Z停止ccad-c5与ccad-c7，结束正在运行的CSM_C5_GPT2_capacity_s1_t4_v1_20261011（00:39:28Z开始，未完成），目录改名为abandoned_CSM_C5_GPT2_capacity_s1_t4_v1_20261011_stopped0042；run_c5_gpt2.sh改为先等GPU1上的C1结束，C7仍在C5之后。已PASS的s1→t2与s1→t3保留，重启后跳过。00:07Z停止的E12第1版w16k_highest目录同样改名为abandoned_NAACL_E12_GEMMA2B_matched_w16k_highest_v1_20261010_stopped0007，状态停在RUNNING，不进入任何汇总。C2继续与C1共用GPU1（剩余约4.6 GB）。
+
+投稿日期核实：ARR官方日期页（aclrollingreview.org/dates，本次访问）列出ACL 2027的最后一个ARR提交时间为2027年1月，具体日期与承诺截止未公布；2026年10月12日的周期承接NAACL 2027与COLING 2027，承诺截止2026年12月23日。
+
+### CONTAINMENT CORRECTION 与 PROGRESS（Pythia 一一对照实现错误；目标 2 部分误差；加入任务输入随机子集族）
+
+实际写入UTC为2026-10-11T01:54:24Z。
+
+1. 实现错误：CSM_C2_PYTHIA70M_eval_t2_v1_20261011于01:47:08Z FAIL，原因是adapted_capacity检查不通过（其余检查与全部结果单元正常）。查明train_shift_program.py的natural_matched把Hungarian匹配到的目标行的全部系数都设为可训练（只截在[0,4]），任何源特征都能驱动这些目标特征，它不是一一对照，行和可超过4。Gemma（matched_only掩码）与GPT-2（weights=param*mask）的一一对照不受影响。已改为每步训练后只保留匹配位置（提交781f49d）。C2第1版的这一臂改名为matched_rows_free（Hungarian目标特征集合、任意源特征可用、增益上限4），作为诊断保留；正确的一一对照one_to_one随C2b重新训练与评价。第1版评价仍有效地给出部分监督、自然文本多对多、Hungarian、geometry_gain、native与readout的结果，分析脚本只接受“唯一失败的检查是adapted_capacity”的第1版评价，并按新名称处理该臂。t3至t5的第1版评价会以同一原因FAIL。
+2. Pythia十二个训练run全部PASS。自然文本误差（四个目标、三个训练种子）：matched_rows_free .75至.83，自然文本多对多.85至.88，部分监督.87至.88（关系专用的部分监督臂在三个训练种子上完全相同：请求顺序与上下文顺序固定，训练种子只改变重建批次，而重建项与关系系数无关），R59原关系.88至.92，Hungarian .95至1.07。
+3. 目标2的第1版评价（R59确认面板，部分误差）：部分监督.161，自然文本多对多.352/.359/.295（三个训练种子），R59原关系.305，matched_rows_free .440/.360/.355，Hungarian .417，geometry_gain .448，readout .129。自然文本多对多与部分监督之比约2.1，远超D1的1.15；它好于Hungarian，好于matched_rows_free。Pythia SHIFT（分类器使用者、11个位置、ReLU源）上，无任务数据的对应只达到部分监督约一半的部分保真度，与研究负责人列出的“尚未确立”的范围一致。D1在Gemma与Qwen结果后判定。
+4. 依D1的部分通过分支（只有GPT-2与Qwen通过时，主方法改为无标签任务输入上的随机子集），为Pythia实现subset_relation：只训练对应关系，在未标注的源使用上下文上每条序列抽p~U[0,1]、每个特征以p入选，损失与部分监督相同（状态加响应），删除上限1。C2c为4目标×3种子，排在C2b之后，由C2b评价一并打分（提交c93b8d0）。这一臂在Gemma上的对应物是E8a的random族。
