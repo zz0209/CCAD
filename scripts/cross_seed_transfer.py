@@ -117,8 +117,34 @@ def main():
         def batch(array, rows):
             return torch.tensor(np.asarray(array[rows], dtype=np.int64), device=device)
 
-        # Natural-text activation statistics between the source members and every target feature.
-        sums = dict(n=0., a=torch.zeros(m, device=device, dtype=torch.float64), b=None, aa=torch.zeros(m, device=device, dtype=torch.float64),
+        decoy = any(f.startswith('decoy') for f in c['families'])
+        tracked = members
+        if decoy:
+            # Decoy explanation: for each member, one source feature outside the explanation from the same source
+            # activation-frequency bin; its candidates come from the same correlation rule as the members' own.
+            fire, count = None, 0
+            for off in range(0, c['decoy_frequency_sequences'], c['natural_batch']):
+                ids = batch(tokens, slice(off, off+c['natural_batch']))
+                source.codes = []
+                with torch.no_grad():
+                    source.model(ids)
+                z = source.codes[0].reshape(-1, source.codes[0].shape[-1])
+                source.codes = None
+                fire = (z > 0).sum(0).double() if fire is None else fire+(z > 0).sum(0)
+                count += z.shape[0]
+            rate_s = (fire/count).cpu().numpy()
+            bins_s = np.empty(len(rate_s), dtype=int)
+            bins_s[np.argsort(rate_s, kind='stable')] = np.arange(len(rate_s))*c['capacity_bins']//len(rate_s)
+            outside = (rate_s > 0) & ~np.isin(np.arange(len(rate_s)), members.cpu().numpy())
+            drng = np.random.default_rng(c['training_seed']+13)
+            chosen = []
+            for i in members.tolist():
+                chosen.append(int(drng.choice([u for u in np.flatnonzero((bins_s == bins_s[i]) & outside) if u not in chosen])))
+            decoys = torch.tensor(chosen, device=device)
+            tracked = torch.cat([members, decoys])
+        mt = len(tracked)
+        # Natural-text activation statistics between the tracked source features and every target feature.
+        sums = dict(n=0., a=torch.zeros(mt, device=device, dtype=torch.float64), b=None, aa=torch.zeros(mt, device=device, dtype=torch.float64),
                     bb=None, ab=None, nz=None)
         # Dense reference: an affine least-squares map from source to target hook states on the same natural text.
         dense = c.get('dense_stitch', False) and target.model is not source.model
@@ -135,7 +161,7 @@ def main():
                 source.model(ids)
                 if target.model is not source.model:
                     target.model(ids)
-            za = source.codes[0][..., members].reshape(-1, m).double()
+            za = source.codes[0][..., tracked].reshape(-1, mt).double()
             zb = target.codes[0].reshape(za.shape[0], -1).double()
             source.codes = target.codes = None
             if dense:
@@ -147,7 +173,7 @@ def main():
             if sums['b'] is None:
                 n_t = zb.shape[1]
                 sums.update(b=torch.zeros(n_t, device=device, dtype=torch.float64), bb=torch.zeros(n_t, device=device, dtype=torch.float64),
-                            ab=torch.zeros(m, n_t, device=device, dtype=torch.float64), nz=torch.zeros(n_t, device=device, dtype=torch.float64))
+                            ab=torch.zeros(mt, n_t, device=device, dtype=torch.float64), nz=torch.zeros(n_t, device=device, dtype=torch.float64))
             sums['n'] += za.shape[0]
             sums['nz'] += (zb > 0).sum(0)
             sums['a'] += za.sum(0)
@@ -160,7 +186,8 @@ def main():
         cov = sums['ab']/n-torch.outer(sums['a']/n, sums['b']/n)
         sd_a = (sums['aa']/n-(sums['a']/n)**2).clamp_min(1e-12).sqrt()
         sd_b = (sums['bb']/n-(sums['b']/n)**2).clamp_min(1e-12).sqrt()
-        corr = (cov/torch.outer(sd_a, sd_b)).float()
+        corr_all = (cov/torch.outer(sd_a, sd_b)).float()
+        corr = corr_all[:m]
         corr_cpu = corr.cpu().numpy()
         rows_h, cols_h = linear_sum_assignment(-corr_cpu)
         hungarian = torch.tensor(cols_h[np.argsort(rows_h)], device=device)
@@ -175,6 +202,28 @@ def main():
         for i in range(m):
             matched[position[int(hungarian[i])], i] = 1.
         dec_t = target.sae.decoder.weight[:, cand].T
+        if decoy:
+            # Candidates and Hungarian start of the decoys, assigned to the members they stand in for.
+            corr_d = corr_all[m:]
+            rows_d, cols_d = linear_sum_assignment(-corr_d.cpu().numpy())
+            hung_d = torch.tensor(cols_d[np.argsort(rows_d)], device=device)
+            near_d = corr_d.topk(c['candidates_per_source'], dim=1).indices
+            cand_dc = torch.unique(torch.cat([near_d.flatten(), hung_d]))
+            pos_d = {int(t): j for j, t in enumerate(cand_dc.tolist())}
+            allowed_d = torch.zeros(len(cand_dc), m, device=device)
+            matched_d = torch.zeros_like(allowed_d)
+            for i in range(m):
+                allowed_d[[pos_d[int(t)] for t in near_d[i].tolist()], i] = 1.
+                allowed_d[pos_d[int(hung_d[i])], i] = 1.
+                matched_d[pos_d[int(hung_d[i])], i] = 1.
+            dec_dc = target.sae.decoder.weight[:, cand_dc].T
+            write(w.run/'DECOY.json', dict(
+                bins=c['capacity_bins'], frequency_sequences=c['decoy_frequency_sequences'],
+                member_rate=float(rate_s[members.cpu().numpy()].mean()), decoy_rate=float(rate_s[decoys.cpu().numpy()].mean()),
+                member_hungarian_corr=float(corr[torch.arange(m), hungarian].mean()),
+                decoy_hungarian_corr=float(corr_d[torch.arange(m), hung_d].mean()),
+                decoy_candidates=len(cand_dc), real_candidates=len(cand),
+                shared_candidates=int(np.isin(cand_dc.cpu().numpy(), cand.cpu().numpy()).sum())))
         if any(f.startswith('capacity') for f in c['families']):
             # Capacity control: each candidate of each source feature is replaced by a random target feature from the
             # same activation-frequency bin, outside every real candidate, so the map keeps its size and firing rates
@@ -359,11 +408,11 @@ def main():
         w.progress('BASELINES', natural=natural)
         endpoints = torch.cat([torch.eye(3, device=device), torch.ones(1, 3, device=device)])
         for family in c['families']:
-            capacity = family.startswith('capacity')
-            mask = matched if family.startswith('matched') else (allowed_r if capacity else allowed)
+            capacity, decoyed = family.startswith('capacity'), family.startswith('decoy')
+            mask = matched if family.startswith('matched') else (allowed_r if capacity else allowed_d if decoyed else allowed)
             hi, cap = (gain_max, None) if family.startswith('matched') else (1., 1.)
-            cset = (cand_r, dec_r) if capacity else None
-            param = torch.nn.Parameter((matched_r if capacity else matched).clone())
+            cset = (cand_r, dec_r) if capacity else (cand_dc, dec_dc) if decoyed else None
+            param = torch.nn.Parameter((matched_r if capacity else matched_d if decoyed else matched).clone())
             optimizer = torch.optim.AdamW([param], lr=c['lr'], weight_decay=0.)
             rng = np.random.default_rng(c['training_seed'])
             gen = torch.Generator(device='cpu').manual_seed(c['training_seed'])
@@ -416,6 +465,8 @@ def main():
             w.progress('EVALUATED', method=family, natural=natural[family])
         extra = dict(capacity_candidates=cand_r.cpu().numpy(), capacity_allowed=allowed_r.cpu().numpy()) if any(
             f.startswith('capacity') for f in c['families']) else {}
+        if decoy:
+            extra.update(decoys=decoys.cpu().numpy(), decoy_candidates=cand_dc.cpu().numpy(), decoy_allowed=allowed_d.cpu().numpy())
         np.savez_compressed(w.run/'maps.npz', candidates=cand.cpu().numpy(), members=members.cpu().numpy(),
                             parts=parts.cpu().numpy(), allowed=allowed.cpu().numpy(), **extra,
                             **{k: v.cpu().numpy() for k, v in maps.items()})

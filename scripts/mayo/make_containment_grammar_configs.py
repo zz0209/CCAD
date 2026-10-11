@@ -62,3 +62,11 @@ for source, target in [(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (3, 4), (4, 5), (
                         'with each candidate replaced by a random target feature from the same activation-frequency bin.'))
     (configs / f'c5_gpt2_capacity_s{source}_t{target}.json').write_text(json.dumps(cfg, indent=1))
     print(cfg['run_id'])
+    # Decoy explanation control: candidates chosen by the same correlation rule for source features outside the
+    # explanation, one per member from the same source activation-frequency bin, fitted to the true explanation.
+    cfg = dict(cfg, run_id=f'CSM_C5B_GPT2_decoy_s{source}_t{target}_v1_20261011', families=['decoy_natural'],
+               decoy_frequency_sequences=64,
+               purpose=('Decoy explanation control for the natural-text many-to-many correspondence: candidates of '
+                        'frequency-matched source features outside the explanation, fitted to the explanation.'))
+    (configs / f'c5b_gpt2_decoy_s{source}_t{target}.json').write_text(json.dumps(cfg, indent=1))
+    print(cfg['run_id'])
