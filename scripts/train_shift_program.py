@@ -179,11 +179,12 @@ def main():
             nonlocal mode,mask
             mask=torch.ones_like(ids)
             for s in sites:q[s]=qs[s]
+            head=model.get_output_embeddings()
             with torch.no_grad():
-                mode='clean';h0,_=forward(ids);lp0=model.embed_out(h0).log_softmax(-1)
-                mode='source';hs,_=forward(ids);ds=model.embed_out(hs).log_softmax(-1)-lp0
+                mode='clean';h0,_=forward(ids);lp0=head(h0).log_softmax(-1)
+                mode='source';hs,_=forward(ids);ds=head(hs).log_softmax(-1)-lp0
                 wgt=lp0.exp()
-            mode='student';ht,_=forward(ids);dt=model.embed_out(ht).log_softmax(-1)-lp0
+            mode='student';ht,_=forward(ids);dt=head(ht).log_softmax(-1)-lp0
             return (wgt*(dt-ds).square()).sum(),(wgt*ds.square()).sum()
         def natural_evaluation(name):
             gen=torch.Generator(device=w.device).manual_seed(c['natural_eval_seed']);num=den=0.

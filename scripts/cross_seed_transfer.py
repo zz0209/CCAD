@@ -108,8 +108,11 @@ def main():
         parts = gate[members].argmax(1)
         m = len(members)
         dec_s = source.sae.decoder.weight[:, members].T
-        tokens = np.memmap(w.checked(c['natural_tokens'], 'Natural text tokens'), dtype='<u2', mode='r').reshape(-1, c['context'])
-        valid = np.memmap(w.checked(c['natural_eval_tokens'], 'Natural validation tokens'), dtype='<u2', mode='r').reshape(-1, c['context'])
+        dtype = c.get('token_dtype', '<u2')
+        tokens = np.memmap(w.checked(c['natural_tokens'], 'Natural text tokens'), dtype=dtype, mode='r').reshape(-1, c['context'])
+        valid = np.memmap(w.checked(c['natural_eval_tokens'], 'Natural validation tokens'), dtype=dtype, mode='r').reshape(-1, c['context'])
+        # One-to-one families may rescale their single match up to this gain; memberships keep loads within one.
+        gain_max = c.get('matched_gain_max', 1.)
 
         def batch(array, rows):
             return torch.tensor(np.asarray(array[rows], dtype=np.int64), device=device)
@@ -185,10 +188,10 @@ def main():
                 return -(z*qq)@dec_s
             return edit
 
-        def membership_edit(weights, q):
+        def membership_edit(weights, q, cap=1.):
             def edit(h):
                 z = target.sae.encode(h)[..., cand]
-                load = (q@weights.T).clamp(max=1.)
+                load = q@weights.T if cap is None else (q@weights.T).clamp(max=cap)
                 load = load[:, None, :] if q.dim() == 2 else load
                 return -(z*load)@dec_t
             return edit
@@ -266,7 +269,7 @@ def main():
             return float(np.sqrt(num/den))
 
         @torch.no_grad()
-        def evaluate_natural(name, weights):
+        def evaluate_natural(name, weights, cap=1.):
             # Probability-weighted error of next-token log-probability changes on validation text under random subsets.
             gen = torch.Generator(device='cpu').manual_seed(c['natural_eval_seed'])
             num = den = 0.
@@ -274,12 +277,12 @@ def main():
                 ids = batch(valid, slice(off, off+c['natural_batch']))
                 p = torch.rand(len(ids), 1, generator=gen)
                 q = (torch.rand(len(ids), m, generator=gen) < p).float().to(device)
-                err, eff = natural_error(ids, q, weights)
+                err, eff = natural_error(ids, q, weights, cap)
                 num += float(err)
                 den += float(eff)
             return float(np.sqrt(num/den))
 
-        def natural_error(ids, q, weights):
+        def natural_error(ids, q, weights, cap=1.):
             with torch.no_grad():
                 source.edit = None
                 lp_s0 = source.logprobs(ids)
@@ -288,7 +291,7 @@ def main():
                 source.edit = None
                 lp_t0 = lp_s0 if target.model is source.model else target.logprobs(ids)
                 weight = .5*(lp_s0.exp()+lp_t0.exp())
-            target.edit = membership_edit(weights, q)
+            target.edit = membership_edit(weights, q, cap)
             d_t = target.logprobs(ids)-lp_t0
             target.edit = None
             return (weight*(d_t-d_s)**2).sum(), (weight*d_s**2).sum()
@@ -324,13 +327,14 @@ def main():
         endpoints = torch.cat([torch.eye(3, device=device), torch.ones(1, 3, device=device)])
         for family in c['families']:
             mask = matched if family.startswith('matched') else allowed
+            hi, cap = (gain_max, None) if family.startswith('matched') else (1., 1.)
             param = torch.nn.Parameter(matched.clone())
             optimizer = torch.optim.AdamW([param], lr=c['lr'], weight_decay=0.)
             rng = np.random.default_rng(c['training_seed'])
             gen = torch.Generator(device='cpu').manual_seed(c['training_seed'])
             natural_steps = task_steps = 0
             for step in range(c['steps']):
-                weights = (param*mask).clamp(0., 1.)
+                weights = (param*mask).clamp(0., hi)
                 # Mixed families alternate natural-text subsets and task parts, each with its own schedule.
                 if family.endswith('natural') or (family.endswith('mixed') and step % 2 == 0):
                     start = c['correlation_sequences']+natural_steps*c['natural_batch']
@@ -338,7 +342,7 @@ def main():
                     ids = batch(tokens, slice(start, start+c['natural_batch']))
                     p = torch.rand(len(ids), 1, generator=gen)
                     q = (torch.rand(len(ids), m, generator=gen) < p).float().to(device)
-                    err, eff = natural_error(ids, q, weights)
+                    err, eff = natural_error(ids, q, weights, cap)
                     loss = err/eff.clamp_min(1e-12)
                 else:
                     k = task_steps
@@ -357,7 +361,7 @@ def main():
                         source.edit = None
                         base_s = margins(source, rr, eos)
                         base_t = base_s if target.model is source.model else margins(target, rr, eos)
-                    target.edit = membership_edit(weights, q)
+                    target.edit = membership_edit(weights, q, cap)
                     effect_t = margins(target, rr, eos)
                     target.edit = None
                     loss = ((effect_t-base_t)-(effect_s-base_s)).square().mean()/(effect_s-base_s).square().mean().clamp_min(1e-12)
@@ -365,14 +369,14 @@ def main():
                 loss.backward()
                 optimizer.step()
                 with torch.no_grad():
-                    param.clamp_(0., 1.)
+                    param.clamp_(0., hi)
                 assert bool(torch.isfinite(loss))
                 if (step+1) % c['progress_every'] == 0 or step+1 == c['steps']:
                     w.progress('TRAINING', method=family, step=step+1, total=c['steps'], loss=float(loss.detach()))
-            weights = (param.detach()*mask).clamp(0., 1.)
+            weights = (param.detach()*mask).clamp(0., hi)
             maps[family] = weights
-            values[family] = evaluate_task(family, target, lambda q, wt=weights: membership_edit(wt, q))
-            natural[family] = evaluate_natural(family, weights)
+            values[family] = evaluate_task(family, target, lambda q, wt=weights, cp=cap: membership_edit(wt, q, cp))
+            natural[family] = evaluate_natural(family, weights, cap)
             np.savez_compressed(w.run/'responses.npz', **values)
             w.progress('EVALUATED', method=family, natural=natural[family])
         np.savez_compressed(w.run/'maps.npz', candidates=cand.cpu().numpy(), members=members.cpu().numpy(),
