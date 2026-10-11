@@ -68,8 +68,9 @@ def main():
                     ss=sp[site];zs=torch.relu((x-ss['center'])@ss['encoder'].T+ss['encoder_bias'])
                     x=x-(zs*q[site])@ss['decoder']
                 elif mode=='student':
+                    # q is one request vector, or one per sequence with shape (batch, 1, members) for natural subsets.
                     t=targets[site];ix=indices[site]
-                    x=x-(t.encode(x)[...,ix]*(coefficients[site]@q[site]))@t.decoder.weight[:,ix].T
+                    x=x-(t.encode(x)[...,ix]*(q[site]@coefficients[site].T))@t.decoder.weight[:,ix].T
                 elif mode=='clean_reconstruction' and site in c['adapt_sites']:
                     x=targets[site](x)
                 if site=='resid_4':pooled=(x*mask[...,None]).sum(1)/mask.sum(1)[...,None]
@@ -150,22 +151,84 @@ def main():
         write(w.run/'loss_scales.json',dict(final_hidden=scales[0],pooled_hidden=scales[1],source_response=scales[2],calibration_contexts=c.get('program_contexts','natural'),calibration_indices=[0,64],requests='32 paired full and Bernoulli-member calibrations; source only; common across arms'))
         params=[p for s in c['adapt_sites'] for p in targets[s].parameters()]
         base_coeff={s:a.detach().clone() for s,a in coefficients.items()}
+        base_indices=dict(indices)
+        natural_variants={'natural','natural_relation','natural_matched'}&set(c['variants'])
+        if natural_variants or c.get('natural_eval_sequences'):
+            # Task-free family: generic natural text with random feature subsets, from a corpus outside the training
+            # data of every dictionary in the run, with its own held-out evaluation documents.
+            natural_tokens=np.memmap(w.checked(c['natural_lm_tokens'],'Generic natural training text outside dictionary training','ODC-By-1.0'),dtype='<u2',mode='r').reshape(-1,128)
+            natural_eval_tokens=np.memmap(w.checked(c['natural_lm_eval_tokens'],'Generic natural evaluation text from held-out documents','ODC-By-1.0'),dtype='<u2',mode='r').reshape(-1,128)
+            natural_order=np.random.default_rng(c['training_seed']+7).permutation(len(natural_tokens))
+            nat_eval=torch.tensor(np.array(natural_eval_tokens[:c['natural_eval_sequences']],dtype='int64'),device=w.device)
+            member_total=sum(len(source['members'][s]) for s in sites)
+            write(w.run/'natural_membership.json',dict(training_sequences=len(natural_tokens),evaluation_sequences=len(nat_eval)))
+        if 'natural_matched' in natural_variants:
+            matched_relation=np.load(w.checked(c['matched_relation'],'Hungarian decoder matches on natural text'))
+            matched_rows={s:torch.tensor(np.flatnonzero(matched_relation[s+'__hungarian_decoder'].sum(1)>0),device=w.device) for s in sites}
+            matched_init={s:torch.tensor(matched_relation[s+'__hungarian_decoder'],device=w.device,dtype=torch.float32)[matched_rows[s]] for s in sites}
+        def natural_q(n,gen):
+            # One inclusion probability per sequence, shared by all explanation features at every site.
+            draw=torch.rand(n,member_total,generator=gen,device=w.device)<torch.rand(n,1,generator=gen,device=w.device)
+            draw[torch.arange(n,device=w.device),torch.randint(0,member_total,(n,),generator=gen,device=w.device)]|=~draw.any(1)
+            out={};off=0
+            for s in sites:
+                k=len(source['members'][s]);out[s]=draw[:,None,off:off+k].float();off+=k
+            return out
+        def natural_error(ids,qs):
+            # Probability-weighted squared error of next-token log-probability changes, against the source edit.
+            nonlocal mode,mask
+            mask=torch.ones_like(ids)
+            for s in sites:q[s]=qs[s]
+            with torch.no_grad():
+                mode='clean';h0,_=forward(ids);lp0=model.embed_out(h0).log_softmax(-1)
+                mode='source';hs,_=forward(ids);ds=model.embed_out(hs).log_softmax(-1)-lp0
+                wgt=lp0.exp()
+            mode='student';ht,_=forward(ids);dt=model.embed_out(ht).log_softmax(-1)-lp0
+            return (wgt*(dt-ds).square()).sum(),(wgt*ds.square()).sum()
+        def natural_evaluation(name):
+            gen=torch.Generator(device=w.device).manual_seed(c['natural_eval_seed']);num=den=0.
+            with torch.no_grad():
+                for off in range(0,len(nat_eval),c['batch_sequences']):
+                    err,eff=natural_error(nat_eval[off:off+c['batch_sequences']],natural_q(len(nat_eval[off:off+c['batch_sequences']]),gen))
+                    num+=float(err);den+=float(eff)
+            w.record(kind='natural',task='natural_text',component=name,row_id=name,method=name,natural_nrmse=float(np.sqrt(num/den)))
+            return float(np.sqrt(num/den))
+        natural_scores={}
+        if natural_variants or c.get('natural_eval_sequences'):natural_scores['initial']=natural_evaluation('initial')
         bulk=Path(c['bulk_output_dir']);bulk.mkdir(parents=True,exist_ok=False)
         checkpoints=[]
+        trained=('whole','parts','parts_relation','random_parts','natural','natural_relation','natural_matched')
+        relation_only=('parts_relation','natural_relation','natural_matched')
+        base_params=dict(coefficients)
+        if 'natural_matched' in natural_variants:
+            # Natural-text error of plain Hungarian matching, the starting point of the one-to-one control.
+            for s in sites:indices[s]=matched_rows[s];coefficients[s]=matched_init[s]
+            natural_scores['hungarian_decoder']=natural_evaluation('hungarian_decoder')
+            for s in sites:indices[s]=base_indices[s];coefficients[s]=base_params[s]
         for variant in c['variants']:
             for s in sites:
-                targets[s].load_state_dict(initial[s]);coefficients[s].data.copy_(base_coeff[s])
-                coefficients[s].requires_grad_(variant in ('whole','parts','parts_relation','random_parts'))
-            for s in c['adapt_sites']:targets[s].requires_grad_(variant!='parts_relation')
+                targets[s].load_state_dict(initial[s])
+                if variant=='natural_matched':
+                    # One-to-one control: only the Hungarian decoder match of each source feature, gain up to the cap.
+                    indices[s]=matched_rows[s];coefficients[s]=torch.nn.Parameter(matched_init[s].clone())
+                else:
+                    indices[s]=base_indices[s];coefficients[s]=base_params[s];coefficients[s].data.copy_(base_coeff[s])
+                coefficients[s].requires_grad_(variant in trained)
+            for s in c['adapt_sites']:targets[s].requires_grad_(variant not in relation_only)
             groups_opt=[dict(params=[p for p in params if p.requires_grad],lr=c['dictionary_lr'])]
-            if variant in ('whole','parts','parts_relation','random_parts'):groups_opt.append(dict(params=list(coefficients.values()),lr=c['relation_lr']))
+            if variant in trained:groups_opt.append(dict(params=list(coefficients.values()),lr=c['relation_lr']))
             optim=torch.optim.AdamW(groups_opt,weight_decay=0.)
             generator=torch.Generator(device=w.device).manual_seed(c['training_seed'])
             for step in range(c['steps']):
                 ids=torch.tensor(nat[step*c['batch_sequences']:(step+1)*c['batch_sequences']],device=w.device)
                 mask=torch.ones_like(ids);mode='clean'
                 with torch.no_grad():clean_h,clean_pool=forward(ids);clean={s:observed[s].clone() for s in c['adapt_sites']}
-                if variant in ('whole','parts','parts_relation','random_parts'):
+                if variant in natural_variants:
+                    start=(step*c['batch_sequences'])%len(natural_order)
+                    ids=torch.tensor(np.array(natural_tokens[np.sort(natural_order[start:start+c['batch_sequences']])],dtype='int64'),device=w.device)
+                    err,eff=natural_error(ids,natural_q(len(ids),generator))
+                    program=err/eff.clamp_min(1e-12)
+                elif variant in ('whole','parts','parts_relation','random_parts'):
                     if program_rows:
                         fit=program_rows[64:];take=[fit[(step*c['batch_sequences']+j)%len(fit)] for j in range(c['batch_sequences'])]
                         ids=program_batch(take);mode='clean'
@@ -194,8 +257,10 @@ def main():
                 optim.step()
                 with torch.no_grad():
                     for s in c['adapt_sites']:
-                        if variant!='parts_relation':targets[s].decoder.weight.div_(targets[s].decoder.weight.norm(dim=0).clamp_min(1e-10))
-                    for a in coefficients.values():project_rows(a)
+                        if variant not in relation_only:targets[s].decoder.weight.div_(targets[s].decoder.weight.norm(dim=0).clamp_min(1e-10))
+                    for a in coefficients.values():
+                        if variant=='natural_matched':a.clamp_(0.,c['matched_gain_max'])
+                        else:project_rows(a)
                 assert torch.isfinite(loss)
                 if (step+1)%16==0:
                     w.record(kind='training',task='natural_program',component=variant,row_id=step+1,method=variant,step=step+1,loss=float(loss.detach()),program=float(program.detach()),reconstruction=float(recon.detach()))
@@ -206,11 +271,14 @@ def main():
             export={}
             for s in sites:
                 for key in ['native','geometry','geometry_gain','raw','candidates']:export[s+'__'+key]=old[s+'__'+key].copy()
+                if variant=='natural_matched':export[s+'__native']=np.zeros_like(export[s+'__native'])
                 export[s+'__native'][indices[s].cpu().numpy()]=coefficients[s].detach().cpu().numpy()
             np.savez_compressed(dest/'relation.npz',**export)
             checkpoints.append(dict(method=variant,directory=str(dest),adapt_sites=c['adapt_sites'],steps=c['steps']))
             write(w.run/'checkpoints.json',dict(checkpoints=checkpoints))
             evaluate(variant)
+            if natural_scores:
+                natural_scores[variant]=natural_evaluation(variant);write(w.run/'NATURAL.json',natural_scores)
             # Comparable natural-state quality on a separate, previously exposed slice.
             mode='clean';ids=torch.tensor(np.array(tokens[-4:],dtype='int64'),device=w.device);mask=torch.ones_like(ids)
             with torch.no_grad():
@@ -219,6 +287,7 @@ def main():
                     x=observed[s];z=targets[s].encode(x);rec=targets[s].decode(z)
                     w.record(kind='quality',task='natural_reconstruction',component=s,row_id=s,method=variant,site=s,fve=float(1-(rec-x).square().sum()/(x-x.mean((0,1))).square().sum()),l0=float((z>0).sum(-1).float().mean()),decoder_norm_error=float((targets[s].decoder.weight.norm(dim=0)-1).abs().max()))
             del optim;torch.cuda.empty_cache()
+        for s in sites:indices[s]=base_indices[s];coefficients[s]=base_params[s]
         w.checks.update(all_variants=len(checkpoints)==len(c['variants']),capacity=all(float(a.detach().sum(1).max())<=1.00001 for a in coefficients.values()),nonnegative=all(float(a.detach().min())>=0 for a in coefficients.values()))
     except Exception:error=traceback.format_exc()
     finally:

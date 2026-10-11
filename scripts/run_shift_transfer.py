@@ -469,7 +469,8 @@ def main():
         expected_cells=sum(1 if name=='none' else len(c['queries']) for name in c['methods'])
         w.checks.update(all_query_methods=len(results)==expected_cells,native_capacity=all(v['row_capacity']<=1.000001 for v in fit_summary.values()))
         w.checks['part_capacity']=all(p['row_capacity']<=1.000001 and p['selected']<=p['allowance'] for v in fit_summary.values() for p in v.get('part_fits',{}).values())
-        w.checks['adapted_capacity']=all(bool((relations[s][m]>=0).all()) and float(relations[s][m].sum(1).max())<=1.00001 for m in adapted_targets for s in sites)
+        # One-to-one controls may carry gains above one on their single match; every other program stays within capacity.
+        w.checks['adapted_capacity']=all(bool((relations[s][m]>=0).all()) and float(relations[s][m].sum(1).max())<=c['adapted_programs'][m].get('gain_max',1.)+1e-5 for m in adapted_targets for s in sites)
     except Exception:error=traceback.format_exc()
     finally:
         for h in hooks:h.remove()
