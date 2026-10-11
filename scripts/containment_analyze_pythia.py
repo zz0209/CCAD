@@ -15,13 +15,14 @@ SEEDS = (42, 43, 44)
 # matched_rows_free is the version 1 natural_matched arm: the Hungarian-matched target features with every source
 # feature allowed on every one of them, gains up to four. one_to_one keeps only each match.
 TRAINED = ['parts_relation', 'natural_relation', 'one_to_one', 'parts_relation_cap4', 'natural_relation_cap4',
-           'matched_rows_free', 'subset_relation']
+           'matched_rows_free', 'subset_relation', 'parts_relation_state', 'subset_relation_state']
 FIXED = ['hungarian_decoder', 'geometry_gain', 'native', 'raw_reconstruction']
 CONTRASTS = [('natural_relation', 'parts_relation'), ('natural_relation', 'hungarian_decoder'),
              ('natural_relation', 'one_to_one'), ('natural_relation_cap4', 'one_to_one'),
              ('natural_relation_cap4', 'parts_relation_cap4'), ('parts_relation', 'hungarian_decoder'),
              ('natural_relation_cap4', 'matched_rows_free'), ('subset_relation', 'parts_relation'),
-             ('subset_relation', 'natural_relation')]
+             ('subset_relation', 'natural_relation'), ('subset_relation_state', 'subset_relation'),
+             ('parts_relation_state', 'parts_relation'), ('subset_relation_state', 'parts_relation')]
 RENAME = [('natural_matched_ts', 'matched_rows_free@'), ('_cap4_ts', '_cap4@'), ('one_to_one_ts', 'one_to_one@'), ('_ts', '@')]
 
 
@@ -74,17 +75,20 @@ def main():
     args = parser.parse_args()
     data, natural = {}, {}
     for t in (2, 3, 4, 5):
-        data[t] = merged(t, [RUNS / f'CSM_C2_PYTHIA70M_eval_t{t}_v1_20261011', RUNS / f'CSM_C2B_PYTHIA70M_eval_t{t}_v1_20261011'])
+        data[t] = merged(t, [RUNS / f'CSM_C2_PYTHIA70M_eval_t{t}_v1_20261011', RUNS / f'CSM_C2B_PYTHIA70M_eval_t{t}_v1_20261011',
+                             RUNS / f'CSM_C2D_PYTHIA70M_eval_t{t}_v1_20261011'])
         natural[t] = {}
         for s in SEEDS:
             a = json.loads((RUNS / f'CSM_C2_PYTHIA70M_program_t{t}_ts{s}_v1_20261011' / 'NATURAL.json').read_text())
             b = json.loads((RUNS / f'CSM_C2B_PYTHIA70M_program_t{t}_ts{s}_v1_20261011' / 'NATURAL.json').read_text())
             sub = json.loads((RUNS / f'CSM_C2C_PYTHIA70M_program_t{t}_ts{s}_v1_20261011' / 'NATURAL.json').read_text())
+            st = json.loads((RUNS / f'CSM_C2D_PYTHIA70M_program_t{t}_ts{s}_v1_20261011' / 'NATURAL.json').read_text())
             natural[t][s] = dict(initial=a['initial'], hungarian_decoder=a['hungarian_decoder'],
                                  parts_relation=a['parts_relation'], natural_relation=a['natural_relation'],
                                  matched_rows_free=a['natural_matched'], one_to_one=b['natural_matched'],
                                  parts_relation_cap4=b['parts_relation'], natural_relation_cap4=b['natural_relation'],
-                                 subset_relation=sub['subset_relation'])
+                                 subset_relation=sub['subset_relation'], parts_relation_state=st['parts_relation'],
+                                 subset_relation_state=st['subset_relation'])
     docs0, _, labels, genders = data[2]
     for docs, _, lab, gen in data.values():
         assert docs == docs0 and np.array_equal(lab, labels) and np.array_equal(gen, genders)
