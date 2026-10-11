@@ -12826,3 +12826,11 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 1. 现象。CSM_U_GEMMA2B_l0low16k_v1_20261011 中统一臂 subsets_statejoint 两个种子已完成训练（第一个种子 399 步），H 臂 subsets_statejointclf 第一个种子在第 25 步后显存不足（GPU1 上本进程占 47.38 GiB）。原因：H 臂的分类器项另做一次带梯度的前向，与状态项和 FineWeb 项的计算图同时存在。
 2. 修正。分类器读取的就是第 22 层状态的平均池化，H 臂现在直接用状态项已经得到的编辑后状态计算分类器 logit（scripts/mayo/gemma_shift_transfer.py 的 state_loss 增加 keep_states），不再做第二次前向；目标函数不变。失败目录改名为 failed_CSM_U_GEMMA2B_l0low16k_v1_20261011_oom_clf 保留，16k 统一 run 在 tmux ccad-u1b 中排在 ccad-expr1 之后重跑；65k 统一 run（ccad-u0，等 ccad-final0）使用修正后的代码。
 3. EXP-R。取消 use 会话后 ccad-u1 失败退出，ccad-expr1 随即在 GPU1 开始，冒烟 CSM_REDISCOVER_GEMMA2B_l0low16k_v1_20261011_SMOKE PASS：迁移映射三个种子的非零目标特征数为 394、380、358，目标数 377；冒烟只用 8 条传记、检查 100 个特征，接受 1 个（resid_20 第 5258 号，代词占比 .57）。正式运行最多检查 2,000 个特征，接受数不足时按事先规则使用全部已接受特征并报告数量。
+
+### READER_COVERAGE EXP-R PROGRESS（16k 目标的重新发现结果）
+
+实际写入UTC为2026-10-11T19:03:56Z。CSM_REDISCOVER_GEMMA2B_l0low16k_v1_20261011 PASS（19:02:30Z 至 19:03:11Z，1,024 条 fit 传记）；冒烟用途 run CSM_EXPR_GEMMA2B_l0low16k_v1_20261011_SMOKE PASS。按事先固定的流程：目标数 377（迁移映射三个种子非零目标特征数 394、380、358 的平均），检查到第 2,000 个特征为止接受 13 个，全部进入代词部分（代词占比 .50 至 .67，分布在 resid_6 至 resid_20 的 12 个位点），没有任何特征的性别词占比达到 .5，重新发现的“女性描述”部分为空。按规则使用全部已接受的 13 个特征进行用途比较（CSM_EXPR_GEMMA2B_l0low16k_v1_20261011，正在 GPU1 运行）。记录：固定的自动流程在 2,000 个最高归因特征中没有找到描述女性的特征，迁移解释的女性描述部分由迁移映射给出。
+
+### READER_COVERAGE CORRECTION（Qwen 本机队列等待超时）
+
+实际写入UTC为2026-10-11T20:00:42Z。scripts/run_uj_qwen.ps1 第一次运行在等待 GPU 租约 3,600 秒后放弃冒烟（GPT-2 确认读取方依次占用租约），按脚本规定以“Qwen smoke failed”退出；没有启动任何 Qwen 进程，也没有产生 run 目录。脚本改为等 GPT-2 确认读取方最后一个方向结束后再开始，已重新排队（日志 D:/CCAD_Storage/runs/cross_seed_models/UJ_QWEN_runner_2.log）。
