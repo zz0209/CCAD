@@ -38,6 +38,12 @@ for source, target in [(1, 2), (2, 1)]:
                           'fitting uses the R26 fit pairs and evaluation the RG09 confirmation pairs.'))
         (configs / f'c4_qwen17_s{source}_t{target}_ts{seed}.json').write_text(json.dumps(cfg, indent=1))
         print(cfg['run_id'])
+        # READER_COVERAGE EXP-2 grammar cell: part supervision read by the full next-token distribution of the task
+        # sentences, with part requests and random feature subsets.
+        rc = dict(cfg, run_id=f'CSM_C8_QWEN17_rc_s{source}_t{target}_ts{seed}_v1_20261011', families=['membership_distparts'],
+                  purpose=('READER_COVERAGE EXP-2: part supervision fitted to the full next-token distribution of the task '
+                           'sentences, for the Qwen3-1.7B grammatical explanation.'))
+        (configs / f'c8_qwen17_rc_s{source}_t{target}_ts{seed}.json').write_text(json.dumps(rc, indent=1))
 
 # One-to-one controls with gains up to four, natural-text and part-supervised, for the eight GPT-2 Medium directions
 # of X1 and X1c, with the X1 recipe otherwise unchanged; the many-to-many arms are the existing X1 and X1c runs.
@@ -70,3 +76,7 @@ for source, target in [(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (3, 4), (4, 5), (
                         'frequency-matched source features outside the explanation, fitted to the explanation.'))
     (configs / f'c5b_gpt2_decoy_s{source}_t{target}.json').write_text(json.dumps(cfg, indent=1))
     print(cfg['run_id'])
+    rc = dict(cfg, run_id=f'CSM_C8_GPT2_rc_s{source}_t{target}_v1_20261011', families=['membership_distparts'],
+              purpose=('READER_COVERAGE EXP-2: part supervision fitted to the full next-token distribution of the task '
+                       'sentences, for the GPT-2 Medium grammatical explanations.'))
+    (configs / f'c8_gpt2_rc_s{source}_t{target}.json').write_text(json.dumps(rc, indent=1))

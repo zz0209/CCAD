@@ -378,6 +378,33 @@ def main():
             target.edit = None
             return (weight*(d_t-d_s)**2).sum(), (weight*d_s**2).sum()
 
+        def task_dist_error(rr, q, weights, cap=1.):
+            # Reader-complete task error: the edit sits at the last shared prefix token of both sentences of each pair,
+            # and the full next-token distribution is compared at that position and every later one.
+            length = max(len(r[key]) for r in rr for key in ['good', 'bad'])
+            ids = torch.full((2*len(rr), length), eos, dtype=torch.long, device=device)
+            pad = torch.zeros_like(ids)
+            for i, row in enumerate(rr):
+                for j, key in enumerate(['good', 'bad']):
+                    ids[2*i+j, :len(row[key])] = torch.tensor(row[key], device=device)
+                    pad[2*i+j, :len(row[key])] = 1
+            positions = torch.tensor([r['position'] for r in rr], device=device).repeat_interleave(2)
+            keep = ((torch.arange(length, device=device)[None, :] >= positions[:, None]) & pad.bool()).float()
+            qq = q.repeat_interleave(2, 0)
+            with torch.no_grad():
+                source.positions = positions
+                lp_s0 = source.logprobs(ids, pad)
+                source.edit = source_edit(qq)
+                d_s = source.logprobs(ids, pad)-lp_s0
+                source.edit = source.positions = None
+                lp_t0 = lp_s0 if target.model is source.model else target.logprobs(ids, pad)
+                weight = .5*(lp_s0.exp()+lp_t0.exp())*keep[..., None]
+            target.positions = positions
+            target.edit = membership_edit(weights, qq, cap)
+            d_t = target.logprobs(ids, pad)-lp_t0
+            target.edit = target.positions = None
+            return (weight*(d_t-d_s)**2).sum(), (weight*d_s**2).sum()
+
         values = dict(none_source=evaluate_task('none_source', source, None),
                       source=evaluate_task('source', source, source_edit))
         values['none_target'] = values['none_source'] if target.model is source.model else evaluate_task('none_target', target, None)
@@ -427,6 +454,19 @@ def main():
                     p = torch.rand(len(ids), 1, generator=gen)
                     q = (torch.rand(len(ids), m, generator=gen) < p).float().to(device)
                     err, eff = natural_error(ids, q, weights, cap, cset)
+                    loss = err/eff.clamp_min(1e-12)
+                elif family.endswith('distparts'):
+                    # Reader-complete part supervision: part and complete requests alternate with per-pair random
+                    # feature subsets, all read by the full next-token distribution of the task sentences.
+                    k = task_steps
+                    task_steps += 1
+                    rr = [fit[i] for i in rng.choice(len(fit), c['batch_pairs'], replace=False)]
+                    if k % 2 == 0:
+                        q = endpoints[(k//2) % len(endpoints)][parts].expand(len(rr), -1)
+                    else:
+                        p = torch.rand(len(rr), 1, generator=gen)
+                        q = (torch.rand(len(rr), m, generator=gen) < p).float().to(device)
+                    err, eff = task_dist_error(rr, q, weights, cap)
                     loss = err/eff.clamp_min(1e-12)
                 else:
                     k = task_steps
