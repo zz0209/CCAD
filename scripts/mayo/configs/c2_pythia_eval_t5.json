@@ -1,0 +1,163 @@
+{
+ "adapted_programs": {
+  "parts_relation_ts42": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t5_ts42/parts_relation",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ],
+   "gain_max": 1.0
+  },
+  "natural_relation_ts42": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t5_ts42/natural_relation",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ],
+   "gain_max": 1.0
+  },
+  "natural_matched_ts42": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t5_ts42/natural_matched",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ],
+   "gain_max": 4.0
+  },
+  "parts_relation_ts43": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t5_ts43/parts_relation",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ],
+   "gain_max": 1.0
+  },
+  "natural_relation_ts43": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t5_ts43/natural_relation",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ],
+   "gain_max": 1.0
+  },
+  "natural_matched_ts43": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t5_ts43/natural_matched",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ],
+   "gain_max": 4.0
+  },
+  "parts_relation_ts44": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t5_ts44/parts_relation",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ],
+   "gain_max": 1.0
+  },
+  "natural_relation_ts44": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t5_ts44/natural_relation",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ],
+   "gain_max": 1.0
+  },
+  "natural_matched_ts44": {
+   "directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models/c2_programs/t5_ts44/natural_matched",
+   "sites": [
+    "embed",
+    "mlp_0",
+    "resid_0"
+   ],
+   "gain_max": 4.0
+  }
+ },
+ "audit_opened": true,
+ "budget": "5400 driver seconds on one Mayo GPU, no fitting.",
+ "budget_seconds": 5400,
+ "candidate_family_frozen": true,
+ "confirmation_freeze": "artifacts\\independent_reuse_20260916\\IR04_CONFIRMATION_FREEZE.json",
+ "context_response": true,
+ "dataset_revision": "052f01de644dba841176e0449528b41f27d94a61",
+ "device": "cuda:0",
+ "dictionary_overlay_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+ "dictionary_source_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+ "eval_batch_size": 16,
+ "eval_token_budget": 4096,
+ "evaluation_panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/R59_CONFIRMATION_PANEL.json",
+ "evaluation_split": "test_confirmation",
+ "evidence_level": "frozen_methods_confirmation_panel",
+ "fit_batch_sequences": 8,
+ "fit_iterations": 1200,
+ "fit_sequences": 128,
+ "frozen_source_run": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/REFORM_R58_shift_source_development_v2_20260915",
+ "functional_weight": 0.99,
+ "generator_script": "scripts/run_shift_transfer.py",
+ "members_per_source": 2,
+ "methods": [
+  "none",
+  "source",
+  "hungarian_decoder",
+  "geometry_gain",
+  "native",
+  "raw_reconstruction",
+  "parts_relation_ts42",
+  "natural_relation_ts42",
+  "natural_matched_ts42",
+  "parts_relation_ts43",
+  "natural_relation_ts43",
+  "natural_matched_ts43",
+  "parts_relation_ts44",
+  "natural_relation_ts44",
+  "natural_matched_ts44"
+ ],
+ "model_local_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/pythia-70m-deduped",
+ "model_revision": "e93a9faa9c77e5d09219f6c868bfc7a1bd65593c",
+ "neighbors_per_source": 16,
+ "notebook": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/bib_shift.ipynb",
+ "paired_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/grammar/discovery.uint16.bin",
+ "probe_batch_size": 128,
+ "probe_lr": 0.01,
+ "probe_seeds": [
+  42
+ ],
+ "purpose": "CONTAINMENT experiment 2 evaluation on complete and part deletions of the SHIFT explanation.",
+ "queries": [
+  "full",
+  "pronouns",
+  "names",
+  "associated_words",
+  "pronouns+names",
+  "pronouns+associated_words",
+  "names+associated_words"
+ ],
+ "relation_run": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/REFORM_R59_shift_confirm_seed5_v1_20260915",
+ "ridge": 0.001,
+ "run_id": "CSM_C2_PYTHIA70M_eval_t5_v1_20261011",
+ "run_parent": "CONTAINMENT",
+ "scope": "Frozen C2 checkpoints and natural-text matching relations. No method or threshold is selected on this panel.",
+ "seeds": [
+  5
+ ],
+ "source_manifest": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/PUBLISHED_EXPLANATION.json",
+ "source_parameters": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/published_shift55.npz",
+ "statistics_unit": "Biographies clustered by document; development one target dictionary stack",
+ "target_directory": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/step_8192",
+ "target_seed": 5,
+ "threshold_source_split": "All adaptation arms share the old source classifier and503source-use contexts. Original geometry/native/raw retain natural-text fits. Relation-only andwhole controls match source information,steps andparameters except the stated dictionary/request change. Reconstruction readout uses original source activation rule on target reconstruction.",
+ "run_storage_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models",
+ "extra_relations": {
+  "hungarian_decoder": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/pythia_shift/matching_relations_seed5/matching_relations.npz"
+ },
+ "source_revision": "d88842d0fe6a90ee604a8c6e175b1f7e28ad631b"
+}

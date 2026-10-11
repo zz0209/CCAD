@@ -1,0 +1,129 @@
+{
+ "run_id": "CSM_C4_QWEN17_s2_t1_ts1_v1_20261011",
+ "run_parent": "CONTAINMENT",
+ "run_storage_root": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/cross_seed_models",
+ "generator_script": "scripts/cross_seed_transfer.py",
+ "device": "cuda:0",
+ "seeds": [
+  2,
+  1
+ ],
+ "purpose": "CONTAINMENT experiment 4: a correspondence trained only on generic natural text with random feature subsets, against part supervision and one-to-one controls with gains up to four, for the Qwen3-1.7B grammatical explanation between public Qwen-Scope dictionaries.",
+ "scope": "Qwen3-1.7B-Base layer 14, source Qwen-Scope dictionary 2 with its R26 source groups, target dictionary 1. Natural text is the exported FineWeb slice tokenized for Qwen; fitting uses the R26 fit pairs and evaluation the RG09 confirmation pairs.",
+ "budget": "Mayo GPU, one job per run.",
+ "audit_opened": true,
+ "candidate_family_frozen": true,
+ "model_revision": "see assets/DOWNLOAD_MANIFEST.json entry qwen3-1.7b-base",
+ "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+ "dictionary_source_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+ "dictionary_overlay_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
+ "source": {
+  "model_dir": "/mnt/nvme3-data/harvardhds/ccad-m364569/assets/qwen3-1.7b-base",
+  "model_label": "Qwen/Qwen3-1.7B-Base",
+  "sae_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/topk_seed2.pt",
+  "sae_label": "Qwen-Scope layer 14 dictionary 2",
+  "hook_module_path": "model.layers.14",
+  "gate": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/topk_s2_source.npz",
+  "model_files": [
+   "config.json",
+   "model.safetensors"
+  ]
+ },
+ "target": {
+  "same_model": true,
+  "sae_checkpoint": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/topk_seed1.pt",
+  "sae_label": "Qwen-Scope layer 14 dictionary 1",
+  "hook_module_path": "model.layers.14"
+ },
+ "natural_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/qwen_natural_train.uint32.bin",
+ "natural_eval_tokens": "/mnt/nvme3-data/harvardhds/ccad-m364569/data/cross_seed/qwen_natural_eval.uint32.bin",
+ "context": 128,
+ "natural_batch": 4,
+ "correlation_sequences": 512,
+ "natural_eval_sequences": 128,
+ "natural_eval_seed": 1,
+ "candidates_per_source": 16,
+ "panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_prepare_l14_v2/fit_panel.json",
+ "evaluation_panel": "/mnt/nvme3-data/harvardhds/ccad-m364569/runs/naacl_sprint_20261010/qwen17_fresh_panel_rg09/confirmation_panel.json",
+ "evaluation_split": "rg09_new_sentence_confirmation",
+ "tasks": [
+  "regular_plural_subject_verb_agreement_1",
+  "anaphor_number_agreement",
+  "anaphor_gender_agreement"
+ ],
+ "queries": {
+  "full": [
+   1,
+   1,
+   1
+  ],
+  "gender": [
+   0,
+   0,
+   1
+  ],
+  "half": [
+   0.5,
+   0.5,
+   0.5
+  ],
+  "number": [
+   0,
+   1,
+   0
+  ],
+  "number_gender": [
+   0,
+   1,
+   1
+  ],
+  "participation_a": [
+   0.25,
+   0.5,
+   0.75
+  ],
+  "participation_b": [
+   0.75,
+   0.25,
+   0.5
+  ],
+  "participation_c": [
+   0.5,
+   0.75,
+   0.25
+  ],
+  "verb": [
+   1,
+   0,
+   0
+  ],
+  "verb_gender": [
+   1,
+   0,
+   1
+  ],
+  "verb_number": [
+   1,
+   1,
+   0
+  ]
+ },
+ "eos_token_id": 151643,
+ "fit_pairs_per_task": 64,
+ "eval_pairs_per_task": 128,
+ "eval_batch_pairs": 16,
+ "batch_pairs": 4,
+ "families": [
+  "matched_natural",
+  "membership_natural",
+  "matched_parts",
+  "membership_parts"
+ ],
+ "steps": 512,
+ "lr": 0.02,
+ "training_seed": 1,
+ "progress_every": 32,
+ "source_revision": "d88842d0fe6a90ee604a8c6e175b1f7e28ad631b",
+ "matched_gain_max": 4.0,
+ "token_dtype": "<u4"
+}
