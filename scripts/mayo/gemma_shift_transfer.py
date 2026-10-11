@@ -731,9 +731,10 @@ def execute(cfg, run):
         (run.dir / 'WHITENING.json').write_text(json.dumps(dict(reader=cfg['state_reader'], tokens=len(states), **info), indent=1))
         del states, chunks
 
-    def state_loss(ids, mask, q, tmap, weights, requests):
+    def state_loss(ids, mask, q, tmap, weights, requests, keep_states=False):
         # Whitened error of the layer-22 token states against the source edit, normalized per request by the mean
-        # source effect energy of its rows in the batch; all drawn subsets share one normalizer.
+        # source effect energy of its rows in the batch; all drawn subsets share one normalizer. keep_states also
+        # returns the edited states, from which the pooled classifier input follows without another forward pass.
         m = mask.float().clone()
         m[:, 0] = 0.
         with torch.no_grad():
@@ -748,7 +749,7 @@ def execute(cfg, run):
         scale = torch.empty_like(eff)
         for ix in groups.values():
             scale[ix] = eff[ix].mean().clamp_min(1e-8)
-        return (err / scale).mean()
+        return ((err / scale).mean(), ht) if keep_states else (err / scale).mean()
 
     def natural_q(n, rng):
         # Each sequence draws an inclusion probability uniformly and each feature joins with it.
@@ -885,7 +886,9 @@ def execute(cfg, run):
             ids, mask = model.encode([fit_texts[b] for _, b in rows])
             weights = {s: params[s] * mask_of[s] for s in dicts.sites}
             if reader == 'state':
-                fit_loss = state_loss(ids, mask, q, tmap, weights, [r for r, _ in rows])
+                fit_loss = state_loss(ids, mask, q, tmap, weights, [r for r, _ in rows], keep_states=with_classifier)
+                if with_classifier:
+                    fit_loss, ht = fit_loss
             if reader == 'classifier' or with_classifier:
                 drawn = ('random', 'single')
                 target = np.array([np.nan if r in drawn else fit_source[train_requests.index(r), b] for r, b in rows],
@@ -900,7 +903,11 @@ def execute(cfg, run):
                     # Drawn rows are normalized by their own mean source energy in the batch, as each part row is by its
                     # part energy, so small subsets keep the same weight as the complete request.
                     scale[live] = max(float(np.mean(target[live] ** 2)), 1e-8)
-                logit = probe(model.pooled(ids, mask, tmap.mode(q, weights)))
+                if reader == 'classifier':
+                    logit = probe(model.pooled(ids, mask, tmap.mode(q, weights)))
+                else:
+                    # The classifier reads the mean-pooled layer-22 states that the state term already computed.
+                    logit = probe((ht * mask[..., None]).sum(1) / mask.sum(1, keepdim=True))
                 delta = logit - torch.tensor(fit_base[[b for _, b in rows]], device=dev)
                 clf_loss = ((delta - torch.tensor(target, device=dev)) ** 2 / torch.tensor(scale, device=dev)).mean()
                 fit_loss = clf_loss if reader == 'classifier' else fit_loss + clf_loss
