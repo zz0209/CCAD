@@ -13,6 +13,7 @@ import numpy as np
 import pyarrow.parquet as pq
 import scipy
 from scipy.optimize import linear_sum_assignment, minimize
+from sklearn.covariance import LedoitWolf
 import torch
 import transformers
 
@@ -148,11 +149,16 @@ class Model:
         assert batch['input_ids'].shape[1] <= 1024
         return batch['input_ids'].to(self.dev), batch['attention_mask'].to(self.dev)
 
-    def pooled(self, ids, mask, mode=None):
+    def states(self, ids, mask, mode=None):
+        # Token states at the classifier layer, the representation that the classifier and the later layers read.
         self.mode, self.ids, self.mask = mode, ids, mask
         self.backbone(input_ids=ids, attention_mask=mask, use_cache=False)
         self.mode = None
         h, self.captured = self.captured.float(), None
+        return h
+
+    def pooled(self, ids, mask, mode=None):
+        h = self.states(ids, mask, mode)
         return (h * mask[..., None]).sum(1) / mask.sum(1, keepdim=True)
 
     def logprobs(self, ids, mask, mode=None):
@@ -676,6 +682,52 @@ def execute(cfg, run):
         run.records([dict(kind='natural_lm_data', train=len(corpus['train']), eval=len(corpus['eval']),
                           source_sha256=corpus['source_sha256'], length=cfg['natural_lm_len'])])
 
+    whiten = None
+    if any(f.endswith('_state') for f in cfg['fit_families']):
+        # Reader-complete families fit the layer-22 token states that every downstream reader sees. Their error is
+        # whitened by the covariance of clean states on unlabeled biographies of other professions, either with the
+        # Ledoit-Wolf estimate or by standardizing each dimension. The first position is left out everywhere.
+        chunks = []
+        with torch.no_grad():
+            for ix in batches(min(len(natural), cfg['whiten_bios']), cfg['natural_batch']):
+                ids, mask = model.encode([natural[i] for i in ix])
+                valid = mask.bool().clone()
+                valid[:, 0] = False
+                chunks.append(model.states(ids, mask)[valid].cpu().numpy())
+        states = np.concatenate(chunks)
+        states = states[np.random.default_rng(cfg['seed']).permutation(len(states))[:cfg['whiten_tokens']]]
+        if cfg['state_reader'] == 'ledoit_wolf':
+            lw = LedoitWolf().fit(states)
+            vals, vecs = np.linalg.eigh(lw.covariance_)
+            w = vecs @ np.diag(vals ** -.5) @ vecs.T
+            info = dict(shrinkage=float(lw.shrinkage_), eigenvalue_min=float(vals.min()), eigenvalue_max=float(vals.max()))
+        else:
+            assert cfg['state_reader'] == 'standardized', cfg['state_reader']
+            w = np.diag(1. / states.std(0))
+            info = dict(std_min=float(states.std(0).min()), std_max=float(states.std(0).max()))
+        whiten = torch.tensor(w, device=dev, dtype=torch.float32)
+        (run.dir / 'WHITENING.json').write_text(json.dumps(dict(reader=cfg['state_reader'], tokens=len(states), **info), indent=1))
+        del states, chunks
+
+    def state_loss(ids, mask, q, tmap, weights, requests):
+        # Whitened error of the layer-22 token states against the source edit, normalized per request by the mean
+        # source effect energy of its rows in the batch; all drawn subsets share one normalizer.
+        m = mask.float().clone()
+        m[:, 0] = 0.
+        with torch.no_grad():
+            h0 = model.states(ids, mask)
+            hs = model.states(ids, mask, source_mode(dicts, q))
+            eff = ((((hs - h0) @ whiten) ** 2).sum(-1) * m).sum(1)
+        ht = model.states(ids, mask, tmap.mode(q, weights))
+        err = ((((ht - hs) @ whiten) ** 2).sum(-1) * m).sum(1)
+        groups = {}
+        for k, r in enumerate(requests):
+            groups.setdefault('drawn' if r in ('random', 'single') else r, []).append(k)
+        scale = torch.empty_like(eff)
+        for ix in groups.values():
+            scale[ix] = eff[ix].mean().clamp_min(1e-8)
+        return (err / scale).mean()
+
     def natural_q(n, rng):
         # Each sequence draws an inclusion probability uniformly and each feature joins with it.
         draw = rng.random((n, len(features))) < rng.random((n, 1))
@@ -743,15 +795,19 @@ def execute(cfg, run):
         rng = np.random.default_rng(seed)
         params = {s: torch.nn.Parameter(torch.tensor(inits[init][s], device=dev)) for s in dicts.sites}
         opt = torch.optim.Adam(params.values(), lr=cfg['fit_lr'])
+        # A family ending in _state fits the layer-22 token states with the same requests, biographies and draws as
+        # the family it extends, which fits the classifier response.
+        reader = 'state' if family.endswith('_state') else 'classifier'
+        base = family[:-len('_state')] if reader == 'state' else family
         # The subset family adds one random half of the features per biography, whose source response is computed live.
         # The label-free families keep the complete request and replace the two part rows by two rows of random feature
         # subsets of uniformly drawn size, or of single features, so they see no annotation at equal budget.
         req = dict(complete=['complete'], parts=train_requests, subsets=train_requests + ['random'],
                    parts_matched=train_requests, random=['complete', 'random', 'random'],
-                   singletons=['complete', 'single', 'single'])[family]
-        label_free = family in ('random', 'singletons')
-        mask_of = matched_only if family == 'parts_matched' else allowed
-        hi = gain_max if family == 'parts_matched' else 1.
+                   singletons=['complete', 'single', 'single'])[base]
+        label_free = base in ('random', 'singletons')
+        mask_of = matched_only if base == 'parts_matched' else allowed
+        hi = gain_max if base == 'parts_matched' else 1.
         per = cfg['fit_sequences'] // len(req)
         tmap = maps['native']
         curve = []
@@ -760,7 +816,7 @@ def execute(cfg, run):
             rows = [(r, b) for r in req for b in bios]
             if label_free:
                 # Every row draws its own subset; a singleton row starts empty and receives exactly one feature.
-                inclusion = rng.random((len(rows), 1)) if family == 'random' else 0.
+                inclusion = rng.random((len(rows), 1)) if base == 'random' else 0.
                 draw = rng.random((len(rows), len(features))) < inclusion
                 draw[np.arange(len(rows)), rng.integers(0, len(features), len(rows))] |= ~draw.any(1)
                 random_q = torch.tensor(draw.astype(np.float32), device=dev)
@@ -776,23 +832,26 @@ def execute(cfg, run):
                 q = torch.stack([random_q[k % per] if r == 'random' else qmat[names.index(r)]
                                  for k, (r, _) in enumerate(rows)])
             ids, mask = model.encode([fit_texts[b] for _, b in rows])
-            drawn = ('random', 'single')
-            target = np.array([np.nan if r in drawn else fit_source[train_requests.index(r), b] for r, b in rows],
-                              dtype=np.float32)
-            live = [k for k, (r, _) in enumerate(rows) if r in drawn]
-            if live:
-                with torch.no_grad():
-                    src = probe(model.pooled(ids[live], mask[live], source_mode(dicts, q[live]))).cpu().numpy()
-                target[live] = src - fit_base[[rows[k][1] for k in live]]
-            scale = np.array([norm[train_requests.index('complete' if r in drawn else r)] for r, _ in rows])
-            if label_free:
-                # Drawn rows are normalized by their own mean source energy in the batch, as each part row is by its
-                # part energy, so small subsets keep the same weight as the complete request.
-                scale[live] = max(float(np.mean(target[live] ** 2)), 1e-8)
             weights = {s: params[s] * mask_of[s] for s in dicts.sites}
-            logit = probe(model.pooled(ids, mask, tmap.mode(q, weights)))
-            delta = logit - torch.tensor(fit_base[[b for _, b in rows]], device=dev)
-            fit_loss = ((delta - torch.tensor(target, device=dev)) ** 2 / torch.tensor(scale, device=dev)).mean()
+            if reader == 'state':
+                fit_loss = state_loss(ids, mask, q, tmap, weights, [r for r, _ in rows])
+            else:
+                drawn = ('random', 'single')
+                target = np.array([np.nan if r in drawn else fit_source[train_requests.index(r), b] for r, b in rows],
+                                  dtype=np.float32)
+                live = [k for k, (r, _) in enumerate(rows) if r in drawn]
+                if live:
+                    with torch.no_grad():
+                        src = probe(model.pooled(ids[live], mask[live], source_mode(dicts, q[live]))).cpu().numpy()
+                    target[live] = src - fit_base[[rows[k][1] for k in live]]
+                scale = np.array([norm[train_requests.index('complete' if r in drawn else r)] for r, _ in rows])
+                if label_free:
+                    # Drawn rows are normalized by their own mean source energy in the batch, as each part row is by its
+                    # part energy, so small subsets keep the same weight as the complete request.
+                    scale[live] = max(float(np.mean(target[live] ** 2)), 1e-8)
+                logit = probe(model.pooled(ids, mask, tmap.mode(q, weights)))
+                delta = logit - torch.tensor(fit_base[[b for _, b in rows]], device=dev)
+                fit_loss = ((delta - torch.tensor(target, device=dev)) ** 2 / torch.tensor(scale, device=dev)).mean()
             l1 = sum(w.sum() for w in weights.values())
             loss = fit_loss + cfg['fit_l1'] * l1
             opt.zero_grad()
@@ -811,7 +870,7 @@ def execute(cfg, run):
 
     labels = dict(complete='complete_sup', parts='part_sup', subsets='subset_sup', parts_matched='matched_part_sup',
                   random='random_sup', singletons='singleton_sup', natural='natural_sup', natural_matched='natural_matched',
-                  natural_capacity='natural_capacity')
+                  natural_capacity='natural_capacity', subsets_state='subset_state_sup', random_state='random_state_sup')
     for init in cfg['fit_inits']:
         for seed in cfg['fit_seeds']:
             for family in cfg['fit_families']:

@@ -12,7 +12,8 @@
     "scipy": "1.15.3",
     "safetensors": "0.8.0",
     "huggingface_hub": "2.2.0",
-    "nnsight": "0.3.7 (installed without dependencies, needed only for the dictionary_learning package import)"
+    "nnsight": "0.3.7 (installed without dependencies, needed only for the dictionary_learning package import)",
+    "scikit-learn": "1.5.2 (added 2026-10-11T03:10Z with joblib 1.6.0, threadpoolctl 3.7.0 and cloudpickle 3.1.2, for the Ledoit-Wolf covariance of the reader-complete loss; numpy, scipy and torch unchanged)"
   },
   "dictionary_learning": "copy of D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf at /mnt/nvme3-data/harvardhds/ccad-m364569/code/dictionary_learning_60ec6bf",
   "difference_from_local_r004": "Local runs use Python 3.13.7, torch 2.8.0+cu128 and transformers 5.15.0 on an RTX 5070 Ti. Results across the two environments are compared through their own baselines inside each run."
