@@ -1,0 +1,126 @@
+{
+ "audit_opened": true,
+ "batch_pairs": 4,
+ "budget": "Local gpu-0 lease, one job per run.",
+ "candidate_family_frozen": true,
+ "candidates_per_source": 16,
+ "context": 128,
+ "correlation_sequences": 512,
+ "dataset_revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+ "device": "cuda:0",
+ "dictionary_overlay_dir": "D:/CCAD_Storage/environments/r005a_dictionary_overlay",
+ "dictionary_source_dir": "D:/CCAD_Storage/references/source/dictionary_learning_60ec6bf",
+ "eos_token_id": 50256,
+ "eval_batch_pairs": 16,
+ "eval_pairs_per_task": 128,
+ "evaluation_panel": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\reuse_generalization_20260921_round08\\confirmation_data\\panel.json",
+ "evaluation_split": "confirmation",
+ "families": [
+  "membership_distjoint",
+  "membership_statejoint"
+ ],
+ "fit_pairs_per_task": 64,
+ "generator_script": "scripts/cross_seed_transfer.py",
+ "lr": 0.02,
+ "model_revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+ "natural_batch": 4,
+ "natural_eval_seed": 1,
+ "natural_eval_sequences": 128,
+ "natural_eval_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_three_research_20260909\\training_material\\validation.uint16.bin",
+ "natural_tokens": "E:\\Projects\\SAE_Lab\\CCAD\\artifacts\\final_three_research_20260909\\training_material\\train.uint16.bin",
+ "panel": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R26_contrast_components_v2_20260913\\panel.json",
+ "progress_every": 32,
+ "purpose": "READER_COVERAGE EXP-U: the unified rule as one objective, the sum of the natural-text and explanation-pair errors at every step, read through the full next-token distribution (U) or the whitened hook state (S), 512 steps.",
+ "queries": {
+  "full": [
+   1,
+   1,
+   1
+  ],
+  "gender": [
+   0,
+   0,
+   1
+  ],
+  "half": [
+   0.5,
+   0.5,
+   0.5
+  ],
+  "number": [
+   0,
+   1,
+   0
+  ],
+  "number_gender": [
+   0,
+   1,
+   1
+  ],
+  "participation_a": [
+   0.25,
+   0.5,
+   0.75
+  ],
+  "participation_b": [
+   0.75,
+   0.25,
+   0.5
+  ],
+  "participation_c": [
+   0.5,
+   0.75,
+   0.25
+  ],
+  "verb": [
+   1,
+   0,
+   0
+  ],
+  "verb_gender": [
+   1,
+   0,
+   1
+  ],
+  "verb_number": [
+   1,
+   1,
+   0
+  ]
+ },
+ "run_id": "CSM_UJ_GPT2_s2_t3_v1_20261011",
+ "run_parent": "READER_COVERAGE",
+ "run_storage_root": "D:\\CCAD_Storage\\runs\\cross_seed_models",
+ "scope": "GPT-2 Medium block 11, source TopK SAE seed 2 with its R26 source groups, target SAE seed 3. Same recipe and evaluation pairs as X1.",
+ "seeds": [
+  2,
+  3
+ ],
+ "source": {
+  "gate": "E:\\Projects\\SAE_Lab\\CCAD\\runs\\REFORM_R26_contrast_components_v2_20260913\\topk_s2_source.npz",
+  "hook_module_path": "transformer.h.11",
+  "model_dir": "D:/CCAD_Storage/models/gpt2-medium/6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "model_files": [
+   "config.json",
+   "model.safetensors"
+  ],
+  "model_label": "openai-community/gpt2-medium 6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+  "sae_checkpoint": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed2.pt",
+  "sae_label": "GPT-2 Medium TopK SAE seed 2"
+ },
+ "source_revision": "e8a112c030dca6d3d0604e791760016fb37e3ba6",
+ "steps": 512,
+ "target": {
+  "hook_module_path": "transformer.h.11",
+  "sae_checkpoint": "D:/CCAD_Storage/training_curves/FINAL3_R19_gpt2_dual_objective_five_seed_16m_v1_20260909/step_16384/topk_seed3.pt",
+  "sae_label": "GPT-2 Medium TopK SAE seed 3",
+  "same_model": true
+ },
+ "tasks": [
+  "regular_plural_subject_verb_agreement_1",
+  "anaphor_number_agreement",
+  "anaphor_gender_agreement"
+ ],
+ "training_seed": 0,
+ "whiten_sequences": 128
+}

@@ -17,3 +17,12 @@ for p1 in sorted(OUT.glob('p1_gpt2_distmixed_*.json')):
                         'explanation pairs alternately with 512 steps each.'))
     (OUT / f'u_gpt2_{direction}.json').write_text(json.dumps(cfg, indent=1))
     print(cfg['run_id'])
+    # The joint form of the same rule: every step sums the normalized natural-text and task errors, 512 steps, so each
+    # input type sees as many batches as its dedicated fit and the optimizer as many steps (alternating 1024-step runs
+    # were unstable late in training).
+    joint = dict(cfg, run_id=f'CSM_UJ_GPT2_{direction}_v1_20261011', families=['membership_distjoint', 'membership_statejoint'],
+                 steps=512, purpose=('READER_COVERAGE EXP-U: the unified rule as one objective, the sum of the natural-text '
+                                     'and explanation-pair errors at every step, read through the full next-token '
+                                     'distribution (U) or the whitened hook state (S), 512 steps.'))
+    (OUT / f'uj_gpt2_{direction}.json').write_text(json.dumps(joint, indent=1))
+    print(joint['run_id'])

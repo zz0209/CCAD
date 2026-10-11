@@ -486,10 +486,28 @@ def main():
             natural_steps = task_steps = 0
             for step in range(c['steps']):
                 weights = (param*mask).clamp(0., hi)
+                # Joint families sum the normalized natural-text and task errors at every step, so each input type
+                # sees one batch per step and the optimizer follows a single objective; distjoint reads both through
+                # the full next-token distribution and statejoint through the whitened hook state.
+                if family.endswith(('distjoint', 'statejoint')):
+                    joint_state = family.endswith('statejoint')
+                    start = c['correlation_sequences']+step*c['natural_batch']
+                    ids = batch(tokens, slice(start, start+c['natural_batch']))
+                    p = torch.rand(len(ids), 1, generator=gen)
+                    q = (torch.rand(len(ids), m, generator=gen) < p).float().to(device)
+                    err_n, eff_n = state_error(ids, None, q, weights, cap) if joint_state else natural_error(ids, q, weights, cap, cset)
+                    rr = [fit[i] for i in rng.choice(len(fit), c['batch_pairs'], replace=False)]
+                    if step % 2 == 0:
+                        q = endpoints[(step//2) % len(endpoints)][parts].expand(len(rr), -1)
+                    else:
+                        p = torch.rand(len(rr), 1, generator=gen)
+                        q = (torch.rand(len(rr), m, generator=gen) < p).float().to(device)
+                    err_t, eff_t = pair_state_error(rr, q, weights, cap) if joint_state else task_dist_error(rr, q, weights, cap)
+                    loss = err_n/eff_n.clamp_min(1e-12)+err_t/eff_t.clamp_min(1e-12)
                 # Mixed families alternate natural-text subsets and task requests, each with its own schedule; the
                 # distmixed family reads its task requests through the full next-token distribution, and the statemixed
                 # family reads both through the whitened hook state.
-                if family.endswith('statemixed'):
+                elif family.endswith('statemixed'):
                     if step % 2 == 0:
                         start = c['correlation_sequences']+natural_steps*c['natural_batch']
                         natural_steps += 1

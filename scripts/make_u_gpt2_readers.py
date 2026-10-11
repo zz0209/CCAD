@@ -11,11 +11,11 @@ DIRECTIONS = ['s1_t2', 's1_t3', 's1_t4', 's1_t5', 's2_t3', 's3_t4', 's4_t5', 's5
 for d in DIRECTIONS:
     cfg = json.loads((RUNS / f'CSM_READERS_GPT2_{d}_v1_20261011' / 'config.resolved.json').read_text())
     keep = {e['name']: e for e in cfg['executors'] if e['name'] in ('hungarian_activation', 'membership_natural', 'rc_distparts')}
-    u = str(RUNS / f'CSM_U_GPT2_{d}_v1_20261011' / 'maps.npz')
+    u = str(RUNS / f'CSM_UJ_GPT2_{d}_v1_20261011' / 'maps.npz')
     cfg.update(run_id=f'CSM_UREADERS_GPT2_{d}_v1_20261011',
                executors=[keep['hungarian_activation'], keep['membership_natural'], keep['rc_distparts'],
-                          dict(name='u_distmixed', maps=u, key='membership_distmixed', cap=1.),
-                          dict(name='s_statemixed', maps=u, key='membership_statemixed', cap=1.)],
+                          dict(name='u_distjoint', maps=u, key='membership_distjoint', cap=1.),
+                          dict(name='s_statejoint', maps=u, key='membership_statejoint', cap=1.)],
                purpose='READER_COVERAGE EXP-U: development readers for the unified GPT-2 arms against G and P.')
     (OUT / f'ureaders_gpt2_{d}.json').write_text(json.dumps(cfg, indent=1))
     print(cfg['run_id'])

@@ -59,15 +59,15 @@
    "cap": 1.0
   },
   {
-   "name": "u_distmixed",
-   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_U_GPT2_s4_t5_v1_20261011\\maps.npz",
-   "key": "membership_distmixed",
+   "name": "u_distjoint",
+   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_UJ_GPT2_s4_t5_v1_20261011\\maps.npz",
+   "key": "membership_distjoint",
    "cap": 1.0
   },
   {
-   "name": "s_statemixed",
-   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_U_GPT2_s4_t5_v1_20261011\\maps.npz",
-   "key": "membership_statemixed",
+   "name": "s_statejoint",
+   "maps": "D:\\CCAD_Storage\\runs\\cross_seed_models\\CSM_UJ_GPT2_s4_t5_v1_20261011\\maps.npz",
+   "key": "membership_statejoint",
    "cap": 1.0
   }
  ],
