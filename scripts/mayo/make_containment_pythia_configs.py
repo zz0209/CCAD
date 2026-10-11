@@ -54,6 +54,25 @@ for target in [2, 3, 4, 5]:
                       scope='Frozen C2 checkpoints and natural-text matching relations. No method or threshold is selected on this panel.')
     (configs / f'c2_pythia_eval_t{target}.json').write_text(json.dumps(evaluation, indent=1))
     print(target)
+# C2b: the same many-to-many arms with each target feature's total deletion allowed up to four, the bound of the
+# one-to-one control, to separate the number of target features from the size of the edit.
+for target in [2, 3, 4, 5]:
+    programs = {}
+    for training_seed in [42, 43, 44]:
+        cfg = json.loads((configs / f'c2_pythia_program_t{target}_ts{training_seed}.json').read_text())
+        bulk = f'{runs}/c2b_programs/t{target}_ts{training_seed}'
+        cfg.update(run_id=f'CSM_C2B_PYTHIA70M_program_t{target}_ts{training_seed}_v1_20261011', bulk_output_dir=bulk,
+                   variants=['parts_relation', 'natural_relation'], relation_capacity=4.,
+                   purpose=('CONTAINMENT experiment 2b: part-supervised and natural-text many-to-many correspondences '
+                            'whose total deletion per target feature may reach four, as the one-to-one control may.'))
+        (configs / f'c2b_pythia_program_t{target}_ts{training_seed}.json').write_text(json.dumps(cfg, indent=1))
+        programs.update({f'{v}_cap4_ts{training_seed}': dict(directory=f'{bulk}/{v}', sites=cfg['adapt_sites'], gain_max=4.)
+                         for v in cfg['variants']})
+    evaluation = json.loads((configs / f'c2_pythia_eval_t{target}.json').read_text())
+    evaluation.update(run_id=f'CSM_C2B_PYTHIA70M_eval_t{target}_v1_20261011', adapted_programs=programs,
+                      methods=['none', 'source'] + list(programs),
+                      purpose='CONTAINMENT experiment 2b evaluation on complete and part deletions of the SHIFT explanation.')
+    (configs / f'c2b_pythia_eval_t{target}.json').write_text(json.dumps(evaluation, indent=1))
 smoke = json.loads((configs / 'c2_pythia_program_t2_ts42.json').read_text())
 smoke.update(run_id=smoke['run_id'] + '_SMOKE', bulk_output_dir=smoke['bulk_output_dir'] + '_smoke', steps=4,
              natural_eval_sequences=8, development_per_group=2)

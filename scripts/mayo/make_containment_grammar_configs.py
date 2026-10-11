@@ -54,3 +54,11 @@ for source, target in [(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (3, 4), (4, 5), (
                          sae_label=f'GPT-2 Medium TopK SAE seed {target}')
     (configs / f'c7_gpt2_matched4_s{source}_t{target}.json').write_text(json.dumps(cfg, indent=1))
     print(cfg['run_id'])
+    # CONTAINMENT experiment 5: the natural-text many-to-many family on candidates replaced by random target features
+    # of matched activation frequency, with the same number of candidates per source feature.
+    cfg = dict(cfg, run_id=f'CSM_C5_GPT2_capacity_s{source}_t{target}_v1_20261011', families=['capacity_natural'],
+               capacity_bins=64,
+               purpose=('CONTAINMENT experiment 5: capacity control for the natural-text many-to-many correspondence, '
+                        'with each candidate replaced by a random target feature from the same activation-frequency bin.'))
+    (configs / f'c5_gpt2_capacity_s{source}_t{target}.json').write_text(json.dumps(cfg, indent=1))
+    print(cfg['run_id'])

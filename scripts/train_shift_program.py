@@ -12,13 +12,13 @@ from run_shift_explanation import source_groups
 from train_shift_dictionaries import site_module
 
 
-def project_rows(a):
-    """Euclidean projection onto nonnegative rows with total at most one."""
+def project_rows(a,capacity=1.):
+    """Euclidean projection onto nonnegative rows with total at most capacity."""
     import torch
     with torch.no_grad():
         a.clamp_(min=0)
         s=a.sort(dim=1,descending=True).values
-        v=(s.cumsum(1)-1)/torch.arange(1,a.shape[1]+1,device=a.device)
+        v=(s.cumsum(1)-capacity)/torch.arange(1,a.shape[1]+1,device=a.device)
         k=(s>v).sum(1).clamp_min(1)-1
         tau=v.gather(1,k[:,None]).clamp_min(0)
         a.copy_((a-tau).clamp_min(0))
@@ -261,7 +261,7 @@ def main():
                         if variant not in relation_only:targets[s].decoder.weight.div_(targets[s].decoder.weight.norm(dim=0).clamp_min(1e-10))
                     for a in coefficients.values():
                         if variant=='natural_matched':a.clamp_(0.,c['matched_gain_max'])
-                        else:project_rows(a)
+                        else:project_rows(a,c.get('relation_capacity',1.))
                 assert torch.isfinite(loss)
                 if (step+1)%16==0:
                     w.record(kind='training',task='natural_program',component=variant,row_id=step+1,method=variant,step=step+1,loss=float(loss.detach()),program=float(program.detach()),reconstruction=float(recon.detach()))
@@ -289,7 +289,7 @@ def main():
                     w.record(kind='quality',task='natural_reconstruction',component=s,row_id=s,method=variant,site=s,fve=float(1-(rec-x).square().sum()/(x-x.mean((0,1))).square().sum()),l0=float((z>0).sum(-1).float().mean()),decoder_norm_error=float((targets[s].decoder.weight.norm(dim=0)-1).abs().max()))
             del optim;torch.cuda.empty_cache()
         for s in sites:indices[s]=base_indices[s];coefficients[s]=base_params[s]
-        w.checks.update(all_variants=len(checkpoints)==len(c['variants']),capacity=all(float(a.detach().sum(1).max())<=1.00001 for a in coefficients.values()),nonnegative=all(float(a.detach().min())>=0 for a in coefficients.values()))
+        w.checks.update(all_variants=len(checkpoints)==len(c['variants']),capacity=all(float(a.detach().sum(1).max())<=c.get('relation_capacity',1.)+1e-5 for a in coefficients.values()),nonnegative=all(float(a.detach().min())>=0 for a in coefficients.values()))
     except Exception:error=traceback.format_exc()
     finally:
         for hook in hooks:hook.remove()

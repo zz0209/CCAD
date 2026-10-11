@@ -23,9 +23,9 @@ def main():
         if progress.exists():
             p = json.loads(progress.read_text())
             stage = ' / '.join(str(p.get(k)) for k in ['stage', 'method', 'query', 'step'] if p.get(k) is not None)
-            # SAE training runs report completed and total steps.
+            # SAE training runs report completed and total steps; program training reports the step of its current arm.
             if st.get('status') == 'RUNNING' and 'total_steps' in p:
-                items = dict(done=p['completed_steps'], total=p['total_steps'])
+                items = dict(done=p['completed_steps'] if 'completed_steps' in p else p['step'], total=p['total_steps'])
         # Runs that report finished items carry them as done and total in progress.jsonl.
         history = run / 'progress.jsonl'
         if st.get('status') == 'RUNNING' and history.exists():
