@@ -60,7 +60,8 @@ def main():
         base[0].update({f'{k}{suffix}': v for k, v in values.items() if k not in FIXED})
         base[3].update({f'{k}{suffix}': v for k, v in natural.items()})
     tasks = loaded[0][2]
-    methods = [m for m in loaded[0][0] if m not in FIXED]
+    # Methods that every run carries; runs with extra families still contribute the shared ones.
+    methods = [m for m in loaded[0][0] if m not in FIXED and all(m in v for v, _, _, _ in loaded)]
     point = {m: {f: float(np.mean([errors(v, o, t, m, np.ones(len(t)))[f] for v, o, t, _ in loaded])) for f in FAMILIES}
              for m in methods}
     per_run = {m: [{f: float(errors(v, o, t, m, np.ones(len(t)))[f]) for f in FAMILIES} for v, o, t, _ in loaded]
@@ -83,7 +84,7 @@ def main():
                 contrasts[f'{a}-{b}'] = {f: dict(point=point[a][f]-point[b][f],
                                                  interval=np.quantile(boot[a][f]-boot[b][f], [.025, .975]).tolist())
                                          for f in FAMILIES}
-    natural = {m: float(np.mean([n[m] for _, _, _, n in loaded])) for m in loaded[0][3]}
+    natural = {m: float(np.mean([n[m] for _, _, _, n in loaded])) for m in loaded[0][3] if all(m in n for _, _, _, n in loaded)}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(dict(written_utc=datetime.now(timezone.utc).isoformat(), description=DESCRIPTION,
                                            runs=[str(r) for r in args.runs], point=point, per_run=per_run,
