@@ -13,7 +13,7 @@ BASE = ['readout', 'hungarian_decoder', 'hungarian_activation', 'top2_decoder', 
 def groups_of(methods):
     learned = {}
     for m in methods:
-        if '_sup_' in m:
+        if '_sup_' in m or m.startswith(('natural_matched_', 'natural_capacity_')):
             learned.setdefault(m.rsplit('_s', 1)[0], []).append(m)
     return {**{m: [m] for m in BASE if m in methods}, **learned}
 
@@ -65,8 +65,22 @@ def analyse(run, draws, rng):
                 contrasts[f'{p}-{other}'] = {f: dict(point=point[p][f] - point[other][f],
                                                      interval=np.quantile(boot[p][f] - boot[other][f], [.025, .975]).tolist())
                                              for f in fam}
+    # The task-free natural-text correspondence against part supervision, matching, one-to-one and capacity controls.
+    for p in [g for g in groups if g.startswith('natural_sup_')]:
+        init = p.split('_sup_')[1]
+        for other in [f'part_sup_{init}', f'natural_matched_{init}', f'matched_part_sup_{init}', f'natural_capacity_{init}',
+                      'hungarian_decoder', 'readout', 'native']:
+            if other in boot:
+                contrasts[f'{p}-{other}'] = {f: dict(point=point[p][f] - point[other][f],
+                                                     interval=np.quantile(boot[p][f] - boot[other][f], [.025, .975]).tolist())
+                                             for f in fam}
     intervals = {g: {f: np.quantile(v, [.025, .975]).tolist() for f, v in fs.items()} for g, fs in boot.items()}
     out = dict(run=str(run), n_bios=n, families=req['families'], point=point, intervals=intervals, contrasts=contrasts)
+    natural_path = run / 'NATURAL.json'
+    if natural_path.exists():
+        natural = json.loads(natural_path.read_text())
+        out['natural'] = {g: float(np.mean([natural[m] for m in members])) for g, members in groups.items()
+                          if all(m in natural for m in members)}
     base = data['eval_base']
     per_part, agreement = {}, {}
     for g, members in groups.items():
@@ -143,6 +157,8 @@ def main():
         for k, c in res['contrasts'].items():
             print(f"  {k:<44}" + '  '.join(f"{f} {v['point']:+.3f} [{v['interval'][0]:+.3f}, {v['interval'][1]:+.3f}]"
                                             for f, v in c.items()))
+        for g, v in res.get('natural', {}).items():
+            print(f"  natural {g:<26} {v:.3f}")
         for g, u in res.get('use', {}).items():
             print(f"  use {g:<22}" + '  '.join(f"{c}: prof {v['profession']:.3f} gender {v['gender']:.3f} wg {v['worst_group']:.3f}"
                                               for c, v in u.items()))
