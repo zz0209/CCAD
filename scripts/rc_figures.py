@@ -219,6 +219,48 @@ def overview():
     save(fig, 'rc_overview')
 
 
+GENERIC = '#8a6d2f'
+TARGETS = None
+
+
+def targets():
+    # Seven Gemma Scope targets ordered by sparsity relative to the source dictionaries; three reader groups.
+    rows = json.loads(Path(TARGETS).read_text())['rows']
+    labels = {'w65k_lowest': '65k\nlowest', 'w16k_lowest': '16k\nlowest', 'w16k_lower': '16k\nlower',
+              'w65k_sfc': '65k\nmatched', 'w16k_higher': '16k\nhigher', 'w65k_highest': '65k\nhighest',
+              'w16k_highest': '16k\nhighest'}
+    series = [('hungarian', 'Hungarian matching', MATCH, 's', ':'),
+              ('generic', 'Generic-text fit', GENERIC, '^', '--'),
+              ('classifier_parts', 'Classifier fit, parts', CLASSIFIER, 'o', '-'),
+              ('classifier', 'Classifier fit, parts and random', CLASSIFIER, 'v', ':'),
+              ('state', 'State fit', STATE, 'D', '-')]
+    panels = [('original', 'Original classifier'), ('held_out', 'Held-out classifiers'),
+              ('token', 'Token-level readers')]
+    fig, axes = plt.subplots(1, 3, figsize=(6.3, 2.25), sharey=False)
+    xs = np.arange(len(rows))
+    for ax, (key, title) in zip(axes, panels):
+        for m, label, color, marker, ls in series:
+            ax.plot(xs, [r['methods'][m][key] for r in rows], color=color, marker=marker, ms=3.4, lw=.8, ls=ls,
+                    label=label, mec='white', mew=.3)
+        if key == 'token':
+            ax.axhline(1, color='.55', lw=.6, ls='--')
+            ax.text(xs[-1], 1.03, 'no edit', ha='right', va='bottom', fontsize=6.6, color='.4')
+        ax.set_title(title, fontsize=7.8, pad=3)
+        ax.set_xticks(xs)
+        ax.set_xticklabels([labels[r['target']] for r in rows], fontsize=6.2)
+        ax.tick_params(labelsize=6.6, length=2.2, width=.5)
+        ax.set_ylim(0, None)
+        for s in ['top', 'right']:
+            ax.spines[s].set_visible(False)
+    axes[0].set_ylabel('Part-deletion error (nRMSE)', fontsize=7.2)
+    axes[1].set_xlabel('Gemma Scope target, from sparsest to densest relative to the source', fontsize=7.2)
+    handles, names = axes[0].get_legend_handles_labels()
+    fig.legend(handles, names, loc='upper center', ncol=5, frameon=False, fontsize=6.6, handlelength=2.2,
+               bbox_to_anchor=(.5, 1.0), columnspacing=1.2)
+    fig.subplots_adjust(left=.075, right=.99, top=.80, bottom=.24, wspace=.25)
+    save(fig, 'rc_targets')
+
+
 def save(fig, name):
     for ext in ['pdf', 'svg']:
         fig.savefig(FIG / f'{name}.{ext}')
@@ -235,8 +277,11 @@ def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--figures', nargs='+', default=['reader_matrix'])
     parser.add_argument('--preview', type=Path, default=None, help='also write PNG previews to this directory')
+    parser.add_argument('--targets', type=Path, default=ART / 'GEMMA_TARGETS.json', help='summary from rc_targets.py')
     args = parser.parse_args()
     PREVIEW = args.preview
+    global TARGETS
+    TARGETS = args.targets
     style()
     for name in args.figures:
         globals()[name]()
