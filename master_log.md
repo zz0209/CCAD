@@ -12838,3 +12838,10 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 ### READER_COVERAGE EXP-R PROGRESS（16k 目标的用途比较）
 
 实际写入UTC为2026-10-11T20:06:48Z。CSM_EXPR_GEMMA2B_l0low16k_v1_20261011 PASS（GPU1）。scripts/expr_analyze.py（SHIFT 任务，平衡 test 传记，2,000 次 bootstrap，传记在职业乘性别层内重抽并与迁移映射的三个种子配对）。重新训练分类头后的最差组准确率：完全删除，源解释 .917，迁移 T .907（三个种子 .908、.910、.903），重新发现 D .712，Hungarian .908；T 减 D +.195[+.161,+.233]，高于负责人规则的 −1 个百分点下界。部分对比（只删代词减只删女性描述）：源 +.134，T +.051，D +.332，Hungarian +.247；T 与源的距离比 D 近 .114[.009,.234]。原分类头不重新训练时，部分对比源 +.203，T 约 +.233，D 约 −.046。本目标上两项条件都满足；按规则需两个目标，65k 的 EXP-R 在 GPU0 上排在 FINAL 与统一臂之后。
+
+### READER_COVERAGE EXP-U DECISION（GPT-2 Medium 确认成立）与 FINAL test 数字
+
+实际写入UTC为2026-10-11T20:10:41Z。
+
+1. GPT-2 确认。CSM_CREADERS_GPT2_* 八个方向 PASS（本机，八个源模型纳入的未用范式、验证文本第 129 至 256 篇），分析 artifacts/containment/CONFIRM_GPT2_READERS.json（SAE 种子为簇）。事先规则三项：E2_fresh(U)−E2_fresh(P) −.051[−.082,−.026]，区间在 0 以下；E2_fresh(U)−E2_fresh(G) +.002[−.004,+.009]，上界不超过 +.02；own(U)−own(P) −.014[−.033,+.001]（artifacts/containment/UJ_GPT2_TRANSFER.json），上界不超过 +.02。三项都满足，统一规则（联合下一词元目标）在 GPT-2 Medium 上确认成立。同一数据上：未用句子下一词元 U .283、G .299、P .323（U 减 G −.016[−.024,−.009]）；未用通用文本 U .356、G .345、P .538；E2 U .221、G .218、P .272、Hungarian .271；S .223。
+2. FINAL test（两个开发目标，test 前 256 条平衡传记，三个训练种子，合并分析 artifacts/containment/FINAL_GEMMA_READERS.json）：状态拟合 E2 .124，标量 subsets .159，标量部分监督 .156，Hungarian .199，通用文本拟合 .163；状态拟合减标量部分监督 E2 −.033[−.040,−.025]，原分类器 +.020[+.013,+.028]，传记下一词元 −.237，通用文本下一词元 −.614；主目标一一对照 E2 高 .038[.032,.046]；主目标能力对照 E2 .995。与 dev 结果一致。

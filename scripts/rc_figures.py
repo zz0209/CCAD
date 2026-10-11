@@ -33,7 +33,7 @@ def style():
 
 
 def gemma_panel(run):
-    pt = json.loads((ART / 'EXP2_GEMMA_PAPER.json').read_text())['runs'][run]['point']
+    pt = json.loads((ART / 'FINAL_GEMMA_READERS.json').read_text())['runs'][run]['point']
     rows = [('hungarian_decoder', ('Hungarian matching', '', ''), None),
             ('natural_sup_hungarian', ('Generic text', 'Next token', 'Random'), 5),
             ('part_sup_hungarian', ('Biographies', 'Classifier', 'Parts'), 0),
@@ -114,9 +114,9 @@ def reader_matrix():
     top_h, bottom_h = 7 * .19 / 4.7, 4 * .19 / 4.7
     top_y, bottom_y = .495, .045
     panels = [((left, top_y, width, top_h), '(a) Gemma-2-2B SHIFT, 65k target',
-               gemma_panel('CSM_EXP2_GEMMA2B_readers_w65k_v1_20261011')),
+               gemma_panel('CSM_FINAL_GEMMA2B_readers_w65k_v1_20261011')),
               ((left + width + gap, top_y, width, top_h), '(b) Gemma-2-2B SHIFT, 16k lowest-$L_0$ target',
-               gemma_panel('CSM_EXP2_GEMMA2B_readers_l0low16k_v2_20261011')),
+               gemma_panel('CSM_FINAL_GEMMA2B_readers_l0low16k_v1_20261011')),
               ((left, bottom_y, width, bottom_h), '(c) GPT-2 Medium grammar', grammar_panel('GPT2')),
               ((left + width + gap, bottom_y, width, bottom_h), '(d) Qwen3-1.7B grammar', grammar_panel('QWEN'))]
     for k, (pos, title, (rows, cols, values, fits)) in enumerate(panels):
@@ -181,8 +181,8 @@ def overview_schematic(ax):
 
 
 def overview_uses(ax):
-    pt = json.loads((ART / 'EXP2_GEMMA_PAPER.json').read_text())['runs'][
-        'CSM_EXP2_GEMMA2B_readers_l0low16k_v2_20261011']['point']
+    pt = json.loads((ART / 'FINAL_GEMMA_READERS.json').read_text())['runs'][
+        'CSM_FINAL_GEMMA2B_readers_l0low16k_v1_20261011']['point']
     uses = [('Original\nclassifier', lambda m: pt[m]['parts|original']),
             ('Held-out\nclassifiers', lambda m: np.mean([pt[m][f'parts|{r}'] for r in LATER + ['gender']])),
             ('Biography\nnext token', lambda m: pt[m]['parts|bio_next_token']),

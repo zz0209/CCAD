@@ -44,9 +44,9 @@ def table(rows, values, cols, extra_cols):
 
 
 def gemma_tables():
-    runs = json.loads((ART / 'EXP2_GEMMA_PAPER.json').read_text())['runs']
-    for key, run in [('w65k', 'CSM_EXP2_GEMMA2B_readers_w65k_v1_20261011'),
-                     ('l0low16k', 'CSM_EXP2_GEMMA2B_readers_l0low16k_v2_20261011')]:
+    runs = json.loads((ART / 'FINAL_GEMMA_READERS.json').read_text())['runs']
+    for key, run in [('w65k', 'CSM_FINAL_GEMMA2B_readers_w65k_v1_20261011'),
+                     ('l0low16k', 'CSM_FINAL_GEMMA2B_readers_l0low16k_v1_20261011')]:
         pt = runs[run]['point']
         values = np.array([[pt[m][f'parts|{r}'] for r, _ in READERS] +
                            [pt[m]['parts|fineweb_next_token'], pt[m]['parts|E2']] for m, _ in GEMMA_ROWS])
