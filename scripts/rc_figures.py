@@ -226,9 +226,8 @@ TARGETS = None
 def targets():
     # Seven Gemma Scope targets ordered by sparsity relative to the source dictionaries; three reader groups.
     rows = json.loads(Path(TARGETS).read_text())['rows']
-    labels = {'w65k_lowest': '65k\nlowest', 'w16k_lowest': '16k\nlowest', 'w16k_lower': '16k\nlower',
-              'w65k_sfc': '65k\nmatched', 'w16k_higher': '16k\nhigher', 'w65k_highest': '65k\nhighest',
-              'w16k_highest': '16k\nhighest'}
+    width = lambda r: r['target'].split('_')[0][1:]
+    tick = lambda r: f"{width(r)}\n{r['l0_ratio']:.2g}"
     series = [('hungarian', 'Hungarian matching', MATCH, 's', ':'),
               ('generic', 'Generic-text fit', GENERIC, '^', '--'),
               ('classifier_parts', 'Classifier fit, parts', CLASSIFIER, 'o', '-'),
@@ -247,13 +246,13 @@ def targets():
             ax.text(xs[-1], 1.03, 'no edit', ha='right', va='bottom', fontsize=6.6, color='.4')
         ax.set_title(title, fontsize=7.8, pad=3)
         ax.set_xticks(xs)
-        ax.set_xticklabels([labels[r['target']] for r in rows], fontsize=6.2)
+        ax.set_xticklabels([tick(r) for r in rows], fontsize=6.4)
         ax.tick_params(labelsize=6.6, length=2.2, width=.5)
         ax.set_ylim(0, None)
         for s in ['top', 'right']:
             ax.spines[s].set_visible(False)
     axes[0].set_ylabel('Part-deletion error (nRMSE)', fontsize=7.2)
-    axes[1].set_xlabel('Gemma Scope target, from sparsest to densest relative to the source', fontsize=7.2)
+    axes[1].set_xlabel('Gemma Scope target width and its $L_0$ relative to the source dictionaries', fontsize=7.2)
     handles, names = axes[0].get_legend_handles_labels()
     fig.legend(handles, names, loc='upper center', ncol=5, frameon=False, fontsize=6.6, handlelength=2.2,
                bbox_to_anchor=(.5, 1.0), columnspacing=1.2)
