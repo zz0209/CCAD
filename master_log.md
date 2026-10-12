@@ -13081,3 +13081,16 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 实际写入UTC为2026-10-12T11:49:12Z。事件时间：CIRC_PUB_REVERSE_GEMMA_CLT2500K_v1 11:07Z 至 11:43Z，CIRC_PUB_DR_GEMMA_CLT2500K_v1 至 11:47Z（Mayo GPU0）；等待由后台阻塞命令完成通知，不再依赖定时唤醒。
 结果（artifacts/circuits/CLT2500K_PUB_AGREEMENT.json、CLT2500K_PUB_EARLY_UNITS.json）：三项预测都成立。(1) 共享减非共享 .31 [.22,.41]（.68 对 .37），偏 Spearman .32 [.21,.40]；(2) 早层单位中位 .018；(3) 四个第 1 层全位置激活特征是 19、18、17、17 张图（共 20）的最重要单位之一，占早层固定后层写入效应 59%，中位超过随机 −.06。另：50% 的最重要单位在第 0、1 层读取，其中 9% 与后层单位中 58% 有 PLT 对应；早层收拢单位 42/190。移除 PLT 单位对共享与否不区分（偏相关 −.01 [−.15,.13]），与 426k 一致。
 稿件：5.3 全位置激活段加入 2.5M 的图数与一致程度结果，附录 J 新增“第二个 CLT 宽度”段，局限改为 Gemma-2 两个 CLT 宽度；为保持正文 8 页压缩两处括号。新增数字逐个与分析输出核对（这次增量小，未另起独立 agent）。快照 v9（archive/paper_snapshots_20261012/v9_dictionary_agreement_clt2500k_20261012T1149Z，重建 41 页文字相同、40 页像素相同），paper/main.pdf SHA256 D6DDD20F4CB4BCEC9578906CCEB545D06E00D413C38CE9EE1C21492F3AC70655。自然文本部分（ccad-c25n，GPU1）预计 13:40Z 完成。
+
+### 摘要顺序调整（PROGRESS，写作，不计研究轮）
+实际写入UTC为2026-10-12T12:49:00Z。依据另一会话 12:47Z 的意见（摘要前半段为流程与百分比，最可能改变读图方式的发现被写成局部细节）。改写后的顺序：问题、方法一句、早层 CLT 单位（20% 至 44% 的最重要单位）不通过检验及其两类来源（部分由模型经 PLT 后层单位完成；两个 Gemma-2 CLT 中大部分效应来自少数近全位置激活、承载后层 MLP 输出近常量分量的特征）、一致处确认更多（保留一组数字）、证据范围（已发表图、60 条自然文本、第二个 CLT 宽度）、下界。重读时把“either…or”改为“Part of … and in both Gemma-2 CLTs most …”，因 Llama 的早层单位两类都不完全覆盖。正文仍在第 8 页内。尚未安装，与 2.5M 自然文本结果一起经独立核对后作为 v10 安装。
+
+### CIRCUITS_ACROSS_DICTIONARIES 第二个 CLT 宽度：自然文本部分（COMPLETE）
+实际写入UTC为2026-10-12T13:10:00Z。事件时间：CIRC_NAT_REVERSE_GEMMA_CLT2500K_v1 11:07Z 至 12:58Z，CIRC_NAT_DR_GEMMA_CLT2500K_v1 至 13:08Z（Mayo GPU1，tmux ccad-c25n），后台阻塞命令通知完成。
+结果（artifacts/circuits/CLT2500K_NAT_AGREEMENT.json、CLT2500K_NAT_EARLY_UNITS.json）：三项预测都成立。(1) 共享减非共享 .33 [.27,.44]（.67 对 .34），偏 Spearman .18 [.08,.31]；(2) 早层单位中位 .019；(3) 四个第 1 层全位置激活特征是 60、60、58、58 张图（共 60）的最重要单位之一，占早层效应 61%，中位超过随机 .01。另：49% 的最重要单位在第 0、1 层读取，其中 6% 有 PLT 对应；早层收拢单位 210/559；移除 PLT 单位不区分共享与否（偏相关 −.02 [−.12,.09]），与其他结果一致。第二个 CLT 宽度在两种提示上都完成，写入附录 J，摘要中“for a second CLT width”由此成立。
+
+### CIRCUITS_ACROSS_DICTIONARIES 第三次只查错误核对、常量性补测与 v10 安装（PROGRESS）
+实际写入UTC为2026-10-12T13:19:02Z。事件时间：独立 agent 约 13:11Z 至 13:17Z；常量性补测（Mayo 两张 GPU）约 13:12Z 至 13:16Z。
+核对指出 7 处：(1) 摘要“lower bound on how closely”改为“lower bound on the error with which”；(2) “20 to 44%”改为“a fifth to a half”，因自然文本与 2.5M 为 44%/46%/18% 与 50%/49%；(3) “两个 Gemma-2 CLT 中近常量分量”当时只对 426k 在已发表提示上测过，选择补测而不是删弱；(4) 摘要范围句改为“on the prompts of the published circuit-tracer graphs … and, in Gemma-2, for a second CLT width”（单位检验用的是字典在这些提示上自己画的图）；(5) 5.3 “2.5M 有四个这样的特征”改为写出实际测得的性质；(6) 附录“第二个 CLT 宽度”段写明三项预测与结果；(7) 引言“三个特征”改为“两个 Gemma-2 CLT 中三个或四个特征”。
+常量性补测（scripts/circuits/constant_component.py）：CIRC_CONST_GEMMA_CLT2500K_v1（2.5M 四个第 1 层特征，已发表提示及变体）标准差为均值的 9.3% 至 33.4%；CIRC_CONST_NAT_GEMMA_CLT426K_v1（426k 三个特征，自然文本）14.8% 至 30.1%；CIRC_CONST_NAT_GEMMA_CLT2500K_v1 14.4% 至 30.9%；随机方向标准差 2.6 至 5.0、围绕 0。原 426k 已发表提示为 9.8% 至 30.3%。摘要中“两个 Gemma-2 CLT 的少数特征承载后层 MLP 输出的近常量分量”由此在两个宽度、两种提示上都有直接测量，写入附录 J。
+快照 v10（archive/paper_snapshots_20261012/v10_dictionary_agreement_abstract_20261012T1318Z，重建 41 页文字相同、40 页像素相同），paper/main.pdf SHA256 7B2FD944676F7921198007CD45CE51E34037A910C47B8C3C44E4155471216AAA，正文第 8 页内。此为 16:00Z 评估版本。
