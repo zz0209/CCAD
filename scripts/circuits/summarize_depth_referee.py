@@ -61,7 +61,7 @@ def summarize(rows, plt_rows):
         if all('removed_u_all' in r for r in sel):
             d['later_u_all'] = boot(sel, lambda r: later(r, 'removed_u_all'))
             d['bounded_u_all'] = boot(sel, lambda r: bounded(r, 'removed_u_all'))
-        for cond in ('u_zero', 'u_mean'):
+        for cond in ('u_zero', 'u_mean', 'u_tok'):
             if all(f'removed_{cond}' in r for r in sel):
                 d[f'later_{cond}'] = boot(sel, lambda r: later(r, f'removed_{cond}'))
                 d[f'bounded_{cond}'] = boot(sel, lambda r: bounded(r, f'removed_{cond}'))

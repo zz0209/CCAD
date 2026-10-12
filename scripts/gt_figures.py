@@ -19,7 +19,8 @@ from summarize_depth_referee import bounded  # noqa: E402
 
 DESCRIPTION = 'Figures of the unit and edge test of attribution graphs, drawn from the saved runs and summaries.'
 RUNS = Path('D:/CCAD_Storage/runs/circuits')
-DR = {'gemma': 'CIRC_DR_GEMMA_CLT426K_v4', 'llama': 'CIRC_DR_LLAMA_CLT524K_v4', 'gemma3': 'CIRC_DR_G3_CLT262K_RES_v6'}
+DR = {'gemma': 'CIRC_DR_GEMMA_CLT426K_TOK_v1', 'llama': 'CIRC_DR_LLAMA_CLT524K_TOK_v1',
+      'gemma3': 'CIRC_DR_G3_CLT262K_RES_TOK_v1'}
 EDGES = RUNS / 'CIRC_EDGE_GEMMA_CLT426K_v1' / 'EDGE_REFEREE_ROWS.json'
 TOY = RUNS / 'CIRC_TOY_REFEREE_FORMAL_v1' / 'TOY_REFEREE.json'
 MODELS = [('gemma', 'Gemma-2', GEMMA), ('llama', 'Llama', LLAMA), ('gemma3', 'Gemma-3', GEMMA3)]
@@ -193,9 +194,87 @@ def toy():
     save(fig, 'gt_toy')
 
 
+def method():
+    # Schematic of the unit test: a CLT unit read at layer l and position p claims writes c_k into the MLP outputs at p;
+    # removing its input changes the model's MLP outputs by dm_k, whose projection on c_k is the part of the claim the
+    # model removes. A small inset shows one layer's projection.
+    fig = plt.figure(figsize=(3.1, 1.5))
+    ax = fig.add_axes([0, 0, .66, 1])
+    ax.set_xlim(0, 6.6)
+    ax.set_ylim(0, 5)
+    ax.axis('off')
+    xr = 1.45
+    ax.plot([xr, xr], [.25, 4.35], color='.6', lw=1.4, zorder=1)
+    ax.text(xr - .15, 4.45, 'residual stream at $p$', ha='left', va='bottom', fontsize=7.2, color='.35')
+    ys = [.95, 2.2, 3.45]
+    for y, lab in zip(ys, ['$l$', '$l{+}1$', '$l{+}2$']):
+        ax.add_patch(plt.Rectangle((1.85, y - .32), 1.55, .64, facecolor='white', edgecolor=INK, lw=.6, zorder=2))
+        ax.text(2.62, y, 'MLP ' + lab, ha='center', va='center', fontsize=7.2, zorder=3)
+        ax.annotate('', xy=(1.85, y - .12), xytext=(xr, y - .45), arrowprops=dict(arrowstyle='-|>', lw=.5, color='.45'))
+        # Model's actual change of this MLP output (solid) above the claimed write (dashed).
+        ax.annotate('', xy=(4.75, y + .14), xytext=(3.4, y + .14), arrowprops=dict(arrowstyle='-|>', lw=.8, color=INK))
+        ax.text(4.85, y + .14, '$\\Delta m_k$', fontsize=7.6, va='center')
+    ax.text(2.62, 3.85, '$\\vdots$', ha='center', fontsize=8.5)
+    # The unit reads the input of MLP l and claims writes into MLP l and every later MLP output.
+    ax.scatter([.6], [.95], s=70, color=CONFIRM(.15), edgecolor=INK, lw=.6, zorder=4)
+    ax.annotate('', xy=(.75, .88), xytext=(xr - .02, .55), arrowprops=dict(arrowstyle='-|>', lw=.6, color=INK))
+    ax.text(.6, 1.35, 'unit', ha='center', fontsize=7.2)
+    ax.text(.15, .12, 'reads $x$', fontsize=7.0, color='.3')
+    for y in ys:
+        ax.annotate('', xy=(4.75, y - .2), xytext=(.78, 1.0), arrowprops=dict(
+            arrowstyle='-|>', lw=.75, ls=(0, (3, 2)), color=LATE, connectionstyle='arc3,rad=-.15'))
+        ax.text(4.85, y - .22, '$c_k$', fontsize=7.6, va='center', color=LATE)
+    ax.plot([1.05, 1.22], [.6, .77], color=EARLY, lw=1.5)
+    ax.plot([1.05, 1.22], [.77, .6], color=EARLY, lw=1.5)
+    ax.text(.05, 2.0, 'remove\ninput', fontsize=7.2, color='.25', linespacing=1.0)
+    # Inset: the share of a claimed write that the model removes is the projection of -dm_k on c_k.
+    ix = fig.add_axes([.67, .1, .32, .8])
+    ix.set_xlim(-.1, 1.3)
+    ix.set_ylim(-.35, 1.05)
+    ix.axis('off')
+    ix.annotate('', xy=(1.0, 0), xytext=(0, 0), arrowprops=dict(arrowstyle='-|>', lw=1.1, color=LATE))
+    ix.text(1.04, .02, '$c_k$', fontsize=8, color=LATE, va='center')
+    ix.annotate('', xy=(.6, .62), xytext=(0, 0), arrowprops=dict(arrowstyle='-|>', lw=1.1, color=INK))
+    ix.text(.02, .55, '$-\\Delta m_k$', fontsize=8)
+    ix.plot([.6, .6], [.62, 0], color='.5', lw=.6, ls=':')
+    ix.plot([0, .6], [-.08, -.08], color=GEMMA, lw=1.8)
+    ix.text(.3, -.26, '$\\pi_k$', fontsize=8, color=GEMMA, ha='center')
+    ix.text(-.05, .95, 'at layer $k$', fontsize=7.2, color='.35')
+    save(fig, 'gt_method')
+
+
+def dose():
+    # Dose-response: CLT units binned by the share of their own-layer write that removing their input takes out, against
+    # the median share of their later writes taken out, for units read at layers 0-1 and later, per model.
+    d = json.loads((CIRC / 'DOSE_RESPONSE.json').read_text())
+    fig, axes = plt.subplots(1, 3, figsize=(3.1, 1.45), sharey=True)
+    for ax, (m, name, _) in zip(axes, MODELS):
+        for group, color, marker in [('early', EARLY, 'o'), ('later', LATE, 's')]:
+            pts = [b for b in d[m][group] if b['units'] >= 5]
+            xs = [b['own'] for b in pts]
+            ax.plot(xs, [b['later'][0] for b in pts], color=color, lw=.9, marker=marker, ms=2.8, zorder=3)
+            ax.vlines(xs, [b['later'][1] for b in pts], [b['later'][2] for b in pts], color=color, lw=.5, alpha=.7)
+        ax.set_xlim(-.05, 1.15)
+        ax.set_xticks([0, .5, 1])
+        ax.set_xticklabels(['0', '.5', '1'], fontsize=6.2)
+        ax.set_ylim(-.1, 1.1)
+        ax.set_title(name, fontsize=7, pad=2)
+        clean(ax)
+    axes[0].set_yticks([0, .5, 1])
+    axes[0].set_yticklabels(['0', '.5', '1'])
+    axes[0].set_ylabel('Later writes removed', fontsize=6.8)
+    axes[1].set_xlabel('Own-layer write removed (dose)', fontsize=6.8)
+    handles = [Line2D([], [], color=EARLY, marker='o', ms=2.8, lw=.9, label='Read at layers 0-1'),
+               Line2D([], [], color=LATE, marker='s', ms=2.8, lw=.9, label='Read later')]
+    fig.legend(handles=handles, loc='upper center', ncol=2, frameon=False, fontsize=6.1, bbox_to_anchor=(.55, 1.02),
+               handletextpad=.3, columnspacing=1.)
+    fig.subplots_adjust(left=.15, right=.98, top=.76, bottom=.27, wspace=.12)
+    save(fig, 'gt_dose')
+
+
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument('--figures', nargs='+', default=['overview', 'toy'])
+    parser.add_argument('--figures', nargs='+', default=['overview', 'toy', 'method', 'dose'])
     parser.add_argument('--preview', type=Path, default=None, help='also write PNG previews to this directory')
     args = parser.parse_args()
     ux_figures.PREVIEW = args.preview

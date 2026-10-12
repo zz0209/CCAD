@@ -138,7 +138,7 @@ def confirm():
 
 def bands():
     # Removed fractions by read layer with graph-bootstrap intervals, from summarize_depth_referee.py.
-    s = json.loads((CIRC / 'DEPTH_REFEREE_SUMMARY_v4.json').read_text())
+    s = json.loads((CIRC / 'DEPTH_REFEREE_SUMMARY_v5.json').read_text())
     ci = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]'
     runs = REMOVAL_RUNS
     lines = []
@@ -228,18 +228,18 @@ def edges(runs):
                                       '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
-REMOVAL_RUNS = [('CIRC_DR_GEMMA_CLT426K_v4', 'Gemma-2'), ('CIRC_DR_LLAMA_CLT524K_v4', 'Llama'),
-                ('CIRC_DR_G3_CLT262K_RES_v6', 'Gemma-3')]
+REMOVAL_RUNS = [('CIRC_DR_GEMMA_CLT426K_TOK_v1', 'Gemma-2'), ('CIRC_DR_LLAMA_CLT524K_TOK_v1', 'Llama'),
+                ('CIRC_DR_G3_CLT262K_RES_TOK_v1', 'Gemma-3')]
 
 
 def removals():
     # Main table: medians over the CLT's own top units read at layers 0-1 and later of the share of their claimed writes
     # that each removal takes out, from summarize_depth_referee.py.
-    s = json.loads((CIRC / 'DEPTH_REFEREE_SUMMARY_v4.json').read_text())
-    rows = [('Own layer, input removed', 'own_layer_u'), ('Later layers, input removed', 'later_u'),
-            ('\\quad at every active position', 'later_u_all'), ('\\quad projection set to 0', 'later_u_zero'),
-            ('\\quad projection set to mean', 'later_u_mean'), ('\\quad bounded share $S$', 'bounded_u'),
-            ('PLT units minus random', 'later_a_minus_ra')]
+    s = json.loads((CIRC / 'DEPTH_REFEREE_SUMMARY_v5.json').read_text())
+    rows = [('Own layer, input removed', 'own_layer_u'), ('Later, input removed', 'later_u'),
+            ('\\quad at all active positions', 'later_u_all'), ('\\quad projection to 0', 'later_u_zero'),
+            ('\\quad projection to mean', 'later_u_mean'), ('\\quad bounded share $S$', 'bounded_u'),
+            ('Later, token replaced', 'later_u_tok'), ('PLT units minus random', 'later_a_minus_ra')]
     lines = []
     for label, key in rows:
         cells = [label]
@@ -261,9 +261,9 @@ def removals():
         for k, (band, label) in enumerate([('layers 0-1', '0--1'), ('layers 2+', '2+')]):
             v = s[run][band]
             lines.append(' & '.join([name if k == 0 else '', label] + [ci(v[key]) for key in
-                                     ('later_u_all', 'later_u_zero', 'later_u_mean', 'bounded_u')]) + '\\\\')
-    head = 'Model & Read at & All positions & Projection to 0 & Projection to mean & Bounded share\\\\'
-    (TAB / 'gt_alternatives.tex').write_text('\\begin{tabular}{@{}llllll@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                     ('later_u_all', 'later_u_zero', 'later_u_mean', 'bounded_u', 'later_u_tok')]) + '\\\\')
+    head = 'Model & Read at & All positions & Projection to 0 & Projection to mean & Bounded share & Token replaced\\\\'
+    (TAB / 'gt_alternatives.tex').write_text('\\begin{tabular}{@{}lllllll@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
                                              '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
@@ -298,6 +298,23 @@ def utility():
                                         '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
+def completeness():
+    # E1: replacement and completeness scores of the CLT's and the PLT's own graphs on the same prompts, medians with the
+    # paired difference and its bootstrap interval over prompts, and the median number of active features.
+    e = json.loads((CIRC / 'E1_GRAPH_SCORES.json').read_text())
+    ci = lambda v: f'{fmt(v["diff"])} [{fmt(v["diff_ci"][0])}, {fmt(v["diff_ci"][1])}]'
+    lines = []
+    for m, name in [('gemma', 'Gemma-2'), ('llama', 'Llama'), ('gemma3', 'Gemma-3')]:
+        d = e[m]
+        lines.append(' & '.join([name, fmt(d['replacement']['clt']), fmt(d['replacement']['plt']), ci(d['replacement']),
+                                 fmt(d['completeness']['clt']), fmt(d['completeness']['plt'])]) + '\\\\')
+    head = ('& \\multicolumn{3}{c}{Replacement score} & \\multicolumn{2}{c}{Completeness}\\\\\n'
+            '\\cmidrule(lr){2-4}\\cmidrule(lr){5-6}\n'
+            'Model & CLT & PLT & CLT$-$PLT & CLT & PLT\\\\')
+    (TAB / 'gt_completeness.tex').write_text('\\begin{tabular}{@{}lrrlrr@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                             '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--runs', type=Path, default=Path('D:/CCAD_Storage/runs/circuits'))
@@ -306,6 +323,7 @@ def main():
     removals()
     toy(args.runs)
     utility()
+    completeness()
     graphs(args.runs)
     targets(s)
     coverage(s)

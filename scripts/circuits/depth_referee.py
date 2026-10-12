@@ -40,6 +40,9 @@ def main():
     parser.add_argument('--prompts-from', type=Path, required=True, help='rows with the chosen prompt per graph')
     parser.add_argument('--max-graphs', type=int, default=None)
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--counterfactual-words', nargs='*', default=[],
+                        help='(u_tok) replace the token at the unit\'s position by the first token of the first of these '
+                             'words for which the unit is off at its layer, and let the model run')
     parser.add_argument('--edit-residual', action='store_true',
                         help='carry the removals of the CLT unit from its MLP-input hook to the residual stream before '
                              'the MLP (hook_resid_mid), as d_resid = d_in * ln2.hook_scale / ln2.w, so that they reach '
@@ -206,13 +209,33 @@ def main():
                 act[0, p] = (mlp0[k] - claim[k]).to(act.dtype)
                 return act
             conds['w_clamped'] = [(f'blocks.{k}.hook_mlp_out', clamp) for k in range(l, L)]
+            if args.counterfactual_words:
+                # (u_tok) information-level removal: the token at p is replaced, so every direction of the input that
+                # carries the token's identity changes; the first candidate word whose token switches the unit off is
+                # used, or the first word when none does.
+                cands = [model.tokenizer.encode(w, add_special_tokens=False)[0] for w in args.counterfactual_words]
+                cands = [c for c in cands if c != int(ids[0, p])]
+                tok_id, tok_off = cands[0], False
+                for c in cands:
+                    mod = ids.clone()
+                    mod[0, p] = c
+                    with torch.no_grad():
+                        _, cmod = model.run_with_cache(mod, names_filter=lambda n_: n_ == f'blocks.{l}.{C.input_hook}')
+                    if float(C.encode(cmod[f'blocks.{l}.{C.input_hook}'][0, p], l, [f]).float().max()) <= 0:
+                        tok_id, tok_off = c, True
+                        break
+                tok_ids = ids.clone()
+                tok_ids[0, p] = tok_id
             energy = (claim ** 2).sum(-1)
             row = dict(graph=g, unit=unit, layer=l, position=p, final=p == n - 1, activation=float(a),
                        claim_energy=energy[l:].tolist(), check_off=check_u, positions_on=len(on), mean_from_off=bool(off),
                        plt_mid=sorted((ll, len(fs)) for (ll, _), fs in mid.items()),
                        plt_mid_units=sum(len(fs) for fs in mid.values()), plt_wide_units=sum(len(fs) for fs in wide.values()))
+            if args.counterfactual_words:
+                row.update(tok_word=model.tokenizer.decode(tok_id), tok_off=tok_off)
+                conds['u_tok'] = 'token'
             for name, hooks in conds.items():
-                lp, mlp = run(ids, hooks, p)
+                lp, mlp = run(tok_ids, [], p) if hooks == 'token' else run(ids, hooks, p)
                 e = lp - base
                 row[f'energy_{name}'] = float((w0 * e ** 2).sum())
                 row[f'drop_{name}'] = float(-e[answer])
