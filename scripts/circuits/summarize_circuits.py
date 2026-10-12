@@ -22,6 +22,12 @@ ORACLE_G3 = {'g3_plt_big': 'CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1', 'g3_clt262k': 'CIR
 RESPONSE = {'gemma_plt_r2': 'CIRC_RESP_GEMMA_PLT_TO_PLTL0R2_v1', 'gemma_clt426k': 'CIRC_RESP_GEMMA_PLT_TO_CLT426K_v1',
             'gemma_clt2500k': 'CIRC_RESP_GEMMA_PLT_TO_CLT2500K_v1', 'llama_clt524k': 'CIRC_RESP_LLAMA_PLT_TO_CLT524K_v1',
             'g3_clt262k': 'CIRC_RESP_G3_PLT_TO_CLT262K_v1'}
+# Coverage on circuits: fits that add the explanation's own uses on prompt variants, compared on the graphs with
+# variants with the generic-text fits (FITS), matching and the best edit.
+COVER = {'gemma_plt_r2': ('CIRC_COV_GEMMA_PLT_TO_PLTL0R2_v1', 'gemma_plt_r2', 'gemma_plt_r2', 'nrmse_whole'),
+         'gemma_clt426k_whole': ('CIRC_COV_GEMMA_PLT_TO_CLT426K_v1', 'gemma_clt426k_whole', 'gemma_clt426k', 'nrmse_response'),
+         'gemma_clt426k_slices': ('CIRC_COV_GEMMA_PLT_TO_CLT426K_slices_v1', 'gemma_clt426k_slices', 'gemma_clt426k',
+                                  'nrmse_slice')}
 FITS = {'gemma_plt_r2': 'CIRC_P1_GEMMA_PLT_TO_PLTL0R2_v2_best',
         'gemma_clt426k_whole': 'CIRC_P1_GEMMA_PLT_TO_CLT426K_v2_pooled',
         'gemma_clt426k_slices': 'CIRC_P1_GEMMA_PLT_TO_CLT426K_v2_slices'}
@@ -182,6 +188,33 @@ def main():
                                                 ci=boot_median(rows_diff, 'diff'),
                                                 clt_worse=float(np.mean([r['diff'] > 0 for r in rows_diff])))
     print('response vs plt', summary['response_vs_plt'])
+    summary['coverage'] = {}
+    for name, (run, fit_key, oracle_key, best_metric) in COVER.items():
+        cov ={(r['graph'], r['supernode']): r for r in load_rows(d / run / 'P1_ROWS.json')}
+        gen = {(r['graph'], r['supernode']): r for r in load_rows(d / FITS[fit_key] / 'P1_ROWS.json')}
+        orc_rows = load_rows(d / ORACLE[oracle_key] / 'ORACLE_ROWS.json')
+        if best_metric == 'nrmse_response':
+            orc_rows = load_rows(d / RESPONSE[oracle_key] / 'RESPONSE_ROWS.json')
+        orc = {(r['graph'], r['supernode']): r for r in orc_rows}
+        out = {}
+        for part, keep in [('covered', True), ('uncovered', False)]:
+            keys = sorted(k for k, r in cov.items() if r['covered'] == keep and k in gen and k in orc)
+            pick = lambda table, metric: [table[k][metric] for k in keys]
+            diff = [dict(graph=k[0], diff=cov[k]['nrmse_fitted'] - gen[k]['nrmse_fitted']) for k in keys]
+            changed = [k for k in keys if cov[k]['top_source'] != cov[k]['top_base']]
+            out[part] = dict(supernodes=len(keys), graphs=len({k[0] for k in keys}),
+                             covered_fit=quart(pick(cov, 'nrmse_fitted')), generic_fit=quart(pick(gen, 'nrmse_fitted')),
+                             matched=quart(pick(cov, 'nrmse_one_to_one')), best=quart(pick(orc, best_metric)),
+                             covered_minus_generic=dict(median=float(np.median([x['diff'] for x in diff])),
+                                                        ci=boot_median(diff, 'diff')) if keys else None,
+                             changed=len(changed),
+                             same_new=dict(covered=float(np.mean([cov[k]['top_fitted'] == cov[k]['top_source'] for k in changed])),
+                                           generic=float(np.mean([gen[k]['top_fitted'] == gen[k]['top_source'] for k in changed])),
+                                           matched=float(np.mean([cov[k]['top_one_to_one'] == cov[k]['top_source'] for k in changed])))
+                             if changed else None)
+        summary['coverage'][name] = dict(run=run, **out)
+        print('coverage', name, {p: {k: (round(v['median'], 3) if isinstance(v, dict) and 'median' in v else v)
+                                     for k, v in out[p].items()} for p in out})
     # Whether the site residual, computed from the dictionaries on the prompt, predicts the effect error of the
     # reconstructed (slice) deletion, per supernode and target, pooled and within each target.
     pairs = {k: [(r['site_residual'], r['nrmse_slice']) for r in load_rows(d / v / 'ORACLE_ROWS.json')]

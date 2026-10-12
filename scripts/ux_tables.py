@@ -70,6 +70,25 @@ def targets(s):
                                        '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
+def coverage(s):
+    # Both conditions on the same circuit explanations: effect error (and the share of answer-changing supernodes
+    # that keep the new answer) on the published prompts of the graphs with prompt variants.
+    c = s['coverage']
+    rows = [('PLT family', c['gemma_plt_r2']['covered']),
+            ('CLT 426k', c['gemma_clt426k_whole']['covered'])]
+    pct = lambda v: f'{100 * v:.0f}\\%'
+    lines = []
+    for label, r in rows:
+        sn = r['same_new']
+        lines.append(' & '.join([label, f"{fmt(r['matched']['median'])} ({pct(sn['matched'])})",
+                                 f"{fmt(r['generic_fit']['median'])} ({pct(sn['generic'])})",
+                                 f"{fmt(r['covered_fit']['median'])} ({pct(sn['covered'])})",
+                                 fmt(r['best']['median'])]) + '\\\\')
+    head = 'Target & Matched & Generic & Covering & Best\\\\'
+    (TAB / 'ux_coverage.tex').write_text('\\begin{tabular}{@{}lllll@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                         '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--runs', type=Path, default=Path('D:/CCAD_Storage/runs/circuits'))
@@ -77,6 +96,7 @@ def main():
     s = json.loads((CIRC / 'CIRCUIT_SUMMARY.json').read_text())
     graphs(args.runs)
     targets(s)
+    coverage(s)
 
 
 if __name__ == '__main__':
