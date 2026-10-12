@@ -201,6 +201,31 @@ def natural(runs):
                                         '\\midrule\n' + body + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
+def edges(runs):
+    # The edge test: per model and dictionary, the edges that enter, the median confirmed share overall and for edges
+    # leaving units read at layers 0-1 or later, and the share of the claimed change carried by edges from layers 0-1.
+    e = json.loads((CIRC / 'EDGE_SUMMARY.json').read_text())
+    ci = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]'
+    lines = []
+    for m, name, tags in [('gemma', 'Gemma-2', [('clt', 'GEMMA_CLT426K'), ('plt', 'GEMMA_PLT')]),
+                          ('llama', 'Llama', [('clt', 'LLAMA_CLT524K'), ('plt', 'LLAMA_PLT')]),
+                          ('g3', 'Gemma-3', [('clt', 'G3_CLT262K'), ('plt', 'G3_PLT')])]:
+        for k, (kind, tag) in enumerate(tags):
+            rows = [r for r in json.loads((runs / f'CIRC_EDGE_{tag}_v1' / 'EDGE_REFEREE_ROWS.json').read_text())['rows']
+                    if abs(r['claimed']) >= .1 * abs(r['v_pre']) and abs(r['claimed']) > 0]
+            ratio = sorted(r['model'] / r['claimed'] for r in rows)
+            med = ratio[len(ratio) // 2] if len(ratio) % 2 else (ratio[len(ratio) // 2 - 1] + ratio[len(ratio) // 2]) / 2
+            early = sum(abs(r['claimed']) for r in rows if r['u_layer'] <= 1) / sum(abs(r['claimed']) for r in rows)
+            d = e[f'{m if m != "g3" else "g3"}-{kind}']
+            lines.append(' & '.join([name if k == 0 else '', kind.upper(), str(len(rows)), fmt(med), f'{100 * early:.0f}\\%',
+                                     ci(d['from layers 0-1']['median']), ci(d['from layers 2+']['median'])]) + '\\\\')
+        if m != 'g3':
+            lines.append('\\midrule')
+    head = 'Model & Dict. & Edges & Confirmed & From 0--1 & Leaving 0--1 & Leaving 2+\\\\'
+    (TAB / 'ux_edges.tex').write_text('\\begin{tabular}{@{}llrrrll@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                      '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--runs', type=Path, default=Path('D:/CCAD_Storage/runs/circuits'))
@@ -213,6 +238,7 @@ def main():
     confirm()
     bands()
     natural(args.runs)
+    edges(args.runs)
 
 
 if __name__ == '__main__':

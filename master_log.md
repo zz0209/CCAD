@@ -13094,3 +13094,14 @@ D1 Pythia（按修正后的一一对照重算）：比值2.09，低于Hungarian�
 核对指出 7 处：(1) 摘要“lower bound on how closely”改为“lower bound on the error with which”；(2) “20 to 44%”改为“a fifth to a half”，因自然文本与 2.5M 为 44%/46%/18% 与 50%/49%；(3) “两个 Gemma-2 CLT 中近常量分量”当时只对 426k 在已发表提示上测过，选择补测而不是删弱；(4) 摘要范围句改为“on the prompts of the published circuit-tracer graphs … and, in Gemma-2, for a second CLT width”（单位检验用的是字典在这些提示上自己画的图）；(5) 5.3 “2.5M 有四个这样的特征”改为写出实际测得的性质；(6) 附录“第二个 CLT 宽度”段写明三项预测与结果；(7) 引言“三个特征”改为“两个 Gemma-2 CLT 中三个或四个特征”。
 常量性补测（scripts/circuits/constant_component.py）：CIRC_CONST_GEMMA_CLT2500K_v1（2.5M 四个第 1 层特征，已发表提示及变体）标准差为均值的 9.3% 至 33.4%；CIRC_CONST_NAT_GEMMA_CLT426K_v1（426k 三个特征，自然文本）14.8% 至 30.1%；CIRC_CONST_NAT_GEMMA_CLT2500K_v1 14.4% 至 30.9%；随机方向标准差 2.6 至 5.0、围绕 0。原 426k 已发表提示为 9.8% 至 30.3%。摘要中“两个 Gemma-2 CLT 的少数特征承载后层 MLP 输出的近常量分量”由此在两个宽度、两种提示上都有直接测量，写入附录 J。
 快照 v10（archive/paper_snapshots_20261012/v10_dictionary_agreement_abstract_20261012T1318Z，重建 41 页文字相同、40 页像素相同），paper/main.pdf SHA256 7B2FD944676F7921198007CD45CE51E34037A910C47B8C3C44E4155471216AAA，正文第 8 页内。此为 16:00Z 评估版本。
+
+### CIRCUITS_ACROSS_DICTIONARIES 图的边对模型的检验（START，结果前写定）
+实际写入UTC为2026-10-12T14:48:32Z。来源：另一会话 14:47Z 支线审查指出离 4.3 的主要缺口之一是只检验了单位与最终位置，没有检验图中边的主张；本会话 13:19Z 后约 1.5 小时没有推进研究，此为接续。评估版本 v10 不改动，结果先写日志与附录草稿。
+设计（scripts/circuits/edge_referee.py）：对每个字典自身图的最重要单位中每一对 u→v（v 读取层晚于 u，位置不早于 u），声称的改变为删除 u 的写入、同时把所有位置所有层的 MLP 输出固定在原值加该删除（只留残差流与注意力的直接路径，对应图中边的含义）后 v 预激活的改变；模型的改变为移除 u 读取的输入（使 u 关闭的最小输入改变）后模型自由运行时 v 预激活的改变。确认比例为二者之比（带符号）。分析只用声称改变的绝对值至少为 v 原预激活 10% 的边。
+事先写定的预测：(E1) CLT 图中从第 0、1 层单位出发的边，确认比例中位低于 .2；两端都在第 2 层以后读取的边中位高于 .4。(E2) 第 2 层以后读取的 CLT 单位中，从有 PLT 对应（一致程度 > .6）的单位出发的边比从无对应单位出发的边确认更多，图级区间不含 0。(E3) PLT 图的边确认比例中位高于 .4。模型与提示：先 Gemma-2（426k CLT 与 Gemma Scope PLT，已发表提示），再按时间做 Llama 与 Gemma-3。不成立的项如实写入。
+
+### CIRCUITS_ACROSS_DICTIONARIES 图的边对模型的检验（COMPLETE）
+实际写入UTC为2026-10-12T14:55:00Z。事件时间：冒烟 CIRC_EDGE_SMOKE_GEMMA_CLT426K_v1 约 14:49Z；六个 run（CIRC_EDGE_{GEMMA_CLT426K,GEMMA_PLT,LLAMA_CLT524K,LLAMA_PLT,G3_CLT262K,G3_PLT}_v1，Mayo 两张 GPU，tmux ccad-edge0/edge1，scripts/circuits/mayo_run_edges.sh）14:50Z 至 14:53Z；分析 scripts/circuits/summarize_edges.py，artifacts/circuits/EDGE_SUMMARY.json。进入分析的边为声称改变至少为下游原预激活 10% 的边：CLT 1,021/780/544 条，PLT 593/890/619 条（Gemma-2/Llama/Gemma-3）。
+预测结果：(E1) 前半成立，CLT 从第 0、1 层出发的边确认中位 .05 [.03,.07]、.02 [−.02,.05]、.04 [.02,.11]；后半只在 Gemma-2 成立，两端在第 2 层以后的边 .65 [.43,.86]、.31 [.12,.46]、.30 [.17,.44]。(E2) 只在 Llama 成立，共享减非共享 +.27 [−.08,.65]、+.65 [.40,.88]、+.12 [−.40,.32]。(E3) Gemma-2 与 Llama 成立、Gemma-3 不成立，PLT 边整体中位 .44、.75、.36（第 2 层以后出发 .45、.94、.44；第 0、1 层出发 .12、.13、.15）。
+整体：CLT 图强边的确认中位 .10、.06、.21，PLT 图 .44、.75、.36；CLT 图中声称改变总量的 75%、63%、17% 来自第 0、1 层出发的边，PLT 图为 1%、9%、3%。Dallas 例中声称最强的边都从三个全位置激活特征指向后层单位，声称的预激活下降约 2 至 2.6，模型中约 0 至 .2。
+判断（最保守）：在图的结构层面，Gemma-2 与 Llama 的 CLT 图把大部分强边放在第 0、1 层，而这些边在两种字典中都很少被模型确认，因此 CLT 图整体被确认的边少于 PLT 图；“共享单位出发的边确认更多”只在 Llama 可检出。结果先写入附录草稿，不改动 16:00Z 评估所用的 v10，是否进入正文按评估意见决定。
