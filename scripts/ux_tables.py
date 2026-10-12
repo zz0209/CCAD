@@ -281,6 +281,43 @@ def toy(runs):
                                     '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
+def toy_counterfactual(runs):
+    # The second formal run of the toy validation, with the redundant circuit and the counterfactual input: per
+    # circuit, medians with quartiles of the input removal, the joint removal of all features active at the site, the
+    # counterfactual input, and the share of the latter that restoring the unit's read projection or the span of all
+    # active read directions brings back.
+    t = json.loads((runs / 'CIRC_TOY_REFEREE_FORMAL_v3' / 'TOY_REFEREE.json').read_text())['summary']
+    q = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]' if v else '--'
+    rows = [('A two-step', 'Two-step, collapsed'), ('B amplified', 'Amplified'), ('F erased copy', 'Surviving copy'),
+            ('E parallel', 'Every layer'), ('G both copies', 'Both copies read'), ('D redundant', 'Unused copy'),
+            ('C constant', 'Constant')]
+    lines = [' & '.join([label, str(t[k]['features']), q(t[k]['removed_u']), q(t[k]['removed_joint']),
+                         q(t[k]['removed_tok']), q(t[k]['sufficiency']), q(t[k]['sufficiency_joint'])]) + '\\\\'
+             for k, label in rows]
+    head = 'Circuit & Feat. & Input removed & All site features off & Counterfactual & Read restored & Span restored\\\\'
+    (TAB / 'gt_toy_counterfactual.tex').write_text('\\begin{tabular}{@{}lrlllll@{}}\n\\toprule\n' + head +
+                                                   '\n\\midrule\n' + '\n'.join(lines) +
+                                                   '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
+def sufficiency():
+    # Joint removal and sufficiency in the real models: CLT units read at layers 0-1 outside the always-active features
+    # and units read later, medians with quartiles.
+    s = json.loads((CIRC / 'SUFFICIENCY.json').read_text())
+    q = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]'
+    lines = []
+    for m, name in [('gemma', 'Gemma-2'), ('llama', 'Llama'), ('gemma3', 'Gemma-3')]:
+        for k, (group, label) in enumerate([('early_other', '0--1'), ('later', '2+')]):
+            v = s[m][group]
+            lines.append(' & '.join([name if k == 0 else '', label, f"{v['tested']}/{v['units']}", q(v['removed_u']),
+                                     q(v['removed_joint']), q(v['removed_tok']), q(v['sufficiency']),
+                                     q(v['sufficiency_joint'])]) + '\\\\')
+    head = ('Model & Read at & Units & Input removed & All site features off & Token replaced & Read restored & '
+            'Span restored\\\\')
+    (TAB / 'gt_sufficiency.tex').write_text('\\begin{tabular}{@{}llrlllll@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                            '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
 def utility():
     # Predicting unconfirmed CLT units on the natural-text prompts from a model fitted on the published prompts.
     rows = [('UTILITY_GEMMA.json', 'Gemma-2 426k'), ('UTILITY_GEMMA25.json', 'Gemma-2 2.5M'), ('UTILITY_LLAMA.json', 'Llama'),
@@ -302,16 +339,19 @@ def completeness():
     # E1: replacement and completeness scores of the CLT's and the PLT's own graphs on the same prompts, medians with the
     # paired difference and its bootstrap interval over prompts, and the median number of active features.
     e = json.loads((CIRC / 'E1_GRAPH_SCORES.json').read_text())
+    # Gemma Scope 2 at its other sparsity: the CLT and the PLT with more active features per token.
+    e['gemma3_dense'] = json.loads((CIRC / 'E1_GRAPH_SCORES_G3_DENSE.json').read_text())['dense_pair']
     ci = lambda v: f'{fmt(v["diff"])} [{fmt(v["diff_ci"][0])}, {fmt(v["diff_ci"][1])}]'
+    k = lambda v: f'{v / 1000:.1f}k'
     lines = []
-    for m, name in [('gemma', 'Gemma-2'), ('llama', 'Llama'), ('gemma3', 'Gemma-3')]:
+    for m, name in [('gemma', 'Gemma-2'), ('llama', 'Llama'), ('gemma3', 'Gemma-3'), ('gemma3_dense', 'Gemma-3 dense')]:
         d = e[m]
-        lines.append(' & '.join([name, fmt(d['replacement']['clt']), fmt(d['replacement']['plt']), ci(d['replacement']),
-                                 fmt(d['completeness']['clt']), fmt(d['completeness']['plt'])]) + '\\\\')
-    head = ('& \\multicolumn{3}{c}{Replacement score} & \\multicolumn{2}{c}{Completeness}\\\\\n'
-            '\\cmidrule(lr){2-4}\\cmidrule(lr){5-6}\n'
-            'Model & CLT & PLT & CLT$-$PLT & CLT & PLT\\\\')
-    (TAB / 'gt_completeness.tex').write_text('\\begin{tabular}{@{}lrrlrr@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+        lines.append(' & '.join([name, k(d['features']['clt']), k(d['features']['plt']), fmt(d['replacement']['clt']),
+                                 fmt(d['replacement']['plt']), ci(d['replacement'])]) + '\\\\')
+    head = ('& \\multicolumn{2}{c}{Features} & \\multicolumn{3}{c}{Replacement score}\\\\\n'
+            '\\cmidrule(lr){2-3}\\cmidrule(lr){4-6}\n'
+            'Model & CLT & PLT & CLT & PLT & CLT$-$PLT\\\\')
+    (TAB / 'gt_completeness.tex').write_text('\\begin{tabular}{@{}lrrrrl@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
                                              '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
@@ -322,6 +362,8 @@ def main():
     s = json.loads((CIRC / 'CIRCUIT_SUMMARY.json').read_text())
     removals()
     toy(args.runs)
+    toy_counterfactual(args.runs)
+    sufficiency()
     utility()
     completeness()
     graphs(args.runs)

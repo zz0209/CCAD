@@ -12,20 +12,25 @@ DESCRIPTION = ('Ground truth for the unit test. A hand-built residual model with
                'at layer 0 and amplified in the same direction by layers 1 and 2; (C) a constant written by layer 2 for '
                'every input; (D) an input stored in two directions of which layer 2 reads only one; (E) the same '
                'feature of one input computed in parallel by every layer (cross-layer superposition); (F) an input '
-               'stored in two directions, the first erased by layer 1, so that layer 2 computes from the second. A per-layer '
+               'stored in two directions, the first erased by layer 1, so that layer 2 computes from the second; (G) an '
+               'input stored in two directions, both of which layer 2 reads (redundant encoding). Each item also gets a '
+               'counterfactual input (the first input that differs only in the labeled circuit\'s inputs and on which '
+               'the feature is off) and the same input with the unit\'s read projection, or the span of the read '
+               'directions of all active features, restored, whose ratio to the counterfactual removal gives the '
+               'sufficiency of the read direction; and the removal of all features active at the site. A per-layer '
                'transcoder (PLT) and a cross-layer transcoder (CLT) are trained on its MLPs. Every active CLT feature '
                'is labeled by the circuit that receives most of its later writes, and the tests of the paper are '
                'applied to it: removing its input (one feature), and removing the inputs of the active PLT features at '
                'later layers. The removed fraction and the bounded explained share of the claimed later writes are '
                'reported per circuit, at inputs where the model\'s own later output in that circuit is not zero.')
 
-D_MODEL, L = 20, 3
+D_MODEL, L = 23, 3
 
 
 def inputs():
     rows = []
     for a, b, c, d in itertools.product([-1., 1.], repeat=4):
-        for s, w, q, v in itertools.product([0., 1.], repeat=4):
+        for s, w, q, v, h in itertools.product([0., 1.], repeat=5):
             x = torch.zeros(D_MODEL)
             x[0:4] = torch.tensor([a, b, c, d])
             x[9] = s
@@ -34,6 +39,8 @@ def inputs():
             x[16] = q
             x[18] = v
             x[19] = v
+            x[20] = h
+            x[21] = h
             rows.append(x)
     return torch.stack(rows)
 
@@ -59,6 +66,8 @@ def mlp(l, r):
         out[:, 11] = 1.
         out[:, 14] = relu(r[:, 13] - .5)
         out[:, 15] = relu(r[:, 19] - .5)
+        # (G) redundant encoding: an input stored in two directions, both of which layer 2 reads.
+        out[:, 22] = .5 * (relu(r[:, 20]) + relu(r[:, 21]))
     # (E) cross-layer superposition: every layer computes the same feature of the same input into dimension 17.
     out[:, 17] = relu(r[:, 16])
     return out
@@ -142,7 +151,11 @@ def removal(W, b, x):
 
 
 CIRCUITS = {'A two-step': [8], 'B amplified': [10], 'C constant': [11], 'D redundant': [14], 'E parallel': [17],
-            'F erased copy': [15]}
+            'F erased copy': [15], 'G both copies': [22]}
+# Input dimensions of each circuit; a counterfactual input changes only these, as a token replacement changes one token.
+# The constant circuit has no input of its own, so its counterfactual may change any input.
+INPUTS = {'A two-step': [0, 1, 2, 3], 'B amplified': [9], 'C constant': list(range(D_MODEL)), 'D redundant': [12, 13],
+          'E parallel': [16], 'F erased copy': [18, 19], 'G both copies': [20, 21]}
 
 
 def bounded(claim, removed):
@@ -182,11 +195,16 @@ def main():
                     share = {name: float((later[:, dims] ** 2).sum()) for name, dims in CIRCUITS.items()}
                     total = float((later ** 2).sum())
                     label = max(share, key=share.get)
+                    others = [d for d in range(D_MODEL) if d not in INPUTS[label]]
                     for i in torch.nonzero(z[:, f] > 0).flatten().tolist():
+                        # Counterfactual input: the first input that differs from input i only in the labeled circuit's
+                        # input dimensions and on which the feature is off at its layer.
+                        same = (x[:, others] == x[i, others]).all(1) & (z[:, f] <= 0)
+                        off_idx = torch.nonzero(same).flatten().tolist()
                         a = z[i, f]
                         claim = {k: a * clt.dec(l, k)[f] for k in range(l, L)}
-                        def run(edits):
-                            _, o = forward(x[i:i + 1], edits)
+                        def run(edits, src=i):
+                            _, o = forward(x[src:src + 1], edits)
                             return {k: o[k][0] - outs[k][i] for k in range(L)}
                         W, b = clt.W_enc[l, f:f + 1], clt.b_enc[l, f:f + 1]
                         # Own input: change of the residual read by layer l and every later layer (the CLT reads the
@@ -208,6 +226,25 @@ def main():
                                 return r + removal(plt.W_enc[k, on], plt.b_enc[k, on], r[0])
                             return edit
                         res['s'] = run({k: plt_edit(k) for k in range(l + 1, L)})
+                        # (joint) every CLT feature active at layer l on input i switched off at once.
+                        on = torch.nonzero(z[i] > 0).flatten()
+                        W_on, b_on = clt.W_enc[l, on], clt.b_enc[l, on]
+                        W_pinv = torch.linalg.pinv(W_on)
+                        d_j = -W_pinv @ (W_on @ ins[l][i] + b_on)
+                        res['joint'] = run({k: (lambda r, d=d_j: r + d) for k in range(l, L)})
+                        if off_idx:
+                            # (tok) the circuit's inputs replaced by the counterfactual ones; (suff) the same, with the
+                            # unit's read projection restored to its value on the original input at layer l and after;
+                            # (suff_joint) the same, with the component in the span of the read directions of all
+                            # features active on the original input restored.
+                            j = off_idx[0]
+                            ins_cf, _ = forward(x[j:j + 1])
+                            diff = ins[l][i] - ins_cf[l][0]
+                            d_s = w * (w @ diff) / (w @ w)
+                            d_sj = W_pinv @ (W_on @ diff)
+                            res['tok'] = run(None, src=j)
+                            res['suff'] = run({k: (lambda r, d=d_s: r + d) for k in range(l, L)}, src=j)
+                            res['suff_joint'] = run({k: (lambda r, d=d_sj: r + d) for k in range(l, L)}, src=j)
                         dims = CIRCUITS[label]
                         row = dict(seed=seed, layer=l, feature=f, input=i, label=label,
                                    label_share=share[label] / total, activation=float(a),
@@ -222,6 +259,11 @@ def main():
     for r in rows:
         r['bounded_u'] = bounded(r['claim_energy'], r['removed_u_by_layer'])
         r['bounded_u_zero'] = bounded(r['claim_energy'], r['removed_u_zero_by_layer'])
+        # Sufficiency: the share of the writes removed by the counterfactual input that restoring the unit's read
+        # projection brings back, defined where the counterfactual input removes at least .05 of the claim.
+        if 'removed_tok' in r and r['removed_tok'] >= .05:
+            r['sufficiency'] = 1 - r['removed_suff'] / r['removed_tok']
+            r['sufficiency_joint'] = 1 - r['removed_suff_joint'] / r['removed_tok']
     summary = {}
     for label in CIRCUITS:
         # Features whose later writes go mostly (more than 60%) to one circuit, at inputs where the model's own later
@@ -229,11 +271,15 @@ def main():
         sel = [r for r in rows if r['label'] == label and r['label_share'] > .6 and r['target_energy'] > 1e-6]
         if not sel:
             continue
-        q = lambda k: [float(torch.quantile(torch.tensor([r[k] for r in sel]), p)) for p in (.5, .25, .75)]
+        def q(k):
+            v = [r[k] for r in sel if k in r]
+            return [float(torch.quantile(torch.tensor(v), p)) for p in (.5, .25, .75)] + [len(v)] if v else None
         summary[label] = dict(rows=len(sel), features=len({(r['seed'], r['layer'], r['feature']) for r in sel}),
                               layers=sorted({r['layer'] for r in sel}),
                               removed_u=q('removed_u'), removed_s=q('removed_s'), bounded_u=q('bounded_u'),
-                              removed_u_zero=q('removed_u_zero'), bounded_u_zero=q('bounded_u_zero'))
+                              removed_u_zero=q('removed_u_zero'), bounded_u_zero=q('bounded_u_zero'),
+                              removed_joint=q('removed_joint'), removed_tok=q('removed_tok'),
+                              sufficiency=q('sufficiency'), sufficiency_joint=q('sufficiency_joint'))
     print(json.dumps(summary, indent=1))
     (args.out / 'TOY_REFEREE.json').write_text(json.dumps(dict(
         written_utc=datetime.now(timezone.utc).isoformat(), description=DESCRIPTION, training=results,

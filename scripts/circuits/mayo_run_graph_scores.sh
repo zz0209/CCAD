@@ -25,6 +25,11 @@ for job in "$@"; do
                --prompts-from $R/CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1/ORACLE_ROWS.json $R/NATURAL_PROMPTS_gemma-3-1b.json); run=CIRC_E1_SCORES_G3_CLT262K_v2 ;;
     g3-plt) a=(--model google/gemma-3-1b-pt --dictionary $G3PLT
                --prompts-from $R/CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1/ORACLE_ROWS.json $R/NATURAL_PROMPTS_gemma-3-1b.json); run=CIRC_E1_SCORES_G3_PLT_v1 ;;
+    # The same release at its other sparsity: the CLT with more and the PLT with more active features per token.
+    g3-clt-big) a=(--model google/gemma-3-1b-pt --dictionary ${G3CLT/l0_medium/l0_big}
+                   --prompts-from $R/CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1/ORACLE_ROWS.json $R/NATURAL_PROMPTS_gemma-3-1b.json); run=CIRC_E1_SCORES_G3_CLT262K_BIG_v2 ;;
+    g3-plt-big) a=(--model google/gemma-3-1b-pt --dictionary ${G3PLT/l0_small/l0_big}
+                   --prompts-from $R/CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1/ORACLE_ROWS.json $R/NATURAL_PROMPTS_gemma-3-1b.json); run=CIRC_E1_SCORES_G3_PLT_BIG_v1 ;;
   esac
   CUDA_VISIBLE_DEVICES=$gpu "$M/env_circuit/bin/python" graph_scores.py "${a[@]}" --out $R/$run > $R/$run.log 2>&1
 done

@@ -194,6 +194,45 @@ def toy():
     save(fig, 'gt_toy')
 
 
+def profile():
+    # Intervention profiles: for CLT units read at layers 0-1 (outside the always-active features) and later in
+    # Gemma-2 and Llama, and for the CLT features of known circuits of the toy model (second formal run), the median
+    # share of the claimed later writes removed when the unit's input is removed, when every feature active at the site
+    # is switched off, and the share of the writes removed by the counterfactual input that restoring the unit's read
+    # projection brings back, with quartiles.
+    toy = json.loads((RUNS / 'CIRC_TOY_REFEREE_FORMAL_v3' / 'TOY_REFEREE.json').read_text())['summary']
+    real = json.loads((CIRC / 'SUFFICIENCY.json').read_text())
+    rows = [('Toy: amplified', toy['B amplified'], 'toy'), ('Toy: every layer', toy['E parallel'], 'toy'),
+            ('Toy: two-step', toy['A two-step'], 'toy'), ('Toy: both copies read', toy['G both copies'], 'toy'),
+            ('Toy: copy unused later', toy['D redundant'], 'toy'),
+            ('Gemma-2, read later', real['gemma']['later'], LATE), ('Llama, read later', real['llama']['later'], LATE),
+            ('Gemma-2, read at 0-1', real['gemma']['early_other'], EARLY),
+            ('Llama, read at 0-1', real['llama']['early_other'], EARLY)]
+    cols = [('removed_u', 'Input\nremoved'), ('removed_joint', 'All site\nfeatures off'),
+            ('sufficiency', 'Read restored\nafter replacement')]
+    fig, axes = plt.subplots(1, 3, figsize=(3.1, 2.05), sharey=True)
+    for ax, (key, title) in zip(axes, cols):
+        for k, (label, d, kind) in enumerate(rows):
+            y = len(rows) - 1 - k
+            med, q25, q75 = d[key][:3]
+            color = INK if kind == 'toy' else kind
+            face = 'white' if kind == 'toy' else kind
+            ax.plot([max(q25, -.1), min(q75, 1.1)], [y, y], color=color, lw=.7)
+            ax.scatter([float(np.clip(med, -.1, 1.1))], [y], s=12, facecolor=face, edgecolor=color, lw=.7, zorder=3)
+        ax.axhspan(-.5, 3.5, color='#f1ebe0', lw=0, zorder=0)
+        ax.axvline(0, color='.6', lw=.5, ls=':')
+        ax.set_xlim(-.12, 1.12)
+        ax.set_xticks([0, .5, 1])
+        ax.set_xticklabels(['0', '.5', '1'], fontsize=6.2)
+        ax.set_title(title, fontsize=6.6, pad=2, linespacing=1.0)
+        clean(ax)
+    axes[0].set_yticks(range(len(rows)))
+    axes[0].set_yticklabels([r[0] for r in rows][::-1], fontsize=6.4)
+    axes[1].set_xlabel('Median share with quartiles', fontsize=6.8)
+    fig.subplots_adjust(left=.36, right=.98, top=.86, bottom=.17, wspace=.14)
+    save(fig, 'gt_profile')
+
+
 def method():
     # Schematic of the unit test: a CLT unit read at layer l and position p claims writes c_k into the MLP outputs at p;
     # removing its input changes the model's MLP outputs by dm_k, whose projection on c_k is the part of the claim the
@@ -274,7 +313,7 @@ def dose():
 
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument('--figures', nargs='+', default=['overview', 'toy', 'method', 'dose'])
+    parser.add_argument('--figures', nargs='+', default=['overview', 'toy', 'method', 'dose', 'profile'])
     parser.add_argument('--preview', type=Path, default=None, help='also write PNG previews to this directory')
     args = parser.parse_args()
     ux_figures.PREVIEW = args.preview

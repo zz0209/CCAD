@@ -7,10 +7,11 @@ gpu=$1
 shift
 R=$M/runs/circuits
 cd "$M/code/CCAD/scripts/circuits"
-# A job name with the suffix +tok adds the counterfactual-token removal (u_tok) and writes run <name>_TOK_v1.
+# A job name with the suffix +tok adds the counterfactual-token removal (u_tok) and writes run <name>_TOK_v1; the suffix
+# +tok2 adds the sufficiency and joint-subspace conditions as well and writes run <name>_TOK2_v1.
 WORDS=(" house" " river" " music" " paper" " green" " seven" " table" " walk" " blue" " the")
 for m in "$@"; do
-  case ${m%+tok} in
+  case ${m%+tok*} in
     gemma) args=(--model google/gemma-2-2b --clt mntss/clt-gemma-2-2b-426k --plt gemma --registry-model gemma-2-2b
                  --clt-units-from $R/CIRC_P1R_REVERSE_GEMMA_CLT426K_TO_PLT_v2/REVERSE_ROWS.json
                  --plt-units $R/GRAPH_UNITS_GEMMA2_PLT16K.json
@@ -40,7 +41,10 @@ for m in "$@"; do
                         --prompts-from $R/NATURAL_PROMPTS_gemma-3-1b.json --edit-residual)
                   run=CIRC_NAT_DR_G3_CLT262K_RES_v2 ;;
   esac
-  if [ "$m" != "${m%+tok}" ]; then
+  if [ "$m" != "${m%+tok2}" ]; then
+    args+=(--counterfactual-words "${WORDS[@]}" --sufficiency)
+    run="${run%_v*}_TOK2_v1"
+  elif [ "$m" != "${m%+tok}" ]; then
     args+=(--counterfactual-words "${WORDS[@]}")
     run="${run%_v*}_TOK_v1"
   fi

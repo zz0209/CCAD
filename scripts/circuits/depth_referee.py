@@ -43,6 +43,10 @@ def main():
     parser.add_argument('--counterfactual-words', nargs='*', default=[],
                         help='(u_tok) replace the token at the unit\'s position by the first token of the first of these '
                              'words for which the unit is off at its layer, and let the model run')
+    parser.add_argument('--sufficiency', action='store_true',
+                        help='with --counterfactual-words, also restore the unit\'s read projection (u_suff) or the span '
+                             'of all active features\' read directions (u_suff_joint) on the replaced token, and switch '
+                             'off every CLT feature active at the unit\'s site on the clean prompt (u_joint)')
     parser.add_argument('--edit-residual', action='store_true',
                         help='carry the removals of the CLT unit from its MLP-input hook to the residual stream before '
                              'the MLP (hook_resid_mid), as d_resid = d_in * ln2.hook_scale / ln2.w, so that they reach '
@@ -158,16 +162,16 @@ def main():
                 return {(f'blocks.{ll}.{P.input_hook}', pp):
                         removal(P, ll, cache[f'blocks.{ll}.{P.input_hook}'][0, pp].float(), sorted(fs))
                         for (ll, pp), fs in sel.items()}
-            def unit_edit(edits):
+            def unit_edit(edits, run_cache=None):
                 # edits: {position: change of the CLT input at layer l}, applied at the input hook or carried to the
-                # residual stream before MLP l.
+                # residual stream before MLP l (with the norm scale of the run being edited, by default the clean one).
                 if not args.edit_residual:
                     return edit_hooks({(f'blocks.{l}.{C.input_hook}', q): d for q, d in edits.items()})
                 # Pseudo-inverse of the norm weight: dimensions with weight exactly zero are zero in the MLP input
                 # whatever the residual stream holds, so no residual change can realize an edit there.
                 w_ln = model.blocks[l].ln2.w.float()
                 w_inv = torch.where(w_ln != 0, 1 / w_ln, torch.zeros_like(w_ln))
-                scale = cache[f'blocks.{l}.ln2.hook_scale'][0].float()
+                scale = (run_cache or cache)[f'blocks.{l}.ln2.hook_scale'][0].float()
                 return edit_hooks({(f'blocks.{l}.hook_resid_mid', q): d * scale[q] * w_inv for q, d in edits.items()})
             conds = {'u': unit_edit({p: delta_u})}
             if args.edit_residual:
@@ -226,6 +230,28 @@ def main():
                         break
                 tok_ids = ids.clone()
                 tok_ids[0, p] = tok_id
+                if args.sufficiency:
+                    # Features of the CLT active at (l, p) on the clean prompt, and the input at (l, p) after the token
+                    # is replaced.
+                    on_feats = torch.nonzero(C.encode(cache[f'blocks.{l}.{C.input_hook}'][0, p], l).float() > 0)
+                    on_feats = on_feats.flatten().tolist()
+                    cf_names = [f'blocks.{l}.{C.input_hook}'] + ([f'blocks.{l}.ln2.hook_scale'] if args.edit_residual else [])
+                    with torch.no_grad():
+                        _, cf_cache = model.run_with_cache(tok_ids, names_filter=lambda n_: n_ in cf_names)
+                    x_cf = cf_cache[f'blocks.{l}.{C.input_hook}'][0, p].float()
+                    W_on, b_on = encoder(C, l, on_feats)
+                    # (u_joint) every CLT feature active at (l, p) is switched off at once, which removes what the
+                    # dictionary encodes there; with many features the encoder rows are dependent, so the smallest
+                    # change uses the pseudo-inverse.
+                    W_pinv = torch.linalg.pinv(W_on)
+                    conds['u_joint'] = unit_edit({p: -W_pinv @ (W_on @ x + b_on)})
+                    # (u_suff) on the replaced token, the unit's read projection is restored to its clean value;
+                    # (u_suff_joint) the component of the input in the span of the read directions of all features
+                    # active on the clean prompt is restored.
+                    suff = w * ((x - x_cf) @ w) / (w @ w)
+                    suff_joint = W_pinv @ (W_on @ (x - x_cf))
+                    conds['u_suff'] = ('token', unit_edit({p: suff}, cf_cache))
+                    conds['u_suff_joint'] = ('token', unit_edit({p: suff_joint}, cf_cache))
             energy = (claim ** 2).sum(-1)
             row = dict(graph=g, unit=unit, layer=l, position=p, final=p == n - 1, activation=float(a),
                        claim_energy=energy[l:].tolist(), check_off=check_u, positions_on=len(on), mean_from_off=bool(off),
@@ -233,9 +259,14 @@ def main():
                        plt_mid_units=sum(len(fs) for fs in mid.values()), plt_wide_units=sum(len(fs) for fs in wide.values()))
             if args.counterfactual_words:
                 row.update(tok_word=model.tokenizer.decode(tok_id), tok_off=tok_off)
-                conds['u_tok'] = 'token'
+                conds['u_tok'] = ('token', [])
+                if args.sufficiency:
+                    row.update(active_at_site=len(on_feats))
             for name, hooks in conds.items():
-                lp, mlp = run(tok_ids, [], p) if hooks == 'token' else run(ids, hooks, p)
+                if isinstance(hooks, tuple):
+                    lp, mlp = run(tok_ids, hooks[1], p)
+                else:
+                    lp, mlp = run(ids, hooks, p)
                 e = lp - base
                 row[f'energy_{name}'] = float((w0 * e ** 2).sum())
                 row[f'drop_{name}'] = float(-e[answer])
