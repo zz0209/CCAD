@@ -15,7 +15,9 @@ DESCRIPTION = ('CIRCUITS_ACROSS_DICTIONARIES P2 (H-inv): does the causal role of
                'through the dictionary that defined it, on the published prompt and on every variant of equal token '
                'length; the readout is the drop of the log-probability of the answer token (first token of the '
                'answer the explanation predicts), and retention is the drop on a variant divided by the drop on the '
-               'published prompt. Feature activity on the variant is recorded alongside.')
+               'published prompt. Feature activity on the variant is recorded alongside. With --units-from, the '
+               'explanation units are the single-feature units of the source dictionary\'s own graph (REVERSE_ROWS of '
+               'P1r, e.g. CLT features), each deleted as a whole feature with every decoder slice.')
 
 
 def main():
@@ -24,6 +26,7 @@ def main():
     parser.add_argument('--families', type=Path, required=True)
     parser.add_argument('--prompts-from', type=Path, required=True, help='ORACLE_ROWS.json with the chosen prompts')
     parser.add_argument('--source', default='gemma')
+    parser.add_argument('--units-from', type=Path, default=None, help='REVERSE_ROWS.json whose single-feature units to use')
     parser.add_argument('--out', type=Path, required=True)
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=False)
@@ -41,8 +44,17 @@ def main():
     A = Dictionary(model.transcoders)
     A.t.requires_grad_(False)
     L = model.cfg.n_layers
-    items, _ = filter_items(gemma_items(args.registry), L, A.t.d_transcoder)
-    items = {k: sn for k, _, sn in items}
+    if args.units_from is None:
+        items, _ = filter_items(gemma_items(args.registry), L, A.t.d_transcoder)
+        items = {k: sn for k, _, sn in items}
+    else:
+        # Unit names of single CLT features are L{layer}F{feature}P{position}.
+        items = {}
+        for r in json.loads(args.units_from.read_text())['rows']:
+            if r['features'] == 1:
+                l, rest = r['unit'][1:].split('F')
+                f, p = rest.split('P')
+                items.setdefault(r['graph'], {})[r['unit']] = [(int(l), int(p), int(f))]
     chosen = {}
     for r in json.loads(args.prompts_from.read_text())['rows']:
         chosen.setdefault(r['graph'], r['prompt'])
@@ -61,7 +73,10 @@ def main():
             for l, p, f in sn_feats:
                 z = A.encode(cache[f'blocks.{l}.{A.input_hook}'][0, p], l, [f]).float()
                 active.append(float(z) > 0)
-                deltas.setdefault(l, torch.zeros(ids.shape[1], model.cfg.d_model, device=dev))[p] -= z[0] * A.decoders(l, [f])[0, 0]
+                # Every decoder slice: one for a per-layer transcoder, one per later layer for a CLT.
+                dec = A.decoders(l, [f])[0]
+                for k in range(dec.shape[0]):
+                    deltas.setdefault(l + k, torch.zeros(ids.shape[1], model.cfg.d_model, device=dev))[p] -= z[0] * dec[k]
             edited = torch.log_softmax(model.run_with_hooks(ids, fwd_hooks=add_hooks(deltas))[0, -1].float(), -1)
         return float(base[answer] - edited[answer]), float(np.mean(active)), float(base[answer])
 

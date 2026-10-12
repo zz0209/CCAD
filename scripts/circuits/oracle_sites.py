@@ -17,7 +17,9 @@ DESCRIPTION = ('CIRCUITS_ACROSS_DICTIONARIES P1e: an upper bound on expressing e
                'that layer (target features of that layer or, for a cross-layer transcoder, of any earlier layer); '
                'box-constrained least squares by accelerated projected gradient. The reconstructed deletion is applied to the model either through those '
                'slices only or as whole target features (every slice, as circuit-tracer intervenes), and its effect on '
-               'the final-position next-token distribution is compared with the source deletion.')
+               'the final-position next-token distribution is compared with the source deletion. For a cross-layer '
+               'target, the whole-feature coefficients that best reconstruct the single-layer write over all layers '
+               'are also applied as a deletion.')
 
 
 def box_least_squares(D, t, upper, iters=2000):
@@ -101,8 +103,8 @@ def main():
         clean_mlp = {l: cache[f'blocks.{l}.hook_mlp_out'] for l in range(L)}
         base = run(ids, {})
         for sname, fs in sn.items():
-            src, sl, wh = {}, {}, {}
-            resid, resid_random = [], []
+            src, sl, wh, whb = {}, {}, {}, {}
+            resid, resid_random, resid_whole, later_share, own_share, lag = [], [], [], [], [], []
             sites = sorted({(l, p) for l, p, _ in fs if p < n})
             for l, p in sites:
                 feats = [f for ll, pp, f in fs if ll == l and pp == p]
@@ -126,6 +128,31 @@ def main():
                 c = box_least_squares(D, target, z)
                 recon = c @ D
                 resid.append(float((target - recon).norm() / target.norm().clamp_min(1e-9)))
+                # Where the reconstruction comes from: weight c_j ||W_j^(l)|| of candidates read at layer l itself, and
+                # the weighted mean number of layers between a candidate's own layer and l.
+                weight = c * D.norm(dim=1)
+                read_at = torch.cat([torch.full((len(zz),), lb, device=dev) for lb, _, zz in blocks]).float()
+                if float(weight.sum()) > 0:
+                    own_share.append(float(weight[read_at == l].sum() / weight.sum()))
+                    lag.append(float((weight * (l - read_at)).sum() / weight.sum()))
+                if cross:
+                    # Whole target features matched against the single-layer source write over all layers at once:
+                    # their writes into other layers count as error.
+                    full = torch.zeros(len(z), L, target.shape[0], device=dev)
+                    start = 0
+                    for lb, dec, zz in blocks:
+                        full[start:start + len(zz), lb:] = dec
+                        start += len(zz)
+                    stacked = torch.zeros(L, target.shape[0], device=dev)
+                    stacked[l] = target
+                    cw = box_least_squares(full.flatten(1), stacked.flatten(), z)
+                    resid_whole.append(float((stacked.flatten() - cw @ full.flatten(1)).norm() / target.norm()))
+                    later = full[:, l + 1:].flatten(1).norm(dim=1)
+                    own = full[:, l].norm(dim=1)
+                    later_share.append(float((later ** 2).sum() / ((later ** 2).sum() + (own ** 2).sum()).clamp_min(1e-12)))
+                    # The deletion with these whole-feature coefficients, the best whole-feature edit at this site.
+                    for k in range(L):
+                        whb.setdefault(k, torch.zeros(n, target.shape[0], device=dev))[p] -= cw @ full[:, k]
                 # Capacity control: a random direction of the same norm, reconstructed from the same active features.
                 rnd = torch.randn(target.shape, generator=gen, device='cpu').to(dev)
                 rnd = rnd * target.norm() / rnd.norm()
@@ -143,16 +170,23 @@ def main():
             ea, es, ew = run(ids, src) - base, run(ids, sl) - base, run(ids, wh) - base
             # The same edits with every MLP output frozen at its clean value plus the edit.
             ewf, eaf = run(ids, wh, clean_mlp) - base, run(ids, src, clean_mlp) - base
+            ewb = run(ids, whb) - base if whb else None
             w = base.exp()
             energy = float((w * ea ** 2).sum())
             nr = lambda e: float((w * (e - ea) ** 2).sum() / max(energy, 1e-12)) ** .5
             top = lambda e: model.tokenizer.decode(int((base + e).argmax()))
             rows.append(dict(graph=key, supernode=sname, prompt=prompt, prompt_activity=activity, sites=len(sites),
                              source_energy=energy, site_residual=float(np.mean(resid)) if resid else None,
-                             site_residual_random=float(np.mean(resid_random)) if resid_random else None, nrmse_slice=nr(es),
+                             site_residual_random=float(np.mean(resid_random)) if resid_random else None,
+                             site_residual_whole=float(np.mean(resid_whole)) if resid_whole else None,
+                             candidate_later_share=float(np.mean(later_share)) if later_share else None,
+                             recon_own_layer_share=float(np.mean(own_share)) if own_share else None,
+                             recon_layer_lag=float(np.mean(lag)) if lag else None, nrmse_slice=nr(es),
                              nrmse_whole=nr(ew), nrmse_whole_frozen=nr(ewf), nrmse_source_frozen=nr(eaf),
+                             nrmse_whole_best=nr(ewb) if whb else None,
                              top_base=top(torch.zeros_like(base)), top_source=top(ea), top_slice=top(es),
-                             top_whole=top(ew), top_whole_frozen=top(ewf), top_source_frozen=top(eaf)))
+                             top_whole=top(ew), top_whole_frozen=top(ewf), top_source_frozen=top(eaf),
+                             top_whole_best=top(ewb) if whb else None))
         log(stage='graph', graph=key)
     (args.out / 'ORACLE_ROWS.json').write_text(json.dumps(dict(written_utc=datetime.now(timezone.utc).isoformat(),
                                                               description=DESCRIPTION, target=args.target, rows=rows), indent=1))
