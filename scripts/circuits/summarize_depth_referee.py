@@ -11,7 +11,7 @@ DESCRIPTION = ('Summary of depth referee rows by the read layer of each CLT unit
                'features at the same layers (r); medians over units with graph-bootstrap intervals for s minus r and '
                's minus u, and the logit effect of deleting the claimed writes with the later MLP outputs clamped or '
                'free against removing the read. PLT units give the own-layer fraction on the PLT side.')
-BANDS = [('layers 0-1', 0, 1), ('layers 2-12', 2, 12), ('layers 13+', 13, 99)]
+BANDS = [('layers 0-1', 0, 1), ('layers 2-12', 2, 12), ('layers 13+', 13, 99), ('layers 2+', 2, 99)]
 
 
 def boot(rows, value, n=2000, seed=0):
@@ -33,6 +33,16 @@ def later(r, key):
     return float(np.sum(r[key][1:]) / c.sum())
 
 
+def bounded(r, key):
+    # Explained share of the claimed later writes along their own directions, 1 - sum_k (|c_k| - p_k)^2 / sum_k |c_k|^2
+    # with p_k the removed projection on c_k / |c_k|, cut at 0: 1 when every later write is removed exactly, 0 when
+    # nothing is removed or the change overshoots by the claim or more.
+    c = np.array(r['claim_energy'][1:])
+    keep = c > 0
+    p = np.array(r[key][1:])[keep] / np.sqrt(c[keep])
+    return float(max(0., 1 - np.sum((np.sqrt(c[keep]) - p) ** 2) / c.sum()))
+
+
 def summarize(rows, plt_rows):
     out = {}
     for name, lo, hi in BANDS:
@@ -42,6 +52,19 @@ def summarize(rows, plt_rows):
         d = dict(units=len(sel), graphs=len({r['graph'] for r in sel}))
         d['own_layer_u'] = boot(sel, lambda r: r['removed_u'][0] / r['claim_energy'][0])
         d['later_u'] = boot(sel, lambda r: later(r, 'removed_u'))
+        d['bounded_u'] = boot(sel, lambda r: bounded(r, 'removed_u'))
+        d['bounded_u_quartiles'] = [float(np.quantile([bounded(r, 'removed_u') for r in sel], q)) for q in (.25, .75)]
+        if all('change_u' in r for r in sel):
+            # Explained claim energy with every direction of the change, 1 - sum_k |dm_k + c_k|^2 / sum_k |c_k|^2.
+            d['explained_full_u'] = boot(sel, lambda r: (2 * sum(r['removed_u'][1:]) - sum(r['change_u'][1:]))
+                                         / sum(r['claim_energy'][1:]))
+        if all('removed_u_all' in r for r in sel):
+            d['later_u_all'] = boot(sel, lambda r: later(r, 'removed_u_all'))
+            d['bounded_u_all'] = boot(sel, lambda r: bounded(r, 'removed_u_all'))
+        for cond in ('u_zero', 'u_mean'):
+            if all(f'removed_{cond}' in r for r in sel):
+                d[f'later_{cond}'] = boot(sel, lambda r: later(r, f'removed_{cond}'))
+                d[f'bounded_{cond}'] = boot(sel, lambda r: bounded(r, f'removed_{cond}'))
         d['later_share_of_claim'] = float(np.median([sum(r['claim_energy'][1:]) / sum(r['claim_energy']) for r in sel]))
         both = [r for r in sel if 'removed_s' in r and 'removed_r' in r]
         d['with_plt_units'] = len(both)
@@ -56,6 +79,8 @@ def summarize(rows, plt_rows):
             d['later_a'] = boot(wide, lambda r: later(r, 'removed_a'))
             d['later_ra'] = boot(wide, lambda r: later(r, 'removed_ra'))
             d['later_a_minus_ra'] = boot(wide, lambda r: later(r, 'removed_a') - later(r, 'removed_ra'))
+            d['bounded_a'] = boot(wide, lambda r: bounded(r, 'removed_a'))
+            d['bounded_ra'] = boot(wide, lambda r: bounded(r, 'removed_ra'))
         own = np.array([r['removed_u'][0] / r['claim_energy'][0] for r in sel])
         lat = np.array([later(r, 'removed_u') for r in sel])
         d['own_over_half_later_below_fifth'] = int(np.sum((own >= .5) & (lat <= .2)))

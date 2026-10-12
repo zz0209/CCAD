@@ -4,6 +4,8 @@ from pathlib import Path
 
 import numpy as np
 
+from summarize_depth_referee import bounded
+
 DESCRIPTION = ('Does agreement between two dictionaries predict which writes of a CLT unit the model confirms? '
                'Agreement of a CLT unit is how well the PLT features active at the same token reconstruct its write '
                'into its own layer (one minus the residual of the converse rows) and into its later layers '
@@ -82,6 +84,7 @@ def join(depth_path, reverse_path, min_effect=0.):
                         agree_own=1 - own[0],
                         agree_later=1 - float(np.sum(w * np.array([res for res, _ in lat])) / w.sum()),
                         own_u=r['removed_u'][0] / r['claim_energy'][0], confirm_u=later(r, 'removed_u'),
+                        bounded_u=bounded(r, 'removed_u'),
                         later_s=later(r, 'removed_a') if has_s else None, later_r=later(r, 'removed_ra') if has_s else None,
                         confirm_s=later(r, 'removed_a') - later(r, 'removed_ra') if has_s else None))
     return out
@@ -123,7 +126,7 @@ def main():
             sel = [u for u in units if keep(u)]
             withs = [u for u in sel if u['later_s'] is not None]
             groups[gname] = dict(units=len(sel), with_plt=len(withs),
-                                 **{k: float(np.median([u[k] for u in sel])) for k in ('own_u', 'confirm_u')},
+                                 **{k: float(np.median([u[k] for u in sel])) for k in ('own_u', 'confirm_u', 'bounded_u')},
                                  **{k: float(np.median([u[k] for u in withs])) for k in ('later_s', 'later_r')})
         res['groups'] = groups
         # Robustness for units read after layer 1: the shared-minus-other difference of medians, and the Spearman
@@ -134,7 +137,7 @@ def main():
         lay = np.array([u['layer'] for u in sel], dtype=float)
         nrm = np.array([u['log_norm'] for u in sel])
         rob = {}
-        for c in ('confirm_u', 'confirm_s'):
+        for c in ('confirm_u', 'confirm_s', 'bounded_u'):
             keep = np.array([u[c] is not None for u in sel])
             y = np.array([u[c] if u[c] is not None else np.nan for u in sel])
             def diff(pick, y=y, keep=keep):

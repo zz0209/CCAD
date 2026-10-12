@@ -26,6 +26,9 @@ def main():
     parser.add_argument('--registry-model', default='gemma-2-2b')
     parser.add_argument('--prompts-from', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--edit-residual', action='store_true',
+                        help='carry the removal of u from its MLP-input hook to hook_resid_mid, as d_resid = d_in * '
+                             'ln2.hook_scale / ln2.w, so that it reaches later layers through the residual stream')
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=False)
     (args.out / 'config.json').write_text(json.dumps({k: str(v) for k, v in vars(args).items()}, indent=1))
@@ -58,6 +61,7 @@ def main():
 
     names_in = [f'blocks.{l}.{D.input_hook}' for l in range(L)]
     names_out = [f'blocks.{k}.hook_mlp_out' for k in range(L)]
+    names_scale = [f'blocks.{k}.ln2.hook_scale' for k in range(L)] if args.edit_residual else []
 
     def pre_acts(cache, us):
         # Pre-activations of the listed units from a cache of the dictionary's inputs.
@@ -75,7 +79,7 @@ def main():
         n = ids.shape[1]
         us = [u for u in us if u[2] < n]
         with torch.no_grad():
-            _, base = model.run_with_cache(ids, names_filter=lambda x: x in names_in + names_out)
+            _, base = model.run_with_cache(ids, names_filter=lambda x: x in names_in + names_out + names_scale)
         pre0 = pre_acts(base, us)
         for i, (uname, l, p, f) in enumerate(us):
             targets = [j for j, (_, lv, pv, _) in enumerate(us) if lv > l and pv >= p]
@@ -94,12 +98,19 @@ def main():
             # Model: remove the input that u reads at (l, p) and let the model run.
             W, b = encoder(l, [f])
             delta = -W.T @ torch.linalg.solve(W @ W.T + 1e-6 * torch.eye(1, device=dev), W @ x + b)
+            remove_at = f'blocks.{l}.{D.input_hook}'
+            if args.edit_residual:
+                # Pseudo-inverse of the norm weight, whose zero dimensions no residual change can reach.
+                w_ln = model.blocks[l].ln2.w.float()
+                w_inv = torch.where(w_ln != 0, 1 / w_ln, torch.zeros_like(w_ln))
+                delta = delta * base[f'blocks.{l}.ln2.hook_scale'][0, p].float() * w_inv
+                remove_at = f'blocks.{l}.hook_resid_mid'
             def remove(act, hook, p=p, delta=delta):
                 act[0, p] = act[0, p] + delta.to(act.dtype)
                 return act
             res = {}
             for name, hooks in [('claimed', [(nm, clamp) for nm in names_out]),
-                                ('model', [(f'blocks.{l}.{D.input_hook}', remove)])]:
+                                ('model', [(remove_at, remove)])]:
                 store = {}
                 def grab(act, hook):
                     store[hook.name] = act.detach().clone()

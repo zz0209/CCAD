@@ -15,6 +15,9 @@ DESCRIPTION = ('Where in depth does the model produce what a CLT unit claims to 
                'model and the change of every MLP output at p is projected on c_k: (u) the smallest change of the '
                'residual stream at layer l and p that switches the unit off; (s) the same change, at their own MLP '
                'inputs, for the per-layer transcoder (PLT) units of the same prompt that sit at p after layer l; '
+               '(u_all) the same change at every position where the unit is active at layer l; (u_zero) and (u_mean) '
+               'set the projection of the residual on the unit\'s read direction to zero or to its mean where the unit '
+               'is off; '
                '(r) the same for randomly drawn active PLT features matched to (s) in layer and number; (a) and (ra) '
                'repeat (s) and (r) with the PLT units at p and at every earlier position, which adds what attention '
                'brings to p. The removed '
@@ -37,6 +40,10 @@ def main():
     parser.add_argument('--prompts-from', type=Path, required=True, help='rows with the chosen prompt per graph')
     parser.add_argument('--max-graphs', type=int, default=None)
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--edit-residual', action='store_true',
+                        help='carry the removals of the CLT unit from its MLP-input hook to the residual stream before '
+                             'the MLP (hook_resid_mid), as d_resid = d_in * ln2.hook_scale / ln2.w, so that they reach '
+                             'later layers through the residual stream')
     parser.add_argument('--out', type=Path, required=True)
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=False)
@@ -110,7 +117,8 @@ def main():
     for g in graphs:
         ids = model.tokenizer(prompts[g], return_tensors='pt').input_ids.to(dev)
         n = ids.shape[1]
-        names = sorted({f'blocks.{k}.{d.input_hook}' for k in range(L) for d in (C, P)})
+        names = sorted({f'blocks.{k}.{d.input_hook}' for k in range(L) for d in (C, P)}
+                       | ({f'blocks.{k}.ln2.hook_scale' for k in range(L)} if args.edit_residual else set()))
         with torch.no_grad():
             _, cache = model.run_with_cache(ids, names_filter=lambda n_: n_ in names)
         for unit, l, p, f in clt_units[g]:
@@ -147,7 +155,41 @@ def main():
                 return {(f'blocks.{ll}.{P.input_hook}', pp):
                         removal(P, ll, cache[f'blocks.{ll}.{P.input_hook}'][0, pp].float(), sorted(fs))
                         for (ll, pp), fs in sel.items()}
-            conds = {'u': edit_hooks({(f'blocks.{l}.{C.input_hook}', p): delta_u})}
+            def unit_edit(edits):
+                # edits: {position: change of the CLT input at layer l}, applied at the input hook or carried to the
+                # residual stream before MLP l.
+                if not args.edit_residual:
+                    return edit_hooks({(f'blocks.{l}.{C.input_hook}', q): d for q, d in edits.items()})
+                # Pseudo-inverse of the norm weight: dimensions with weight exactly zero are zero in the MLP input
+                # whatever the residual stream holds, so no residual change can realize an edit there.
+                w_ln = model.blocks[l].ln2.w.float()
+                w_inv = torch.where(w_ln != 0, 1 / w_ln, torch.zeros_like(w_ln))
+                scale = cache[f'blocks.{l}.ln2.hook_scale'][0].float()
+                return edit_hooks({(f'blocks.{l}.hook_resid_mid', q): d * scale[q] * w_inv for q, d in edits.items()})
+            conds = {'u': unit_edit({p: delta_u})}
+            if args.edit_residual:
+                # The pre-activation of the unit that the residual edit actually leaves at its input hook.
+                got = {}
+                def grab_in(act, hook):
+                    got['x'] = act[0, p].float().clone()
+                    return act
+                with torch.no_grad():
+                    model.run_with_hooks(ids, fwd_hooks=conds['u'] + [(f'blocks.{l}.{C.input_hook}', grab_in)])
+                check_u = float(C.encode(got['x'].to(C.dtype), l, [f]).float().abs().max())
+            # (u_all) switches the unit off at every position where it is active at layer l, so that attention cannot
+            # bring the same feature in from another position.
+            xs = cache[f'blocks.{l}.{C.input_hook}'][0]
+            on = torch.nonzero(C.encode(xs, l, [f]).float().reshape(-1) > 0).flatten().tolist()
+            conds['u_all'] = unit_edit({q: removal(C, l, xs[q].float(), [f]) for q in on})
+            # Two removals along the read direction w of the unit that go past its threshold: (u_zero) sets w.x to
+            # zero, and (u_mean) sets it to its mean over the positions of the prompt where the unit is off (all
+            # positions when it is never off), both without the first position.
+            w = encoder(C, l, [f])[0][0]
+            proj = xs[1:].float() @ w
+            off = [q - 1 for q in range(1, n) if q not in on]
+            mean_proj = proj[off].mean() if off else proj.mean()
+            conds['u_zero'] = unit_edit({p: -(x @ w) / (w @ w) * w})
+            conds['u_mean'] = unit_edit({p: (mean_proj - x @ w) / (w @ w) * w})
             for name, sel in [('s', mid), ('a', wide)]:
                 rand = matched(sel) if sel else None
                 if sel and rand is not None:
@@ -166,7 +208,7 @@ def main():
             conds['w_clamped'] = [(f'blocks.{k}.hook_mlp_out', clamp) for k in range(l, L)]
             energy = (claim ** 2).sum(-1)
             row = dict(graph=g, unit=unit, layer=l, position=p, final=p == n - 1, activation=float(a),
-                       claim_energy=energy[l:].tolist(), check_off=check_u,
+                       claim_energy=energy[l:].tolist(), check_off=check_u, positions_on=len(on), mean_from_off=bool(off),
                        plt_mid=sorted((ll, len(fs)) for (ll, _), fs in mid.items()),
                        plt_mid_units=sum(len(fs) for fs in mid.values()), plt_wide_units=sum(len(fs) for fs in wide.values()))
             for name, hooks in conds.items():
@@ -177,6 +219,8 @@ def main():
                 if not name.startswith('w_'):
                     removed = -((mlp - mlp0) * claim).sum(-1)
                     row[f'removed_{name}'] = removed[l:].tolist()
+                    # Squared norm of the change of each MLP output at p, for the explained share of the claimed write.
+                    row[f'change_{name}'] = ((mlp - mlp0) ** 2).sum(-1)[l:].tolist()
             rows.append(row)
         # Calibration on the PLT side: the fraction of each PLT unit's own write that its read removal takes out of
         # the MLP output of its layer, with the same edit as condition (s).
@@ -192,6 +236,7 @@ def main():
             plt_rows.append(dict(graph=g, unit=f'L{l}F{f}P{p}', layer=l, position=p, activation=float(a),
                                  claim_energy=float((claim ** 2).sum()),
                                  removed=float(-((mlp[l] - mlp0[l]) * claim).sum()),
+                                 change=float(((mlp[l] - mlp0[l]) ** 2).sum()),
                                  energy_read=float((base.exp() * (lp - base) ** 2).sum())))
         print(json.dumps(dict(elapsed=round(time.time() - t0, 1), graph=g, units=len(clt_units[g]), rows=len(rows))),
               flush=True)

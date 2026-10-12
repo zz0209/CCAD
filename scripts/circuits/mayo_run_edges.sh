@@ -23,6 +23,14 @@ for job in "$@"; do
     g3-clt) a=(--model google/gemma-3-1b-pt --dictionary $G3CLT --registry-model gemma-3-1b
                --units-from $R/CIRC_G3_REVERSE_CLT262K_TO_PLT_v1/REVERSE_ROWS.json
                --prompts-from $R/CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1/ORACLE_ROWS.json); run=CIRC_EDGE_G3_CLT262K_v1 ;;
+    gemma-clt-nat) a=(--dictionary mntss/clt-gemma-2-2b-426k --units-from $R/CIRC_NAT_REVERSE_GEMMA_CLT426K_v1/REVERSE_ROWS.json
+                      --prompts-from $R/NATURAL_PROMPTS_gemma-2-2b.json); run=CIRC_NAT_EDGE_GEMMA_CLT426K_v1 ;;
+    llama-clt-nat) a=(--model meta-llama/Llama-3.2-1B --dictionary mntss/clt-llama-3.2-1b-524k --registry-model llama-3.2-1b
+                      --units-from $R/CIRC_NAT_REVERSE_LLAMA_CLT524K_v1/REVERSE_ROWS.json
+                      --prompts-from $R/NATURAL_PROMPTS_llama-3.2-1b.json); run=CIRC_NAT_EDGE_LLAMA_CLT524K_v1 ;;
+    g3-clt-res) a=(--model google/gemma-3-1b-pt --dictionary $G3CLT --registry-model gemma-3-1b
+                   --units-from $R/CIRC_G3_REVERSE_CLT262K_TO_PLT_v1/REVERSE_ROWS.json
+                   --prompts-from $R/CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1/ORACLE_ROWS.json --edit-residual); run=CIRC_EDGE_G3_CLT262K_RES_v3 ;;
     g3-plt) a=(--model google/gemma-3-1b-pt --dictionary $G3PLT --registry-model gemma-3-1b --registry $R/GRAPH_UNITS_GEMMA3_1B_PLT16K.json
                --prompts-from $R/CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1/ORACLE_ROWS.json); run=CIRC_EDGE_G3_PLT_v1 ;;
   esac

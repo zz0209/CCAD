@@ -138,9 +138,9 @@ def confirm():
 
 def bands():
     # Removed fractions by read layer with graph-bootstrap intervals, from summarize_depth_referee.py.
-    s = json.loads((CIRC / 'DEPTH_REFEREE_SUMMARY.json').read_text())
+    s = json.loads((CIRC / 'DEPTH_REFEREE_SUMMARY_v4.json').read_text())
     ci = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]'
-    runs = [('CIRC_DR_GEMMA_CLT426K_v2', 'Gemma-2'), ('CIRC_DR_LLAMA_CLT524K_v2', 'Llama'), ('CIRC_DR_G3_CLT262K_v2', 'Gemma-3')]
+    runs = REMOVAL_RUNS
     lines = []
     for run, name in runs:
         d = s[run]
@@ -191,7 +191,7 @@ def natural(runs):
         ('\\quad published prompts', [ci(pub[m]['robust_later']['confirm_u']['shared_minus_other']) for m, _ in models]),
         ('Partial Spearman, own input', [ci(nat[m]['robust_later']['confirm_u']['partial_spearman_layer_norm']) for m, _ in models]),
         ('Early units, own input', [fmt(nat[m]['groups']['early']['confirm_u']) for m, _ in models]),
-        ('Early units collapsed', [f"{early[f'CIRC_NAT_DR_{tag}_v1']['collapsed']}/{early[f'CIRC_NAT_DR_{tag}_v1']['tested']}"
+        ('Early stand-ins', [f"{early[f'CIRC_NAT_DR_{tag}_v1']['collapsed']}/{early[f'CIRC_NAT_DR_{tag}_v1']['tested']}"
                                    for m, tag in models]),
         ('PLT side, partial Spearman', [ci(plt[m]['all']['partial_spearman_layer_norm']) for m, _ in models]),
         ('\\quad published prompts', [ci(plt_pub[m]['all']['partial_spearman_layer_norm']) for m, _ in models]),
@@ -204,20 +204,22 @@ def natural(runs):
 def edges(runs):
     # The edge test: per model and dictionary, the edges that enter, the median confirmed share overall and for edges
     # leaving units read at layers 0-1 or later, and the share of the claimed change carried by edges from layers 0-1.
-    e = json.loads((CIRC / 'EDGE_SUMMARY.json').read_text())
+    e = json.loads((CIRC / 'EDGE_SUMMARY_v2.json').read_text())
     ci = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]'
     lines = []
-    for m, name, tags in [('gemma', 'Gemma-2', [('clt', 'GEMMA_CLT426K'), ('plt', 'GEMMA_PLT')]),
-                          ('llama', 'Llama', [('clt', 'LLAMA_CLT524K'), ('plt', 'LLAMA_PLT')]),
-                          ('g3', 'Gemma-3', [('clt', 'G3_CLT262K'), ('plt', 'G3_PLT')])]:
-        for k, (kind, tag) in enumerate(tags):
-            rows = [r for r in json.loads((runs / f'CIRC_EDGE_{tag}_v1' / 'EDGE_REFEREE_ROWS.json').read_text())['rows']
+    # Gemma-3's CLT reads the MLP input; its second row carries the removal to the residual stream.
+    for m, name, kinds in [('gemma', 'Gemma-2', [('clt', 'CLT', 'CIRC_EDGE_GEMMA_CLT426K_v1'), ('plt', 'PLT', 'CIRC_EDGE_GEMMA_PLT_v1')]),
+                           ('llama', 'Llama', [('clt', 'CLT', 'CIRC_EDGE_LLAMA_CLT524K_v1'), ('plt', 'PLT', 'CIRC_EDGE_LLAMA_PLT_v1')]),
+                           ('g3', 'Gemma-3', [('clt-res', 'CLT', 'CIRC_EDGE_G3_CLT262K_RES_v3'),
+                                              ('clt', 'CLT, MLP in', 'CIRC_EDGE_G3_CLT262K_v1'), ('plt', 'PLT', 'CIRC_EDGE_G3_PLT_v1')])]:
+        for k, (kind, label, run) in enumerate(kinds):
+            rows = [r for r in json.loads((runs / run / 'EDGE_REFEREE_ROWS.json').read_text())['rows']
                     if abs(r['claimed']) >= .1 * abs(r['v_pre']) and abs(r['claimed']) > 0]
             ratio = sorted(r['model'] / r['claimed'] for r in rows)
             med = ratio[len(ratio) // 2] if len(ratio) % 2 else (ratio[len(ratio) // 2 - 1] + ratio[len(ratio) // 2]) / 2
             early = sum(abs(r['claimed']) for r in rows if r['u_layer'] <= 1) / sum(abs(r['claimed']) for r in rows)
-            d = e[f'{m if m != "g3" else "g3"}-{kind}']
-            lines.append(' & '.join([name if k == 0 else '', kind.upper(), str(len(rows)), fmt(med), f'{100 * early:.0f}\\%',
+            d = e[f'{m}-{kind}']
+            lines.append(' & '.join([name if k == 0 else '', label, str(len(rows)), fmt(med), f'{100 * early:.0f}\\%',
                                      ci(d['from layers 0-1']['median']), ci(d['from layers 2+']['median'])]) + '\\\\')
         if m != 'g3':
             lines.append('\\midrule')
@@ -226,11 +228,84 @@ def edges(runs):
                                       '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
+REMOVAL_RUNS = [('CIRC_DR_GEMMA_CLT426K_v4', 'Gemma-2'), ('CIRC_DR_LLAMA_CLT524K_v4', 'Llama'),
+                ('CIRC_DR_G3_CLT262K_RES_v6', 'Gemma-3')]
+
+
+def removals():
+    # Main table: medians over the CLT's own top units read at layers 0-1 and later of the share of their claimed writes
+    # that each removal takes out, from summarize_depth_referee.py.
+    s = json.loads((CIRC / 'DEPTH_REFEREE_SUMMARY_v4.json').read_text())
+    rows = [('Own layer, input removed', 'own_layer_u'), ('Later layers, input removed', 'later_u'),
+            ('\\quad at every active position', 'later_u_all'), ('\\quad projection set to 0', 'later_u_zero'),
+            ('\\quad projection set to mean', 'later_u_mean'), ('\\quad bounded share $S$', 'bounded_u'),
+            ('PLT units minus random', 'later_a_minus_ra')]
+    lines = []
+    for label, key in rows:
+        cells = [label]
+        for run, _ in REMOVAL_RUNS:
+            for band in ('layers 0-1', 'layers 2+'):
+                cells.append(fmt(s[run][band][key][0]))
+        lines.append(' & '.join(cells) + '\\\\')
+    units = ['Units'] + [str(s[run][band]['units']) for run, _ in REMOVAL_RUNS for band in ('layers 0-1', 'layers 2+')]
+    head = (' & ' + ' & '.join(f'\\multicolumn{{2}}{{c}}{{{name}}}' for _, name in REMOVAL_RUNS) + '\\\\\n'
+            '\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\\cmidrule(lr){6-7}\n'
+            'Read at layer & 0--1 & 2+ & 0--1 & 2+ & 0--1 & 2+\\\\')
+    (TAB / 'gt_removals.tex').write_text('\\begin{tabular}{@{}lrrrrrr@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                         '\n'.join(lines) + '\n\\midrule\n' + ' & '.join(units) + '\\\\' +
+                                         '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+    # Appendix: the same medians with 95% graph-bootstrap intervals.
+    ci = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]'
+    lines = []
+    for run, name in REMOVAL_RUNS:
+        for k, (band, label) in enumerate([('layers 0-1', '0--1'), ('layers 2+', '2+')]):
+            v = s[run][band]
+            lines.append(' & '.join([name if k == 0 else '', label] + [ci(v[key]) for key in
+                                     ('later_u_all', 'later_u_zero', 'later_u_mean', 'bounded_u')]) + '\\\\')
+    head = 'Model & Read at & All positions & Projection to 0 & Projection to mean & Bounded share\\\\'
+    (TAB / 'gt_alternatives.tex').write_text('\\begin{tabular}{@{}llllll@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                             '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
+def toy(runs):
+    # The formal run of the toy validation: per circuit, features and rows that enter, and medians with quartiles of
+    # the removed share (input at threshold, read projection to zero), the bounded share and the PLT-unit removal.
+    t = json.loads((runs / 'CIRC_TOY_REFEREE_FORMAL_v1' / 'TOY_REFEREE.json').read_text())['summary']
+    q = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]'
+    rows = [('A two-step', 'Two-step, collapsed'), ('B amplified', 'Amplified'), ('F erased copy', 'Surviving copy'),
+            ('E parallel', 'Every layer'), ('D redundant', 'Unused copy'), ('C constant', 'Constant')]
+    lines = [' & '.join([label, str(t[k]['features']), str(t[k]['rows']), q(t[k]['removed_u']), q(t[k]['removed_u_zero']),
+                         q(t[k]['bounded_u']), q(t[k]['removed_s'])]) + '\\\\' for k, label in rows]
+    head = 'Circuit & Feat. & Rows & Input removed & Projection to 0 & Bounded $S$ & PLT later units\\\\'
+    (TAB / 'gt_toy.tex').write_text('\\begin{tabular}{@{}lrrllll@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                    '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
+def utility():
+    # Predicting unconfirmed CLT units on the natural-text prompts from a model fitted on the published prompts.
+    rows = [('UTILITY_GEMMA.json', 'Gemma-2 426k'), ('UTILITY_GEMMA25.json', 'Gemma-2 2.5M'), ('UTILITY_LLAMA.json', 'Llama'),
+            ('UTILITY_G3_RES.json', 'Gemma-3')]
+    ci = lambda v: f'{fmt(v[0], 3)} [{fmt(v[1], 3)}, {fmt(v[2], 3)}]'
+    lines = []
+    for name, label in rows:
+        u = json.loads((CIRC / name).read_text())
+        lines.append(' & '.join([label, str(u['test_units']), f"{100 * u['test_unconfirmed']:.0f}\\%",
+                                 fmt(u['single_auroc']['layer']), fmt(u['single_auroc']['agree']),
+                                 fmt(u['auroc_baselines'], 3), ci(u['auroc_gain_from_agreement']),
+                                 fmt(u['precision_top20pct_baselines'])]) + '\\\\')
+    head = 'Dictionary & Units & Unconf. & Layer & Agreement & Baselines & Gain from agreement & Prec.@20\\%\\\\'
+    (TAB / 'gt_utility.tex').write_text('\\begin{tabular}{@{}lrrrrrlr@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                        '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--runs', type=Path, default=Path('D:/CCAD_Storage/runs/circuits'))
     args = parser.parse_args()
     s = json.loads((CIRC / 'CIRCUIT_SUMMARY.json').read_text())
+    removals()
+    toy(args.runs)
+    utility()
     graphs(args.runs)
     targets(s)
     coverage(s)
