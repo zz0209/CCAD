@@ -142,7 +142,7 @@ def overview_errors(ax, s):
               bbox_to_anchor=(1.02, 1.0), labelspacing=.9)
 
 
-def overview():
+def transfer():
     s = json.loads((CIRC / 'CIRCUIT_SUMMARY.json').read_text())
     fig = plt.figure(figsize=(6.3, 2.55))
     a = fig.add_axes([.0, .07, .38, .83])
@@ -151,6 +151,139 @@ def overview():
     overview_errors(b, s)
     fig.text(.005, .985, '(a) Where a supernode deletion writes', fontsize=8, va='top')
     fig.text(.41, .985, '(b) Explanations after a change of dictionary', fontsize=8, va='top')
+    save(fig, 'ux_transfer')
+
+
+READINGS = Path('D:/CCAD_Storage/runs/circuits/EXAMPLE_READINGS_GEMMA_v1/READINGS.json')
+
+
+def depth_map(ax):
+    # The Dallas graph on token-by-layer axes: published PLT supernode features and the CLT graph's top units, a CLT
+    # unit filled when a single PLT feature at its layer and token reproduces its write (residual below .4).
+    g = [r for r in json.loads(READINGS.read_text(encoding='utf-8'))['readings'] if r['graph'].endswith('dallas-austin')][0]
+    toks = ['BOS' if t == '<bos>' else (t.strip() or '_') for t in g['tokens']]
+    names = {'capital': 'capital', 'state': 'state', 'Texas': 'Texas',
+             'preposition followed by place name': 'place name', 'capital cities / say a capital city': 'say a capital'}
+    for s in g['supernodes']:
+        xs = [x['position'] for x in s['sites']]
+        ys = [x['layer'] for x in s['sites']]
+        ax.scatter(xs, ys, s=22, marker='o', facecolor='none', edgecolor=INK, lw=.7, zorder=3)
+        # Labels of supernodes on the token before the last go to their left, clear of the last token's column.
+        left = max(xs) == len(toks) - 2
+        ax.text(max(xs) + (-.45 if left else .55), max(ys) + .8, names.get(s['name'], s['name']), fontsize=6.3,
+                va='center', ha='right' if left else 'left', color='.25')
+    # Features of the 426k CLT active at nearly every token (CIRC_FREQ_GEMMA_CLT426K_v1).
+    always = {(0, 7081), (1, 3148), (1, 3872)}
+    for u in g['clt_units']:
+        shared = u['plt_residual'] < .4
+        dense = (u['layer'], u['index']) in always
+        size = 14 + 10 * min(abs(u['answer_drop']), 4)
+        ax.scatter([u['position'] + .18], [u['layer']], s=size, marker='^', zorder=4, lw=.6,
+                   facecolor=GEMMA if shared else ('.75' if dense else 'white'), edgecolor=GEMMA if shared else LATER)
+    ax.set_xticks(range(len(toks)))
+    ax.set_xticklabels(toks, rotation=60, fontsize=6.2, ha='right')
+    ax.set_ylim(-1, 27)
+    ax.set_xlim(-.5, len(toks) + 1.9)
+    ax.set_yticks([0, 5, 10, 15, 20, 25])
+    ax.set_ylabel('Layer', fontsize=7.2)
+    clean(ax)
+    handles = [Line2D([], [], ls='', marker='o', ms=4, mfc='none', mec=INK, label='PLT supernode feature'),
+               Line2D([], [], ls='', marker='^', ms=4.5, mfc=GEMMA, mec=GEMMA, label='CLT unit, shared'),
+               Line2D([], [], ls='', marker='^', ms=4.5, mfc='white', mec=LATER, label='CLT unit, CLT only'),
+               Line2D([], [], ls='', marker='^', ms=4.5, mfc='.75', mec=LATER, label='CLT only, always active')]
+    ax.legend(handles=handles, frameon=False, fontsize=6.1, loc='upper left', handletextpad=.2, borderaxespad=.1)
+
+
+def shared_panel(ax, s):
+    models = [('gemma', 'Gemma-2'), ('llama', 'Llama'), ('gemma3', 'Gemma-3')]
+    x = np.arange(len(models))
+    early = [s['shared_by_depth'][m]['shared_early'] for m, _ in models]
+    later = [s['shared_by_depth'][m]['shared_later'] for m, _ in models]
+    ax.bar(x - .19, early, width=.36, color=LATER, lw=0, label='Read at layers 0-1')
+    ax.bar(x + .19, later, width=.36, color=GEMMA, lw=0, label='Read later')
+    for k, (m, _) in enumerate(models):
+        ax.text(k - .19, early[k] + .03, f"{s['shared_by_depth'][m]['early_share']:.0%}\nof units", ha='center',
+                va='bottom', fontsize=5.8, color=LATER)
+    ax.set_xticks(x)
+    ax.set_xticklabels([n for _, n in models], fontsize=6.6)
+    ax.set_ylim(0, 1.1)
+    ax.set_yticks([0, .5, 1])
+    ax.set_yticklabels(['0', '.5', '1'])
+    ax.set_ylabel('Share with a PLT counterpart', fontsize=7.2)
+    ax.legend(frameon=False, fontsize=6.1, loc='upper left', handletextpad=.3, borderaxespad=.1)
+    clean(ax)
+
+
+def referee_panel(ax, s):
+    rw = s['read_write']
+    groups = [('plt_own', lambda l: True, 'PLT units', '.55', 'o'),
+              ('clt_own', lambda l: l >= 2, 'CLT units, later', GEMMA, 's'),
+              ('clt_own', lambda l: l <= 1, 'CLT units, layers 0-1', LATER, '^')]
+    for key, keep, label, color, marker in groups:
+        pts = np.array([p for m in rw for p in rw[m].get(key, {}).get('points', []) if keep(p[2])])
+        ax.scatter(pts[:, 0], np.maximum(pts[:, 1], 1e-3), s=6, marker=marker, color=color, alpha=.6, lw=0, label=label)
+    lim = (1e-2, 15)
+    ax.plot(lim, lim, color='.4', lw=.6, ls=':')
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    ax.set_xlim(.25, 15)
+    ax.set_ylim(1e-2, 15)
+    ax.set_xticks([.3, 1, 3, 10])
+    ax.set_xticklabels(['.3', '1', '3', '10'])
+    ax.set_yticks([.01, .1, 1, 10])
+    ax.set_yticklabels(['.01', '.1', '1', '10'])
+    ax.set_xlabel('Effect of deleting what it writes', fontsize=7.2)
+    ax.set_ylabel('Effect of removing what it reads', fontsize=7.2)
+    ax.legend(frameon=False, fontsize=6.1, loc='upper left', handletextpad=.1, borderaxespad=.1, markerscale=1.6)
+    clean(ax)
+
+
+def confirm_panel(ax):
+    # CLT units binned by how well PLT features at the same layer and token reproduce their own-layer write, against
+    # the median fraction of their later writes that the model removes when the unit's read is removed.
+    a = json.loads((CIRC / 'AGREEMENT_VS_REFEREE.json').read_text())
+    edges = [0, .25, .5, .75, 1.0001]
+    mids = [.125, .375, .625, .875]
+    for k, (m, name, color, marker) in enumerate([('gemma', 'Gemma-2', GEMMA, 'o'), ('llama', 'Llama', LLAMA, 's'),
+                                                    ('gemma3', 'Gemma-3', GEMMA3, '^')]):
+        pts = a[m]['points']
+        agree = np.clip(np.array([p['agree_own'] for p in pts]), 0, 1)
+        conf = np.array([p['confirm_u'] for p in pts])
+        xs, ys, lo, hi = [], [], [], []
+        for j in range(4):
+            sel = conf[(agree >= edges[j]) & (agree < edges[j + 1])]
+            if len(sel) >= 8:
+                xs.append(mids[j] + (k - 1) * .025)
+                ys.append(np.median(sel))
+                lo.append(np.quantile(sel, .25))
+                hi.append(np.quantile(sel, .75))
+        ax.plot(xs, ys, color=color, lw=.9, marker=marker, ms=3.4, label=name, zorder=3)
+        ax.vlines(xs, lo, hi, color=color, lw=.6, alpha=.7)
+    ax.axhline(0, color='.6', lw=.5, ls=':')
+    ax.set_xlim(0, 1)
+    ax.set_xticks([0, .5, 1])
+    ax.set_xticklabels(['0', '.5', '1'])
+    ax.set_ylim(-.15, 1.05)
+    ax.set_yticks([0, .5, 1])
+    ax.set_yticklabels(['0', '.5', '1'])
+    ax.set_xlabel('Agreement with the PLT', fontsize=7.2)
+    ax.set_ylabel('Later writes the model removes', fontsize=7.2)
+    ax.legend(frameon=False, fontsize=6.1, loc='upper left', handletextpad=.2, borderaxespad=.1)
+    clean(ax)
+
+
+def overview():
+    s = json.loads((CIRC / 'CIRCUIT_SUMMARY.json').read_text())
+    fig = plt.figure(figsize=(6.3, 2.45))
+    a = fig.add_axes([.055, .25, .33, .66])
+    b = fig.add_axes([.46, .25, .2, .66])
+    c = fig.add_axes([.75, .25, .24, .66])
+    depth_map(a)
+    shared_panel(b, s)
+    confirm_panel(c)
+    fig.text(.005, .985, '(a) Dallas$\\to$Austin in a PLT and a CLT', fontsize=8, va='top')
+    fig.text(.40, .985, '(b) Shared concepts', fontsize=8, va='top')
+    fig.text(.69, .985, '(c) Agreement and the model', fontsize=8, va='top')
     save(fig, 'ux_overview')
 
 
@@ -241,7 +374,7 @@ def mechanism():
 def main():
     global PREVIEW
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument('--figures', nargs='+', default=['overview', 'mechanism'])
+    parser.add_argument('--figures', nargs='+', default=['overview', 'mechanism', 'transfer'])
     parser.add_argument('--preview', type=Path, default=None, help='also write PNG previews to this directory')
     args = parser.parse_args()
     PREVIEW = args.preview

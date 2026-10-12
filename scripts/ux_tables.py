@@ -10,7 +10,12 @@ DESCRIPTION = 'LaTeX tables of the dictionary-change manuscript, written from CI
 
 def fmt(v, digits=2):
     s = f'{v:.{digits}f}'
-    return s[1:] if s.startswith('0.') else s
+    if float(s) == 0:
+        s = s.lstrip('-')
+    neg = s.startswith('-')
+    s = s.lstrip('-')
+    s = s[1:] if s.startswith('0.') else s
+    return '$-$' + s if neg else s
 
 
 def q(d):
@@ -90,6 +95,73 @@ def coverage(s):
                                          '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
+def referee(s):
+    # Median ratio of the effect of deleting what a unit writes to the effect of removing what it reads, among units
+    # whose write deletion has a substantial effect, with the share of units above ten and the number of units.
+    rw = s['read_write']
+    cols = [('plt_published', 'all'), ('plt_own', 'all'), ('clt_own', 'later'), ('clt_own', 'early')]
+    lines = []
+    for m, name in [('gemma', 'Gemma-2'), ('llama', 'Llama'), ('gemma3', 'Gemma-3')]:
+        cells = []
+        for key, band in cols:
+            if key not in rw[m]:
+                cells.append('--')
+                continue
+            v = rw[m][key][band]
+            cells.append(f"{v['ratio']:.1f} ({100 * v['over_10']:.0f}\\%)")
+        lines.append(' & '.join([name] + cells) + '\\\\')
+    head = ('Model & PLT publ. & PLT own & CLT, 2+ & CLT, 0--1\\\\')
+    (TAB / 'ux_referee.tex').write_text('\\begin{tabular}{@{}lllll@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                        '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
+def confirm():
+    # Medians over CLT units of the fraction of their claimed writes that the model removes: from their own layer when
+    # their read is removed, and from later layers when their read, the PLT units of the prompt, or random PLT
+    # features are removed.
+    a = json.loads((CIRC / 'AGREEMENT_VS_REFEREE.json').read_text())
+    labels = [('early', '0--1'), ('later_shared', '2+, shared'), ('later_other', '2+, CLT only')]
+    lines = []
+    for m, name in [('gemma', 'Gemma-2'), ('llama', 'Llama'), ('gemma3', 'Gemma-3')]:
+        for k, (g, label) in enumerate(labels):
+            v = a[m]['groups'][g]
+            cells = [name if k == 0 else '', label, str(v['units'])] + [fmt(v[c]) for c in ('own_u', 'confirm_u', 'later_s', 'later_r')]
+            lines.append(' & '.join(cells) + '\\\\')
+        if m != 'gemma3':
+            lines.append('\\midrule')
+    head = ('& & & \\multicolumn{1}{c}{Own} & \\multicolumn{3}{c}{Later layers}\\\\\n'
+            '\\cmidrule(lr){4-4}\\cmidrule(lr){5-7}\n'
+            'Model & Read at & $n$ & Input & Input & PLT & Rand.\\\\')
+    (TAB / 'ux_confirm.tex').write_text('\\begin{tabular}{@{}llrrrrr@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                        '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
+def bands():
+    # Removed fractions by read layer with graph-bootstrap intervals, from summarize_depth_referee.py.
+    s = json.loads((CIRC / 'DEPTH_REFEREE_SUMMARY.json').read_text())
+    ci = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]'
+    runs = [('CIRC_DR_GEMMA_CLT426K_v2', 'Gemma-2'), ('CIRC_DR_LLAMA_CLT524K_v2', 'Llama'), ('CIRC_DR_G3_CLT262K_v2', 'Gemma-3')]
+    lines = []
+    for run, name in runs:
+        d = s[run]
+        first = True
+        for band, label in [('layers 0-1', 'CLT, 0--1'), ('layers 2-12', 'CLT, 2--12'), ('layers 13+', 'CLT, 13+')]:
+            if band not in d:
+                continue
+            v = d[band]
+            lines.append(' & '.join([name if first else '', label, str(v['units']), ci(v['own_layer_u']), ci(v['later_u']),
+                                     ci(v['later_a']), ci(v['later_ra'])]) + '\\\\')
+            first = False
+        for band, label in [('PLT layers 0-4', 'PLT, 0--4'), ('PLT layers 13+', 'PLT, 13+')]:
+            v = d[band]
+            lines.append(' & '.join(['', label, str(v['units']), ci(v['own_layer']), '', '', '']) + '\\\\')
+        if name != 'Gemma-3':
+            lines.append('\\midrule')
+    head = ('Model & Units & $n$ & Own layer & Own read & PLT units & Random\\\\')
+    (TAB / 'ux_bands.tex').write_text('\\begin{tabular}{@{}llrllll@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                      '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--runs', type=Path, default=Path('D:/CCAD_Storage/runs/circuits'))
@@ -98,6 +170,9 @@ def main():
     graphs(args.runs)
     targets(s)
     coverage(s)
+    referee(s)
+    confirm()
+    bands()
 
 
 if __name__ == '__main__':

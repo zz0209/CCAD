@@ -37,6 +37,15 @@ COVER = {'gemma_plt_r2': ('CIRC_COV_GEMMA_PLT_TO_PLTL0R2_v1', 'CIRC_P1_GEMMA_PLT
                                      'gemma_clt426k', 'nrmse_whole_best'),
          'samelayer_clt426k_slices': ('CIRC_COV_GEMMA_PLT_TO_CLT426K_slices_v1', 'CIRC_P1_GEMMA_PLT_TO_CLT426K_v2_slices',
                                       'gemma_clt426k', 'nrmse_slice')}
+# Read-write agreement runs and converse rows used for sharing by depth, per model.
+READ_WRITE = {'gemma': dict(plt_published='CIRC_RW_GEMMA_PLT_PUBLISHED_v1', plt_own='CIRC_RW_GEMMA_PLT_OWN_v1',
+                            clt_own='CIRC_RW_GEMMA_CLT426K_OWN_v1'),
+              'llama': dict(plt_published='CIRC_RW_LLAMA_PLT_PUBLISHED_v1', plt_own='CIRC_RW_LLAMA_PLT_OWN_v1',
+                            clt_own='CIRC_RW_LLAMA_CLT524K_OWN_v2'),
+              'gemma3': dict(plt_own='CIRC_RW_G3_PLT_OWN_v1', clt_own='CIRC_RW_G3_CLT262K_OWN_v2')}
+SHARED = {'gemma': 'CIRC_P1R_REVERSE_GEMMA_CLT426K_TO_PLT_v2', 'llama': 'CIRC_P1R_REVERSE_LLAMA_CLT524K_TO_PLT_v1',
+          'gemma3': 'CIRC_G3_REVERSE_CLT262K_TO_PLT_v1'}
+STRONG = .3
 FITS = {'gemma_plt_r2': 'CIRC_P1_GEMMA_PLT_TO_PLTL0R2_v2_best',
         'gemma_clt426k_whole': 'CIRC_P1_GEMMA_PLT_TO_CLT426K_v2_pooled',
         'gemma_clt426k_slices': 'CIRC_P1_GEMMA_PLT_TO_CLT426K_v2_slices'}
@@ -114,6 +123,44 @@ def response(path):
                 response_answers=a, response_ci=boot_median(rows, 'nrmse_response'))
 
 
+def read_write(path):
+    # Units read at layers 0 and 1 against later ones; among units whose write deletion has effect size above STRONG,
+    # the write-to-read effect size ratio (median with a bootstrap over graphs, share above 10).
+    rows = [r for r in json.loads(path.read_text())['rows'] if r['energy_write'] > MIN_ENERGY]
+    out = dict(run=path.parent.name)
+    for band, keep in [('all', lambda r: True), ('early', lambda r: min(r['layers']) <= 1),
+                       ('later', lambda r: min(r['layers']) >= 2)]:
+        sel = [r for r in rows if keep(r)]
+        strong = [dict(graph=r['graph'], log_ratio=float(np.log10((r['energy_write'] / max(r['energy_read'], 1e-12)) ** .5)))
+                  for r in sel if r['energy_write'] ** .5 > STRONG]
+        out[band] = dict(units=len(sel), strong=len(strong),
+                         spearman_drops=spearman([r['drop_write'] for r in sel], [r['drop_read'] for r in sel]) if len(sel) > 3 else None,
+                         ratio=float(10 ** np.median([s['log_ratio'] for s in strong])) if strong else None,
+                         ratio_ci=[float(10 ** x) for x in boot_median(strong, 'log_ratio')] if len(strong) > 3 else None,
+                         over_10=float(np.mean([s['log_ratio'] > 1 for s in strong])) if strong else None)
+    out['points'] = [[r['energy_write'] ** .5, r['energy_read'] ** .5, min(r['layers'])] for r in rows
+                     if r['energy_write'] ** .5 > STRONG]
+    return out
+
+
+def shared_by_depth(path, threshold=.4):
+    units = []
+    for r in json.loads(path.read_text())['rows']:
+        if r['features'] != 1:
+            continue
+        own = [(res, n) for k, res, n in r['residual_by_offset'] if k == 0]
+        if not own:
+            continue
+        units.append((int(r['unit'][1:].split('F')[0]), own[0][0]))
+    layer = np.array([u[0] for u in units])
+    res = np.array([u[1] for u in units])
+    return dict(run=path.parent.name, units=len(units), early_share=float(np.mean(layer <= 1)),
+                shared_early=float(np.mean(res[layer <= 1] < threshold)),
+                shared_later=float(np.mean(res[layer >= 2] < threshold)),
+                by_layer={int(l): [int((layer == l).sum()), float(np.mean(res[layer == l] < threshold))]
+                          for l in sorted(set(layer.tolist()))})
+
+
 def fit(path):
     data = json.loads(path.read_text())
     rows = load_rows(path)
@@ -184,6 +231,15 @@ def main():
     for k, v in RESPONSE.items():
         (summary['oracle'] if k in summary['oracle'] else summary['oracle_g3'])[k].update(
             response(d / v / 'RESPONSE_ROWS.json'))
+    summary['read_write'] = {m: {k: read_write(d / v / 'READ_WRITE_ROWS.json') for k, v in runs.items()}
+                             for m, runs in READ_WRITE.items()}
+    summary['shared_by_depth'] = {m: shared_by_depth(d / v / 'REVERSE_ROWS.json') for m, v in SHARED.items()}
+    for m, runs in summary['read_write'].items():
+        for k, v in runs.items():
+            print('read_write', m, k, {b: {kk: (round(vv, 3) if isinstance(vv, float) else vv) for kk, vv in v[b].items()}
+                                       for b in ['all', 'early', 'later']})
+    for m, v in summary['shared_by_depth'].items():
+        print('shared', m, {k: (round(x, 3) if isinstance(x, float) else x) for k, x in v.items() if k != 'by_layer'})
     # Paired difference of the response-aware effect error between each Gemma-2 CLT and the same-family PLT, per
     # supernode, with a bootstrap over graphs for the median.
     by_key = lambda name: {(r['graph'], r['supernode']): r['nrmse_response'] for r in load_rows(d / RESPONSE[name] / 'RESPONSE_ROWS.json')}
