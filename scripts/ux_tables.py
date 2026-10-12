@@ -75,7 +75,8 @@ def coverage(s):
     # that keep the new answer) on the published prompts of the graphs with prompt variants.
     c = s['coverage']
     rows = [('PLT family', c['gemma_plt_r2']['covered']),
-            ('CLT 426k', c['gemma_clt426k_whole']['covered'])]
+            ('CLT, whole', c['gemma_clt426k_whole']['covered']),
+            ('CLT, slices', c['gemma_clt426k_slices']['covered'])]
     pct = lambda v: f'{100 * v:.0f}\\%'
     lines = []
     for label, r in rows:
