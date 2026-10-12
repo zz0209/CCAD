@@ -3,15 +3,33 @@ import json
 import torch
 from huggingface_hub import list_repo_files
 
+from circuit_tracer import ReplacementModel
+from circuit_tracer.replacement_model.replacement_model_transformerlens import TransformerLensReplacementModel
 from circuit_tracer.utils.hf_utils import load_transcoder_from_hub, load_transcoders
 
 GEMMA_SCOPE_TC = 'google/gemma-scope-2b-pt-transcoders'
+
+
+def staged_on_cpu(ref):
+    # Gemma Scope 2 CLT checkpoints store every decoder over all layers in float32 and circuit-tracer stacks them on
+    # the loading device; loading them on the CPU keeps the GPU at the size after conversion to the working dtype.
+    return 'gemma-scope-2' in ref and '/clt/' in ref
+
+
+def replacement_model(model_name, ref, device, dtype):
+    if staged_on_cpu(ref):
+        transcoders = load_transcoder_from_hub(ref, device=torch.device('cpu'), dtype=dtype)[0]
+        return TransformerLensReplacementModel.from_pretrained_and_transcoders(model_name, transcoders, device=device,
+                                                                               dtype=dtype)
+    return ReplacementModel.from_pretrained(model_name, ref, dtype=dtype, backend='transformerlens')
 
 
 def load_target(ref, device, dtype):
     # A Hugging Face transcoder reference, or gemmascope-l0-rank:R for the Gemma Scope 16k transcoders at the R-th
     # lowest L0 of every layer, or the highest L0 where a layer has fewer releases (rank 0 is the set that
     # circuit-tracer ships for Gemma-2-2B).
+    if staged_on_cpu(ref):
+        return load_transcoder_from_hub(ref, device=torch.device('cpu'), dtype=dtype)[0].to(device)
     if not ref.startswith('gemmascope-l0-rank:'):
         return load_transcoder_from_hub(ref, device=device, dtype=dtype, lazy_decoder=True)[0]
     rank = int(ref.split(':')[1])

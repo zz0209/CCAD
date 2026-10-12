@@ -16,11 +16,14 @@ ORACLE = {'gemma_plt_r1': 'CIRC_P1E_ORACLE_GEMMA_PLT_TO_PLTL0R1_v6',
           'gemma_clt426k': 'CIRC_P1E_ORACLE_GEMMA_PLT_TO_CLT426K_v9',
           'gemma_clt2500k': 'CIRC_P1E_ORACLE_GEMMA_PLT_TO_CLT2500K_v9',
           'llama_clt524k': 'CIRC_P1E_ORACLE_LLAMA_PLT_TO_CLT524K_v4'}
+# Gemma-3-1B with Gemma Scope 2 dictionaries: units are the 20 most influential feature nodes of the PLT's own graphs.
+ORACLE_G3 = {'g3_plt_big': 'CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1', 'g3_clt262k': 'CIRC_G3_ORACLE_PLT_TO_CLT262K_v2'}
 FITS = {'gemma_plt_r2': 'CIRC_P1_GEMMA_PLT_TO_PLTL0R2_v2_best',
         'gemma_clt426k_whole': 'CIRC_P1_GEMMA_PLT_TO_CLT426K_v2_pooled',
         'gemma_clt426k_slices': 'CIRC_P1_GEMMA_PLT_TO_CLT426K_v2_slices'}
 MATCH = {'gemma_clt426k': 'CIRC_P0_GEMMA_PLT_TO_CLT426K_v1'}
-REVERSE = {'gemma': 'CIRC_P1R_REVERSE_GEMMA_CLT426K_TO_PLT_v2', 'llama': 'CIRC_P1R_REVERSE_LLAMA_CLT524K_TO_PLT_v1'}
+REVERSE = {'gemma': 'CIRC_P1R_REVERSE_GEMMA_CLT426K_TO_PLT_v2', 'llama': 'CIRC_P1R_REVERSE_LLAMA_CLT524K_TO_PLT_v1',
+           'gemma3': 'CIRC_G3_REVERSE_CLT262K_TO_PLT_v1'}
 PAIR = 'CIRC_P1C_CLT426K_TO_CLT2500K_v1'
 GENERALIZE = 'CIRC_P2_GENERALIZE_GEMMA_PLT_v1'
 GENERALIZE_CLT = 'CIRC_P2_GENERALIZE_GEMMA_CLT426K_v1'
@@ -108,12 +111,15 @@ def reverse(path):
     single = [r for r in rows if r['features'] == 1]
     reached = {(r['graph'], name) for r in rows for name, s in r.get('published_supernodes', {}).items() if s >= .1}
     effect = [r for r in rows if r['source_energy'] > MIN_ENERGY]
+    # Runs without a registry of published graphs (Gemma-3) have no published share.
+    has_registry = json.loads((path.parent / 'config.json').read_text()).get('registry', 'None') != 'None'
+    shares = [r['published_share'] for r in single if has_registry and r.get('published_share') is not None]
     return dict(run=path.parent.name, units=len(rows), single_units=len(single), residual_own=wavg(own),
                 residual_later=wavg(later), later_share_norm=float(sum(n for _, n in later) / sum(n for _, n in own + later)),
                 later_share_sq=float(sq(later) / (sq(own) + sq(later))), residual_random=quart([r['site_residual_random'] for r in effect]),
                 nrmse_layerwise=quart([r['nrmse_layerwise'] for r in effect]),
-                published_share=quart([r['published_share'] for r in single if r.get('published_share') is not None]),
-                supernodes_reached=len(reached), answers=answers(effect, ['layerwise']))
+                published_share=quart(shares) if shares else None,
+                supernodes_reached=len(reached) if has_registry else None, answers=answers(effect, ['layerwise']))
 
 
 def pair(path):
@@ -139,6 +145,7 @@ def main():
     summary = dict(written_utc=datetime.now(timezone.utc).isoformat(), description=DESCRIPTION,
                    min_energy=MIN_ENERGY, min_drop=MIN_DROP,
                    oracle={k: oracle(d / v / 'ORACLE_ROWS.json') for k, v in ORACLE.items()},
+                   oracle_g3={k: oracle(d / v / 'ORACLE_ROWS.json') for k, v in ORACLE_G3.items()},
                    fits={k: fit(d / v / 'P1_ROWS.json') for k, v in FITS.items()},
                    match={k: match(d / v / 'P0_ROWS.json') for k, v in MATCH.items()},
                    reverse={k: reverse(d / v / 'REVERSE_ROWS.json') for k, v in REVERSE.items()},
@@ -157,7 +164,7 @@ def main():
         within={k: spearman(*zip(*v)) for k, v in pairs.items()})
     args.out.write_text(json.dumps(summary, indent=1))
     print('residual predicts effect', summary['residual_predicts_effect'])
-    for k, v in summary['oracle'].items():
+    for k, v in {**summary['oracle'], **summary['oracle_g3']}.items():
         print(k, v['supernodes'], {m: round(v[m]['median'], 3) for m in v if isinstance(v[m], dict) and 'median' in v[m]},
               {m: (round(a['same_new'], 2) if a['same_new'] is not None else None) for m, a in v['answers'].items() if isinstance(a, dict)})
     for group in ['fits', 'match', 'reverse']:

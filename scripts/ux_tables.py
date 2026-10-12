@@ -47,15 +47,19 @@ def targets(s):
             ('Gemma CLT 426k', 'gemma_clt426k', sim['gemma']['mntss/clt-gemma-2-2b-426k']),
             ('Gemma CLT 2.5M', 'gemma_clt2500k', sim['gemma']['mntss/clt-gemma-2-2b-2.5M']),
             ('Llama CLT 524k', 'llama_clt524k', sim['llama']['mntss/clt-llama-3.2-1b-524k'])]
+    g3 = s['oracle_g3']
+    rows += [('Gemma-3 PLT, larger $L_0$', 'g3_plt_big', None), ('Gemma-3 CLT 262k', 'g3_clt262k', None)]
     lines = []
     for label, key, sm in rows:
-        r = o[key]
+        if key == 'g3_plt_big':
+            lines.append('\\midrule')
+        r = o[key] if key in o else g3[key]
         cross = r.get('site_residual_whole') is not None
         m = lambda k: fmt(r[k]['median']) if cross else '--'
         # For a PLT the slice, whole and best whole-feature deletions coincide.
         best = r['nrmse_whole_best'] if cross else r['nrmse_whole']
         same = r['answers']['whole_best' if cross else 'whole']
-        lines.append(' & '.join([label, str(r['supernodes']), fmt(sm['median']), fmt(r['site_residual']['median']),
+        lines.append(' & '.join([label, str(r['supernodes']), fmt(sm['median']) if sm else '--', fmt(r['site_residual']['median']),
                                  fmt(r['site_residual_random']['median']), m('site_residual_whole'),
                                  m('candidate_later_share'), m('nrmse_slice'), m('nrmse_whole'), fmt(best['median']),
                                  fmt(r['nrmse_whole_frozen']['median']), fmt(same['same_new']),

@@ -7,9 +7,9 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from circuit_tracer import ReplacementModel, attribute
+from circuit_tracer import attribute
 from circuit_tracer.graph import prune_graph
-from common import Dictionary, add_hooks, load_target
+from common import Dictionary, add_hooks, load_target, replacement_model
 from oracle_sites import box_least_squares
 
 DESCRIPTION = ('CIRCUITS_ACROSS_DICTIONARIES P1r: the reverse of P1e. Explanation units come from the attribution '
@@ -43,7 +43,7 @@ def main():
         with (args.out / 'progress.jsonl').open('a') as f:
             f.write(json.dumps(row) + '\n')
     dev = torch.device('cuda')
-    model = ReplacementModel.from_pretrained(args.model, args.source, dtype=torch.bfloat16, backend='transformerlens')
+    model = replacement_model(args.model, args.source, dev, torch.bfloat16)
     model.requires_grad_(False)
     A = Dictionary(model.transcoders)
     B = Dictionary(load_target(args.target, dev, torch.bfloat16))

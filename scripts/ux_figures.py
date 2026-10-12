@@ -22,6 +22,7 @@ OWN = '#3b4a5a'
 LATER = '#a2512d'
 GEMMA = '#2f5d7c'
 LLAMA = '#b8873a'
+GEMMA3 = '#4f7a4a'
 PREVIEW = None
 
 
@@ -71,7 +72,7 @@ def supports(ax, s):
 
 def overview_errors(ax, s):
     # Effect error of published explanations after a change of dictionary, by kind of change.
-    o, f, r = s['oracle'], s['fits'], s['reverse']
+    o, f, r, g3 = s['oracle'], s['fits'], s['reverse'], s['oracle_g3']
     targets = json.loads((ART / 'GEMMA_TARGETS.json').read_text())['rows']
     tok = lambda m: [t['methods'][m]['token'] for t in targets]
     held = lambda fam, m: json.loads((ART / f'UJ_{fam}_READERS.json').read_text())['point'][m]['parts']['E2']
@@ -79,26 +80,30 @@ def overview_errors(ax, s):
     # Each row: label, then values (or ranges) for matched features, fitted correspondence, best reconstruction with
     # whole target features and with layer-l slices.
     rows = [('Same family', None),
-            ('PLT, other sparsity', dict(match=f['gemma_plt_r2']['one_to_one']['median'],
-                                         fit=f['gemma_plt_r2']['fitted']['median'], whole=plt_whole)),
-            ('CLT 426k$\\to$2.5M', dict(whole=s['clt_pair']['nrmse_whole']['median'],
-                                        slice=s['clt_pair']['nrmse_slices']['median'])),
+            ('Gemma-2 PLT, other $L_0$', dict(match=f['gemma_plt_r2']['one_to_one']['median'],
+                                              fit=f['gemma_plt_r2']['fitted']['median'], whole=plt_whole)),
+            ('Gemma-2 CLT 426k$\\to$2.5M', dict(whole=s['clt_pair']['nrmse_whole']['median'],
+                                                slice=s['clt_pair']['nrmse_slices']['median'])),
+            ('Gemma-3 PLT, other $L_0$', dict(whole=g3['g3_plt_big']['nrmse_whole']['median'])),
             ('Retrained SAE', None),
-            ('SHIFT, 7 Gemma Scope', dict(match=tok('hungarian'), fit=tok('state'))),
+            ('SHIFT, Gemma-2', dict(match=tok('hungarian'), fit=tok('state'))),
             ('Grammar, GPT-2 M', dict(match=held('GPT2', 'hungarian_activation'), fit=held('GPT2', 'u_distjoint'))),
             ('Grammar, Qwen3-1.7B', dict(match=held('QWEN', 'hungarian_activation'), fit=held('QWEN', 'u_distjoint'))),
             ('PLT$\\to$CLT', None),
-            ('Gemma, 426k', dict(match=s['match']['gemma_clt426k']['one_to_one']['median'],
+            ('Gemma-2, 426k', dict(match=s['match']['gemma_clt426k']['one_to_one']['median'],
                                  fit=[f['gemma_clt426k_whole']['fitted']['median'], f['gemma_clt426k_slices']['fitted']['median']],
                                  whole=o['gemma_clt426k']['nrmse_whole_best']['median'],
                                  slice=o['gemma_clt426k']['nrmse_slice']['median'])),
-            ('Gemma, 2.5M', dict(whole=o['gemma_clt2500k']['nrmse_whole_best']['median'],
+            ('Gemma-2, 2.5M', dict(whole=o['gemma_clt2500k']['nrmse_whole_best']['median'],
                                  slice=o['gemma_clt2500k']['nrmse_slice']['median'])),
             ('Llama, 524k', dict(whole=o['llama_clt524k']['nrmse_whole_best']['median'],
                                  slice=o['llama_clt524k']['nrmse_slice']['median'])),
+            ('Gemma-3, 262k', dict(whole=g3['g3_clt262k']['nrmse_whole_best']['median'],
+                                   slice=g3['g3_clt262k']['nrmse_slice']['median'])),
             ('CLT$\\to$PLT', None),
-            ('Gemma', dict(whole=r['gemma']['nrmse_layerwise']['median'])),
-            ('Llama', dict(whole=r['llama']['nrmse_layerwise']['median']))]
+            ('Gemma-2', dict(whole=r['gemma']['nrmse_layerwise']['median'])),
+            ('Llama', dict(whole=r['llama']['nrmse_layerwise']['median'])),
+            ('Gemma-3', dict(whole=r['gemma3']['nrmse_layerwise']['median']))]
     marks = dict(match=('Matched features', MATCH, 's', MATCH), fit=('Fitted\ncorrespondence', STATE, 'D', STATE),
                  whole=('Best edit of\nwhole features', INK, 'o', INK), slice=('Best edit of\nlayer-$l$ slices', LATER, '^', 'white'))
     y = 0
@@ -145,16 +150,17 @@ def overview():
     supports(a, s)
     overview_errors(b, s)
     fig.text(.005, .985, '(a) Where a supernode deletion writes', fontsize=8, va='top')
-    fig.text(.41, .985, '(b) Published explanations after a change of dictionary', fontsize=8, va='top')
+    fig.text(.41, .985, '(b) Explanations after a change of dictionary', fontsize=8, va='top')
     save(fig, 'ux_overview')
 
 
 def mechanism():
     s = json.loads((CIRC / 'CIRCUIT_SUMMARY.json').read_text())
-    o, r = s['oracle'], s['reverse']
-    targets = [('gemma_clt426k', 'Gemma 426k', GEMMA), ('gemma_clt2500k', 'Gemma 2.5M', '#6f93ad'),
-               ('llama_clt524k', 'Llama 524k', LLAMA)]
-    fig, axes = plt.subplots(1, 4, figsize=(6.3, 1.85), gridspec_kw=dict(width_ratios=[.78, 1.0, 1.4, .72]))
+    o, r = {**s['oracle'], **s['oracle_g3']}, s['reverse']
+    targets = [('gemma_clt426k', 'Gemma-2 CLT 426k', GEMMA), ('gemma_clt2500k', 'Gemma-2 CLT 2.5M', '#6f93ad'),
+               ('llama_clt524k', 'Llama CLT 524k', LLAMA), ('g3_clt262k', 'Gemma-3 CLT 262k', GEMMA3)]
+    ticks = ['G2\n426k', 'G2\n2.5M', 'Llama\n524k', 'G3\n262k']
+    fig, axes = plt.subplots(1, 4, figsize=(6.3, 2.1), gridspec_kw=dict(width_ratios=[.95, 1.0, 1.45, .8]))
     # (a) Later-layer share of the squared write norm of the CLT features active at each supernode site.
     ax = axes[0]
     for k, (key, label, color) in enumerate(targets):
@@ -162,8 +168,8 @@ def mechanism():
         jitter = np.random.default_rng(k).uniform(-.18, .18, len(v))
         ax.scatter(k + jitter, v, s=3, color=color, alpha=.45, lw=0)
         ax.plot([k - .28, k + .28], [np.median(v)] * 2, color=INK, lw=1.)
-    ax.set_xticks(range(3))
-    ax.set_xticklabels([t[1].replace(' ', '\n') for t in targets], fontsize=6.6)
+    ax.set_xticks(range(len(targets)))
+    ax.set_xticklabels(ticks, fontsize=6.4)
     ax.set_ylim(0, 1)
     ax.set_yticks([0, .5, 1])
     ax.set_yticklabels(['0', '.5', '1'])
@@ -172,7 +178,7 @@ def mechanism():
     clean(ax)
     # (b) Residual at the edited layer against the residual of whole features over all layers, per supernode.
     ax = axes[1]
-    for key, label, color in [targets[0], targets[2]]:
+    for key, label, color in [targets[0], targets[2], targets[3]]:
         p = np.array(o[key]['pairs'])
         ax.scatter(p[:, 0], p[:, 1], s=4, color=color, alpha=.6, lw=0, label=label)
     ax.plot([0, 1], [0, 1], color='.5', lw=.6, ls=':')
@@ -188,7 +194,6 @@ def mechanism():
     ax.set_xlabel('Edited-layer residual', fontsize=7.2)
     ax.set_ylabel('All-layers residual', fontsize=7.2)
     ax.set_title('(b) Site residual', fontsize=7.6, pad=3, loc='left')
-    ax.legend(frameon=False, fontsize=6.3, loc='lower right', handletextpad=.1, markerscale=2)
     clean(ax)
     # (c) Effect error of the reconstructed deletion as layer-l slices, whole features and whole features with frozen
     # MLP outputs.
@@ -198,7 +203,7 @@ def mechanism():
     for k, (key, label, color) in enumerate(targets):
         for j, (m, _) in enumerate(kinds):
             q = o[key][m]
-            x = j + (k - 1) * .22
+            x = j + (k - 1.5) * .18
             ax.plot([x, x], [q['q25'], q['q75']], color=color, lw=1.)
             ax.scatter([x], [q['median']], s=12, color=color, zorder=3, lw=0, label=label if j == 0 else None)
     ax.axhline(1, color='.55', lw=.6, ls='--')
@@ -210,25 +215,26 @@ def mechanism():
     ax.set_xticklabels([k[1] for k in kinds], fontsize=6.4)
     ax.set_ylabel('Effect error (nRMSE)', fontsize=7.2)
     ax.set_title('(c) Reconstructed deletion', fontsize=7.6, pad=3, loc='left')
-    ax.legend(frameon=False, fontsize=6.1, loc='upper right', handletextpad=.1, borderaxespad=.1)
     clean(ax)
     # (d) Converse direction: residual of CLT graph units in the PLT, norm-weighted over writes.
     ax = axes[3]
-    for k, (key, label, color) in enumerate([('gemma', 'Gemma', GEMMA), ('llama', 'Llama', LLAMA)]):
+    for k, (key, label, color) in enumerate([('gemma', 'Gemma', GEMMA), ('llama', 'Llama', LLAMA),
+                                              ('gemma3', 'Gemma-3', GEMMA3)]):
         for j, m in enumerate(['residual_own', 'residual_later']):
-            ax.bar(j + (k - .5) * .34, r[key][m], width=.32, color=color, lw=0, label=label if j == 0 else None)
+            ax.bar(j + (k - 1) * .27, r[key][m], width=.25, color=color, lw=0, label=label if j == 0 else None)
     ax.axhline(r['gemma']['residual_random']['median'], color='.55', lw=.6, ls='--')
     ax.set_xticks([0, 1])
     ax.set_xticklabels(['Own\nlayer', 'Later\nlayers'], fontsize=6.6)
-    ax.set_ylim(0, 1.3)
+    ax.set_ylim(0, 1.05)
     ax.set_yticks([0, .5, 1])
     ax.set_yticklabels(['0', '.5', '1'])
     ax.set_ylabel('Residual in the PLT', fontsize=7.2)
     ax.set_title('(d) Converse', fontsize=7.6, pad=3, loc='left')
-    ax.legend(frameon=False, fontsize=6.3, loc='upper center', handletextpad=.3, borderaxespad=.1, ncol=2,
-              columnspacing=.8, handlelength=1.2)
     clean(ax)
-    fig.subplots_adjust(left=.06, right=.995, top=.88, bottom=.2, wspace=.42)
+    handles = [Line2D([], [], ls='', marker='o', ms=4, mfc=c, mec=c, label=n) for _, n, c in targets]
+    fig.legend(handles=handles, loc='upper center', ncol=4, frameon=False, fontsize=6.8, handletextpad=.2,
+               columnspacing=1.4, bbox_to_anchor=(.5, 1.0))
+    fig.subplots_adjust(left=.06, right=.995, top=.80, bottom=.19, wspace=.42)
     save(fig, 'ux_mechanism')
 
 
