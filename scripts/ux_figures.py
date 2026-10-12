@@ -92,13 +92,13 @@ def overview_errors(ax, s):
             ('PLT$\\to$CLT', None),
             ('Gemma-2, 426k', dict(match=s['match']['gemma_clt426k']['one_to_one']['median'],
                                  fit=[f['gemma_clt426k_whole']['fitted']['median'], f['gemma_clt426k_slices']['fitted']['median']],
-                                 whole=o['gemma_clt426k']['nrmse_whole_best']['median'],
+                                 whole=o['gemma_clt426k']['nrmse_response']['median'],
                                  slice=o['gemma_clt426k']['nrmse_slice']['median'])),
-            ('Gemma-2, 2.5M', dict(whole=o['gemma_clt2500k']['nrmse_whole_best']['median'],
+            ('Gemma-2, 2.5M', dict(whole=o['gemma_clt2500k']['nrmse_response']['median'],
                                  slice=o['gemma_clt2500k']['nrmse_slice']['median'])),
-            ('Llama, 524k', dict(whole=o['llama_clt524k']['nrmse_whole_best']['median'],
+            ('Llama, 524k', dict(whole=o['llama_clt524k']['nrmse_response']['median'],
                                  slice=o['llama_clt524k']['nrmse_slice']['median'])),
-            ('Gemma-3, 262k', dict(whole=g3['g3_clt262k']['nrmse_whole_best']['median'],
+            ('Gemma-3, 262k', dict(whole=g3['g3_clt262k']['nrmse_response']['median'],
                                    slice=g3['g3_clt262k']['nrmse_slice']['median'])),
             ('CLT$\\to$PLT', None),
             ('Gemma-2', dict(whole=r['gemma']['nrmse_layerwise']['median'])),
@@ -160,7 +160,7 @@ def mechanism():
     targets = [('gemma_clt426k', 'Gemma-2 CLT 426k', GEMMA), ('gemma_clt2500k', 'Gemma-2 CLT 2.5M', '#6f93ad'),
                ('llama_clt524k', 'Llama CLT 524k', LLAMA), ('g3_clt262k', 'Gemma-3 CLT 262k', GEMMA3)]
     ticks = ['G2\n426k', 'G2\n2.5M', 'Llama\n524k', 'G3\n262k']
-    fig, axes = plt.subplots(1, 4, figsize=(6.3, 2.1), gridspec_kw=dict(width_ratios=[.95, 1.0, 1.45, .8]))
+    fig, axes = plt.subplots(1, 4, figsize=(6.3, 2.1), gridspec_kw=dict(width_ratios=[.9, .95, 1.65, .75]))
     # (a) Later-layer share of the squared write norm of the CLT features active at each supernode site.
     ax = axes[0]
     for k, (key, label, color) in enumerate(targets):
@@ -199,7 +199,7 @@ def mechanism():
     # MLP outputs.
     ax = axes[2]
     kinds = [('nrmse_slice', 'Slices'), ('nrmse_whole', 'Same\namounts'), ('nrmse_whole_frozen', 'Same,\nfrozen'),
-             ('nrmse_whole_best', 'Best\nwhole')]
+             ('nrmse_whole_best', 'Best\nwhole'), ('nrmse_response', 'With\nresponses')]
     for k, (key, label, color) in enumerate(targets):
         for j, (m, _) in enumerate(kinds):
             q = o[key][m]
@@ -212,7 +212,7 @@ def mechanism():
     ax.set_yticks([.2, .5, 1, 2, 5, 10])
     ax.set_yticklabels(['.2', '.5', '1', '2', '5', '10'])
     ax.set_xticks(range(len(kinds)))
-    ax.set_xticklabels([k[1] for k in kinds], fontsize=6.4)
+    ax.set_xticklabels([k[1] for k in kinds], fontsize=6.0)
     ax.set_ylabel('Effect error (nRMSE)', fontsize=7.2)
     ax.set_title('(c) Reconstructed deletion', fontsize=7.6, pad=3, loc='left')
     clean(ax)

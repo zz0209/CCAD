@@ -18,6 +18,10 @@ ORACLE = {'gemma_plt_r1': 'CIRC_P1E_ORACLE_GEMMA_PLT_TO_PLTL0R1_v6',
           'llama_clt524k': 'CIRC_P1E_ORACLE_LLAMA_PLT_TO_CLT524K_v4'}
 # Gemma-3-1B with Gemma Scope 2 dictionaries: units are the 20 most influential feature nodes of the PLT's own graphs.
 ORACLE_G3 = {'g3_plt_big': 'CIRC_G3_ORACLE_PLT_TO_PLTBIG_v1', 'g3_clt262k': 'CIRC_G3_ORACLE_PLT_TO_CLT262K_v2'}
+# Response-aware test: whole target features fitted to the complete MLP-output change at the edited positions.
+RESPONSE = {'gemma_plt_r2': 'CIRC_RESP_GEMMA_PLT_TO_PLTL0R2_v1', 'gemma_clt426k': 'CIRC_RESP_GEMMA_PLT_TO_CLT426K_v1',
+            'gemma_clt2500k': 'CIRC_RESP_GEMMA_PLT_TO_CLT2500K_v1', 'llama_clt524k': 'CIRC_RESP_LLAMA_PLT_TO_CLT524K_v1',
+            'g3_clt262k': 'CIRC_RESP_G3_PLT_TO_CLT262K_v1'}
 FITS = {'gemma_plt_r2': 'CIRC_P1_GEMMA_PLT_TO_PLTL0R2_v2_best',
         'gemma_clt426k_whole': 'CIRC_P1_GEMMA_PLT_TO_CLT426K_v2_pooled',
         'gemma_clt426k_slices': 'CIRC_P1_GEMMA_PLT_TO_CLT426K_v2_slices'}
@@ -87,6 +91,14 @@ def oracle(path):
     return out
 
 
+def response(path):
+    rows = load_rows(path)
+    keys = ['response_share', 'response_residual', 'response_residual_random', 'nrmse_response', 'nrmse_sanity']
+    a = answers(rows, ['response', 'sanity'])
+    return dict(response_run=path.parent.name, **{k: quart([r[k] for r in rows]) for k in keys},
+                response_answers=a, response_ci=boot_median(rows, 'nrmse_response'))
+
+
 def fit(path):
     data = json.loads(path.read_text())
     rows = load_rows(path)
@@ -154,6 +166,22 @@ def main():
                    generalize_clt=generalize(d / GENERALIZE_CLT / 'GENERALIZE_ROWS.json'),
                    similarity={m: json.loads((d / f'SIMILARITY_{m.upper()}_PLT.json').read_text())['targets']
                                for m in ['gemma', 'llama']})
+    for k, v in RESPONSE.items():
+        (summary['oracle'] if k in summary['oracle'] else summary['oracle_g3'])[k].update(
+            response(d / v / 'RESPONSE_ROWS.json'))
+    # Paired difference of the response-aware effect error between each Gemma-2 CLT and the same-family PLT, per
+    # supernode, with a bootstrap over graphs for the median.
+    by_key = lambda name: {(r['graph'], r['supernode']): r['nrmse_response'] for r in load_rows(d / RESPONSE[name] / 'RESPONSE_ROWS.json')}
+    plt_resp = by_key('gemma_plt_r2')
+    summary['response_vs_plt'] = {}
+    for name in ['gemma_clt426k', 'gemma_clt2500k']:
+        clt_resp = by_key(name)
+        keys = sorted(set(plt_resp) & set(clt_resp))
+        rows_diff = [dict(graph=k[0], diff=clt_resp[k] - plt_resp[k]) for k in keys]
+        summary['response_vs_plt'][name] = dict(n=len(keys), median=float(np.median([r['diff'] for r in rows_diff])),
+                                                ci=boot_median(rows_diff, 'diff'),
+                                                clt_worse=float(np.mean([r['diff'] > 0 for r in rows_diff])))
+    print('response vs plt', summary['response_vs_plt'])
     # Whether the site residual, computed from the dictionaries on the prompt, predicts the effect error of the
     # reconstructed (slice) deletion, per supernode and target, pooled and within each target.
     pairs = {k: [(r['site_residual'], r['nrmse_slice']) for r in load_rows(d / v / 'ORACLE_ROWS.json')]

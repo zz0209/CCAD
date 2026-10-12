@@ -62,10 +62,11 @@ def targets(s):
         lines.append(' & '.join([label, str(r['supernodes']), fmt(sm['median']) if sm else '--', fmt(r['site_residual']['median']),
                                  fmt(r['site_residual_random']['median']), m('site_residual_whole'),
                                  m('candidate_later_share'), m('nrmse_slice'), m('nrmse_whole'), fmt(best['median']),
+                                 fmt(r['nrmse_response']['median']) if 'nrmse_response' in r else '--',
                                  fmt(r['nrmse_whole_frozen']['median']), fmt(same['same_new']),
                                  fmt(same['keeps_base'])]) + '\\\\')
-    head = ('Target & $n$ & Corr. & Site & Rand. & All & Later & Slices & Same amt. & Best & Frozen & New & Old\\\\')
-    (TAB / 'ux_targets.tex').write_text('\\begin{tabular}{@{}lrrrrrrrrrrrr@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+    head = ('Target & $n$ & Corr. & Site & Rand. & All & Later & Slices & Same amt. & Best & Resp. & Frozen & New & Old\\\\')
+    (TAB / 'ux_targets.tex').write_text('\\begin{tabular}{@{}lrrrrrrrrrrrrr@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
                                        '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
