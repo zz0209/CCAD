@@ -194,6 +194,55 @@ def depth_map(ax):
     ax.legend(handles=handles, frameon=False, fontsize=6.1, loc='upper left', handletextpad=.2, borderaxespad=.1)
 
 
+NATURAL = Path('D:/CCAD_Storage/runs/circuits')
+
+
+def natural_map(ax, graph):
+    # One natural-text prompt on token-by-layer axes: the PLT's own top units and the CLT's own top units, a CLT unit
+    # filled when PLT features at its layer and token reproduce its write, gray when it is one of the always-active
+    # features, sized by the effect of deleting its writes with the later MLP outputs clamped.
+    toks = json.loads((NATURAL / 'natural' / 'NATURAL_TOKENS_gemma-2-2b.json').read_text(encoding='utf-8'))['tokens'][graph]
+    toks = ['BOS' if t == '<bos>' else (t.strip() or '_') for t in toks]
+    reg = json.loads((NATURAL / 'GRAPH_UNITS_GEMMA_CLT426K_PLT_NATURAL.json').read_text())['graphs'][graph]
+    for fs in reg['variants'][0]['supernodes'].values():
+        for l, p, _ in fs:
+            ax.scatter([p - .18], [l], s=16, marker='o', facecolor='none', edgecolor=INK, lw=.6, zorder=3)
+    rev = {r['unit']: r for r in json.loads((NATURAL / 'CIRC_NAT_REVERSE_GEMMA_CLT426K_v1' / 'REVERSE_ROWS.json').read_text())['rows']
+           if r['graph'] == graph and r['features'] == 1}
+    dr = {r['unit']: r for r in json.loads((NATURAL / 'CIRC_NAT_DR_GEMMA_CLT426K_v1' / 'DEPTH_REFEREE_ROWS.json').read_text())['rows']
+          if r['graph'] == graph}
+    always = {'L0F7081', 'L1F3148', 'L1F3872'}
+    for unit, r in rev.items():
+        l, rest = unit[1:].split('F')
+        f, p = rest.split('P')
+        own = [res for k, res, _ in r['residual_by_offset'] if k == 0]
+        shared = bool(own) and own[0] < .4
+        dense = f'L{l}F{f}' in always
+        eff = dr[unit]['energy_w_clamped'] ** .5 if unit in dr else 0.
+        ax.scatter([int(p) + .18], [int(l)], s=14 + 30 * min(eff, 2), marker='^', zorder=4, lw=.6,
+                   facecolor=GEMMA if shared else ('.75' if dense else 'white'), edgecolor=GEMMA if shared else LATER)
+    ax.set_xticks(range(len(toks)))
+    ax.set_xticklabels(toks, rotation=60, fontsize=6.2, ha='right')
+    ax.set_ylim(-1, 27)
+    ax.set_xlim(-.5, len(toks) - .3)
+    ax.set_yticks([0, 5, 10, 15, 20, 25])
+    clean(ax)
+
+
+NAT_REVERSE = {'gemma': 'CIRC_NAT_REVERSE_GEMMA_CLT426K_v1', 'llama': 'CIRC_NAT_REVERSE_LLAMA_CLT524K_v1',
+               'gemma3': 'CIRC_NAT_REVERSE_G3_CLT262K_v1'}
+
+
+def natural_shared(m, threshold=.4):
+    # Shares of the CLT's own top units on the natural-text prompts that PLT features reproduce at their own layer.
+    early, later = [], []
+    for r in json.loads((NATURAL / NAT_REVERSE[m] / 'REVERSE_ROWS.json').read_text())['rows']:
+        own = [res for k, res, _ in r['residual_by_offset'] if k == 0] if r['features'] == 1 else []
+        if own:
+            (early if int(r['unit'][1:].split('F')[0]) <= 1 else later).append(own[0] < threshold)
+    return float(np.mean(early)), float(np.mean(later))
+
+
 def shared_panel(ax, s):
     models = [('gemma', 'Gemma-2'), ('llama', 'Llama'), ('gemma3', 'Gemma-3')]
     x = np.arange(len(models))
@@ -201,9 +250,12 @@ def shared_panel(ax, s):
     later = [s['shared_by_depth'][m]['shared_later'] for m, _ in models]
     ax.bar(x - .19, early, width=.36, color=LATER, lw=0, label='Read at layers 0-1')
     ax.bar(x + .19, later, width=.36, color=GEMMA, lw=0, label='Read later')
+    nat = [natural_shared(m) for m, _ in models]
+    ax.scatter(x - .19, [v[0] for v in nat], marker='D', s=9, color=INK, zorder=4, lw=0, label='Natural text')
+    ax.scatter(x + .19, [v[1] for v in nat], marker='D', s=9, color=INK, zorder=4, lw=0)
     for k, (m, _) in enumerate(models):
-        ax.text(k - .19, early[k] + .03, f"{s['shared_by_depth'][m]['early_share']:.0%}\nof units", ha='center',
-                va='bottom', fontsize=5.8, color=LATER)
+        ax.text(k - .19, max(early[k], nat[k][0]) + .03, f"{s['shared_by_depth'][m]['early_share']:.0%}\nof units",
+                ha='center', va='bottom', fontsize=5.8, color=LATER)
     ax.set_xticks(x)
     ax.set_xticklabels([n for _, n in models], fontsize=6.6)
     ax.set_ylim(0, 1.1)
@@ -241,24 +293,30 @@ def referee_panel(ax, s):
 def confirm_panel(ax):
     # CLT units binned by how well PLT features at the same layer and token reproduce their own-layer write, against
     # the median fraction of their later writes that the model removes when the unit's read is removed.
-    a = json.loads((CIRC / 'AGREEMENT_VS_REFEREE.json').read_text())
     edges = [0, .25, .5, .75, 1.0001]
     mids = [.125, .375, .625, .875]
-    for k, (m, name, color, marker) in enumerate([('gemma', 'Gemma-2', GEMMA, 'o'), ('llama', 'Llama', LLAMA, 's'),
-                                                    ('gemma3', 'Gemma-3', GEMMA3, '^')]):
-        pts = a[m]['points']
-        agree = np.clip(np.array([p['agree_own'] for p in pts]), 0, 1)
-        conf = np.array([p['confirm_u'] for p in pts])
-        xs, ys, lo, hi = [], [], [], []
-        for j in range(4):
-            sel = conf[(agree >= edges[j]) & (agree < edges[j + 1])]
-            if len(sel) >= 8:
-                xs.append(mids[j] + (k - 1) * .025)
-                ys.append(np.median(sel))
-                lo.append(np.quantile(sel, .25))
-                hi.append(np.quantile(sel, .75))
-        ax.plot(xs, ys, color=color, lw=.9, marker=marker, ms=3.4, label=name, zorder=3)
-        ax.vlines(xs, lo, hi, color=color, lw=.6, alpha=.7)
+    # Solid lines with quartiles for the published prompts, dashed lines for the natural-text prompts.
+    for source, dashed in [('AGREEMENT_VS_REFEREE.json', False), ('NAT_AGREEMENT_VS_REFEREE.json', True)]:
+        a = json.loads((CIRC / source).read_text())
+        for k, (m, name, color, marker) in enumerate([('gemma', 'Gemma-2', GEMMA, 'o'), ('llama', 'Llama', LLAMA, 's'),
+                                                        ('gemma3', 'Gemma-3', GEMMA3, '^')]):
+            pts = a[m]['points']
+            agree = np.clip(np.array([p['agree_own'] for p in pts]), 0, 1)
+            conf = np.array([p['confirm_u'] for p in pts])
+            xs, ys, lo, hi = [], [], [], []
+            for j in range(4):
+                sel = conf[(agree >= edges[j]) & (agree < edges[j + 1])]
+                if len(sel) >= 8:
+                    xs.append(mids[j] + (k - 1) * .025 + (.012 if dashed else 0))
+                    ys.append(np.median(sel))
+                    lo.append(np.quantile(sel, .25))
+                    hi.append(np.quantile(sel, .75))
+            if dashed:
+                ax.plot(xs, ys, color=color, lw=.8, ls='--', marker=marker, ms=3, mfc='white', zorder=3)
+            else:
+                ax.plot(xs, ys, color=color, lw=.9, marker=marker, ms=3.4, label=name, zorder=3)
+                ax.vlines(xs, lo, hi, color=color, lw=.6, alpha=.7)
+    ax.plot([], [], color='.4', lw=.8, ls='--', marker='o', ms=3, mfc='white', label='Natural text')
     ax.axhline(0, color='.6', lw=.5, ls=':')
     ax.set_xlim(0, 1)
     ax.set_xticks([0, .5, 1])

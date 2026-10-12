@@ -61,12 +61,15 @@ def later(r, key):
     return float(np.sum(r[key][1:]) / c.sum())
 
 
-def join(depth_path, reverse_path):
+def join(depth_path, reverse_path, min_effect=0.):
     rev = {(r['graph'], r['unit']): r for r in json.loads(reverse_path.read_text())['rows'] if r['features'] == 1}
     out = []
     for r in json.loads(depth_path.read_text())['rows']:
         v = rev.get((r['graph'], r['unit']))
         if v is None or len(r['claim_energy']) < 2 or sum(r['claim_energy'][1:]) <= 0:
+            continue
+        # Optional restriction to units whose clamped write deletion moves the next-token distribution.
+        if r['energy_w_clamped'] ** .5 <= min_effect:
             continue
         own = [res for k, res, _ in v['residual_by_offset'] if k == 0]
         lat = [(res, nrm) for k, res, nrm in v['residual_by_offset'] if k > 0]
@@ -87,13 +90,14 @@ def join(depth_path, reverse_path):
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--pairs', nargs='+', required=True, help='name=DEPTH_REFEREE_ROWS.json,REVERSE_ROWS.json')
+    parser.add_argument('--min-effect', type=float, default=0., help='keep units whose clamped write deletion has a larger effect size')
     parser.add_argument('--out', type=Path, default=None)
     args = parser.parse_args()
     summary = {}
     for pair in args.pairs:
         name, paths = pair.split('=')
         depth, reverse = (Path(p) for p in paths.split(','))
-        units = join(depth, reverse)
+        units = join(depth, reverse, args.min_effect)
         res = {}
         for band, lo, hi in [('all', 0, 99), ('layers 0-1', 0, 1), ('layers 2+', 2, 99)]:
             sel = [u for u in units if lo <= u['layer'] <= hi]

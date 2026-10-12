@@ -162,6 +162,45 @@ def bands():
                                       '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
+def natural(runs):
+    # The unit test on the natural-text prompts against the published prompts, one column per model.
+    nat = json.loads((CIRC / 'NAT_AGREEMENT_VS_REFEREE.json').read_text())
+    nat01 = json.loads((CIRC / 'NAT_AGREEMENT_VS_REFEREE_EFFECT01.json').read_text())
+    pub = json.loads((CIRC / 'AGREEMENT_VS_REFEREE.json').read_text())
+    early = json.loads((CIRC / 'NAT_EARLY_UNITS.json').read_text())
+    plt = json.loads((CIRC / 'NAT_PLT_SIDE.json').read_text())
+    plt_pub = json.loads((CIRC / 'PLT_SIDE.json').read_text())
+    models = [('gemma', 'GEMMA_CLT426K'), ('llama', 'LLAMA_CLT524K'), ('gemma3', 'G3_CLT262K')]
+    ci = lambda v: f'{fmt(v[0])} [{fmt(v[1])}, {fmt(v[2])}]'
+
+    def shares(tag):
+        rows = json.loads((runs / f'CIRC_NAT_REVERSE_{tag}_v1' / 'REVERSE_ROWS.json').read_text())['rows']
+        units = [(int(r['unit'][1:].split('F')[0]), [res for k, res, _ in r['residual_by_offset'] if k == 0])
+                 for r in rows if r['features'] == 1]
+        units = [(l, own[0]) for l, own in units if own]
+        n_early = sum(1 for l, _ in units if l <= 1)
+        later = [res < .4 for l, res in units if l >= 2]
+        return n_early / len(units), sum(later) / len(later)
+
+    sh = {m: shares(tag) for m, tag in models}
+    lines = [
+        ('CLT units read at layers 0--1', [f'{100 * sh[m][0]:.0f}\\%' for m, _ in models]),
+        ('Later CLT units shared', [f'{100 * sh[m][1]:.0f}\\%' for m, _ in models]),
+        ('Shared minus other, own input', [ci(nat[m]['robust_later']['confirm_u']['shared_minus_other']) for m, _ in models]),
+        ('\\quad with effect above .1', [ci(nat01[m]['robust_later']['confirm_u']['shared_minus_other']) for m, _ in models]),
+        ('\\quad published prompts', [ci(pub[m]['robust_later']['confirm_u']['shared_minus_other']) for m, _ in models]),
+        ('Partial Spearman, own input', [ci(nat[m]['robust_later']['confirm_u']['partial_spearman_layer_norm']) for m, _ in models]),
+        ('Early units, own input', [fmt(nat[m]['groups']['early']['confirm_u']) for m, _ in models]),
+        ('Early units collapsed', [f"{early[f'CIRC_NAT_DR_{tag}_v1']['collapsed']}/{early[f'CIRC_NAT_DR_{tag}_v1']['tested']}"
+                                   for m, tag in models]),
+        ('PLT side, partial Spearman', [ci(plt[m]['all']['partial_spearman_layer_norm']) for m, _ in models]),
+        ('\\quad published prompts', [ci(plt_pub[m]['all']['partial_spearman_layer_norm']) for m, _ in models]),
+    ]
+    body = '\n'.join(' & '.join([label] + cells) + '\\\\' for label, cells in lines)
+    (TAB / 'ux_natural.tex').write_text('\\begin{tabular}{@{}llll@{}}\n\\toprule\n & Gemma-2 & Llama & Gemma-3\\\\\n'
+                                        '\\midrule\n' + body + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
 def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--runs', type=Path, default=Path('D:/CCAD_Storage/runs/circuits'))
@@ -173,6 +212,7 @@ def main():
     referee(s)
     confirm()
     bands()
+    natural(args.runs)
 
 
 if __name__ == '__main__':
