@@ -1,6 +1,8 @@
 import json
+from pathlib import Path
 
 import torch
+import yaml
 from huggingface_hub import list_repo_files
 
 from circuit_tracer import ReplacementModel
@@ -16,12 +18,30 @@ def staged_on_cpu(ref):
     return 'gemma-scope-2' in ref and '/clt/' in ref
 
 
+def local_transcoders(folder, device, dtype):
+    # A transcoder set downloaded as plain files (config.yaml and layer_*.safetensors), for disks where the Hugging Face
+    # cache cannot build its snapshot links.
+    folder = Path(folder)
+    config = yaml.safe_load((folder / 'config.yaml').read_text())
+    n = len(list(folder.glob('layer_*.safetensors')))
+    config['transcoders'] = [str(folder / f'layer_{i}.safetensors') for i in range(n)]
+    config['scan_name'] = folder.name
+    return load_transcoders(config, device=device, dtype=dtype, lazy_decoder=True)
+
+
 def replacement_model(model_name, ref, device, dtype):
+    if Path(ref).is_dir():
+        transcoders = local_transcoders(ref, device, dtype)
+        return TransformerLensReplacementModel.from_pretrained_and_transcoders(model_name, transcoders, device=device,
+                                                                               dtype=dtype)
     if staged_on_cpu(ref):
         transcoders = load_transcoder_from_hub(ref, device=torch.device('cpu'), dtype=dtype)[0]
         return TransformerLensReplacementModel.from_pretrained_and_transcoders(model_name, transcoders, device=device,
                                                                                dtype=dtype)
-    return ReplacementModel.from_pretrained(model_name, ref, dtype=dtype, backend='transformerlens')
+    # TransformerLens folds value biases by cloning the float32 state dict, and on Windows the copies stay in the commit
+    # charge after loading (Gemma-2-2B 57.8 GiB with folding, 39.9 GiB without; MEASURE_LOAD_COMMIT_GEMMA_PLT_v2, v4).
+    # The models used here have no attention biases, so folding leaves every weight unchanged.
+    return ReplacementModel.from_pretrained(model_name, ref, dtype=dtype, backend='transformerlens', fold_value_biases=False)
 
 
 def load_target(ref, device, dtype):

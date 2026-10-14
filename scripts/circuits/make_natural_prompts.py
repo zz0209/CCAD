@@ -13,6 +13,8 @@ def main():
     parser.add_argument('--slice', type=Path, required=True, help='natural_fineweb_slice.json')
     parser.add_argument('--model-keys', nargs='+', required=True)
     parser.add_argument('--n', type=int, default=60)
+    parser.add_argument('--skip', type=int, default=0, help='leave out the first SKIP eligible documents')
+    parser.add_argument('--prefix', default='NATURAL_PROMPTS', help='output file name prefix')
     parser.add_argument('--words', type=int, default=12)
     parser.add_argument('--out-dir', type=Path, required=True)
     args = parser.parse_args()
@@ -22,11 +24,12 @@ def main():
         words = doc.strip().split('\n')[0].split()
         if len(words) >= args.words:
             prompts.append((i, ' '.join(words[:args.words])))
-        if len(prompts) == args.n:
+        if len(prompts) == args.skip + args.n:
             break
+    prompts = prompts[args.skip:]
     for key in args.model_keys:
         rows = [dict(graph=f'{key}/fineweb-eval-{i:03d}', prompt=p) for i, p in prompts]
-        (args.out_dir / f'NATURAL_PROMPTS_{key}.json').write_text(json.dumps(dict(
+        (args.out_dir / f'{args.prefix}_{key}.json').write_text(json.dumps(dict(
             written_utc=datetime.now(timezone.utc).isoformat(), description=DESCRIPTION, slice=str(args.slice),
             rows=rows), indent=1))
     print(json.dumps(dict(prompts=len(prompts), first=prompts[:3])))

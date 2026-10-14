@@ -22,7 +22,7 @@ RUNS = Path('D:/CCAD_Storage/runs/circuits')
 DR = {'gemma': 'CIRC_DR_GEMMA_CLT426K_TOK_v1', 'llama': 'CIRC_DR_LLAMA_CLT524K_TOK_v1',
       'gemma3': 'CIRC_DR_G3_CLT262K_RES_TOK_v1'}
 EDGES = RUNS / 'CIRC_EDGE_GEMMA_CLT426K_v1' / 'EDGE_REFEREE_ROWS.json'
-TOY = RUNS / 'CIRC_TOY_REFEREE_FORMAL_v1' / 'TOY_REFEREE.json'
+TOY = RUNS / 'CIRC_TOY_REFEREE_FORMAL_v3' / 'TOY_REFEREE.json'
 MODELS = [('gemma', 'Gemma-2', GEMMA), ('llama', 'Llama', LLAMA), ('gemma3', 'Gemma-3', GEMMA3)]
 # Confirmation runs from a light sand (not produced) to a dark slate (produced), with luminance falling monotonically
 # so that the scale reads in grayscale.
@@ -163,19 +163,20 @@ def overview():
 
 
 def toy():
-    # Known circuits, formal run on held-out seeds: the share of the claimed later writes of the CLT features of each
-    # circuit that removing their input takes out of the model (filled) and the bounded share S (open), as medians
-    # with quartiles over features and inputs.
+    # Known circuits, final formal run on held-out seeds: the share of the claimed later writes of the CLT features of
+    # each circuit that removing their input takes out of the model (filled) and the bounded share S (open), as
+    # medians with quartiles over features and inputs.
     s = json.loads(TOY.read_text())['summary']
     rows = [('A two-step', 'Two-step circuit, collapsed'), ('B amplified', 'Amplified over layers'),
             ('F erased copy', 'Read from a surviving copy'), ('E parallel', 'Same feature at every layer'),
-            ('D redundant', 'Read from an unused copy'), ('C constant', 'Constant write')]
-    fig, ax = plt.subplots(figsize=(3.05, 1.75))
+            ('G both copies', 'Both stored copies read'), ('D redundant', 'Read from an unused copy'),
+            ('C constant', 'Constant write')]
+    fig, ax = plt.subplots(figsize=(3.05, 1.95))
     for k, (key, label) in enumerate(rows):
         y = len(rows) - 1 - k
         for cond, dy, face in [('removed_u', .12, INK), ('bounded_u', -.12, 'white')]:
-            med, q25, q75 = s[key][cond]
-            ax.plot([q25, q75], [y + dy, y + dy], color=INK, lw=.7)
+            med, q25, q75 = s[key][cond][:3]
+            ax.plot([q25, min(q75, 1.1)], [y + dy, y + dy], color=INK, lw=.7)
             ax.scatter([med], [y + dy], s=13, facecolor=face, edgecolor=INK, lw=.7, zorder=3)
     ax.axhspan(-.5, 1.5, color='#f1ebe0', lw=0, zorder=0)
     ax.set_yticks(range(len(rows)))

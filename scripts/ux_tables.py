@@ -318,6 +318,33 @@ def sufficiency():
                                             '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
 
 
+def filter_prediction():
+    # v14: intervention prediction error of graphs filtered by the unit test against the unfiltered graph, a random
+    # filter of the same size, the layer filter and the PLT graph, per model, for resampling (primary) and input removal
+    # (second): medians over held-out prompts, the best baseline in bold, and the paired difference to it with its
+    # bootstrap interval. The third row of a model is the median change of the answer logit by the first ten units of
+    # each list under resampling (coverage).
+    s = json.loads((CIRC / 'FILTER_PREDICTION_SUMMARY.json').read_text())['models']
+    lists = ['test', 'all', 'random', 'layer', 'plt']
+    lines = []
+    for m, name in [('llama', 'Llama'), ('gemma', 'Gemma-2'), ('gemma3', 'Gemma-3')]:
+        if m not in s:
+            continue
+        if lines:
+            lines.append('\\midrule')
+        for k, (kind, label) in enumerate([('rs', 'Resample'), ('rm', 'Remove')]):
+            d = s[m][kind]
+            cells = [f"\\textbf{{{fmt(d['median'][b])}}}" if b == d['best'] else fmt(d['median'][b]) for b in lists]
+            ci = f"{fmt(d['diff'])} [{fmt(d['diff_ci'][0])}, {fmt(d['diff_ci'][1])}]"
+            lines.append(' & '.join([name if k == 0 else '', label] + cells + [ci]) + '\\\\')
+        c = s[m]['coverage']['median']
+        lines.append(' & '.join(['', 'First ten'] + [fmt(c[b]) for b in lists] + ['']) + '\\\\')
+    head = ('& & \\multicolumn{5}{c}{Node list} & \\\\\n\\cmidrule(lr){3-7}\n'
+            'Model & & Test & All & Random & Layers 2+ & PLT & Test$-$best\\\\')
+    (TAB / 'gt_filter.tex').write_text('\\begin{tabular}{@{}llrrrrrl@{}}\n\\toprule\n' + head + '\n\\midrule\n' +
+                                       '\n'.join(lines) + '\n\\bottomrule\n\\end{tabular}\n', encoding='utf-8')
+
+
 def utility():
     # Predicting unconfirmed CLT units on the natural-text prompts from a model fitted on the published prompts.
     rows = [('UTILITY_GEMMA.json', 'Gemma-2 426k'), ('UTILITY_GEMMA25.json', 'Gemma-2 2.5M'), ('UTILITY_LLAMA.json', 'Llama'),
@@ -364,6 +391,7 @@ def main():
     toy(args.runs)
     toy_counterfactual(args.runs)
     sufficiency()
+    filter_prediction()
     utility()
     completeness()
     graphs(args.runs)
